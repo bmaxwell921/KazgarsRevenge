@@ -60,6 +60,12 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BEPUphysics">
+      <HintPath>E:\C# Workspace\Demo\Demo\Demo\bin\x86\Debug\BEPUphysics.dll</HintPath>
+    </Reference>
+    <Reference Include="BEPUphysicsDrawer">
+      <HintPath>E:\C# Workspace\Demo\Demo\Demo\bin\x86\Debug\BEPUphysicsDrawer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -72,6 +78,8 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomSkinnedEffect.cs" />
+    <Compile Include="EffectHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
@@ -83,9 +91,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SkinnedModelLib\SkinnedModelLib.csproj">
+      <Project>{75303409-E0B0-43B2-A1F4-F2A506CBBDDC}</Project>
+      <Name>SkinnedModelLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KazgarsRevengeContent\KazgarsRevengeContent.contentproj">
-      <Name>KazgarsRevengeContent</Name>
+      <Name>KazgarsRevengeContent %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
+      <Project>{C9C6A8BF-E80D-4E54-9A95-51E0FDDFD3DF}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
