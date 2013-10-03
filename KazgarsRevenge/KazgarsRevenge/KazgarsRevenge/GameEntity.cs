@@ -8,11 +8,11 @@ namespace KazgarsRevenge
 {
     class GameEntity
     {
-        protected Dictionary<Type, GameComponent> components;
+        protected Dictionary<Type, Component> components;
 
-        public void AddComponent(Type t, GameComponent o)
+        public void AddComponent(Type t, Component o)
         {
-            GameComponent possObj;
+            Component possObj;
             if (!components.TryGetValue(t, out possObj))
             {
                 //components doesn't have this kind of component yet, so add it
@@ -32,9 +32,9 @@ namespace KazgarsRevenge
             }
         }
 
-        public GameComponent GetComponent(Type t)
+        public Component GetComponent(Type t)
         {
-            GameComponent retComponent = null;
+            Component retComponent = null;
             if (components.TryGetValue(t, out retComponent))
             {
                 return components[t];

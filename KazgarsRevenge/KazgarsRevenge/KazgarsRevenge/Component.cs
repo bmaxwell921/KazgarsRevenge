@@ -8,12 +8,18 @@ namespace KazgarsRevenge
 {
     abstract class Component
     {
+        protected MainGame Game;
+        public Component(MainGame game)
+        {
+            this.Game = game;
+        }
+
         public virtual void Start()
         {
 
         }
 
-        public virtual void Update(GameTime gametime)
+        public virtual void Update(GameTime gameTime)
         {
 
         }

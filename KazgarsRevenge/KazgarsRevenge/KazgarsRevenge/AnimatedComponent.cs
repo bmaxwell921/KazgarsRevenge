@@ -2,15 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using SkinnedModelLib;
+using BEPUphysics;
+using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
     class AnimatedModelComponent : Component
     {
-        public override void Update(Microsoft.Xna.Framework.GameTime gametime)
+        //components
+        protected Entity physicalData;
+        protected AnimationPlayer animationPlayer;
+        protected 
+
+        //fields
+        protected Model model;
+        protected Vector3 drawScale = new Vector3(1);
+        protected Vector3 localOffset = Vector3.Zero;
+        protected Matrix drawRotation;
+
+        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model)
+            : base(game)
+        {
+            this.physicalData = physicalData;
+            this.model = model;
+        }
+
+        public override void Update(GameTime gameTime)
         {
             animationPlayer.Update(gameTime.ElapsedGameTime, true,
-                drawRotation * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(Position + localOffset));
+                drawRotation * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
 
 
             Matrix[] bones = animationPlayer.GetSkinTransforms();
