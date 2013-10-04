@@ -79,15 +79,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatedComponent.cs" />
-    <Compile Include="CameraComponent.cs" />
-    <Compile Include="Component.cs" />
+    <Compile Include="CameraService.cs" />
+    <Compile Include="Base Classes\Component.cs" />
     <Compile Include="CustomSkinnedEffect.cs" />
     <Compile Include="EffectHelpers.cs" />
-    <Compile Include="GameEntity.cs" />
+    <Compile Include="Base Classes\GameEntity.cs" />
+    <Compile Include="Base Classes\ComponentManager.cs" />
     <Compile Include="PhysicsComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="MainGame.cs" />
+    <Compile Include="RenderService.cs" />
+    <Compile Include="SceneManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

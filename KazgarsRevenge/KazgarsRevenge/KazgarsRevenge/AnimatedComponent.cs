@@ -15,27 +15,54 @@ namespace KazgarsRevenge
         //components
         protected Entity physicalData;
         protected AnimationPlayer animationPlayer;
-        protected 
+        protected CameraService camera;
 
         //fields
         protected Model model;
         protected Vector3 drawScale = new Vector3(1);
         protected Vector3 localOffset = Vector3.Zero;
         protected Matrix drawRotation;
+        protected EffectParameter epLightDirection;
+        protected EffectParameter epToonMap;
 
-        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model)
+        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, SkinningData skinningData)
             : base(game)
         {
             this.physicalData = physicalData;
             this.model = model;
+            this.camera = Game.Services.GetService(typeof(CameraService)) as CameraService;
+
+            if (skinningData == null)
+                throw new ArgumentNullException("skinningData");
+
+            animationPlayer = new AnimationPlayer(skinningData);
+            PlayAnimation(skinningData.AnimationClips.Keys.First());
         }
 
+        public override void Start()
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (CustomSkinnedEffect effect in mesh.Effects)
+                {
+                    epToonMap = effect.Parameters["CelMap"];
+                    epToonMap.SetValue(Game.ToonMap);
+
+                    epLightDirection = effect.Parameters["vLightDirection"];
+                    epLightDirection.SetValue(vLightDirection);
+                }
+            }
+        }
+
+        protected Vector4 vLightDirection = new Vector4(-1.0f, -.5f, 1.0f, 1.0f);
         public override void Update(GameTime gameTime)
         {
             animationPlayer.Update(gameTime.ElapsedGameTime, true,
                 drawRotation * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
+        }
 
-
+        public void Draw(Matrix view, Matrix projection)
+        {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
 
 
@@ -52,11 +79,9 @@ namespace KazgarsRevenge
                     Matrix worldMatrix = bones[mesh.ParentBone.Index]
                         * drawRotation
                         * Matrix.CreateScale(drawScale)
-                        * Matrix.CreateTranslation(Position + localOffset);
+                        * Matrix.CreateTranslation(physicalData.Position + localOffset);
 
                     effect.Parameters["matInverseWorld"].SetValue(Matrix.Invert(worldMatrix));
-                    effect.Parameters["vLightDirection"].SetValue(vLightDirection);
-                    effect.Parameters["CelMap"].SetValue(toonMap);
                 }
 
                 mesh.Draw();

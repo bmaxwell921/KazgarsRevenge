@@ -35,14 +35,9 @@ namespace KazgarsRevenge
         public Component GetComponent(Type t)
         {
             Component retComponent = null;
-            if (components.TryGetValue(t, out retComponent))
-            {
-                return components[t];
-            }
-            else
-            {
-                return null;
-            }
+            components.TryGetValue(t, out retComponent);
+            //will be null if key is not found
+            return retComponent;
         }
     }
 }

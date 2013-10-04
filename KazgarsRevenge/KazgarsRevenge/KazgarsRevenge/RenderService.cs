@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace KazgarsRevenge
+{
+    class RenderService : ComponentManager
+    {
+
+    }
+}
