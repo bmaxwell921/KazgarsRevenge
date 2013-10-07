@@ -62,13 +62,13 @@ namespace KazgarsRevenge
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
 
-            //either do this or Matrix.CreateFromQuaternion(physicalData.Orientation);
+            //need to do this conversion from Matrix3x3 to Matrix; Matrix3x3 is just a bepu thing
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
-            Matrix rot = new Matrix();
-            rot.Forward = bepurot.Forward;
-            rot.Backward = bepurot.Backward;
-            rot.Right = bepurot.Right;
-            rot.Left = bepurot.Left;
+
+            //either do this or Matrix.CreateFromQuaternion(physicalData.Orientation);
+            //this is probably faster? not sure how CreateFromQuaternion works
+            Matrix rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
+            
             //drawing with toon shader
             foreach (ModelMesh mesh in model.Meshes)
             {
@@ -81,6 +81,7 @@ namespace KazgarsRevenge
 
                     Matrix worldMatrix = bones[mesh.ParentBone.Index]
                         * rot
+                        //* Matrix.CreateFromQuaternion(physicalData.Orientation)
                         * Matrix.CreateScale(drawScale)
                         * Matrix.CreateTranslation(physicalData.Position + localOffset);
 
