@@ -85,9 +85,9 @@
     <Compile Include="Drawing\DrawableComponent3D.cs" />
     <Compile Include="Drawing\EffectHelpers.cs" />
     <Compile Include="Base Classes\GameEntity.cs" />
-    <Compile Include="GeneralComponentManager.cs" />
-    <Compile Include="HealthComponent.cs" />
-    <Compile Include="PhysicsComponent.cs" />
+    <Compile Include="Managers\GeneralComponentManager.cs" />
+    <Compile Include="Misc Components\HealthComponent.cs" />
+    <Compile Include="Misc Components\PhysicsComponent.cs" />
     <Compile Include="Controllers\PlayerInputComponent.cs" />
     <Compile Include="Controllers\ProjectileController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

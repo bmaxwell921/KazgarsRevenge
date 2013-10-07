@@ -30,13 +30,12 @@ namespace KazgarsRevenge
             animations.StartClip(animations.skinningDataValue.AnimationClips[animationName]);
         }
 
-        float maxSpeed = 20;
+        float maxSpeed = 80;
 
         public PlayerInputComponent(MainGame game, Entity physicalData, AnimationPlayer animations)
             : base(game)
         {
             this.physicalData = physicalData;
-            physicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             physics = Game.Services.GetService(typeof(Space)) as Space;
             rayCastFilter = RayCastFilter;
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
@@ -44,6 +43,7 @@ namespace KazgarsRevenge
             this.animations = animations;
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
             font = game.Content.Load<SpriteFont>("Georgia");
+            InitDrawingParams();
         }
 
         public override void Start()
@@ -68,16 +68,26 @@ namespace KazgarsRevenge
             curKeys = Keyboard.GetState();
             if (Game.IsActive)
             {
-                int xmid = Game.GraphicsDevice.Viewport.Width / 2;
-                int ymid = Game.GraphicsDevice.Viewport.Height / 2;
 
                 Vector3 castOrigin = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 0), camera.Projection, camera.View, Matrix.Identity);
                 Vector3 castdir = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 1), camera.Projection, camera.View, Matrix.Identity) - castOrigin;
                 castdir.Normalize();
+                Ray r = new Ray(castOrigin, castdir);
 
+                //check where on the zero plane the ray hits, to guide the character by the mouse
+                float? distance;
+                Plane p = new Plane(Vector3.Up, 0);
+                r.Intersects(ref p, out distance);
+                Vector3 groundHitPos = Vector3.Zero;
+                if (distance.HasValue)
+                {
+                    groundHitPos = r.Position + r.Direction * distance.Value;
+                }
+                
+
+                //check if ray hits GameEntity
                 RayCastResult result;
-                physics.RayCast(new Ray(castOrigin, castdir), 200, rayCastFilter, out result);
-
+                physics.RayCast(r, 200, rayCastFilter, out result);
                 if (result.HitObject != null)
                 {
                     mouseHoveredEntity = result.HitObject.Tag as GameEntity;
@@ -94,13 +104,14 @@ namespace KazgarsRevenge
 
 
                 //moving
-                Vector3 move = new Vector3(curMouse.X - xmid, 0, curMouse.Y - ymid);
+                Vector3 move = new Vector3(groundHitPos.X - physicalData.Position.X, 0, groundHitPos.Z - physicalData.Position.Z);
                 move.Normalize();
                 if (curMouse.LeftButton == ButtonState.Pressed)
                 {
                     CalculateRotation(move);
-
-                    physicalData.LinearVelocity = move * maxSpeed;
+                    Vector3 moveVec = move * maxSpeed;
+                    moveVec.Y = physicalData.LinearVelocity.Y;
+                    physicalData.LinearVelocity = moveVec;
 
                     if (prevMouse.LeftButton == ButtonState.Released)
                     {
@@ -127,7 +138,7 @@ namespace KazgarsRevenge
                 if (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released)
                 {
                     Matrix rot = Matrix.CreateFromQuaternion(physicalData.Orientation);
-                    entities.CreateArrow(physicalData.Position + rot.Forward * 6, rot.Forward, 25);
+                    entities.CreateArrow(physicalData.Position + rot.Forward * 6, rot.Forward * 25, 25);
                 }
             }
             else
@@ -169,7 +180,7 @@ namespace KazgarsRevenge
         {
             if (mouseHoveredEntity != null)
             {
-                s.DrawString(font, mouseHoveredEntity.Name, vecName, Color.White);
+                s.DrawString(font, mouseHoveredEntity.Name, vecName, Color.Red);
             }
             if(mouseHoveredHealth != null)
             {

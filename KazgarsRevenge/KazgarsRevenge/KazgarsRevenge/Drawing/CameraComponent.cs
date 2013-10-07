@@ -36,7 +36,7 @@ namespace KazgarsRevenge
 
         float yaw = 0;
         float pitch = -MathHelper.PiOver4;
-        float zoom = 1.0f;
+        public float zoom = 1.0f;
         #endregion
 
         public void AssignEntity(Entity followMe)
@@ -79,13 +79,13 @@ namespace KazgarsRevenge
                 {
                     zoom /= 1.2f;
                 }
-                if (zoom < .01f)
+                if (zoom < .4f)
                 {
-                    zoom = .01f;
+                    zoom = .4f;
                 }
-                if (zoom > 3)
+                if (zoom > 5)
                 {
-                    zoom = 3;
+                    zoom = 5;
                 }
             }
 

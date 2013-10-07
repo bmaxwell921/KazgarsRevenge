@@ -81,7 +81,6 @@ namespace KazgarsRevenge
             }
             physics.ForceUpdater.Gravity = new Vector3(0, -80f, 0);
             Services.AddService(typeof(Space), physics);
-
         }
 
         /// <summary>
@@ -210,7 +209,7 @@ namespace KazgarsRevenge
                     if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     {
                         gameState = GameState.Playing;
-                        entityManager.CreateMainPlayer(new Vector3(200, 10, -200));
+                        DemoLevel();
                     }
                     break;
                 case GameState.Paused:
@@ -224,6 +223,17 @@ namespace KazgarsRevenge
                     break;
             }
 
+        }
+        public void DemoLevel()
+        {
+            entityManager.CreateMainPlayer(new Vector3(200, 10, -200));
+            for (int i = 0; i < 25; ++i)
+            {
+                for (int j = 0; j < 25; ++j)
+                {
+                    entityManager.CreateFred(new Vector3(130 + i * 40, 10, -100 - j * 40));
+                }
+            }
         }
 
         Vector2 vecLoadingText;
@@ -294,7 +304,7 @@ namespace KazgarsRevenge
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);
 
-                    //spriteBatch.DrawString(normalFont, "X: " + camera.Position.X + "\nY: " + camera.Position.Y + "\nZ: " + camera.Position.Z, new Vector2(50, 50), Color.Yellow);
+                    //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
                     //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
                     spriteBatch.Draw(texCursor, rectMouse, Color.White);
                     spriteBatch.End();

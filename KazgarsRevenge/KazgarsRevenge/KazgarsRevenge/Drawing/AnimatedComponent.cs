@@ -25,12 +25,14 @@ namespace KazgarsRevenge
         protected EffectParameter epLightDirection;
         protected EffectParameter epToonMap;
 
-        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations)
+        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations, Vector3 drawScale, Vector3 drawOffset)
             : base(game)
         {
             this.physicalData = physicalData;
             this.model = model;
             this.camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
+            this.drawScale = drawScale;
+            this.localOffset = drawOffset;
 
             this.animationPlayer = animations;
             PlayAnimation(animationPlayer.skinningDataValue.AnimationClips.Keys.First());

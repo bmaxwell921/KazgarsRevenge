@@ -92,17 +92,29 @@ namespace KazgarsRevenge
         {
             GameEntity player = new GameEntity("player", "good");
 
-            Entity playerPhysicalData = new Cylinder(position, 3, 1, 1);
+            Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
+            //locking rotation on axis (so that bumping into something won't make the player tip over)
+            playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            //more accurate collision detection for the player
+            playerPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
+            //need the collisioninformation's tag to be set, to get the entity in a collision handler
             playerPhysicalData.CollisionInformation.Tag = player;
 
+            //giving a reference to the player's physical data to the camera, so it can follow the player aorund
             (Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).AssignEntity(playerPhysicalData);
+
+            //shared animation data (need this to be in the player controller component as well as the graphics component, so that the controller can determine when to play animations)
             AnimationPlayer playerAnimations = new AnimationPlayer(skinningDataPlayer);
 
+            //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(Game as MainGame, playerPhysicalData);
-            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(Game as MainGame, playerPhysicalData, modelPlayer, playerAnimations);
+            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(Game as MainGame, playerPhysicalData, modelPlayer, playerAnimations, new Vector3(2f), Vector3.Zero);
             HealthComponent playerHealth = new HealthComponent(Game as MainGame, 100);
             PlayerInputComponent playerController = new PlayerInputComponent(Game as MainGame, playerPhysicalData, playerAnimations);
 
+            //adding the controllers to their respective managers 
+            //(need to decide what kinds of components need their own managers; currently 
+            //it's just a 2d renderer, a 3d renderer, and a general manager)
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
             genComponentManager.AddComponent(playerPhysics);
 
@@ -124,6 +136,7 @@ namespace KazgarsRevenge
             GameEntity newArrow = new GameEntity("arrow", "players");
 
             Entity arrowData = new Box(position, 1, 2, 5, 1);
+            arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = initialTrajectory;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(initialTrajectory));
 
@@ -131,7 +144,7 @@ namespace KazgarsRevenge
 
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(Game as MainGame, arrowData);
-            AnimatedModelComponent arrowGraphics = new AnimatedModelComponent(Game as MainGame, arrowData, modelArrow, arrowAnimations);
+            AnimatedModelComponent arrowGraphics = new AnimatedModelComponent(Game as MainGame, arrowData, modelArrow, arrowAnimations, new Vector3(.1f), Vector3.Zero);
             ArrowController arrowAI = new ArrowController(Game as MainGame, arrowData, damage);
 
             newArrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
@@ -144,6 +157,32 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(arrowAI);
         }
 
+        public void CreateFred(Vector3 position)
+        {
+            GameEntity fred = new GameEntity("Fred", "bad");
+
+            Entity fredPhysicalData = new Box(position, 4f, 10f, 4f, 1);
+            fredPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            fredPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
+            fredPhysicalData.CollisionInformation.Tag = fred;
+
+            AnimationPlayer fredAnimations = new AnimationPlayer(skinningDataPlayer);
+
+            PhysicsComponent fredPhysics = new PhysicsComponent(Game as MainGame, fredPhysicalData);
+            AnimatedModelComponent fredGraphics = new AnimatedModelComponent(Game as MainGame, fredPhysicalData, modelPlayer, fredAnimations, new Vector3(.5f), Vector3.Zero);
+            HealthComponent fredHealth = new HealthComponent(Game as MainGame, 100);
+
+            fred.AddComponent(typeof(PhysicsComponent), fredPhysics);
+            genComponentManager.AddComponent(fredPhysics);
+
+            fred.AddComponent(typeof(AnimatedModelComponent), fredGraphics);
+            renderManager.AddComponent(fredGraphics);
+
+            fred.AddComponent(typeof(HealthComponent), fredHealth);
+            genComponentManager.AddComponent(fredHealth);
+
+            AddEntity(fred);
+        }
         #endregion
 
         #region Helpers
