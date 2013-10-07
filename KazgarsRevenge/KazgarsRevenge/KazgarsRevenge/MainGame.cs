@@ -30,9 +30,6 @@ namespace KazgarsRevenge
     /// </summary>
     public class MainGame : Microsoft.Xna.Framework.Game
     {
-        //MainGame is acting as a scenemanager
-        private List<GameEntity> entities = new List<GameEntity>();
-
         #region components
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -122,13 +119,13 @@ namespace KazgarsRevenge
             Components.Add(genComponentManager);
             Services.AddService(typeof(GeneralComponentManager), genComponentManager);
 
-            renderManager = new RenderManager(this);
-            Components.Add(renderManager);
-            Services.AddService(typeof(RenderManager), renderManager);
-
             spriteManager = new SpriteManager(this);
             Components.Add(spriteManager);
             Services.AddService(typeof(SpriteManager), spriteManager);
+
+            entityManager = new EntityManager(this);
+            Components.Add(entityManager);
+            Services.AddService(typeof(EntityManager), entityManager);
 
             //adding large rectangle for units to stand on
             StaticMesh ground = new StaticMesh(new Vector3[] { new Vector3(-500, 0, -500), new Vector3(500, 0, -500), new Vector3(-500, 0, 500), new Vector3(500, 0, 500) }, new int[] { 0, 1, 2, 2, 1, 3 });
@@ -149,13 +146,13 @@ namespace KazgarsRevenge
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             normalFont = Content.Load<SpriteFont>("Georgia");
-            texCursor = Content.Load<Texture2D>("whiteCursor");
+            texCursor = Content.Load<Texture2D>("Textures\\whiteCursor");
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             effectModelDrawer = new BasicEffect(GraphicsDevice);
 
             effectOutline = Content.Load<Effect>("Shaders\\LineShader");
-            toonMap = Content.Load<Texture2D>("Toon");
+            toonMap = Content.Load<Texture2D>("Textures\\Toon");
 
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             renderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, GraphicsDevice.DisplayMode.Format, DepthFormat.Depth24Stencil8);
@@ -213,6 +210,7 @@ namespace KazgarsRevenge
                     if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     {
                         gameState = GameState.Playing;
+                        entityManager.CreateMainPlayer(new Vector3(200, 10, -200));
                     }
                     break;
                 case GameState.Paused:

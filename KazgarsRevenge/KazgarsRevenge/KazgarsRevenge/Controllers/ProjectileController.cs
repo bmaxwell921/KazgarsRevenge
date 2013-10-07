@@ -23,6 +23,7 @@ namespace KazgarsRevenge
             : base(game)
         {
             this.physicalData = physicalData;
+            this.damage = damage;
             physicalData.IsAffectedByGravity = false;
         }
 

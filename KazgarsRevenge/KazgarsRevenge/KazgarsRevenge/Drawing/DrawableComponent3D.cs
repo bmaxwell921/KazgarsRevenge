@@ -15,9 +15,6 @@ namespace KazgarsRevenge
 
         }
 
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection)
-        {
-
-        }
+        abstract public void Draw(GameTime gameTime, Matrix view, Matrix projection);
     }
 }

@@ -31,6 +31,12 @@ namespace KazgarsRevenge
             }
         }
 
+        public void AddComponent(DrawableComponent3D toAdd)
+        {
+            toAdd.Start();
+            components.Add(toAdd);
+        }
+
         public override void Draw(GameTime gameTime)
         {
             foreach (DrawableComponent3D d in components)

@@ -58,6 +58,7 @@
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_MergeAnimations>Models\Player\walk.fbx</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +80,13 @@
       <Name>Georgia</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\whiteCursor.png">
+      <Name>whiteCursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

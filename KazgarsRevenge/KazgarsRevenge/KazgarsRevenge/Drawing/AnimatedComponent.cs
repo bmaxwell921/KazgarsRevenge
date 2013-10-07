@@ -7,10 +7,11 @@ using Microsoft.Xna.Framework.Graphics;
 using SkinnedModelLib;
 using BEPUphysics;
 using BEPUphysics.Entities;
+using BEPUphysics.MathExtensions;
 
 namespace KazgarsRevenge
 {
-    class AnimatedModelComponent : Component
+    class AnimatedModelComponent : DrawableComponent3D
     {
         //components
         protected Entity physicalData;
@@ -21,22 +22,18 @@ namespace KazgarsRevenge
         protected Model model;
         protected Vector3 drawScale = new Vector3(1);
         protected Vector3 localOffset = Vector3.Zero;
-        protected Matrix drawRotation;
         protected EffectParameter epLightDirection;
         protected EffectParameter epToonMap;
 
-        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, SkinningData skinningData)
+        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations)
             : base(game)
         {
             this.physicalData = physicalData;
             this.model = model;
             this.camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
-            if (skinningData == null)
-                throw new ArgumentNullException("skinningData");
-
-            animationPlayer = new AnimationPlayer(skinningData);
-            PlayAnimation(skinningData.AnimationClips.Keys.First());
+            this.animationPlayer = animations;
+            PlayAnimation(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
         }
 
         public override void Start()
@@ -58,14 +55,20 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             animationPlayer.Update(gameTime.ElapsedGameTime, true,
-                drawRotation * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
+                Matrix.CreateFromQuaternion(physicalData.Orientation) * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
         }
 
-        public void Draw(Matrix view, Matrix projection)
+        public override void Draw(GameTime gameTime, Matrix view, Matrix projection)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
 
-
+            //either do this or Matrix.CreateFromQuaternion(physicalData.Orientation);
+            Matrix3X3 bepurot = physicalData.OrientationMatrix;
+            Matrix rot = new Matrix();
+            rot.Forward = bepurot.Forward;
+            rot.Backward = bepurot.Backward;
+            rot.Right = bepurot.Right;
+            rot.Left = bepurot.Left;
             //drawing with toon shader
             foreach (ModelMesh mesh in model.Meshes)
             {
@@ -77,7 +80,7 @@ namespace KazgarsRevenge
                     effect.Projection = projection;
 
                     Matrix worldMatrix = bones[mesh.ParentBone.Index]
-                        * drawRotation
+                        * rot
                         * Matrix.CreateScale(drawScale)
                         * Matrix.CreateTranslation(physicalData.Position + localOffset);
 

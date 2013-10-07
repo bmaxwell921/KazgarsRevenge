@@ -11,7 +11,7 @@ namespace KazgarsRevenge
         public string Name { get; protected set; }
         public string Faction { get; protected set; }
         public bool Dead { get; protected set; }
-        protected Dictionary<Type, Component> components;
+        protected Dictionary<Type, Component> components = new Dictionary<Type, Component>();
 
         public GameEntity(string name, string faction)
         {

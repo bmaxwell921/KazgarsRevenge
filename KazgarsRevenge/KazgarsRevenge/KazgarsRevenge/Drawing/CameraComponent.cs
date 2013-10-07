@@ -39,6 +39,11 @@ namespace KazgarsRevenge
         float zoom = 1.0f;
         #endregion
 
+        public void AssignEntity(Entity followMe)
+        {
+            this.physicalData = followMe;
+        }
+
         public CameraComponent(MainGame game)
             : base(game)
         {

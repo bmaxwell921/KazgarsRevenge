@@ -12,6 +12,7 @@ using BEPUphysics.BroadPhaseEntries;
 using BEPUphysics.CollisionRuleManagement;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.Collidables;
+using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
@@ -23,18 +24,25 @@ namespace KazgarsRevenge
         GameEntity mouseHoveredEntity;
         HealthComponent mouseHoveredHealth;
         EntityManager entities;
+        AnimationPlayer animations;
+        public void PlayAnimation(string animationName)
+        {
+            animations.StartClip(animations.skinningDataValue.AnimationClips[animationName]);
+        }
 
         float maxSpeed = 20;
 
-        public PlayerInputComponent(MainGame game, Entity physicalData)
+        public PlayerInputComponent(MainGame game, Entity physicalData, AnimationPlayer animations)
             : base(game)
         {
             this.physicalData = physicalData;
+            physicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             physics = Game.Services.GetService(typeof(Space)) as Space;
             rayCastFilter = RayCastFilter;
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             entities = game.Services.GetService(typeof(EntityManager)) as EntityManager;
-            texWhitePixel = Game.Content.Load<Texture2D>("whitePixel");
+            this.animations = animations;
+            texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
             font = game.Content.Load<SpriteFont>("Georgia");
         }
 
@@ -115,7 +123,8 @@ namespace KazgarsRevenge
                 //abilities
                 if (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released)
                 {
-                    entities.CreateArrow(physicalData.Position + physicalData.Orientation
+                    Matrix rot = Matrix.CreateFromQuaternion(physicalData.Orientation);
+                    entities.CreateArrow(physicalData.Position + rot.Forward * 6, rot.Forward, 25);
                 }
             }
             else
@@ -126,7 +135,7 @@ namespace KazgarsRevenge
             prevMouse = curMouse;
             prevKeys = curKeys;
         }
-
+        
         private void CalculateRotation(Vector3 move)
         {
             //orientation

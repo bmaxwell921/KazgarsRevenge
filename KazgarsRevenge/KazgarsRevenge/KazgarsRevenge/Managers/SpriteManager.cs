@@ -29,6 +29,12 @@ namespace KazgarsRevenge
             }
         }
 
+        public void AddComponent(DrawableComponent2D toAdd)
+        {
+            toAdd.Start();
+            components.Add(toAdd);
+        }
+
         public void Draw(SpriteBatch s)
         {
             foreach (DrawableComponent2D d in components)

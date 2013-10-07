@@ -1,5 +1,9 @@
 Content\Shaders\CellShader.xnb
 Content\Shaders\LineShader.xnb
 Content\Shaders\ToonSkinnedEffect.xnb
-Content\Models\Player\idle.xnb
+Content\Textures\whitePixel.xnb
+Content\Textures\Toon.xnb
+Content\Georgia.xnb
 Content\Models\Player\muscular-anatomy-back_0.xnb
+Content\Textures\whiteCursor.xnb
+Content\Models\Player\idle.xnb
