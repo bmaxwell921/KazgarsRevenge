@@ -38,7 +38,11 @@ namespace KazgarsRevenge
         SpriteBatch spriteBatch;
         Space physics;
         BoundingBoxDrawer modelDrawer;
-        CameraService camera;
+        CameraComponent camera;
+        RenderManager renderManager;
+        EntityManager entityManager;
+        GeneralComponentManager genComponentManager;
+        SpriteManager spriteManager;
         #endregion
 
 
@@ -105,15 +109,32 @@ namespace KazgarsRevenge
 
             Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
 
-
-            camera = new CameraService(this, playerCollidable);
+            camera = new CameraComponent(this);
             Components.Add(camera);
-            Services.AddService(typeof(CameraService), camera);
+            Services.AddService(typeof(CameraComponent), camera);
 
+            //adding managers
+            renderManager = new RenderManager(this);
+            Components.Add(renderManager);
+            Services.AddService(typeof(RenderManager), renderManager);
 
+            genComponentManager = new GeneralComponentManager(this);
+            Components.Add(genComponentManager);
+            Services.AddService(typeof(GeneralComponentManager), genComponentManager);
+
+            renderManager = new RenderManager(this);
+            Components.Add(renderManager);
+            Services.AddService(typeof(RenderManager), renderManager);
+
+            spriteManager = new SpriteManager(this);
+            Components.Add(spriteManager);
+            Services.AddService(typeof(SpriteManager), spriteManager);
+
+            //adding large rectangle for units to stand on
             StaticMesh ground = new StaticMesh(new Vector3[] { new Vector3(-500, 0, -500), new Vector3(500, 0, -500), new Vector3(-500, 0, 500), new Vector3(500, 0, 500) }, new int[] { 0, 1, 2, 2, 1, 3 });
             physics.Add(ground);
 
+            //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
 
 
@@ -242,7 +263,8 @@ namespace KazgarsRevenge
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                     GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
                     
-                    base.Draw(gameTime);
+                    //base.Draw(gameTime);
+                    renderManager.Draw(gameTime);
 
                     GraphicsDevice.SetRenderTarget(null);
 
@@ -263,21 +285,6 @@ namespace KazgarsRevenge
                     }
                     spriteBatch.End();
 
-
-                    //extra sprites in manager components
-                    spriteBatch.Begin();
-                    foreach (GameComponent gc in Components)
-                    {
-                        ComponentManager cm = gc as ComponentManager;
-                        if (cm != null)
-                        {
-                            cm.Draw(spriteBatch);
-                        }
-                    }
-                    spriteBatch.End();
-
-
-                    
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
@@ -287,6 +294,8 @@ namespace KazgarsRevenge
                     
 
                     spriteBatch.Begin();
+                    spriteManager.Draw(spriteBatch);
+
                     //spriteBatch.DrawString(normalFont, "X: " + camera.Position.X + "\nY: " + camera.Position.Y + "\nZ: " + camera.Position.Z, new Vector2(50, 50), Color.Yellow);
                     //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
                     spriteBatch.Draw(texCursor, rectMouse, Color.White);

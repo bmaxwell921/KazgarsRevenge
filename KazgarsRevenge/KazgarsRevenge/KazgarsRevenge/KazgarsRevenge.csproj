@@ -78,19 +78,25 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnimatedComponent.cs" />
-    <Compile Include="CameraService.cs" />
+    <Compile Include="Drawing\AnimatedComponent.cs" />
+    <Compile Include="Drawing\CameraComponent.cs" />
     <Compile Include="Base Classes\Component.cs" />
-    <Compile Include="CustomSkinnedEffect.cs" />
-    <Compile Include="EffectHelpers.cs" />
+    <Compile Include="Drawing\CustomSkinnedEffect.cs" />
+    <Compile Include="Drawing\DrawableComponent3D.cs" />
+    <Compile Include="Drawing\EffectHelpers.cs" />
     <Compile Include="Base Classes\GameEntity.cs" />
-    <Compile Include="Base Classes\ComponentManager.cs" />
+    <Compile Include="GeneralComponentManager.cs" />
+    <Compile Include="HealthComponent.cs" />
     <Compile Include="PhysicsComponent.cs" />
+    <Compile Include="PlayerInputComponent.cs" />
+    <Compile Include="ProjectileController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="MainGame.cs" />
-    <Compile Include="RenderService.cs" />
-    <Compile Include="SceneManager.cs" />
+    <Compile Include="Managers\EntityManager.cs" />
+    <Compile Include="Managers\RenderManager.cs" />
+    <Compile Include="Drawing\DrawableComponent2D.cs" />
+    <Compile Include="Managers\SpriteManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
@@ -136,7 +142,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Shared Data\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

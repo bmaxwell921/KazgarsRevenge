@@ -15,7 +15,7 @@ namespace KazgarsRevenge
         //components
         protected Entity physicalData;
         protected AnimationPlayer animationPlayer;
-        protected CameraService camera;
+        protected CameraComponent camera;
 
         //fields
         protected Model model;
@@ -30,7 +30,7 @@ namespace KazgarsRevenge
         {
             this.physicalData = physicalData;
             this.model = model;
-            this.camera = Game.Services.GetService(typeof(CameraService)) as CameraService;
+            this.camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
             if (skinningData == null)
                 throw new ArgumentNullException("skinningData");

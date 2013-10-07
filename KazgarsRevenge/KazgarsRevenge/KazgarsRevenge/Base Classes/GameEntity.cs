@@ -8,7 +8,17 @@ namespace KazgarsRevenge
 {
     class GameEntity
     {
+        public string Name { get; protected set; }
+        public string Faction { get; protected set; }
+        public bool Dead { get; protected set; }
         protected Dictionary<Type, Component> components;
+
+        public GameEntity(string name, string faction)
+        {
+            this.Name = name;
+            this.Faction = faction;
+            Dead = false;
+        }
 
         public void AddComponent(Type t, Component o)
         {
@@ -22,6 +32,16 @@ namespace KazgarsRevenge
             {
                 //error? components already contain a component of this type
             }
+        }
+
+        public void Kill()
+        {
+            foreach (KeyValuePair<Type, Component> pair in components)
+            {
+                pair.Value.Kill();
+            }
+
+            Dead = true;
         }
 
         public void RemoveComponent(Type t)

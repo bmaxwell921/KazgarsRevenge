@@ -9,7 +9,7 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
-    class CameraService : GameComponent
+    class CameraComponent : GameComponent
     {
         #region fields
         private Entity physicalData;
@@ -39,10 +39,9 @@ namespace KazgarsRevenge
         float zoom = 1.0f;
         #endregion
 
-        public CameraService(MainGame game, Entity physicalData)
+        public CameraComponent(MainGame game)
             : base(game)
         {
-            this.physicalData = physicalData;
         }
 
         public override void  Initialize()
@@ -87,7 +86,15 @@ namespace KazgarsRevenge
 
             distanceFromTarget = 50 * zoom;
 
-            target = physicalData.Position + headOffset;
+            //camera just sits at zero until given a collidable reference to follow
+            if (physicalData == null)
+            {
+                target = headOffset;
+            }
+            else
+            {
+                target = physicalData.Position + headOffset;
+            }
             position = target + rot.Backward * distanceFromTarget;
 
             view = Matrix.CreateLookAt(position, target, rotatedUpVector);
