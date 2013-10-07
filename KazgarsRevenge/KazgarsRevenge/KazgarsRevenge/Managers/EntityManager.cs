@@ -93,6 +93,8 @@ namespace KazgarsRevenge
             GameEntity player = new GameEntity("player", "good");
 
             Entity playerPhysicalData = new Cylinder(position, 3, 1, 1);
+            playerPhysicalData.CollisionInformation.Tag = player;
+
             (Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).AssignEntity(playerPhysicalData);
             AnimationPlayer playerAnimations = new AnimationPlayer(skinningDataPlayer);
 

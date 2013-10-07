@@ -81,7 +81,10 @@ namespace KazgarsRevenge
                 if (result.HitObject != null)
                 {
                     mouseHoveredEntity = result.HitObject.Tag as GameEntity;
-                    mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(HealthComponent)) as HealthComponent;
+                    if (mouseHoveredEntity != null)
+                    {
+                        mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(HealthComponent)) as HealthComponent;
+                    }
                 }
                 else
                 {
