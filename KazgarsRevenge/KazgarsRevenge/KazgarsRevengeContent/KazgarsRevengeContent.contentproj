@@ -53,15 +53,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Player\idle.fbx">
-      <Name>idle</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\Player\walk.fbx</ProcessorParameters_MergeAnimations>
-      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\whitePixel.png">
       <Name>whitePixel</Name>
       <Importer>TextureImporter</Importer>
@@ -87,6 +78,23 @@
       <Name>whiteCursor</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Enemies\idle.fbx">
+      <Name>idle</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Models\Player\idle1.fbx">
+      <Name>idle1</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\idle2.fbx%3bModels\\Player\\idle3.fbx%3bModels\\Player\\idle4.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

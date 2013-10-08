@@ -231,7 +231,7 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < 25; ++j)
                 {
-                    entityManager.CreateFred(new Vector3(130 + i * 40, 10, -100 - j * 40));
+                    //entityManager.CreateFred(new Vector3(130 + i * 40, 10, -100 - j * 40));
                 }
             }
         }

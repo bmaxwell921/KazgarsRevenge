@@ -41,9 +41,10 @@ namespace KazgarsRevenge
         #region Models and SkinningData
         Model modelArrow;
         SkinningData skinningDataArrow;
-
         Model modelPlayer;
         SkinningData skinningDataPlayer;
+        Model modelTestEnemy;
+        SkinningData skinningDataTestEnemy;
         #endregion
 
         public override void Initialize()
@@ -55,11 +56,14 @@ namespace KazgarsRevenge
             spriteManager = Game.Services.GetService(typeof(SpriteManager)) as SpriteManager;
 
             toonAnimatedEffect = Game.Content.Load<Effect>("Shaders\\ToonSkinnedEffect");
-            LoadModel(out modelArrow, "Models\\Player\\idle");
+            LoadModel(out modelArrow, "Models\\Enemies\\idle");
             skinningDataArrow = modelArrow.Tag as SkinningData;
 
-            LoadModel(out modelPlayer, "Models\\Player\\idle");
+            LoadModel(out modelPlayer, "Models\\Player\\idle1");
             skinningDataPlayer = modelPlayer.Tag as SkinningData;
+
+            LoadModel(out modelTestEnemy, "Models\\Enemies\\idle");
+            skinningDataTestEnemy = modelTestEnemy.Tag as SkinningData;
         }
 
         protected void LoadModel(out Model model, string filePath)
@@ -166,10 +170,10 @@ namespace KazgarsRevenge
             fredPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             fredPhysicalData.CollisionInformation.Tag = fred;
 
-            AnimationPlayer fredAnimations = new AnimationPlayer(skinningDataPlayer);
+            AnimationPlayer fredAnimations = new AnimationPlayer(skinningDataTestEnemy);
 
             PhysicsComponent fredPhysics = new PhysicsComponent(Game as MainGame, fredPhysicalData);
-            AnimatedModelComponent fredGraphics = new AnimatedModelComponent(Game as MainGame, fredPhysicalData, modelPlayer, fredAnimations, new Vector3(.5f), Vector3.Zero);
+            AnimatedModelComponent fredGraphics = new AnimatedModelComponent(Game as MainGame, fredPhysicalData, modelTestEnemy, fredAnimations, new Vector3(.5f), Vector3.Zero);
             HealthComponent fredHealth = new HealthComponent(Game as MainGame, 100);
 
             fred.AddComponent(typeof(PhysicsComponent), fredPhysics);
