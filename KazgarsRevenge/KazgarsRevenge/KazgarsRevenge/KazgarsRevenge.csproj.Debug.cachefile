@@ -1,10 +1,10 @@
 Content\Shaders\CellShader.xnb
-Content\Shaders\LineShader.xnb
 Content\Shaders\ToonSkinnedEffect.xnb
 Content\Textures\whitePixel.xnb
 Content\Textures\Toon.xnb
-Content\Textures\whiteCursor.xnb
 Content\Georgia.xnb
-Content\Models\Enemies\idle.xnb
-Content\Models\Enemies\muscular-anatomy-back_0.xnb
+Content\Textures\whiteCursor.xnb
 Content\Models\Player\idle1.xnb
+Content\Models\Enemies\muscular-anatomy-back_0.xnb
+Content\Models\Enemies\idle.xnb
+Content\Shaders\EdgeDetection.xnb

@@ -36,7 +36,7 @@ namespace KazgarsRevenge
         Space physics;
         BoundingBoxDrawer modelDrawer;
         CameraComponent camera;
-        RenderManager renderManager;
+        ModelManager renderManager;
         EntityManager entityManager;
         GeneralComponentManager genComponentManager;
         SpriteManager spriteManager;
@@ -52,6 +52,7 @@ namespace KazgarsRevenge
         EffectParameter epOutlineThreshhold;
         Texture2D toonMap;
         RenderTarget2D renderTarget;
+        RenderTarget2D normalDepthRenderTarget;
         #endregion
 
         public Texture2D ToonMap { get { return toonMap; } }
@@ -110,9 +111,9 @@ namespace KazgarsRevenge
             Services.AddService(typeof(CameraComponent), camera);
 
             //adding managers
-            renderManager = new RenderManager(this);
+            renderManager = new ModelManager(this);
             Components.Add(renderManager);
-            Services.AddService(typeof(RenderManager), renderManager);
+            Services.AddService(typeof(ModelManager), renderManager);
 
             genComponentManager = new GeneralComponentManager(this);
             Components.Add(genComponentManager);
@@ -150,32 +151,20 @@ namespace KazgarsRevenge
             spriteBatch = new SpriteBatch(GraphicsDevice);
             effectModelDrawer = new BasicEffect(GraphicsDevice);
 
-            effectOutline = Content.Load<Effect>("Shaders\\LineShader");
+            effectOutline = Content.Load<Effect>("Shaders\\EdgeDetection");
             toonMap = Content.Load<Texture2D>("Textures\\Toon");
 
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
-            renderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, GraphicsDevice.DisplayMode.Format, DepthFormat.Depth24Stencil8);
+            renderTarget = new RenderTarget2D(GraphicsDevice, 
+                                                pp.BackBufferWidth, pp.BackBufferHeight, false,
+                                                pp.BackBufferFormat, pp.DepthStencilFormat);
 
+            normalDepthRenderTarget = new RenderTarget2D(graphics.GraphicsDevice,
+                                                         pp.BackBufferWidth, pp.BackBufferHeight, false,
+                                                         pp.BackBufferFormat, pp.DepthStencilFormat);
 
-            /*
-             * terrainGraphics.LoadTerrain("bang.jt");
-
-
-            terrainPhysics = new Terrain(terrainGraphics.HeightData, new AffineTransform(
-                    new Vector3(1, 1, -1),
-                    Quaternion.Identity,
-                    Vector3.Zero));
-
-            physics.Add(terrainPhysics);
-             */
 
             initDrawingParams();
-
-
-            epOutlineThickness = effectOutline.Parameters["Thickness"];
-            epOutlineThickness.SetValue(.5f);
-            epOutlineThreshhold = effectOutline.Parameters["Threshold"];
-            epOutlineThreshhold.SetValue(.5f);
 
             base.LoadContent();
         }
@@ -263,42 +252,37 @@ namespace KazgarsRevenge
             switch (gameState)
             {
                 case GameState.Playing:
-                    
-                    GraphicsDevice.SetRenderTarget(renderTarget);
-                    GraphicsDevice.Clear(Color.DarkSlateBlue);
-
+                    //draw depth render target
+                    GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
+                    GraphicsDevice.Clear(Color.Black);
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                     GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-                    
-                    //base.Draw(gameTime);
-                    renderManager.Draw(gameTime);
+                    renderManager.Draw(gameTime, "NormalDepth");
 
+                    //draw scene render target
+                    GraphicsDevice.SetRenderTarget(renderTarget);
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
+                    renderManager.Draw(gameTime, "SkinnedEffect");
                     GraphicsDevice.SetRenderTarget(null);
 
-                    Texture2D SceneTexture = renderTarget;
-                    // Render the scene with Edge Detection, using the render target from last frame.
-                    GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.DarkSlateBlue, 1.0f, 0);
-
-
-                    //spriteBatch.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate, SaveStateMode.SaveState);
-                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
-                    {
-                        // Apply the post process shader
-                        effectOutline.CurrentTechnique.Passes[0].Apply();
-                        {
-
-                            spriteBatch.Draw(SceneTexture, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
-                        }
-                    }
+                    
+                    //pass in depth render target to the edge detection shader
+                    Texture2D normalDepthTexture = normalDepthRenderTarget;
+                    effectOutline.Parameters["ScreenResolution"].SetValue(new Vector2(renderTarget.Width, renderTarget.Height));
+                    effectOutline.Parameters["NormalDepthTexture"].SetValue(normalDepthTexture);
+                    effectOutline.CurrentTechnique = effectOutline.Techniques["EdgeDetect"];
+                    //draw scene
+                    spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effectOutline);
+                    spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
                     spriteBatch.End();
 
-                    effectModelDrawer.LightingEnabled = false;
+                    /*effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
-                    modelDrawer.Draw(effectModelDrawer, physics);
+                    modelDrawer.Draw(effectModelDrawer, physics);*/
                     
 
                     spriteBatch.Begin();

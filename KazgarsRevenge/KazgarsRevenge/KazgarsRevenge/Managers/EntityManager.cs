@@ -13,7 +13,7 @@ namespace KazgarsRevenge
 {
     class EntityManager : GameComponent
     {
-        RenderManager renderManager;
+        ModelManager renderManager;
         EntityManager entityManager;
         GeneralComponentManager genComponentManager;
         SpriteManager spriteManager;
@@ -50,7 +50,7 @@ namespace KazgarsRevenge
         public override void Initialize()
         {
 
-            renderManager = Game.Services.GetService(typeof(RenderManager)) as RenderManager;
+            renderManager = Game.Services.GetService(typeof(ModelManager)) as ModelManager;
             entityManager = Game.Services.GetService(typeof(EntityManager)) as EntityManager;
             genComponentManager = Game.Services.GetService(typeof(GeneralComponentManager)) as GeneralComponentManager;
             spriteManager = Game.Services.GetService(typeof(SpriteManager)) as SpriteManager;
@@ -59,7 +59,7 @@ namespace KazgarsRevenge
             LoadModel(out modelArrow, "Models\\Enemies\\idle");
             skinningDataArrow = modelArrow.Tag as SkinningData;
 
-            LoadModel(out modelPlayer, "Models\\Player\\idle1");
+            LoadModel(out modelPlayer, "Models\\Enemies\\idle");
             skinningDataPlayer = modelPlayer.Tag as SkinningData;
 
             LoadModel(out modelTestEnemy, "Models\\Enemies\\idle");

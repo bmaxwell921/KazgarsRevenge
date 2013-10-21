@@ -3,7 +3,7 @@
 
 
 float4x4	matInverseWorld;
-float4		vLightDirection;
+float3		vLightDirection = normalize(float3(1,1,1));
 
 // The texture that contains the celmap
 texture CelMap;
@@ -19,24 +19,25 @@ struct ToonVSOutput
 {
     float2 TexCoord   : TEXCOORD0;
     float4 PositionPS : SV_Position;
-	float3 L          : TEXCOORD1;
-	float3 N          : TEXCOORD2;
+	float L          : TEXCOORD1;
 };
 
+float ToonThresholds[2] = { 0.8, 0.4 };
+float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
 
 
 // Vertex shader: vertex lighting, one bone.
 ToonVSOutput VSSkinnedVertexLightingOneBone(VSInputNmTxWeights vin)
 {
     Skin(vin, 1);
-
+	
     ToonVSOutput output;
     
-    output.PositionPS = mul(vin.Position, WorldViewProj);
-	output.L = normalize(vLightDirection);
-	output.N = normalize(mul(matInverseWorld, vin.Normal));
-    
     output.TexCoord = vin.TexCoord;
+    output.PositionPS = mul(vin.Position, WorldViewProj);
+
+	float3 worldNormal = mul(vin.Normal, World);
+	output.L = dot(worldNormal, vLightDirection);
     
     return output;
 }
@@ -47,14 +48,14 @@ ToonVSOutput VSSkinnedVertexLightingTwoBones(VSInputNmTxWeights vin)
 {
     
     Skin(vin, 2);
-
+	
     ToonVSOutput output;
     
-    output.PositionPS = mul(vin.Position, WorldViewProj);
-	output.L = normalize(vLightDirection);
-	output.N = normalize(mul(matInverseWorld, vin.Normal));
-    
     output.TexCoord = vin.TexCoord;
+    output.PositionPS = mul(vin.Position, WorldViewProj);
+
+	float3 worldNormal = mul(vin.Normal, World);
+	output.L = dot(worldNormal, vLightDirection);
     
     return output;
 }
@@ -68,11 +69,11 @@ ToonVSOutput VSSkinnedVertexLightingFourBones(VSInputNmTxWeights vin)
 
     ToonVSOutput output;
     
-    output.PositionPS = mul(vin.Position, WorldViewProj);
-	output.L = normalize(vLightDirection);
-	output.N = normalize(mul(matInverseWorld, vin.Normal));
-    
     output.TexCoord = vin.TexCoord;
+    output.PositionPS = mul(vin.Position, WorldViewProj);
+
+	float3 worldNormal = mul(vin.Normal, World);
+	output.L = dot(worldNormal, vLightDirection);
     
     return output;
 }
@@ -81,12 +82,100 @@ ToonVSOutput VSSkinnedVertexLightingFourBones(VSInputNmTxWeights vin)
 float4 PSSkinnedVertexLighting(ToonVSOutput pin) : SV_Target0
 {
 	float4 Color = SAMPLE_TEXTURE(Texture, pin.TexCoord);
-	float2 celTexCoord = float2(saturate(dot(pin.L, pin.N)), 0.0f);
-	float4 CelColor = tex2D(CelMapSampler, celTexCoord);
+	
+    float light;
 
-	float4 Ac = float4(0.075, 0.075, 0.2, 1.0);
-	return (Ac*Color)+(Color*CelColor);
+    if (pin.L> ToonThresholds[0])
+        light = ToonBrightnessLevels[0];
+    else if (pin.L > ToonThresholds[1])
+        light = ToonBrightnessLevels[1];
+    else
+        light = ToonBrightnessLevels[2];
+                
+    Color.rgb *= light;
+    
+    return Color;
 }
+
+
+
+//
+//this effect is drawn onto a rendertarget, which is used as an input for the edge detection shader
+//
+
+// Vertex shader input structure.
+struct NormalDepthVSInput
+{
+    float4 Position : POSITION0;
+    float3 Normal : NORMAL0;
+    float2 TextureCoordinate : TEXCOORD0;
+};
+
+// Output structure for the vertex shader that renders normal and depth information.
+struct NormalDepthVSOutput
+{
+    float4 Position : POSITION0;
+    float4 Color : COLOR0;
+};
+
+
+// Alternative vertex shader outputs normal and depth values, which are then
+// used as an input for the edge detection filter in PostprocessEffect.fx.
+NormalDepthVSOutput VSDepthOneBone(VSInputNmTxWeights vin)
+{
+	Skin(vin, 1);
+
+    NormalDepthVSOutput output;
+	
+    output.Position = mul(vin.Position, WorldViewProj);
+    float3 worldNormal = mul(vin.Normal, World);
+
+    // The output color holds the normal, scaled to fit into a 0 to 1 range.
+    output.Color.rgb = (worldNormal + 1) / 2;
+
+    // The output alpha holds the depth, scaled to fit into a 0 to 1 range.
+    output.Color.a = output.Position.z / output.Position.w;
+    
+    return output;    
+}
+
+NormalDepthVSOutput VSDepthTwoBone(VSInputNmTxWeights vin)
+{
+	Skin(vin, 2);
+
+    NormalDepthVSOutput output;
+	
+    output.Position = mul(vin.Position, WorldViewProj);
+    float3 worldNormal = mul(vin.Normal, World);
+    output.Color.rgb = (worldNormal + 1) / 2;
+    output.Color.a = output.Position.z / output.Position.w;
+    
+    return output;
+}
+
+NormalDepthVSOutput VSDepthFourBone(VSInputNmTxWeights vin)
+{
+	Skin(vin, 4);
+
+    NormalDepthVSOutput output;
+	
+    output.Position = mul(vin.Position, WorldViewProj);
+    float3 worldNormal = mul(vin.Normal, World);
+    output.Color.rgb = (worldNormal + 1) / 2;
+    output.Color.a = output.Position.z / output.Position.w;
+    
+    return output;
+}
+
+// Simple pixel shader for rendering the normal and depth information.
+float4 NormalDepthPixelShader(float4 color : COLOR0) : COLOR0
+{
+    return color;
+}
+
+
+
+
 
 VertexShader VSArray[3] =
 {
@@ -95,6 +184,12 @@ VertexShader VSArray[3] =
     compile vs_2_0 VSSkinnedVertexLightingFourBones(),
 };
 
+VertexShader VSArrayDepth[3] =
+{
+    compile vs_2_0 VSDepthOneBone(),
+    compile vs_2_0 VSDepthTwoBone(),
+    compile vs_2_0 VSDepthFourBone(),
+};
 
 int VSIndices[3] =
 {
@@ -113,3 +208,15 @@ Technique SkinnedEffect
         PixelShader  = compile ps_2_0 PSSkinnedVertexLighting();
     }
 }
+
+
+// Technique draws the object as normal and depth values.
+technique NormalDepth
+{
+    pass P0
+    {
+        VertexShader = (VSArrayDepth[VSIndices[ShaderIndex]]);
+        PixelShader = compile ps_2_0 NormalDepthPixelShader();
+    }
+}
+

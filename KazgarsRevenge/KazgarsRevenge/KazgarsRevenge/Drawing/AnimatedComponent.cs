@@ -47,20 +47,20 @@ namespace KazgarsRevenge
                     epToonMap = effect.Parameters["CelMap"];
                     epToonMap.SetValue(Game.ToonMap);
 
-                    epLightDirection = effect.Parameters["vLightDirection"];
-                    epLightDirection.SetValue(vLightDirection);
+                    //epLightDirection = effect.Parameters["vLightDirection"];
+                    //epLightDirection.SetValue(vLightDirection);
                 }
             }
         }
 
-        protected Vector4 vLightDirection = new Vector4(-1.0f, -.5f, 1.0f, 1.0f);
+        protected Vector3 vLightDirection = new Vector3(-1.0f, -.5f, 1.0f);
         public override void Update(GameTime gameTime)
         {
             animationPlayer.Update(gameTime.ElapsedGameTime, true,
                 Matrix.CreateFromQuaternion(physicalData.Orientation) * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
         }
 
-        public override void Draw(GameTime gameTime, Matrix view, Matrix projection)
+        public override void Draw(GameTime gameTime, Matrix view, Matrix projection, string technique)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
 
@@ -76,6 +76,7 @@ namespace KazgarsRevenge
             {
                 foreach (CustomSkinnedEffect effect in mesh.Effects)
                 {
+                    effect.CurrentTechnique = effect.Techniques[technique];
                     effect.SetBoneTransforms(bones);
 
                     effect.View = view;
@@ -87,7 +88,9 @@ namespace KazgarsRevenge
                         * Matrix.CreateScale(drawScale)
                         * Matrix.CreateTranslation(physicalData.Position + localOffset);
 
+                    //effect.World = worldMatrix;
                     effect.Parameters["matInverseWorld"].SetValue(Matrix.Invert(worldMatrix));
+                    //effect.Parameters["World"].SetValue(worldMatrix);
                 }
 
                 mesh.Draw();

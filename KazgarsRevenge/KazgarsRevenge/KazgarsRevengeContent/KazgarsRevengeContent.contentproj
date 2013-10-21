@@ -41,11 +41,6 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <Compile Include="Shaders\LineShader.fx">
-      <Name>LineShader</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
     <Compile Include="Shaders\ToonSkinnedEffect.fx">
       <Name>ToonSkinnedEffect</Name>
       <Importer>EffectImporter</Importer>
@@ -84,10 +79,18 @@
     <Compile Include="Models\Enemies\idle.fbx">
       <Name>idle</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\walk.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Shaders\EdgeDetection.fx">
+      <Name>EdgeDetection</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Player\idle1.fbx">
       <Name>idle1</Name>

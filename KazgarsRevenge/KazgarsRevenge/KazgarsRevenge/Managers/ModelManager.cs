@@ -6,12 +6,12 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
-    class RenderManager : DrawableGameComponent
+    class ModelManager : DrawableGameComponent
     {
         List<DrawableComponent3D> components = new List<DrawableComponent3D>();
         CameraComponent camera;
 
-        public RenderManager(MainGame game)
+        public ModelManager(MainGame game)
             : base(game)
         {
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
@@ -37,11 +37,11 @@ namespace KazgarsRevenge
             components.Add(toAdd);
         }
 
-        public override void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, string technique)
         {
             foreach (DrawableComponent3D d in components)
             {
-                d.Draw(gameTime, camera.View, camera.Projection);
+                d.Draw(gameTime, camera.View, camera.Projection, technique);
             }
         }
     }

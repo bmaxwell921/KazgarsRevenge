@@ -94,7 +94,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="MainGame.cs" />
     <Compile Include="Managers\EntityManager.cs" />
-    <Compile Include="Managers\RenderManager.cs" />
+    <Compile Include="Managers\ModelManager.cs" />
     <Compile Include="Drawing\DrawableComponent2D.cs" />
     <Compile Include="Managers\SpriteManager.cs" />
   </ItemGroup>
