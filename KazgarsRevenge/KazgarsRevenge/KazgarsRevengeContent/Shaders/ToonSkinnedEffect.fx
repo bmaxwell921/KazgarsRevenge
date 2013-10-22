@@ -1,9 +1,7 @@
 #include "Skinning.fxh"
 
 
-
-float4x4	matInverseWorld;
-float3		vLightDirection = normalize(float3(1,1,1));
+float3 vLightDirection = normalize(float3(1,1,1));
 
 // The texture that contains the celmap
 texture CelMap;
@@ -168,7 +166,7 @@ NormalDepthVSOutput VSDepthFourBone(VSInputNmTxWeights vin)
 }
 
 // Simple pixel shader for rendering the normal and depth information.
-float4 NormalDepthPixelShader(float4 color : COLOR0) : COLOR0
+float4 PSDepth(float4 color : COLOR0) : COLOR0
 {
     return color;
 }
@@ -200,7 +198,7 @@ int VSIndices[3] =
 
 int ShaderIndex = 0;
 
-Technique SkinnedEffect
+Technique Toon
 {
     Pass
     {
@@ -216,7 +214,7 @@ technique NormalDepth
     pass P0
     {
         VertexShader = (VSArrayDepth[VSIndices[ShaderIndex]]);
-        PixelShader = compile ps_2_0 NormalDepthPixelShader();
+        PixelShader = compile ps_2_0 PSDepth();
     }
 }
 

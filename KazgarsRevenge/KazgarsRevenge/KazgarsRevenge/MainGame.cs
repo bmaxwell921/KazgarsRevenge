@@ -48,6 +48,7 @@ namespace KazgarsRevenge
         BasicEffect effectModelDrawer;
         Texture2D texCursor;
         Effect effectOutline;
+        Effect effectCellShading;
         EffectParameter epOutlineThickness;
         EffectParameter epOutlineThreshhold;
         Texture2D toonMap;
@@ -154,6 +155,7 @@ namespace KazgarsRevenge
 
             effectOutline = Content.Load<Effect>("Shaders\\EdgeDetection");
             toonMap = Content.Load<Texture2D>("Textures\\Toon");
+            effectCellShading = Content.Load<Effect>("shaders\\CellShader");
 
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             renderTarget = new RenderTarget2D(GraphicsDevice, 
@@ -163,7 +165,6 @@ namespace KazgarsRevenge
             normalDepthRenderTarget = new RenderTarget2D(graphics.GraphicsDevice,
                                                          pp.BackBufferWidth, pp.BackBufferHeight, false,
                                                          pp.BackBufferFormat, pp.DepthStencilFormat);
-
 
             initDrawingParams();
 
@@ -179,7 +180,16 @@ namespace KazgarsRevenge
             }
             else
             {
-                m = new AttachableModel(Content.Load<Model>(modelName), otherAttachPoint);
+                Model mod = Content.Load<Model>("Models\\Attachables\\" + modelName);
+
+                foreach (ModelMesh mesh in mod.Meshes)
+                {
+                    foreach (ModelMeshPart part in mesh.MeshParts)
+                    {
+                        part.Effect = effectCellShading.Clone();
+                    }
+                }
+                m = new AttachableModel(mod, otherAttachPoint);
                 return m;
             }
         }
@@ -276,7 +286,7 @@ namespace KazgarsRevenge
                     //draw scene render target
                     GraphicsDevice.SetRenderTarget(renderTarget);
                     GraphicsDevice.Clear(Color.CornflowerBlue);
-                    renderManager.Draw(gameTime, "SkinnedEffect");
+                    renderManager.Draw(gameTime, "Toon");
                     GraphicsDevice.SetRenderTarget(null);
 
                     

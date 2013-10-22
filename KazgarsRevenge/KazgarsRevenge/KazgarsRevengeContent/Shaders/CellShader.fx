@@ -12,9 +12,10 @@
 
 
 // Global variables
-float4x4	matWorldViewProj;
-float4x4	matInverseWorld;
-float4		vLightDirection;
+float4x4 World;
+float4x4 ViewProj;
+float4x4 InverseWorld;
+float3 vLightDirection = normalize(float3(1,1,1));
 
 texture ColorMap;
 sampler ColorMapSampler = sampler_state
@@ -48,10 +49,10 @@ struct OUT
 OUT VertexShaderGo( float4 Pos: POSITION, float2 Tex : TEXCOORD, float3 N: NORMAL )
 {
 	OUT Out = (OUT) 0;
-	Out.Pos = mul(Pos, matWorldViewProj);
+	Out.Pos = mul(mul(Pos, World), ViewProj);
 	Out.Tex = Tex;
 	Out.L = normalize(vLightDirection);
-	Out.N = normalize(mul(matInverseWorld, N));
+	Out.N = normalize(mul(InverseWorld, N));
 	
 	return Out;
 }
@@ -73,7 +74,54 @@ float4 PixelShaderGo(float2 Tex: TEXCOORD0,float3 L: TEXCOORD1, float3 N: TEXCOO
 	return (Ai*Ac*Color)+(Color*Di*CelColor);
 }
 
-technique ToonShader
+
+
+
+//
+//this effect is drawn onto a rendertarget, which is used as an input for the edge detection shader
+//
+
+// Vertex shader input structure.
+struct NormalDepthVSInput
+{
+    float4 Position : POSITION0;
+    float3 Normal : NORMAL0;
+    float2 TextureCoordinate : TEXCOORD0;
+};
+
+// Output structure for the vertex shader that renders normal and depth information.
+struct NormalDepthVSOutput
+{
+    float4 Position : POSITION0;
+    float4 Color : COLOR0;
+};
+
+// Alternative vertex shader outputs normal and depth values, which are then
+// used as an input for the edge detection filter in PostprocessEffect.fx.
+NormalDepthVSOutput VSDepth(NormalDepthVSInput vin)
+{
+
+    NormalDepthVSOutput output;
+	
+    output.Position = mul(mul(vin.Position, World), ViewProj);
+    float3 worldNormal = mul(vin.Normal, World);
+
+    // The output color holds the normal, scaled to fit into a 0 to 1 range.
+    output.Color.rgb = (worldNormal + 1) / 2;
+
+    // The output alpha holds the depth, scaled to fit into a 0 to 1 range.
+    output.Color.a = output.Position.z / output.Position.w;
+    
+    return output;    
+}
+
+// Simple pixel shader for rendering the normal and depth information.
+float4 PSDepth(float4 color : COLOR0) : COLOR0
+{
+    return color;
+}
+
+technique Toon
 {
 	pass P0
 	{
@@ -83,4 +131,14 @@ technique ToonShader
 		VertexShader = compile vs_2_0 VertexShaderGo();
 		PixelShader = compile ps_2_0 PixelShaderGo();
 	}
+}
+
+// Technique draws the object as normal and depth values.
+technique NormalDepth
+{
+    pass P0
+    {
+        VertexShader = compile vs_2_0 VSDepth();
+        PixelShader = compile ps_2_0 PSDepth();
+    }
 }

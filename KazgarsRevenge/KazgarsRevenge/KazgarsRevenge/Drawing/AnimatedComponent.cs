@@ -24,9 +24,9 @@ namespace KazgarsRevenge
         protected Vector3 localOffset = Vector3.Zero;
         protected EffectParameter epLightDirection;
         protected EffectParameter epToonMap;
-        protected AttachableModel[] attachedModels;
+        protected List<AttachableModel> attachedModels;
 
-        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations, Vector3 drawScale, Vector3 drawOffset, AttachableModel[] attachedModels)
+        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations, Vector3 drawScale, Vector3 drawOffset, List<AttachableModel> attachedModels)
             : base(game)
         {
             this.physicalData = physicalData;
@@ -34,6 +34,7 @@ namespace KazgarsRevenge
             this.camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             this.drawScale = drawScale;
             this.localOffset = drawOffset;
+            this.attachedModels = attachedModels;
 
             this.animationPlayer = animations;
             PlayAnimation(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
@@ -71,7 +72,11 @@ namespace KazgarsRevenge
             //either do this or Matrix.CreateFromQuaternion(physicalData.Orientation);
             //this is probably faster? not sure how CreateFromQuaternion works
             Matrix rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
-            
+
+            Matrix worldWithoutBone = rot
+                //* Matrix.CreateFromQuaternion(physicalData.Orientation)
+                        * Matrix.CreateScale(drawScale)
+                        * Matrix.CreateTranslation(physicalData.Position + localOffset);
             //drawing with toon shader
             foreach (ModelMesh mesh in model.Meshes)
             {
@@ -82,19 +87,25 @@ namespace KazgarsRevenge
 
                     effect.View = view;
                     effect.Projection = projection;
-
-                    Matrix worldMatrix = bones[mesh.ParentBone.Index]
-                        * rot
-                        //* Matrix.CreateFromQuaternion(physicalData.Orientation)
-                        * Matrix.CreateScale(drawScale)
-                        * Matrix.CreateTranslation(physicalData.Position + localOffset);
-
-                    //effect.World = worldMatrix;
-                    effect.Parameters["matInverseWorld"].SetValue(Matrix.Invert(worldMatrix));
-                    //effect.Parameters["World"].SetValue(worldMatrix);
                 }
 
                 mesh.Draw();
+            }
+
+            foreach (AttachableModel a in attachedModels)
+            {
+                foreach (ModelMesh mesh in a.model.Meshes)
+                {
+                    foreach (Effect effect in mesh.Effects)
+                    {
+                        effect.CurrentTechnique = effect.Techniques[technique];
+                        Matrix world = bones[model.Bones[a.otherBoneName].Index] * worldWithoutBone;
+                        effect.Parameters["World"].SetValue(world);
+                        effect.Parameters["ViewProj"].SetValue(view * projection);
+                        effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
+                    }
+                    mesh.Draw();
+                }
             }
         }
 

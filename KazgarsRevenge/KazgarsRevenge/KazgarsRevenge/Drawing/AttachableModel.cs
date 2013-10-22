@@ -9,8 +9,8 @@ namespace KazgarsRevenge
 {
     public class AttachableModel
     {
-        Model model;
-        string otherBoneName;
+        public Model model;
+        public string otherBoneName;
         public AttachableModel(Model model, string otherBoneName)
         {
             this.model = model;

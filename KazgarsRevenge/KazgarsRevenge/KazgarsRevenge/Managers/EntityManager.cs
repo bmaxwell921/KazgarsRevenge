@@ -56,17 +56,17 @@ namespace KazgarsRevenge
             spriteManager = Game.Services.GetService(typeof(SpriteManager)) as SpriteManager;
 
             toonAnimatedEffect = Game.Content.Load<Effect>("Shaders\\ToonSkinnedEffect");
-            LoadModel(out modelArrow, "Models\\Enemies\\walk");
-            skinningDataArrow = modelArrow.Tag as SkinningData;
+            //LoadModel(out modelArrow, "Models\\Enemies\\walk");
+            //skinningDataArrow = modelArrow.Tag as SkinningData;
 
             LoadModel(out modelPlayer, "Models\\Player\\idle1");
             skinningDataPlayer = modelPlayer.Tag as SkinningData;
 
-            LoadModel(out modelTestEnemy, "Models\\Enemies\\walk");
-            skinningDataTestEnemy = modelTestEnemy.Tag as SkinningData;
+            //LoadModel(out modelTestEnemy, "Models\\Enemies\\walk");
+            //skinningDataTestEnemy = modelTestEnemy.Tag as SkinningData;
         }
 
-        protected void LoadModel(out Model model, string filePath)
+        public void LoadModel(out Model model, string filePath)
         {
             model = Game.Content.Load<Model>(filePath);
             foreach (ModelMesh mesh in model.Meshes)
@@ -110,7 +110,8 @@ namespace KazgarsRevenge
             //shared animation data (need this to be in the player controller component as well as the graphics component, so that the controller can determine when to play animations)
             AnimationPlayer playerAnimations = new AnimationPlayer(skinningDataPlayer);
             
-            AttachableModel[] attachables = new AttachableModel[1];
+            List<AttachableModel> attachables = new List<AttachableModel>();
+            attachables.Add((Game as MainGame).GetAttachable("sword1", "RootNode"));
 
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(Game as MainGame, playerPhysicalData);
@@ -150,7 +151,7 @@ namespace KazgarsRevenge
 
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(Game as MainGame, arrowData);
-            AnimatedModelComponent arrowGraphics = new AnimatedModelComponent(Game as MainGame, arrowData, modelArrow, arrowAnimations, new Vector3(.1f), Vector3.Zero, new AttachableModel[0]);
+            AnimatedModelComponent arrowGraphics = new AnimatedModelComponent(Game as MainGame, arrowData, modelArrow, arrowAnimations, new Vector3(.1f), Vector3.Zero, new List<AttachableModel>());
             ArrowController arrowAI = new ArrowController(Game as MainGame, arrowData, damage);
 
             newArrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
@@ -175,7 +176,7 @@ namespace KazgarsRevenge
             AnimationPlayer fredAnimations = new AnimationPlayer(skinningDataTestEnemy);
 
             PhysicsComponent fredPhysics = new PhysicsComponent(Game as MainGame, fredPhysicalData);
-            AnimatedModelComponent fredGraphics = new AnimatedModelComponent(Game as MainGame, fredPhysicalData, modelTestEnemy, fredAnimations, new Vector3(.5f), Vector3.Zero, new AttachableModel[0]);
+            AnimatedModelComponent fredGraphics = new AnimatedModelComponent(Game as MainGame, fredPhysicalData, modelTestEnemy, fredAnimations, new Vector3(.5f), Vector3.Zero, new List<AttachableModel>());
             HealthComponent fredHealth = new HealthComponent(Game as MainGame, 100);
 
             fred.AddComponent(typeof(PhysicsComponent), fredPhysics);

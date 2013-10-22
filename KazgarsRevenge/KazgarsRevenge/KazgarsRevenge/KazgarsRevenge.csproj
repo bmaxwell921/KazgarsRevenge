@@ -78,7 +78,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttachableModel.cs" />
+    <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
     <Compile Include="Base Classes\Component.cs" />
