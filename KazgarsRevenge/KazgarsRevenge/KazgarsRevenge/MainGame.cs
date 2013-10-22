@@ -53,6 +53,7 @@ namespace KazgarsRevenge
         Texture2D toonMap;
         RenderTarget2D renderTarget;
         RenderTarget2D normalDepthRenderTarget;
+        Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
         #endregion
 
         public Texture2D ToonMap { get { return toonMap; } }
@@ -169,7 +170,19 @@ namespace KazgarsRevenge
             base.LoadContent();
         }
 
-
+        public AttachableModel GetAttachable(string modelName, string otherAttachPoint)
+        {
+            AttachableModel m;
+            if (attachables.TryGetValue(modelName, out m))
+            {
+                return m;
+            }
+            else
+            {
+                m = new AttachableModel(Content.Load<Model>(modelName), otherAttachPoint);
+                return m;
+            }
+        }
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -277,12 +290,12 @@ namespace KazgarsRevenge
                     spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
                     spriteBatch.End();
 
-                    /*effectModelDrawer.LightingEnabled = false;
+                    effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
-                    modelDrawer.Draw(effectModelDrawer, physics);*/
+                    modelDrawer.Draw(effectModelDrawer, physics);
                     
 
                     spriteBatch.Begin();

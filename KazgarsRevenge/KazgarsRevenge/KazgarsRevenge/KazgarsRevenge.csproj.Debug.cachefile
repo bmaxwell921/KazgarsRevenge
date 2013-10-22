@@ -1,10 +1,12 @@
+Content\Models\Weapons\sword1.xnb
 Content\Shaders\CellShader.xnb
 Content\Shaders\ToonSkinnedEffect.xnb
+Content\Shaders\EdgeDetection.xnb
 Content\Textures\whitePixel.xnb
 Content\Textures\Toon.xnb
-Content\Georgia.xnb
 Content\Textures\whiteCursor.xnb
-Content\Models\Player\idle1.xnb
+Content\Georgia.xnb
+Content\Models\Enemies\walk.xnb
 Content\Models\Enemies\muscular-anatomy-back_0.xnb
-Content\Models\Enemies\idle.xnb
-Content\Shaders\EdgeDetection.xnb
+Content\Models\Player\Skin_0.xnb
+Content\Models\Player\idle1.xnb

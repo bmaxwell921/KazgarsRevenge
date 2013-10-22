@@ -24,8 +24,9 @@ namespace KazgarsRevenge
         protected Vector3 localOffset = Vector3.Zero;
         protected EffectParameter epLightDirection;
         protected EffectParameter epToonMap;
+        protected AttachableModel[] attachedModels;
 
-        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations, Vector3 drawScale, Vector3 drawOffset)
+        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations, Vector3 drawScale, Vector3 drawOffset, AttachableModel[] attachedModels)
             : base(game)
         {
             this.physicalData = physicalData;

@@ -34,6 +34,9 @@ namespace SkinnedAnimationPipeline
         public override ModelContent Process(NodeContent input,
                                              ContentProcessorContext context)
         {
+            //uncomment this to debug the content processor
+            //System.Diagnostics.Debugger.Launch();
+
             if (!string.IsNullOrEmpty(MergeAnimations))
             {
                 foreach (string mergeFile in MergeAnimations.Split(';')
@@ -72,7 +75,7 @@ namespace SkinnedAnimationPipeline
             List<int> skeletonHierarchy = new List<int>();
 
             foreach (BoneContent bone in bones)
-            {
+            { 
                 bindPose.Add(bone.Transform);
                 inverseBindPose.Add(Matrix.Invert(bone.AbsoluteTransform));
                 skeletonHierarchy.Add(bones.IndexOf(bone.Parent as BoneContent));

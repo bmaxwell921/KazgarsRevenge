@@ -44,7 +44,7 @@ namespace KazgarsRevenge
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
             font = game.Content.Load<SpriteFont>("Georgia");
             InitDrawingParams();
-            PlayAnimation("Idle");
+            PlayAnimation("idle2");
         }
 
         public override void Start()
@@ -116,7 +116,7 @@ namespace KazgarsRevenge
 
                     if (prevMouse.LeftButton == ButtonState.Released)
                     {
-                        PlayAnimation("Walk");
+                        PlayAnimation("idle1");
                     }
 
                 }
@@ -125,7 +125,7 @@ namespace KazgarsRevenge
                     physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
                     if (prevMouse.LeftButton == ButtonState.Pressed)
                     {
-                        PlayAnimation("Idle");
+                        PlayAnimation("idle2");
                     }
                 }
 
