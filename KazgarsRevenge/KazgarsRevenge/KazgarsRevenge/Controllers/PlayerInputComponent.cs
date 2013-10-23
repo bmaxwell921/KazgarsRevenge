@@ -129,7 +129,8 @@ namespace KazgarsRevenge
                     if (prevMouse.LeftButton == ButtonState.Pressed)
                     {
                         PlayAnimation("idle1");
-                        attached.RemoveAt(0);
+                        if(attached.Count > 1)
+                            attached.RemoveAt(0);
                     }
                 }
 
