@@ -35,7 +35,7 @@ namespace SkinnedAnimationPipeline
                                              ContentProcessorContext context)
         {
             //uncomment this to debug the content processor
-            //System.Diagnostics.Debugger.Launch();
+            System.Diagnostics.Debugger.Launch();
 
             if (!string.IsNullOrEmpty(MergeAnimations))
             {

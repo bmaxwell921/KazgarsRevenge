@@ -101,9 +101,7 @@ namespace KazgarsRevenge
                 target = physicalData.Position + headOffset;
             }
             position = target + rot.Backward * distanceFromTarget;
-
             view = Matrix.CreateLookAt(position, target, rotatedUpVector);
-
             prevMouse = curMouse;
         }
     }

@@ -25,6 +25,7 @@ namespace KazgarsRevenge
         HealthComponent mouseHoveredHealth;
         EntityManager entities;
         AnimationPlayer animations;
+        List<AttachableModel> attached;
         public void PlayAnimation(string animationName)
         {
             animations.StartClip(animations.skinningDataValue.AnimationClips[animationName]);
@@ -32,7 +33,7 @@ namespace KazgarsRevenge
 
         float maxSpeed = 80;
 
-        public PlayerInputComponent(MainGame game, Entity physicalData, AnimationPlayer animations)
+        public PlayerInputComponent(MainGame game, Entity physicalData, AnimationPlayer animations, List<AttachableModel> attached)
             : base(game)
         {
             this.physicalData = physicalData;
@@ -41,10 +42,11 @@ namespace KazgarsRevenge
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             entities = game.Services.GetService(typeof(EntityManager)) as EntityManager;
             this.animations = animations;
+            this.attached = attached;
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
             font = game.Content.Load<SpriteFont>("Georgia");
             InitDrawingParams();
-            PlayAnimation("idle2");
+            PlayAnimation("idle1");
         }
 
         public override void Start()
@@ -116,7 +118,8 @@ namespace KazgarsRevenge
 
                     if (prevMouse.LeftButton == ButtonState.Released)
                     {
-                        PlayAnimation("idle1");
+                        PlayAnimation("idle3");
+                        attached.Add(Game.GetAttachable("sword1", "Bone_001_R_006"));
                     }
 
                 }
@@ -125,7 +128,8 @@ namespace KazgarsRevenge
                     physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
                     if (prevMouse.LeftButton == ButtonState.Pressed)
                     {
-                        PlayAnimation("idle2");
+                        PlayAnimation("idle1");
+                        attached.RemoveAt(0);
                     }
                 }
 
@@ -139,7 +143,7 @@ namespace KazgarsRevenge
                 if (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released)
                 {
                     Matrix rot = Matrix.CreateFromQuaternion(physicalData.Orientation);
-                    entities.CreateArrow(physicalData.Position + rot.Forward * 6, rot.Forward * 25, 25);
+                    //entities.CreateArrow(physicalData.Position + rot.Forward * 6, rot.Forward * 25, 25);
                 }
             }
             else

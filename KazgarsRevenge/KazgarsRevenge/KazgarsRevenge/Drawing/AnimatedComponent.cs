@@ -8,6 +8,7 @@ using SkinnedModelLib;
 using BEPUphysics;
 using BEPUphysics.Entities;
 using BEPUphysics.MathExtensions;
+using Microsoft.Xna.Framework.Input;
 
 namespace KazgarsRevenge
 {
@@ -58,14 +59,14 @@ namespace KazgarsRevenge
         protected Vector3 vLightDirection = new Vector3(-1.0f, -.5f, 1.0f);
         public override void Update(GameTime gameTime)
         {
+
             animationPlayer.Update(gameTime.ElapsedGameTime, true,
                 Matrix.CreateFromQuaternion(physicalData.Orientation) * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
         }
-
+        int ind = 0;
         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, string technique)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
-
             //need to do this conversion from Matrix3x3 to Matrix; Matrix3x3 is just a bepu thing
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
 
@@ -92,14 +93,18 @@ namespace KazgarsRevenge
                 mesh.Draw();
             }
 
+            Matrix[] worldbones = animationPlayer.GetWorldTransforms();
+            Matrix[] transforms;
             foreach (AttachableModel a in attachedModels)
             {
+                transforms = new Matrix[a.model.Bones.Count];
+                a.model.CopyAbsoluteBoneTransformsTo(transforms);
                 foreach (ModelMesh mesh in a.model.Meshes)
                 {
                     foreach (Effect effect in mesh.Effects)
                     {
                         effect.CurrentTechnique = effect.Techniques[technique];
-                        Matrix world = bones[model.Bones[a.otherBoneName].Index] * worldWithoutBone;
+                        Matrix world = transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
                         effect.Parameters["World"].SetValue(world);
                         effect.Parameters["ViewProj"].SetValue(view * projection);
                         effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));

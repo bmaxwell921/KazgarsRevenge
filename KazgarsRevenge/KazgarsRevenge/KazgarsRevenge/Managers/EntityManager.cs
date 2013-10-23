@@ -111,13 +111,13 @@ namespace KazgarsRevenge
             AnimationPlayer playerAnimations = new AnimationPlayer(skinningDataPlayer);
             
             List<AttachableModel> attachables = new List<AttachableModel>();
-            attachables.Add((Game as MainGame).GetAttachable("sword1", "RootNode"));
+            
 
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(Game as MainGame, playerPhysicalData);
-            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(Game as MainGame, playerPhysicalData, modelPlayer, playerAnimations, new Vector3(2f), Vector3.Zero, attachables);
+            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(Game as MainGame, playerPhysicalData, modelPlayer, playerAnimations, new Vector3(10f), Vector3.Down * 18, attachables);
             HealthComponent playerHealth = new HealthComponent(Game as MainGame, 100);
-            PlayerInputComponent playerController = new PlayerInputComponent(Game as MainGame, playerPhysicalData, playerAnimations);
+            PlayerInputComponent playerController = new PlayerInputComponent(Game as MainGame, playerPhysicalData, playerAnimations, attachables);
 
             //adding the controllers to their respective managers 
             //(need to decide what kinds of components need their own managers; currently 
