@@ -174,7 +174,7 @@ namespace KazgarsRevenge
         public AttachableModel GetAttachable(string modelName, string otherAttachPoint)
         {
             AttachableModel m;
-            if (attachables.TryGetValue(modelName, out m))
+            if (attachables.TryGetValue(modelName + otherAttachPoint, out m))
             {
                 return m;
             }
@@ -190,6 +190,7 @@ namespace KazgarsRevenge
                     }
                 }
                 m = new AttachableModel(mod, otherAttachPoint);
+                attachables.Add(modelName + otherAttachPoint, m);
                 return m;
             }
         }
