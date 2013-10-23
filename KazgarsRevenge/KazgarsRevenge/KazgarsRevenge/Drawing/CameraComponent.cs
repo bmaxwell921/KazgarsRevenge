@@ -30,7 +30,7 @@ namespace KazgarsRevenge
         private Vector3 rotatedTarget;
         private Vector3 rotatedUpVector;
 
-        private Vector3 headOffset = new Vector3(0, 1, 0);
+        private Vector3 headOffset = new Vector3(0, 13, 0);
 
         float distanceFromTarget = 10.0f;
 

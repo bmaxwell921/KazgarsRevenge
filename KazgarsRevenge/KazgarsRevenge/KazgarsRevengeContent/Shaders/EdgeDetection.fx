@@ -1,11 +1,3 @@
-//-----------------------------------------------------------------------------
-// PostprocessEffect.fx
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-
-
 // Settings controlling the edge detection filter.
 float EdgeWidth = 1;
 float EdgeIntensity = 1;
@@ -13,16 +5,12 @@ float EdgeIntensity = 1;
 // How sensitive should the edge detection be to tiny variations in the input data?
 // Smaller settings will make it pick up more subtle edges, while larger values get
 // rid of unwanted noise.
-float NormalThreshold = 0.5;
+float NormalThreshold = 1;
 float DepthThreshold = 0.1;
 
 // How dark should the edges get in response to changes in the input data?
 float NormalSensitivity = 1;
 float DepthSensitivity = 10;
-
-// How should the sketch effect respond to changes of brightness in the input scene?
-float SketchThreshold = 0.1;
-float SketchBrightness = 0.333;
 
 // Pass in the current screen resolution.
 float2 ScreenResolution;
