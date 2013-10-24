@@ -102,21 +102,21 @@ namespace KazgarsRevenge
                 foreach (ModelMesh mesh in a.model.Meshes)
                 {
 
-                    foreach (CustomSkinnedEffect effect in mesh.Effects)
+                    /*foreach (CustomSkinnedEffect effect in mesh.Effects)
                     {
                         effect.CurrentTechnique = effect.Techniques[technique];
                         effect.World = transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
                         effect.View = view;
                         effect.Projection = projection;
-                    }
-                    /*foreach (Effect effect in mesh.Effects)
+                    }*/
+                    foreach (Effect effect in mesh.Effects)
                     {
                         effect.CurrentTechnique = effect.Techniques[technique];
                         Matrix world = transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
                         effect.Parameters["World"].SetValue(world);
                         effect.Parameters["ViewProj"].SetValue(view * projection);
                         effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
-                    }*/
+                    }
                     mesh.Draw();
                 }
             }

@@ -171,6 +171,7 @@ namespace KazgarsRevenge
             base.LoadContent();
         }
 
+        string attachDir = "Models\\Attachables\\";
         public AttachableModel GetAttachable(string modelName, string otherAttachPoint)
         {
             AttachableModel m;
@@ -180,16 +181,18 @@ namespace KazgarsRevenge
             }
             else
             {
-                Model mod;
-                entityManager.LoadModel(out mod, "Models\\Attachables\\" + modelName);
+                Model mod = Content.Load<Model>(attachDir + modelName);
+                Texture2D modTex = Content.Load<Texture2D>(attachDir + modelName + "tex");
+                //entityManager.LoadModel(out mod, e);
 
-                /*foreach (ModelMesh mesh in mod.Meshes)
+                foreach (ModelMesh mesh in mod.Meshes)
                 {
                     foreach (ModelMeshPart part in mesh.MeshParts)
                     {
                         part.Effect = effectCellShading.Clone();
+                        part.Effect.Parameters["ColorMap"].SetValue(modTex);
                     }
-                }*/
+                }
                 m = new AttachableModel(mod, otherAttachPoint);
                 attachables.Add(modelName + otherAttachPoint, m);
                 return m;
