@@ -180,15 +180,16 @@ namespace KazgarsRevenge
             }
             else
             {
-                Model mod = Content.Load<Model>("Models\\Attachables\\" + modelName);
+                Model mod;
+                entityManager.LoadModel(out mod, "Models\\Attachables\\" + modelName);
 
-                foreach (ModelMesh mesh in mod.Meshes)
+                /*foreach (ModelMesh mesh in mod.Meshes)
                 {
                     foreach (ModelMeshPart part in mesh.MeshParts)
                     {
                         part.Effect = effectCellShading.Clone();
                     }
-                }
+                }*/
                 m = new AttachableModel(mod, otherAttachPoint);
                 attachables.Add(modelName + otherAttachPoint, m);
                 return m;

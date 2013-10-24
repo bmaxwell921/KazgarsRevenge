@@ -83,14 +83,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Attachables\sword1.fbx">
-      <Name>sword1</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-      <ProcessorParameters_RotationY>180</ProcessorParameters_RotationY>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Models\Player\idle1.fbx">
       <Name>idle1</Name>
       <Importer>FbxImporter</Importer>
@@ -101,6 +93,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Enemies\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Attachables\sword1.fbx">
+      <Name>sword1</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
