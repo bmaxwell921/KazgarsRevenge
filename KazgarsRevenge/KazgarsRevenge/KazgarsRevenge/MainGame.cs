@@ -49,8 +49,6 @@ namespace KazgarsRevenge
         Texture2D texCursor;
         Effect effectOutline;
         Effect effectCellShading;
-        EffectParameter epOutlineThickness;
-        EffectParameter epOutlineThreshhold;
         Texture2D toonMap;
         RenderTarget2D renderTarget;
         RenderTarget2D normalDepthRenderTarget;
@@ -183,7 +181,6 @@ namespace KazgarsRevenge
             {
                 Model mod = Content.Load<Model>(attachDir + modelName);
                 Texture2D modTex = Content.Load<Texture2D>(attachDir + modelName + "tex");
-                //entityManager.LoadModel(out mod, e);
 
                 foreach (ModelMesh mesh in mod.Meshes)
                 {

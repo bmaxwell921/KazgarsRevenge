@@ -1,21 +1,12 @@
-/*
- * Tutorial
- * XNA Shader programming
- * www.gamecamp.no
- * 
- * by: Petri T. Wilhelmsen
- * e-mail: petriw@gmail.com
- * 
- * Feel free to ask me a question, give feedback or correct mistakes!
- * 
- */
 
+float ToonThresholds[2] = { 0.8, 0.4 };
+float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
 
 // Global variables
 float4x4 World;
 float4x4 ViewProj;
 float4x4 InverseWorld;
-float3 vLightDirection = normalize(float3(1,1,1));
+float3 vLightDirection = normalize(float3(1,0,1));
 
 texture ColorMap;
 sampler ColorMapSampler = sampler_state
@@ -28,51 +19,52 @@ sampler ColorMapSampler = sampler_state
    AddressV  = Clamp;
 };
 
-// The texture that contains the celmap
-texture CelMap;
-sampler2D CelMapSampler = sampler_state
-{
-	Texture	  = <CelMap>;
-	MIPFILTER = LINEAR;
-	MAGFILTER = LINEAR;
-	MINFILTER = LINEAR;
-};
-
-struct OUT
+struct ToonVSOut
 {
 	float4 Pos	: POSITION;
 	float2 Tex	: TEXCOORD0;
-	float3 L	: TEXCOORD1;
-	float3 N	: TEXCOORD2;
+	float L	: TEXCOORD1;
 };
 
-OUT VertexShaderGo( float4 Pos: POSITION, float2 Tex : TEXCOORD, float3 N: NORMAL )
+
+
+
+
+
+// Vertex shader: vertex lighting, four bones.
+ToonVSOut ToonVS( float4 Pos: POSITION, float2 Tex : TEXCOORD, float3 N: NORMAL)
 {
-	OUT Out = (OUT) 0;
-	Out.Pos = mul(mul(Pos, World), ViewProj);
-	Out.Tex = Tex;
-	Out.L = normalize(vLightDirection);
-	Out.N = normalize(mul(InverseWorld, N));
-	
-	return Out;
+
+    ToonVSOut output;
+    
+    output.Tex = Tex;
+    output.Pos = mul(mul(Pos, World), ViewProj);
+
+	float3 worldNormal = mul(N, World);
+	output.L = dot(worldNormal, vLightDirection);
+    
+    return output;
 }
 
-float4 PixelShaderGo(float2 Tex: TEXCOORD0,float3 L: TEXCOORD1, float3 N: TEXCOORD2) : COLOR
+// Pixel shader: vertex lighting.
+float4 ToonPS(ToonVSOut pin) : COLOR
 {
-	// Calculate normal diffuse light but use Tex.x as color in stead.
-	float4 Color = tex2D(ColorMapSampler, Tex);	
-	float Ai = 0.8f;
-	float4 Ac = float4(0.075, 0.075, 0.2, 1.0);
-	float Di = 1.0f;
-	float4 Dc = float4(1.0, 1.0, 1.0, 1.0);
+	float4 Color = tex2D(ColorMapSampler, pin.Tex);
 	
-	Tex.y = 0.0f;
-	Tex.x = saturate(dot(L, N));
-	
-	float4 CelColor = tex2D(CelMapSampler, Tex);
-	
-	return (Ai*Ac*Color)+(Color*Di*CelColor);
+    float light;
+
+    //if (pin.L> ToonThresholds[0])
+        light = ToonBrightnessLevels[0];
+    //else if (pin.L > ToonThresholds[1])
+    //    light = ToonBrightnessLevels[1];
+    //else
+    //    light = ToonBrightnessLevels[2];
+                
+    Color.rgb *= light;
+    
+    return Color;
 }
+
 
 
 
@@ -125,11 +117,9 @@ technique Toon
 {
 	pass P0
 	{
-		Sampler[0] = (ColorMapSampler);	
-		Sampler[1] = (CelMapSampler);	
 		
-		VertexShader = compile vs_2_0 VertexShaderGo();
-		PixelShader = compile ps_2_0 PixelShaderGo();
+		VertexShader = compile vs_2_0 ToonVS();
+		PixelShader = compile ps_2_0 ToonPS();
 	}
 }
 

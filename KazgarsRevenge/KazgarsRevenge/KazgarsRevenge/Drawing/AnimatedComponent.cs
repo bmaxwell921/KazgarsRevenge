@@ -43,17 +43,7 @@ namespace KazgarsRevenge
 
         public override void Start()
         {
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (CustomSkinnedEffect effect in mesh.Effects)
-                {
-                    epToonMap = effect.Parameters["CelMap"];
-                    epToonMap.SetValue(Game.ToonMap);
 
-                    //epLightDirection = effect.Parameters["vLightDirection"];
-                    //epLightDirection.SetValue(vLightDirection);
-                }
-            }
         }
 
         protected Vector3 vLightDirection = new Vector3(-1.0f, -.5f, 1.0f);
@@ -101,14 +91,6 @@ namespace KazgarsRevenge
                 a.model.CopyAbsoluteBoneTransformsTo(transforms);
                 foreach (ModelMesh mesh in a.model.Meshes)
                 {
-
-                    /*foreach (CustomSkinnedEffect effect in mesh.Effects)
-                    {
-                        effect.CurrentTechnique = effect.Techniques[technique];
-                        effect.World = transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
-                        effect.View = view;
-                        effect.Projection = projection;
-                    }*/
                     foreach (Effect effect in mesh.Effects)
                     {
                         effect.CurrentTechnique = effect.Techniques[technique];

@@ -36,6 +36,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Attachables\sword1tex.png">
+      <Name>sword1tex</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="Shaders\CellShader.fx">
       <Name>CellShader</Name>
       <Importer>EffectImporter</Importer>
@@ -95,10 +100,10 @@
     <Folder Include="Models\Enemies\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Attachables\sword1tex.png">
-      <Name>sword1tex</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="Models\Attachables\sword1.fbx">
+      <Name>sword1</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ToonModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
