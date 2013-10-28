@@ -88,7 +88,6 @@
     <Compile Include="Drawing\EffectHelpers.cs" />
     <Compile Include="Base Classes\GameEntity.cs" />
     <Compile Include="Managers\GeneralComponentManager.cs" />
-    <Compile Include="MelleAttackController.cs" />
     <Compile Include="Misc Components\HealthComponent.cs" />
     <Compile Include="Misc Components\PhysicsComponent.cs" />
     <Compile Include="Controllers\PlayerInputComponent.cs" />

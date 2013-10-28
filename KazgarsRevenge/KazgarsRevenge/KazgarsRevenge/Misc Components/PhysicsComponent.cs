@@ -16,6 +16,7 @@ namespace KazgarsRevenge
     class PhysicsComponent : Component
     {
         protected Entity collidable;
+        public Vector3 Position { get { return collidable.Position; } }
         public PhysicsComponent(MainGame game, Entity collidable)
             : base(game)
         {

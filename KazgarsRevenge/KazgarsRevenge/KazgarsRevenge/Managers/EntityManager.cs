@@ -242,7 +242,7 @@ namespace KazgarsRevenge
         {
             GameEntity newAttack = new GameEntity("arrow", "good");
 
-            Entity attackData = new Box(position, 20, 47, 20, .01f);
+            Entity attackData = new Box(position, 35, 47, 35, .01f);
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
 

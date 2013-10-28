@@ -30,9 +30,17 @@ namespace KazgarsRevenge
         Random rand;
 
 
-
+        enum PrimaryAttack
+        {
+            Melle,
+            Ranged,
+            Magic,
+        }
+        PrimaryAttack selectedPrimary = PrimaryAttack.Melle;
         float attackSpeed = 0.05f;
         float maxSpeed = 120;
+        const float melleRange = 50;
+        const float bowRange = 1000;
 
         public PlayerInputComponent(MainGame game, GameEntity entity, Entity physicalData, AnimationPlayer animations, Dictionary<string, AttachableModel> attached)
             : base(game)
@@ -240,7 +248,7 @@ namespace KazgarsRevenge
         private void MoveCharacter(Vector3 move)
         {
             //running
-            if (curMouse.LeftButton == ButtonState.Pressed)
+            if (curMouse.LeftButton == ButtonState.Pressed || curMouse.RightButton == ButtonState.Pressed)
             {
                 UpdateRotation(move);
                 Vector3 moveVec = move * maxSpeed;
@@ -258,7 +266,7 @@ namespace KazgarsRevenge
                 //not moving
                 physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
                 //just stopped moving
-                if (prevMouse.LeftButton == ButtonState.Pressed)
+                if (currentAniName == "k_run")
                 {
                     PlayAnimation("k_fighting_stance");
                 }
@@ -271,28 +279,62 @@ namespace KazgarsRevenge
         /// <param name="gameTime"></param>
         private void CheckAbilities(Vector3 move)
         {
+            bool attacking = false;
+            Vector3 dir = move;
+            float distance = float.MaxValue;
+            if (mouseHoveredEntity != null)
+            {
+                Vector3 otherPos = (mouseHoveredEntity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Position;
+                distance = (otherPos - physicalData.Position).Length();
+                dir = new Vector3(otherPos.X - physicalData.Position.X, 0, otherPos.Z - physicalData.Position.Z);
+            }
 
-            if (curKeys.IsKeyDown(Keys.D1))
+            if (curKeys.IsKeyDown(Keys.Tab) && prevKeys.IsKeyUp(Keys.Tab))
             {
-                PlayAnimation("k_fire_arrow");
-                attState = AttackState.GrabbingArrow;
-                UpdateRotation(move);
-                millisShotAniCounter = 0;
-                millisShotArrowAttachCounter = 0;
+                selectedPrimary += 1;
+                if ((int)selectedPrimary >= 3)
+                {
+                    selectedPrimary = 0;
+                }
             }
-            else if (curKeys.IsKeyDown(Keys.D2))
+
+            if (curMouse.LeftButton == ButtonState.Pressed)
             {
-                PlayAnimation("k_onehanded_swing");
-                attState = AttackState.InitialSwing;
-                UpdateRotation(move);
-                millisMelleCounter = 0;
+                switch (selectedPrimary)
+                {
+                    case PrimaryAttack.Melle:
+                        if (curKeys.IsKeyDown(Keys.LeftShift) || distance < melleRange)
+                        {
+                            PlayAnimation("k_onehanded_swing");
+                            attState = AttackState.InitialSwing;
+                            UpdateRotation(dir);
+                            millisMelleCounter = 0;
+                            attacking = true;
+                        }
+                        break;
+                    case PrimaryAttack.Ranged:
+                        if (curKeys.IsKeyDown(Keys.LeftShift) || distance < bowRange)
+                        {
+                            PlayAnimation("k_fire_arrow");
+                            attState = AttackState.GrabbingArrow;
+                            UpdateRotation(dir);
+                            millisShotAniCounter = 0;
+                            millisShotArrowAttachCounter = 0;
+                            attacking = true;
+                        }
+                        break;
+                }
             }
-            else if (curKeys.IsKeyDown(Keys.D3))
+
+            if (!attacking)
             {
-                PlayAnimation("k_flip");
-                attState = AttackState.InitialSwing;
-                UpdateRotation(move);
-                millisMelleCounter = 0;
+                if (curKeys.IsKeyDown(Keys.D1))
+                {
+                    PlayAnimation("k_flip");
+                    attState = AttackState.InitialSwing;
+                    UpdateRotation(dir);
+                    millisMelleCounter = 0;
+                }
             }
         }
 
@@ -398,7 +440,7 @@ namespace KazgarsRevenge
                 if (attState == AttackState.InitialSwing && millisMelleCounter >= millisMelleDamage)
                 {
                     Vector3 forward = GetForward();
-                    entities.CreateMelleAttack(physicalData.Position + forward * 25, 25, "bad");
+                    entities.CreateMelleAttack(physicalData.Position + forward * 35, 25, "bad");
                     attState = AttackState.FinishSwing;
                     millisMelleCounter = 0;
                 }
