@@ -23,11 +23,10 @@ namespace KazgarsRevenge
         protected Model model;
         protected Vector3 drawScale = new Vector3(1);
         protected Vector3 localOffset = Vector3.Zero;
-        protected EffectParameter epLightDirection;
-        protected EffectParameter epToonMap;
-        protected List<AttachableModel> attachedModels;
+        protected Dictionary<string, AttachableModel> attachedModels;
+        protected Matrix yawOffset = Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0);
 
-        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations, Vector3 drawScale, Vector3 drawOffset, List<AttachableModel> attachedModels)
+        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations, Vector3 drawScale, Vector3 drawOffset, Dictionary<string, AttachableModel> attachedModels)
             : base(game)
         {
             this.physicalData = physicalData;
@@ -47,22 +46,22 @@ namespace KazgarsRevenge
         }
 
         protected Vector3 vLightDirection = new Vector3(-1.0f, -.5f, 1.0f);
+        Matrix rot = Matrix.Identity;
         public override void Update(GameTime gameTime)
         {
-
+            //need to do this conversion from Matrix3x3 to Matrix; Matrix3x3 is just a bepu thing
+            Matrix3X3 bepurot = physicalData.OrientationMatrix;
+            //either do this or Matrix.CreateFromQuaternion(physicalData.Orientation);
+            //this is probably faster? not sure how CreateFromQuaternion works
+            rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
+            rot *= yawOffset;
             animationPlayer.Update(gameTime.ElapsedGameTime, true,
-                Matrix.CreateFromQuaternion(physicalData.Orientation) * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
+                rot * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
         }
-        int ind = 0;
         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, string technique)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
-            //need to do this conversion from Matrix3x3 to Matrix; Matrix3x3 is just a bepu thing
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
-
-            //either do this or Matrix.CreateFromQuaternion(physicalData.Orientation);
-            //this is probably faster? not sure how CreateFromQuaternion works
-            Matrix rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
 
             Matrix worldWithoutBone = rot
                 //* Matrix.CreateFromQuaternion(physicalData.Orientation)
@@ -85,7 +84,8 @@ namespace KazgarsRevenge
 
             Matrix[] worldbones = animationPlayer.GetWorldTransforms();
             Matrix[] transforms;
-            foreach (AttachableModel a in attachedModels)
+            Matrix attachedRot = Matrix.CreateFromYawPitchRoll(0, MathHelper.Pi, 0);
+            foreach (AttachableModel a in attachedModels.Values)
             {
                 transforms = new Matrix[a.model.Bones.Count];
                 a.model.CopyAbsoluteBoneTransformsTo(transforms);

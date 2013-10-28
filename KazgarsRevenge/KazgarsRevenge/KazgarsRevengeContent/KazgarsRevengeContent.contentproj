@@ -11,6 +11,21 @@
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <OutputPath>bin\$(Platform)\$(Configuration)</OutputPath>
     <ContentRootDirectory>Content</ContentRootDirectory>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -36,10 +51,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Attachables\sword1tex.png">
-      <Name>sword1tex</Name>
+    <Compile Include="Models\Attachables\sword.png">
+      <Name>sword</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Player\k_idle1.fbx">
+      <Name>k_idle1</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_onehanded_swing.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_fire_arrow.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Shaders\CellShader.fx">
       <Name>CellShader</Name>
@@ -55,13 +77,6 @@
   <ItemGroup>
     <Compile Include="Textures\whitePixel.png">
       <Name>whitePixel</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Textures\Toon.bmp">
-      <Name>Toon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -88,22 +103,51 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Player\idle1.fbx">
-      <Name>idle1</Name>
+    <Compile Include="Models\Enemies\Pigman\pig_idle.fbx">
+      <Name>pig_idle</Name>
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Player\\idle2.fbx%3bModels\\Player\\idle3.fbx%3bModels\\Player\\idle4.fbx%3b</ProcessorParameters_MergeAnimations>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\Enemies\" />
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Attachables\sword1.fbx">
-      <Name>sword1</Name>
+    <Compile Include="Models\Attachables\arrow.fbx">
+      <Name>arrow</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ToonModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Attachables\bow01.fbx">
+      <Name>bow01</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ToonModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Attachables\sword01.fbx">
+      <Name>sword01</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ToonModelProcessor</Processor>
+      <ProcessorParameters_RotationX>180</ProcessorParameters_RotationX>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

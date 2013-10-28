@@ -49,13 +49,11 @@ namespace KazgarsRevenge
         Texture2D texCursor;
         Effect effectOutline;
         Effect effectCellShading;
-        Texture2D toonMap;
         RenderTarget2D renderTarget;
         RenderTarget2D normalDepthRenderTarget;
         Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
         #endregion
 
-        public Texture2D ToonMap { get { return toonMap; } }
         public RenderTarget2D RenderTarget { get { return renderTarget; } }
 
         float screenScale = 1;
@@ -98,7 +96,9 @@ namespace KazgarsRevenge
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.IsFullScreen = true;
             graphics.ApplyChanges();*/
-
+            graphics.PreferredBackBufferWidth = 1000;
+            graphics.PreferredBackBufferHeight = 800;
+            graphics.ApplyChanges();
 
             screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
 
@@ -128,7 +128,7 @@ namespace KazgarsRevenge
             Services.AddService(typeof(EntityManager), entityManager);
 
             //adding large rectangle for units to stand on
-            StaticMesh ground = new StaticMesh(new Vector3[] { new Vector3(-500, 0, -500), new Vector3(500, 0, -500), new Vector3(-500, 0, 500), new Vector3(500, 0, 500) }, new int[] { 0, 1, 2, 2, 1, 3 });
+            StaticMesh ground = new StaticMesh(new Vector3[] { new Vector3(-2000, 0, -2000), new Vector3(2000, 0, -2000), new Vector3(-2000, 0, 2000), new Vector3(2000, 0, 2000) }, new int[] { 0, 1, 2, 2, 1, 3 });
             physics.Add(ground);
 
             //debug drawing
@@ -152,7 +152,6 @@ namespace KazgarsRevenge
             effectModelDrawer = new BasicEffect(GraphicsDevice);
 
             effectOutline = Content.Load<Effect>("Shaders\\EdgeDetection");
-            toonMap = Content.Load<Texture2D>("Textures\\Toon");
             effectCellShading = Content.Load<Effect>("shaders\\CellShader");
 
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
@@ -170,7 +169,7 @@ namespace KazgarsRevenge
         }
 
         string attachDir = "Models\\Attachables\\";
-        public AttachableModel GetAttachable(string modelName, string otherAttachPoint)
+        public AttachableModel GetAttachable(string modelName, string textureName, string otherAttachPoint)
         {
             AttachableModel m;
             if (attachables.TryGetValue(modelName + otherAttachPoint, out m))
@@ -180,7 +179,7 @@ namespace KazgarsRevenge
             else
             {
                 Model mod = Content.Load<Model>(attachDir + modelName);
-                Texture2D modTex = Content.Load<Texture2D>(attachDir + modelName + "tex");
+                Texture2D modTex = Content.Load<Texture2D>(attachDir + textureName);
 
                 foreach (ModelMesh mesh in mod.Meshes)
                 {
@@ -241,11 +240,11 @@ namespace KazgarsRevenge
         public void DemoLevel()
         {
             entityManager.CreateMainPlayer(new Vector3(200, 10, -200));
-            for (int i = 0; i < 25; ++i)
+            for (int i = 0; i < 10; ++i)
             {
-                for (int j = 0; j < 25; ++j)
+                for (int j = 0; j < 10; ++j)
                 {
-                    //entityManager.CreateFred(new Vector3(130 + i * 40, 10, -100 - j * 40));
+                    entityManager.CreateBrute(new Vector3(130 + i * 100, 10, -100 - j * 100));
                 }
             }
         }
@@ -302,13 +301,14 @@ namespace KazgarsRevenge
                     spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
                     spriteBatch.End();
 
+                    /*
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
                     modelDrawer.Draw(effectModelDrawer, physics);
-                    
+                    */
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);

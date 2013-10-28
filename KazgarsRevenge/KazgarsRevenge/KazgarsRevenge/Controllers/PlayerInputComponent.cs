@@ -21,22 +21,23 @@ namespace KazgarsRevenge
         Entity physicalData;
         Space physics;
         CameraComponent camera;
+        GameEntity entity;
         GameEntity mouseHoveredEntity;
         HealthComponent mouseHoveredHealth;
         EntityManager entities;
         AnimationPlayer animations;
-        List<AttachableModel> attached;
-        public void PlayAnimation(string animationName)
-        {
-            animations.StartClip(animations.skinningDataValue.AnimationClips[animationName]);
-        }
+        Dictionary<string, AttachableModel> attached;
+        Random rand;
 
-        float maxSpeed = 80;
 
-        public PlayerInputComponent(MainGame game, Entity physicalData, AnimationPlayer animations, List<AttachableModel> attached)
+        float maxSpeed = 120;
+
+        public PlayerInputComponent(MainGame game, GameEntity entity, Entity physicalData, AnimationPlayer animations, Dictionary<string, AttachableModel> attached)
             : base(game)
         {
+            rand = new Random();
             this.physicalData = physicalData;
+            this.entity = entity;
             physics = Game.Services.GetService(typeof(Space)) as Space;
             rayCastFilter = RayCastFilter;
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
@@ -46,8 +47,59 @@ namespace KazgarsRevenge
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
             font = game.Content.Load<SpriteFont>("Georgia");
             InitDrawingParams();
-            PlayAnimation("idle1");
+            PlayAnimation("k_idle1");
+            attached.Add("sword", Game.GetAttachable("sword01", "sword", "Bone_001_R_004"));
+            attached.Add("bow", Game.GetAttachable("bow01", "sword", "Bone_001_L_004"));
+
+            millisShotRelease = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
         }
+
+        #region animations
+        /* animations:
+        "k_idle1" - standing still
+        "k_idle2" - looking around
+        "k_idle3" - flex squat
+        "k_idle4" - fancy flex
+        "k_idle5" - butt scratch
+        "k_onehanded_swing"
+        "k_run"
+        "k_fighting_stance"
+        "k_flip"
+        "k_from_fighting_stance" - transition from fighting to idle
+         */
+
+        /* Bones:
+         "Bone_001_L_004" - left hand
+         "Bone_001_R_004" - right hand 
+         */
+        private double millisAniCounter;
+        private double millisAniDuration;
+        private double millisShotRelease;
+        private double millisShotAniCounter;
+
+        private string currentAniName;
+        public void PlayAnimation(string animationName)
+        {
+            AnimationClip clip =  animations.skinningDataValue.AnimationClips[animationName];
+            animations.StartClip(clip);
+            if (animationName == "k_idle1")
+            {
+                millisAniDuration = rand.Next(2000, 4000);
+            }
+            else if (animationName == "k_fighting_stance")
+            {
+                millisAniDuration = clip.Duration.TotalMilliseconds * 2;
+            }
+            else
+            {
+                millisAniDuration = clip.Duration.TotalMilliseconds;
+            }
+            millisAniDuration -= 10;
+            currentAniName = animationName;
+            millisAniCounter = 0;
+            millisShotAniCounter = 0;
+        }
+        #endregion
 
         public override void Start()
         {
@@ -69,83 +121,33 @@ namespace KazgarsRevenge
         {
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
+            double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
+            millisAniCounter += elapsed;
+            millisShotAniCounter += elapsed;
             if (Game.IsActive)
             {
 
-                Vector3 castOrigin = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 0), camera.Projection, camera.View, Matrix.Identity);
-                Vector3 castdir = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 1), camera.Projection, camera.View, Matrix.Identity) - castOrigin;
-                castdir.Normalize();
-                Ray r = new Ray(castOrigin, castdir);
+                Vector3 groundHitPos = CheckMouseRay();
 
-                //check where on the zero plane the ray hits, to guide the character by the mouse
-                float? distance;
-                Plane p = new Plane(Vector3.Up, 0);
-                r.Intersects(ref p, out distance);
-                Vector3 groundHitPos = Vector3.Zero;
-                if (distance.HasValue)
-                {
-                    groundHitPos = r.Position + r.Direction * distance.Value;
-                }
-                
-
-                //check if ray hits GameEntity
-                RayCastResult result;
-                physics.RayCast(r, 200, rayCastFilter, out result);
-                if (result.HitObject != null)
-                {
-                    mouseHoveredEntity = result.HitObject.Tag as GameEntity;
-                    if (mouseHoveredEntity != null)
-                    {
-                        mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(HealthComponent)) as HealthComponent;
-                    }
-                }
-                else
-                {
-                    mouseHoveredEntity = null;
-                    mouseHoveredHealth = null;
-                }
-
-
-                //moving
                 Vector3 move = new Vector3(groundHitPos.X - physicalData.Position.X, 0, groundHitPos.Z - physicalData.Position.Z);
                 move.Normalize();
-                if (curMouse.LeftButton == ButtonState.Pressed)
+                if (currentAniName != "k_fire_arrow"
+                    && currentAniName != "other_attacking_animations")
                 {
-                    CalculateRotation(move);
-                    Vector3 moveVec = move * maxSpeed;
-                    moveVec.Y = physicalData.LinearVelocity.Y;
-                    physicalData.LinearVelocity = moveVec;
-
-                    if (prevMouse.LeftButton == ButtonState.Released)
-                    {
-                        PlayAnimation("idle3");
-                        attached.Add(Game.GetAttachable("sword1", "Bone_001_R_006"));
-                    }
-
+                    MoveCharacter(move);
+                    CheckAbilities(gameTime);
                 }
                 else
                 {
                     physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
-                    if (prevMouse.LeftButton == ButtonState.Pressed)
+                    if (curMouse.RightButton == ButtonState.Pressed)
                     {
-                        PlayAnimation("idle1");
-                        if(attached.Count > 0)
-                            attached.RemoveAt(0);
+                        UpdateRotation(move);
                     }
                 }
 
-                if (curMouse.RightButton == ButtonState.Pressed)
-                {
-                    CalculateRotation(move);
-                }
 
-
-                //abilities
-                if (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released)
-                {
-                    Matrix rot = Matrix.CreateFromQuaternion(physicalData.Orientation);
-                    //entities.CreateArrow(physicalData.Position + rot.Forward * 6, rot.Forward * 25, 25);
-                }
+                CheckAnimations();
             }
             else
             {
@@ -155,8 +157,101 @@ namespace KazgarsRevenge
             prevMouse = curMouse;
             prevKeys = curKeys;
         }
-        
-        private void CalculateRotation(Vector3 move)
+
+        /// <summary>
+        /// creates a raycast from the mouse, and returns the position on the ground that it hits.
+        /// Also does a bepu raycast and finds the first enemy it hits, and keeps its healthcomponent
+        /// for gui purposes
+        /// </summary>
+        /// <returns></returns>
+        private Vector3 CheckMouseRay()
+        {
+            Vector3 castOrigin = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 0), camera.Projection, camera.View, Matrix.Identity);
+            Vector3 castdir = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 1), camera.Projection, camera.View, Matrix.Identity) - castOrigin;
+            castdir.Normalize();
+            Ray r = new Ray(castOrigin, castdir);
+
+            //check where on the zero plane the ray hits, to guide the character by the mouse
+            float? distance;
+            Plane p = new Plane(Vector3.Up, 0);
+            r.Intersects(ref p, out distance);
+            Vector3 groundHitPos = Vector3.Zero;
+            if (distance.HasValue)
+            {
+                groundHitPos = r.Position + r.Direction * distance.Value;
+            }
+
+
+            //check if ray hits GameEntity
+            List<RayCastResult> results = new List<RayCastResult>();
+            physics.RayCast(r, 10000, rayCastFilter, results);
+
+            mouseHoveredEntity = null;
+            mouseHoveredHealth = null;
+            foreach (RayCastResult result in results)
+            {
+                if (result.HitObject != null)
+                {
+                    mouseHoveredEntity = result.HitObject.Tag as GameEntity;
+                    if (mouseHoveredEntity != null)
+                    {
+                        mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(HealthComponent)) as HealthComponent;
+                        break;
+                    }
+                }
+            }
+
+            return groundHitPos;
+        }
+
+        /// <summary>
+        /// handles character movement
+        /// </summary>
+        /// <param name="groundHitPos"></param>
+        private void MoveCharacter(Vector3 move)
+        {
+            //running
+            if (curMouse.LeftButton == ButtonState.Pressed)
+            {
+                UpdateRotation(move);
+                Vector3 moveVec = move * maxSpeed;
+                moveVec.Y = physicalData.LinearVelocity.Y;
+                physicalData.LinearVelocity = moveVec;
+
+                //just started running
+                if (prevMouse.LeftButton == ButtonState.Released)
+                {
+                    PlayAnimation("k_run");
+                }
+            }
+            else
+            {
+                //not moving
+                physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
+                //just stopped moving
+                if (prevMouse.LeftButton == ButtonState.Pressed)
+                {
+                    PlayAnimation("k_fighting_stance");
+                }
+            }
+        }
+
+        private void CheckAbilities(GameTime gameTime)
+        {
+
+            if (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released)
+            {
+                
+                PlayAnimation("k_fire_arrow");
+                attached.Add("arrow", Game.GetAttachable("arrow", "sword", "Bone_001_R_004"));
+            }
+        }
+
+        /// <summary>
+        /// rotates kazgar towards mouse
+        /// </summary>
+        /// <param name="move"></param>
+        private void UpdateRotation(Vector3 move)
         {
             //orientation
             float yaw = (float)Math.Atan(move.X / move.Z);
@@ -166,9 +261,67 @@ namespace KazgarsRevenge
                 //TODO
                 yaw += MathHelper.Pi;
             }
+            yaw += MathHelper.Pi;
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
         }
 
+        /// <summary>
+        /// handles animation transitions
+        /// </summary>
+        private void CheckAnimations()
+        {
+            if (millisAniCounter > millisAniDuration)
+            {
+                switch (currentAniName)
+                {
+                    case "k_idle1":
+                        int aniRand = rand.Next(1, 7);
+                        if (aniRand < 4)
+                        {
+                            PlayAnimation("k_idle2");
+                        }
+                        else
+                        {
+                            switch (aniRand)
+                            {
+                                case 4:
+                                    PlayAnimation("k_idle3");
+                                    break;
+                                case 5:
+                                    PlayAnimation("k_idle4");
+                                    break;
+                                case 6:
+                                    PlayAnimation("k_idle5");
+                                    break;
+                            }
+                        }
+                        break;
+                    case "k_fire_arrow":
+                        PlayAnimation("k_fighting_stance");
+                        break;
+                    case "k_fighting_stance":
+                        PlayAnimation("k_from_fighting_stance");
+                        break;
+                    case "k_from_fighting_stance":
+                    case "k_idle2":
+                    case "k_idle3":
+                    case "k_idle4":
+                    case "k_idle5":
+                        PlayAnimation("k_idle1");
+                        break;
+                }
+                millisAniCounter = 0;
+            }
+
+            if (currentAniName == "k_fire_arrow" && millisShotAniCounter >= millisShotRelease)
+            {
+                Matrix3X3 bepurot = physicalData.OrientationMatrix;
+                Matrix rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
+                attached.Remove("arrow");
+                entities.CreateArrow(physicalData.Position + rot.Forward * 10, rot.Forward * 450, 25);
+                millisShotAniCounter = 0;
+            }
+        }
 
         //questionable part of this component's design
         SpriteFont font;

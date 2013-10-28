@@ -78,6 +78,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BruteController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Managers\ModelManager.cs" />
     <Compile Include="Drawing\DrawableComponent2D.cs" />
     <Compile Include="Managers\SpriteManager.cs" />
+    <Compile Include="Drawing\UnanimatedModelComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
@@ -145,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Levels\" />
+    <Folder Include="Shared Data\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
