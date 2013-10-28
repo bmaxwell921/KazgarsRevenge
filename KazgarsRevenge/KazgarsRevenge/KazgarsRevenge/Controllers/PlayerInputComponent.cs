@@ -30,6 +30,8 @@ namespace KazgarsRevenge
         Random rand;
 
 
+
+        float attackSpeed = 0.05f;
         float maxSpeed = 120;
 
         public PlayerInputComponent(MainGame game, GameEntity entity, Entity physicalData, AnimationPlayer animations, Dictionary<string, AttachableModel> attached)
@@ -52,6 +54,7 @@ namespace KazgarsRevenge
             attached.Add("bow", Game.GetAttachable("bow01", "sword", "Bone_001_L_004"));
 
             millisShotRelease = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
+            millisMelleDamage = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
         }
 
         #region animations
@@ -72,10 +75,31 @@ namespace KazgarsRevenge
          "Bone_001_L_004" - left hand
          "Bone_001_R_004" - right hand 
          */
+        private enum AttackState
+        {
+            None,
+            GrabbingArrow,
+            DrawingString,
+            LettingGo,
+            InitialSwing,
+            FinishSwing,
+            CastingSpell,
+        }
+
+
+
+
         private double millisAniCounter;
         private double millisAniDuration;
+
+        private AttackState attState = AttackState.None;
         private double millisShotRelease;
         private double millisShotAniCounter;
+        private double millisShotArrowAttachLength = 200;
+        private double millisShotArrowAttachCounter;
+
+        private double millisMelleDamage;
+        private double millisMelleCounter;
 
         private string currentAniName;
         public void PlayAnimation(string animationName)
@@ -124,6 +148,8 @@ namespace KazgarsRevenge
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
             millisAniCounter += elapsed;
             millisShotAniCounter += elapsed;
+            millisShotArrowAttachCounter += elapsed;
+            millisMelleCounter += elapsed;
             if (Game.IsActive)
             {
 
@@ -131,11 +157,14 @@ namespace KazgarsRevenge
 
                 Vector3 move = new Vector3(groundHitPos.X - physicalData.Position.X, 0, groundHitPos.Z - physicalData.Position.Z);
                 move.Normalize();
-                if (currentAniName != "k_fire_arrow"
-                    && currentAniName != "other_attacking_animations")
+                if (attState == AttackState.None)
+                {
+                    CheckAbilities(move);
+                }
+
+                if (attState == AttackState.None)
                 {
                     MoveCharacter(move);
-                    CheckAbilities(gameTime);
                 }
                 else
                 {
@@ -219,7 +248,7 @@ namespace KazgarsRevenge
                 physicalData.LinearVelocity = moveVec;
 
                 //just started running
-                if (prevMouse.LeftButton == ButtonState.Released)
+                if (currentAniName != "k_run")
                 {
                     PlayAnimation("k_run");
                 }
@@ -236,14 +265,34 @@ namespace KazgarsRevenge
             }
         }
 
-        private void CheckAbilities(GameTime gameTime)
+        /// <summary>
+        /// checks player input to see what ability to use
+        /// </summary>
+        /// <param name="gameTime"></param>
+        private void CheckAbilities(Vector3 move)
         {
 
-            if (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released)
+            if (curKeys.IsKeyDown(Keys.D1))
             {
-                
                 PlayAnimation("k_fire_arrow");
-                attached.Add("arrow", Game.GetAttachable("arrow", "sword", "Bone_001_R_004"));
+                attState = AttackState.GrabbingArrow;
+                UpdateRotation(move);
+                millisShotAniCounter = 0;
+                millisShotArrowAttachCounter = 0;
+            }
+            else if (curKeys.IsKeyDown(Keys.D2))
+            {
+                PlayAnimation("k_onehanded_swing");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(move);
+                millisMelleCounter = 0;
+            }
+            else if (curKeys.IsKeyDown(Keys.D3))
+            {
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(move);
+                millisMelleCounter = 0;
             }
         }
 
@@ -270,6 +319,8 @@ namespace KazgarsRevenge
         /// </summary>
         private void CheckAnimations()
         {
+            //if the animation has played through its duration, do stuff
+            //(mainly to handle idle animations and fighting stance to idle
             if (millisAniCounter > millisAniDuration)
             {
                 switch (currentAniName)
@@ -296,8 +347,11 @@ namespace KazgarsRevenge
                             }
                         }
                         break;
+                    case "k_flip":
+                    case "k_onehanded_swing":
                     case "k_fire_arrow":
                         PlayAnimation("k_fighting_stance");
+                        attState = AttackState.None;
                         break;
                     case "k_fighting_stance":
                         PlayAnimation("k_from_fighting_stance");
@@ -313,15 +367,55 @@ namespace KazgarsRevenge
                 millisAniCounter = 0;
             }
 
-            if (currentAniName == "k_fire_arrow" && millisShotAniCounter >= millisShotRelease)
+            //shooting animation / arrow attachment / projectile creation
+            if (currentAniName == "k_fire_arrow")
             {
-                Matrix3X3 bepurot = physicalData.OrientationMatrix;
-                Matrix rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
-                attached.Remove("arrow");
-                entities.CreateArrow(physicalData.Position + rot.Forward * 10, rot.Forward * 450, 25);
-                millisShotAniCounter = 0;
+                if(attState == AttackState.GrabbingArrow 
+                    && millisShotArrowAttachCounter >= millisShotArrowAttachLength)
+                {
+                    attached.Add("arrow", Game.GetAttachable("arrow", "sword", "Bone_001_R_004"));
+                    attState = AttackState.DrawingString;
+                    millisShotArrowAttachCounter = 0;
+                }
+                else if (attState == AttackState.DrawingString && millisShotAniCounter >= millisShotRelease)
+                {
+                    Vector3 forward = GetForward();
+                    attached.Remove("arrow");
+                    entities.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, "bad");
+                    attState = AttackState.LettingGo;
+                    millisShotAniCounter = 0;
+                }
+                else if (attState == AttackState.LettingGo && millisShotAniCounter >= millisShotRelease * attackSpeed)
+                {
+                    attState = AttackState.None;
+                    millisShotAniCounter = 0;
+                }
+            }
+
+            //swinging animation
+            if (currentAniName == "k_onehanded_swing" || currentAniName == "k_flip")
+            {
+                if (attState == AttackState.InitialSwing && millisMelleCounter >= millisMelleDamage)
+                {
+                    Vector3 forward = GetForward();
+                    entities.CreateMelleAttack(physicalData.Position + forward * 25, 25, "bad");
+                    attState = AttackState.FinishSwing;
+                    millisMelleCounter = 0;
+                }
             }
         }
+
+        private Matrix GetRotation()
+        {
+            Matrix3X3 bepurot = physicalData.OrientationMatrix;
+            return new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
+        }
+
+        private Vector3 GetForward()
+        {
+            return physicalData.OrientationMatrix.Forward;
+        }
+
 
         //questionable part of this component's design
         SpriteFont font;

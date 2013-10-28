@@ -1,0 +1,13 @@
+﻿prototype features
+====================
+entity-component architecture
+running / colliding physics
+cell shading, outline shader
+skinned/animated models
+model attachment
+character camera/controller
+enemies
+health
+enemy healthbars (raycasts)
+projectiles
+attack animations

@@ -78,7 +78,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BruteController.cs" />
+    <Compile Include="Controllers\BruteController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
@@ -88,6 +88,7 @@
     <Compile Include="Drawing\EffectHelpers.cs" />
     <Compile Include="Base Classes\GameEntity.cs" />
     <Compile Include="Managers\GeneralComponentManager.cs" />
+    <Compile Include="MelleAttackController.cs" />
     <Compile Include="Misc Components\HealthComponent.cs" />
     <Compile Include="Misc Components\PhysicsComponent.cs" />
     <Compile Include="Controllers\PlayerInputComponent.cs" />
@@ -106,6 +107,7 @@
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
+    <Content Include="TextFile1.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SkinnedModelLib\SkinnedModelLib.csproj">
@@ -147,7 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Levels\" />
-    <Folder Include="Shared Data\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

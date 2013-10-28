@@ -210,9 +210,9 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        #region Entities - projectiles
+        #region Entities - attacks
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
-        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage)
+        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, string factionToHit)
         {
             GameEntity newArrow = new GameEntity("arrow", "good");
 
@@ -226,7 +226,7 @@ namespace KazgarsRevenge
                 new UnanimatedModelComponent(mainGame, GetUnanimatedModel("Models\\Attachables\\arrow", "Models\\Attachables\\sword"),
                     arrowData, new Vector3(10), Vector3.Zero, arrowGraphicRot);
 
-            ArrowController arrowAI = new ArrowController(mainGame, newArrow, arrowData, damage);
+            ProjectileController arrowAI = new ProjectileController(mainGame, newArrow, arrowData, damage, 3000, factionToHit);
 
             newArrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -234,9 +234,29 @@ namespace KazgarsRevenge
             newArrow.AddComponent(typeof(UnanimatedModelComponent), arrowGraphics);
             renderManager.AddComponent(arrowGraphics);
 
-            newArrow.AddComponent(typeof(ArrowController), arrowAI);
+            newArrow.AddComponent(typeof(ProjectileController), arrowAI);
             genComponentManager.AddComponent(arrowAI);
         }
+
+        public void CreateMelleAttack(Vector3 position, int damage, string factionToHit)
+        {
+            GameEntity newAttack = new GameEntity("arrow", "good");
+
+            Entity attackData = new Box(position, 20, 47, 20, .01f);
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, attackData);
+
+            ProjectileController attackAI = new ProjectileController(mainGame, newAttack, attackData, damage, 300, factionToHit);
+
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
+
+            newAttack.AddComponent(typeof(ProjectileController), attackAI);
+            genComponentManager.AddComponent(attackAI);
+        }
+
         #endregion
 
         #region Helpers
