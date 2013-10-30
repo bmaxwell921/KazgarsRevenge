@@ -150,6 +150,21 @@
       <ProcessorParameters_RotationX>180</ProcessorParameters_RotationX>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\test\test\test\4x4Final.fbx">
+      <Name>4x4Final</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ToonModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="3DLightPebbleFloor.jpg">
+      <Name>3DLightPebbleFloor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

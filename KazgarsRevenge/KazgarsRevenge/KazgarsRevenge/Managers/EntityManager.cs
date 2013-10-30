@@ -8,6 +8,8 @@ using BEPUphysics;
 using BEPUphysics.Entities;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.MathExtensions;
+using BEPUphysics.Collidables;
+using BEPUphysics.DataStructures;
 using SkinnedModelLib;
 
 namespace KazgarsRevenge
@@ -20,23 +22,11 @@ namespace KazgarsRevenge
         SpriteManager spriteManager;
         MainGame mainGame;
 
-        private List<GameEntity> entities = new List<GameEntity>();
 
         public EntityManager(MainGame game)
             : base(game)
         {
             mainGame = game as MainGame;
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            for (int i = entities.Count - 1; i >= 0; --i)
-            {
-                if (entities[i].Dead)
-                {
-                    entities.RemoveAt(i);
-                }
-            }
         }
 
         Effect toonAnimatedEffect;
@@ -123,10 +113,6 @@ namespace KazgarsRevenge
 
         //each method will, in effect, create a new type of entity by adding whatever components you want
         #region Entities - characters
-        public void AddEntity(GameEntity toAdd)
-        {
-            entities.Add(toAdd);
-        }
 
         public void CreateMainPlayer(Vector3 position)
         {
@@ -171,8 +157,6 @@ namespace KazgarsRevenge
             player.AddComponent(typeof(PlayerInputComponent), playerController);
             //needs redesign
             spriteManager.AddComponent(playerController);
-
-            AddEntity(player);
         }
 
         public void CreateBrute(Vector3 position)
@@ -205,8 +189,6 @@ namespace KazgarsRevenge
 
             brute.AddComponent(typeof(BruteController), bruteController);
             spriteManager.AddComponent(bruteController);
-            
-            AddEntity(brute);
         }
         #endregion
 
@@ -257,6 +239,36 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(attackAI);
         }
 
+        #endregion
+
+        #region Entities - Levels
+        public GameEntity CreateLevel(string modelPath, Vector3 position, float yaw)
+        {
+            float roomScale = 10;
+
+            GameEntity level = new GameEntity("room", "neutral");
+
+            Model envModel = GetUnanimatedModel(modelPath, "3DLightPebbleFloor");
+            Vector3[] verts;
+            int[] indices;
+            TriangleMesh.GetVerticesAndIndicesFromModel(envModel, out verts, out indices);
+            StaticMesh room = new StaticMesh(verts, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
+            StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
+
+            //holds the position so the model is drawn correctly
+            Entity roomLocation = new Box(position, 1, 1, 1);
+
+            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, envModel, roomLocation, new Vector3(roomScale), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
+
+            level.AddComponent(typeof(StaticMeshComponent), roomPhysics);
+            genComponentManager.AddComponent(roomPhysics);
+
+            level.AddComponent(typeof(UnanimatedModelComponent), roomGraphics);
+            renderManager.AddComponent(roomGraphics);
+
+
+            return level;
+        }
         #endregion
 
         #region Helpers

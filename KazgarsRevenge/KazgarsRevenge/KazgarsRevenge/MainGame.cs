@@ -28,7 +28,7 @@ namespace KazgarsRevenge
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class MainGame : Microsoft.Xna.Framework.Game
+    public class MainGame : Game
     {
         #region components
         GraphicsDeviceManager graphics;
@@ -40,6 +40,7 @@ namespace KazgarsRevenge
         EntityManager entityManager;
         GeneralComponentManager genComponentManager;
         SpriteManager spriteManager;
+        LevelManager levelManager;
         #endregion
 
 
@@ -127,9 +128,9 @@ namespace KazgarsRevenge
             Components.Add(entityManager);
             Services.AddService(typeof(EntityManager), entityManager);
 
-            //adding large rectangle for units to stand on
-            StaticMesh ground = new StaticMesh(new Vector3[] { new Vector3(-2000, 0, -2000), new Vector3(2000, 0, -2000), new Vector3(-2000, 0, 2000), new Vector3(2000, 0, 2000) }, new int[] { 0, 1, 2, 2, 1, 3 });
-            physics.Add(ground);
+            levelManager = new LevelManager(this);
+            Components.Add(levelManager);
+            Services.AddService(typeof(LevelManager), levelManager);
 
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
@@ -144,6 +145,13 @@ namespace KazgarsRevenge
         /// </summary>
         protected override void LoadContent()
         {
+            //adding large rectangle for units to stand on
+            //StaticMesh ground = new StaticMesh(new Vector3[] { new Vector3(-2000, 0, -2000), new Vector3(2000, 0, -2000), new Vector3(-2000, 0, 2000), new Vector3(2000, 0, 2000) }, new int[] { 0, 1, 2, 2, 1, 3 });
+            //physics.Add(ground);
+
+
+
+
             // Create a new SpriteBatch, which can be used to draw textures.
             normalFont = Content.Load<SpriteFont>("Georgia");
             texCursor = Content.Load<Texture2D>("Textures\\whiteCursor");
@@ -239,12 +247,13 @@ namespace KazgarsRevenge
         }
         public void DemoLevel()
         {
-            entityManager.CreateMainPlayer(new Vector3(200, 10, -200));
-            for (int i = 0; i < 10; ++i)
+            levelManager.DemoLevel();
+            entityManager.CreateMainPlayer(new Vector3(200, 0, -200));
+            for (int i = 0; i < 3; ++i)
             {
-                for (int j = 0; j < 10; ++j)
+                for (int j = 0; j < 3; ++j)
                 {
-                    entityManager.CreateBrute(new Vector3(130 + i * 100, 10, -100 - j * 100));
+                    entityManager.CreateBrute(new Vector3(130 + i * 100, 0, -100 - j * 100));
                 }
             }
         }
@@ -286,7 +295,7 @@ namespace KazgarsRevenge
 
                     //draw scene render target
                     GraphicsDevice.SetRenderTarget(renderTarget);
-                    GraphicsDevice.Clear(Color.CornflowerBlue);
+                    GraphicsDevice.Clear(Color.Black);
                     renderManager.Draw(gameTime, "Toon");
                     GraphicsDevice.SetRenderTarget(null);
 
@@ -301,14 +310,14 @@ namespace KazgarsRevenge
                     spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
                     spriteBatch.End();
 
-                    /*
+                    
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
                     modelDrawer.Draw(effectModelDrawer, physics);
-                    */
+                    
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);
