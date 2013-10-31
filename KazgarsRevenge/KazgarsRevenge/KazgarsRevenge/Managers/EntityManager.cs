@@ -248,17 +248,20 @@ namespace KazgarsRevenge
 
             GameEntity level = new GameEntity("room", "neutral");
 
-            Model envModel = GetUnanimatedModel(modelPath, "3DLightPebbleFloor");
+
+            Model roomModel = GetUnanimatedModel(modelPath, "Models\\Levels\\3DGreyPebbleFloor");
+
+            Model roomCollisionModel = Game.Content.Load<Model>(modelPath + "Co");
             Vector3[] verts;
             int[] indices;
-            TriangleMesh.GetVerticesAndIndicesFromModel(envModel, out verts, out indices);
+            TriangleMesh.GetVerticesAndIndicesFromModel(roomCollisionModel, out verts, out indices);
             StaticMesh room = new StaticMesh(verts, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
             StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
 
             //holds the position so the model is drawn correctly
             Entity roomLocation = new Box(position, 1, 1, 1);
 
-            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, envModel, roomLocation, new Vector3(roomScale), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
+            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, roomModel, roomLocation, new Vector3(roomScale), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
 
             level.AddComponent(typeof(StaticMeshComponent), roomPhysics);
             genComponentManager.AddComponent(roomPhysics);

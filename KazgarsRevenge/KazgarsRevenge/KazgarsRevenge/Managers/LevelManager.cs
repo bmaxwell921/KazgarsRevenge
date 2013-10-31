@@ -26,7 +26,7 @@ namespace KazgarsRevenge
 
         public void DemoLevel()
         {
-            levels.Add(entityManager.CreateLevel("Models\\Levels\\test\\test\\test\\4x4Final", new Vector3(200, -20, -200), 0));
+            levels.Add(entityManager.CreateLevel("Models\\Levels\\4x4Final", new Vector3(200, -20, -200), 0));
         }
 
 

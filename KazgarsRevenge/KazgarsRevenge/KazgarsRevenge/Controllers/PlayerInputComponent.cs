@@ -193,10 +193,6 @@ namespace KazgarsRevenge
                 else
                 {
                     physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
-                    if (curMouse.RightButton == ButtonState.Pressed)
-                    {
-                        UpdateRotation(move);
-                    }
                 }
 
 
@@ -277,7 +273,10 @@ namespace KazgarsRevenge
             attackOnce = attackOnce || (curMouse.LeftButton == ButtonState.Pressed && 
                 (curKeys.IsKeyDown(Keys.LeftShift) || (prevMouse.LeftButton == ButtonState.Released && mouseHoveredEntity != null)));
             attacking = (attacking || attackOnce);// && curMouse.LeftButton == ButtonState.Pressed;
-            Vector3 dir = move;
+            Vector3 dir;
+            dir.X = move.X;
+            dir.Y = move.Y;
+            dir.Z = move.Z;
             float distance = float.MaxValue;
             if (mouseHoveredEntity != null)
             {
@@ -327,7 +326,7 @@ namespace KazgarsRevenge
                 }
             }
 
-            if (!attacking)
+            /*if (!attacking)
             {
                 if (curKeys.IsKeyDown(Keys.D1))
                 {
@@ -336,7 +335,7 @@ namespace KazgarsRevenge
                     UpdateRotation(dir);
                     millisMelleCounter = 0;
                 }
-            }
+            }*/
         }
 
         /// <summary>
