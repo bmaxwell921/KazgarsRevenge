@@ -163,7 +163,7 @@ namespace KazgarsRevenge
         {
             GameEntity brute = new GameEntity("Brute", "bad");
 
-            Entity brutePhysicalData = new Box(position, 12f, 37f, 12f, 100);
+            Entity brutePhysicalData = new Box(position, 20f, 37f, 20f, 100);
             brutePhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             brutePhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             brutePhysicalData.CollisionInformation.Tag = brute;

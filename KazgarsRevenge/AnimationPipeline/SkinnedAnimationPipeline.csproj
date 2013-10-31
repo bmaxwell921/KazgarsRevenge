@@ -51,8 +51,6 @@
   <ItemGroup>
     <Compile Include="AnimatedModelProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ToonMaterialProcessor.cs" />
-    <Compile Include="ToonModelProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SkinnedModelLib\SkinnedModelLib.csproj">

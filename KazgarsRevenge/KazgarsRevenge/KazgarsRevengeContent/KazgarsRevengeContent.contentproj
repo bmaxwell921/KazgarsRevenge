@@ -136,17 +136,17 @@
     <Compile Include="Models\Attachables\arrow.fbx">
       <Name>arrow</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ToonModelProcessor</Processor>
+      <Processor>ModelProcessor</Processor>
     </Compile>
     <Compile Include="Models\Attachables\bow01.fbx">
       <Name>bow01</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ToonModelProcessor</Processor>
+      <Processor>ModelProcessor</Processor>
     </Compile>
     <Compile Include="Models\Attachables\sword01.fbx">
       <Name>sword01</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ToonModelProcessor</Processor>
+      <Processor>ModelProcessor</Processor>
       <ProcessorParameters_RotationX>180</ProcessorParameters_RotationX>
     </Compile>
   </ItemGroup>
@@ -167,7 +167,7 @@
     <Compile Include="Models\Levels\4x4Final.fbx">
       <Name>4x4Final</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ToonModelProcessor</Processor>
+      <Processor>ModelProcessor</Processor>
     </Compile>
     <Compile Include="Models\Levels\4x4FinalCo.fbx">
       <Name>4x4FinalCo</Name>

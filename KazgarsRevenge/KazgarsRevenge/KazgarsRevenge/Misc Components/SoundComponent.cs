@@ -7,7 +7,7 @@ namespace KazgarsRevenge.Misc_Components
 {
     class SoundComponent : Component
     {
-
+        public SoundComponent(MainGame game) : base(game) { }
     }
 
 

@@ -22,22 +22,22 @@ namespace KazgarsRevenge
         Space physics;
         CameraComponent camera;
         GameEntity entity;
-        Entity mouseHoveredPhysicalData;
-        GameEntity mouseHoveredEntity;
-        HealthComponent mouseHoveredHealth;
         EntityManager entities;
         AnimationPlayer animations;
         Dictionary<string, AttachableModel> attached;
         Random rand;
 
+        Entity targettedPhysicalData;
+        
+        GameEntity mouseHoveredEntity;
+        HealthComponent mouseHoveredHealth;
+
         const float stopRadius = 10;
         const float targetResetDistance = 1000;
-        Vector3 targettedLocation = Vector3.Zero;
+        Vector3 mouseHoveredLocation = Vector3.Zero;
         //dont want kazgar to run until first click
         double millisRunningCounter = 2000;
         double millisRunTime = 2000;
-        bool attacking = false;
-        bool attackOnce = false;
 
         enum PrimaryAttack
         {
@@ -172,15 +172,27 @@ namespace KazgarsRevenge
 
             if (Game.IsActive)
             {
-                Vector3 groundHitPos = CheckMouseRay();
-                if (mouseHoveredHealth != null && 
-                    (mouseHoveredHealth.Dead || ((physicalData.Position - mouseHoveredPhysicalData.Position).Length() >= targetResetDistance)))
+                if (curMouse.LeftButton == ButtonState.Pressed)
                 {
-                    ResetTargettedEntity();
+                    millisRunningCounter = 0;
+                }
+                else
+                {
+                    if (attState != AttackState.None)
+                    {
+                        targettedPhysicalData = null;
+                    }
                 }
 
-                Vector3 move = new Vector3(groundHitPos.X - physicalData.Position.X, 0, groundHitPos.Z - physicalData.Position.Z);
+                CheckMouseRay();
+
+                Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
+                if (targettedPhysicalData != null)
+                {
+                    move = new Vector3(targettedPhysicalData.Position.X - physicalData.Position.X, 0, targettedPhysicalData.Position.Z - physicalData.Position.Z);
+                }
                 move.Normalize();
+
                 if (attState == AttackState.None)
                 {
                     CheckAbilities(move);
@@ -213,7 +225,7 @@ namespace KazgarsRevenge
         /// for gui purposes
         /// </summary>
         /// <returns></returns>
-        private Vector3 CheckMouseRay()
+        private void CheckMouseRay()
         {
             //creating ray from mouse location
             Vector3 castOrigin = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 0), camera.Projection, camera.View, Matrix.Identity);
@@ -222,7 +234,7 @@ namespace KazgarsRevenge
             Ray r = new Ray(castOrigin, castdir);
 
             //targets ground location to start running to if holding mouse button
-            if (curMouse.LeftButton == ButtonState.Pressed && attState == AttackState.None)
+            if (curMouse.LeftButton == ButtonState.Pressed && targettedPhysicalData == null)
             {
                 //check where on the zero plane the ray hits, to guide the character by the mouse
                 float? distance;
@@ -230,17 +242,17 @@ namespace KazgarsRevenge
                 r.Intersects(ref p, out distance);
                 if (distance.HasValue)
                 {
-                    targettedLocation = r.Position + r.Direction * distance.Value;
+                    mouseHoveredLocation = r.Position + r.Direction * distance.Value;
                 }
-                millisRunningCounter = 0;
             }
-            else if(curMouse.LeftButton == ButtonState.Released && !attacking)
+            
+            //if the left mouse button was either just clicked or not pressed down at all
+            if (curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released)
             {
                 //check if ray hits GameEntity if not holding down mouse button
                 List<RayCastResult> results = new List<RayCastResult>();
                 physics.RayCast(r, 10000, rayCastFilter, results);
 
-                GameEntity oldTarget = mouseHoveredEntity;
                 ResetTargettedEntity();
                 foreach (RayCastResult result in results)
                 {
@@ -250,18 +262,19 @@ namespace KazgarsRevenge
                         if (mouseHoveredEntity != null)
                         {
                             mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(HealthComponent)) as HealthComponent;
-                            mouseHoveredPhysicalData = (mouseHoveredEntity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).collidable;
-                            if (mouseHoveredHealth == null || mouseHoveredPhysicalData == null)
+                            if (mouseHoveredHealth == null)
                             {
                                 ResetTargettedEntity();
+                            }
+                            else if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                            {
+                                targettedPhysicalData = (mouseHoveredEntity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).collidable;
                             }
                             break;
                         }
                     }
                 }
             }
-
-            return targettedLocation;
         }
 
         /// <summary>
@@ -270,21 +283,13 @@ namespace KazgarsRevenge
         /// <param name="gameTime"></param>
         private void CheckAbilities(Vector3 move)
         {
-            attackOnce = attackOnce || (curMouse.LeftButton == ButtonState.Pressed && 
-                (curKeys.IsKeyDown(Keys.LeftShift) || (prevMouse.LeftButton == ButtonState.Released && mouseHoveredEntity != null)));
-            attacking = (attacking || attackOnce);// && curMouse.LeftButton == ButtonState.Pressed;
             Vector3 dir;
             dir.X = move.X;
             dir.Y = move.Y;
             dir.Z = move.Z;
-            float distance = float.MaxValue;
-            if (mouseHoveredEntity != null)
-            {
-                Vector3 otherPos = (mouseHoveredEntity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Position;
-                distance = (otherPos - physicalData.Position).Length();
-                dir = new Vector3(otherPos.X - physicalData.Position.X, 0, otherPos.Z - physicalData.Position.Z);
-            }
+            float distance = 0;
 
+            //switch primary
             if (curKeys.IsKeyDown(Keys.Tab) && prevKeys.IsKeyUp(Keys.Tab))
             {
                 selectedPrimary += 1;
@@ -294,8 +299,19 @@ namespace KazgarsRevenge
                 }
             }
 
-            if (attacking )//|| attackOnce)
+            if (targettedPhysicalData != null)
             {
+                dir = targettedPhysicalData.Position - physicalData.Position;
+                dir.Y = 0;
+                distance = (dir).Length();
+                dir.Normalize();
+            }
+
+
+            //primary attack (autos)
+            if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targettedPhysicalData != null)
+            {
+                //attack if in range
                 switch (selectedPrimary)
                 {
                     case PrimaryAttack.Melle:
@@ -305,9 +321,7 @@ namespace KazgarsRevenge
                             attState = AttackState.InitialSwing;
                             UpdateRotation(dir);
                             millisMelleCounter = 0;
-                            attackOnce = false;
-                            attacking = false;
-                            targettedLocation = physicalData.Position;
+                            mouseHoveredLocation = physicalData.Position;
                         }
                         break;
                     case PrimaryAttack.Ranged:
@@ -318,24 +332,31 @@ namespace KazgarsRevenge
                             UpdateRotation(dir);
                             millisShotAniCounter = 0;
                             millisShotArrowAttachCounter = 0;
-                            attackOnce = false;
-                            attacking = false;
-                            targettedLocation = physicalData.Position;
+                            mouseHoveredLocation = physicalData.Position;
+                        }
+                        break;
+                    case PrimaryAttack.Magic:
+                        if (distance < bowRange)
+                        {
+                            PlayAnimation("k_fire_arrow");
+                            attState = AttackState.GrabbingArrow;
+                            UpdateRotation(dir);
+                            millisShotAniCounter = 0;
+                            millisShotArrowAttachCounter = 0;
+                            mouseHoveredLocation = physicalData.Position;
                         }
                         break;
                 }
             }
-
-            /*if (!attacking)
+            if (curMouse.RightButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift))
             {
-                if (curKeys.IsKeyDown(Keys.D1))
-                {
-                    PlayAnimation("k_flip");
-                    attState = AttackState.InitialSwing;
-                    UpdateRotation(dir);
-                    millisMelleCounter = 0;
-                }
-            }*/
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(dir);
+                millisMelleCounter = 0;
+                mouseHoveredLocation = physicalData.Position;
+                targettedPhysicalData = null;
+            }
         }
 
         /// <summary>
@@ -344,21 +365,24 @@ namespace KazgarsRevenge
         /// <param name="groundHitPos"></param>
         private void MoveCharacter(Vector3 move)
         {
+            //click:      target enemy if ray catches one to move to / attack
+            //held down:  path towards mousehovered location (or targetted entity if its data isn't null and it's not in range) / if in range of targetted entity, auto attack
+            //up:         if there is a targetted enemy, run up and attack it once. if not, run towards targetted location if not already at it
+
             Vector3 moveVec = move * maxSpeed;
-            //running
+            moveVec.Y = physicalData.LinearVelocity.Y;
             if (curMouse.LeftButton == ButtonState.Pressed)
             {
-                UpdateRotation(move);
-                moveVec.Y = physicalData.LinearVelocity.Y;
                 physicalData.LinearVelocity = moveVec;
 
+                UpdateRotation(move);
                 //just started running
                 if (currentAniName != "k_run")
                 {
                     PlayAnimation("k_run");
                 }
             }
-            else if ((physicalData.Position - targettedLocation).Length() <= stopRadius || millisRunningCounter >= millisRunTime)
+            else if ((physicalData.Position - mouseHoveredLocation).Length() <= stopRadius || millisRunningCounter >= millisRunTime)
             {
                 //stop if within stopRadius of targetted ground location
                 physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
@@ -371,6 +395,12 @@ namespace KazgarsRevenge
             else
             {
                 physicalData.LinearVelocity = moveVec;
+                UpdateRotation(move);
+                //just started running
+                if (currentAniName != "k_run")
+                {
+                    PlayAnimation("k_run");
+                }
             }
         }
 
@@ -490,8 +520,6 @@ namespace KazgarsRevenge
         {
             mouseHoveredEntity = null;
             mouseHoveredHealth = null;
-            mouseHoveredPhysicalData = null;
-            attacking = false;
         }
         private Matrix GetRotation()
         {

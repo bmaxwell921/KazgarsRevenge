@@ -32,11 +32,11 @@ namespace KazgarsRevenge
 
         private Vector3 headOffset = new Vector3(0, 13, 0);
 
-        float distanceFromTarget = 10.0f;
+        float distanceFromTarget = 200.0f;
 
         float yaw = 0;
         float pitch = -MathHelper.PiOver4;
-        public float zoom = 1.0f;
+        public float zoom = 4.0f;
         #endregion
 
         public void AssignEntity(Entity followMe)
@@ -79,13 +79,13 @@ namespace KazgarsRevenge
                 {
                     zoom /= 1.2f;
                 }
-                if (zoom < .4f)
+                if (zoom < 1f)
                 {
-                    zoom = .4f;
+                    zoom = 1f;
                 }
-                if (zoom > 5)
+                if (zoom > 8)
                 {
-                    zoom = 5;
+                    zoom = 8;
                 }
             }
 
