@@ -140,7 +140,7 @@ namespace KazgarsRevenge
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, playerPhysicalData);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, playerPhysicalData, playerModel, playerAnimations, new Vector3(10f), Vector3.Down * 18, attachables);
             HealthComponent playerHealth = new HealthComponent(mainGame, 100);
-            PlayerInputComponent playerController = new PlayerInputComponent(mainGame, player, playerPhysicalData, playerAnimations, attachables);
+            PlayerController playerController = new PlayerController(mainGame, player, playerPhysicalData, playerAnimations, attachables);
 
             //adding the controllers to their respective managers 
             //(need to decide what kinds of components need their own managers; currently 
@@ -154,7 +154,7 @@ namespace KazgarsRevenge
             player.AddComponent(typeof(HealthComponent), playerHealth);
             genComponentManager.AddComponent(playerHealth);
             
-            player.AddComponent(typeof(PlayerInputComponent), playerController);
+            player.AddComponent(typeof(PlayerController), playerController);
             //needs redesign
             spriteManager.AddComponent(playerController);
         }
@@ -208,7 +208,7 @@ namespace KazgarsRevenge
                 new UnanimatedModelComponent(mainGame, GetUnanimatedModel("Models\\Attachables\\arrow", "Models\\Attachables\\sword"),
                     arrowData, new Vector3(10), Vector3.Zero, arrowGraphicRot);
 
-            ProjectileController arrowAI = new ProjectileController(mainGame, newArrow, arrowData, damage, 3000, factionToHit);
+            AttackController arrowAI = new AttackController(mainGame, newArrow, arrowData, damage, 3000, factionToHit);
 
             newArrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -216,7 +216,7 @@ namespace KazgarsRevenge
             newArrow.AddComponent(typeof(UnanimatedModelComponent), arrowGraphics);
             renderManager.AddComponent(arrowGraphics);
 
-            newArrow.AddComponent(typeof(ProjectileController), arrowAI);
+            newArrow.AddComponent(typeof(AttackController), arrowAI);
             genComponentManager.AddComponent(arrowAI);
         }
 
@@ -230,12 +230,12 @@ namespace KazgarsRevenge
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, attackData);
 
-            ProjectileController attackAI = new ProjectileController(mainGame, newAttack, attackData, damage, 300, factionToHit);
+            AttackController attackAI = new AttackController(mainGame, newAttack, attackData, damage, 300, factionToHit);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             genComponentManager.AddComponent(attackPhysics);
 
-            newAttack.AddComponent(typeof(ProjectileController), attackAI);
+            newAttack.AddComponent(typeof(AttackController), attackAI);
             genComponentManager.AddComponent(attackAI);
         }
 

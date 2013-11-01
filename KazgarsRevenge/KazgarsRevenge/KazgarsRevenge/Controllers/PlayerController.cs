@@ -16,7 +16,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class PlayerInputComponent : DrawableComponent2D
+    class PlayerController : DrawableComponent2D
     {
         Entity physicalData;
         Space physics;
@@ -52,7 +52,7 @@ namespace KazgarsRevenge
         const float bowRange = 1000;
 
 
-        public PlayerInputComponent(MainGame game, GameEntity entity, Entity physicalData, AnimationPlayer animations, Dictionary<string, AttachableModel> attached)
+        public PlayerController(MainGame game, GameEntity entity, Entity physicalData, AnimationPlayer animations, Dictionary<string, AttachableModel> attached)
             : base(game)
         {
             rand = new Random();
@@ -234,7 +234,7 @@ namespace KazgarsRevenge
             Ray r = new Ray(castOrigin, castdir);
 
             //targets ground location to start running to if holding mouse button
-            if (curMouse.LeftButton == ButtonState.Pressed && targettedPhysicalData == null)
+            if (curMouse.LeftButton == ButtonState.Pressed && targettedPhysicalData == null && attState == AttackState.None)
             {
                 //check where on the zero plane the ray hits, to guide the character by the mouse
                 float? distance;

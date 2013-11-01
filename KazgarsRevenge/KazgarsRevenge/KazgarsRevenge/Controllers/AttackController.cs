@@ -15,7 +15,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class ProjectileController : Component
+    class AttackController : Component
     {
         Entity physicalData;
         GameEntity entity;
@@ -24,7 +24,7 @@ namespace KazgarsRevenge
         double lifeLength;
         //either "good" or "bad", for now
         string factionToHit;
-        public ProjectileController(MainGame game, GameEntity arrowEntity, Entity physicalData, int damage, double millisDuration, string factionToHit)
+        public AttackController(MainGame game, GameEntity arrowEntity, Entity physicalData, int damage, double millisDuration, string factionToHit)
             : base(game)
         {
             this.entity = arrowEntity;
