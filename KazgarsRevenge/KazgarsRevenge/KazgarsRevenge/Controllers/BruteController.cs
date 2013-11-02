@@ -12,10 +12,10 @@ namespace KazgarsRevenge
     class BruteController : DrawableComponent2D
     {
         GameEntity entity;
-        HealthComponent health;
+        HealthData health;
         Entity physicalData;
         AnimationPlayer animations;
-        public BruteController(MainGame game, GameEntity bruteEntity, HealthComponent bruteHealth, Entity physicalData, AnimationPlayer bruteAnimations)
+        public BruteController(MainGame game, GameEntity bruteEntity, HealthData bruteHealth, Entity physicalData, AnimationPlayer bruteAnimations)
             : base(game)
         {
             this.entity = bruteEntity;

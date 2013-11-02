@@ -118,7 +118,11 @@ namespace KazgarsRevenge
         {
             GameEntity player = new GameEntity("player", "good");
 
+            //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
+            //assigns a collision group to the physics
+            playerPhysicalData.CollisionInformation.CollisionRules.Group = MainGame.PlayerCollisionGroup;
+
             //locking rotation on axis (so that bumping into something won't make the player tip over)
             playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             //more accurate collision detection for the player
@@ -134,12 +138,13 @@ namespace KazgarsRevenge
             AnimationPlayer playerAnimations = new AnimationPlayer(playerModel.Tag as SkinningData);
 
             Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
-            
+            HealthData playerHealth = new HealthData(100);
+
 
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, playerPhysicalData);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, playerPhysicalData, playerModel, playerAnimations, new Vector3(10f), Vector3.Down * 18, attachables);
-            HealthComponent playerHealth = new HealthComponent(mainGame, 100);
+            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, playerHealth);
             PlayerController playerController = new PlayerController(mainGame, player, playerPhysicalData, playerAnimations, attachables);
 
             //adding the controllers to their respective managers 
@@ -151,8 +156,8 @@ namespace KazgarsRevenge
             player.AddComponent(typeof(AnimatedModelComponent), playerGraphics);
             renderManager.AddComponent(playerGraphics);
 
-            player.AddComponent(typeof(HealthComponent), playerHealth);
-            genComponentManager.AddComponent(playerHealth);
+            player.AddComponent(typeof(HealthHandlerComponent), playerHealthHandler);
+            genComponentManager.AddComponent(playerHealthHandler);
             
             player.AddComponent(typeof(PlayerController), playerController);
             //needs redesign
@@ -164,6 +169,7 @@ namespace KazgarsRevenge
             GameEntity brute = new GameEntity("Brute", "bad");
 
             Entity brutePhysicalData = new Box(position, 20f, 37f, 20f, 100);
+            brutePhysicalData.CollisionInformation.CollisionRules.Group = MainGame.EnemyCollisionGroup;
             brutePhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             brutePhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             brutePhysicalData.CollisionInformation.Tag = brute;
@@ -171,10 +177,11 @@ namespace KazgarsRevenge
 
             Model bruteModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
             AnimationPlayer bruteAnimations = new AnimationPlayer(bruteModel.Tag as SkinningData);
+            HealthData bruteHealth = new HealthData(100);
 
             PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brutePhysicalData);
             AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brutePhysicalData, bruteModel, bruteAnimations, new Vector3(10f), Vector3.Down * 18, new Dictionary<string, AttachableModel>());
-            HealthComponent bruteHealth = new HealthComponent(mainGame, 100);
+            HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(mainGame, bruteHealth);
 
             BruteController bruteController = new BruteController(mainGame, brute, bruteHealth, brutePhysicalData, bruteAnimations);
 
@@ -184,8 +191,8 @@ namespace KazgarsRevenge
             brute.AddComponent(typeof(AnimatedModelComponent), bruteGraphics);
             renderManager.AddComponent(bruteGraphics);
 
-            brute.AddComponent(typeof(HealthComponent), bruteHealth);
-            genComponentManager.AddComponent(bruteHealth);
+            brute.AddComponent(typeof(HealthHandlerComponent), bruteHealthHandler);
+            genComponentManager.AddComponent(bruteHealthHandler);
 
             brute.AddComponent(typeof(BruteController), bruteController);
             spriteManager.AddComponent(bruteController);
@@ -197,8 +204,9 @@ namespace KazgarsRevenge
         public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, string factionToHit)
         {
             GameEntity newArrow = new GameEntity("arrow", "good");
-
-            Entity arrowData = new Box(position, 10, 47, 10, .01f);
+            position.Y += 20;
+            Entity arrowData = new Box(position, 10, 17, 10, .001f);
+            arrowData.CollisionInformation.CollisionRules.Group = factionToHit == "good" ? MainGame.GoodProjectileCollisionGroup : MainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = initialTrajectory;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(initialTrajectory));
@@ -225,6 +233,7 @@ namespace KazgarsRevenge
             GameEntity newAttack = new GameEntity("arrow", "good");
 
             Entity attackData = new Box(position, 35, 47, 35, .01f);
+            attackData.CollisionInformation.CollisionRules.Group = factionToHit == "good" ? MainGame.GoodProjectileCollisionGroup : MainGame.BadProjectileCollisionGroup;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
 
@@ -257,6 +266,7 @@ namespace KazgarsRevenge
             TriangleMesh.GetVerticesAndIndicesFromModel(roomCollisionModel, out verts, out indices);
             StaticMesh room = new StaticMesh(verts, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
             StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
+            room.Tag = level;
 
             //holds the position so the model is drawn correctly
             Entity roomLocation = new Box(position, 1, 1, 1);

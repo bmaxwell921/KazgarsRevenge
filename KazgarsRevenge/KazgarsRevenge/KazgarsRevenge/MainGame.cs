@@ -12,6 +12,7 @@ using BEPUphysics;
 using BEPUphysics.Collidables;
 using BEPUphysics.Entities;
 using BEPUphysics.Entities.Prefabs;
+using BEPUphysics.CollisionRuleManagement;
 
 using BEPUphysicsDrawer;
 using BEPUphysicsDrawer.Lines;
@@ -69,26 +70,41 @@ namespace KazgarsRevenge
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+            InitPhysicsStuff();
+        }
 
+        public static CollisionGroup GoodProjectileCollisionGroup;
+        public static CollisionGroup PlayerCollisionGroup;
+        public static CollisionGroup BadProjectileCollisionGroup;
+        public static CollisionGroup EnemyCollisionGroup;
+        protected void InitPhysicsStuff()
+        {
+            //physics! yay!
             physics = new Space();
 
             if (Environment.ProcessorCount > 1)
             {
                 for (int i = 0; i < 10 * Environment.ProcessorCount; ++i)
                 {
+                    //threads! woo!
                     physics.ThreadManager.AddThread();
                 }
             }
             physics.ForceUpdater.Gravity = new Vector3(0, -80f, 0);
             Services.AddService(typeof(Space), physics);
+
+
+            //collision groups
+            GoodProjectileCollisionGroup = new CollisionGroup();
+            PlayerCollisionGroup = new CollisionGroup();
+            BadProjectileCollisionGroup = new CollisionGroup();
+            EnemyCollisionGroup = new CollisionGroup();
+
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(BadProjectileCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
@@ -139,10 +155,6 @@ namespace KazgarsRevenge
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
             //adding large rectangle for units to stand on
@@ -203,20 +215,11 @@ namespace KazgarsRevenge
             }
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             physics.Update();
@@ -266,10 +269,6 @@ namespace KazgarsRevenge
             rectMouse = new Rectangle(0, 0, 25, 25);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             MouseState curMouse = Mouse.GetState();
@@ -310,14 +309,14 @@ namespace KazgarsRevenge
                     spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
                     spriteBatch.End();
 
-                    /*
+                    
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
                     modelDrawer.Draw(effectModelDrawer, physics);
-                    */
+                    
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);

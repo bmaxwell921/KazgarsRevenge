@@ -33,7 +33,8 @@ namespace KazgarsRevenge
             this.lifeLength = millisDuration;
             this.factionToHit = factionToHit;
             physicalData.IsAffectedByGravity = false;
-            physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleCollision;
+            physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
+
         }
 
         public override void Update(GameTime gameTime)
@@ -48,14 +49,21 @@ namespace KazgarsRevenge
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
             GameEntity hitEntity = other.Tag as GameEntity;
-            if (hitEntity != null && hitEntity.Faction == factionToHit)
+            if (hitEntity != null)
             {
-                HealthComponent healthData = hitEntity.GetComponent(typeof(HealthComponent)) as HealthComponent;
-                if (healthData != null)
+                if (hitEntity.Name == "room")
                 {
-                    healthData.Damage(damage);
+                    (entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
                 }
-                entity.Kill();
+                if (hitEntity.Faction == factionToHit)
+                {
+                    HealthHandlerComponent healthData = hitEntity.GetComponent(typeof(HealthHandlerComponent)) as HealthHandlerComponent;
+                    if (healthData != null)
+                    {
+                        healthData.Damage(damage);
+                    }
+                    entity.Kill();
+                }
             }
         }
     }

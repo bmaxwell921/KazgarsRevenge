@@ -30,7 +30,7 @@ namespace KazgarsRevenge
         Entity targettedPhysicalData;
         
         GameEntity mouseHoveredEntity;
-        HealthComponent mouseHoveredHealth;
+        HealthData mouseHoveredHealth;
 
         const float stopRadius = 10;
         const float targetResetDistance = 1000;
@@ -261,7 +261,7 @@ namespace KazgarsRevenge
                         mouseHoveredEntity = result.HitObject.Tag as GameEntity;
                         if (mouseHoveredEntity != null)
                         {
-                            mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(HealthComponent)) as HealthComponent;
+                            mouseHoveredHealth = mouseHoveredEntity.GetHealth();
                             if (mouseHoveredHealth == null)
                             {
                                 ResetTargettedEntity();

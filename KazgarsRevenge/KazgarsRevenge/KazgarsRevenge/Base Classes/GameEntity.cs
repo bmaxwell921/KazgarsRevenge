@@ -59,5 +59,19 @@ namespace KazgarsRevenge
             //will be null if key is not found
             return retComponent;
         }
+
+        public HealthData GetHealth()
+        {
+            Component possHealth = null;
+            components.TryGetValue(typeof(HealthHandlerComponent), out possHealth);
+            if (possHealth != null)
+            {
+                return (possHealth as HealthHandlerComponent).GetHealthData();
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

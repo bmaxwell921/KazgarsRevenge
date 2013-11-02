@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
-    class HealthComponent : Component
+    class HealthData
     {
         public int Health { get; private set; }
         public int MaxHealth { get; private set; }
@@ -27,20 +27,13 @@ namespace KazgarsRevenge
         public bool Dead { get; private set; }
 
 
-        public HealthComponent(MainGame game, int maxHealth)
-            : base(game)
+        public HealthData(int maxHealth)
         {
             this.Health = maxHealth;
             this.MaxHealth = maxHealth;
             this.Dead = false;
         }
 
-        public override void Start()
-        {
-            Dead = false;
-        }
-
-        #region Damage
         public void Damage(int d)
         {
             Health -= d;
@@ -49,13 +42,6 @@ namespace KazgarsRevenge
                 Health = 0;
                 Dead = true;
             }
-        }
-
-        #endregion
-
-        public override void Update(GameTime gameTime)
-        {
-
         }
     }
 }
