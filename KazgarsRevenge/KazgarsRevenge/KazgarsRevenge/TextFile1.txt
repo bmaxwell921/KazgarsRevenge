@@ -1,4 +1,56 @@
-﻿prototype features
+﻿Networking
+=============
+
+Levels
+-server creates all rooms on level load,
+-gives all clients each room entity (Model name, yaw, translation)
+
+Enemy AI
+-server holds pathing graph
+-server creates queue of points to path to?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+prototype 1 features
 ====================
 entity-component architecture
 running / colliding physics
@@ -11,3 +63,5 @@ health
 enemy healthbars (raycasts)
 projectiles
 attack animations
+
+

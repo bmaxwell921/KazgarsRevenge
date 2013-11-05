@@ -309,14 +309,14 @@ namespace KazgarsRevenge
                     spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
                     spriteBatch.End();
 
-                    
+                    /*
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
                     modelDrawer.Draw(effectModelDrawer, physics);
-                    
+                    */
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);

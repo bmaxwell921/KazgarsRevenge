@@ -9,7 +9,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class BruteController : DrawableComponent2D
+    class BruteController : Component
     {
         GameEntity entity;
         HealthData health;
@@ -36,11 +36,6 @@ namespace KazgarsRevenge
             {
                 entity.Kill();
             }
-        }
-
-        public override void Draw(SpriteBatch s)
-        {
-
         }
     }
 }

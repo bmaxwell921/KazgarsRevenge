@@ -195,7 +195,7 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(bruteHealthHandler);
 
             brute.AddComponent(typeof(BruteController), bruteController);
-            spriteManager.AddComponent(bruteController);
+            genComponentManager.AddComponent(bruteController);
         }
         #endregion
 
