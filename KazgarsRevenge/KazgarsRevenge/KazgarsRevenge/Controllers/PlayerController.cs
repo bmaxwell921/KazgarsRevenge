@@ -22,7 +22,7 @@ namespace KazgarsRevenge
         Space physics;
         CameraComponent camera;
         GameEntity entity;
-        EntityManager entities;
+        AttackManager attacks;
         AnimationPlayer animations;
         Dictionary<string, AttachableModel> attached;
         Random rand;
@@ -61,7 +61,7 @@ namespace KazgarsRevenge
             physics = Game.Services.GetService(typeof(Space)) as Space;
             rayCastFilter = RayCastFilter;
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
-            entities = game.Services.GetService(typeof(EntityManager)) as EntityManager;
+            attacks = game.Services.GetService(typeof(AttackManager)) as AttackManager;
             this.animations = animations;
             this.attached = attached;
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
@@ -193,6 +193,11 @@ namespace KazgarsRevenge
                 }
                 move.Normalize();
 
+                if (curMouse.LeftButton == ButtonState.Pressed && mouseHoveredHealth != null && mouseHoveredHealth.Dead)
+                {
+                    ResetTargettedEntity();
+                    targettedPhysicalData = null;
+                }
                 if (attState == AttackState.None)
                 {
                     CheckAbilities(move);
@@ -204,7 +209,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
+                    ChangeVelocity(new Vector3(0, physicalData.LinearVelocity.Y, 0));
                 }
 
 
@@ -212,7 +217,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
+                ChangeVelocity(new Vector3(0, physicalData.LinearVelocity.Y, 0));
             }
 
             prevMouse = curMouse;
@@ -373,7 +378,7 @@ namespace KazgarsRevenge
             moveVec.Y = physicalData.LinearVelocity.Y;
             if (curMouse.LeftButton == ButtonState.Pressed)
             {
-                physicalData.LinearVelocity = moveVec;
+                ChangeVelocity(moveVec);
 
                 UpdateRotation(move);
                 //just started running
@@ -385,7 +390,7 @@ namespace KazgarsRevenge
             else if ((physicalData.Position - mouseHoveredLocation).Length() <= stopRadius || millisRunningCounter >= millisRunTime)
             {
                 //stop if within stopRadius of targetted ground location
-                physicalData.LinearVelocity = new Vector3(0, physicalData.LinearVelocity.Y, 0);
+                ChangeVelocity(new Vector3(0, physicalData.LinearVelocity.Y, 0));
                 //just stopped moving
                 if (currentAniName == "k_run")
                 {
@@ -394,7 +399,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                physicalData.LinearVelocity = moveVec;
+                ChangeVelocity(moveVec);
                 UpdateRotation(move);
                 //just started running
                 if (currentAniName != "k_run")
@@ -404,23 +409,6 @@ namespace KazgarsRevenge
             }
         }
 
-        /// <summary>
-        /// rotates kazgar towards mouse
-        /// </summary>
-        /// <param name="move"></param>
-        private void UpdateRotation(Vector3 move)
-        {
-            //orientation
-            float yaw = (float)Math.Atan(move.X / move.Z);
-            if (move.Z < 0 && move.X >= 0
-                || move.Z < 0 && move.X < 0)
-            {
-                //TODO
-                yaw += MathHelper.Pi;
-            }
-            yaw += MathHelper.Pi;
-            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
-        }
 
         /// <summary>
         /// handles animation transitions
@@ -489,7 +477,7 @@ namespace KazgarsRevenge
                 {
                     Vector3 forward = GetForward();
                     attached.Remove("arrow");
-                    entities.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, "bad");
+                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, "bad");
                     attState = AttackState.LettingGo;
                     millisShotAniCounter = 0;
                 }
@@ -506,7 +494,7 @@ namespace KazgarsRevenge
                 if (attState == AttackState.InitialSwing && millisMelleCounter >= millisMelleDamage)
                 {
                     Vector3 forward = GetForward();
-                    entities.CreateMelleAttack(physicalData.Position + forward * 35, 25, "bad");
+                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, "bad");
                     attState = AttackState.FinishSwing;
                     millisMelleCounter = 0;
                 }
@@ -516,6 +504,29 @@ namespace KazgarsRevenge
 
 
         #region helpers
+        /// <summary>
+        /// rotates kazgar towards mouse
+        /// </summary>
+        /// <param name="move"></param>
+        private void UpdateRotation(Vector3 move)
+        {
+            //orientation
+            float yaw = (float)Math.Atan(move.X / move.Z);
+            if (move.Z < 0 && move.X >= 0
+                || move.Z < 0 && move.X < 0)
+            {
+                //TODO
+                yaw += MathHelper.Pi;
+            }
+            yaw += MathHelper.Pi;
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+        }
+        private void ChangeVelocity(Vector3 newVel)
+        {
+            physicalData.LinearVelocity = newVel;
+        }
+
+
         private void ResetTargettedEntity()
         {
             mouseHoveredEntity = null;

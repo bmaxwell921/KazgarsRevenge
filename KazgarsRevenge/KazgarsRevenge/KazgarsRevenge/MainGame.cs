@@ -38,10 +38,13 @@ namespace KazgarsRevenge
         BoundingBoxDrawer modelDrawer;
         CameraComponent camera;
         ModelManager renderManager;
-        EntityManager entityManager;
         GeneralComponentManager genComponentManager;
         SpriteManager spriteManager;
-        LevelManager levelManager;
+        LevelManager levels;
+        PlayerManager players;
+        EnemyManager enemies;
+        AttackManager attacks;
+        NetworkMessageManager networkMessages;
         #endregion
 
 
@@ -100,6 +103,7 @@ namespace KazgarsRevenge
             BadProjectileCollisionGroup = new CollisionGroup();
             EnemyCollisionGroup = new CollisionGroup();
 
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(PlayerCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(BadProjectileCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
@@ -107,7 +111,6 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
 
             /*graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -140,13 +143,25 @@ namespace KazgarsRevenge
             Components.Add(spriteManager);
             Services.AddService(typeof(SpriteManager), spriteManager);
 
-            entityManager = new EntityManager(this);
-            Components.Add(entityManager);
-            Services.AddService(typeof(EntityManager), entityManager);
+            players = new PlayerManager(this);
+            Components.Add(players);
+            Services.AddService(typeof(PlayerManager), players);
 
-            levelManager = new LevelManager(this);
-            Components.Add(levelManager);
-            Services.AddService(typeof(LevelManager), levelManager);
+            enemies = new EnemyManager(this);
+            Components.Add(enemies);
+            Services.AddService(typeof(EnemyManager), enemies);
+
+            levels = new LevelManager(this);
+            Components.Add(levels);
+            Services.AddService(typeof(LevelManager), levels);
+
+            attacks = new AttackManager(this);
+            Components.Add(attacks);
+            Services.AddService(typeof(AttackManager), attacks);
+
+            networkMessages = new NetworkMessageManager(this);
+            Components.Add(networkMessages);
+            Services.AddService(typeof(NetworkMessageManager), networkMessages);
 
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
@@ -162,9 +177,6 @@ namespace KazgarsRevenge
             //physics.Add(ground);
 
 
-
-
-            // Create a new SpriteBatch, which can be used to draw textures.
             normalFont = Content.Load<SpriteFont>("Georgia");
             texCursor = Content.Load<Texture2D>("Textures\\whiteCursor");
 
@@ -248,15 +260,17 @@ namespace KazgarsRevenge
             }
 
         }
+
+
         public void DemoLevel()
         {
-            levelManager.DemoLevel();
-            entityManager.CreateMainPlayer(new Vector3(200, 0, -200));
+            levels.DemoLevel();
+            players.CreateMainPlayer(new Vector3(200, 0, -200));
             for (int i = 0; i < 3; ++i)
             {
                 for (int j = 0; j < 3; ++j)
                 {
-                    entityManager.CreateBrute(new Vector3(130 + i * 100, 0, -100 - j * 100));
+                    enemies.CreateBrute(new Vector3(130 + i * 100, 0, -100 - j * 100));
                 }
             }
         }
@@ -321,6 +335,7 @@ namespace KazgarsRevenge
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);
 
+                    //debug strings
                     //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
                     //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
                     spriteBatch.Draw(texCursor, rectMouse, Color.White);
