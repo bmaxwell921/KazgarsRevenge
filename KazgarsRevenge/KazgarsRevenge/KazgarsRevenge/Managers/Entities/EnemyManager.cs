@@ -41,7 +41,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brutePhysicalData);
             AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brutePhysicalData, bruteModel, bruteAnimations, new Vector3(10f), Vector3.Down * 18, new Dictionary<string, AttachableModel>());
-            HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(mainGame, bruteHealth);
+            HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(mainGame, bruteHealth, brute);
 
             BruteController bruteController = new BruteController(mainGame, brute, bruteHealth, brutePhysicalData, bruteAnimations);
 
@@ -54,7 +54,7 @@ namespace KazgarsRevenge
             brute.AddComponent(typeof(HealthHandlerComponent), bruteHealthHandler);
             genComponentManager.AddComponent(bruteHealthHandler);
 
-            brute.AddComponent(typeof(BruteController), bruteController);
+            brute.AddComponent(typeof(AIController), bruteController);
             genComponentManager.AddComponent(bruteController);
 
             enemies.Add(brute);

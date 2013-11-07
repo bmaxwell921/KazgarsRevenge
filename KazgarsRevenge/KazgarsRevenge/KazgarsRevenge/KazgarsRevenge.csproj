@@ -78,7 +78,9 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIController.cs" />
     <Compile Include="Controllers\BruteController.cs" />
+    <Compile Include="CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />

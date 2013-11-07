@@ -76,7 +76,25 @@ namespace KazgarsRevenge
             attacks.Add(newAttack);
         }
 
+        public void CreateMouseSpikes(Vector3 position)
+        {
+            GameEntity spikes = new GameEntity("cursor", "neutral");
 
+            Entity spikesPhysical = new Box(position, 1, 1, 1);
+            Model spikeModel = GetAnimatedModel("Models\\spikes");
+            AnimationPlayer anims = new AnimationPlayer(spikeModel.Tag as SkinningData);
+
+            AnimatedModelComponent spikesGraphics = new AnimatedModelComponent(mainGame, spikesPhysical, spikeModel, anims, new Vector3(5), Vector3.Down * 20, new Dictionary<string, AttachableModel>());
+            CursorSpikeController spikesController = new CursorSpikeController(mainGame, anims, spikes);
+
+            spikes.AddComponent(typeof(AnimatedModelComponent), spikesGraphics);
+            modelManager.AddComponent(spikesGraphics);
+
+            spikes.AddComponent(typeof(CursorSpikeController), spikesController);
+            genComponentManager.AddComponent(spikesController);
+
+            attacks.Add(spikes);
+        }
 
         private Matrix CreateRotationFromForward(Vector3 forward)
         {

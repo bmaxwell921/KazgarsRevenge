@@ -108,6 +108,7 @@
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Pigman\\pig_hit.fbx%3bModels\\Enemies\\Pigman\\pig_walk.fbx%3b</ProcessorParameters_MergeAnimations>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -150,7 +151,14 @@
       <ProcessorParameters_RotationX>180</ProcessorParameters_RotationX>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Models\spikes.fbx">
+      <Name>spikes</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Levels\3DGreyPebbleFloor.jpg">
       <Name>3DGreyPebbleFloor</Name>

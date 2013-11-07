@@ -35,6 +35,7 @@ namespace KazgarsRevenge
         const float stopRadius = 10;
         const float targetResetDistance = 1000;
         Vector3 mouseHoveredLocation = Vector3.Zero;
+        Vector3 groundTargetLocation = Vector3.Zero;
         //dont want kazgar to run until first click
         double millisRunningCounter = 2000;
         double millisRunTime = 2000;
@@ -183,8 +184,17 @@ namespace KazgarsRevenge
                         targettedPhysicalData = null;
                     }
                 }
+                bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
+                foreach (Keys k in abilityKeys)
+                {
+                    if (curKeys.IsKeyDown(k) && prevKeys.IsKeyUp(k))
+                    {
+                        newTarget = true;
+                        break;
+                    }
+                }
 
-                CheckMouseRay();
+                CheckMouseRay(newTarget);
 
                 Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
                 if (targettedPhysicalData != null)
@@ -201,11 +211,27 @@ namespace KazgarsRevenge
                 if (attState == AttackState.None)
                 {
                     CheckAbilities(move);
+                }            
+                
+                //targets ground location to start running to if holding mouse button
+                if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released && attState == AttackState.None)
+                {
+                    groundTargetLocation = mouseHoveredLocation;
+                    if (prevMouse.LeftButton == ButtonState.Released && targettedPhysicalData == null)
+                    {
+                        attacks.CreateMouseSpikes(groundTargetLocation);
+                    }
+                }
+                Vector3 groundMove = move;
+                if (targettedPhysicalData == null)
+                {
+                    groundMove = new Vector3(groundTargetLocation.X - physicalData.Position.X, 0, groundTargetLocation.Z - physicalData.Position.Z);
+                    groundMove.Normalize();
                 }
 
                 if (attState == AttackState.None)
                 {
-                    MoveCharacter(move);
+                    MoveCharacter(groundMove);
                 }
                 else
                 {
@@ -224,13 +250,14 @@ namespace KazgarsRevenge
             prevKeys = curKeys;
         }
 
+        List<Keys> abilityKeys = new List<Keys> { Keys.D1, Keys.D2, Keys.D3, Keys.D4 };
         /// <summary>
         /// creates a raycast from the mouse, and returns the position on the ground that it hits.
         /// Also does a bepu raycast and finds the first enemy it hits, and keeps its healthcomponent
         /// for gui purposes
         /// </summary>
         /// <returns></returns>
-        private void CheckMouseRay()
+        private void CheckMouseRay(bool newTarget)
         {
             //creating ray from mouse location
             Vector3 castOrigin = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 0), camera.Projection, camera.View, Matrix.Identity);
@@ -238,21 +265,18 @@ namespace KazgarsRevenge
             castdir.Normalize();
             Ray r = new Ray(castOrigin, castdir);
 
-            //targets ground location to start running to if holding mouse button
-            if (curMouse.LeftButton == ButtonState.Pressed && targettedPhysicalData == null && attState == AttackState.None)
+            //check where on the zero plane the ray hits, to guide the character by the mouse
+            float? distance;
+            Plane p = new Plane(Vector3.Up, 0);
+            r.Intersects(ref p, out distance);
+            if (distance.HasValue)
             {
-                //check where on the zero plane the ray hits, to guide the character by the mouse
-                float? distance;
-                Plane p = new Plane(Vector3.Up, 0);
-                r.Intersects(ref p, out distance);
-                if (distance.HasValue)
-                {
-                    mouseHoveredLocation = r.Position + r.Direction * distance.Value;
-                }
+                mouseHoveredLocation = r.Position + r.Direction * distance.Value;
             }
-            
-            //if the left mouse button was either just clicked or not pressed down at all
-            if (curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released)
+
+
+            //if the left mouse button was either just clicked or not pressed down at all, or if any other ability input was just clicked
+            if (newTarget)
             {
                 //check if ray hits GameEntity if not holding down mouse button
                 List<RayCastResult> results = new List<RayCastResult>();
@@ -327,6 +351,7 @@ namespace KazgarsRevenge
                             UpdateRotation(dir);
                             millisMelleCounter = 0;
                             mouseHoveredLocation = physicalData.Position;
+                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                     case PrimaryAttack.Ranged:
@@ -338,6 +363,7 @@ namespace KazgarsRevenge
                             millisShotAniCounter = 0;
                             millisShotArrowAttachCounter = 0;
                             mouseHoveredLocation = physicalData.Position;
+                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                     case PrimaryAttack.Magic:
@@ -349,17 +375,30 @@ namespace KazgarsRevenge
                             millisShotAniCounter = 0;
                             millisShotArrowAttachCounter = 0;
                             mouseHoveredLocation = physicalData.Position;
+                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                 }
             }
-            if (curMouse.RightButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift))
+           /* if (curMouse.RightButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift))
             {
                 PlayAnimation("k_flip");
                 attState = AttackState.InitialSwing;
                 UpdateRotation(dir);
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
+                groundTargetLocation = physicalData.Position;
+                targettedPhysicalData = null;
+            }*/
+
+            if (curKeys.IsKeyDown(Keys.D1))
+            {
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(dir);
+                millisMelleCounter = 0;
+                mouseHoveredLocation = physicalData.Position;
+                groundTargetLocation = physicalData.Position;
                 targettedPhysicalData = null;
             }
         }
@@ -387,7 +426,7 @@ namespace KazgarsRevenge
                     PlayAnimation("k_run");
                 }
             }
-            else if ((physicalData.Position - mouseHoveredLocation).Length() <= stopRadius || millisRunningCounter >= millisRunTime)
+            else if ((physicalData.Position - groundTargetLocation).Length() <= stopRadius || millisRunningCounter >= millisRunTime)
             {
                 //stop if within stopRadius of targetted ground location
                 ChangeVelocity(new Vector3(0, physicalData.LinearVelocity.Y, 0));

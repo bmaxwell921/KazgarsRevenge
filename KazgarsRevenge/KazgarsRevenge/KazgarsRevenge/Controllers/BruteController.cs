@@ -9,7 +9,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class BruteController : Component
+    class BruteController : AIController
     {
         GameEntity entity;
         HealthData health;
@@ -23,6 +23,11 @@ namespace KazgarsRevenge
             this.physicalData = physicalData;
             this.animations = bruteAnimations;
             PlayAnimation("pig_idle");
+        }
+
+        public override void PlayHit()
+        {
+            PlayAnimation("pig_hit");
         }
 
         public void PlayAnimation(string animationName)

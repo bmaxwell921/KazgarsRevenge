@@ -13,15 +13,18 @@ namespace KazgarsRevenge
     class HealthHandlerComponent : Component
     {
         HealthData health;
-        public HealthHandlerComponent(MainGame game, HealthData health)
+        GameEntity entity;
+        public HealthHandlerComponent(MainGame game, HealthData health, GameEntity entity)
             : base(game)
         {
+            this.entity = entity;
             this.health = health;
         }
 
         public void Damage(int d)
         {
             health.Damage(d);
+            entity.Hit();
         }
 
         public void Damage(NegativeEffect n, int d)

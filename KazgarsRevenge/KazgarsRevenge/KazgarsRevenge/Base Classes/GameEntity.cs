@@ -34,6 +34,16 @@ namespace KazgarsRevenge
             }
         }
 
+        public void Hit()
+        {
+            Component possAI;
+            if (components.TryGetValue(typeof(AIController), out possAI))
+            {
+                (possAI as AIController).PlayHit();
+            }
+            
+        }
+
         public void Kill()
         {
             foreach (KeyValuePair<Type, Component> pair in components)

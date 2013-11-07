@@ -53,7 +53,7 @@ namespace KazgarsRevenge
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, playerPhysicalData);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, playerPhysicalData, playerModel, playerAnimations, new Vector3(10f), Vector3.Down * 18, attachables);
-            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, playerHealth);
+            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, playerHealth, player);
             PlayerController playerController = new PlayerController(mainGame, player, playerPhysicalData, playerAnimations, attachables);
 
             //adding the controllers to their respective managers 

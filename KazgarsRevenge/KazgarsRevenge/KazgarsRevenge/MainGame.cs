@@ -23,8 +23,7 @@ namespace KazgarsRevenge
     {
         Playing,
         Paused,
-        Loading,
-        LoadingFinished,
+        StartMenu,
     }
     /// <summary>
     /// This is the main type for your game
@@ -62,7 +61,7 @@ namespace KazgarsRevenge
         public RenderTarget2D RenderTarget { get { return renderTarget; } }
 
         float screenScale = 1;
-        GameState gameState = GameState.LoadingFinished;
+        GameState gameState = GameState.StartMenu;
         Random rand;
 
 
@@ -238,10 +237,7 @@ namespace KazgarsRevenge
 
             switch (gameState)
             {
-                case GameState.Loading:
-
-                    break;
-                case GameState.LoadingFinished:
+                case GameState.StartMenu:
                     if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     {
                         gameState = GameState.Playing;
@@ -252,9 +248,6 @@ namespace KazgarsRevenge
 
                     break;
                 case GameState.Playing:
-
-
-
                     base.Update(gameTime);
                     break;
             }
@@ -341,12 +334,7 @@ namespace KazgarsRevenge
                     spriteBatch.Draw(texCursor, rectMouse, Color.White);
                     spriteBatch.End();
                     break;
-                case GameState.Loading:
-                    spriteBatch.Begin();
-                    spriteBatch.DrawString(normalFont, "Loading", vecLoadingText, Color.Yellow);
-                    spriteBatch.End();
-                    break;
-                case GameState.LoadingFinished:
+                case GameState.StartMenu:
                     spriteBatch.Begin();
                     spriteBatch.DrawString(normalFont, "Press Space To Start", vecLoadingText, Color.Yellow);
                     spriteBatch.End();
