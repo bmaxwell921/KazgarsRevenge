@@ -201,7 +201,10 @@ namespace KazgarsRevenge
                 {
                     move = new Vector3(targettedPhysicalData.Position.X - physicalData.Position.X, 0, targettedPhysicalData.Position.Z - physicalData.Position.Z);
                 }
-                move.Normalize();
+                if (move != Vector3.Zero)
+                {
+                    move.Normalize();
+                }
 
                 if (curMouse.LeftButton == ButtonState.Pressed && mouseHoveredHealth != null && mouseHoveredHealth.Dead)
                 {
@@ -211,10 +214,10 @@ namespace KazgarsRevenge
                 if (attState == AttackState.None)
                 {
                     CheckAbilities(move);
-                }            
-                
+                }
+
                 //targets ground location to start running to if holding mouse button
-                if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released && attState == AttackState.None)
+                if (curMouse.LeftButton == ButtonState.Pressed && attState == AttackState.None)
                 {
                     groundTargetLocation = mouseHoveredLocation;
                     if (prevMouse.LeftButton == ButtonState.Released && targettedPhysicalData == null)
@@ -226,7 +229,10 @@ namespace KazgarsRevenge
                 if (targettedPhysicalData == null)
                 {
                     groundMove = new Vector3(groundTargetLocation.X - physicalData.Position.X, 0, groundTargetLocation.Z - physicalData.Position.Z);
-                    groundMove.Normalize();
+                    if (groundMove != Vector3.Zero)
+                    {
+                        groundMove.Normalize();
+                    }
                 }
 
                 if (attState == AttackState.None)

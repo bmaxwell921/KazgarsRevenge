@@ -29,6 +29,9 @@ namespace SkinnedModelLib
         TimeSpan currentTimeValue;
         int currentKeyframe;
 
+        AnimationClip secondClipValue = null;
+        TimeSpan secondTimeValue;
+        int secondKeyframe;
 
         // Current animation transform matrices.
         Matrix[] boneTransforms;
@@ -62,15 +65,23 @@ namespace SkinnedModelLib
         /// <summary>
         /// Starts decoding the specified animation clip.
         /// </summary>
-        public void StartClip(AnimationClip clip)
+        public void StartClip(AnimationClip clip)//, bool preserveCurrentAni)
         {
             if (clip == null)
                 throw new ArgumentNullException("clip");
 
-            currentClipValue = clip;
-            currentTimeValue = TimeSpan.Zero;
-            currentKeyframe = 0;
-
+            if (preserveCurrentAni)
+            {
+                secondClipValue = clip;
+                secondTimeValue = TimeSpan.Zero;
+                secondKeyframe = 0;
+            }
+            else
+            {
+                currentClipValue = clip;
+                currentTimeValue = TimeSpan.Zero;
+                currentKeyframe = 0;
+            }
             // Initialize bone transforms to the bind pose.
             skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
         }

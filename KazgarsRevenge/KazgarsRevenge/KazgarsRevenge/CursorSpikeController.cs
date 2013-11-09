@@ -16,7 +16,7 @@ namespace KazgarsRevenge
             : base(game)
         {
             this.entity = entity;
-            animations.StartClip(animations.skinningDataValue.AnimationClips["spikes"]);
+            animations.StartClip(animations.skinningDataValue.AnimationClips["Default Take"]);
         }
 
         public override void Update(GameTime gameTime)

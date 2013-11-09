@@ -2315,7 +2315,7 @@ Connections:  {
 ;----------------------------------------------------
 
 Takes:  {
-	Current: "Default Take"
+	Current: "spikes"
 	Take: "Default Take" {
 		FileName: "Default_Take.tak"
 		LocalTime: 0,46186158000
