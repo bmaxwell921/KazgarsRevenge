@@ -124,7 +124,7 @@ namespace KazgarsRevenge
         public void PlayAnimation(string animationName)
         {
             AnimationClip clip =  animations.skinningDataValue.AnimationClips[animationName];
-            animations.StartClip(clip);
+            animations.StartClip(clip, false);
             if (animationName == "k_idle1")
             {
                 millisAniDuration = rand.Next(2000, 4000);

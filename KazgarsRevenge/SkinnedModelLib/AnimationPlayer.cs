@@ -29,6 +29,7 @@ namespace SkinnedModelLib
         TimeSpan currentTimeValue;
         int currentKeyframe;
 
+        bool mixing = false;
         AnimationClip secondClipValue = null;
         TimeSpan secondTimeValue;
         int secondKeyframe;
@@ -61,27 +62,32 @@ namespace SkinnedModelLib
             skinTransforms = new Matrix[skinningData.BindPose.Count];
         }
 
+        public void StopSecond()
+        {
+            mixing = false;
+        }
 
         /// <summary>
         /// Starts decoding the specified animation clip.
         /// </summary>
-        public void StartClip(AnimationClip clip)//, bool preserveCurrentAni)
+        public void StartClip(AnimationClip clip, bool preserveCurrentAni)
         {
             if (clip == null)
                 throw new ArgumentNullException("clip");
 
-            /*if (preserveCurrentAni)
+            if (preserveCurrentAni)
             {
+                //mixing = true;
                 secondClipValue = clip;
                 secondTimeValue = TimeSpan.Zero;
                 secondKeyframe = 0;
             }
             else
-            {*/
+            {
                 currentClipValue = clip;
                 currentTimeValue = TimeSpan.Zero;
                 currentKeyframe = 0;
-            //}
+            }
             // Initialize bone transforms to the bind pose.
             skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
         }
@@ -98,16 +104,8 @@ namespace SkinnedModelLib
             UpdateSkinTransforms();
         }
 
-
-        /// <summary>
-        /// Helper used by the Update method to refresh the BoneTransforms data.
-        /// </summary>
-        public void UpdateBoneTransforms(TimeSpan time, bool relativeToCurrentTime)
+        private void UpdateCurrentTime(TimeSpan time, bool relativeToCurrentTime)
         {
-            if (currentClipValue == null)
-                throw new InvalidOperationException(
-                            "AnimationPlayer.Update was called before StartClip");
-
             // Update the animation position.
             if (relativeToCurrentTime)
             {
@@ -129,20 +127,83 @@ namespace SkinnedModelLib
             }
 
             currentTimeValue = time;
+        }
+
+        private void UpdateSecondTime(TimeSpan time, bool relativeToCurrentTime)
+        {
+            // Update the animation position.
+            if (relativeToCurrentTime)
+            {
+                time += secondTimeValue;
+
+                // If we reached the end, loop back to the start.
+                while (time >= secondClipValue.Duration)
+                    time -= secondClipValue.Duration;
+            }
+
+            if ((time < TimeSpan.Zero) || (time >= secondClipValue.Duration))
+                throw new ArgumentOutOfRangeException("time");
+
+            // If the position moved backwards, reset the keyframe index.
+            if (time < secondTimeValue)
+            {
+                secondKeyframe = 0;
+                skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
+            }
+
+            secondTimeValue = time;
+        }
+
+        /// <summary>
+        /// Helper used by the Update method to refresh the BoneTransforms data.
+        /// </summary>
+        public void UpdateBoneTransforms(TimeSpan time, bool relativeToCurrentTime)
+        {
+            if (currentClipValue == null)
+            {
+                throw new InvalidOperationException("AnimationPlayer.Update was called before StartClip");
+            }
+
+            if (mixing && secondClipValue == null)
+            {
+                throw new InvalidOperationException("AnimationPlayer.Update was supposed to mix two animations, but secondClipValue is null");
+            }
+
+            TimeSpan secondTime = time;
+
+            UpdateCurrentTime(time, relativeToCurrentTime);
+
+            if (mixing)
+            {
+                UpdateSecondTime(secondTime, relativeToCurrentTime);
+            }
 
             // Read keyframe matrices.
             IList<Keyframe> keyframes = currentClipValue.Keyframes;
 
+            IList<Keyframe> secondKeyframes = keyframes;
+            if (mixing)
+            {
+                secondKeyframes = secondClipValue.Keyframes;
+            }
+
             while (currentKeyframe < keyframes.Count)
             {
                 Keyframe keyframe = keyframes[currentKeyframe];
+                Keyframe keyframe2 =secondKeyframes[secondKeyframe];
 
                 // Stop when we've read up to the current time position.
                 if (keyframe.Time > currentTimeValue)
                     break;
 
                 // Use this keyframe.
-                boneTransforms[keyframe.Bone] = keyframe.Transform;
+                Matrix transform = keyframe.Transform;
+                if (mixing)
+                {
+                    transform = Matrix.Lerp(transform, keyframe2.Transform, .25f);
+                }
+
+                boneTransforms[keyframe.Bone] = transform;
 
                 currentKeyframe++;
             }

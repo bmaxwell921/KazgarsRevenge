@@ -22,18 +22,18 @@ namespace KazgarsRevenge
             this.health = bruteHealth;
             this.physicalData = physicalData;
             this.animations = bruteAnimations;
-            PlayAnimation("pig_idle");
+            PlayAnimation("pig_idle", false);
         }
 
         public override void PlayHit()
         {
-            PlayAnimation("pig_hit");
+            PlayAnimation("pig_hit", true);
         }
 
-        public void PlayAnimation(string animationName)
+        public void PlayAnimation(string animationName, bool mix)
         {
             AnimationClip clip = animations.skinningDataValue.AnimationClips[animationName];
-            animations.StartClip(clip);
+            animations.StartClip(clip, mix);
         }
         public override void Update(GameTime gameTime)
         {
