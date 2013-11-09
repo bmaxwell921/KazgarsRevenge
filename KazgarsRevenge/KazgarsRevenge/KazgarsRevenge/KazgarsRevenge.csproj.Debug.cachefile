@@ -4,8 +4,11 @@ Content\Textures\whiteCursor.xnb
 Content\Models\Levels\3DGreyPebbleFloor.xnb
 Content\Models\Levels\seemless dungeon wall texture.xnb
 Content\Models\Player\k_idle1.xnb
+Content\Models\Enemies\Pigman\pig_idle.xnb
 Content\Models\Attachables\arrow.xnb
 Content\Models\Attachables\bow01.xnb
+Content\Models\Attachables\sword01.xnb
+Content\Models\spikes.xnb
 Content\Models\Levels\4x4Final.xnb
 Content\Models\Levels\4x4FinalCo.xnb
 Content\Shaders\CellShader.xnb
@@ -15,9 +18,6 @@ Content\Georgia.xnb
 Content\Models\Player\skin_0.xnb
 Content\Models\Enemies\Pigman\pigman_skin_0.xnb
 Content\Models\Attachables\sword_0.xnb
+Content\Models\spike_0.xnb
 Content\FBX\91EB29E1\4x4Final.fbm\seemless dungeon wall texture_0.xnb
 Content\FBX\91EB29E1\4x4Final.fbm\3DGreyPebbleFloor_0.xnb
-Content\Models\Attachables\sword01.xnb
-Content\Models\Enemies\Pigman\pig_idle.xnb
-Content\Models\spikes.xnb
-Content\Models\spike_0.xnb

@@ -70,18 +70,18 @@ namespace SkinnedModelLib
             if (clip == null)
                 throw new ArgumentNullException("clip");
 
-            if (preserveCurrentAni)
+            /*if (preserveCurrentAni)
             {
                 secondClipValue = clip;
                 secondTimeValue = TimeSpan.Zero;
                 secondKeyframe = 0;
             }
             else
-            {
+            {*/
                 currentClipValue = clip;
                 currentTimeValue = TimeSpan.Zero;
                 currentKeyframe = 0;
-            }
+            //}
             // Initialize bone transforms to the bind pose.
             skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
         }
