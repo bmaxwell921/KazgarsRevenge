@@ -78,11 +78,11 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AIController.cs" />
+    <Compile Include="Controllers\AIController.cs" />
     <Compile Include="Controllers\BruteController.cs" />
     <Compile Include="CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
-    <Compile Include="Drawing\AnimatedComponent.cs" />
+    <Compile Include="Drawing\AnimatedModelComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
     <Compile Include="Base Classes\Component.cs" />
     <Compile Include="Drawing\CustomSkinnedEffect.cs" />
@@ -111,6 +111,7 @@
     <Compile Include="Managers\Components\SpriteManager.cs" />
     <Compile Include="Drawing\UnanimatedModelComponent.cs" />
     <Compile Include="Misc Components\StaticMeshComponent.cs" />
+    <Compile Include="SkinnedModelComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

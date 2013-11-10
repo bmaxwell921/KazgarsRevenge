@@ -37,7 +37,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrowData);
             UnanimatedModelComponent arrowGraphics =
-                new UnanimatedModelComponent(mainGame, GetUnanimatedModel("Models\\Attachables\\arrow", "Models\\Attachables\\sword"),
+                new UnanimatedModelComponent(mainGame, GetUnanimatedModel("Models\\Attachables\\arrow"),//, "Models\\Attachables\\sword"),
                     arrowData, new Vector3(10), Vector3.Zero, arrowGraphicRot);
 
             AttackController arrowAI = new AttackController(mainGame, newArrow, arrowData, damage, 3000, factionToHit);

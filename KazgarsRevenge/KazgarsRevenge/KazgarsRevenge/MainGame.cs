@@ -46,7 +46,6 @@ namespace KazgarsRevenge
         NetworkMessageManager networkMessages;
         #endregion
 
-
         #region Content
         SpriteFont normalFont;
         BasicEffect effectModelDrawer;
@@ -110,11 +109,13 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
-
+            //fullscreen
             /*graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.IsFullScreen = true;
             graphics.ApplyChanges();*/
+
+            //windowed
             graphics.PreferredBackBufferWidth = 1000;
             graphics.PreferredBackBufferHeight = 800;
             graphics.ApplyChanges();
@@ -297,12 +298,12 @@ namespace KazgarsRevenge
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                     GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-                    renderManager.Draw(gameTime, "NormalDepth");
+                    renderManager.Draw(gameTime, true);
 
                     //draw scene render target
                     GraphicsDevice.SetRenderTarget(renderTarget);
                     GraphicsDevice.Clear(Color.Black);
-                    renderManager.Draw(gameTime, "Toon");
+                    renderManager.Draw(gameTime, false);
                     GraphicsDevice.SetRenderTarget(null);
 
                     

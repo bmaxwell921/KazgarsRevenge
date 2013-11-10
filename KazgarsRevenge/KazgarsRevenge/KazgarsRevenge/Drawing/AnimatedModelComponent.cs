@@ -17,7 +17,6 @@ namespace KazgarsRevenge
         //components
         protected Entity physicalData;
         protected AnimationPlayer animationPlayer;
-        protected CameraComponent camera;
 
         //fields
         protected Model model;
@@ -31,7 +30,6 @@ namespace KazgarsRevenge
         {
             this.physicalData = physicalData;
             this.model = model;
-            this.camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             this.drawScale = drawScale;
             this.localOffset = drawOffset;
             this.attachedModels = attachedModels;
@@ -58,7 +56,7 @@ namespace KazgarsRevenge
             animationPlayer.Update(gameTime.ElapsedGameTime, true,
                 rot * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
         }
-        public override void Draw(GameTime gameTime, Matrix view, Matrix projection, string technique)
+        public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
@@ -72,7 +70,7 @@ namespace KazgarsRevenge
             {
                 foreach (CustomSkinnedEffect effect in mesh.Effects)
                 {
-                    effect.CurrentTechnique = effect.Techniques[technique];
+                    effect.CurrentTechnique = effect.Techniques[edgeDetection? "NormalDepth" : "Toon"];
                     effect.SetBoneTransforms(bones);
 
                     effect.View = view;
@@ -93,7 +91,7 @@ namespace KazgarsRevenge
                 {
                     foreach (Effect effect in mesh.Effects)
                     {
-                        effect.CurrentTechnique = effect.Techniques[technique];
+                        effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                         Matrix world = transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
                         effect.Parameters["World"].SetValue(world);
                         effect.Parameters["ViewProj"].SetValue(view * projection);

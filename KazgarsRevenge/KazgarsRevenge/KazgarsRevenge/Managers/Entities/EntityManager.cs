@@ -33,6 +33,7 @@ namespace KazgarsRevenge
         protected Effect effectCellShading;
         protected Dictionary<string, Model> animatedModels = new Dictionary<string, Model>();
         protected Dictionary<string, Model> unanimatedModels = new Dictionary<string, Model>();
+        protected Dictionary<string, Model> skinnedModels = new Dictionary<string, Model>();
 
         public Model GetAnimatedModel(string filePath)
         {
@@ -49,7 +50,7 @@ namespace KazgarsRevenge
             }
         }
 
-        public Model GetUnanimatedModel(string modelPath, string texturePath)
+        public Model GetUnanimatedModel(string modelPath)
         {
             Model m;
             if (unanimatedModels.TryGetValue(modelPath, out m))
@@ -58,7 +59,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                LoadUnanimatedModel(out m, modelPath, texturePath);
+                LoadUnanimatedModel(out m, modelPath);
                 unanimatedModels.Add(modelPath, m);
                 return m;
             }
@@ -83,15 +84,29 @@ namespace KazgarsRevenge
             }
         }
 
-        public void LoadUnanimatedModel(out Model model, string modelPath, string texturePath)
+        public void LoadUnanimatedModel(out Model model, string modelPath)
         {
             model = Game.Content.Load<Model>(modelPath);
+            List<Texture2D> modelTextures = new List<Texture2D>();
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (BasicEffect eff in mesh.Effects)
+                {
+                    modelTextures.Add(eff.Texture);
+                }
+            }
+
+            int i = 0;
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (ModelMeshPart part in mesh.MeshParts)
                 {
                     part.Effect = effectCellShading.Clone();
-                    part.Effect.Parameters["ColorMap"].SetValue(Game.Content.Load<Texture2D>(texturePath));
+                    part.Effect.Parameters["ColorMap"].SetValue(modelTextures[i++]);
+                    if (i >= modelTextures.Count)
+                    {
+                        i = modelTextures.Count - 1;
+                    }
                 }
             }
         }

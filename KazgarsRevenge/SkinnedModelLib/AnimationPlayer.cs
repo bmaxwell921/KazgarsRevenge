@@ -77,7 +77,7 @@ namespace SkinnedModelLib
 
             if (preserveCurrentAni)
             {
-                //mixing = true;
+                mixing = true;
                 secondClipValue = clip;
                 secondTimeValue = TimeSpan.Zero;
                 secondKeyframe = 0;
@@ -181,16 +181,10 @@ namespace SkinnedModelLib
             // Read keyframe matrices.
             IList<Keyframe> keyframes = currentClipValue.Keyframes;
 
-            IList<Keyframe> secondKeyframes = keyframes;
-            if (mixing)
-            {
-                secondKeyframes = secondClipValue.Keyframes;
-            }
 
             while (currentKeyframe < keyframes.Count)
             {
                 Keyframe keyframe = keyframes[currentKeyframe];
-                Keyframe keyframe2 =secondKeyframes[secondKeyframe];
 
                 // Stop when we've read up to the current time position.
                 if (keyframe.Time > currentTimeValue)
@@ -198,14 +192,26 @@ namespace SkinnedModelLib
 
                 // Use this keyframe.
                 Matrix transform = keyframe.Transform;
-                if (mixing)
-                {
-                    transform = Matrix.Lerp(transform, keyframe2.Transform, .25f);
-                }
-
                 boneTransforms[keyframe.Bone] = transform;
-
                 currentKeyframe++;
+            }
+
+            if (mixing)
+            {
+                IList<Keyframe> secondKeyframes = secondClipValue.Keyframes;
+                while (secondKeyframe < secondKeyframes.Count)
+                {
+                    Keyframe keyframe = keyframes[secondKeyframe];
+
+                    // Stop when we've read up to the current time position.
+                    if (keyframe.Time > secondTimeValue)
+                        break;
+
+                    // Use this keyframe.
+                    Matrix transform = keyframe.Transform;
+                    boneTransforms[keyframe.Bone] = Matrix.Lerp(boneTransforms[keyframe.Bone], transform, .5f);
+                    secondKeyframe++;
+                }
             }
         }
 

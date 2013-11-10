@@ -15,8 +15,8 @@ sampler ColorMapSampler = sampler_state
    MinFilter = Linear;
    MagFilter = Linear;
    MipFilter = Linear;
-   AddressU  = Clamp;
-   AddressV  = Clamp;
+   AddressU  = Wrap;
+   AddressV  = Wrap;
 };
 
 struct ToonVSOut

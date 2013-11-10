@@ -16,8 +16,6 @@ namespace KazgarsRevenge
 {
     class LevelManager : EntityManager
     {
-        EntityManager entityManager;
-
         List<GameEntity> rooms = new List<GameEntity>();
         public LevelManager(MainGame game)
             : base(game)
@@ -27,7 +25,7 @@ namespace KazgarsRevenge
 
         public void DemoLevel()
         {
-            CreateLevel("Models\\Levels\\4x4Final", new Vector3(200, -20, -200), 0);
+            CreateLevel("Models\\Levels\\4x4Final02", new Vector3(200, -20, -200), 0);
         }
 
         #region Level Creation
@@ -38,7 +36,7 @@ namespace KazgarsRevenge
             GameEntity room = new GameEntity("room", "neutral");
 
 
-            Model roomModel = GetUnanimatedModel(modelPath, "Models\\Levels\\3DGreyPebbleFloor");
+            Model roomModel = GetUnanimatedModel(modelPath);
 
             Model roomCollisionModel = Game.Content.Load<Model>(modelPath + "Co");
             Vector3[] verts;
@@ -51,7 +49,7 @@ namespace KazgarsRevenge
             //holds the position so the model is drawn correctly
             Entity roomLocation = new Box(position, 1, 1, 1);
 
-            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, roomModel, roomLocation, new Vector3(roomScale), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
+            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, roomModel, roomLocation, new Vector3(10), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
 
             room.AddComponent(typeof(StaticMeshComponent), roomPhysics);
             genComponentManager.AddComponent(roomPhysics);

@@ -27,7 +27,7 @@ namespace KazgarsRevenge
             this.rotOffset = rotOffset;
         }
 
-        public override void Draw(GameTime gameTime, Matrix view, Matrix projection, string technique)
+        public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
         {
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
             Matrix rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
@@ -38,7 +38,7 @@ namespace KazgarsRevenge
             {
                 foreach (Effect effect in mesh.Effects)
                 {
-                    effect.CurrentTechnique = effect.Techniques[technique];
+                    effect.CurrentTechnique = effect.Techniques[edgeDetection? "NormalDepth" : "Toon"];
                     Matrix world = transforms[mesh.ParentBone.Index]
                         * rotOffset
                         * rot

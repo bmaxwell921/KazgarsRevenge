@@ -165,20 +165,29 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Models\Levels\seemless dungeon wall texture.jpg">
-      <Name>seemless dungeon wall texture</Name>
+    <Compile Include="Models\Levels\seamless dungeon wall texture.jpg">
+      <Name>seamless dungeon wall texture</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Levels\4x4Final.fbx">
-      <Name>4x4Final</Name>
+    <Compile Include="Models\Levels\4x4Final02Co.fbx">
+      <Name>4x4Final02Co</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <Compile Include="Models\Levels\4x4FinalCo.fbx">
-      <Name>4x4FinalCo</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\4x4Final02.fbx">
+      <Name>4x4Final02</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\4x4Final.fbx">
+      <Name>4x4Final</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>

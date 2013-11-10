@@ -37,11 +37,11 @@ namespace KazgarsRevenge
             components.Add(toAdd);
         }
 
-        public void Draw(GameTime gameTime, string technique)
+        public void Draw(GameTime gameTime, bool edgeDetection)
         {
             foreach (DrawableComponent3D d in components)
             {
-                d.Draw(gameTime, camera.View, camera.Projection, technique);
+                d.Draw(gameTime, camera.View, camera.Projection, edgeDetection);
             }
         }
     }
