@@ -13,6 +13,7 @@ using BEPUphysics.CollisionRuleManagement;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.Collidables;
 using SkinnedModelLib;
+using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
@@ -368,6 +369,8 @@ namespace KazgarsRevenge
             //primary attack (autos)
             if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targettedPhysicalData != null)
             {
+                SoundEffectLibrary soundEffects = (SoundEffectLibrary) Game.Services.GetService(typeof(SoundEffectLibrary));
+
                 //attack if in range
                 switch (selectedPrimary)
                 {
@@ -375,6 +378,7 @@ namespace KazgarsRevenge
                         if (distance < melleRange)
                         {
                             PlayAnimation("k_onehanded_swing");
+                            soundEffects.playMeleeSound();
                             attState = AttackState.InitialSwing;
                             UpdateRotation(dir);
                             millisMelleCounter = 0;
@@ -386,6 +390,7 @@ namespace KazgarsRevenge
                         if (distance < bowRange)
                         {
                             PlayAnimation("k_fire_arrow");
+                            soundEffects.playRangedSound();
                             attState = AttackState.GrabbingArrow;
                             UpdateRotation(dir);
                             millisShotAniCounter = 0;
@@ -398,6 +403,7 @@ namespace KazgarsRevenge
                         if (distance < bowRange)
                         {
                             PlayAnimation("k_fire_arrow");
+                            soundEffects.playMagicSound();
                             attState = AttackState.GrabbingArrow;
                             UpdateRotation(dir);
                             millisShotAniCounter = 0;

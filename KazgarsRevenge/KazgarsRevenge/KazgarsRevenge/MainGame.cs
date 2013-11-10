@@ -16,6 +16,7 @@ using BEPUphysics.CollisionRuleManagement;
 
 using BEPUphysicsDrawer;
 using BEPUphysicsDrawer.Lines;
+using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
@@ -44,6 +45,7 @@ namespace KazgarsRevenge
         EnemyManager enemies;
         AttackManager attacks;
         NetworkMessageManager networkMessages;
+        SoundEffectLibrary soundEffectLibrary;
         #endregion
 
 
@@ -63,6 +65,7 @@ namespace KazgarsRevenge
         float screenScale = 1;
         GameState gameState = GameState.StartMenu;
         Random rand;
+        
 
 
         public MainGame()
@@ -164,6 +167,9 @@ namespace KazgarsRevenge
             networkMessages = new NetworkMessageManager(this);
             Components.Add(networkMessages);
             Services.AddService(typeof(NetworkMessageManager), networkMessages);
+
+            soundEffectLibrary = new SoundEffectLibrary(this);
+            Services.AddService(typeof(SoundEffectLibrary), soundEffectLibrary);
 
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
