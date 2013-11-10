@@ -112,19 +112,16 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
-            //windowed
-
-
-            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            /*graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.IsFullScreen = true;
-            graphics.ApplyChanges();
+            graphics.ApplyChanges();*/
 
-            /*
+            
             graphics.PreferredBackBufferWidth = 1000;
             graphics.PreferredBackBufferHeight = 800;
             graphics.ApplyChanges();
-            */
+            
             
             screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
 
