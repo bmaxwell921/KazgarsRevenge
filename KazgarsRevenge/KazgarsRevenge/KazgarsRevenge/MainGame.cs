@@ -16,6 +16,7 @@ using BEPUphysics.CollisionRuleManagement;
 
 using BEPUphysicsDrawer;
 using BEPUphysicsDrawer.Lines;
+using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
@@ -44,6 +45,7 @@ namespace KazgarsRevenge
         EnemyManager enemies;
         AttackManager attacks;
         NetworkMessageManager networkMessages;
+        SoundEffectLibrary soundEffectLibrary;
         #endregion
 
         #region Content
@@ -62,6 +64,7 @@ namespace KazgarsRevenge
         float screenScale = 1;
         GameState gameState = GameState.StartMenu;
         Random rand;
+        
 
 
         public MainGame()
@@ -109,17 +112,20 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
-            //fullscreen
-            /*graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            //windowed
+
+
+            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.IsFullScreen = true;
-            graphics.ApplyChanges();*/
+            graphics.ApplyChanges();
 
-            //windowed
+            /*
             graphics.PreferredBackBufferWidth = 1000;
             graphics.PreferredBackBufferHeight = 800;
             graphics.ApplyChanges();
-
+            */
+            
             screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
 
             rand = new Random();
@@ -162,6 +168,9 @@ namespace KazgarsRevenge
             networkMessages = new NetworkMessageManager(this);
             Components.Add(networkMessages);
             Services.AddService(typeof(NetworkMessageManager), networkMessages);
+
+            soundEffectLibrary = new SoundEffectLibrary(this);
+            Services.AddService(typeof(SoundEffectLibrary), soundEffectLibrary);
 
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);

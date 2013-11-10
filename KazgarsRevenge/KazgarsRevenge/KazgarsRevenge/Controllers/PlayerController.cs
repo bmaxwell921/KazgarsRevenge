@@ -13,6 +13,7 @@ using BEPUphysics.CollisionRuleManagement;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.Collidables;
 using SkinnedModelLib;
+using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
@@ -39,6 +40,17 @@ namespace KazgarsRevenge
         //dont want kazgar to run until first click
         double millisRunningCounter = 2000;
         double millisRunTime = 2000;
+
+        #region Ability Icons
+        Texture2D melee;
+        Texture2D range;
+        Texture2D magic;
+        Texture2D placeHolder;
+        #endregion
+
+        #region Item Icons
+        Texture2D healthPot;
+        #endregion
 
         enum PrimaryAttack
         {
@@ -71,6 +83,17 @@ namespace KazgarsRevenge
             PlayAnimation("k_idle1");
             attached.Add("sword", Game.GetAttachable("sword01", "sword", "Bone_001_R_004"));
             attached.Add("bow", Game.GetAttachable("bow01", "sword", "Bone_001_L_004"));
+
+            #region Ability Image Load
+            melee = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\DB");
+            range = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW");
+            magic = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR");
+            placeHolder = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BN");
+            #endregion
+
+            #region Item Image Load
+            healthPot = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\HP");
+            #endregion
 
             millisShotRelease = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
             millisMelleDamage = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
@@ -346,6 +369,8 @@ namespace KazgarsRevenge
             //primary attack (autos)
             if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targettedPhysicalData != null)
             {
+                SoundEffectLibrary soundEffects = (SoundEffectLibrary) Game.Services.GetService(typeof(SoundEffectLibrary));
+
                 //attack if in range
                 switch (selectedPrimary)
                 {
@@ -353,6 +378,7 @@ namespace KazgarsRevenge
                         if (distance < melleRange)
                         {
                             PlayAnimation("k_onehanded_swing");
+                            soundEffects.playMeleeSound();
                             attState = AttackState.InitialSwing;
                             UpdateRotation(dir);
                             millisMelleCounter = 0;
@@ -364,6 +390,7 @@ namespace KazgarsRevenge
                         if (distance < bowRange)
                         {
                             PlayAnimation("k_fire_arrow");
+                            soundEffects.playRangedSound();
                             attState = AttackState.GrabbingArrow;
                             UpdateRotation(dir);
                             millisShotAniCounter = 0;
@@ -376,6 +403,7 @@ namespace KazgarsRevenge
                         if (distance < bowRange)
                         {
                             PlayAnimation("k_fire_arrow");
+                            soundEffects.playMagicSound();
                             attState = AttackState.GrabbingArrow;
                             UpdateRotation(dir);
                             millisShotAniCounter = 0;
@@ -595,11 +623,23 @@ namespace KazgarsRevenge
         Rectangle RectEnemyHealthBar;
         Vector2 vecName;
         Vector2 mid;
+        float xRatio;
+        float yRatio;
+        Vector2 screenRatio;
+        int maxX;
+        int maxY;
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
+            maxX = Game.GraphicsDevice.Viewport.Width;
+            maxY = Game.GraphicsDevice.Viewport.Height;
+            xRatio = maxX/1920f;
+            yRatio = maxY/1080f;
+            screenRatio = new Vector2(xRatio, yRatio);
             RectEnemyHealthBar = new Rectangle((int)mid.X - 75, 40, 150, 20);
             vecName = new Vector2((int)mid.X - 75, 10);
+
+
         }
         public override void Draw(SpriteBatch s)
         {
@@ -612,6 +652,88 @@ namespace KazgarsRevenge
                 s.Draw(texWhitePixel, RectEnemyHealthBar, Color.Red);
                 s.Draw(texWhitePixel, new Rectangle(RectEnemyHealthBar.X, RectEnemyHealthBar.Y, (int)(RectEnemyHealthBar.Width * mouseHoveredHealth.HealthPercent), RectEnemyHealthBar.Height), Color.Green);
             }
+
+            #region UIBase
+            //Chat Pane
+            s.Draw(texWhitePixel, new Rectangle(0, (int) ((maxY-444*yRatio)), (int) (362*xRatio), (int)(444*yRatio)) , Color.Black*0.5f);
+
+            #region Ability Bar
+            //Ability Bar
+            s.Draw(texWhitePixel, new Rectangle((int)((maxX/2 -311 * xRatio)), (int)((maxY - 158 * yRatio)), (int)(622 * xRatio), (int)(158 * yRatio)), Color.Red * 0.5f);
+            //Q
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 301 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //W
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 227 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //E
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 153 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //R
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 79 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //A
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 301 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //S
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 227 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //D
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 153 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //F
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 79 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+
+            //LM
+            //TODO Change when we change attState based on hands?
+            switch (selectedPrimary)
+            {
+                case PrimaryAttack.Melle:
+                    s.Draw(melee, new Rectangle((int)((maxX / 2 + 5 * xRatio)), (int)((maxY - 111 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+                    break;
+                case PrimaryAttack.Magic:
+                    s.Draw(magic, new Rectangle((int)((maxX / 2 + 5 * xRatio)), (int)((maxY - 111 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+                    break;
+                case PrimaryAttack.Ranged:
+                    s.Draw(range, new Rectangle((int)((maxX / 2 + 5 * xRatio)), (int)((maxY - 111 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+                    break;
+            }
+                
+            //RM
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 + 79 * xRatio)), (int)((maxY - 111 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+
+            //Item 1
+            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 163 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //Item 2
+            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 237 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //Item 3
+            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 163 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            //Item 4
+            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 237 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+
+            #endregion
+
+            //XP Area
+            s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - 311 * xRatio)), (int)((maxY - 178 * yRatio)), (int)(622 * xRatio), (int)(20 * yRatio)), Color.Brown * 0.5f);
+            //Damage Tracker
+            s.Draw(texWhitePixel, new Rectangle((int)((maxX - 300 * xRatio)), (int)((maxY - 230 * yRatio)), (int)(300 * xRatio), (int)(230 * yRatio)), Color.Green * 0.5f);
+            //Mini Map (square for now)
+            s.Draw(texWhitePixel, new Rectangle((int)((maxX - 344 * xRatio)), 0, (int)(344 * xRatio), (int)(344 * yRatio)), Color.Orange * 0.5f);
+            //Main Player Frame Pic
+            s.Draw(texWhitePixel, new Rectangle(0, 0, (int)(160 * xRatio), (int)(160 * yRatio)), Color.Blue * 0.5f);
+            //Main Player Frame Health
+            s.Draw(texWhitePixel, new Rectangle((int)(160 * xRatio), 0, (int)(310 * xRatio), (int)(52 * yRatio)), Color.Blue * 0.5f);
+            //Second Player Frame Pic
+            s.Draw(texWhitePixel, new Rectangle((int)(20 * xRatio), (int)(180 * yRatio), (int)(54 * xRatio), (int)(54 * yRatio)), Color.Blue * 0.5f);
+            //Second Player Frame Health
+            s.Draw(texWhitePixel, new Rectangle((int)(74 * xRatio), (int)(180 * yRatio), (int)(74 * xRatio), (int)(30 * yRatio)), Color.Blue * 0.5f);
+            //Third Player Frame Pic
+            s.Draw(texWhitePixel, new Rectangle((int)(20 * xRatio), (int)(254 * yRatio), (int)(54 * xRatio), (int)(54 * yRatio)), Color.Blue * 0.5f);
+            //Third Player Frame Health
+            s.Draw(texWhitePixel, new Rectangle((int)(74 * xRatio), (int)(254 * yRatio), (int)(74 * xRatio), (int)(30 * yRatio)), Color.Blue * 0.5f);
+            //Fourth Player Frame Pic
+            s.Draw(texWhitePixel, new Rectangle((int)(20 * xRatio), (int)(328 * yRatio), (int)(54 * xRatio), (int)(54 * yRatio)), Color.Blue * 0.5f);
+            //Fourth Player Frame Health
+            s.Draw(texWhitePixel, new Rectangle((int)(74 * xRatio), (int)(328 * yRatio), (int)(74 * xRatio), (int)(30 * yRatio)), Color.Blue * 0.5f);
+            //Fifth Player Frame Pic
+            s.Draw(texWhitePixel, new Rectangle((int)(20 * xRatio), (int)(402 * yRatio), (int)(54 * xRatio), (int)(54 * yRatio)), Color.Blue * 0.5f);
+            //Fifth Player Frame Health
+            s.Draw(texWhitePixel, new Rectangle((int)(74 * xRatio), (int)(402 * yRatio), (int)(74 * xRatio), (int)(30 * yRatio)), Color.Blue * 0.5f);
+
+            #endregion
         }
     }
 }

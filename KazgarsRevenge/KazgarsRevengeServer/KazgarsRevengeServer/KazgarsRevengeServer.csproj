@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{5B2A0B59-A22E-47B0-94C4-557FA7C18049}</ProjectGuid>
+    <ProjectGuid>{A85437D5-3CD3-4170-8651-DB27217B058A}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KazgarsRevenge</RootNamespace>
-    <AssemblyName>KazgarsRevenge</AssemblyName>
+    <RootNamespace>KazgarsRevengeServer</RootNamespace>
+    <AssemblyName>KazgarsRevengeServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaProfile>Reach</XnaProfile>
-    <XnaCrossPlatformGroupID>36ffac55-8a86-4aff-9add-67126d319a58</XnaCrossPlatformGroupID>
+    <XnaCrossPlatformGroupID>2e2fdb43-5c57-461c-9e00-a6b2cc997dc0</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
     <Thumbnail>GameThumbnail.png</Thumbnail>
@@ -60,11 +60,16 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BEPUphysics">
-      <HintPath>E:\C# Workspace\Demo\Demo\Demo\bin\x86\Debug\BEPUphysics.dll</HintPath>
+    <Reference Include="BEPUphysics, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31f6a8732a21de19, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\BEPUphysics.dll</HintPath>
     </Reference>
     <Reference Include="BEPUphysicsDrawer">
-      <HintPath>E:\C# Workspace\Demo\Demo\Demo\bin\x86\Debug\BEPUphysicsDrawer.dll</HintPath>
+      <HintPath>..\..\..\BEPUphysicsDrawer.dll</HintPath>
+    </Reference>
+    <Reference Include="Lidgren.Network, Version=2011.3.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -78,57 +83,16 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\AIController.cs" />
-    <Compile Include="Controllers\BruteController.cs" />
-    <Compile Include="CursorSpikeController.cs" />
-    <Compile Include="Drawing\AttachableModel.cs" />
-    <Compile Include="Drawing\AnimatedModelComponent.cs" />
-    <Compile Include="Drawing\CameraComponent.cs" />
-    <Compile Include="Base Classes\Component.cs" />
-    <Compile Include="Drawing\CustomSkinnedEffect.cs" />
-    <Compile Include="Drawing\DrawableComponent3D.cs" />
-    <Compile Include="Drawing\EffectHelpers.cs" />
-    <Compile Include="Base Classes\GameEntity.cs" />
-    <Compile Include="Libraries\SoundEffectLibrary.cs" />
-    <Compile Include="Managers\Entities\EnemyManager.cs" />
-    <Compile Include="Misc Components\HealthHandlerComponent.cs" />
-    <Compile Include="Managers\Entities\LevelManager.cs" />
-    <Compile Include="Managers\Components\GeneralComponentManager.cs" />
-    <Compile Include="Managers\NetworkMessageManager.cs" />
-    <Compile Include="Misc Components\HealthData.cs" />
-    <Compile Include="Misc Components\PhysicsComponent.cs" />
-    <Compile Include="Controllers\PlayerController.cs" />
-    <Compile Include="Controllers\PrimaryAttackController.cs" />
-    <Compile Include="Managers\Entities\PlayerManager.cs" />
-    <Compile Include="Managers\Entities\AttackManager.cs" />
+    <Compile Include="Managers\ServerMessageManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="MainGame.cs" />
-    <Compile Include="Managers\Entities\EntityManager.cs" />
-    <Compile Include="Managers\Components\ModelManager.cs" />
-    <Compile Include="Drawing\DrawableComponent2D.cs" />
-    <Compile Include="Managers\Components\SpriteManager.cs" />
-    <Compile Include="Drawing\UnanimatedModelComponent.cs" />
-    <Compile Include="Misc Components\StaticMeshComponent.cs" />
-    <Compile Include="SkinnedModelComponent.cs" />
+    <Compile Include="Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
-    <Content Include="TextFile1.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\SkinnedModelLib\SkinnedModelLib.csproj">
-      <Project>{75303409-E0B0-43B2-A1F4-F2A506CBBDDC}</Project>
-      <Name>SkinnedModelLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\KazgarsRevengeContent\KazgarsRevengeContent.contentproj">
-      <Name>KazgarsRevengeContent %28Content%29</Name>
-      <XnaReferenceType>Content</XnaReferenceType>
-      <Project>{C9C6A8BF-E80D-4E54-9A95-51E0FDDFD3DF}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -156,6 +120,12 @@
       <ProductName>Microsoft XNA Framework Redistributable 4.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\KazgarsRevenge\KazgarsRevenge\KazgarsRevenge.csproj">
+      <Project>{5B2A0B59-A22E-47B0-94C4-557FA7C18049}</Project>
+      <Name>KazgarsRevenge</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
