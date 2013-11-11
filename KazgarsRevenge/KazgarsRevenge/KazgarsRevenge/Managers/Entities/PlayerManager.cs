@@ -23,6 +23,17 @@ namespace KazgarsRevenge
 
         }
 
+        public void CreateDude()
+        {
+            GameEntity dude = new GameEntity("dude", "wtf");
+
+            Model dudeModel = GetAnimatedModel("Models\\dude");
+            AnimationPlayer dudeAnims = new AnimationPlayer(dudeModel.Tag as SkinningData);
+            AnimatedModelComponent dudeGraphics = new AnimatedModelComponent(mainGame, new Box(new Vector3(200, 0, -210), 1, 1, 1), dudeModel, dudeAnims, new Vector3(1), Vector3.Zero, new Dictionary<string, AttachableModel>());
+            modelManager.AddComponent(dudeGraphics);
+            players.Add(dude);
+        }
+
         public void CreateMainPlayer(Vector3 position)
         {
             GameEntity player = new GameEntity("localplayer", "good");
