@@ -15,7 +15,6 @@ TestResults
 
 #visual studio crap
 *.csproj.Debug.cachefile
-*.contentproj
 
 # Build results
 [Dd]ebug/

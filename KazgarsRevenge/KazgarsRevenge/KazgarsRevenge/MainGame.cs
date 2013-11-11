@@ -216,26 +216,10 @@ namespace KazgarsRevenge
             }
             else
             {
-                Model mod = Content.Load<Model>(attachDir + modelName);
-                Texture2D modTex = Content.Load<Texture2D>(attachDir + textureName);
-
-                foreach (ModelMesh mesh in mod.Meshes)
-                {
-                    foreach (ModelMeshPart part in mesh.MeshParts)
-                    {
-                        part.Effect = effectCellShading.Clone();
-                        part.Effect.Parameters["ColorMap"].SetValue(modTex);
-                    }
-                }
-                m = new AttachableModel(mod, otherAttachPoint);
+                m = new AttachableModel(attacks.GetUnanimatedModel(attachDir + modelName), otherAttachPoint);
                 attachables.Add(modelName + otherAttachPoint, m);
                 return m;
             }
-        }
-
-        protected override void UnloadContent()
-        {
-
         }
 
         protected override void Update(GameTime gameTime)
