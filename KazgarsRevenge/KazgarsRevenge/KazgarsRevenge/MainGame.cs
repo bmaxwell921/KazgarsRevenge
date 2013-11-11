@@ -250,7 +250,7 @@ namespace KazgarsRevenge
         {
             levels.DemoLevel();
             players.CreateMainPlayer(new Vector3(200, 0, -200));
-            //players.CreateDude();
+            players.CreateDude();
             for (int i = 0; i < 3; ++i)
             {
                 for (int j = 0; j < 3; ++j)
@@ -280,6 +280,7 @@ namespace KazgarsRevenge
             RasterizerState rs = new RasterizerState();
             rs.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rs;
+
             switch (gameState)
             {
                 case GameState.Playing:
@@ -297,7 +298,7 @@ namespace KazgarsRevenge
                     renderManager.Draw(gameTime, false);
                     GraphicsDevice.SetRenderTarget(null);
 
-                    
+
                     //pass in depth render target to the edge detection shader
                     Texture2D normalDepthTexture = normalDepthRenderTarget;
                     effectOutline.Parameters["ScreenResolution"].SetValue(new Vector2(renderTarget.Width, renderTarget.Height));

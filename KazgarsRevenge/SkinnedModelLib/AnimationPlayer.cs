@@ -62,36 +62,35 @@ namespace SkinnedModelLib
             skinTransforms = new Matrix[skinningData.BindPose.Count];
         }
 
-        public void StopSecond()
+        public void StopMixing()
         {
             mixing = false;
+            secondClipValue = null;
         }
 
         /// <summary>
         /// Starts decoding the specified animation clip.
         /// </summary>
-        public void StartClip(AnimationClip clip, bool preserveCurrentAni)
+        public void StartClip(AnimationClip clip)
         {
             if (clip == null)
                 throw new ArgumentNullException("clip");
 
-            if (preserveCurrentAni)
-            {
-                mixing = true;
-                secondClipValue = clip;
-                secondTimeValue = TimeSpan.Zero;
-                secondKeyframe = 0;
-            }
-            else
-            {
-                currentClipValue = clip;
-                currentTimeValue = TimeSpan.Zero;
-                currentKeyframe = 0;
-            }
+            currentClipValue = clip;
+            currentTimeValue = TimeSpan.Zero;
+            currentKeyframe = 0;
+
             // Initialize bone transforms to the bind pose.
             skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
         }
 
+        public void MixClipOnce(AnimationClip clip)
+        {
+            mixing = true;
+            secondClipValue = clip;
+            secondTimeValue = TimeSpan.Zero;
+            secondKeyframe = 0;
+        }
 
         /// <summary>
         /// Advances the current animation position.
@@ -136,9 +135,12 @@ namespace SkinnedModelLib
             {
                 time += secondTimeValue;
 
-                // If we reached the end, loop back to the start.
-                while (time >= secondClipValue.Duration)
-                    time -= secondClipValue.Duration;
+                // If we reached the end, stop mixing
+                if(time >= secondClipValue.Duration)
+                {
+                    StopMixing();
+                    return;
+                }
             }
 
             if ((time < TimeSpan.Zero) || (time >= secondClipValue.Duration))
@@ -201,7 +203,7 @@ namespace SkinnedModelLib
                 IList<Keyframe> secondKeyframes = secondClipValue.Keyframes;
                 while (secondKeyframe < secondKeyframes.Count)
                 {
-                    Keyframe keyframe = keyframes[secondKeyframe];
+                    Keyframe keyframe = secondKeyframes[secondKeyframe];
 
                     // Stop when we've read up to the current time position.
                     if (keyframe.Time > secondTimeValue)
@@ -209,7 +211,9 @@ namespace SkinnedModelLib
 
                     // Use this keyframe.
                     Matrix transform = keyframe.Transform;
-                    boneTransforms[keyframe.Bone] = Matrix.Lerp(boneTransforms[keyframe.Bone], transform, .5f);
+                    float dur=(float)(secondClipValue.Duration.TotalMilliseconds);
+                    float cur=(float)(secondTimeValue.TotalMilliseconds);
+                    boneTransforms[keyframe.Bone] = Matrix.Lerp(boneTransforms[keyframe.Bone], transform, (float)((dur-cur) / dur));
                     secondKeyframe++;
                 }
             }
