@@ -139,8 +139,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Georgia.spritefont">
-      <Name>Georgia</Name>
+    <Compile Include="Verdana.spritefont">
+      <Name>Verdana</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>

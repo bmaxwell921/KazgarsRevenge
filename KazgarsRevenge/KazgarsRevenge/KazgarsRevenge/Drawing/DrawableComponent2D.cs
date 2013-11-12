@@ -9,8 +9,8 @@ namespace KazgarsRevenge
 {
     abstract class DrawableComponent2D : Component
     {
-        public DrawableComponent2D(MainGame game)
-            : base(game)
+        public DrawableComponent2D(MainGame game, GameEntity entity)
+            : base(game, entity)
         {
             
         }

@@ -22,7 +22,6 @@ namespace KazgarsRevenge
         Entity physicalData;
         Space physics;
         CameraComponent camera;
-        GameEntity entity;
         AttackManager attacks;
         AnimationPlayer animations;
         Dictionary<string, AttachableModel> attached;
@@ -66,11 +65,10 @@ namespace KazgarsRevenge
 
 
         public PlayerController(MainGame game, GameEntity entity, Entity physicalData, AnimationPlayer animations, Dictionary<string, AttachableModel> attached)
-            : base(game)
+            : base(game, entity)
         {
             rand = new Random();
             this.physicalData = physicalData;
-            this.entity = entity;
             physics = Game.Services.GetService(typeof(Space)) as Space;
             rayCastFilter = RayCastFilter;
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
@@ -78,7 +76,7 @@ namespace KazgarsRevenge
             this.animations = animations;
             this.attached = attached;
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
-            font = game.Content.Load<SpriteFont>("Georgia");
+            font = game.Content.Load<SpriteFont>("Verdana");
             InitDrawingParams();
             PlayAnimation("k_idle1");
             attached.Add("sword", Game.GetAttachable("sword01", "sword", "Bone_001_R_004"));
@@ -617,7 +615,6 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        //questionable part of this component's design
         SpriteFont font;
         Texture2D texWhitePixel;
         Rectangle RectEnemyHealthBar;
@@ -628,24 +625,25 @@ namespace KazgarsRevenge
         Vector2 screenRatio;
         int maxX;
         int maxY;
+        float average = 1;
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
             maxX = Game.GraphicsDevice.Viewport.Width;
             maxY = Game.GraphicsDevice.Viewport.Height;
-            xRatio = maxX/1920f;
-            yRatio = maxY/1080f;
+            xRatio = maxX / 1920f;
+            yRatio = maxY / 1080f;
+            average = (xRatio + yRatio) / 2;
             screenRatio = new Vector2(xRatio, yRatio);
-            RectEnemyHealthBar = new Rectangle((int)mid.X - 75, 40, 150, 20);
-            vecName = new Vector2((int)mid.X - 75, 10);
-
-
+            RectEnemyHealthBar = new Rectangle((int)(mid.X - 75 * average), (int)(53 * average), (int)(200 * average), (int)(40 * average));
+            vecName = new Vector2(RectEnemyHealthBar.X, 5);
         }
+
         public override void Draw(SpriteBatch s)
         {
             if (mouseHoveredEntity != null)
             {
-                s.DrawString(font, mouseHoveredEntity.Name, vecName, Color.Red);
+                s.DrawString(font, mouseHoveredEntity.Name, vecName, Color.Red, 0, Vector2.Zero, average, SpriteEffects.None, 0);
             }
             if(mouseHoveredHealth != null)
             {
@@ -655,83 +653,83 @@ namespace KazgarsRevenge
 
             #region UIBase
             //Chat Pane
-            s.Draw(texWhitePixel, new Rectangle(0, (int) ((maxY-444*yRatio)), (int) (362*xRatio), (int)(444*yRatio)) , Color.Black*0.5f);
+            s.Draw(texWhitePixel, new Rectangle(0, (int) ((maxY-444*average)), (int) (362*average), (int)(444*average)) , Color.Black*0.5f);
 
             #region Ability Bar
             //Ability Bar
-            s.Draw(texWhitePixel, new Rectangle((int)((maxX/2 -311 * xRatio)), (int)((maxY - 158 * yRatio)), (int)(622 * xRatio), (int)(158 * yRatio)), Color.Red * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)((maxX/2 -311 * average)), (int)((maxY - 158 * average)), (int)(622 * average), (int)(158 * average)), Color.Red * 0.5f);
             //Q
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 301 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 301 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //W
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 227 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 227 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //E
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 153 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 153 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //R
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 79 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 79 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //A
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 301 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 301 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //S
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 227 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 227 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //D
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 153 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 153 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //F
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 79 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 79 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
 
             //LM
             //TODO Change when we change attState based on hands?
             switch (selectedPrimary)
             {
                 case PrimaryAttack.Melle:
-                    s.Draw(melee, new Rectangle((int)((maxX / 2 + 5 * xRatio)), (int)((maxY - 111 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+                    s.Draw(melee, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                     break;
                 case PrimaryAttack.Magic:
-                    s.Draw(magic, new Rectangle((int)((maxX / 2 + 5 * xRatio)), (int)((maxY - 111 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+                    s.Draw(magic, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                     break;
                 case PrimaryAttack.Ranged:
-                    s.Draw(range, new Rectangle((int)((maxX / 2 + 5 * xRatio)), (int)((maxY - 111 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+                    s.Draw(range, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                     break;
             }
                 
             //RM
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 + 79 * xRatio)), (int)((maxY - 111 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
 
             //Item 1
-            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 163 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //Item 2
-            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 237 * xRatio)), (int)((maxY - 148 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //Item 3
-            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 163 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //Item 4
-            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 237 * xRatio)), (int)((maxY - 74 * yRatio)), (int)(64 * xRatio), (int)(64 * yRatio)), Color.White);
+            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
 
             #endregion
 
             //XP Area
-            s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - 311 * xRatio)), (int)((maxY - 178 * yRatio)), (int)(622 * xRatio), (int)(20 * yRatio)), Color.Brown * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)), Color.Brown * 0.5f);
             //Damage Tracker
-            s.Draw(texWhitePixel, new Rectangle((int)((maxX - 300 * xRatio)), (int)((maxY - 230 * yRatio)), (int)(300 * xRatio), (int)(230 * yRatio)), Color.Green * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)), Color.Green * 0.5f);
             //Mini Map (square for now)
-            s.Draw(texWhitePixel, new Rectangle((int)((maxX - 344 * xRatio)), 0, (int)(344 * xRatio), (int)(344 * yRatio)), Color.Orange * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)), Color.Orange * 0.5f);
             //Main Player Frame Pic
-            s.Draw(texWhitePixel, new Rectangle(0, 0, (int)(160 * xRatio), (int)(160 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle(0, 0, (int)(160 * average), (int)(160 * average)), Color.Blue * 0.5f);
             //Main Player Frame Health
-            s.Draw(texWhitePixel, new Rectangle((int)(160 * xRatio), 0, (int)(310 * xRatio), (int)(52 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)(160 * average), 0, (int)(310 * average), (int)(52 * average)), Color.Blue * 0.5f);
             //Second Player Frame Pic
-            s.Draw(texWhitePixel, new Rectangle((int)(20 * xRatio), (int)(180 * yRatio), (int)(54 * xRatio), (int)(54 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(180 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
             //Second Player Frame Health
-            s.Draw(texWhitePixel, new Rectangle((int)(74 * xRatio), (int)(180 * yRatio), (int)(74 * xRatio), (int)(30 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(180 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
             //Third Player Frame Pic
-            s.Draw(texWhitePixel, new Rectangle((int)(20 * xRatio), (int)(254 * yRatio), (int)(54 * xRatio), (int)(54 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(254 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
             //Third Player Frame Health
-            s.Draw(texWhitePixel, new Rectangle((int)(74 * xRatio), (int)(254 * yRatio), (int)(74 * xRatio), (int)(30 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(254 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
             //Fourth Player Frame Pic
-            s.Draw(texWhitePixel, new Rectangle((int)(20 * xRatio), (int)(328 * yRatio), (int)(54 * xRatio), (int)(54 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(328 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
             //Fourth Player Frame Health
-            s.Draw(texWhitePixel, new Rectangle((int)(74 * xRatio), (int)(328 * yRatio), (int)(74 * xRatio), (int)(30 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(328 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
             //Fifth Player Frame Pic
-            s.Draw(texWhitePixel, new Rectangle((int)(20 * xRatio), (int)(402 * yRatio), (int)(54 * xRatio), (int)(54 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(402 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
             //Fifth Player Frame Health
-            s.Draw(texWhitePixel, new Rectangle((int)(74 * xRatio), (int)(402 * yRatio), (int)(74 * xRatio), (int)(30 * yRatio)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(402 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
 
             #endregion
         }

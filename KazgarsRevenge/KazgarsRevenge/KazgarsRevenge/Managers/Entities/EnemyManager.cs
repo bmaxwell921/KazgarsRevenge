@@ -24,6 +24,19 @@ namespace KazgarsRevenge
 
         }
 
+        PlayerManager players;
+        public override void Initialize()
+        {
+            base.Initialize();
+            players = mainGame.Services.GetService(typeof(PlayerManager)) as PlayerManager;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            
+        }
+
+        #region entities
         public void CreateBrute(Vector3 position)
         {
             GameEntity brute = new GameEntity("Brute", "bad");
@@ -34,14 +47,18 @@ namespace KazgarsRevenge
             brutePhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             brutePhysicalData.CollisionInformation.Tag = brute;
             brutePhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
+            brute.AddSharedData(typeof(Entity), brutePhysicalData);
 
             Model bruteModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
             AnimationPlayer bruteAnimations = new AnimationPlayer(bruteModel.Tag as SkinningData);
-            HealthData bruteHealth = new HealthData(100);
+            brute.AddSharedData(typeof(AnimationPlayer), bruteAnimations);
 
-            PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brutePhysicalData);
-            AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brutePhysicalData, bruteModel, bruteAnimations, new Vector3(10f), Vector3.Down * 18, new Dictionary<string, AttachableModel>());
-            HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(mainGame, bruteHealth, brute);
+            HealthData bruteHealth = new HealthData(100);
+            brute.AddSharedData(typeof(HealthData), bruteHealth);
+
+            PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brute);
+            AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, new Vector3(10f), Vector3.Down * 18, new Dictionary<string, AttachableModel>());
+            HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(mainGame, brute);
 
             BruteController bruteController = new BruteController(mainGame, brute, bruteHealth, brutePhysicalData, bruteAnimations);
 
@@ -59,5 +76,6 @@ namespace KazgarsRevenge
 
             enemies.Add(brute);
         }
+        #endregion
     }
 }

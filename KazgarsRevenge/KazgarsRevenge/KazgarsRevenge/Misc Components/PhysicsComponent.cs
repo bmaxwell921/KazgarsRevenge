@@ -17,10 +17,10 @@ namespace KazgarsRevenge
     {
         public Entity collidable;
         public Vector3 Position { get { return collidable.Position; } }
-        public PhysicsComponent(MainGame game, Entity collidable)
-            : base(game)
+        public PhysicsComponent(MainGame game, GameEntity entity)
+            : base(game, entity)
         {
-            this.collidable = collidable;
+            this.collidable = entity.GetSharedData(typeof(Entity)) as Entity;
         }
 
         public override void Start()

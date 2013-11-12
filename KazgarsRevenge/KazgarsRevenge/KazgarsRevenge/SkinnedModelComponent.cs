@@ -23,8 +23,8 @@ namespace KazgarsRevenge
         protected Vector3 localOffset = Vector3.Zero;
         protected Matrix yawOffset;
 
-        public SkinnedModelComponent(MainGame game, Entity physicalData, Model model, float yaw)
-            : base(game)
+        public SkinnedModelComponent(MainGame game, GameEntity entity, Entity physicalData, Model model, float yaw)
+            : base(game, entity)
         {
             this.physicalData = physicalData;
             this.model = model;

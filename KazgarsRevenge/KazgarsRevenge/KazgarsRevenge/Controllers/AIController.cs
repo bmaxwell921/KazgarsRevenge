@@ -7,8 +7,8 @@ namespace KazgarsRevenge
 {
     class AIController : Component
     {
-        public AIController(MainGame game)
-            : base(game)
+        public AIController(MainGame game, GameEntity entity)
+            : base(game, entity)
         {
 
         }

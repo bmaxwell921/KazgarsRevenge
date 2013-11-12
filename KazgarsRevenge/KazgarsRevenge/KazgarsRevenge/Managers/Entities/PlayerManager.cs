@@ -29,7 +29,10 @@ namespace KazgarsRevenge
 
             Model dudeModel = GetAnimatedModel("Models\\dude");
             AnimationPlayer dudeAnims = new AnimationPlayer(dudeModel.Tag as SkinningData);
-            AnimatedModelComponent dudeGraphics = new AnimatedModelComponent(mainGame, new Box(new Vector3(200, 0, -210), 1, 1, 1), dudeModel, dudeAnims, new Vector3(1), Vector3.Zero, new Dictionary<string, AttachableModel>());
+            dude.AddSharedData(typeof(AnimationPlayer), dudeAnims);
+
+            dude.AddSharedData(typeof(Entity),  new Box(new Vector3(200, 0, -210), 1, 1, 1));
+            AnimatedModelComponent dudeGraphics = new AnimatedModelComponent(mainGame, dude, dudeModel, new Vector3(1), Vector3.Zero, new Dictionary<string, AttachableModel>());
             modelManager.AddComponent(dudeGraphics);
             players.Add(dude);
         }
@@ -49,6 +52,7 @@ namespace KazgarsRevenge
             playerPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             //need the collisioninformation's tag to be set, to get the entity in a collision handler
             playerPhysicalData.CollisionInformation.Tag = player;
+            player.AddSharedData(typeof(Entity), playerPhysicalData);
 
             //giving a reference to the player's physical data to the camera, so it can follow the player aorund
             (Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).AssignEntity(playerPhysicalData);
@@ -56,15 +60,17 @@ namespace KazgarsRevenge
             Model playerModel = GetAnimatedModel("Models\\Player\\k_idle1");
             //shared animation data (need this to be in the player controller component as well as the graphics component, so that the controller can determine when to play animations)
             AnimationPlayer playerAnimations = new AnimationPlayer(playerModel.Tag as SkinningData);
+            player.AddSharedData(typeof(AnimationPlayer), playerAnimations);
 
             Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
             HealthData playerHealth = new HealthData(100);
+            player.AddSharedData(typeof(HealthData), playerHealth);
 
 
             //the components that make up the player
-            PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, playerPhysicalData);
-            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, playerPhysicalData, playerModel, playerAnimations, new Vector3(10f), Vector3.Down * 18, attachables);
-            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, playerHealth, player);
+            PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
+            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18, attachables);
+            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
             PlayerController playerController = new PlayerController(mainGame, player, playerPhysicalData, playerAnimations, attachables);
 
             //adding the controllers to their respective managers 

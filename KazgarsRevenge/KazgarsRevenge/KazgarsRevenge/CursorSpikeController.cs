@@ -11,12 +11,10 @@ namespace KazgarsRevenge
     {
         double millisCreated = 0;
         double millisLife = 800;
-        GameEntity entity;
-        public CursorSpikeController(MainGame game, AnimationPlayer animations, GameEntity entity)
-            : base(game)
+        public CursorSpikeController(MainGame game, GameEntity entity, AnimationPlayer animations)
+            : base(game, entity)
         {
-            this.entity = entity;
-            animations.StartClip(animations.skinningDataValue.AnimationClips["Default Take"]);
+            (entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer).StartClip(animations.skinningDataValue.AnimationClips["Default Take"]);
         }
 
         public override void Update(GameTime gameTime)

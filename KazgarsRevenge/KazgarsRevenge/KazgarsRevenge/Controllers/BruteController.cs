@@ -11,14 +11,12 @@ namespace KazgarsRevenge
 {
     class BruteController : AIController
     {
-        GameEntity entity;
         HealthData health;
         Entity physicalData;
         AnimationPlayer animations;
-        public BruteController(MainGame game, GameEntity bruteEntity, HealthData bruteHealth, Entity physicalData, AnimationPlayer bruteAnimations)
-            : base(game)
+        public BruteController(MainGame game, GameEntity entity, HealthData bruteHealth, Entity physicalData, AnimationPlayer bruteAnimations)
+            : base(game, entity)
         {
-            this.entity = bruteEntity;
             this.health = bruteHealth;
             this.physicalData = physicalData;
             this.animations = bruteAnimations;

@@ -15,8 +15,8 @@ namespace KazgarsRevenge
     class StaticMeshComponent : Component
     {
         protected StaticMesh collidable;
-        public StaticMeshComponent(MainGame game, StaticMesh collidable)
-            : base(game)
+        public StaticMeshComponent(MainGame game, GameEntity entity, StaticMesh collidable)
+            : base(game, entity)
         {
             this.collidable = collidable;
         }

@@ -44,12 +44,12 @@ namespace KazgarsRevenge
             TriangleMesh.GetVerticesAndIndicesFromModel(roomCollisionModel, out verts, out indices);
             StaticMesh roommesh = new StaticMesh(verts, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
             roommesh.Tag = room;
-            StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, roommesh);
+            StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room, roommesh);
 
             //holds the position so the model is drawn correctly
             Entity roomLocation = new Box(position, 1, 1, 1);
 
-            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, roomModel, roomLocation, new Vector3(10), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
+            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, roomLocation, new Vector3(10), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
 
             room.AddComponent(typeof(StaticMeshComponent), roomPhysics);
             genComponentManager.AddComponent(roomPhysics);

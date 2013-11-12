@@ -25,16 +25,16 @@ namespace KazgarsRevenge
         protected Dictionary<string, AttachableModel> attachedModels;
         protected Matrix yawOffset = Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0);
 
-        public AnimatedModelComponent(MainGame game, Entity physicalData, Model model, AnimationPlayer animations, Vector3 drawScale, Vector3 drawOffset, Dictionary<string, AttachableModel> attachedModels)
-            : base(game)
+        public AnimatedModelComponent(MainGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 drawOffset, Dictionary<string, AttachableModel> attachedModels)
+            : base(game, entity)
         {
-            this.physicalData = physicalData;
+            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.model = model;
             this.drawScale = drawScale;
             this.localOffset = drawOffset;
             this.attachedModels = attachedModels;
 
-            this.animationPlayer = animations;
+            this.animationPlayer = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             PlayAnimation(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
         }
 

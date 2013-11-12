@@ -183,7 +183,7 @@ namespace KazgarsRevenge
             //physics.Add(ground);
 
 
-            normalFont = Content.Load<SpriteFont>("Georgia");
+            normalFont = Content.Load<SpriteFont>("Verdana");
             texCursor = Content.Load<Texture2D>("Textures\\whiteCursor");
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -250,7 +250,7 @@ namespace KazgarsRevenge
         {
             levels.DemoLevel();
             players.CreateMainPlayer(new Vector3(200, 0, -200));
-            players.CreateDude();
+            //players.CreateDude();
             for (int i = 0; i < 3; ++i)
             {
                 for (int j = 0; j < 3; ++j)

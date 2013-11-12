@@ -18,16 +18,14 @@ namespace KazgarsRevenge
     class AttackController : Component
     {
         Entity physicalData;
-        GameEntity entity;
         int damage;
         double lifeCounter = 0;
         double lifeLength;
         //either "good" or "bad", for now
         string factionToHit;
-        public AttackController(MainGame game, GameEntity arrowEntity, Entity physicalData, int damage, double millisDuration, string factionToHit)
-            : base(game)
+        public AttackController(MainGame game, GameEntity entity, Entity physicalData, int damage, double millisDuration, string factionToHit)
+            : base(game, entity)
         {
-            this.entity = arrowEntity;
             this.physicalData = physicalData;
             this.damage = damage;
             this.lifeLength = millisDuration;

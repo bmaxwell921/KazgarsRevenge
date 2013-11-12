@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
@@ -11,7 +12,8 @@ namespace KazgarsRevenge
         public string Name { get; protected set; }
         public string Faction { get; protected set; }
         public bool Dead { get; protected set; }
-        protected Dictionary<Type, Component> components = new Dictionary<Type, Component>();
+        private Dictionary<Type, Component> components = new Dictionary<Type, Component>();
+        private Dictionary<Type, Object> sharedData = new Dictionary<Type, Object>();
 
         public GameEntity(string name, string faction)
         {
@@ -20,18 +22,25 @@ namespace KazgarsRevenge
             Dead = false;
         }
 
+        public void AddSharedData(Type t, Object o)
+        {
+            sharedData.Add(t, o);
+        }
+
+        public Object GetSharedData(Type t)
+        {
+            Object retData = null;
+            sharedData.TryGetValue(t, out retData);
+            if (retData == null)
+            {
+                throw new KeyNotFoundException("You must add shared data of type '" + t.ToString() + "' to '" + Name + "'.");
+            }
+            return retData;
+        }
+
         public void AddComponent(Type t, Component o)
         {
-            Component possObj;
-            if (!components.TryGetValue(t, out possObj))
-            {
-                //components doesn't have this kind of component yet, so add it
-                components.Add(t, o);
-            }
-            else
-            {
-                //error? components already contain a component of this type
-            }
+            components.Add(t, o);
         }
 
         public void Hit()
