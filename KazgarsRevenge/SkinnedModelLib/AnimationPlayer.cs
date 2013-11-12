@@ -30,6 +30,7 @@ namespace SkinnedModelLib
         int currentKeyframe;
 
         bool mixing = false;
+        bool playMixedOnce = false;
         AnimationClip secondClipValue = null;
         TimeSpan secondTimeValue;
         int secondKeyframe;
@@ -71,12 +72,9 @@ namespace SkinnedModelLib
         /// <summary>
         /// Starts decoding the specified animation clip.
         /// </summary>
-        public void StartClip(AnimationClip clip)
+        public void StartClip(string clipName)
         {
-            if (clip == null)
-                throw new ArgumentNullException("clip");
-
-            currentClipValue = clip;
+            currentClipValue = skinningDataValue.AnimationClips[clipName];
             currentTimeValue = TimeSpan.Zero;
             currentKeyframe = 0;
 
@@ -84,10 +82,20 @@ namespace SkinnedModelLib
             skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
         }
 
-        public void MixClipOnce(AnimationClip clip)
+        public void MixClipOnce(string clipName)
         {
             mixing = true;
-            secondClipValue = clip;
+            playMixedOnce = true;
+            secondClipValue = skinningDataValue.AnimationClips[clipName];
+            secondTimeValue = TimeSpan.Zero;
+            secondKeyframe = 0;
+        }
+
+        public void BlendCurrentIntoClip(string clipName)
+        {
+            playMixedOnce = false;
+            mixing = true;
+            secondClipValue = skinningDataValue.AnimationClips[clipName];
             secondTimeValue = TimeSpan.Zero;
             secondKeyframe = 0;
         }

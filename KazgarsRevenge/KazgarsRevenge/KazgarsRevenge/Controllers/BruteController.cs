@@ -26,14 +26,12 @@ namespace KazgarsRevenge
 
         public override void PlayHit()
         {
-            AnimationClip clip = animations.skinningDataValue.AnimationClips["pig_hit"];
-            animations.MixClipOnce(clip);
+            animations.MixClipOnce("pig_hit");
         }
 
         public void PlayAnimation(string animationName, bool mix)
         {
-            AnimationClip clip = animations.skinningDataValue.AnimationClips[animationName];
-            animations.StartClip(clip);
+            animations.StartClip(animationName);
         }
         public override void Update(GameTime gameTime)
         {

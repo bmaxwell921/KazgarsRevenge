@@ -102,6 +102,22 @@ namespace KazgarsRevenge
             millisShotRelease = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
             millisMelleDamage = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
 
+
+            //populate list of animation lengths
+            aniDurations = new Dictionary<string, double>();
+            foreach (KeyValuePair<string, AnimationClip> k in animations.skinningDataValue.AnimationClips)
+            {
+                string key = k.Key;
+                double length = k.Value.Duration.TotalMilliseconds;
+
+                if (key == "k_fighting_stance")
+                {
+                    length *= 2;
+                }
+
+                aniDurations.Add(key, length - 10);
+            }
+
             PlayAnimation("k_idle1");
             
             //adding sword and bow for demo
@@ -139,7 +155,7 @@ namespace KazgarsRevenge
         }
 
 
-
+        Dictionary<string, double> aniDurations;
 
         private double millisAniCounter;
         private double millisAniDuration;
@@ -156,21 +172,16 @@ namespace KazgarsRevenge
         private string currentAniName;
         public void PlayAnimation(string animationName)
         {
-            AnimationClip clip =  animations.skinningDataValue.AnimationClips[animationName];
-            animations.StartClip(clip);
+            animations.StartClip(animationName);
             if (animationName == "k_idle1")
             {
                 millisAniDuration = rand.Next(2000, 4000);
             }
-            else if (animationName == "k_fighting_stance")
-            {
-                millisAniDuration = clip.Duration.TotalMilliseconds * 2;
-            }
             else
             {
-                millisAniDuration = clip.Duration.TotalMilliseconds;
+                millisAniDuration = aniDurations[animationName] * 2;
             }
-            millisAniDuration -= 10;
+
             currentAniName = animationName;
             millisAniCounter = 0;
             millisShotAniCounter = 0;

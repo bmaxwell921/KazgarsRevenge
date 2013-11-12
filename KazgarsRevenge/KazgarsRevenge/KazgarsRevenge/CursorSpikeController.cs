@@ -15,7 +15,7 @@ namespace KazgarsRevenge
             : base(game, entity)
         {
             AnimationPlayer anims = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
-            anims.StartClip(anims.skinningDataValue.AnimationClips["Default Take"]);
+            anims.StartClip("Default Take");
         }
 
         public override void Update(GameTime gameTime)

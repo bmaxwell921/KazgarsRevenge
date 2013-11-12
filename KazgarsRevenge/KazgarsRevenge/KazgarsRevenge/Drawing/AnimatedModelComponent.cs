@@ -107,7 +107,7 @@ namespace KazgarsRevenge
 
         public void PlayAnimation(string animationName)
         {
-            animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips[animationName]);
+            animationPlayer.StartClip(animationName);
         }
     }
 }
