@@ -179,7 +179,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                millisAniDuration = aniDurations[animationName] * 2;
+                millisAniDuration = aniDurations[animationName];
             }
 
             currentAniName = animationName;

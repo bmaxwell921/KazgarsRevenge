@@ -21,7 +21,7 @@ namespace KazgarsRevenge
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
 
-            PlayAnimation("pig_attack", false);
+            PlayAnimation("pig_walk", false);
         }
 
         public override void PlayHit()
