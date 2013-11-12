@@ -39,7 +39,7 @@ namespace KazgarsRevenge
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics =
                 new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
-                    arrowData, new Vector3(10), Vector3.Zero, arrowGraphicRot);
+                    new Vector3(10), Vector3.Zero, arrowGraphicRot);
 
             AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, factionToHit);
 
@@ -89,8 +89,10 @@ namespace KazgarsRevenge
             AnimationPlayer anims = new AnimationPlayer(spikeModel.Tag as SkinningData);
             spikes.AddSharedData(typeof(AnimationPlayer), anims);
 
-            AnimatedModelComponent spikesGraphics = new AnimatedModelComponent(mainGame, spikes, spikeModel, new Vector3(5), Vector3.Down * 20, new Dictionary<string, AttachableModel>());
-            CursorSpikeController spikesController = new CursorSpikeController(mainGame, spikes, anims);
+            spikes.AddSharedData(typeof(Dictionary<string, AttachableModel>), new Dictionary<string, AttachableModel>());
+
+            AnimatedModelComponent spikesGraphics = new AnimatedModelComponent(mainGame, spikes, spikeModel, new Vector3(5), Vector3.Down * 20);
+            CursorSpikeController spikesController = new CursorSpikeController(mainGame, spikes);
 
             spikes.AddComponent(typeof(AnimatedModelComponent), spikesGraphics);
             modelManager.AddComponent(spikesGraphics);

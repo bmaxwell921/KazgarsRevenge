@@ -87,25 +87,30 @@ namespace KazgarsRevenge
         public void LoadUnanimatedModel(out Model model, string modelPath)
         {
             model = Game.Content.Load<Model>(modelPath);
-            List<Texture2D> modelTextures = new List<Texture2D>();
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (BasicEffect eff in mesh.Effects)
-                {
-                    modelTextures.Add(eff.Texture);
-                }
-            }
 
-            int i = 0;
-            foreach (ModelMesh mesh in model.Meshes)
+            //if this model has already been loaded, don't process its textures again
+            if (model.Meshes[0].Effects[0] is BasicEffect)
             {
-                foreach (ModelMeshPart part in mesh.MeshParts)
+                List<Texture2D> modelTextures = new List<Texture2D>();
+                foreach (ModelMesh mesh in model.Meshes)
                 {
-                    part.Effect = effectCellShading.Clone();
-                    part.Effect.Parameters["ColorMap"].SetValue(modelTextures[i++]);
-                    if (i >= modelTextures.Count)
+                    foreach (BasicEffect eff in mesh.Effects)
                     {
-                        i = modelTextures.Count - 1;
+                        modelTextures.Add(eff.Texture);
+                    }
+                }
+
+                int i = 0;
+                foreach (ModelMesh mesh in model.Meshes)
+                {
+                    foreach (ModelMeshPart part in mesh.MeshParts)
+                    {
+                        part.Effect = effectCellShading.Clone();
+                        part.Effect.Parameters["ColorMap"].SetValue(modelTextures[i++]);
+                        if (i >= modelTextures.Count)
+                        {
+                            i = modelTextures.Count - 1;
+                        }
                     }
                 }
             }

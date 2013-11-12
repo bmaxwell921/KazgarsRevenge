@@ -32,7 +32,7 @@ namespace KazgarsRevenge
             dude.AddSharedData(typeof(AnimationPlayer), dudeAnims);
 
             dude.AddSharedData(typeof(Entity),  new Box(new Vector3(200, 0, -210), 1, 1, 1));
-            AnimatedModelComponent dudeGraphics = new AnimatedModelComponent(mainGame, dude, dudeModel, new Vector3(1), Vector3.Zero, new Dictionary<string, AttachableModel>());
+            AnimatedModelComponent dudeGraphics = new AnimatedModelComponent(mainGame, dude, dudeModel, new Vector3(1), Vector3.Zero);
             modelManager.AddComponent(dudeGraphics);
             players.Add(dude);
         }
@@ -54,7 +54,7 @@ namespace KazgarsRevenge
             playerPhysicalData.CollisionInformation.Tag = player;
             player.AddSharedData(typeof(Entity), playerPhysicalData);
 
-            //giving a reference to the player's physical data to the camera, so it can follow the player aorund
+            //giving a reference to the player's physical data to the camera, so it can follow the player around
             (Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).AssignEntity(playerPhysicalData);
 
             Model playerModel = GetAnimatedModel("Models\\Player\\k_idle1");
@@ -63,15 +63,17 @@ namespace KazgarsRevenge
             player.AddSharedData(typeof(AnimationPlayer), playerAnimations);
 
             Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
+            player.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
+
             HealthData playerHealth = new HealthData(100);
             player.AddSharedData(typeof(HealthData), playerHealth);
 
 
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
-            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18, attachables);
+            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
             HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
-            PlayerController playerController = new PlayerController(mainGame, player, playerPhysicalData, playerAnimations, attachables);
+            PlayerController playerController = new PlayerController(mainGame, player);
 
             //adding the controllers to their respective managers 
             //(need to decide what kinds of components need their own managers; currently 

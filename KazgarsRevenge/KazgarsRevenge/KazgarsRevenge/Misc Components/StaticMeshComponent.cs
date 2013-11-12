@@ -15,10 +15,10 @@ namespace KazgarsRevenge
     class StaticMeshComponent : Component
     {
         protected StaticMesh collidable;
-        public StaticMeshComponent(MainGame game, GameEntity entity, StaticMesh collidable)
+        public StaticMeshComponent(MainGame game, GameEntity entity)
             : base(game, entity)
         {
-            this.collidable = collidable;
+            this.collidable = entity.GetSharedData(typeof(StaticMesh)) as StaticMesh;
         }
 
         public override void Start()

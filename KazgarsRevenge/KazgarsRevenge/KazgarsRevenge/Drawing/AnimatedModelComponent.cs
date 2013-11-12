@@ -25,22 +25,17 @@ namespace KazgarsRevenge
         protected Dictionary<string, AttachableModel> attachedModels;
         protected Matrix yawOffset = Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0);
 
-        public AnimatedModelComponent(MainGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 drawOffset, Dictionary<string, AttachableModel> attachedModels)
+        public AnimatedModelComponent(MainGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 drawOffset)
             : base(game, entity)
         {
-            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.model = model;
             this.drawScale = drawScale;
             this.localOffset = drawOffset;
-            this.attachedModels = attachedModels;
-
+            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
+            this.attachedModels = entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
             this.animationPlayer = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
+
             PlayAnimation(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
-        }
-
-        public override void Start()
-        {
-
         }
 
         protected Vector3 vLightDirection = new Vector3(-1.0f, -.5f, 1.0f);
@@ -80,24 +75,27 @@ namespace KazgarsRevenge
                 mesh.Draw();
             }
 
-            Matrix[] worldbones = animationPlayer.GetWorldTransforms();
-            Matrix[] transforms;
-            Matrix attachedRot = Matrix.CreateFromYawPitchRoll(0, MathHelper.Pi, 0);
-            foreach (AttachableModel a in attachedModels.Values)
+            if (attachedModels.Count > 0)
             {
-                transforms = new Matrix[a.model.Bones.Count];
-                a.model.CopyAbsoluteBoneTransformsTo(transforms);
-                foreach (ModelMesh mesh in a.model.Meshes)
+                Matrix[] worldbones = animationPlayer.GetWorldTransforms();
+                Matrix[] transforms;
+                Matrix attachedRot = Matrix.CreateFromYawPitchRoll(0, MathHelper.Pi, 0);
+                foreach (AttachableModel a in attachedModels.Values)
                 {
-                    foreach (Effect effect in mesh.Effects)
+                    transforms = new Matrix[a.model.Bones.Count];
+                    a.model.CopyAbsoluteBoneTransformsTo(transforms);
+                    foreach (ModelMesh mesh in a.model.Meshes)
                     {
-                        effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                        Matrix world = transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
-                        effect.Parameters["World"].SetValue(world);
-                        effect.Parameters["ViewProj"].SetValue(view * projection);
-                        effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
+                        foreach (Effect effect in mesh.Effects)
+                        {
+                            effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                            Matrix world = transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
+                            effect.Parameters["World"].SetValue(world);
+                            effect.Parameters["ViewProj"].SetValue(view * projection);
+                            effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
+                        }
+                        mesh.Draw();
                     }
-                    mesh.Draw();
                 }
             }
         }

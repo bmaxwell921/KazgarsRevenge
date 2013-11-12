@@ -110,7 +110,6 @@
     <Compile Include="Managers\Components\SpriteManager.cs" />
     <Compile Include="Drawing\UnanimatedModelComponent.cs" />
     <Compile Include="Misc Components\StaticMeshComponent.cs" />
-    <Compile Include="SkinnedModelComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

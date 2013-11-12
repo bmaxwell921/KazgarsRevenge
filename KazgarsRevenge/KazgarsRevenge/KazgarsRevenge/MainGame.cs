@@ -118,8 +118,8 @@ namespace KazgarsRevenge
             graphics.ApplyChanges();*/
 
             
-            graphics.PreferredBackBufferWidth = 1000;
-            graphics.PreferredBackBufferHeight = 800;
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 600;
             graphics.ApplyChanges();
             
             
@@ -262,10 +262,14 @@ namespace KazgarsRevenge
 
         Vector2 vecLoadingText;
         Rectangle rectMouse;
+        float guiScale = 1;
         private void initDrawingParams()
         {
             vecLoadingText = new Vector2(50, 50);
             rectMouse = new Rectangle(0, 0, 25, 25);
+            float xRatio = GraphicsDevice.Viewport.Width / 1920f;
+            float yRatio = GraphicsDevice.Viewport.Height / 1080f;
+            guiScale = (xRatio + yRatio) / 2;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -280,6 +284,7 @@ namespace KazgarsRevenge
             RasterizerState rs = new RasterizerState();
             rs.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rs;
+
 
             switch (gameState)
             {
@@ -329,7 +334,7 @@ namespace KazgarsRevenge
                     break;
                 case GameState.StartMenu:
                     spriteBatch.Begin();
-                    spriteBatch.DrawString(normalFont, "Press Space To Start", vecLoadingText, Color.Yellow);
+                    spriteBatch.DrawString(normalFont, "Press Space To Start", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
                     spriteBatch.End();
                     break;
             }

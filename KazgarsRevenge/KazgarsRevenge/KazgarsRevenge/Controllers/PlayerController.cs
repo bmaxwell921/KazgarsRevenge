@@ -22,6 +22,7 @@ namespace KazgarsRevenge
         Entity physicalData;
         Space physics;
         CameraComponent camera;
+        SoundEffectLibrary soundEffects;
         AttackManager attacks;
         AnimationPlayer animations;
         Dictionary<string, AttachableModel> attached;
@@ -64,23 +65,28 @@ namespace KazgarsRevenge
         const float bowRange = 1000;
 
 
-        public PlayerController(MainGame game, GameEntity entity, Entity physicalData, AnimationPlayer animations, Dictionary<string, AttachableModel> attached)
+        public PlayerController(MainGame game, GameEntity entity)
             : base(game, entity)
         {
+            //shared data
+            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
+            this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
+            this.attached = entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
+
+            //misc
             rand = new Random();
-            this.physicalData = physicalData;
-            physics = Game.Services.GetService(typeof(Space)) as Space;
             rayCastFilter = RayCastFilter;
+
+            //services
+            physics = Game.Services.GetService(typeof(Space)) as Space;
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             attacks = game.Services.GetService(typeof(AttackManager)) as AttackManager;
-            this.animations = animations;
-            this.attached = attached;
+            soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
+
+            //required content
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
             font = game.Content.Load<SpriteFont>("Verdana");
             InitDrawingParams();
-            PlayAnimation("k_idle1");
-            attached.Add("sword", Game.GetAttachable("sword01", "sword", "Bone_001_R_004"));
-            attached.Add("bow", Game.GetAttachable("bow01", "sword", "Bone_001_L_004"));
 
             #region Ability Image Load
             melee = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\DB");
@@ -95,6 +101,12 @@ namespace KazgarsRevenge
 
             millisShotRelease = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
             millisMelleDamage = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
+
+            PlayAnimation("k_idle1");
+            
+            //adding sword and bow for demo
+            attached.Add("sword", Game.GetAttachable("sword01", "sword", "Bone_001_R_004"));
+            attached.Add("bow", Game.GetAttachable("bow01", "sword", "Bone_001_L_004"));
         }
 
         #region animations
@@ -367,7 +379,7 @@ namespace KazgarsRevenge
             //primary attack (autos)
             if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targettedPhysicalData != null)
             {
-                SoundEffectLibrary soundEffects = (SoundEffectLibrary) Game.Services.GetService(typeof(SoundEffectLibrary));
+                
 
                 //attack if in range
                 switch (selectedPrimary)

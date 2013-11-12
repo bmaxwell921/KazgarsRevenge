@@ -17,11 +17,11 @@ namespace KazgarsRevenge
         private Vector3 drawScale;
         private Vector3 localOffset;
         private Matrix rotOffset;
-        public UnanimatedModelComponent(MainGame game, GameEntity entity, Model model, Entity physicalData, Vector3 drawScale, Vector3 localOffset, Matrix rotOffset)
+        public UnanimatedModelComponent(MainGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 localOffset, Matrix rotOffset)
             : base(game, entity)
         {
+            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.model = model;
-            this.physicalData = physicalData;
             this.drawScale = drawScale;
             this.localOffset = localOffset;
             this.rotOffset = rotOffset;
