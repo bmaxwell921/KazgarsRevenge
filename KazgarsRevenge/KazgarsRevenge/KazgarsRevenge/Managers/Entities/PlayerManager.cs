@@ -50,8 +50,6 @@ namespace KazgarsRevenge
             playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             //more accurate collision detection for the player
             playerPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
-            //need the collisioninformation's tag to be set, to get the entity in a collision handler
-            playerPhysicalData.CollisionInformation.Tag = player;
             player.AddSharedData(typeof(Entity), playerPhysicalData);
 
             //giving a reference to the player's physical data to the camera, so it can follow the player around

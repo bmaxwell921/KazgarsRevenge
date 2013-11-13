@@ -19,25 +19,28 @@ namespace KazgarsRevenge
 {
     class PlayerController : DrawableComponent2D
     {
-        Entity physicalData;
+        //services
         Space physics;
         CameraComponent camera;
         SoundEffectLibrary soundEffects;
         AttackManager attacks;
+
+        //data
         AnimationPlayer animations;
         Dictionary<string, AttachableModel> attached;
+        Entity physicalData;
         Random rand;
 
+        //variables for target
         Entity targettedPhysicalData;
-        
         GameEntity mouseHoveredEntity;
         HealthData mouseHoveredHealth;
 
+        //variables for movement
         const float stopRadius = 10;
         const float targetResetDistance = 1000;
         Vector3 mouseHoveredLocation = Vector3.Zero;
         Vector3 groundTargetLocation = Vector3.Zero;
-        //dont want kazgar to run until first click
         double millisRunningCounter = 2000;
         double millisRunTime = 2000;
 
@@ -52,6 +55,28 @@ namespace KazgarsRevenge
         Texture2D healthPot;
         #endregion
 
+
+
+        //stats
+        enum StatType
+        {
+            RunSpeed,
+            AttackSpeed,
+
+        }
+        Dictionary<StatType, float> playerStats = new Dictionary<StatType, float>() {{StatType.AttackSpeed, .05f}, {StatType.RunSpeed, 120} };
+
+        //inventory
+        enum InventorySlot{
+            Head,
+            Chest,
+            Legs,
+            Righthand,
+            Lefthand,
+        }
+        Dictionary<InventorySlot, Item> inventory = new Dictionary<InventorySlot, Item>();
+
+        //attacks
         enum PrimaryAttack
         {
             Melle,
@@ -59,8 +84,6 @@ namespace KazgarsRevenge
             Magic,
         }
         PrimaryAttack selectedPrimary = PrimaryAttack.Melle;
-        float attackSpeed = 0.05f;
-        float maxSpeed = 120;
         const float melleRange = 50;
         const float bowRange = 1000;
 
@@ -468,7 +491,7 @@ namespace KazgarsRevenge
             //held down:  path towards mousehovered location (or targetted entity if its data isn't null and it's not in range) / if in range of targetted entity, auto attack
             //up:         if there is a targetted enemy, run up and attack it once. if not, run towards targetted location if not already at it
 
-            Vector3 moveVec = move * maxSpeed;
+            Vector3 moveVec = move * playerStats[StatType.RunSpeed];
             moveVec.Y = physicalData.LinearVelocity.Y;
             if (curMouse.LeftButton == ButtonState.Pressed)
             {
@@ -575,7 +598,7 @@ namespace KazgarsRevenge
                     attState = AttackState.LettingGo;
                     millisShotAniCounter = 0;
                 }
-                else if (attState == AttackState.LettingGo && millisShotAniCounter >= millisShotRelease * attackSpeed)
+                else if (attState == AttackState.LettingGo && millisShotAniCounter >= millisShotRelease * playerStats[StatType.AttackSpeed])
                 {
                     attState = AttackState.None;
                     millisShotAniCounter = 0;
@@ -594,8 +617,6 @@ namespace KazgarsRevenge
                 }
             }
         }
-
-
 
         #region helpers
         /// <summary>
