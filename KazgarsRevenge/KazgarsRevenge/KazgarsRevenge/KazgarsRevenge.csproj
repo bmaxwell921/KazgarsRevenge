@@ -66,6 +66,10 @@
     <Reference Include="BEPUphysicsDrawer">
       <HintPath>E:\C# Workspace\Demo\Demo\Demo\bin\x86\Debug\BEPUphysicsDrawer.dll</HintPath>
     </Reference>
+    <Reference Include="Lidgren.Network, Version=2011.3.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Lidgren.Network.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -78,9 +82,10 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\KazgarsRevengeGame.cs" />
     <Compile Include="Controllers\AIController.cs" />
     <Compile Include="Controllers\BruteController.cs" />
-    <Compile Include="Controllers\CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedModelComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
@@ -89,7 +94,6 @@
     <Compile Include="Drawing\DrawableComponent3D.cs" />
     <Compile Include="Drawing\EffectHelpers.cs" />
     <Compile Include="Base Classes\GameEntity.cs" />
-    <Compile Include="Non-Component\Item.cs" />
     <Compile Include="Libraries\SoundEffectLibrary.cs" />
     <Compile Include="Managers\Entities\EnemyManager.cs" />
     <Compile Include="Misc Components\HealthHandlerComponent.cs" />
