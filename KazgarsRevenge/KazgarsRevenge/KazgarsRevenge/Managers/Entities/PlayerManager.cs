@@ -14,7 +14,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class PlayerManager : EntityManager
+    public class PlayerManager : EntityManager
     {
         List<GameEntity> players = new List<GameEntity>();
         public PlayerManager(KazgarsRevengeGame game)

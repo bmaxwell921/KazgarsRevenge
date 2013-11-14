@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
-    class HealthData
+    public class HealthData
     {
         public int Health { get; private set; }
         public int MaxHealth { get; private set; }

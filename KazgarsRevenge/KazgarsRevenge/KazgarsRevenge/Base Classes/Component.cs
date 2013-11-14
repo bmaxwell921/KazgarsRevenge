@@ -7,7 +7,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    abstract class Component
+    public abstract class Component
     {
         protected KazgarsRevengeGame Game;
         protected GameEntity entity;

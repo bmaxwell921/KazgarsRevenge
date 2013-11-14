@@ -23,21 +23,19 @@ namespace KazgarsRevenge
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class MainGame : Game
+    public class MainGame : KazgarsRevengeGame
     {
         #region components
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Space physics;
+        
         BoundingBoxDrawer modelDrawer;
         CameraComponent camera;
         ModelManager renderManager;
-        GeneralComponentManager genComponentManager;
+        
         SpriteManager spriteManager;
-        LevelManager levels;
-        PlayerManager players;
-        EnemyManager enemies;
-        AttackManager attacks;
+        
+        //PlayerManager players; Probably should still be in here???
         NetworkMessageManager networkMessages;
         SoundEffectLibrary soundEffectLibrary;
         #endregion
@@ -56,52 +54,13 @@ namespace KazgarsRevenge
         public RenderTarget2D RenderTarget { get { return renderTarget; } }
 
         float screenScale = 1;
-        GameState gameState = GameState.StartMenu;
-        Random rand;
-        
-
-
         public MainGame()
         {
+            gameState = GameState.StartMenu;
             Window.Title = "Kazgar's Revenge";
 
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
-            InitPhysicsStuff();
-        }
-
-        public static CollisionGroup GoodProjectileCollisionGroup;
-        public static CollisionGroup PlayerCollisionGroup;
-        public static CollisionGroup BadProjectileCollisionGroup;
-        public static CollisionGroup EnemyCollisionGroup;
-        protected void InitPhysicsStuff()
-        {
-            //physics! yay!
-            physics = new Space();
-
-            if (Environment.ProcessorCount > 1)
-            {
-                for (int i = 0; i < 10 * Environment.ProcessorCount; ++i)
-                {
-                    //threads! woo!
-                    physics.ThreadManager.AddThread();
-                }
-            }
-            physics.ForceUpdater.Gravity = new Vector3(0, -80f, 0);
-            Services.AddService(typeof(Space), physics);
-
-
-            //collision groups
-            GoodProjectileCollisionGroup = new CollisionGroup();
-            PlayerCollisionGroup = new CollisionGroup();
-            BadProjectileCollisionGroup = new CollisionGroup();
-            EnemyCollisionGroup = new CollisionGroup();
-
-            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(PlayerCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
-            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
-            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
-            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(BadProjectileCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
         }
 
         protected override void Initialize()
@@ -119,7 +78,7 @@ namespace KazgarsRevenge
             
             screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
 
-            rand = new Random();
+            //rand = new Random();
 
             Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
 
@@ -132,29 +91,29 @@ namespace KazgarsRevenge
             Components.Add(renderManager);
             Services.AddService(typeof(ModelManager), renderManager);
 
-            genComponentManager = new GeneralComponentManager(this);
-            Components.Add(genComponentManager);
-            Services.AddService(typeof(GeneralComponentManager), genComponentManager);
+            //genComponentManager = new GeneralComponentManager(this);
+            //Components.Add(genComponentManager);
+            //Services.AddService(typeof(GeneralComponentManager), genComponentManager);
 
             spriteManager = new SpriteManager(this);
             Components.Add(spriteManager);
             Services.AddService(typeof(SpriteManager), spriteManager);
 
-            players = new PlayerManager(this);
-            Components.Add(players);
-            Services.AddService(typeof(PlayerManager), players);
+            //players = new PlayerManager(this);
+            //Components.Add(players);
+            //Services.AddService(typeof(PlayerManager), players);
 
-            enemies = new EnemyManager(this);
-            Components.Add(enemies);
-            Services.AddService(typeof(EnemyManager), enemies);
+            //enemies = new EnemyManager(this);
+            //Components.Add(enemies);
+            //Services.AddService(typeof(EnemyManager), enemies);
 
-            levels = new LevelManager(this);
-            Components.Add(levels);
-            Services.AddService(typeof(LevelManager), levels);
+            //levels = new LevelManager(this);
+            //Components.Add(levels);
+            //Services.AddService(typeof(LevelManager), levels);
 
-            attacks = new AttackManager(this);
-            Components.Add(attacks);
-            Services.AddService(typeof(AttackManager), attacks);
+            //attacks = new AttackManager(this);
+            //Components.Add(attacks);
+            //Services.AddService(typeof(AttackManager), attacks);
 
             networkMessages = new NetworkMessageManager(this);
             Components.Add(networkMessages);
@@ -172,11 +131,6 @@ namespace KazgarsRevenge
 
         protected override void LoadContent()
         {
-            //adding large rectangle for units to stand on
-            //StaticMesh ground = new StaticMesh(new Vector3[] { new Vector3(-2000, 0, -2000), new Vector3(2000, 0, -2000), new Vector3(-2000, 0, 2000), new Vector3(2000, 0, 2000) }, new int[] { 0, 1, 2, 2, 1, 3 });
-            //physics.Add(ground);
-
-
             normalFont = Content.Load<SpriteFont>("Verdana");
             texCursor = Content.Load<Texture2D>("Textures\\whiteCursor");
 
@@ -319,7 +273,6 @@ namespace KazgarsRevenge
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);
-
                     //debug strings
                     //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
                     //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);

@@ -31,7 +31,7 @@ namespace KazgarsRevengeServer.Managers
             AddMessageParsers();
 
             // Server starts in the lobby state since it's awaiting connections
-            ((KazgarsRevengeGame)Game).state = GameState.Lobby;
+            ((KazgarsRevengeGame)Game).gameState = GameState.Lobby;
 
             connectedPlayers = 0;
             nextUpdateTime = NetTime.Now;

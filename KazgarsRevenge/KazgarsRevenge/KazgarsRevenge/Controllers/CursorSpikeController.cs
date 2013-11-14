@@ -11,7 +11,7 @@ namespace KazgarsRevenge
     {
         double millisCreated = 0;
         double millisLife = 800;
-        public CursorSpikeController(MainGame game, GameEntity entity)
+        public CursorSpikeController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
             AnimationPlayer anims = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;

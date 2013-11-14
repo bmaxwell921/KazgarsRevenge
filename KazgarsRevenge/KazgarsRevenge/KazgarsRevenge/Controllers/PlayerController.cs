@@ -44,6 +44,10 @@ namespace KazgarsRevenge
         double millisRunningCounter = 2000;
         double millisRunTime = 2000;
 
+        #region UI Frames
+        Texture2D icon_selected;
+        #endregion
+
         #region Ability Icons
         Texture2D melee;
         Texture2D range;
@@ -55,26 +59,42 @@ namespace KazgarsRevenge
         Texture2D healthPot;
         #endregion
 
+        #region Variables for UI
+        bool[] UISlotUsed = new bool[14];     //0-7 abilities, 8 primary, 9 secondary, 10-13 items
+        #endregion
 
-
-        //stats
-        enum StatType
+        #region stats
+        public enum StatType
         {
             RunSpeed,
             AttackSpeed,
-
+            Strength,
+            Agility,
+            Intellect,
+            CooldownReduction,
+            CritChance,
+            Health,
         }
-        Dictionary<StatType, float> playerStats = new Dictionary<StatType, float>() {{StatType.AttackSpeed, .05f}, {StatType.RunSpeed, 120} };
+        float[] baseStats = new float[] {120, .05f, 1, 1, 1, 0, 0, 100 };
 
+        //array with one position per type of stat
+        Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
+        #endregion
+
+
+        #region equipped gear
         //inventory
-        enum InventorySlot{
+        public enum GearSlot
+        {
             Head,
             Chest,
             Legs,
             Righthand,
             Lefthand,
         }
-        Dictionary<InventorySlot, Item> inventory = new Dictionary<InventorySlot, Item>();
+        Dictionary<GearSlot, Item> gear = new Dictionary<GearSlot, Item>();
+        #endregion
+
 
         //attacks
         enum PrimaryAttack
@@ -111,6 +131,10 @@ namespace KazgarsRevenge
             font = game.Content.Load<SpriteFont>("Verdana");
             InitDrawingParams();
 
+            #region UI Frame Load
+            icon_selected = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\icon_selected");
+            #endregion
+
             #region Ability Image Load
             melee = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\DB");
             range = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW");
@@ -122,12 +146,10 @@ namespace KazgarsRevenge
             healthPot = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\HP");
             #endregion
 
-            millisShotRelease = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
-            millisMelleDamage = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
-
-
             //populate list of animation lengths
             aniDurations = new Dictionary<string, double>();
+            aniDurations["shotRelease"] = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
+            aniDurations["melleDamage"] = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
             foreach (KeyValuePair<string, AnimationClip> k in animations.skinningDataValue.AnimationClips)
             {
                 string key = k.Key;
@@ -144,8 +166,18 @@ namespace KazgarsRevenge
             PlayAnimation("k_idle1");
             
             //adding sword and bow for demo
-            attached.Add("sword", Game.GetAttachable("sword01", "sword", "Bone_001_R_004"));
-            attached.Add("bow", Game.GetAttachable("bow01", "sword", "Bone_001_L_004"));
+            attached.Add("sword", ((MainGame)Game).GetAttachable("sword01", "sword", "Bone_001_R_004"));
+            attached.Add("bow", ((MainGame)Game).GetAttachable("bow01", "sword", "Bone_001_L_004"));
+
+            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
+            {
+                stats.Add((StatType)i, baseStats[i]);
+            }
+
+            for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
+            {
+                //stats.Add((GearSlot)i, Item.None);
+            }
         }
 
         #region animations
@@ -184,12 +216,10 @@ namespace KazgarsRevenge
         private double millisAniDuration;
 
         private AttackState attState = AttackState.None;
-        private double millisShotRelease;
         private double millisShotAniCounter;
         private double millisShotArrowAttachLength = 200;
         private double millisShotArrowAttachCounter;
 
-        private double millisMelleDamage;
         private double millisMelleCounter;
 
         private string currentAniName;
@@ -237,6 +267,14 @@ namespace KazgarsRevenge
             millisShotArrowAttachCounter += elapsed;
             millisMelleCounter += elapsed;
             millisRunningCounter += elapsed;
+
+            #region UI Update Section
+            //reset the currently used abilities
+            for (int i = 0; i < 14; i++)
+            {
+                UISlotUsed[i] = false;
+            }
+            #endregion
 
             if (Game.IsActive)
             {
@@ -479,6 +517,24 @@ namespace KazgarsRevenge
                 groundTargetLocation = physicalData.Position;
                 targettedPhysicalData = null;
             }
+
+            //UI Abilities Used Frame
+            if (curKeys.IsKeyDown(Keys.Q)) UISlotUsed[0] = true;
+            if (curKeys.IsKeyDown(Keys.W)) UISlotUsed[1] = true;
+            if (curKeys.IsKeyDown(Keys.E)) UISlotUsed[2] = true;
+            if (curKeys.IsKeyDown(Keys.R)) UISlotUsed[3] = true;
+            if (curKeys.IsKeyDown(Keys.A)) UISlotUsed[4] = true;
+            if (curKeys.IsKeyDown(Keys.S)) UISlotUsed[5] = true;
+            if (curKeys.IsKeyDown(Keys.D)) UISlotUsed[6] = true;
+            if (curKeys.IsKeyDown(Keys.F)) UISlotUsed[7] = true;
+
+            if (curMouse.LeftButton == ButtonState.Pressed) UISlotUsed[8] = true;
+            if (curMouse.RightButton == ButtonState.Pressed) UISlotUsed[9] = true;
+
+            if (curKeys.IsKeyDown(Keys.D1)) UISlotUsed[10] = true;
+            if (curKeys.IsKeyDown(Keys.D2)) UISlotUsed[11] = true;
+            if (curKeys.IsKeyDown(Keys.D3)) UISlotUsed[12] = true;
+            if (curKeys.IsKeyDown(Keys.D4)) UISlotUsed[13] = true;
         }
 
         /// <summary>
@@ -491,7 +547,7 @@ namespace KazgarsRevenge
             //held down:  path towards mousehovered location (or targetted entity if its data isn't null and it's not in range) / if in range of targetted entity, auto attack
             //up:         if there is a targetted enemy, run up and attack it once. if not, run towards targetted location if not already at it
 
-            Vector3 moveVec = move * playerStats[StatType.RunSpeed];
+            Vector3 moveVec = move * stats[(int)StatType.RunSpeed];
             moveVec.Y = physicalData.LinearVelocity.Y;
             if (curMouse.LeftButton == ButtonState.Pressed)
             {
@@ -586,11 +642,11 @@ namespace KazgarsRevenge
                 if(attState == AttackState.GrabbingArrow 
                     && millisShotArrowAttachCounter >= millisShotArrowAttachLength)
                 {
-                    attached.Add("arrow", Game.GetAttachable("arrow", "sword", "Bone_001_R_004"));
+                    attached.Add("arrow", ((MainGame)Game).GetAttachable("arrow", "sword", "Bone_001_R_004"));
                     attState = AttackState.DrawingString;
                     millisShotArrowAttachCounter = 0;
                 }
-                else if (attState == AttackState.DrawingString && millisShotAniCounter >= millisShotRelease)
+                else if (attState == AttackState.DrawingString && millisShotAniCounter >= aniDurations["shotRelease"])
                 {
                     Vector3 forward = GetForward();
                     attached.Remove("arrow");
@@ -598,7 +654,7 @@ namespace KazgarsRevenge
                     attState = AttackState.LettingGo;
                     millisShotAniCounter = 0;
                 }
-                else if (attState == AttackState.LettingGo && millisShotAniCounter >= millisShotRelease * playerStats[StatType.AttackSpeed])
+                else if (attState == AttackState.LettingGo && millisShotAniCounter >= aniDurations["shotRelease"] * stats[StatType.AttackSpeed])
                 {
                     attState = AttackState.None;
                     millisShotAniCounter = 0;
@@ -608,7 +664,7 @@ namespace KazgarsRevenge
             //swinging animation
             if (currentAniName == "k_onehanded_swing" || currentAniName == "k_flip")
             {
-                if (attState == AttackState.InitialSwing && millisMelleCounter >= millisMelleDamage)
+                if (attState == AttackState.InitialSwing && millisMelleCounter >= aniDurations["melleDamage"])
                 {
                     Vector3 forward = GetForward();
                     attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, "bad");
@@ -695,6 +751,7 @@ namespace KazgarsRevenge
                 s.Draw(texWhitePixel, new Rectangle(RectEnemyHealthBar.X, RectEnemyHealthBar.Y, (int)(RectEnemyHealthBar.Width * mouseHoveredHealth.HealthPercent), RectEnemyHealthBar.Height), Color.Green);
             }
 
+            #region UI
             #region UIBase
             //Chat Pane
             s.Draw(texWhitePixel, new Rectangle(0, (int) ((maxY-444*average)), (int) (362*average), (int)(444*average)) , Color.Black*0.5f);
@@ -748,6 +805,10 @@ namespace KazgarsRevenge
 
             #endregion
 
+            #region Ability Bar Mods
+
+            #endregion
+
             //XP Area
             s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)), Color.Brown * 0.5f);
             //Damage Tracker
@@ -775,6 +836,7 @@ namespace KazgarsRevenge
             //Fifth Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(402 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
 
+            #endregion
             #endregion
         }
     }

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
-    class GeneralComponentManager : GameComponent
+    public class GeneralComponentManager : GameComponent
     {
         List<Component> components = new List<Component>();
         public GeneralComponentManager(KazgarsRevengeGame game)

@@ -14,7 +14,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    abstract class EntityManager : GameComponent
+    public abstract class EntityManager : GameComponent
     {
         protected ModelManager modelManager;
         protected SpriteManager spriteManager;

@@ -18,25 +18,26 @@ using BEPUphysics.Entities.Prefabs;
 
 namespace KazgarsRevenge
 {
-    enum GameState
+    public enum GameState
     {
         Playing,
+        Lobby,
         Paused,
         StartMenu
     }
 
-    class KazgarsRevengeGame : Game
+    public class KazgarsRevengeGame : Game
     {
         #region components
-        Space physics;
-        GeneralComponentManager genComponentManager;
-        LevelManager levels;
-        PlayerManager players; // TODO remove this one?? Server and client manage players differently
-        EnemyManager enemies;
-        AttackManager attacks;
+        protected Space physics;
+        protected GeneralComponentManager genComponentManager;
+        protected LevelManager levels;
+        protected PlayerManager players; // TODO remove this one?? Server and client manage players differently
+        protected EnemyManager enemies;
+        protected AttackManager attacks;
         #endregion
 
-        public GameState state;
+        public GameState gameState;
 
         public static CollisionGroup GoodProjectileCollisionGroup;
         public static CollisionGroup PlayerCollisionGroup;
@@ -79,11 +80,11 @@ namespace KazgarsRevenge
         }
 
 
-         protected override void Initialize()
+        protected override void Initialize()
         {
             rand = new Random();
 
-            Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
+            //Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
 
             genComponentManager = new GeneralComponentManager(this);
             Components.Add(genComponentManager);

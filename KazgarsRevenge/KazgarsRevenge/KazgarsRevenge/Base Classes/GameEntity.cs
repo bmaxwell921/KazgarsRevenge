@@ -7,7 +7,7 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
-    class GameEntity
+    public class GameEntity
     {
         public string Name { get; protected set; }
         public string Faction { get; protected set; }

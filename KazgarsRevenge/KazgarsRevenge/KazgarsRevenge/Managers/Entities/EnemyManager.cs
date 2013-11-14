@@ -14,7 +14,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class EnemyManager : EntityManager
+    public class EnemyManager : EntityManager
     {
         List<GameEntity> enemies = new List<GameEntity>();
 

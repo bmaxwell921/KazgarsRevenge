@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
-    class ModelManager : DrawableGameComponent
+    public class ModelManager : DrawableGameComponent
     {
         List<DrawableComponent3D> components = new List<DrawableComponent3D>();
         CameraComponent camera;

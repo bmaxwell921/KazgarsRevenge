@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    abstract class DrawableComponent3D : Component
+    public abstract class DrawableComponent3D : Component
     {
         public DrawableComponent3D(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)

@@ -86,6 +86,7 @@
     <Compile Include="Common\KazgarsRevengeGame.cs" />
     <Compile Include="Controllers\AIController.cs" />
     <Compile Include="Controllers\BruteController.cs" />
+    <Compile Include="Controllers\CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedModelComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
@@ -94,6 +95,8 @@
     <Compile Include="Drawing\DrawableComponent3D.cs" />
     <Compile Include="Drawing\EffectHelpers.cs" />
     <Compile Include="Base Classes\GameEntity.cs" />
+    <Compile Include="Non-Component\Equippable.cs" />
+    <Compile Include="Non-Component\Item.cs" />
     <Compile Include="Libraries\SoundEffectLibrary.cs" />
     <Compile Include="Managers\Entities\EnemyManager.cs" />
     <Compile Include="Misc Components\HealthHandlerComponent.cs" />

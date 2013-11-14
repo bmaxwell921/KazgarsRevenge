@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    class SpriteManager : DrawableGameComponent
+    public class SpriteManager : DrawableGameComponent
     {
         List<DrawableComponent2D> components = new List<DrawableComponent2D>();
         public SpriteManager(MainGame game)
