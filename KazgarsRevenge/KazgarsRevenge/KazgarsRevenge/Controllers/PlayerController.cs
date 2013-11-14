@@ -17,7 +17,7 @@ using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
-    class PlayerController : DrawableComponent2D
+    public class PlayerController : DrawableComponent2D
     {
         //services
         Space physics;
