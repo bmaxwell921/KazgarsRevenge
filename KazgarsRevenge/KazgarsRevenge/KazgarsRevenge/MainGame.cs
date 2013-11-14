@@ -64,8 +64,8 @@ namespace KazgarsRevenge
         float screenScale = 1;
         GameState gameState = GameState.StartMenu;
         Random rand;
-        
 
+        public Equippable EmptyItem;
 
         public MainGame()
         {
@@ -197,6 +197,9 @@ namespace KazgarsRevenge
                                                          pp.BackBufferFormat, pp.DepthStencilFormat);
 
             initDrawingParams();
+
+            Texture2D empty=Content.Load<Texture2D>("whitePixel");
+            EmptyItem = new Equippable(empty, "Empty", new Dictionary<PlayerController.StatType, float>());
 
             base.LoadContent();
         }

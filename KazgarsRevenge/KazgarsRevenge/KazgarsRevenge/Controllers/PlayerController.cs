@@ -176,7 +176,7 @@ namespace KazgarsRevenge
 
             for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
             {
-                //stats.Add((GearSlot)i, Item.None);
+                gear.Add((GearSlot)i, (game as MainGame).EmptyItem);
             }
         }
 
