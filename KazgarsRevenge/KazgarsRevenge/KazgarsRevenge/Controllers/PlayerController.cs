@@ -176,7 +176,7 @@ namespace KazgarsRevenge
 
             for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
             {
-                //stats.Add((GearSlot)i, Item.None);
+                gear.Add((GearSlot)i, (game as MainGame).EmptyItem);
             }
         }
 
@@ -451,8 +451,6 @@ namespace KazgarsRevenge
             //primary attack (autos)
             if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targettedPhysicalData != null)
             {
-                
-
                 //attack if in range
                 switch (selectedPrimary)
                 {
@@ -612,6 +610,7 @@ namespace KazgarsRevenge
                                     break;
                                 case 6:
                                     PlayAnimation("k_idle5");
+                                    soundEffects.playScratch();
                                     break;
                             }
                         }

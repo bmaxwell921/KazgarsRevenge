@@ -54,6 +54,10 @@ namespace KazgarsRevenge
         public RenderTarget2D RenderTarget { get { return renderTarget; } }
 
         float screenScale = 1;
+
+
+        public Equippable EmptyItem;
+
         public MainGame()
         {
             gameState = GameState.StartMenu;
@@ -150,6 +154,9 @@ namespace KazgarsRevenge
                                                          pp.BackBufferFormat, pp.DepthStencilFormat);
 
             initDrawingParams();
+
+            Texture2D empty=Content.Load<Texture2D>("whitePixel");
+            EmptyItem = new Equippable(empty, "Empty", new Dictionary<PlayerController.StatType, float>());
 
             base.LoadContent();
         }
