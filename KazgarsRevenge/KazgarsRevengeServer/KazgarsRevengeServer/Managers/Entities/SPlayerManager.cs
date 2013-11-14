@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using KazgarsRevenge;
+using Microsoft.Xna.Framework;
 
 namespace KazgarsRevengeServer
 {
@@ -33,6 +34,16 @@ namespace KazgarsRevengeServer
             //TODO do stuff - actually setting it up
 
             return newId;
+        }
+
+        public void UpdatePlayerPosition(Identification id, Vector3 velocity)
+        {
+            // TODO Update the position based on velocity?? - I feel like Bepu won't like me doing that -.-
+        }
+
+        public Vector3 GetPlayerPosition(Identification id)
+        {
+            return Vector3.Zero;
         }
     }
 }

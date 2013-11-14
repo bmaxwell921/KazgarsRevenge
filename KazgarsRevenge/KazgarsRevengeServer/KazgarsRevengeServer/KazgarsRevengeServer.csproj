@@ -87,7 +87,10 @@
     <Compile Include="Managers\SNetworkingMessageManager.cs" />
     <Compile Include="Misc\IdentificationFactory.cs" />
     <Compile Include="Networking\Handlers\BaseHandler.cs" />
-    <Compile Include="Networking\Handlers\ConnectionHandler.cs" />
+    <Compile Include="Networking\Handlers\SConnectionHandler.cs" />
+    <Compile Include="Networking\Handlers\SDataMessageHandler.cs" />
+    <Compile Include="Networking\Handlers\SGameStateChangeHandler.cs" />
+    <Compile Include="Networking\Handlers\SPositionHandler.cs" />
     <Compile Include="Networking\Messages\BasePacket.cs" />
     <Compile Include="Networking\Parsers\MessageParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
