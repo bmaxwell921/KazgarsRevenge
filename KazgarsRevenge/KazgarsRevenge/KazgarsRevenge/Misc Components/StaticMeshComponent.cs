@@ -15,7 +15,7 @@ namespace KazgarsRevenge
     class StaticMeshComponent : Component
     {
         protected StaticMesh collidable;
-        public StaticMeshComponent(MainGame game, GameEntity entity)
+        public StaticMeshComponent(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
             this.collidable = entity.GetSharedData(typeof(StaticMesh)) as StaticMesh;

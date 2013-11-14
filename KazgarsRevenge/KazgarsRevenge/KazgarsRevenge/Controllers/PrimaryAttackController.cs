@@ -23,7 +23,7 @@ namespace KazgarsRevenge
         double lifeLength;
         //either "good" or "bad", for now
         string factionToHit;
-        public AttackController(MainGame game, GameEntity entity, Entity physicalData, int damage, double millisDuration, string factionToHit)
+        public AttackController(KazgarsRevengeGame game, GameEntity entity, Entity physicalData, int damage, double millisDuration, string factionToHit)
             : base(game, entity)
         {
             this.physicalData = physicalData;

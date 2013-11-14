@@ -20,12 +20,6 @@ using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
-    enum GameState
-    {
-        Playing,
-        Paused,
-        StartMenu,
-    }
     /// <summary>
     /// This is the main type for your game
     /// </summary>

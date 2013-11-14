@@ -25,7 +25,7 @@ namespace KazgarsRevenge
         protected Dictionary<string, AttachableModel> attachedModels;
         protected Matrix yawOffset = Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0);
 
-        public AnimatedModelComponent(MainGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 drawOffset)
+        public AnimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 drawOffset)
             : base(game, entity)
         {
             this.model = model;

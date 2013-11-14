@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     class GeneralComponentManager : GameComponent
     {
         List<Component> components = new List<Component>();
-        public GeneralComponentManager(MainGame game)
+        public GeneralComponentManager(KazgarsRevengeGame game)
             : base(game)
         {
 

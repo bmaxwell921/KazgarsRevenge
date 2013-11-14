@@ -19,13 +19,13 @@ namespace KazgarsRevenge
         protected ModelManager modelManager;
         protected SpriteManager spriteManager;
         protected GeneralComponentManager genComponentManager;
-        protected MainGame mainGame;
+        protected KazgarsRevengeGame mainGame;
 
 
-        public EntityManager(MainGame game)
+        public EntityManager(KazgarsRevengeGame game)
             : base(game)
         {
-            mainGame = game as MainGame;
+            mainGame = game;
         }
 
         #region Models

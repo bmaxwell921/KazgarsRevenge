@@ -17,7 +17,7 @@ namespace KazgarsRevenge
     class PlayerManager : EntityManager
     {
         List<GameEntity> players = new List<GameEntity>();
-        public PlayerManager(MainGame game)
+        public PlayerManager(KazgarsRevengeGame game)
             : base(game)
         {
 

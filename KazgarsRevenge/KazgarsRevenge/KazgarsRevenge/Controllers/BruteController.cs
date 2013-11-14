@@ -14,7 +14,7 @@ namespace KazgarsRevenge
         HealthData health;
         Entity physicalData;
         AnimationPlayer animations;
-        public BruteController(MainGame game, GameEntity entity)
+        public BruteController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
             this.health = entity.GetSharedData(typeof(HealthData)) as HealthData;

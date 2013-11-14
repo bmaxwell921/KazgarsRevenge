@@ -18,7 +18,7 @@ namespace KazgarsRevenge
     {
         List<GameEntity> enemies = new List<GameEntity>();
 
-        public EnemyManager(MainGame game)
+        public EnemyManager(KazgarsRevengeGame game)
             : base(game)
         {
 

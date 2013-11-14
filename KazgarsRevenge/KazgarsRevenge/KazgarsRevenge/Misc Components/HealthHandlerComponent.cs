@@ -13,7 +13,7 @@ namespace KazgarsRevenge
     class HealthHandlerComponent : Component
     {
         HealthData health;
-        public HealthHandlerComponent(MainGame game, GameEntity entity)
+        public HealthHandlerComponent(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
             this.health = entity.GetSharedData(typeof(HealthData)) as HealthData;

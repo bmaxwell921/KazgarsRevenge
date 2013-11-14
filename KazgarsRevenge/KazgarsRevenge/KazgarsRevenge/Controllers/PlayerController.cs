@@ -88,7 +88,7 @@ namespace KazgarsRevenge
         const float bowRange = 1000;
 
 
-        public PlayerController(MainGame game, GameEntity entity)
+        public PlayerController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
             //shared data

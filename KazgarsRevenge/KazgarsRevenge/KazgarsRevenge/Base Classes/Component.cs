@@ -9,14 +9,14 @@ namespace KazgarsRevenge
 {
     abstract class Component
     {
-        protected MainGame Game;
+        protected KazgarsRevengeGame Game;
         protected GameEntity entity;
         public bool Remove { get; protected set; }
         public void Kill()
         {
             Remove = true;
         }
-        public Component(MainGame game, GameEntity entity)
+        public Component(KazgarsRevengeGame game, GameEntity entity)
         {
             this.Game = game;
             this.entity = entity;

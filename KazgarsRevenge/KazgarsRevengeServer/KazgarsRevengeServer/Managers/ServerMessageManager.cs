@@ -1,93 +1,93 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-//using Microsoft.Xna.Framework;
-//using Lidgren.Network;
-//using KazgarsRevenge;
+using Microsoft.Xna.Framework;
+using Lidgren.Network;
+using KazgarsRevenge;
 
-//namespace KazgarsRevengeServer.Managers
-//{
-//    class ServerMessageManager : GameComponent
-//    {
-//        public static readonly Boolean DEBUGGING = true;
+namespace KazgarsRevengeServer.Managers
+{
+    class ServerMessageManager : GameComponent
+    {
+        public static readonly Boolean DEBUGGING = true;
 
-//        // Server from Lidgren
-//        NetServer server;
+        // Server from Lidgren
+        NetServer server;
 
-//        // When to send info to connected clients
-//        double nextUpdateTime;
+        // When to send info to connected clients
+        double nextUpdateTime;
 
-//        // number of people connected, must be < MAX_NUM_CONNECTIONS
-//        int connectedPlayers;
+        // number of people connected, must be < MAX_NUM_CONNECTIONS
+        int connectedPlayers;
 
-//        Dictionary<NetIncomingMessageType, BaseParser> messageParsers;
+        //Dictionary<NetIncomingMessageType, BaseParser> messageParsers;
 
-//        public ServerMessageManager(Game game)
-//            : base(game)
-//        {
-//            SetUpNetServer();
-//            AddMessageParsers();
+        public ServerMessageManager(KazgarsRevengeGame game)
+            : base(game)
+        {
+            SetUpNetServer();
+            AddMessageParsers();
 
-//            // Server starts in the lobby state since it's awaiting connections
-//            ((Server)Game).state = GameState.Lobby;
+            // Server starts in the lobby state since it's awaiting connections
+            ((KazgarsRevengeGame)Game).state = GameState.Lobby;
 
-//            connectedPlayers = 0;
-//            nextUpdateTime = NetTime.Now;
-//        }
+            connectedPlayers = 0;
+            nextUpdateTime = NetTime.Now;
+        }
 
-//        private void SetUpNetServer()
-//        {
-//            NetPeerConfiguration config = new NetPeerConfiguration(Constants.CONNECTION_KEY);
-//            config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
-//            config.Port = Constants.PORT;
+        private void SetUpNetServer()
+        {
+            NetPeerConfiguration config = new NetPeerConfiguration(Constants.CONNECTION_KEY);
+            config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
+            config.Port = Constants.PORT;
 
-//            config.MaximumConnections = Constants.MAX_NUM_CONNECTIONS;
+            config.MaximumConnections = Constants.MAX_NUM_CONNECTIONS;
 
-//            server = new NetServer(config);
-//            server.Start();
-//        }
+            server = new NetServer(config);
+            server.Start();
+        }
 
-//        private void AddMessageParsers()
-//        {
+        private void AddMessageParsers()
+        {
 
-//        }
+        }
 
-//        public override void Update(GameTime gameTime)
-//        {
-//            ReadMessages();
-//            base.Update(gameTime);
-//        }
+        public override void Update(GameTime gameTime)
+        {
+            ReadMessages();
+            base.Update(gameTime);
+        }
 
-//        private void ReadMessages()
-//        {
-//            NetIncomingMessage msg;
+        private void ReadMessages()
+        {
+            NetIncomingMessage msg;
 
-//            while ((msg = server.ReadMessage()) != null)
-//            {
-//                if (msg.MessageType == NetIncomingMessageType.DiscoveryRequest)
-//                {
-//                    HandleNewConnection(msg);
-//                    continue;
-//                }
-//            }
-//        }
+            while ((msg = server.ReadMessage()) != null)
+            {
+                if (msg.MessageType == NetIncomingMessageType.DiscoveryRequest)
+                {
+                    HandleNewConnection(msg);
+                    continue;
+                }
+            }
+        }
 
-//        // Special case for connecting players??
-//        private void HandleNewConnection(NetIncomingMessage msg)
-//        {
-//            if (connectedPlayers >= Constants.MAX_NUM_CONNECTIONS)
-//            {
-//                // TODO sophisticated logging?
-//                Console.WriteLine("DEBUG:Someone tried to connect to the server when we already have %d connections.", connectedPlayers);
-//                return;
-//            }
+        // Special case for connecting players??
+        private void HandleNewConnection(NetIncomingMessage msg)
+        {
+            if (connectedPlayers >= Constants.MAX_NUM_CONNECTIONS)
+            {
+                // TODO sophisticated logging?
+                Console.WriteLine("DEBUG:Someone tried to connect to the server when we already have %d connections.", connectedPlayers);
+                return;
+            }
 
-//            if (DEBUGGING)
-//            {
-//                Console.WriteLine("Someone new is connecting from: " + msg.ReadIPEndpoint());
-//            }
-//        }
-//    }
-//}
+            if (DEBUGGING)
+            {
+                Console.WriteLine("Someone new is connecting from: " + msg.ReadIPEndpoint());
+            }
+        }
+    }
+}
