@@ -27,15 +27,13 @@ namespace KazgarsRevenge
     {
         #region components
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        
+        SpriteBatch spriteBatch;        
         BoundingBoxDrawer modelDrawer;
         CameraComponent camera;
         ModelManager renderManager;
-        
         SpriteManager spriteManager;
-        
-        //PlayerManager players; Probably should still be in here???
+
+        PlayerManager players;
         NetworkMessageManager networkMessages;
         SoundEffectLibrary soundEffectLibrary;
         #endregion
@@ -95,29 +93,13 @@ namespace KazgarsRevenge
             Components.Add(renderManager);
             Services.AddService(typeof(ModelManager), renderManager);
 
-            //genComponentManager = new GeneralComponentManager(this);
-            //Components.Add(genComponentManager);
-            //Services.AddService(typeof(GeneralComponentManager), genComponentManager);
-
             spriteManager = new SpriteManager(this);
             Components.Add(spriteManager);
             Services.AddService(typeof(SpriteManager), spriteManager);
 
-            //players = new PlayerManager(this);
-            //Components.Add(players);
-            //Services.AddService(typeof(PlayerManager), players);
-
-            //enemies = new EnemyManager(this);
-            //Components.Add(enemies);
-            //Services.AddService(typeof(EnemyManager), enemies);
-
-            //levels = new LevelManager(this);
-            //Components.Add(levels);
-            //Services.AddService(typeof(LevelManager), levels);
-
-            //attacks = new AttackManager(this);
-            //Components.Add(attacks);
-            //Services.AddService(typeof(AttackManager), attacks);
+            players = new PlayerManager(this);
+            Components.Add(players);
+            Services.AddService(typeof(PlayerManager), players);
 
             networkMessages = new NetworkMessageManager(this);
             Components.Add(networkMessages);

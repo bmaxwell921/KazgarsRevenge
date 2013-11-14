@@ -32,7 +32,7 @@ namespace KazgarsRevenge
         protected Space physics;
         protected GeneralComponentManager genComponentManager;
         protected LevelManager levels;
-        protected PlayerManager players; // TODO remove this one?? Server and client manage players differently
+        
         protected EnemyManager enemies;
         protected AttackManager attacks;
         #endregion
@@ -90,9 +90,9 @@ namespace KazgarsRevenge
             Components.Add(genComponentManager);
             Services.AddService(typeof(GeneralComponentManager), genComponentManager);
 
-            players = new PlayerManager(this);
-            Components.Add(players);
-            Services.AddService(typeof(PlayerManager), players);
+            //players = new PlayerManager(this);
+            //Components.Add(players);
+            //Services.AddService(typeof(PlayerManager), players);
 
             enemies = new EnemyManager(this);
             Components.Add(enemies);
