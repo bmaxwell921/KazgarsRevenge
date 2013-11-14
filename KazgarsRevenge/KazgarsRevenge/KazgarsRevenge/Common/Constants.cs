@@ -15,11 +15,14 @@ namespace KazgarsRevenge
     
     public enum MessageType
     {
-        ConnectionMessage,
+        // Client -> Server or Server -> Client
         GameStateChange,
         InGame_Kinetic,
         InGame_Ability,
         InGame_Status,
+
+        // Server -> Client Only
+        MapData,
     }
 
     public class Constants
