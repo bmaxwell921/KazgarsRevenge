@@ -155,7 +155,7 @@ namespace KazgarsRevenge
 
             initDrawingParams();
 
-            Texture2D empty=Content.Load<Texture2D>("whitePixel");
+            Texture2D empty=Content.Load<Texture2D>("Textures\\whitePixel");
             EmptyItem = new Equippable(empty, "Empty", new Dictionary<PlayerController.StatType, float>());
 
             base.LoadContent();

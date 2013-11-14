@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    class Item
+    public class Item
     {
         public Texture2D Icon { get; private set; }
         public string Name { get; private set; }

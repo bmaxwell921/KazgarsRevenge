@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    class Equippable : Item
+    public class Equippable : Item
     {
         Dictionary<PlayerController.StatType, float> statEffects;
         public Equippable(Texture2D icon, string name, Dictionary<PlayerController.StatType, float> statEffects)
