@@ -21,22 +21,18 @@ namespace KazgarsRevengeServer
     /// </summary>
     public class Server : KazgarsRevengeGame
     {
-        #region components
-
         SNetworkingMessageManager msgManager;
-        #endregion
-        //  TODO this guy just runs the game normally
-
+     
         public Server() : base()
         {
         }
 
         protected override void Initialize()
         {
+            base.Initialize();
             msgManager = new SNetworkingMessageManager(this);
             Components.Add(msgManager);
             Services.AddService(typeof(SNetworkingMessageManager), msgManager);
-            base.Initialize();
         }
 
         /// <summary>

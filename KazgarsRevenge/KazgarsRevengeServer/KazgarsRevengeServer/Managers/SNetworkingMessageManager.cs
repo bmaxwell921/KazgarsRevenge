@@ -62,7 +62,7 @@ namespace KazgarsRevengeServer
 
         private void AddHandlers()
         {
-            msgHandlers[NetIncomingMessageType.DiscoveryRequest] = new ConnectionHandler(Game as KazgarsRevengeGame);
+            msgHandlers[NetIncomingMessageType.DiscoveryRequest] = new SConnectionHandler(Game as KazgarsRevengeGame);
         }
 
         public override void Update(GameTime gameTime)

@@ -10,6 +10,7 @@ namespace KazgarsRevengeServer
     class SPlayerManager : EntityManager
     {
         // Map of Identifications to players
+        // HOST IS ALWAYS IDENTIFICATION 0 
         public Dictionary<Identification, GameEntity> players
         {
             get;

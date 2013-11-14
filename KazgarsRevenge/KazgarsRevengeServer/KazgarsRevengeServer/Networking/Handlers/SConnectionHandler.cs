@@ -10,12 +10,12 @@ namespace KazgarsRevengeServer
     /// <summary>
     /// Handler used by the server to establish a connection to a client
     /// </summary>
-    public class ConnectionHandler : BaseHandler
+    public class SConnectionHandler : BaseHandler
     {
         SPlayerManager playerManager;
         SNetworkingMessageManager nmm;
 
-        public ConnectionHandler(KazgarsRevengeGame game)
+        public SConnectionHandler(KazgarsRevengeGame game)
             : base(game)
         {
             playerManager = (SPlayerManager) game.Services.GetService(typeof(SPlayerManager));
