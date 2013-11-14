@@ -5,6 +5,23 @@ using System.Text;
 
 namespace KazgarsRevenge
 {
+    public enum GameState
+    {
+        Playing,
+        Lobby,
+        Paused,
+        StartMenu
+    }
+    
+    public enum MessageType
+    {
+        ConnectionMessage,
+        GameStateChange,
+        InGame_Kinetic,
+        InGame_Ability,
+        InGame_Status,
+    }
+
     public class Constants
     {
         public static readonly string CONNECTION_KEY = "Revengeance";

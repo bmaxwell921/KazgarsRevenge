@@ -18,14 +18,6 @@ using BEPUphysics.Entities.Prefabs;
 
 namespace KazgarsRevenge
 {
-    public enum GameState
-    {
-        Playing,
-        Lobby,
-        Paused,
-        StartMenu
-    }
-
     public class KazgarsRevengeGame : Game
     {
         #region components
@@ -89,10 +81,6 @@ namespace KazgarsRevenge
             genComponentManager = new GeneralComponentManager(this);
             Components.Add(genComponentManager);
             Services.AddService(typeof(GeneralComponentManager), genComponentManager);
-
-            //players = new PlayerManager(this);
-            //Components.Add(players);
-            //Services.AddService(typeof(PlayerManager), players);
 
             enemies = new EnemyManager(this);
             Components.Add(enemies);
