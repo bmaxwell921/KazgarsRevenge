@@ -451,8 +451,6 @@ namespace KazgarsRevenge
             //primary attack (autos)
             if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targettedPhysicalData != null)
             {
-                
-
                 //attack if in range
                 switch (selectedPrimary)
                 {
@@ -612,6 +610,7 @@ namespace KazgarsRevenge
                                     break;
                                 case 6:
                                     PlayAnimation("k_idle5");
+                                    soundEffects.playScratch();
                                     break;
                             }
                         }
