@@ -1,0 +1,23 @@
+﻿1) Server Receives Discovery Request
+	i) Check if we can have another player
+	ii) Add the player if yes
+
+2) Server Sends Discovery Response
+	Message Format:
+		- byte playerId;
+		- bool isHost;
+
+3) Repeat steps 1-2 until we start or hit the max players
+
+4) Host tells us to begin the game
+	i) Generate the map
+	ii) Generate player locations
+	iii) Send the map/locations to the players
+	iv) Transition to game playing
+
+5) Game Playing
+	i) For now just pass all messages to every client?
+
+
+
+Need a more sophisticated Logger...
