@@ -178,11 +178,6 @@ namespace KazgarsRevenge
 
         protected override void LoadContent()
         {
-            //adding large rectangle for units to stand on
-            //StaticMesh ground = new StaticMesh(new Vector3[] { new Vector3(-2000, 0, -2000), new Vector3(2000, 0, -2000), new Vector3(-2000, 0, 2000), new Vector3(2000, 0, 2000) }, new int[] { 0, 1, 2, 2, 1, 3 });
-            //physics.Add(ground);
-
-
             normalFont = Content.Load<SpriteFont>("Verdana");
             texCursor = Content.Load<Texture2D>("Textures\\whiteCursor");
 
@@ -325,7 +320,6 @@ namespace KazgarsRevenge
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);
-
                     //debug strings
                     //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
                     //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);

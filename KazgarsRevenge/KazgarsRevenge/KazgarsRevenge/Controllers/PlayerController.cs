@@ -56,25 +56,38 @@ namespace KazgarsRevenge
         #endregion
 
 
-
-        //stats
-        enum StatType
+        #region stats
+        public enum StatType
         {
             RunSpeed,
             AttackSpeed,
-
+            Strength,
+            Agility,
+            Intellect,
+            CooldownReduction,
+            CritChance,
+            Health,
         }
-        Dictionary<StatType, float> playerStats = new Dictionary<StatType, float>() {{StatType.AttackSpeed, .05f}, {StatType.RunSpeed, 120} };
+        float[] baseStats = new float[] {120, .05f, 1, 1, 1, 0, 0, 100 };
 
+        //array with one position per type of stat
+        Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
+        #endregion
+
+
+        #region equipped gear
         //inventory
-        enum InventorySlot{
+        public enum GearSlot
+        {
             Head,
             Chest,
             Legs,
             Righthand,
             Lefthand,
         }
-        Dictionary<InventorySlot, Item> inventory = new Dictionary<InventorySlot, Item>();
+        Dictionary<GearSlot, Item> gear = new Dictionary<GearSlot, Item>();
+        #endregion
+
 
         //attacks
         enum PrimaryAttack
@@ -122,12 +135,10 @@ namespace KazgarsRevenge
             healthPot = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\HP");
             #endregion
 
-            millisShotRelease = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
-            millisMelleDamage = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
-
-
             //populate list of animation lengths
             aniDurations = new Dictionary<string, double>();
+            aniDurations["shotRelease"] = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
+            aniDurations["melleDamage"] = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
             foreach (KeyValuePair<string, AnimationClip> k in animations.skinningDataValue.AnimationClips)
             {
                 string key = k.Key;
@@ -146,6 +157,16 @@ namespace KazgarsRevenge
             //adding sword and bow for demo
             attached.Add("sword", Game.GetAttachable("sword01", "sword", "Bone_001_R_004"));
             attached.Add("bow", Game.GetAttachable("bow01", "sword", "Bone_001_L_004"));
+
+            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
+            {
+                stats.Add((StatType)i, baseStats[i]);
+            }
+
+            for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
+            {
+                //stats.Add((GearSlot)i, Item.None);
+            }
         }
 
         #region animations
@@ -184,12 +205,10 @@ namespace KazgarsRevenge
         private double millisAniDuration;
 
         private AttackState attState = AttackState.None;
-        private double millisShotRelease;
         private double millisShotAniCounter;
         private double millisShotArrowAttachLength = 200;
         private double millisShotArrowAttachCounter;
 
-        private double millisMelleDamage;
         private double millisMelleCounter;
 
         private string currentAniName;
@@ -491,7 +510,7 @@ namespace KazgarsRevenge
             //held down:  path towards mousehovered location (or targetted entity if its data isn't null and it's not in range) / if in range of targetted entity, auto attack
             //up:         if there is a targetted enemy, run up and attack it once. if not, run towards targetted location if not already at it
 
-            Vector3 moveVec = move * playerStats[StatType.RunSpeed];
+            Vector3 moveVec = move * stats[(int)StatType.RunSpeed];
             moveVec.Y = physicalData.LinearVelocity.Y;
             if (curMouse.LeftButton == ButtonState.Pressed)
             {
@@ -590,7 +609,7 @@ namespace KazgarsRevenge
                     attState = AttackState.DrawingString;
                     millisShotArrowAttachCounter = 0;
                 }
-                else if (attState == AttackState.DrawingString && millisShotAniCounter >= millisShotRelease)
+                else if (attState == AttackState.DrawingString && millisShotAniCounter >= aniDurations["shotRelease"])
                 {
                     Vector3 forward = GetForward();
                     attached.Remove("arrow");
@@ -598,7 +617,7 @@ namespace KazgarsRevenge
                     attState = AttackState.LettingGo;
                     millisShotAniCounter = 0;
                 }
-                else if (attState == AttackState.LettingGo && millisShotAniCounter >= millisShotRelease * playerStats[StatType.AttackSpeed])
+                else if (attState == AttackState.LettingGo && millisShotAniCounter >= aniDurations["shotRelease"] * stats[StatType.AttackSpeed])
                 {
                     attState = AttackState.None;
                     millisShotAniCounter = 0;
@@ -608,7 +627,7 @@ namespace KazgarsRevenge
             //swinging animation
             if (currentAniName == "k_onehanded_swing" || currentAniName == "k_flip")
             {
-                if (attState == AttackState.InitialSwing && millisMelleCounter >= millisMelleDamage)
+                if (attState == AttackState.InitialSwing && millisMelleCounter >= aniDurations["melleDamage"])
                 {
                     Vector3 forward = GetForward();
                     attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, "bad");
