@@ -32,6 +32,7 @@ namespace KazgarsRevenge
         CameraComponent camera;
         ModelManager renderManager;
         SpriteManager spriteManager;
+        GearGenerator gearGenerator;
 
         PlayerManager players;
         NetworkMessageManager networkMessages;
@@ -53,8 +54,6 @@ namespace KazgarsRevenge
 
         float screenScale = 1;
 
-
-        public Equippable EmptyItem;
 
         public MainGame()
         {
@@ -101,6 +100,10 @@ namespace KazgarsRevenge
             Components.Add(players);
             Services.AddService(typeof(PlayerManager), players);
 
+            gearGenerator = new GearGenerator(this);
+            Components.Add(gearGenerator);
+            Services.AddService(typeof(GearGenerator), gearGenerator);
+
             networkMessages = new NetworkMessageManager(this);
             Components.Add(networkMessages);
             Services.AddService(typeof(NetworkMessageManager), networkMessages);
@@ -138,7 +141,6 @@ namespace KazgarsRevenge
             initDrawingParams();
 
             Texture2D empty=Content.Load<Texture2D>("Textures\\whitePixel");
-            EmptyItem = new Equippable(empty, "Empty", new Dictionary<PlayerController.StatType, float>());
 
             base.LoadContent();
         }

@@ -96,7 +96,9 @@
     <Compile Include="Drawing\DrawableComponent3D.cs" />
     <Compile Include="Drawing\EffectHelpers.cs" />
     <Compile Include="Base Classes\GameEntity.cs" />
+    <Compile Include="GearGenerator.cs" />
     <Compile Include="Misc Components\Identification.cs" />
+    <Compile Include="ModelCreator.cs" />
     <Compile Include="Non-Component\Equippable.cs" />
     <Compile Include="Non-Component\Item.cs" />
     <Compile Include="Libraries\SoundEffectLibrary.cs" />

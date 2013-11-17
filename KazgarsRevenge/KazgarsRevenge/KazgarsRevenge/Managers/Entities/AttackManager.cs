@@ -11,18 +11,27 @@ using BEPUphysics.MathExtensions;
 using BEPUphysics.Collidables;
 using BEPUphysics.DataStructures;
 using SkinnedModelLib;
+using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
     public class AttackManager : EntityManager
     {
         List<GameEntity> attacks = new List<GameEntity>();
+        SoundEffectLibrary soundEffects;
+
         public AttackManager(KazgarsRevengeGame game)
             : base(game)
         {
 
         }
 
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
+        }
 
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
         public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, string factionToHit)
@@ -53,6 +62,8 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(arrowAI);
 
             attacks.Add(arrow);
+
+            soundEffects.playRangedSound();
         }
 
         public void CreateMelleAttack(Vector3 position, int damage, string factionToHit)
@@ -76,6 +87,13 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(attackAI);
 
             attacks.Add(newAttack);
+            soundEffects.playMeleeSound();
+        }
+
+        public void CreateMagicAttack()
+        {
+
+            soundEffects.playMagicSound();
         }
 
         public void CreateMouseSpikes(Vector3 position)

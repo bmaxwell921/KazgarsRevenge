@@ -71,12 +71,9 @@ namespace KazgarsRevenge
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(BadProjectileCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
         }
 
-
         protected override void Initialize()
         {
             rand = new Random();
-
-            //Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
 
             genComponentManager = new GeneralComponentManager(this);
             Components.Add(genComponentManager);
@@ -97,14 +94,9 @@ namespace KazgarsRevenge
             base.Initialize();
         }
 
-         /// <summary>
-         /// Allows the game to run logic such as updating the world,
-         /// checking for collisions, gathering input, and playing audio.
-         /// </summary>
-         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-         protected override void Update(GameTime gameTime)
-         {
-             base.Update(gameTime);
-         }
+        protected override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+        }
     }
 }

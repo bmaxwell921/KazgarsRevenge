@@ -17,6 +17,17 @@ using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
+    public enum StatType
+    {
+        RunSpeed,
+        AttackSpeed,
+        Strength,
+        Agility,
+        Intellect,
+        CooldownReduction,
+        CritChance,
+        Health,
+    }
     public class PlayerController : DrawableComponent2D
     {
         //services
@@ -24,6 +35,7 @@ namespace KazgarsRevenge
         CameraComponent camera;
         SoundEffectLibrary soundEffects;
         AttackManager attacks;
+        GearGenerator gearGenerator;
 
         //data
         AnimationPlayer animations;
@@ -64,20 +76,10 @@ namespace KazgarsRevenge
         #endregion
 
         #region stats
-        public enum StatType
-        {
-            RunSpeed,
-            AttackSpeed,
-            Strength,
-            Agility,
-            Intellect,
-            CooldownReduction,
-            CritChance,
-            Health,
-        }
-        float[] baseStats = new float[] {120, .05f, 1, 1, 1, 0, 0, 100 };
-
         //array with one position per type of stat
+        //                                move    attspeed   str  agi  intel  cd   crit   hp
+        float[] baseStats = new float[] { 120,    .05f,      1,   1,   1,     0,   0,     100 };
+
         Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
         #endregion
 
@@ -92,9 +94,88 @@ namespace KazgarsRevenge
             Righthand,
             Lefthand,
         }
-        Dictionary<GearSlot, Item> gear = new Dictionary<GearSlot, Item>();
-        #endregion
+        Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
+        Item[,] inventory = new Item[15, 15];
+        public void EquipGear(Equippable equipMe, GearSlot slot)
+        {
+            UnequipGear(slot);
+            gear[slot] = equipMe;
+            RecalculateStats();
 
+            attached.Add(slot.ToString(), new AttachableModel(equipMe.gearModel, GearSlotToBoneName(slot)));
+        }
+        /// <summary>
+        /// tries to put equipped item into inventory. If there was no inventory space, returns false.
+        /// </summary>
+        public bool UnequipGear(GearSlot slot)
+        {
+            Equippable oldEquipped = gear[slot];
+            if (oldEquipped != null)
+            {
+                if (AddToInventory(oldEquipped))
+                {
+                    attached.Remove(slot.ToString());
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                //if there was nothing in there to start with, return true
+                return true;
+            }
+        }
+        /// <summary>
+        /// tries to add item to inventory if there is space. returns false if no space left
+        /// </summary>
+        public bool AddToInventory(Item toAdd)
+        {
+            if (toAdd == null)
+            {
+                return true;
+            }
+            for (int i = 0; i < inventory.GetLength(0); ++i)
+            {
+                for (int j = 0; j < inventory.GetLength(1); ++j)
+                {
+                    if (inventory[i, j] == null)
+                    {
+                        inventory[i, j] = toAdd;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public void RecalculateStats()
+        {
+            //add base stats, accounting for level
+            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
+            {
+                stats[(StatType)i] = baseStats[i];
+            }
+
+            //add stats for each piece of gear
+            foreach (KeyValuePair<GearSlot, Equippable> k in gear)
+            {
+                if (k.Value != null)
+                {
+                    AddStats(k.Value.statEffects);
+                }
+            }
+        }
+
+        public void AddStats(Dictionary<StatType, float> statsToAdd)
+        {
+            foreach (KeyValuePair<StatType, float> k in statsToAdd)
+            {
+                stats[k.Key] += k.Value;
+            }
+        }
+        #endregion
 
         //attacks
         enum PrimaryAttack
@@ -111,6 +192,7 @@ namespace KazgarsRevenge
         public PlayerController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
+            #region members
             //shared data
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
@@ -125,11 +207,13 @@ namespace KazgarsRevenge
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             attacks = game.Services.GetService(typeof(AttackManager)) as AttackManager;
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
+            gearGenerator= Game.Services.GetService(typeof(GearGenerator)) as GearGenerator;
 
             //required content
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
             font = game.Content.Load<SpriteFont>("Verdana");
             InitDrawingParams();
+            #endregion
 
             #region UI Frame Load
             icon_selected = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\icon_selected");
@@ -146,7 +230,7 @@ namespace KazgarsRevenge
             healthPot = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\HP");
             #endregion
 
-            //populate list of animation lengths
+            #region animation setup
             aniDurations = new Dictionary<string, double>();
             aniDurations["shotRelease"] = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
             aniDurations["melleDamage"] = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
@@ -164,20 +248,25 @@ namespace KazgarsRevenge
             }
 
             PlayAnimation("k_idle1");
+            #endregion
             
-            //adding sword and bow for demo
-            attached.Add("sword", ((MainGame)Game).GetAttachable("sword01", "sword", "Bone_001_R_004"));
-            attached.Add("bow", ((MainGame)Game).GetAttachable("bow01", "sword", "Bone_001_L_004"));
-
+            #region stats and invencoty
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
             {
-                stats.Add((StatType)i, baseStats[i]);
+                stats.Add((StatType)i, 0);
             }
+
+            RecalculateStats();
 
             for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
             {
-                gear.Add((GearSlot)i, (game as MainGame).EmptyItem);
+                gear.Add((GearSlot)i, null);
             }
+            #endregion
+
+            //adding sword and bow for demo
+            EquipGear(gearGenerator.GetSword(), GearSlot.Righthand);
+            EquipGear(gearGenerator.GetBow(), GearSlot.Lefthand);
         }
 
         #region animations
@@ -458,7 +547,6 @@ namespace KazgarsRevenge
                         if (distance < melleRange)
                         {
                             PlayAnimation("k_onehanded_swing");
-                            soundEffects.playMeleeSound();
                             attState = AttackState.InitialSwing;
                             UpdateRotation(dir);
                             millisMelleCounter = 0;
@@ -470,7 +558,6 @@ namespace KazgarsRevenge
                         if (distance < bowRange)
                         {
                             PlayAnimation("k_fire_arrow");
-                            soundEffects.playRangedSound();
                             attState = AttackState.GrabbingArrow;
                             UpdateRotation(dir);
                             millisShotAniCounter = 0;
@@ -483,7 +570,6 @@ namespace KazgarsRevenge
                         if (distance < bowRange)
                         {
                             PlayAnimation("k_fire_arrow");
-                            soundEffects.playMagicSound();
                             attState = AttackState.GrabbingArrow;
                             UpdateRotation(dir);
                             millisShotAniCounter = 0;
@@ -580,14 +666,13 @@ namespace KazgarsRevenge
             }
         }
 
-
         /// <summary>
         /// handles animation transitions
         /// </summary>
         private void CheckAnimations()
         {
             //if the animation has played through its duration, do stuff
-            //(mainly to handle idle animations and fighting stance to idle
+            //(mainly to handle idle animations and fighting stance to idle)
             if (millisAniCounter > millisAniDuration)
             {
                 switch (currentAniName)
@@ -674,6 +759,18 @@ namespace KazgarsRevenge
         }
 
         #region helpers
+        public string GearSlotToBoneName(GearSlot s)
+        {
+            switch (s)
+            {
+                case GearSlot.Lefthand:
+                    return "Bone_001_L_004";
+                case GearSlot.Righthand:
+                    return "Bone_001_R_004";
+                default:
+                    return "RootNode";
+            }
+        }
         /// <summary>
         /// rotates kazgar towards mouse
         /// </summary>
