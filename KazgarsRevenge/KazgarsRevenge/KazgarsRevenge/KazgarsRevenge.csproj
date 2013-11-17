@@ -110,9 +110,10 @@
     <Compile Include="Misc Components\HealthData.cs" />
     <Compile Include="Misc Components\PhysicsComponent.cs" />
     <Compile Include="Controllers\PlayerController.cs" />
-    <Compile Include="Controllers\PrimaryAttackController.cs" />
+    <Compile Include="Controllers\AttackController.cs" />
     <Compile Include="Managers\Entities\PlayerManager.cs" />
     <Compile Include="Managers\Entities\AttackManager.cs" />
+    <Compile Include="Non-Component\Weapon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="MainGame.cs" />
