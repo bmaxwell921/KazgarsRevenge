@@ -367,6 +367,9 @@ namespace KazgarsRevenge
 
             if (Game.IsActive)
             {
+                //Checkswhich ability buttons are pressed down.
+                CheckButtons();
+
                 if (curMouse.LeftButton == ButtonState.Pressed)
                 {
                     millisRunningCounter = 0;
@@ -506,6 +509,27 @@ namespace KazgarsRevenge
             }
         }
 
+        private void CheckButtons()
+        {
+            //UI Abilities Used Frame
+            if (curKeys.IsKeyDown(Keys.Q)) UISlotUsed[0] = true;
+            if (curKeys.IsKeyDown(Keys.W)) UISlotUsed[1] = true;
+            if (curKeys.IsKeyDown(Keys.E)) UISlotUsed[2] = true;
+            if (curKeys.IsKeyDown(Keys.R)) UISlotUsed[3] = true;
+            if (curKeys.IsKeyDown(Keys.A)) UISlotUsed[4] = true;
+            if (curKeys.IsKeyDown(Keys.S)) UISlotUsed[5] = true;
+            if (curKeys.IsKeyDown(Keys.D)) UISlotUsed[6] = true;
+            if (curKeys.IsKeyDown(Keys.F)) UISlotUsed[7] = true;
+
+            if (curMouse.LeftButton == ButtonState.Pressed) UISlotUsed[8] = true;
+            if (curMouse.RightButton == ButtonState.Pressed) UISlotUsed[9] = true;
+
+            if (curKeys.IsKeyDown(Keys.D1)) UISlotUsed[10] = true;
+            if (curKeys.IsKeyDown(Keys.D2)) UISlotUsed[11] = true;
+            if (curKeys.IsKeyDown(Keys.D3)) UISlotUsed[12] = true;
+            if (curKeys.IsKeyDown(Keys.D4)) UISlotUsed[13] = true;
+        }
+
         /// <summary>
         /// checks player input to see what ability to use
         /// </summary>
@@ -591,7 +615,7 @@ namespace KazgarsRevenge
                 targettedPhysicalData = null;
             }*/
 
-            if (curKeys.IsKeyDown(Keys.D1))
+            if (curKeys.IsKeyDown(Keys.Q))
             {
                 PlayAnimation("k_flip");
                 attState = AttackState.InitialSwing;
@@ -601,24 +625,6 @@ namespace KazgarsRevenge
                 groundTargetLocation = physicalData.Position;
                 targettedPhysicalData = null;
             }
-
-            //UI Abilities Used Frame
-            if (curKeys.IsKeyDown(Keys.Q)) UISlotUsed[0] = true;
-            if (curKeys.IsKeyDown(Keys.W)) UISlotUsed[1] = true;
-            if (curKeys.IsKeyDown(Keys.E)) UISlotUsed[2] = true;
-            if (curKeys.IsKeyDown(Keys.R)) UISlotUsed[3] = true;
-            if (curKeys.IsKeyDown(Keys.A)) UISlotUsed[4] = true;
-            if (curKeys.IsKeyDown(Keys.S)) UISlotUsed[5] = true;
-            if (curKeys.IsKeyDown(Keys.D)) UISlotUsed[6] = true;
-            if (curKeys.IsKeyDown(Keys.F)) UISlotUsed[7] = true;
-
-            if (curMouse.LeftButton == ButtonState.Pressed) UISlotUsed[8] = true;
-            if (curMouse.RightButton == ButtonState.Pressed) UISlotUsed[9] = true;
-
-            if (curKeys.IsKeyDown(Keys.D1)) UISlotUsed[10] = true;
-            if (curKeys.IsKeyDown(Keys.D2)) UISlotUsed[11] = true;
-            if (curKeys.IsKeyDown(Keys.D3)) UISlotUsed[12] = true;
-            if (curKeys.IsKeyDown(Keys.D4)) UISlotUsed[13] = true;
         }
 
         /// <summary>
@@ -900,9 +906,46 @@ namespace KazgarsRevenge
             s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
 
             #endregion
-
+            
             #region Ability Bar Mods
-
+            //0-7 abilities, 8 primary, 9 secondary, 10-13 items
+            //Draw the frames around abilities being used
+            for (int i = 0; i < 4; i++)
+            {
+                if (UISlotUsed[i])
+                {
+                    s.Draw(icon_selected, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                }
+                if (UISlotUsed[i + 4])
+                {
+                    s.Draw(icon_selected, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                }
+            }
+            //Primary
+            //if (UISlotUsed[8])
+            //{
+            //    s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            //}
+            if (UISlotUsed[9])
+            {
+                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            }
+            if (UISlotUsed[10])
+            {
+                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            }
+            if (UISlotUsed[11])
+            {
+                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            }
+            if (UISlotUsed[12])
+            {
+                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            }
+            if (UISlotUsed[13])
+            {
+                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            }
             #endregion
 
             //XP Area
