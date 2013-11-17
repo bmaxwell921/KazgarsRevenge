@@ -16,15 +16,19 @@ namespace KazgarsRevenge
 {
     public class PlayerManager : EntityManager
     {
-        List<GameEntity> players = new List<GameEntity>();
+        //TODO remove once client connection networking is in
+        private static readonly Identification DUMMY_ID = new Identification(0);
+
+        IDictionary<Identification, GameEntity> playerMap;
         public PlayerManager(KazgarsRevengeGame game)
             : base(game)
         {
-
+            playerMap = new Dictionary<Identification, GameEntity>();
         }
 
         public void CreateDude()
         {
+            // TODO if this method is unneeded remove it
             GameEntity dude = new GameEntity("dude", "wtf");
 
             Model dudeModel = GetAnimatedModel("Models\\dude");
@@ -34,7 +38,7 @@ namespace KazgarsRevenge
             dude.AddSharedData(typeof(Entity),  new Box(new Vector3(200, 0, -210), 1, 1, 1));
             AnimatedModelComponent dudeGraphics = new AnimatedModelComponent(mainGame, dude, dudeModel, new Vector3(1), Vector3.Zero);
             modelManager.AddComponent(dudeGraphics);
-            players.Add(dude);
+            playerMap[DUMMY_ID] = dude;
         }
 
         public void CreateMainPlayer(Vector3 position)
@@ -89,7 +93,7 @@ namespace KazgarsRevenge
 
             spriteManager.AddComponent(playerController);
 
-            players.Add(player);
+            playerMap[DUMMY_ID] = player;
         }
     }
 }
