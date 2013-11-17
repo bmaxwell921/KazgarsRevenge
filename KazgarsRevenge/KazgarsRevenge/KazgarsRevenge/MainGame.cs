@@ -184,11 +184,12 @@ namespace KazgarsRevenge
 
         }
 
-
+        // TODO remove this once networking is in
+        private static readonly Identification DUMMY_ID = new Identification(0);
         public void DemoLevel()
         {
             levels.DemoLevel();
-            players.CreateMainPlayer(new Vector3(200, 0, -200));
+            players.CreateMainPlayer(new Vector3(200, 0, -200), DUMMY_ID);
             //players.CreateDude();
             for (int i = 0; i < 3; ++i)
             {

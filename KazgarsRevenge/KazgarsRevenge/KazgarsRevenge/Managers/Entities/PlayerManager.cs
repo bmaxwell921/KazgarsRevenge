@@ -16,8 +16,10 @@ namespace KazgarsRevenge
 {
     public class PlayerManager : EntityManager
     {
-        //TODO remove once client connection networking is in
-        private static readonly Identification DUMMY_ID = new Identification(0);
+        
+        
+
+        Identification myId;
 
         IDictionary<Identification, GameEntity> playerMap;
         public PlayerManager(KazgarsRevengeGame game)
@@ -38,10 +40,10 @@ namespace KazgarsRevenge
             dude.AddSharedData(typeof(Entity),  new Box(new Vector3(200, 0, -210), 1, 1, 1));
             AnimatedModelComponent dudeGraphics = new AnimatedModelComponent(mainGame, dude, dudeModel, new Vector3(1), Vector3.Zero);
             modelManager.AddComponent(dudeGraphics);
-            playerMap[DUMMY_ID] = dude;
+            playerMap[new Identification(0)] = dude;
         }
 
-        public void CreateMainPlayer(Vector3 position)
+        public void CreateMainPlayer(Vector3 position, Identification id)
         {
             GameEntity player = new GameEntity("localplayer", "good");
 
@@ -93,7 +95,67 @@ namespace KazgarsRevenge
 
             spriteManager.AddComponent(playerController);
 
-            playerMap[DUMMY_ID] = player;
+            playerMap[id] = player;
+            myId = id;
+        }
+
+        public void CreateNetworkedPlayer(Vector3 position, Identification id)
+        {
+            // TODO remove duplication between this and the above method
+            GameEntity player = new GameEntity("netplayer", "good");
+
+            //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController
+            Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
+            //assigns a collision group to the physics
+            playerPhysicalData.CollisionInformation.CollisionRules.Group = MainGame.PlayerCollisionGroup;
+
+            //locking rotation on axis (so that bumping into something won't make the player tip over)
+            playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            //more accurate collision detection for the player
+            playerPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
+            player.AddSharedData(typeof(Entity), playerPhysicalData);
+
+            // DON'T MAKE THE CAMERA FOLLOW EVERYONE
+            //(Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).AssignEntity(playerPhysicalData);
+
+            Model playerModel = GetAnimatedModel("Models\\Player\\k_idle1");
+            //shared animation data (need this to be in the player controller component as well as the graphics component, so that the controller can determine when to play animations)
+            AnimationPlayer playerAnimations = new AnimationPlayer(playerModel.Tag as SkinningData);
+            player.AddSharedData(typeof(AnimationPlayer), playerAnimations);
+
+            Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
+            player.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
+
+            HealthData playerHealth = new HealthData(100);
+            player.AddSharedData(typeof(HealthData), playerHealth);
+
+
+            //the components that make up the player
+            PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
+            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
+            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
+            
+            // NETWORKED PLAYERS ARE NOT CONTROLLED BY THIS CLIENT 
+            // TODO Need a different controller
+            //PlayerController playerController = new PlayerController(mainGame, player);
+
+            //adding the controllers to their respective managers 
+            //(need to decide what kinds of components need their own managers; currently 
+            //it's just a 2d renderer, a 3d renderer, and a general manager)
+            player.AddComponent(typeof(PhysicsComponent), playerPhysics);
+            genComponentManager.AddComponent(playerPhysics);
+
+            player.AddComponent(typeof(AnimatedModelComponent), playerGraphics);
+            modelManager.AddComponent(playerGraphics);
+
+            player.AddComponent(typeof(HealthHandlerComponent), playerHealthHandler);
+            genComponentManager.AddComponent(playerHealthHandler);
+
+            //player.AddComponent(typeof(PlayerController), playerController);
+
+            //spriteManager.AddComponent(playerController);
+
+            playerMap[id] = player;
         }
     }
 }
