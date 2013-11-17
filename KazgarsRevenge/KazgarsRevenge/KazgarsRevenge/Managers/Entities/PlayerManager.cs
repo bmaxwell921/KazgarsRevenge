@@ -30,7 +30,7 @@ namespace KazgarsRevenge
 
         public void CreateDude()
         {
-            // TODO if this method is unneeded remove it
+            // TODO ISSUE #8
             GameEntity dude = new GameEntity("dude", "wtf");
 
             Model dudeModel = GetAnimatedModel("Models\\dude");
@@ -101,7 +101,7 @@ namespace KazgarsRevenge
 
         public void CreateNetworkedPlayer(Vector3 position, Identification id)
         {
-            // TODO remove duplication between this and the above method
+            // TODO ISSUE #9
             GameEntity player = new GameEntity("netplayer", "good");
 
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController
@@ -136,7 +136,7 @@ namespace KazgarsRevenge
             HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
             
             // NETWORKED PLAYERS ARE NOT CONTROLLED BY THIS CLIENT 
-            // TODO Need a different controller
+            // TODO ISSUE #10
             //PlayerController playerController = new PlayerController(mainGame, player);
 
             //adding the controllers to their respective managers 

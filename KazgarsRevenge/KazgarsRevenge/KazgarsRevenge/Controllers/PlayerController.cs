@@ -948,7 +948,7 @@ namespace KazgarsRevenge
             s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 79 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
 
             //LM
-            //TODO Change when we change attState based on hands?
+            //TODO Change when we change attState based on hands? - ISSUE #6
             switch (GetMainhandType())
             {
                 case WeaponType.None:

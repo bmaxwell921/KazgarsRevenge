@@ -184,7 +184,7 @@ namespace KazgarsRevenge
 
         }
 
-        // TODO remove this once networking is in
+        // TODO ISSUE #7
         private static readonly Identification DUMMY_ID = new Identification(0);
         public void DemoLevel()
         {

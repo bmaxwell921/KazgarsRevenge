@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     /// Represents the unique identifier for an entity.
     /// Equals and HashCode implemented so they can be used in Dictionaries
     /// 
-    /// TODO needs to be added to Entities
+    /// TODO ISSUE #11
     /// </summary>
     public class Identification
     {
