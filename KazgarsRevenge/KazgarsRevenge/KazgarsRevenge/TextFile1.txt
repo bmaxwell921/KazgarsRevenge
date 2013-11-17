@@ -1,56 +1,4 @@
-﻿Networking
-=============
-
-Levels
--server creates all rooms on level load,
--gives all clients each room entity (Model name, yaw, translation)
-
-Enemy AI
--server holds pathing graph
--server creates queue of points to path to?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-prototype 1 features
+﻿prototype 1 features
 ====================
 entity-component architecture
 running / colliding physics
@@ -65,3 +13,13 @@ projectiles
 attack animations
 
 
+
+prototype 2 features
+=====================
+animation blending
+cursor spikes
+updated player controller movement
+Started GUi
+Loot system?
+Inventory?
+Networking? (location and running animations for multiple players)

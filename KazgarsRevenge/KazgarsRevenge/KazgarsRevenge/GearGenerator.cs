@@ -44,7 +44,7 @@ namespace KazgarsRevenge
             Dictionary<StatType, float> itemStats = new Dictionary<StatType, float>();
             switch (itemName)
             {
-                case "sword"://+5 str. heck yeah.
+                case "sword":
                     itemStats.Add(StatType.Strength, 5);
                     break;
                 default:
@@ -54,14 +54,33 @@ namespace KazgarsRevenge
             return itemStats;
         }
 
-        public Equippable GetSword()
+        /// <summary>
+        /// generates new sword with random stats
+        /// </summary>
+        /// <returns></returns>
+        public Equippable GenerateSword()
         {
-            return new Equippable(GetIcon("sword"), "sword", GetStats("sword"), GetUnanimatedModel(attachDir + "sword01"));
+            return GetSword(GetStats("sword"));
         }
 
-        public Equippable GetBow()
+        /// <summary>
+        /// loads a saved sword with predefined stats
+        /// </summary>
+        /// <param name="swordStats"></param>
+        /// <returns></returns>
+        public Equippable GetSword(Dictionary<StatType, float> swordStats)
         {
-            return new Equippable(GetIcon("bow"), "bow", GetStats("bow"), GetUnanimatedModel(attachDir + "bow01"));
+            return new Weapon(GetIcon("sword"), "sword01", swordStats, GetUnanimatedModel(attachDir + "sword01"), WeaponType.Melle, false);
+        }
+
+        public Equippable GenerateBow()
+        {
+            return GetBow(GetStats("bow"));
+        }
+
+        public Equippable GetBow(Dictionary<StatType, float> bowStats)
+        {
+            return new Weapon(GetIcon("bow"), "bow", bowStats, GetUnanimatedModel(attachDir + "bow01"), WeaponType.Ranged, false);
         }
     }
 }

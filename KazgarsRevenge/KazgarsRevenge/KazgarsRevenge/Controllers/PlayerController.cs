@@ -28,6 +28,22 @@ namespace KazgarsRevenge
         CritChance,
         Health,
     }
+    public enum WeaponType
+    {
+        None,
+        Melle,
+        Ranged,
+        Magic,
+    }
+    public enum GearSlot
+    {
+        None,
+        Head,
+        Chest,
+        Legs,
+        Righthand,
+        Lefthand,
+    }
     public class PlayerController : DrawableComponent2D
     {
         //services
@@ -83,26 +99,33 @@ namespace KazgarsRevenge
         Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
         #endregion
 
-
         #region equipped gear
         //inventory
-        public enum GearSlot
-        {
-            Head,
-            Chest,
-            Legs,
-            Righthand,
-            Lefthand,
-        }
         Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
         Item[,] inventory = new Item[15, 15];
         public void EquipGear(Equippable equipMe, GearSlot slot)
         {
+            //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand
+            Weapon possWep = equipMe as Weapon;
+            if (possWep != null)
+            {
+                if (possWep.TwoHanded)
+                {
+                    if (slot == GearSlot.Lefthand)
+                    {
+                        EquipGear(equipMe, GearSlot.Righthand);
+                        return;
+                    }
+                    UnequipGear(GearSlot.Lefthand);
+                }
+            }
+
+            //otherwise, carry on
             UnequipGear(slot);
             gear[slot] = equipMe;
             RecalculateStats();
 
-            attached.Add(slot.ToString(), new AttachableModel(equipMe.gearModel, GearSlotToBoneName(slot)));
+            attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot)));
         }
         /// <summary>
         /// tries to put equipped item into inventory. If there was no inventory space, returns false.
@@ -163,11 +186,10 @@ namespace KazgarsRevenge
             {
                 if (k.Value != null)
                 {
-                    AddStats(k.Value.statEffects);
+                    AddStats(k.Value.StatEffects);
                 }
             }
         }
-
         public void AddStats(Dictionary<StatType, float> statsToAdd)
         {
             foreach (KeyValuePair<StatType, float> k in statsToAdd)
@@ -175,16 +197,33 @@ namespace KazgarsRevenge
                 stats[k.Key] += k.Value;
             }
         }
+        public WeaponType GetMainhandType()
+        {
+            Equippable e = gear[GearSlot.Righthand];
+            if (e != null)
+            {
+                return (e as Weapon).Type;
+            }
+            else
+            {
+                return WeaponType.None;
+            }
+        }
+        public WeaponType GetOffhandType()
+        {
+            Equippable e = gear[GearSlot.Lefthand];
+            if (e != null)
+            {
+                return (e as Weapon).Type;
+            }
+            else
+            {
+                return WeaponType.None;
+            }
+        }
         #endregion
 
-        //attacks
-        enum PrimaryAttack
-        {
-            Melle,
-            Ranged,
-            Magic,
-        }
-        PrimaryAttack selectedPrimary = PrimaryAttack.Melle;
+
         const float melleRange = 50;
         const float bowRange = 1000;
 
@@ -265,8 +304,8 @@ namespace KazgarsRevenge
             #endregion
 
             //adding sword and bow for demo
-            EquipGear(gearGenerator.GetSword(), GearSlot.Righthand);
-            EquipGear(gearGenerator.GetBow(), GearSlot.Lefthand);
+            EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
+            EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
         }
 
         #region animations
@@ -542,14 +581,14 @@ namespace KazgarsRevenge
             dir.Z = move.Z;
             float distance = 0;
 
-            //switch primary
+            //switch weapon hands (for demo)
             if (curKeys.IsKeyDown(Keys.Tab) && prevKeys.IsKeyUp(Keys.Tab))
             {
-                selectedPrimary += 1;
-                if ((int)selectedPrimary >= 2)
-                {
-                    selectedPrimary = 0;
-                }
+                Equippable r = gear[GearSlot.Righthand];
+                Equippable l = gear[GearSlot.Lefthand];
+
+                EquipGear(r, GearSlot.Lefthand);
+                EquipGear(l, GearSlot.Righthand);
             }
 
             if (targettedPhysicalData != null)
@@ -564,44 +603,77 @@ namespace KazgarsRevenge
             //primary attack (autos)
             if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targettedPhysicalData != null)
             {
-                //attack if in range
-                switch (selectedPrimary)
+                //used to differentiate between left hand, right hand, and two hand animations
+                string aniSuffix = "right";
+
+                //figure out what kind of weapon is in the main hand
+                WeaponType mainHandType = GetMainhandType();
+                WeaponType offHandType = GetOffhandType();
+
+                //figure out if we're dual-wielding the same type of weapon, or using a two-hander, or just attacking with right hand
+                if (mainHandType != WeaponType.None)
                 {
-                    case PrimaryAttack.Melle:
+                    if ((gear[GearSlot.Righthand] as Weapon).TwoHanded)
+                    {
+                        aniSuffix = "twohanded";
+                    }
+                    else if (mainHandType == offHandType)
+                    {
+                        aniSuffix = "dual";
+                    }
+
+                }
+
+                //remove this once we get more animations
+                aniSuffix = "";
+
+                bool inRange = false;
+                //attack if in range
+                switch (mainHandType)
+                {
+                    case WeaponType.None:
                         if (distance < melleRange)
                         {
-                            PlayAnimation("k_onehanded_swing");
+                            PlayAnimation("k_onehanded_swing" + aniSuffix);
                             attState = AttackState.InitialSwing;
-                            UpdateRotation(dir);
-                            millisMelleCounter = 0;
-                            mouseHoveredLocation = physicalData.Position;
-                            groundTargetLocation = physicalData.Position;
+                            inRange = true;
                         }
                         break;
-                    case PrimaryAttack.Ranged:
+                    case WeaponType.Melle:
+                        if (distance < melleRange)
+                        {
+                            PlayAnimation("k_onehanded_swing" + aniSuffix);
+                            attState = AttackState.InitialSwing;
+                            inRange = true;
+                        }
+                        break;
+                    case WeaponType.Ranged:
                         if (distance < bowRange)
                         {
-                            PlayAnimation("k_fire_arrow");
+                            PlayAnimation("k_fire_arrow" + aniSuffix);
                             attState = AttackState.GrabbingArrow;
-                            UpdateRotation(dir);
-                            millisShotAniCounter = 0;
-                            millisShotArrowAttachCounter = 0;
-                            mouseHoveredLocation = physicalData.Position;
-                            groundTargetLocation = physicalData.Position;
+                            inRange = true;
                         }
                         break;
-                    case PrimaryAttack.Magic:
+                    case WeaponType.Magic:
                         if (distance < bowRange)
                         {
-                            PlayAnimation("k_fire_arrow");
+                            //need magic item animation here
+                            PlayAnimation("k_fire_arrow" + aniSuffix);
                             attState = AttackState.GrabbingArrow;
-                            UpdateRotation(dir);
-                            millisShotAniCounter = 0;
-                            millisShotArrowAttachCounter = 0;
-                            mouseHoveredLocation = physicalData.Position;
-                            groundTargetLocation = physicalData.Position;
+                            inRange = true;
                         }
                         break;
+                }
+
+                if (inRange)
+                {
+                    UpdateRotation(dir);
+                    millisMelleCounter = 0;
+                    millisShotAniCounter = 0;
+                    millisShotArrowAttachCounter = 0;
+                    mouseHoveredLocation = physicalData.Position;
+                    groundTargetLocation = physicalData.Position;
                 }
             }
            /* if (curMouse.RightButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift))
@@ -798,8 +870,6 @@ namespace KazgarsRevenge
         {
             physicalData.LinearVelocity = newVel;
         }
-
-
         private void ResetTargettedEntity()
         {
             mouseHoveredEntity = null;
@@ -810,7 +880,6 @@ namespace KazgarsRevenge
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
             return new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
         }
-
         private Vector3 GetForward()
         {
             return physicalData.OrientationMatrix.Forward;
@@ -880,15 +949,16 @@ namespace KazgarsRevenge
 
             //LM
             //TODO Change when we change attState based on hands?
-            switch (selectedPrimary)
+            switch (GetMainhandType())
             {
-                case PrimaryAttack.Melle:
+                case WeaponType.None:
+                case WeaponType.Melle:
                     s.Draw(melee, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                     break;
-                case PrimaryAttack.Magic:
+                case WeaponType.Magic:
                     s.Draw(magic, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                     break;
-                case PrimaryAttack.Ranged:
+                case WeaponType.Ranged:
                     s.Draw(range, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                     break;
             }
