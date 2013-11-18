@@ -47,7 +47,7 @@ namespace KazgarsRevenge
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
             //assigns a collision group to the physics
-            playerPhysicalData.CollisionInformation.CollisionRules.Group = MainGame.PlayerCollisionGroup;
+            playerPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.PlayerCollisionGroup;
 
             //locking rotation on axis (so that bumping into something won't make the player tip over)
             playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
@@ -104,7 +104,7 @@ namespace KazgarsRevenge
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
             //assigns a collision group to the physics
-            playerPhysicalData.CollisionInformation.CollisionRules.Group = MainGame.PlayerCollisionGroup;
+            playerPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.PlayerCollisionGroup;
 
             //locking rotation on axis (so that bumping into something won't make the player tip over)
             playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();

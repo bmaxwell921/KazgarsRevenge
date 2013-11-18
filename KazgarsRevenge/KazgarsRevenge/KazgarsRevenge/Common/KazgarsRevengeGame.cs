@@ -27,10 +27,11 @@ namespace KazgarsRevenge
 
         public GameState gameState;
 
-        public static CollisionGroup GoodProjectileCollisionGroup;
-        public static CollisionGroup PlayerCollisionGroup;
-        public static CollisionGroup BadProjectileCollisionGroup;
-        public static CollisionGroup EnemyCollisionGroup;
+        public CollisionGroup GoodProjectileCollisionGroup;
+        public CollisionGroup PlayerCollisionGroup;
+        public CollisionGroup BadProjectileCollisionGroup;
+        public CollisionGroup EnemyCollisionGroup;
+        public CollisionGroup LootCollisionGroup;
 
         Random rand;
 
@@ -60,11 +61,18 @@ namespace KazgarsRevenge
             PlayerCollisionGroup = new CollisionGroup();
             BadProjectileCollisionGroup = new CollisionGroup();
             EnemyCollisionGroup = new CollisionGroup();
+            LootCollisionGroup = new CollisionGroup();
 
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(PlayerCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(BadProjectileCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
+
+            //loot dont collide with nuthin
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, EnemyCollisionGroup), CollisionRule.NoBroadPhase);
         }
 
         protected override void Initialize()

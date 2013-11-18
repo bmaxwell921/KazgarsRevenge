@@ -42,7 +42,7 @@ namespace KazgarsRevenge
             GameEntity brute = new GameEntity("Brute", "bad");
 
             Entity brutePhysicalData = new Box(position, 20f, 37f, 20f, 100);
-            brutePhysicalData.CollisionInformation.CollisionRules.Group = MainGame.EnemyCollisionGroup;
+            brutePhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
             brutePhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             brutePhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             brutePhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
