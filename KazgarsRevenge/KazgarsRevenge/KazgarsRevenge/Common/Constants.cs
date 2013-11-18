@@ -12,7 +12,7 @@ namespace KazgarsRevenge
         Paused,
         StartMenu
     }
-    
+
     public enum MessageType
     {
         // Client -> Server or Server -> Client
@@ -23,6 +23,7 @@ namespace KazgarsRevenge
 
         // Server -> Client Only
         MapData,
+        Connected, // Used for clients to parse out their Id and host state
     }
 
     public class Constants

@@ -35,8 +35,12 @@ namespace KazgarsRevenge
         GearGenerator gearGenerator;
 
         PlayerManager players;
-        NetworkMessageManager networkMessages;
+        NetworkMessageManager nmm;
         SoundEffectLibrary soundEffectLibrary;
+
+        protected LevelManager levels;
+        protected EnemyManager enemies;
+        protected AttackManager attacks;
         #endregion
 
         #region Content
@@ -79,8 +83,6 @@ namespace KazgarsRevenge
             
             screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
 
-            //rand = new Random();
-
             Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
 
             camera = new CameraComponent(this);
@@ -104,12 +106,24 @@ namespace KazgarsRevenge
             Components.Add(gearGenerator);
             Services.AddService(typeof(GearGenerator), gearGenerator);
 
-            networkMessages = new NetworkMessageManager(this);
-            Components.Add(networkMessages);
-            Services.AddService(typeof(NetworkMessageManager), networkMessages);
+            nmm = new NetworkMessageManager(this);
+            Components.Add(nmm);
+            Services.AddService(typeof(NetworkMessageManager), nmm);
 
             soundEffectLibrary = new SoundEffectLibrary(this);
             Services.AddService(typeof(SoundEffectLibrary), soundEffectLibrary);
+
+            enemies = new EnemyManager(this);
+            Components.Add(enemies);
+            Services.AddService(typeof(EnemyManager), enemies);
+
+            levels = new LevelManager(this);
+            Components.Add(levels);
+            Services.AddService(typeof(LevelManager), levels);
+
+            attacks = new AttackManager(this);
+            Components.Add(attacks);
+            Services.AddService(typeof(AttackManager), attacks);
 
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
@@ -170,9 +184,14 @@ namespace KazgarsRevenge
                 case GameState.StartMenu:
                     if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     {
+                        //gameState = GameState.Lobby;
+
                         gameState = GameState.Playing;
                         DemoLevel();
                     }
+                    break;
+                case GameState.Lobby:
+                    nmm.Update(gameTime);
                     break;
                 case GameState.Paused:
 
@@ -276,7 +295,23 @@ namespace KazgarsRevenge
                     spriteBatch.DrawString(normalFont, "Press Space To Start", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
                     spriteBatch.End();
                     break;
+                case GameState.Lobby:
+                    DrawLobbyScreen();
+                    break;
             }
+        }
+
+        public void DrawLobbyScreen()
+        {
+            spriteBatch.Begin();
+            spriteBatch.DrawString(normalFont, "Local Connections", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+            float h = normalFont.MeasureString("Local Connections").Y;
+            for (int i = 0; i < nmm.connections.Count; ++i)
+            {
+                ServerInfo si = nmm.connections[i];
+                spriteBatch.DrawString(normalFont, "\t" + si.ServerName, vecLoadingText + new Vector2(0, h * i), Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+            }
+            spriteBatch.End();
         }
     }
 }

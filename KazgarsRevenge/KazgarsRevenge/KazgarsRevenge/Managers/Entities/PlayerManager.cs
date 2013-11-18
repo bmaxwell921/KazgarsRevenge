@@ -16,9 +16,6 @@ namespace KazgarsRevenge
 {
     public class PlayerManager : EntityManager
     {
-        
-        
-
         Identification myId;
 
         IDictionary<Identification, GameEntity> playerMap;

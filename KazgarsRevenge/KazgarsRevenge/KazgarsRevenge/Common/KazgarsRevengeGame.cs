@@ -23,10 +23,6 @@ namespace KazgarsRevenge
         #region components
         protected Space physics;
         protected GeneralComponentManager genComponentManager;
-        protected LevelManager levels;
-        
-        protected EnemyManager enemies;
-        protected AttackManager attacks;
         #endregion
 
         public GameState gameState;
@@ -78,18 +74,6 @@ namespace KazgarsRevenge
             genComponentManager = new GeneralComponentManager(this);
             Components.Add(genComponentManager);
             Services.AddService(typeof(GeneralComponentManager), genComponentManager);
-
-            enemies = new EnemyManager(this);
-            Components.Add(enemies);
-            Services.AddService(typeof(EnemyManager), enemies);
-
-            levels = new LevelManager(this);
-            Components.Add(levels);
-            Services.AddService(typeof(LevelManager), levels);
-
-            attacks = new AttackManager(this);
-            Components.Add(attacks);
-            Services.AddService(typeof(AttackManager), attacks);
 
             base.Initialize();
         }

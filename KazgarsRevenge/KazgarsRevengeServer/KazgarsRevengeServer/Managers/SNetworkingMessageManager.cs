@@ -9,8 +9,9 @@ using KazgarsRevenge;
 
 namespace KazgarsRevengeServer
 {
-    class SNetworkingMessageManager : GameComponent
+    class SNetworkingMessageManager : BaseNetworkMessageManager
     {
+        public string DUMMY_NAME = "Server Name";
         public static readonly Boolean DEBUGGING = true;
 
         // Server from Lidgren
@@ -30,15 +31,10 @@ namespace KazgarsRevengeServer
         // number of people connected, must be < MAX_NUM_CONNECTIONS
         public int connectedPlayers;
 
-        // Dictionary of objects used to handle incoming messages
-        Dictionary<NetIncomingMessageType, BaseHandler> msgHandlers;
-
         public SNetworkingMessageManager(KazgarsRevengeGame game)
             : base(game)
         {
-            msgHandlers = new Dictionary<NetIncomingMessageType, BaseHandler>();
             SetUpNetServer();
-            AddHandlers();
 
             // Server starts in the lobby state since it's awaiting connections
             ((KazgarsRevengeGame)Game).gameState = GameState.Lobby;
@@ -60,35 +56,16 @@ namespace KazgarsRevengeServer
             server.Start();
         }
 
-        private void AddHandlers()
+        protected override void AddHandlers()
         {
-            msgHandlers[NetIncomingMessageType.DiscoveryRequest] = new SConnectionHandler(Game as KazgarsRevengeGame);
+            msgHandlers[NetIncomingMessageType.DiscoveryRequest] = new SDiscoveryRequestHandler(Game as KazgarsRevengeGame);
+            msgHandlers[NetIncomingMessageType.StatusChanged] = new SStatusChangeHandler(Game as KazgarsRevengeGame);
+            msgHandlers[NetIncomingMessageType.Data] = new SDataMessageHandler(Game as KazgarsRevengeGame);
         }
 
-        public override void Update(GameTime gameTime)
+        protected override NetIncomingMessage ReadMessage()
         {
-            HandleMessages();
-            base.Update(gameTime);
-        }
-
-        // Fairly simple, we just let the appropriate handler handle each message
-        private void HandleMessages()
-        {
-            NetIncomingMessage msg;
-
-            while ((msg = server.ReadMessage()) != null)
-            {
-                BaseHandler handler;
-                msgHandlers.TryGetValue(msg.MessageType, out handler);
-
-                if (handler == null)
-                {
-                    Console.WriteLine("ERROR: OH GOD MESSAGE TYPE WE DON'T HANDLE!" + msg.MessageType);
-                    continue;
-                }
-
-                handler.Handle(msg);
-            }
+            return server.ReadMessage();
         }
     }
 }

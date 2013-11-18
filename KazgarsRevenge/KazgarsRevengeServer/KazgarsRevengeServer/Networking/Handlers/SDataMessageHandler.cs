@@ -25,7 +25,8 @@ namespace KazgarsRevengeServer
 
         private void AddHandlers()
         {
-            //handlers[MessageType.GameStateChange] = ;
+            handlers[MessageType.GameStateChange] = new SGameStateChangeHandler(game);
+            handlers[MessageType.InGame_Kinetic] = new SPositionHandler(game);
         }
 
         /*

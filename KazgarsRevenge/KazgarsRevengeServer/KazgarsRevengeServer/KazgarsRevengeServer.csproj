@@ -86,9 +86,9 @@
     <Compile Include="Managers\Entities\SPlayerManager.cs" />
     <Compile Include="Managers\SNetworkingMessageManager.cs" />
     <Compile Include="Misc\IdentificationFactory.cs" />
-    <Compile Include="Networking\Handlers\BaseHandler.cs" />
-    <Compile Include="Networking\Handlers\SConnectionHandler.cs" />
+    <Compile Include="Networking\Handlers\SStatusChangeHandler.cs" />
     <Compile Include="Networking\Handlers\SDataMessageHandler.cs" />
+    <Compile Include="Networking\Handlers\SDiscoveryRequestHandler.cs" />
     <Compile Include="Networking\Handlers\SGameStateChangeHandler.cs" />
     <Compile Include="Networking\Handlers\SPositionHandler.cs" />
     <Compile Include="Networking\Messages\BasePacket.cs" />

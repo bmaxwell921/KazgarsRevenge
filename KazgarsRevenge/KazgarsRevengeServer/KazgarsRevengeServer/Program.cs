@@ -10,10 +10,10 @@ namespace KazgarsRevengeServer
         /// </summary>
         static void Main(string[] args)
         {
-            //using (Server game = new Server())
-            //{
-            //    game.Run();
-            //}
+            using (Server game = new Server())
+            {
+                game.Run();
+            }
         }
     }
 #endif
