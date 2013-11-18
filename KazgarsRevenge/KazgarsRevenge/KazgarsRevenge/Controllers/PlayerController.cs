@@ -505,7 +505,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    ChangeVelocity(new Vector3(0, physicalData.LinearVelocity.Y, 0));
+                    ChangeVelocity(Vector3.Zero);
                 }
 
 
@@ -513,7 +513,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                ChangeVelocity(new Vector3(0, physicalData.LinearVelocity.Y, 0));
+                ChangeVelocity(Vector3.Zero);
             }
 
             prevMouse = curMouse;
@@ -743,7 +743,7 @@ namespace KazgarsRevenge
             //up:         if there is a targetted enemy, run up and attack it once. if not, run towards targetted location if not already at it
 
             Vector3 moveVec = move * stats[(int)StatType.RunSpeed];
-            moveVec.Y = physicalData.LinearVelocity.Y;
+            moveVec.Y = 0;
             if (curMouse.LeftButton == ButtonState.Pressed)
             {
                 ChangeVelocity(moveVec);
@@ -758,7 +758,7 @@ namespace KazgarsRevenge
             else if ((physicalData.Position - groundTargetLocation).Length() <= stopRadius || millisRunningCounter >= millisRunTime)
             {
                 //stop if within stopRadius of targetted ground location
-                ChangeVelocity(new Vector3(0, physicalData.LinearVelocity.Y, 0));
+                ChangeVelocity(new Vector3(0, 0, 0));
                 //just stopped moving
                 if (currentAniName == "k_run")
                 {
@@ -845,7 +845,7 @@ namespace KazgarsRevenge
                 {
                     Vector3 forward = GetForward();
                     attached.Remove("arrow");
-                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, "bad");
+                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, FactionType.Players);
                     attState = AttackState.LettingGo;
                     millisShotAniCounter = 0;
                 }
@@ -862,7 +862,7 @@ namespace KazgarsRevenge
                 if (attState == AttackState.InitialSwing && millisMelleCounter >= aniDurations["melleDamage"])
                 {
                     Vector3 forward = GetForward();
-                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, "bad");
+                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, FactionType.Players);
                     attState = AttackState.FinishSwing;
                     millisMelleCounter = 0;
                 }

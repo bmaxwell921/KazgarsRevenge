@@ -7,15 +7,21 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
+    public enum FactionType
+    {
+        Players,
+        Enemies,
+        Neutral,
+    }
     public class GameEntity
     {
         public string Name { get; protected set; }
-        public string Faction { get; protected set; }
+        public FactionType Faction { get; protected set; }
         public bool Dead { get; protected set; }
         private Dictionary<Type, Component> components = new Dictionary<Type, Component>();
         private Dictionary<Type, Object> sharedData = new Dictionary<Type, Object>();
 
-        public GameEntity(string name, string faction)
+        public GameEntity(string name, FactionType faction)
         {
             this.Name = name;
             this.Faction = faction;

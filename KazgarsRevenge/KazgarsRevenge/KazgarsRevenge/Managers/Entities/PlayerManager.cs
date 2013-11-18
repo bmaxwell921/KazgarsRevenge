@@ -25,24 +25,9 @@ namespace KazgarsRevenge
             playerMap = new Dictionary<Identification, GameEntity>();
         }
 
-        public void CreateDude()
-        {
-            // TODO ISSUE #8
-            GameEntity dude = new GameEntity("dude", "wtf");
-
-            Model dudeModel = GetAnimatedModel("Models\\dude");
-            AnimationPlayer dudeAnims = new AnimationPlayer(dudeModel.Tag as SkinningData);
-            dude.AddSharedData(typeof(AnimationPlayer), dudeAnims);
-
-            dude.AddSharedData(typeof(Entity),  new Box(new Vector3(200, 0, -210), 1, 1, 1));
-            AnimatedModelComponent dudeGraphics = new AnimatedModelComponent(mainGame, dude, dudeModel, new Vector3(1), Vector3.Zero);
-            modelManager.AddComponent(dudeGraphics);
-            playerMap[new Identification(0)] = dude;
-        }
-
         public void CreateMainPlayer(Vector3 position, Identification id)
         {
-            GameEntity player = new GameEntity("localplayer", "good");
+            GameEntity player = new GameEntity("localplayer", FactionType.Players);
 
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
@@ -99,7 +84,7 @@ namespace KazgarsRevenge
         public void CreateNetworkedPlayer(Vector3 position, Identification id)
         {
             // TODO ISSUE #9
-            GameEntity player = new GameEntity("netplayer", "good");
+            GameEntity player = new GameEntity("netplayer", FactionType.Players);
 
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);

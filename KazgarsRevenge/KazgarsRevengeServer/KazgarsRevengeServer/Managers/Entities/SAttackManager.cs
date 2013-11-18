@@ -23,12 +23,12 @@ namespace KazgarsRevengeServer
             attacks = new List<GameEntity>();
         }
 
-        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, string factionToHit)
+        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType faction)
         {
-            GameEntity arrow = new GameEntity("arrow", "good");
+            GameEntity arrow = new GameEntity("arrow", faction);
             position.Y += 20;
             Entity arrowData = new Box(position, 10, 17, .001f);
-            arrowData.CollisionInformation.CollisionRules.Group = factionToHit == "good" ? game.GoodProjectileCollisionGroup : game.BadProjectileCollisionGroup;
+            arrowData.CollisionInformation.CollisionRules.Group = faction == FactionType.Players? game.GoodProjectileCollisionGroup : game.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = initialTrajectory;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(initialTrajectory));
@@ -36,7 +36,7 @@ namespace KazgarsRevengeServer
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(game, arrow);
 
-            AttackController arrowAI = new AttackController(game, arrow, arrowData, damage, 3000, factionToHit);
+            AttackController arrowAI = new AttackController(game, arrow, arrowData, damage, 3000, faction == FactionType.Players? FactionType.Enemies : FactionType.Players);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             gcm.AddComponent(arrowPhysics);
@@ -47,18 +47,18 @@ namespace KazgarsRevengeServer
             attacks.Add(arrow);
         }
 
-        public void CreateMeleeAttack(Vector3 position, int damage, string factionToHit)
+        public void CreateMeleeAttack(Vector3 position, int damage, FactionType faction)
         {
-            GameEntity newAttack = new GameEntity("sword", "good");
+            GameEntity newAttack = new GameEntity("sword", faction);
             Entity attackData = new Box(position, 35, 47, 35, .01f);
-            attackData.CollisionInformation.CollisionRules.Group = factionToHit == "good" ? game.GoodProjectileCollisionGroup : game.BadProjectileCollisionGroup;
+            attackData.CollisionInformation.CollisionRules.Group = faction == FactionType.Players ? game.GoodProjectileCollisionGroup : game.BadProjectileCollisionGroup;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(game, newAttack);
 
-            AttackController attackAI = new AttackController(game, newAttack, attackData, damage, 300, factionToHit);
+            AttackController attackAI = new AttackController(game, newAttack, attackData, damage, 300, faction == FactionType.Players ? FactionType.Enemies : FactionType.Players);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             gcm.AddComponent(attackPhysics);

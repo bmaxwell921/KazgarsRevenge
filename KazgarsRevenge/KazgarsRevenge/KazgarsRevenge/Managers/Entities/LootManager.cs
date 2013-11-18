@@ -23,7 +23,7 @@ namespace KazgarsRevenge
 
         public void CreateLootSoul(Vector3 position, List<Item> containedLoot)
         {
-            GameEntity lootSoul = new GameEntity("loot", "neutral");
+            GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral);
 
             Entity lootPhysicalData = new Box(position, 1, 1, 1);
             lootPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.LootCollisionGroup;

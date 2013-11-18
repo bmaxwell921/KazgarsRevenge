@@ -34,12 +34,12 @@ namespace KazgarsRevenge
         }
 
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
-        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, string factionToHit)
+        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType arrowFaction)
         {
-            GameEntity arrow = new GameEntity("arrow", "good");
+            GameEntity arrow = new GameEntity("arrow", arrowFaction);
             position.Y += 20;
             Entity arrowData = new Box(position, 10, 17, 10, .001f);
-            arrowData.CollisionInformation.CollisionRules.Group = factionToHit == "good" ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.CollisionInformation.CollisionRules.Group = arrowFaction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = initialTrajectory;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(initialTrajectory));
@@ -50,7 +50,7 @@ namespace KazgarsRevenge
                 new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                     new Vector3(10), Vector3.Zero, arrowGraphicRot);
 
-            AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, factionToHit);
+            AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, arrowFaction == FactionType.Players ? FactionType.Enemies : FactionType.Players);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -66,19 +66,19 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateMelleAttack(Vector3 position, int damage, string factionToHit)
+        public void CreateMelleAttack(Vector3 position, int damage, FactionType faction)
         {
-            GameEntity newAttack = new GameEntity("arrow", "good");
+            GameEntity newAttack = new GameEntity("arrow", faction);
 
             Entity attackData = new Box(position, 35, 47, 35, .01f);
-            attackData.CollisionInformation.CollisionRules.Group = factionToHit == "good" ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.CollisionInformation.CollisionRules.Group = faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
 
-            AttackController attackAI = new AttackController(mainGame, newAttack, attackData, damage, 300, factionToHit);
+            AttackController attackAI = new AttackController(mainGame, newAttack, attackData, damage, 300, faction == FactionType.Players? FactionType.Enemies : FactionType.Players);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             genComponentManager.AddComponent(attackPhysics);
@@ -98,7 +98,7 @@ namespace KazgarsRevenge
 
         public void CreateMouseSpikes(Vector3 position)
         {
-            GameEntity spikes = new GameEntity("cursor", "neutral");
+            GameEntity spikes = new GameEntity("cursor", FactionType.Neutral);
 
             Entity spikesPhysical = new Box(position, 1, 1, 1);
             spikes.AddSharedData(typeof(Entity), spikesPhysical);

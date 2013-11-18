@@ -27,7 +27,7 @@ namespace KazgarsRevengeServer
         {
             float roomScale = 10;
 
-            GameEntity room = new GameEntity("room", "neutral");
+            GameEntity room = new GameEntity("room", FactionType.Neutral);
 
             Vector3[] verts;
             int[] indices;

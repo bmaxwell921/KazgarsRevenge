@@ -39,7 +39,7 @@ namespace KazgarsRevenge
         #region entities
         public void CreateBrute(Vector3 position)
         {
-            GameEntity brute = new GameEntity("Brute", "bad");
+            GameEntity brute = new GameEntity("Brute", FactionType.Enemies);
 
             Entity brutePhysicalData = new Box(position, 20f, 37f, 20f, 100);
             brutePhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
