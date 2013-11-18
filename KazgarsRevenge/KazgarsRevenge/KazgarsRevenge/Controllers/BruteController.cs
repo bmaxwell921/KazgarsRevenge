@@ -23,12 +23,13 @@ namespace KazgarsRevenge
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             lewts = game.Services.GetService(typeof(LootManager)) as LootManager;
 
-            PlayAnimation("pig_walk", false);
+            PlayAnimation("pig_attack", false);
         }
 
+        List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
         public override void PlayHit()
         {
-            animations.MixClipOnce("pig_hit");
+            animations.MixClipOnce("pig_hit", armBoneIndices);
         }
 
         public void PlayAnimation(string animationName, bool mix)

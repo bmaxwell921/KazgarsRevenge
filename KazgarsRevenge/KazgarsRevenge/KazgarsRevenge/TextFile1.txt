@@ -19,7 +19,7 @@ prototype 2 features
 animation blending
 cursor spikes
 updated player controller movement
-Started GUi
+Started GUI
 Loot system?
 Inventory?
 Networking? (location and running animations for multiple players)

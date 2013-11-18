@@ -34,6 +34,7 @@ namespace SkinnedModelLib
         AnimationClip secondClipValue = null;
         TimeSpan secondTimeValue;
         int secondKeyframe;
+        List<int> bonesToIgnore;
 
         // Current animation transform matrices.
         Matrix[] boneTransforms;
@@ -82,13 +83,19 @@ namespace SkinnedModelLib
             skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
         }
 
-        public void MixClipOnce(string clipName)
+        /// <summary>
+        /// Mixes a clip with the one already playing, but stops after one run
+        /// </summary>
+        /// <param name="clipName">the clip to play</param>
+        /// <param name="boneIndicesToIgnore">a list of bone indices to ignore. just pass in null if you don't care</param>
+        public void MixClipOnce(string clipName, List<int> boneIndicesToIgnore)
         {
             mixing = true;
             playMixedOnce = true;
             secondClipValue = skinningDataValue.AnimationClips[clipName];
             secondTimeValue = TimeSpan.Zero;
             secondKeyframe = 0;
+            this.bonesToIgnore = boneIndicesToIgnore;
         }
 
         public void BlendCurrentIntoClip(string clipName)
@@ -221,7 +228,11 @@ namespace SkinnedModelLib
                     Matrix transform = keyframe.Transform;
                     float dur=(float)(secondClipValue.Duration.TotalMilliseconds);
                     float cur=(float)(secondTimeValue.TotalMilliseconds);
-                    boneTransforms[keyframe.Bone] = Matrix.Lerp(boneTransforms[keyframe.Bone], transform, (float)((dur-cur) / dur));
+                    bool lerp = bonesToIgnore == null;
+                    if (lerp || !bonesToIgnore.Contains(keyframe.Bone))
+                    {
+                        boneTransforms[keyframe.Bone] = Matrix.Lerp(boneTransforms[keyframe.Bone], transform, (float)((dur - cur) / dur));
+                    }
                     secondKeyframe++;
                 }
             }
