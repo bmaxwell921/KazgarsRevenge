@@ -44,6 +44,7 @@ namespace KazgarsRevenge
         Righthand,
         Lefthand,
     }
+    
     public class PlayerController : DrawableComponent2D
     {
         //services
@@ -71,6 +72,11 @@ namespace KazgarsRevenge
         Vector3 groundTargetLocation = Vector3.Zero;
         double millisRunningCounter = 2000;
         double millisRunTime = 2000;
+
+        #region Abilities
+        Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
+        Ability[] boundAbilities = new Ability[9];
+        #endregion
 
         #region UI Frames
         Texture2D icon_selected;
@@ -100,8 +106,8 @@ namespace KazgarsRevenge
         #endregion
 
         #region equipped gear
-        //inventory
         Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
+        //inventory
         Item[,] inventory = new Item[15, 15];
         public void EquipGear(Equippable equipMe, GearSlot slot)
         {
@@ -231,6 +237,47 @@ namespace KazgarsRevenge
         public PlayerController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
+            InitGeneralFields();
+
+            InitNewPlayer();
+
+            //adding sword and bow for demo
+            EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
+            EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
+        }
+
+        private void InitNewPlayer()
+        {
+            #region stats and inventory
+            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
+            {
+                stats.Add((StatType)i, 0);
+            }
+
+            RecalculateStats();
+
+            for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
+            {
+                gear.Add((GearSlot)i, null);
+            }
+            #endregion
+
+            #region ability initialization
+            //create initial abilities
+            allAbilities.Add("heartstrike", new Ability(1, 1, texWhitePixel, 1));
+
+
+
+            #endregion
+        }
+
+        private void InitPlayerFromFile()
+        {
+
+        }
+
+        private void InitGeneralFields()
+        {
             #region members
             //shared data
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
@@ -243,14 +290,14 @@ namespace KazgarsRevenge
 
             //services
             physics = Game.Services.GetService(typeof(Space)) as Space;
-            camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
-            attacks = game.Services.GetService(typeof(AttackManager)) as AttackManager;
+            camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
+            attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
-            gearGenerator= Game.Services.GetService(typeof(GearGenerator)) as GearGenerator;
+            gearGenerator = Game.Services.GetService(typeof(GearGenerator)) as GearGenerator;
 
             //required content
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
-            font = game.Content.Load<SpriteFont>("Verdana");
+            font = Game.Content.Load<SpriteFont>("Verdana");
             InitDrawingParams();
             #endregion
 
@@ -288,24 +335,6 @@ namespace KazgarsRevenge
 
             PlayAnimation("k_idle1");
             #endregion
-            
-            #region stats and invencoty
-            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
-            {
-                stats.Add((StatType)i, 0);
-            }
-
-            RecalculateStats();
-
-            for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
-            {
-                gear.Add((GearSlot)i, null);
-            }
-            #endregion
-
-            //adding sword and bow for demo
-            EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
-            EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
         }
 
         #region animations
@@ -366,6 +395,9 @@ namespace KazgarsRevenge
             currentAniName = animationName;
             millisAniCounter = 0;
             millisShotAniCounter = 0;
+
+            //TODO: send network signal
+
         }
         #endregion
 
@@ -406,8 +438,6 @@ namespace KazgarsRevenge
 
             if (Game.IsActive)
             {
-                //Checkswhich ability buttons are pressed down.
-                CheckButtons();
 
                 if (curMouse.LeftButton == ButtonState.Pressed)
                 {
@@ -421,15 +451,9 @@ namespace KazgarsRevenge
                     }
                 }
                 bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
-                foreach (Keys k in abilityKeys)
-                {
-                    if (curKeys.IsKeyDown(k) && prevKeys.IsKeyUp(k))
-                    {
-                        newTarget = true;
-                        break;
-                    }
-                }
-
+                
+                newTarget = newTarget || CheckButtons();
+                
                 CheckMouseRay(newTarget);
 
                 Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
@@ -492,7 +516,6 @@ namespace KazgarsRevenge
             prevKeys = curKeys;
         }
 
-        List<Keys> abilityKeys = new List<Keys> { Keys.D1, Keys.D2, Keys.D3, Keys.D4 };
         /// <summary>
         /// creates a raycast from the mouse, and returns the position on the ground that it hits.
         /// Also does a bepu raycast and finds the first enemy it hits, and keeps its healthcomponent
@@ -548,7 +571,11 @@ namespace KazgarsRevenge
             }
         }
 
-        private void CheckButtons()
+        /// <summary>
+        /// Checks which buttons are pressed down
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckButtons()
         {
             //UI Abilities Used Frame
             if (curKeys.IsKeyDown(Keys.Q)) UISlotUsed[0] = true;
@@ -567,6 +594,8 @@ namespace KazgarsRevenge
             if (curKeys.IsKeyDown(Keys.D2)) UISlotUsed[11] = true;
             if (curKeys.IsKeyDown(Keys.D3)) UISlotUsed[12] = true;
             if (curKeys.IsKeyDown(Keys.D4)) UISlotUsed[13] = true;
+
+            return false;
         }
 
         /// <summary>

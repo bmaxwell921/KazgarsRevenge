@@ -82,6 +82,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Non-Component\Ability.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\EnumParser.cs" />
     <Compile Include="Common\KazgarsRevengeGame.cs" />
