@@ -28,7 +28,7 @@ namespace KazgarsRevenge
         CritChance,
         Health,
     }
-    public enum WeaponType
+    public enum AttackType
     {
         None,
         Melle,
@@ -92,6 +92,7 @@ namespace KazgarsRevenge
         Texture2D range;
         Texture2D magic;
         Texture2D placeHolder;
+        Texture2D heartStrikeIcon;
         #endregion
 
         #region Item Icons
@@ -208,7 +209,7 @@ namespace KazgarsRevenge
                 stats[k.Key] += k.Value;
             }
         }
-        public WeaponType GetMainhandType()
+        public AttackType GetMainhandType()
         {
             Equippable e = gear[GearSlot.Righthand];
             if (e != null)
@@ -217,10 +218,10 @@ namespace KazgarsRevenge
             }
             else
             {
-                return WeaponType.None;
+                return AttackType.None;
             }
         }
-        public WeaponType GetOffhandType()
+        public AttackType GetOffhandType()
         {
             Equippable e = gear[GearSlot.Lefthand];
             if (e != null)
@@ -229,7 +230,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                return WeaponType.None;
+                return AttackType.None;
             }
         }
         #endregion
@@ -266,8 +267,8 @@ namespace KazgarsRevenge
 
             #region ability initialization
             //create initial abilities
-            allAbilities.Add("heartstrike", new Ability(1, 1, texWhitePixel, 1));
-
+            allAbilities.Add("heartstrike", new Ability(1, 1, heartStrikeIcon, 1, AttackType.Melle));
+            boundAbilities[0] = allAbilities["heartstrike"];
 
 
             #endregion
@@ -312,6 +313,7 @@ namespace KazgarsRevenge
             range = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW");
             magic = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR");
             placeHolder = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BN");
+            heartStrikeIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS");
             #endregion
 
             #region Item Image Load
@@ -454,7 +456,7 @@ namespace KazgarsRevenge
                 }
                 bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
                 
-                newTarget = newTarget || CheckButtons();
+                newTarget = CheckButtons() || newTarget;
                 
                 CheckMouseRay(newTarget);
 
@@ -638,11 +640,11 @@ namespace KazgarsRevenge
                 string aniSuffix = "right";
 
                 //figure out what kind of weapon is in the main hand
-                WeaponType mainHandType = GetMainhandType();
-                WeaponType offHandType = GetOffhandType();
+                AttackType mainHandType = GetMainhandType();
+                AttackType offHandType = GetOffhandType();
 
                 //figure out if we're dual-wielding the same type of weapon, or using a two-hander, or just attacking with right hand
-                if (mainHandType != WeaponType.None)
+                if (mainHandType != AttackType.None)
                 {
                     if ((gear[GearSlot.Righthand] as Weapon).TwoHanded)
                     {
@@ -662,7 +664,7 @@ namespace KazgarsRevenge
                 //attack if in range
                 switch (mainHandType)
                 {
-                    case WeaponType.None:
+                    case AttackType.None:
                         if (distance < melleRange)
                         {
                             PlayAnimation("k_onehanded_swing" + aniSuffix);
@@ -670,7 +672,7 @@ namespace KazgarsRevenge
                             inRange = true;
                         }
                         break;
-                    case WeaponType.Melle:
+                    case AttackType.Melle:
                         if (distance < melleRange)
                         {
                             PlayAnimation("k_onehanded_swing" + aniSuffix);
@@ -678,7 +680,7 @@ namespace KazgarsRevenge
                             inRange = true;
                         }
                         break;
-                    case WeaponType.Ranged:
+                    case AttackType.Ranged:
                         if (distance < bowRange)
                         {
                             PlayAnimation("k_fire_arrow" + aniSuffix);
@@ -686,7 +688,7 @@ namespace KazgarsRevenge
                             inRange = true;
                         }
                         break;
-                    case WeaponType.Magic:
+                    case AttackType.Magic:
                         if (distance < bowRange)
                         {
                             //need magic item animation here
@@ -962,7 +964,7 @@ namespace KazgarsRevenge
             //Ability Bar
             s.Draw(texWhitePixel, new Rectangle((int)((maxX/2 -311 * average)), (int)((maxY - 158 * average)), (int)(622 * average), (int)(158 * average)), Color.Red * 0.5f);
             //Q
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 301 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(boundAbilities[0].icon, new Rectangle((int)((maxX / 2 - 301 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //W
             s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 227 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //E
@@ -982,14 +984,14 @@ namespace KazgarsRevenge
             //TODO Change when we change attState based on hands? - ISSUE #6
             switch (GetMainhandType())
             {
-                case WeaponType.None:
-                case WeaponType.Melle:
+                case AttackType.None:
+                case AttackType.Melle:
                     s.Draw(melee, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                     break;
-                case WeaponType.Magic:
+                case AttackType.Magic:
                     s.Draw(magic, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                     break;
-                case WeaponType.Ranged:
+                case AttackType.Ranged:
                     s.Draw(range, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                     break;
             }

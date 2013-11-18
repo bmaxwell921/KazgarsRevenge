@@ -10,8 +10,8 @@ namespace KazgarsRevenge
     public class Weapon : Equippable
     {
         public bool TwoHanded { get; private set; }
-        public WeaponType Type { get; private set; }
-        public Weapon(Texture2D icon, string name, Dictionary<StatType, float> statEffects, Model gearModel, WeaponType type, bool twoHanded)
+        public AttackType Type { get; private set; }
+        public Weapon(Texture2D icon, string name, Dictionary<StatType, float> statEffects, Model gearModel, AttackType type, bool twoHanded)
             : base(icon, name, statEffects, gearModel, GearSlot.Righthand, GearSlot.Lefthand)
         {
             this.Type = type;

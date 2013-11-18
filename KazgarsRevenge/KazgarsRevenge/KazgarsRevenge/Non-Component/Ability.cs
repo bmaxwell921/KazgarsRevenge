@@ -11,12 +11,24 @@ namespace KazgarsRevenge
     {
         int abilityLevel;
         int levelLearned;
-        Texture2D icon;
+        public Texture2D icon { get; private set; }
         float cooldownSeconds;
+        String tooltip = "N/A";
+        AttackType type;
 
-        public Ability(int abilityLevel, int levelLearned, Texture2D icon, float cooldownSeconds)
+        public Ability(int abilityLevelIn, int levelLearnedIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn)
         {
-            //assign
+            abilityLevel = abilityLevelIn;
+            levelLearned = levelLearnedIn;
+            icon = iconIn;
+            cooldownSeconds = cooldownSecondsIn;
+            type = typeIn;
+        }
+
+        public void setToolTip(String toolTipString)
+        {
+            tooltip = toolTipString;
         }
     }
 }
+
