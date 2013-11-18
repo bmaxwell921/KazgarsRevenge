@@ -7,11 +7,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    class GearGenerator : ModelCreator
+    class LootManager : EntityManager
     {
         Dictionary<string, Texture2D> equippableIcons = new Dictionary<string, Texture2D>();
         string attachDir = "Models\\Attachables\\";
-        public GearGenerator(KazgarsRevengeGame game)
+        public LootManager(KazgarsRevengeGame game)
             : base(game)
         {
 

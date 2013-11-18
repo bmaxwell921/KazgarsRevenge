@@ -54,7 +54,7 @@ namespace KazgarsRevenge
         CameraComponent camera;
         SoundEffectLibrary soundEffects;
         AttackManager attacks;
-        GearGenerator gearGenerator;
+        LootManager gearGenerator;
 
         //data
         AnimationPlayer animations;
@@ -296,7 +296,7 @@ namespace KazgarsRevenge
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
-            gearGenerator = Game.Services.GetService(typeof(GearGenerator)) as GearGenerator;
+            gearGenerator = Game.Services.GetService(typeof(LootManager)) as LootManager;
 
             //required content
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
