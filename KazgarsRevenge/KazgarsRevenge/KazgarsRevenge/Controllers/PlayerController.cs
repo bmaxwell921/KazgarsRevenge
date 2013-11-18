@@ -47,6 +47,8 @@ namespace KazgarsRevenge
     
     public class PlayerController : DrawableComponent2D
     {
+
+        #region member variables
         //services
         Space physics;
         CameraComponent camera;
@@ -72,8 +74,11 @@ namespace KazgarsRevenge
         Vector3 groundTargetLocation = Vector3.Zero;
         double millisRunningCounter = 2000;
         double millisRunTime = 2000;
+        #endregion
 
         #region Abilities
+        const float melleRange = 50;
+        const float bowRange = 1000;
         Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
         Ability[] boundAbilities = new Ability[9];
         #endregion
@@ -229,9 +234,6 @@ namespace KazgarsRevenge
         }
         #endregion
 
-
-        const float melleRange = 50;
-        const float bowRange = 1000;
 
 
         public PlayerController(KazgarsRevengeGame game, GameEntity entity)
