@@ -83,6 +83,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Managers\Entities\SEntityManager.cs" />
     <Compile Include="Managers\Entities\SPlayerManager.cs" />
     <Compile Include="Managers\SNetworkingMessageManager.cs" />
     <Compile Include="Misc\IdentificationFactory.cs" />
