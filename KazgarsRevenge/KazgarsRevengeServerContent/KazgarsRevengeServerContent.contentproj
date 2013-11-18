@@ -36,11 +36,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Levels\4x4Final02.fbx">
-      <Name>4x4Final02</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="Models\Levels\4x4Final02Co.fbx">
       <Name>4x4Final02Co</Name>
       <Importer>FbxImporter</Importer>
