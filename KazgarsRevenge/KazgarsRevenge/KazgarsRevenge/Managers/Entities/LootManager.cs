@@ -7,11 +7,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    class GearGenerator : ModelCreator
+    class LootManager : EntityManager
     {
         Dictionary<string, Texture2D> equippableIcons = new Dictionary<string, Texture2D>();
         string attachDir = "Models\\Attachables\\";
-        public GearGenerator(KazgarsRevengeGame game)
+        public LootManager(KazgarsRevengeGame game)
             : base(game)
         {
 
@@ -70,7 +70,7 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public Equippable GetSword(Dictionary<StatType, float> swordStats)
         {
-            return new Weapon(GetIcon("sword"), "sword01", swordStats, GetUnanimatedModel(attachDir + "sword01"), WeaponType.Melle, false);
+            return new Weapon(GetIcon("sword"), "sword01", swordStats, GetUnanimatedModel(attachDir + "sword01"), AttackType.Melle, false);
         }
 
         public Equippable GenerateBow()
@@ -80,7 +80,7 @@ namespace KazgarsRevenge
 
         public Equippable GetBow(Dictionary<StatType, float> bowStats)
         {
-            return new Weapon(GetIcon("bow"), "bow", bowStats, GetUnanimatedModel(attachDir + "bow01"), WeaponType.Ranged, false);
+            return new Weapon(GetIcon("bow"), "bow", bowStats, GetUnanimatedModel(attachDir + "bow01"), AttackType.Ranged, false);
         }
     }
 }

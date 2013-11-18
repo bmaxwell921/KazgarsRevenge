@@ -32,7 +32,7 @@ namespace KazgarsRevenge
         CameraComponent camera;
         ModelManager renderManager;
         SpriteManager spriteManager;
-        GearGenerator gearGenerator;
+        LootManager gearGenerator;
 
         PlayerManager players;
         NetworkMessageManager nmm;
@@ -102,9 +102,9 @@ namespace KazgarsRevenge
             Components.Add(players);
             Services.AddService(typeof(PlayerManager), players);
 
-            gearGenerator = new GearGenerator(this);
+            gearGenerator = new LootManager(this);
             Components.Add(gearGenerator);
-            Services.AddService(typeof(GearGenerator), gearGenerator);
+            Services.AddService(typeof(LootManager), gearGenerator);
 
             nmm = new NetworkMessageManager(this);
             Components.Add(nmm);
