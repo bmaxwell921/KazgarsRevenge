@@ -15,8 +15,6 @@ namespace KazgarsRevengeServer
         public SPositionHandler(KazgarsRevengeGame game)
             : base(game)
         {
-            playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
-            nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
         }
         
         /*
@@ -32,6 +30,14 @@ namespace KazgarsRevengeServer
          */
         public override void Handle(NetIncomingMessage nim)
         {
+            if (nmm == null)
+            {
+                nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
+            }
+            if (playerManager == null)
+            {
+                playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
+            }
             Identification pId = new Identification(nim.ReadByte());
             Vector3 vel = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
             Vector3 curPos = playerManager.GetPlayerPosition(pId);

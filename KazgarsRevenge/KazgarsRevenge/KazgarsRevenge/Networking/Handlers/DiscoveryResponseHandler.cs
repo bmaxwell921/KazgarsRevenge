@@ -15,11 +15,15 @@ namespace KazgarsRevenge
         public DiscoveryResponseHandler(KazgarsRevengeGame game)
             : base(game)
         {
-            nmm = (NetworkMessageManager) game.Services.GetService(typeof(NetworkMessageManager));
+            
         }
 
         public override void Handle(NetIncomingMessage nim)
         {
+            if (nmm == null)
+            {
+                nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
+            }
             ServerInfo si = new ServerInfo(nim.ReadString(), nim.SenderEndpoint);
 
             nmm.connections.Add(si);            

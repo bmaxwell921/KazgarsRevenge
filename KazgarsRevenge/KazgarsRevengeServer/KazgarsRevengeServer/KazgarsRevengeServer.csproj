@@ -83,7 +83,10 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Managers\Entities\SAttackManager.cs" />
+    <Compile Include="Managers\Entities\SEnemyManager.cs" />
     <Compile Include="Managers\Entities\SEntityManager.cs" />
+    <Compile Include="Managers\Entities\SLevelManager.cs" />
     <Compile Include="Managers\Entities\SPlayerManager.cs" />
     <Compile Include="Managers\SNetworkingMessageManager.cs" />
     <Compile Include="Misc\IdentificationFactory.cs" />
@@ -133,6 +136,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\KazgarsRevengeServerContent\KazgarsRevengeServerContent.contentproj">
+      <Project>{62701FD4-A68B-4412-95C8-DEC15E508B95}</Project>
+      <Name>KazgarsRevengeServerContent</Name>
+      <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
     <ProjectReference Include="..\..\KazgarsRevenge\KazgarsRevenge\KazgarsRevenge.csproj">
       <Project>{5B2A0B59-A22E-47B0-94C4-557FA7C18049}</Project>
       <Name>KazgarsRevenge</Name>

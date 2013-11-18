@@ -19,11 +19,14 @@ namespace KazgarsRevengeServer
         public SDiscoveryRequestHandler(KazgarsRevengeGame game)
             : base(game)
         {
-            nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
         }
 
         public override void Handle(NetIncomingMessage nim)
         {
+            if (nmm == null)
+            {
+                nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
+            }
             Console.WriteLine("Incoming request!");
             NetOutgoingMessage outMsg = nmm.server.CreateMessage();
             outMsg.Write(nmm.DUMMY_NAME);

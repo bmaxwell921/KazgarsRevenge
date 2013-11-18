@@ -14,8 +14,6 @@ namespace KazgarsRevenge.Networking.Handlers
         public ConnectedHandler(KazgarsRevengeGame game)
             : base(game)
         {
-            nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
-            pm = (PlayerManager)game.Services.GetService(typeof(PlayerManager));
         }
 
         /// <summary>
@@ -26,6 +24,14 @@ namespace KazgarsRevenge.Networking.Handlers
         /// <param name="nim"></param>
         public override void Handle(Lidgren.Network.NetIncomingMessage nim)
         {
+            if (pm == null)
+            {
+                pm = (PlayerManager)game.Services.GetService(typeof(PlayerManager));
+            }
+            if (nmm == null)
+            {
+                nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
+            }
             // TODO remove this for one from the server
             Vector3 addLoc = new Vector3(200, 0, -200);
 

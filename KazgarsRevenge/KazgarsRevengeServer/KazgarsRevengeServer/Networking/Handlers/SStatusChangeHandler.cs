@@ -19,8 +19,6 @@ namespace KazgarsRevengeServer
         public SStatusChangeHandler(KazgarsRevengeGame game)
             : base(game)
         {
-            playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
-            nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
         }
         /// <summary>
         /// Receives the new connection request, connects server and client, adds the player to the game, and sends response message
@@ -28,6 +26,14 @@ namespace KazgarsRevengeServer
         /// <param name="nim"></param>
         public override void Handle(NetIncomingMessage nim)
         {
+            if (playerManager == null)
+            {
+                playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
+            }
+            if (nmm == null)
+            {
+                nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
+            }
             NetConnectionStatus status = (NetConnectionStatus)nim.ReadByte();
 
             // TODO what about other types??

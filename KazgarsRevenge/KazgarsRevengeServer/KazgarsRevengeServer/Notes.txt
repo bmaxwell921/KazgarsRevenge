@@ -1,8 +1,8 @@
 ﻿================================================================================================
 NEXT TASK
 ================================================================================================
-	- Start implementing Client side connection stuff
-	- Test to see connecting is working
+	- Implement Clients connecting to servers
+		- currently we can just see a list of possible servers to connect to
 
 ================================================================================================
 TRANSITIONS

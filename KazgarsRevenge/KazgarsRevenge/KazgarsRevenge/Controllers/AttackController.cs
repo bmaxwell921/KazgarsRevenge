@@ -15,7 +15,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class AttackController : Component
+    public class AttackController : Component
     {
         Entity physicalData;
         int damage;

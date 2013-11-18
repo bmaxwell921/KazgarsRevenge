@@ -12,7 +12,7 @@ using BEPUphysics.CollisionRuleManagement;
 
 namespace KazgarsRevenge
 {
-    class StaticMeshComponent : Component
+    public class StaticMeshComponent : Component
     {
         protected StaticMesh collidable;
         public StaticMeshComponent(KazgarsRevengeGame game, GameEntity entity)

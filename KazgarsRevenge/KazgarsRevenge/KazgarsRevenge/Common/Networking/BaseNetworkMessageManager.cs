@@ -39,7 +39,8 @@ namespace KazgarsRevenge
 
                 if (handler == null)
                 {
-                    Console.WriteLine("ERROR: OH GOD MESSAGE TYPE WE DON'T HANDLE!" + msg.MessageType);
+                    Console.WriteLine("ERROR: OH GOD MESSAGE TYPE WE DON'T HANDLE! " + msg.MessageType);
+                    Console.WriteLine("Message: " + msg.ReadString());
                     continue;
                 }
 

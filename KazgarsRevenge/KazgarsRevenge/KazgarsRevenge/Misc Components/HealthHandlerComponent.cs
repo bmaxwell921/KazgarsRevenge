@@ -10,7 +10,7 @@ namespace KazgarsRevenge
     {
         None,
     }
-    class HealthHandlerComponent : Component
+    public class HealthHandlerComponent : Component
     {
         HealthData health;
         public HealthHandlerComponent(KazgarsRevengeGame game, GameEntity entity)

@@ -9,7 +9,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class BruteController : AIController
+    public class BruteController : AIController
     {
         HealthData health;
         Entity physicalData;

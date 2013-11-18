@@ -11,6 +11,7 @@ namespace KazgarsRevengeServer
     public abstract class SEntityManager : GameComponent
     {
         protected GeneralComponentManager gcm;
+        protected KazgarsRevengeGame game;
 
         public SEntityManager(KazgarsRevengeGame game)
             : base(game)

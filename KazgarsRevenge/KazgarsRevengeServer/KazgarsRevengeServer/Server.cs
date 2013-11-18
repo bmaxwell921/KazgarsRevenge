@@ -22,6 +22,10 @@ namespace KazgarsRevengeServer
     public class Server : KazgarsRevengeGame
     {
         SNetworkingMessageManager msgManager;
+        
+        protected SLevelManager levels;
+        protected SEnemyManager enemies;
+        protected SAttackManager attacks;
      
         public Server() : base()
         {
@@ -33,6 +37,18 @@ namespace KazgarsRevengeServer
             msgManager = new SNetworkingMessageManager(this);
             Components.Add(msgManager);
             Services.AddService(typeof(SNetworkingMessageManager), msgManager);
+
+            levels = new SLevelManager(this);
+            Components.Add(levels);
+            Services.AddService(typeof(SLevelManager), levels);
+
+            enemies = new SEnemyManager(this);
+            Components.Add(enemies);
+            Services.AddService(typeof(SEnemyManager), enemies);
+
+            attacks = new SAttackManager(this);
+            Components.Add(attacks);
+            Services.AddService(typeof(SAttackManager), attacks);
         }
 
         /// <summary>

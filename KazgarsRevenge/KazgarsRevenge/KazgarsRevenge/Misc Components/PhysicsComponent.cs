@@ -13,7 +13,7 @@ using BEPUphysics.CollisionRuleManagement;
 
 namespace KazgarsRevenge
 {
-    class PhysicsComponent : Component
+    public class PhysicsComponent : Component
     {
         public Entity collidable;
         public Vector3 Position { get { return collidable.Position; } }

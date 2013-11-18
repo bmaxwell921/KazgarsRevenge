@@ -38,6 +38,8 @@ namespace KazgarsRevenge
 
         public override void Initialize()
         {
+            Client.DiscoverLocalPeers(Constants.PORT);
+
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             players = Game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
             levels = Game.Services.GetService(typeof(LevelManager)) as LevelManager;

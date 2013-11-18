@@ -12,7 +12,6 @@ namespace KazgarsRevengeServer
         public SGameStateChangeHandler(KazgarsRevengeGame game)
             : base(game)
         {
-            nmm = (SNetworkingMessageManager) game.Services.GetService(typeof(SNetworkingMessageManager));
         }
 
         /*
@@ -24,6 +23,10 @@ namespace KazgarsRevengeServer
          */
         public override void Handle(NetIncomingMessage nim)
         {
+            if (nmm == null)
+            {
+                nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
+            }
             byte pId = nim.ReadByte();
 
             if (pId != 0)

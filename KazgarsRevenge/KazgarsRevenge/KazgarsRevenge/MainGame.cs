@@ -184,6 +184,7 @@ namespace KazgarsRevenge
                 case GameState.StartMenu:
                     if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     {
+                        // TODO uncomment this for networking fun!
                         //gameState = GameState.Lobby;
 
                         gameState = GameState.Playing;
@@ -309,7 +310,7 @@ namespace KazgarsRevenge
             for (int i = 0; i < nmm.connections.Count; ++i)
             {
                 ServerInfo si = nmm.connections[i];
-                spriteBatch.DrawString(normalFont, "\t" + si.ServerName, vecLoadingText + new Vector2(0, h * i), Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(normalFont, si.ServerName, vecLoadingText + new Vector2(5, h * (i+1)), Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
             }
             spriteBatch.End();
         }
