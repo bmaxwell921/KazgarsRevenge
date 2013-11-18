@@ -192,7 +192,10 @@ namespace KazgarsRevenge
                     }
                     break;
                 case GameState.Lobby:
-                    nmm.Update(gameTime);
+                    if (Keyboard.GetState().IsKeyDown(Keys.Space) && nmm.connections.Count != 0)
+                    {
+                        // TODO go to a loading screen until we get the map?
+                    }
                     break;
                 case GameState.Paused:
 
