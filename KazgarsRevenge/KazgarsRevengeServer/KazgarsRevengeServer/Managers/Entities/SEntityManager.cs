@@ -16,6 +16,7 @@ namespace KazgarsRevengeServer
         public SEntityManager(KazgarsRevengeGame game)
             : base(game)
         {
+            this.game = game;
         }
 
         public override void Initialize()

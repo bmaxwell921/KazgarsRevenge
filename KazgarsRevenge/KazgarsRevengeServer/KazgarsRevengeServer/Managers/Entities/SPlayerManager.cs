@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevengeServer
 {
-    class SPlayerManager : SEntityManager
+    public class SPlayerManager : SEntityManager
     {
         // Map of Identifications to players
         // HOST IS ALWAYS IDENTIFICATION 0 

@@ -23,11 +23,11 @@ namespace KazgarsRevengeServer
 
         public override void Handle(NetIncomingMessage nim)
         {
+            Console.WriteLine("Received a DiscoveryRequest");
             if (nmm == null)
             {
                 nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
             }
-            Console.WriteLine("Incoming request!");
             NetOutgoingMessage outMsg = nmm.server.CreateMessage();
             outMsg.Write(nmm.DUMMY_NAME);
             nmm.server.SendDiscoveryResponse(outMsg, nim.SenderEndpoint);

@@ -12,42 +12,18 @@ namespace KazgarsRevengeServer
     /// to handle our MessageTypes
     /// </summary>
  
-    public class SDataMessageHandler : BaseHandler
+    public class SDataMessageHandler : BaseDataMessageHandler
     {
-        Dictionary<MessageType, BaseHandler> handlers;
 
         public SDataMessageHandler(KazgarsRevengeGame game)
             : base(game)
         {
-            handlers = new Dictionary<MessageType, BaseHandler>();
-            AddHandlers();
         }
 
-        private void AddHandlers()
+        protected override void AddHandlers()
         {
             handlers[MessageType.GameStateChange] = new SGameStateChangeHandler(game);
             handlers[MessageType.InGame_Kinetic] = new SPositionHandler(game);
-        }
-
-        /*
-         * Messages come in as
-         *      - byte MessageType
-         *      - byte playerId
-         *      - <Additional Info>
-         */ 
-        public override void Handle(NetIncomingMessage nim)
-        {
-            BaseHandler handler;
-            MessageType mt = EnumParser.GetMessageType(nim.ReadByte());
-            handlers.TryGetValue(mt, out handler);
-
-            if (handler == null)
-            {
-                Console.WriteLine("ERROR: OH GOD PANIC THE DATA MESSAGE HANDLER DIDN'T RECOGNIZE THE MESSAGE TYPE!!!");
-                return;
-            }
-
-            handler.Handle(nim);
         }
     }
 }

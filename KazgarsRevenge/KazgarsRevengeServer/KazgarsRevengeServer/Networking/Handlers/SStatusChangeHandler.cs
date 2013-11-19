@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using KazgarsRevenge;
 using Lidgren.Network;
+using System.Threading;
 
 namespace KazgarsRevengeServer
 {
@@ -33,12 +34,14 @@ namespace KazgarsRevengeServer
             if (nmm == null)
             {
                 nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
+                Thread.Sleep(10);
             }
             NetConnectionStatus status = (NetConnectionStatus)nim.ReadByte();
 
             // TODO what about other types??
             if (status == NetConnectionStatus.Connected)
             {
+                Console.WriteLine("New player connecting!");
                 if (nmm.connectedPlayers > Constants.MAX_NUM_CONNECTIONS)
                 {
                     // TODO log this issue

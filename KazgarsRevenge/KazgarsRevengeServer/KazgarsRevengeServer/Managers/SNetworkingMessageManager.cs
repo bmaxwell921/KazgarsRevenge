@@ -67,5 +67,22 @@ namespace KazgarsRevengeServer
         {
             return server.ReadMessage();
         }
+
+        // TODO If this is just using random generation...can we get away with just sending a seed?
+        public void SendLevel(string p)
+        {
+            NetOutgoingMessage nom = server.CreateMessage();
+            nom.Write((byte)MessageType.MapData);
+            foreach (string id in p.Split(','))
+            {
+                nom.Write(id);
+            }
+
+            // Tell everyone the info!
+            foreach (NetConnection player in server.Connections)
+            {
+                server.SendMessage(nom, player, NetDeliveryMethod.ReliableOrdered);
+            }
+        }
     }
 }

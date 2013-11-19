@@ -36,6 +36,9 @@ namespace KazgarsRevengeServer
             }
 
             game.gameState = EnumParser.GetGameState(nim.ReadByte());
+
+            Console.WriteLine("Changing to gameState: " + game.gameState);
+
             this.SendMessages();
         }
 
@@ -47,8 +50,13 @@ namespace KazgarsRevengeServer
         private void SendMessages()
         {
             NetOutgoingMessage msg = nmm.server.CreateMessage();
+            GameState state = game.gameState;
+            if (game.gameState == GameState.GenerateMap)
+            {
+                state = GameState.ReceivingMap;
+            }
             msg.Write((byte)MessageType.GameStateChange);
-            msg.Write((byte)game.gameState);
+            msg.Write((byte)state);
 
             foreach (NetConnection player in nmm.server.Connections)
             {
