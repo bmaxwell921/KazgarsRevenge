@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace KazgarsRevenge.Networking.Handlers
+namespace KazgarsRevenge
 {
     class ConnectedHandler : BaseHandler
     {
@@ -24,6 +24,7 @@ namespace KazgarsRevenge.Networking.Handlers
         /// <param name="nim"></param>
         public override void Handle(Lidgren.Network.NetIncomingMessage nim)
         {
+            Console.WriteLine("Receiving Connection info from server");
             if (pm == null)
             {
                 pm = (PlayerManager)game.Services.GetService(typeof(PlayerManager));
@@ -33,7 +34,7 @@ namespace KazgarsRevenge.Networking.Handlers
                 nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
             }
             // TODO remove this for one from the server
-            Vector3 addLoc = new Vector3(200, 0, -200);
+            Vector3 addLoc = new Vector3(200, 10, -200);
 
             byte clientId = nim.ReadByte();
             bool isHost = nim.ReadBoolean();

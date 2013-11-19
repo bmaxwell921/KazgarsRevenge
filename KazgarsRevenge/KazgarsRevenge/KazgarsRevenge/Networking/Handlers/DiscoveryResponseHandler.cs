@@ -20,6 +20,7 @@ namespace KazgarsRevenge
 
         public override void Handle(NetIncomingMessage nim)
         {
+            Console.WriteLine("Adding some server info");
             if (nmm == null)
             {
                 nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
