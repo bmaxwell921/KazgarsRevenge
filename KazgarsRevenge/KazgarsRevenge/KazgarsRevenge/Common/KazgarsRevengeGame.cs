@@ -22,7 +22,7 @@ namespace KazgarsRevenge
     {
         #region components
         protected Space physics;
-        protected GeneralComponentManager genComponentManager;
+        public GeneralComponentManager genComponentManager;
         #endregion
 
         public GameState gameState;

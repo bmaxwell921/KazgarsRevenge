@@ -82,7 +82,11 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
+    <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
+    <Compile Include="Networking\Handlers\GameStateChangeHandler.cs" />
+    <Compile Include="Networking\Handlers\ReceivingMapHandler.cs" />
     <Compile Include="Non-Component\Ability.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\EnumParser.cs" />

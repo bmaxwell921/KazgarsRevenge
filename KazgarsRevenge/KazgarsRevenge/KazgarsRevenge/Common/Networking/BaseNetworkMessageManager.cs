@@ -28,7 +28,7 @@ namespace KazgarsRevenge
         }
 
         // Just lets the correct Handler handle messages. The Handlers can send messages too
-        public void HandleMessages()
+        public virtual void HandleMessages()
         {
             NetIncomingMessage msg;
 

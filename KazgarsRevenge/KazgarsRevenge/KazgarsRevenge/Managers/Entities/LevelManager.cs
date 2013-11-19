@@ -63,5 +63,23 @@ namespace KazgarsRevenge
             rooms.Add(room);
         }
         #endregion
+
+        // Reads the map data from a CSV string and builds the level, moves gameState into playing
+        public void CreateMapFrom(string map)
+        {
+            // TODO actually implement
+            float yaw;
+            string modelPath = this.TranslateIdToPathYaw(0, out yaw);
+            CreateLevel(modelPath, new Vector3(200, -20, -200), yaw);
+
+            mainGame.gameState = GameState.Playing;
+        }
+
+        // Translates the given room id into the path to that respective model and yaw (rotation) for a room
+        private string TranslateIdToPathYaw(int id, out float yaw)
+        {
+            yaw = 0;
+            return "Models\\Levels\\4x4Final02";
+        }
     }
 }

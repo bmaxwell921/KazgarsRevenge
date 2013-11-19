@@ -179,22 +179,38 @@ namespace KazgarsRevenge
         {
             physics.Update();
 
+            nmm.Update(gameTime);
             switch (gameState)
             {
                 case GameState.StartMenu:
                     if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     {
                         // TODO uncomment this for networking fun!
-                        //gameState = GameState.Lobby;
+                        //Console.WriteLine("Transitioning to ConnectionScreen");
+                        //gameState = GameState.ConnectionScreen;
 
                         gameState = GameState.Playing;
                         DemoLevel();
                     }
                     break;
-                case GameState.Lobby:
+                case GameState.ConnectionScreen:
                     if (Keyboard.GetState().IsKeyDown(Keys.Space) && nmm.connections.Count != 0)
                     {
-                        // TODO go to a loading screen until we get the map?
+                        Console.WriteLine("Connecting to Server 0");
+                        // TODO change this to proper connection number based on input
+                        nmm.ConnectTo(0);
+                        gameState = GameState.Lobby;
+                    }
+                    break;
+                case GameState.Lobby:
+                    // Since isHost starts as false, we'll only be able to play
+                    // once the server gets back to us with whether we're host
+                    // this is desired since that message comes with our id as well
+                    if (nmm.isHost && Keyboard.GetState().IsKeyDown(Keys.Space))
+                    {
+                        Console.WriteLine("Starting game");
+                        nmm.StartGame();
+                        gameState = GameState.ReceivingMap;
                     }
                     break;
                 case GameState.Paused:
@@ -299,13 +315,23 @@ namespace KazgarsRevenge
                     spriteBatch.DrawString(normalFont, "Press Space To Start", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
                     spriteBatch.End();
                     break;
+                case GameState.ConnectionScreen:
+                    DrawConnectScreen();
+                    break;
                 case GameState.Lobby:
-                    DrawLobbyScreen();
+                    spriteBatch.Begin();
+                    spriteBatch.DrawString(normalFont, "If you're host, press space to begin!", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.End();
+                    break;
+                case GameState.ReceivingMap:
+                    spriteBatch.Begin();
+                    spriteBatch.DrawString(normalFont, "Receiving Map", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.End();
                     break;
             }
         }
 
-        public void DrawLobbyScreen()
+        public void DrawConnectScreen()
         {
             spriteBatch.Begin();
             spriteBatch.DrawString(normalFont, "Local Connections", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);

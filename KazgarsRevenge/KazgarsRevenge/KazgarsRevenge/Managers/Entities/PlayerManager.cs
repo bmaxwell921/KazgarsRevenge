@@ -16,7 +16,11 @@ namespace KazgarsRevenge
 {
     public class PlayerManager : EntityManager
     {
-        Identification myId;
+        public Identification myId
+        {
+            get;
+            protected set;
+        }
 
         IDictionary<Identification, GameEntity> playerMap;
         public PlayerManager(KazgarsRevengeGame game)

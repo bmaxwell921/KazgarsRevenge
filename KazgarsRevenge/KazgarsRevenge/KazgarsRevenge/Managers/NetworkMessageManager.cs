@@ -46,9 +46,16 @@ namespace KazgarsRevenge
             enemies = Game.Services.GetService(typeof(EnemyManager)) as EnemyManager;
         }
 
+        public void ConnectTo(int connIndex)
+        {
+            Client.Connect(connections[connIndex].ServerEndpoint);
+        }
+
         protected override void AddHandlers()
         {
             msgHandlers[NetIncomingMessageType.DiscoveryResponse] = new DiscoveryResponseHandler(Game as KazgarsRevengeGame);
+            msgHandlers[NetIncomingMessageType.Data] = new DataMessageHandler(Game as KazgarsRevengeGame);
+
         }
 
         protected override NetIncomingMessage ReadMessage()
@@ -56,5 +63,19 @@ namespace KazgarsRevenge
             return Client.ReadMessage();
         }
 
+        public void StartGame()
+        {
+            // TODO make sure we're connected to something???
+            NetOutgoingMessage nom = Client.CreateMessage();
+            nom.Write((byte)MessageType.GameStateChange);
+            nom.Write(players.myId.id);
+            nom.Write((byte)GameState.GenerateMap);
+            Client.SendMessage(nom, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public override void HandleMessages()
+        {
+            base.HandleMessages();
+        }
     }
 }
