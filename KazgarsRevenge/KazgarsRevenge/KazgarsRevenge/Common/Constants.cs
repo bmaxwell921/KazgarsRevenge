@@ -8,9 +8,14 @@ namespace KazgarsRevenge
     public enum GameState
     {
         Playing,
+        ConnectionScreen,
         Lobby,
+        ReceivingMap,
         Paused,
-        StartMenu
+        StartMenu,
+
+        // Used on server
+        GenerateMap
     }
 
     public enum MessageType
@@ -23,7 +28,7 @@ namespace KazgarsRevenge
 
         // Server -> Client Only
         MapData,
-        Connected, // Used for clients to parse out their Id and host state
+        Connected, // Used for clients to parse out their Id and host 
     }
 
     public class Constants
