@@ -21,14 +21,18 @@ namespace KazgarsRevengeServer
     /// </summary>
     public class Server : KazgarsRevengeGame
     {
+        GraphicsDeviceManager graphics;
         SNetworkingMessageManager msgManager;
         
         protected SLevelManager levels;
         protected SEnemyManager enemies;
         protected SAttackManager attacks;
+        protected SPlayerManager players;
      
         public Server() : base()
         {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
         }
 
         protected override void Initialize()
@@ -49,6 +53,10 @@ namespace KazgarsRevengeServer
             attacks = new SAttackManager(this);
             Components.Add(attacks);
             Services.AddService(typeof(SAttackManager), attacks);
+
+            players = new SPlayerManager(this);
+            Components.Add(players);
+            Services.AddService(typeof(SPlayerManager), players);
         }
 
         /// <summary>
