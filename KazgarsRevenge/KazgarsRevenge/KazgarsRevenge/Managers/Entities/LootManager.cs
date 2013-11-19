@@ -43,13 +43,14 @@ namespace KazgarsRevenge
             lootSoul.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
             PhysicsComponent lootPhysics = new PhysicsComponent(mainGame, lootSoul);
-            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(10f), Vector3.Down * 18);
+            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(3f), Vector3.Down * 18);
+            //UnanimatedModelComponent lootGraphics = new UnanimatedModelComponent(mainGame, lootSoul, GetUnanimatedModel("Models\\Attachables\\arrow"), new Vector3(20), Vector3.Zero, Matrix.Identity);
             LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot);
 
             lootSoul.AddComponent(typeof(PhysicsComponent), lootPhysics);
             genComponentManager.AddComponent(lootPhysics);
 
-            lootSoul.AddComponent(typeof(AnimatedModelComponent), lootGraphics);
+            lootSoul.AddComponent(typeof(UnanimatedModelComponent), lootGraphics);
             modelManager.AddComponent(lootGraphics);
 
             lootSoul.AddComponent(typeof(LootSoulController), lootController);

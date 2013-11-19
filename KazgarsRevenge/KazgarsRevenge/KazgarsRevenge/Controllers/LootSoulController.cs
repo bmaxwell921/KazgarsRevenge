@@ -31,7 +31,7 @@ namespace KazgarsRevenge
             rand = new Random(wanderSeed);
             physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
-            animations.StartClip("pig_attack");
+            animations.StartClip("pig_walk");
 
             //creating a box on top of this one to find any other loot souls around it to join with
             sensingData = new Box(physicalData.Position, 50, 20, 50);
