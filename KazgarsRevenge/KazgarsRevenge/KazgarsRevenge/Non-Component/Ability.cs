@@ -13,6 +13,9 @@ namespace KazgarsRevenge
         int levelLearned;
         public Texture2D icon { get; private set; }
         float cooldownSeconds;
+        float lastUsed = -300f; //-5 minutes
+        public bool onCooldown = false;
+        public float timeRemaining;
         String tooltip = "N/A";
         AttackType type;
 
@@ -23,11 +26,36 @@ namespace KazgarsRevenge
             icon = iconIn;
             cooldownSeconds = cooldownSecondsIn;
             type = typeIn;
+            timeRemaining = cooldownSeconds;
         }
 
         public void setToolTip(String toolTipString)
         {
             tooltip = toolTipString;
+        }
+
+        public bool tryUse(float currentTime)
+        {
+            if (currentTime >= lastUsed + cooldownSeconds)
+            {
+                lastUsed = currentTime;
+                timeRemaining = cooldownSeconds;
+                onCooldown = true;
+                return true;
+            }
+            return false;
+        }
+
+        public void update(float currentTime)
+        {
+            if (currentTime < lastUsed + cooldownSeconds)
+            {
+                timeRemaining = (lastUsed + cooldownSeconds) - currentTime;
+            }
+            else
+            {
+                onCooldown = false;
+            }
         }
     }
 }

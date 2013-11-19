@@ -267,7 +267,7 @@ namespace KazgarsRevenge
 
             #region ability initialization
             //create initial abilities
-            allAbilities.Add("heartstrike", new Ability(1, 1, heartStrikeIcon, 1, AttackType.Melle));
+            allAbilities.Add("heartstrike", new Ability(1, 1, heartStrikeIcon, 5.5f, AttackType.Melle));
             boundAbilities[0] = allAbilities["heartstrike"];
 
 
@@ -426,6 +426,7 @@ namespace KazgarsRevenge
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
+            double currentTime = gameTime.TotalGameTime.TotalSeconds;
             millisAniCounter += elapsed;
             millisShotAniCounter += elapsed;
             millisShotArrowAttachCounter += elapsed;
@@ -434,15 +435,18 @@ namespace KazgarsRevenge
 
             #region UI Update Section
             //reset the currently used abilities
+            //TODO change for ability use on key up
             for (int i = 0; i < 14; i++)
             {
                 UISlotUsed[i] = false;
             }
+            //ability CD updates
+            //TODO make into loop for all bound abilities and items
+            boundAbilities[0].update((float)currentTime);
             #endregion
 
             if (Game.IsActive)
             {
-
                 if (curMouse.LeftButton == ButtonState.Pressed)
                 {
                     millisRunningCounter = 0;
@@ -477,7 +481,7 @@ namespace KazgarsRevenge
                 }
                 if (attState == AttackState.None)
                 {
-                    CheckAbilities(move);
+                    CheckAbilities(move, (float)currentTime);
                 }
 
                 //targets ground location to start running to if holding mouse button
@@ -606,7 +610,7 @@ namespace KazgarsRevenge
         /// checks player input to see what ability to use
         /// </summary>
         /// <param name="gameTime"></param>
-        private void CheckAbilities(Vector3 move)
+        private void CheckAbilities(Vector3 move, float currentTime)
         {
             Vector3 dir;
             dir.X = move.X;
@@ -720,7 +724,7 @@ namespace KazgarsRevenge
                 targettedPhysicalData = null;
             }*/
 
-            if (curKeys.IsKeyDown(Keys.Q))
+            if (curKeys.IsKeyDown(Keys.Q) && boundAbilities[0].tryUse(currentTime))
             {
                 PlayAnimation("k_flip");
                 attState = AttackState.InitialSwing;
@@ -1010,7 +1014,26 @@ namespace KazgarsRevenge
             #endregion
             
             #region Ability Bar Mods
-            //0-7 abilities, 8 primary, 9 secondary, 10-13 items
+            #region Cooldown Mod
+            //TODO make into for loop for all bound abilities / items
+            if (boundAbilities[0].onCooldown)
+            {
+                s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * 0) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.Black * 0.5f);
+            }
+
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    if (boundAbilities[i].onCooldown)
+            //    {
+            //        s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.Black * 0.5f);
+            //    }
+            //    if (boundAbilities[i+4].onCooldown)
+            //    {
+            //        //s.Draw(icon_selected, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            //    }
+            //}
+            #endregion
+            #region Ability Frames
             //Draw the frames around abilities being used
             for (int i = 0; i < 4; i++)
             {
@@ -1049,6 +1072,8 @@ namespace KazgarsRevenge
                 s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             }
             #endregion
+            
+            #endregion
 
             //XP Area
             s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)), Color.Brown * 0.5f);
@@ -1079,6 +1104,7 @@ namespace KazgarsRevenge
 
             #endregion
             #endregion
+
         }
     }
 }
