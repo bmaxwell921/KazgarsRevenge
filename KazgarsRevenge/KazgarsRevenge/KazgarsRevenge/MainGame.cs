@@ -229,12 +229,11 @@ namespace KazgarsRevenge
         {
             levels.DemoLevel();
             players.CreateMainPlayer(new Vector3(200, 0, -200), DUMMY_ID);
-            //players.CreateDude();
-            for (int i = 0; i < 3; ++i)
+            for (int i = 0; i < 10; ++i)
             {
-                for (int j = 0; j < 3; ++j)
+                for (int j = 0; j < 10; ++j)
                 {
-                    enemies.CreateBrute(new Vector3(130 + i * 100, 0, -100 - j * 100));
+                    enemies.CreateBrute(new Vector3(130 + i * 200, 0, -100 - j * 200));
                 }
             }
         }

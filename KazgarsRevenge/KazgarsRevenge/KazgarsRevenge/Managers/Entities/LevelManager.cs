@@ -25,7 +25,7 @@ namespace KazgarsRevenge
 
         public void DemoLevel()
         {
-            CreateLevel("Models\\Levels\\4x4Final02", new Vector3(200, -20, -200), 0);
+            CreateLevel("Models\\Levels\\tempChunk", new Vector3(200, -20, -200), 0);
         }
 
         #region Level Creation
@@ -38,7 +38,7 @@ namespace KazgarsRevenge
 
             Model roomModel = GetUnanimatedModel(modelPath);
 
-            Model roomCollisionModel = Game.Content.Load<Model>(modelPath + "Co");
+            Model roomCollisionModel = Game.Content.Load<Model>(modelPath);// + "Co");
             Vector3[] verts;
             int[] indices;
             TriangleMesh.GetVerticesAndIndicesFromModel(roomCollisionModel, out verts, out indices);
@@ -79,7 +79,7 @@ namespace KazgarsRevenge
         private string TranslateIdToPathYaw(int id, out float yaw)
         {
             yaw = 0;
-            return "Models\\Levels\\4x4Final02";
+            return "Models\\Levels\\tempChunk";
         }
     }
 }
