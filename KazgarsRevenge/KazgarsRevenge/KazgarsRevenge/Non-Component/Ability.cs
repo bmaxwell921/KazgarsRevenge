@@ -12,7 +12,7 @@ namespace KazgarsRevenge
         int abilityLevel;
         int levelLearned;
         public Texture2D icon { get; private set; }
-        float cooldownSeconds;
+        public float cooldownSeconds;
         float lastUsed = -300f; //-5 minutes
         public bool onCooldown = false;
         public float timeRemaining;

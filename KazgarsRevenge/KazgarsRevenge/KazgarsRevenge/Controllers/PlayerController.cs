@@ -93,6 +93,13 @@ namespace KazgarsRevenge
         Texture2D magic;
         Texture2D placeHolder;
         Texture2D heartStrikeIcon;
+        Texture2D I1;
+        Texture2D I2;
+        Texture2D I3;
+        Texture2D I4;
+        Texture2D I5;
+        Texture2D I6;
+        Texture2D I7;
         #endregion
 
         #region Item Icons
@@ -267,10 +274,22 @@ namespace KazgarsRevenge
 
             #region ability initialization
             //create initial abilities
-            allAbilities.Add("heartstrike", new Ability(1, 1, heartStrikeIcon, 5.5f, AttackType.Melle));
+            allAbilities.Add("heartstrike", new Ability(1, 1, heartStrikeIcon, 10f, AttackType.Melle));
             boundAbilities[0] = allAbilities["heartstrike"];
-
-
+            allAbilities.Add("I1", new Ability(1, 1, I1, 5f, AttackType.Melle));
+            boundAbilities[1] = allAbilities["I1"];
+            allAbilities.Add("I2", new Ability(1, 1, I2, 30f, AttackType.Melle));
+            boundAbilities[2] = allAbilities["I2"];
+            allAbilities.Add("I3", new Ability(1, 1, I3, 60f, AttackType.Melle));
+            boundAbilities[3] = allAbilities["I3"];
+            allAbilities.Add("I4", new Ability(1, 1, I4, 120f, AttackType.Melle));
+            boundAbilities[4] = allAbilities["I4"];
+            allAbilities.Add("I5", new Ability(1, 1, I5, 120f, AttackType.Melle));
+            boundAbilities[5] = allAbilities["I5"];
+            allAbilities.Add("I6", new Ability(1, 1, I6, 90f, AttackType.Melle));
+            boundAbilities[6] = allAbilities["I6"];
+            allAbilities.Add("I7", new Ability(1, 1, I7, 300f, AttackType.Melle));
+            boundAbilities[7] = allAbilities["I7"];
             #endregion
         }
 
@@ -314,6 +333,13 @@ namespace KazgarsRevenge
             magic = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR");
             placeHolder = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BN");
             heartStrikeIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS");
+            I1 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I1");
+            I2 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I2");
+            I3 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I3");
+            I4 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4");
+            I5 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I5");
+            I6 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I6");
+            I7 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I7");
             #endregion
 
             #region Item Image Load
@@ -442,7 +468,10 @@ namespace KazgarsRevenge
             }
             //ability CD updates
             //TODO make into loop for all bound abilities and items
-            boundAbilities[0].update((float)currentTime);
+            for (int i = 0; i < 8; i++)
+            {
+                boundAbilities[i].update((float)currentTime);
+            }
             #endregion
 
             if (Game.IsActive)
@@ -723,8 +752,85 @@ namespace KazgarsRevenge
                 groundTargetLocation = physicalData.Position;
                 targettedPhysicalData = null;
             }*/
-
+            //Q
             if (curKeys.IsKeyDown(Keys.Q) && boundAbilities[0].tryUse(currentTime))
+            {
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(dir);
+                millisMelleCounter = 0;
+                mouseHoveredLocation = physicalData.Position;
+                groundTargetLocation = physicalData.Position;
+                targettedPhysicalData = null;
+            }
+            //W
+            if (curKeys.IsKeyDown(Keys.W) && boundAbilities[1].tryUse(currentTime))
+            {
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(dir);
+                millisMelleCounter = 0;
+                mouseHoveredLocation = physicalData.Position;
+                groundTargetLocation = physicalData.Position;
+                targettedPhysicalData = null;
+            }
+            //E
+            if (curKeys.IsKeyDown(Keys.E) && boundAbilities[2].tryUse(currentTime))
+            {
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(dir);
+                millisMelleCounter = 0;
+                mouseHoveredLocation = physicalData.Position;
+                groundTargetLocation = physicalData.Position;
+                targettedPhysicalData = null;
+            }
+            //R
+            if (curKeys.IsKeyDown(Keys.R) && boundAbilities[3].tryUse(currentTime))
+            {
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(dir);
+                millisMelleCounter = 0;
+                mouseHoveredLocation = physicalData.Position;
+                groundTargetLocation = physicalData.Position;
+                targettedPhysicalData = null;
+            }
+            //A
+            if (curKeys.IsKeyDown(Keys.A) && boundAbilities[4].tryUse(currentTime))
+            {
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(dir);
+                millisMelleCounter = 0;
+                mouseHoveredLocation = physicalData.Position;
+                groundTargetLocation = physicalData.Position;
+                targettedPhysicalData = null;
+            }
+            //S
+            if (curKeys.IsKeyDown(Keys.S) && boundAbilities[5].tryUse(currentTime))
+            {
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(dir);
+                millisMelleCounter = 0;
+                mouseHoveredLocation = physicalData.Position;
+                groundTargetLocation = physicalData.Position;
+                targettedPhysicalData = null;
+            }
+            //D
+            if (curKeys.IsKeyDown(Keys.D) && boundAbilities[6].tryUse(currentTime))
+            {
+                PlayAnimation("k_flip");
+                attState = AttackState.InitialSwing;
+                UpdateRotation(dir);
+                millisMelleCounter = 0;
+                mouseHoveredLocation = physicalData.Position;
+                groundTargetLocation = physicalData.Position;
+                targettedPhysicalData = null;
+            }
+            //F
+            if (curKeys.IsKeyDown(Keys.F) && boundAbilities[7].tryUse(currentTime))
             {
                 PlayAnimation("k_flip");
                 attState = AttackState.InitialSwing;
@@ -970,19 +1076,19 @@ namespace KazgarsRevenge
             //Q
             s.Draw(boundAbilities[0].icon, new Rectangle((int)((maxX / 2 - 301 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //W
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 227 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(boundAbilities[1].icon, new Rectangle((int)((maxX / 2 - 227 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //E
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 153 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(boundAbilities[2].icon, new Rectangle((int)((maxX / 2 - 153 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //R
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 79 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(boundAbilities[3].icon, new Rectangle((int)((maxX / 2 - 79 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //A
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 301 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(boundAbilities[4].icon, new Rectangle((int)((maxX / 2 - 301 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //S
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 227 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(boundAbilities[5].icon, new Rectangle((int)((maxX / 2 - 227 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //D
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 153 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(boundAbilities[6].icon, new Rectangle((int)((maxX / 2 - 153 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             //F
-            s.Draw(placeHolder, new Rectangle((int)((maxX / 2 - 79 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(boundAbilities[7].icon, new Rectangle((int)((maxX / 2 - 79 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
 
             //LM
             switch (GetMainhandType())
@@ -1016,22 +1122,19 @@ namespace KazgarsRevenge
             #region Ability Bar Mods
             #region Cooldown Mod
             //TODO make into for loop for all bound abilities / items
-            if (boundAbilities[0].onCooldown)
-            {
-                s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * 0) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.Black * 0.5f);
-            }
+            //s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * 0) * average)), (int)((maxY - (84 + 64 * (boundAbilities[0].timeRemaining / boundAbilities[0].cooldownSeconds)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[0].timeRemaining / boundAbilities[0].cooldownSeconds) * average) + 1), Color.Black * 0.5f);
 
-            //for (int i = 0; i < 4; i++)
-            //{
-            //    if (boundAbilities[i].onCooldown)
-            //    {
-            //        s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.Black * 0.5f);
-            //    }
-            //    if (boundAbilities[i+4].onCooldown)
-            //    {
-            //        //s.Draw(icon_selected, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
-            //    }
-            //}
+            for (int i = 0; i < 4; i++)
+            {
+                if (boundAbilities[i].onCooldown)
+                {
+                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (84 + 64 * (boundAbilities[i].timeRemaining / boundAbilities[i].cooldownSeconds)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i].timeRemaining / boundAbilities[i].cooldownSeconds) * average) + 1), Color.Black * 0.5f);
+                }
+                if (boundAbilities[i + 4].onCooldown)
+                {
+                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (10  + 64 * (boundAbilities[i + 4].timeRemaining / boundAbilities[i + 4].cooldownSeconds)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i + 4].timeRemaining / boundAbilities[i + 4].cooldownSeconds) * average) + 1), Color.Black * 0.5f);
+                }
+            }
             #endregion
             #region Ability Frames
             //Draw the frames around abilities being used
