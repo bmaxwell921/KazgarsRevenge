@@ -33,13 +33,12 @@ namespace KazgarsRevenge
             {
                 nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
             }
-            // TODO remove this for one from the server
-            Vector3 addLoc = new Vector3(200, 10, -200);
 
             byte clientId = nim.ReadByte();
             bool isHost = nim.ReadBoolean();
 
-            pm.CreateMainPlayer(addLoc, new Identification(clientId));
+            // TODO remove this for a position from the server
+            pm.CreateMainPlayer(new Vector3(200, 0 , -200), new Identification(clientId));
             nmm.isHost = isHost;
         }
     }

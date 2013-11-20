@@ -10,7 +10,6 @@ namespace KazgarsRevengeServer
 {
     /// <summary>
     /// Handler used by the server to establish a connection to a client
-    /// TODO this will need to be split up a bit, the DiscoveryRequest should just send back this server's name
     /// </summary>
     public class SStatusChangeHandler : BaseHandler
     {
