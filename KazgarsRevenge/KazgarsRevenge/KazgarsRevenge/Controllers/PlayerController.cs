@@ -63,7 +63,8 @@ namespace KazgarsRevenge
         Random rand;
 
         //variables for target
-        Entity targettedPhysicalData;
+        Entity targetedPhysicalData;
+        Entity targetedLootData;
         GameEntity mouseHoveredEntity;
         HealthData mouseHoveredHealth;
 
@@ -74,6 +75,10 @@ namespace KazgarsRevenge
         Vector3 groundTargetLocation = Vector3.Zero;
         double millisRunningCounter = 2000;
         double millisRunTime = 2000;
+        double millisCombatLength = 4000;
+        double millisCombatCounter = 0;
+        bool inCombat;
+
         #endregion
 
         #region Abilities
@@ -394,6 +399,7 @@ namespace KazgarsRevenge
             InitialSwing,
             FinishSwing,
             CastingSpell,
+            Looting,
         }
 
 
@@ -459,6 +465,16 @@ namespace KazgarsRevenge
             millisMelleCounter += elapsed;
             millisRunningCounter += elapsed;
 
+            if (inCombat && millisCombatCounter >= millisCombatLength)
+            {
+                inCombat = false;
+                millisCombatCounter = 0;
+            }
+            else
+            {
+                millisCombatCounter += elapsed;
+            }
+
             #region UI Update Section
             //reset the currently used abilities
             //TODO change for ability use on key up
@@ -484,7 +500,7 @@ namespace KazgarsRevenge
                 {
                     if (attState != AttackState.None)
                     {
-                        targettedPhysicalData = null;
+                        targetedPhysicalData = null;
                     }
                 }
                 bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
@@ -494,9 +510,9 @@ namespace KazgarsRevenge
                 CheckMouseRay(newTarget);
 
                 Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
-                if (targettedPhysicalData != null)
+                if (targetedPhysicalData != null)
                 {
-                    move = new Vector3(targettedPhysicalData.Position.X - physicalData.Position.X, 0, targettedPhysicalData.Position.Z - physicalData.Position.Z);
+                    move = new Vector3(targetedPhysicalData.Position.X - physicalData.Position.X, 0, targetedPhysicalData.Position.Z - physicalData.Position.Z);
                 }
                 if (move != Vector3.Zero)
                 {
@@ -506,7 +522,7 @@ namespace KazgarsRevenge
                 if (curMouse.LeftButton == ButtonState.Pressed && mouseHoveredHealth != null && mouseHoveredHealth.Dead)
                 {
                     ResetTargettedEntity();
-                    targettedPhysicalData = null;
+                    targetedPhysicalData = null;
                 }
                 if (attState == AttackState.None)
                 {
@@ -517,13 +533,13 @@ namespace KazgarsRevenge
                 if (curMouse.LeftButton == ButtonState.Pressed && attState == AttackState.None)
                 {
                     groundTargetLocation = mouseHoveredLocation;
-                    if (prevMouse.LeftButton == ButtonState.Released && targettedPhysicalData == null)
+                    if (prevMouse.LeftButton == ButtonState.Released && targetedPhysicalData == null)
                     {
                         attacks.CreateMouseSpikes(groundTargetLocation);
                     }
                 }
                 Vector3 groundMove = move;
-                if (targettedPhysicalData == null)
+                if (targetedPhysicalData == null)
                 {
                     groundMove = new Vector3(groundTargetLocation.X - physicalData.Position.X, 0, groundTargetLocation.Z - physicalData.Position.Z);
                     if (groundMove != Vector3.Zero)
@@ -577,14 +593,15 @@ namespace KazgarsRevenge
             }
 
 
-            //if the left mouse button was either just clicked or not pressed down at all, or if any other ability input was just clicked
-            if (newTarget)
-            {
+
                 //check if ray hits GameEntity if not holding down mouse button
                 List<RayCastResult> results = new List<RayCastResult>();
                 physics.RayCast(r, 10000, rayCastFilter, results);
 
-                ResetTargettedEntity();
+                if (newTarget)
+                {
+                    ResetTargettedEntity();
+                }
                 foreach (RayCastResult result in results)
                 {
                     if (result.HitObject != null)
@@ -592,20 +609,27 @@ namespace KazgarsRevenge
                         mouseHoveredEntity = result.HitObject.Tag as GameEntity;
                         if (mouseHoveredEntity != null)
                         {
-                            mouseHoveredHealth = mouseHoveredEntity.GetHealth();
-                            if (mouseHoveredHealth == null)
+                            if (mouseHoveredEntity.Name == "loot")
                             {
-                                ResetTargettedEntity();
+                                targetedLootData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
                             }
-                            else if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                            //if the left mouse button was either just clicked or not pressed down at all, or if any other ability input was just clicked
+                            else if(newTarget)
                             {
-                                targettedPhysicalData = (mouseHoveredEntity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).collidable;
+                                mouseHoveredHealth = mouseHoveredEntity.GetHealth();
+                                if (mouseHoveredHealth == null)
+                                {
+                                    ResetTargettedEntity();
+                                }
+                                else if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                                {
+                                    targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
-            }
         }
 
         /// <summary>
@@ -657,9 +681,9 @@ namespace KazgarsRevenge
                 EquipGear(l, GearSlot.Righthand);
             }
 
-            if (targettedPhysicalData != null)
+            if (targetedPhysicalData != null)
             {
-                dir = targettedPhysicalData.Position - physicalData.Position;
+                dir = targetedPhysicalData.Position - physicalData.Position;
                 dir.Y = 0;
                 distance = (dir).Length();
                 dir.Normalize();
@@ -667,7 +691,7 @@ namespace KazgarsRevenge
 
 
             //primary attack (autos)
-            if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targettedPhysicalData != null)
+            if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targetedPhysicalData != null)
             {
                 //used to differentiate between left hand, right hand, and two hand animations
                 string aniSuffix = "right";
@@ -838,7 +862,7 @@ namespace KazgarsRevenge
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
-                targettedPhysicalData = null;
+                targetedPhysicalData = null;
             }
         }
 
@@ -1003,7 +1027,6 @@ namespace KazgarsRevenge
             if (move.Z < 0 && move.X >= 0
                 || move.Z < 0 && move.X < 0)
             {
-                //TODO
                 yaw += MathHelper.Pi;
             }
             yaw += MathHelper.Pi;

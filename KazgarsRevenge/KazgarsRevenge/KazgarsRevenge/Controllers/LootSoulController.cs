@@ -14,7 +14,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class LootSoulController : Component
+    class LootSoulController : AIController
     {
         Entity physicalData;
         AnimationPlayer animations;
@@ -64,6 +64,9 @@ namespace KazgarsRevenge
                     move.Y = 0;
                     move *= groundSpeed;
                     physicalData.LinearVelocity = move;
+
+
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(move), 0, 0);
                 }
             }
             else
@@ -103,7 +106,9 @@ namespace KazgarsRevenge
                 wanderCounter = 0;
                 wanderLength = rand.Next(4000, 10000);
                 float newDir = rand.Next(1, 627) / 10.0f;
-                Vector3 newVel = new Vector3((float)Math.Cos(newDir) * groundSpeed, 0, (float)Math.Sin(newDir) * groundSpeed);
+                Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(newVel), 0, 0);
+                newVel *= groundSpeed;
                 physicalData.LinearVelocity = newVel;
             }
 

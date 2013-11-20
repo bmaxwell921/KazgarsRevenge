@@ -25,7 +25,7 @@ namespace KazgarsRevenge
         {
             GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral);
 
-            Entity lootPhysicalData = new Box(position, 1, 1, 1);
+            Entity lootPhysicalData = new Box(position, 10, 10, 10);
             lootPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.LootCollisionGroup;
 
             //locking rotation on axis (so that bumping into something won't make the player tip over)
