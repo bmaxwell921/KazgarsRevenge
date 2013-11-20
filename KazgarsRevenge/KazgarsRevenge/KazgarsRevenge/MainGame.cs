@@ -80,7 +80,7 @@ namespace KazgarsRevenge
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 600;
             graphics.ApplyChanges();
-            
+ 
             screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
 
             Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
