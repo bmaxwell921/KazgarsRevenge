@@ -979,7 +979,7 @@ namespace KazgarsRevenge
                 {
                     Vector3 forward = GetForward();
                     attached.Remove("arrow");
-                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 100, FactionType.Players);
+                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, FactionType.Players);
                     attState = AttackState.LettingGo;
                     millisShotAniCounter = 0;
                 }

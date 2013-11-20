@@ -54,7 +54,7 @@ namespace KazgarsRevenge
             animations.StartClip("pig_walk");
 
 
-            deathLength = animations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
+            deathLength = 70;//animations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
         }
 
         GameEntity targetedSoul;
