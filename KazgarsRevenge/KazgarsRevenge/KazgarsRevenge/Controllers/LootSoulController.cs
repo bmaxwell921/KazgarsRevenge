@@ -7,141 +7,198 @@ using BEPUphysics;
 using BEPUphysics.Entities;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.CollisionTests;
-using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.Collidables;
 using BEPUphysics.Collidables.MobileCollidables;
+using BEPUphysics.CollisionRuleManagement;
+using BEPUphysics.NarrowPhaseSystems.Pairs;
 using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
     class LootSoulController : AIController
     {
+        public enum LootSoulState
+        {
+            Wandering,
+            Following,
+            BeingLooted,
+            Dying,
+            Uniting,
+        }
+        public LootSoulState soulState { get; private set; }
+
+        public int totalSouls { get; private set; }
         Entity physicalData;
         AnimationPlayer animations;
-        public Dictionary<int, Item> Loot;
-        public LootSoulController(KazgarsRevengeGame game, GameEntity entity, int wanderSeed, List<Item> loot)
+        private List<Item> loot;
+        public List<Item> Loot
+        {
+            get
+            {
+                return soulState == LootSoulState.Dying ? new List<Item>() : loot;
+            }
+        }
+
+        public LootSoulController(KazgarsRevengeGame game, GameEntity entity, int wanderSeed, List<Item> loot, int totalSouls, Entity soulSensor)
             : base(game, entity)
         {
-            this.Loot = new Dictionary<int, Item>();
-            for(int i=0; i<loot.Count; ++i)
-            {
-                this.Loot.Add(i, loot[i]);
-            }
+            this.loot = loot;
+            this.totalSouls = totalSouls;
+            this.soulSensor = soulSensor;
+            soulState = LootSoulState.Wandering;
 
-            rand = new Random(wanderSeed);
+            rand = new Random();//new Random(wanderSeed);
             physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
+            physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleSoulCollision;
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             animations.StartClip("pig_walk");
 
-            //creating a box on top of this one to find any other loot souls around it to join with
-            sensingData = new Box(physicalData.Position, 50, 20, 50);
-            sensingData.CollisionInformation.CollisionRules.Group = game.LootCollisionGroup;
+
+            deathLength = animations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
         }
 
-        GameEntity targettedSoul;
+        GameEntity targetedSoul;
         Entity targetData;
-        Entity sensingData;
+        Entity soulSensor;
         Random rand;
         double wanderCounter = 0;
         double wanderLength = 0;
         float groundSpeed = 5.0f;
+        double deathCounter = 0;
+        double deathLength;
         public override void Update(GameTime gameTime)
         {
-            //locking sensor onto it's position
-            sensingData.Position = physicalData.Position;
-
-            if (targettedSoul != null)
+            //centering sensor
+            soulSensor.Position = physicalData.Position;
+            switch (soulState)
             {
-                if (targettedSoul.Dead)
-                {
-                    targettedSoul = null;
-                    targetData = null;
-                }
-                else
-                {
-                    Vector3 move = targetData.Position - physicalData.Position;
-                    move.Normalize();
-                    move.Y = 0;
-                    move *= groundSpeed;
-                    physicalData.LinearVelocity = move;
-
-
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(move), 0, 0);
-                }
-            }
-            else
-            {
-                //look for contacts
-                foreach (var c in physicalData.CollisionInformation.Pairs)
-                {
-                    if (PairIsColliding(c))
+                case LootSoulState.Wandering:
+                    if (Loot.Count == 0)
                     {
-                        //getting other entity
-                        Entity e;
-                        if (c.EntityA == physicalData)
+                        soulState = LootSoulState.Dying;
+                        physicalData.LinearVelocity = Vector3.Zero;
+                        return;
+                    }
+
+                    //wandering
+                    wanderCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if (wanderCounter >= wanderLength)
+                    {
+                        wanderCounter = 0;
+                        wanderLength = rand.Next(4000, 10000);
+                        float newDir = rand.Next(1, 627) / 10.0f;
+                        Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
+                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(newVel), 0, 0);
+                        newVel *= groundSpeed;
+                        physicalData.LinearVelocity = newVel;
+                    }
+
+                    //looking for nearby souls to unite with
+                    GameEntity possNearestSoul = LookForNearest("loot", soulSensor);
+                    if (possNearestSoul != null && (possNearestSoul.GetComponent(typeof(LootSoulController)) as LootSoulController).soulState != LootSoulState.Dying)
+                    {
+                        targetedSoul = possNearestSoul;
+                        targetData = targetedSoul.GetSharedData(typeof(Entity)) as Entity;
+                        soulState = LootSoulState.Following;
+                    }
+                    break;
+                case LootSoulState.Following:
+                    if (Loot.Count == 0)
+                    {
+                        soulState = LootSoulState.Dying;
+                        physicalData.LinearVelocity = Vector3.Zero;
+                        return;
+                    }
+                    if (targetedSoul != null)
+                    {
+                        if (targetedSoul.Dead)
                         {
-                            e = c.EntityB;
+                            targetedSoul = null;
+                            targetData = null;
+                            soulState = LootSoulState.Wandering;
                         }
                         else
                         {
-                            e = c.EntityA;
-                        }
-
-                        if (e != null)
-                        {
-                            //target the first other soul found
-                            GameEntity other = e.CollisionInformation.Tag as GameEntity;
-                            if (other != null && other.Name == "loot")
+                            Vector3 move = targetData.Position - physicalData.Position;
+                            if (move != Vector3.Zero)
                             {
+                                move.Normalize();
+                                move.Y = 0;
+                            }
+                            move *= groundSpeed;
+                            physicalData.LinearVelocity = move;
+                            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(move), 0, 0);
+                        }
+                    }
+                    break;
+                case LootSoulState.BeingLooted:
+                    break;
+                case LootSoulState.Dying:
+                    deathCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if (deathCounter > deathLength)
+                    {
+                        entity.Kill();
+                    }
+                    break;
+            }
+        }
 
+        public void OpenLoot()
+        {
+            soulState = LootSoulState.BeingLooted;
+            animations.StartClip("pig_idle");
+        }
+
+        public void CloseLoot()
+        {
+            soulState = LootSoulState.Wandering;
+            animations.StartClip("pig_walk");
+        }
+
+        protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
+        {
+            if (soulState != LootSoulState.Dying)
+            {
+                GameEntity hitEntity = other.Tag as GameEntity;
+                if (hitEntity != null)
+                {
+                    //if we hit another soul, merge with it
+                    if (hitEntity.Name == "loot")
+                    {
+                        LootSoulController otherSoul = hitEntity.GetComponent(typeof(LootSoulController)) as LootSoulController;
+                        if (otherSoul != null)
+                        {
+                            if (otherSoul.soulState != LootSoulState.Dying)
+                            {
+                                List<Item> toAdd = otherSoul.Unite();
+                                for (int i = 0; i < toAdd.Count; ++i)
+                                {
+                                    loot.Add(toAdd[i]);
+                                }
+                                //may not be necessary
+                                Vector3 newPos = physicalData.Position + (hitEntity.GetSharedData(typeof(Entity)) as Entity).Position;
+                                newPos /= 2;
+
+                                soulState = LootSoulState.Dying;
+                                physicalData.LinearVelocity = Vector3.Zero;
+                                (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateLootSoul(newPos, loot, totalSouls + otherSoul.totalSouls);
                             }
                         }
                     }
                 }
             }
-
-            wanderCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (wanderCounter >= wanderLength)
-            {
-                wanderCounter = 0;
-                wanderLength = rand.Next(4000, 10000);
-                float newDir = rand.Next(1, 627) / 10.0f;
-                Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
-                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(newVel), 0, 0);
-                newVel *= groundSpeed;
-                physicalData.LinearVelocity = newVel;
-            }
-
-            if (Loot.Count == 0)
-            {
-                this.Kill();
-            }
         }
 
-        protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
+        public List<Item> Unite()
         {
-            GameEntity hitEntity = other.Tag as GameEntity;
-            if (hitEntity != null)
-            {
-                //if we hit another soul, merge with it
-                if (hitEntity.Name == "loot")
-                {
-
-                }
-            }
+            soulState = LootSoulState.Dying;
+            physicalData.LinearVelocity = Vector3.Zero;
+            return Loot;
         }
 
-        private bool PairIsColliding(CollidablePairHandler pair)
+        public override void End()
         {
-            foreach (var contactInformation in pair.Contacts)
-            {
-                if (contactInformation.Contact.PenetrationDepth >= 0)
-                {
-                    return true;
-                }
-            }
-            return false;
+            (Game.Services.GetService(typeof(Space)) as Space).Remove(soulSensor);
         }
-
     }
 }

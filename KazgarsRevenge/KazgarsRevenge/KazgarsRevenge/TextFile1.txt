@@ -23,3 +23,16 @@ Started GUI
 Loot system?
 Inventory?
 Networking? (location and running animations for multiple players)
+
+
+
+
+
+art needed:
+concept art for enemies, to be put in design doc
+loot soul blob (animations: wander, dying, being looted)
+pig man death animation
+moar enemies!
+Kazgar casting animation
+moar levels!
+GUI textures

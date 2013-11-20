@@ -7,12 +7,19 @@ using Microsoft.Xna.Framework.Graphics;
 using BEPUphysics;
 using BEPUphysics.Entities;
 using BEPUphysics.Entities.Prefabs;
+using BEPUphysics.CollisionTests;
+using BEPUphysics.Collidables;
+using BEPUphysics.Collidables.MobileCollidables;
+using BEPUphysics.CollisionRuleManagement;
+using BEPUphysics.NarrowPhaseSystems.Pairs;
 using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
     class LootManager : EntityManager
     {
+        const float SOULS_PER_INCREASE = 1.0f;
+
         List<GameEntity> lootSouls = new List<GameEntity>();
 
         public LootManager(KazgarsRevengeGame game)
@@ -23,16 +30,25 @@ namespace KazgarsRevenge
 
         public void CreateLootSoul(Vector3 position, List<Item> containedLoot)
         {
+            CreateLootSoul(position, containedLoot, 1);
+        }
+
+        public void CreateLootSoul(Vector3 position, List<Item> containedLoot, int totalSouls)
+        {
             GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral);
+            float size = 3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE);
 
-            Entity lootPhysicalData = new Box(position, 10, 10, 10);
+            //soul's entity
+            Entity lootPhysicalData = new Box(position, size, size, size);
             lootPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.LootCollisionGroup;
-
-            //locking rotation on axis (so that bumping into something won't make the player tip over)
             lootPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            //more accurate collision detection for the player
-            lootPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             lootSoul.AddSharedData(typeof(Entity), lootPhysicalData);
+
+            
+            //creating a box on top of this soul to find any other loot souls around it to join with
+            Entity soulSensor = new Box(position, 300, 50, 300);
+            soulSensor.CollisionInformation.CollisionRules.Group = mainGame.SensorLootCollisionGroup;
+            (Game.Services.GetService(typeof(Space)) as Space).Add(soulSensor);
 
 
             Model lootModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
@@ -43,9 +59,8 @@ namespace KazgarsRevenge
             lootSoul.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
             PhysicsComponent lootPhysics = new PhysicsComponent(mainGame, lootSoul);
-            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(3f), Vector3.Down * 18);
-            //UnanimatedModelComponent lootGraphics = new UnanimatedModelComponent(mainGame, lootSoul, GetUnanimatedModel("Models\\Attachables\\arrow"), new Vector3(20), Vector3.Zero, Matrix.Identity);
-            LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot);
+            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE)), Vector3.Zero);
+            LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot, totalSouls, soulSensor);
 
             lootSoul.AddComponent(typeof(PhysicsComponent), lootPhysics);
             genComponentManager.AddComponent(lootPhysics);

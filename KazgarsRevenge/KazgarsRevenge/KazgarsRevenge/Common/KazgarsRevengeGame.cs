@@ -32,6 +32,7 @@ namespace KazgarsRevenge
         public CollisionGroup BadProjectileCollisionGroup;
         public CollisionGroup EnemyCollisionGroup;
         public CollisionGroup LootCollisionGroup;
+        public CollisionGroup SensorLootCollisionGroup;
 
         Random rand;
 
@@ -62,6 +63,7 @@ namespace KazgarsRevenge
             BadProjectileCollisionGroup = new CollisionGroup();
             EnemyCollisionGroup = new CollisionGroup();
             LootCollisionGroup = new CollisionGroup();
+            SensorLootCollisionGroup = new CollisionGroup();
 
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(PlayerCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
@@ -73,6 +75,13 @@ namespace KazgarsRevenge
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, EnemyCollisionGroup), CollisionRule.NoBroadPhase);
+
+            //loot sensors don't collide with anything, but generate contacts with loot
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(SensorLootCollisionGroup, LootCollisionGroup), CollisionRule.NoSolver);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(SensorLootCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(SensorLootCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(SensorLootCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(SensorLootCollisionGroup, EnemyCollisionGroup), CollisionRule.NoBroadPhase);
         }
 
         protected override void Initialize()
