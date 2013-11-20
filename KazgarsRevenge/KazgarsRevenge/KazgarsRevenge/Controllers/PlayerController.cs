@@ -774,7 +774,7 @@ namespace KazgarsRevenge
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
-                targettedPhysicalData = null;
+                targetedPhysicalData = null;
             }*/
             //Q
             if (curKeys.IsKeyDown(Keys.Q) && boundAbilities[0].tryUse(currentTime))
@@ -785,7 +785,7 @@ namespace KazgarsRevenge
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
-                targettedPhysicalData = null;
+                targetedPhysicalData = null;
             }
             //W
             if (curKeys.IsKeyDown(Keys.W) && boundAbilities[1].tryUse(currentTime))
@@ -796,7 +796,7 @@ namespace KazgarsRevenge
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
-                targettedPhysicalData = null;
+                targetedPhysicalData = null;
             }
             //E
             if (curKeys.IsKeyDown(Keys.E) && boundAbilities[2].tryUse(currentTime))
@@ -807,7 +807,7 @@ namespace KazgarsRevenge
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
-                targettedPhysicalData = null;
+                targetedPhysicalData = null;
             }
             //R
             if (curKeys.IsKeyDown(Keys.R) && boundAbilities[3].tryUse(currentTime))
@@ -818,7 +818,7 @@ namespace KazgarsRevenge
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
-                targettedPhysicalData = null;
+                targetedPhysicalData = null;
             }
             //A
             if (curKeys.IsKeyDown(Keys.A) && boundAbilities[4].tryUse(currentTime))
@@ -829,7 +829,7 @@ namespace KazgarsRevenge
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
-                targettedPhysicalData = null;
+                targetedPhysicalData = null;
             }
             //S
             if (curKeys.IsKeyDown(Keys.S) && boundAbilities[5].tryUse(currentTime))
@@ -840,7 +840,7 @@ namespace KazgarsRevenge
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
-                targettedPhysicalData = null;
+                targetedPhysicalData = null;
             }
             //D
             if (curKeys.IsKeyDown(Keys.D) && boundAbilities[6].tryUse(currentTime))
@@ -851,7 +851,7 @@ namespace KazgarsRevenge
                 millisMelleCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
-                targettedPhysicalData = null;
+                targetedPhysicalData = null;
             }
             //F
             if (curKeys.IsKeyDown(Keys.F) && boundAbilities[7].tryUse(currentTime))
