@@ -67,7 +67,7 @@ namespace KazgarsRevengeServer
 
         public void CreateDemoLevel()
         {
-            CreateLevel("Models\\Levels\\4x4Final02Co", new Vector3(200, -20, -200), 0);
+            CreateLevel("Models\\Levels\\tempChunk", new Vector3(200, -20, -200), 0);
         }
 
         public override void Update(GameTime gameTime)

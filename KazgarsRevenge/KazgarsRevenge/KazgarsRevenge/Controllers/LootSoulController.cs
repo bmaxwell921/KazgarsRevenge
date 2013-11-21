@@ -94,7 +94,7 @@ namespace KazgarsRevenge
                     }
 
                     //looking for nearby souls to unite with
-                    GameEntity possNearestSoul = LookForNearest("loot", soulSensor);
+                    GameEntity possNearestSoul = QueryNearest("loot", soulSensor.CollisionInformation.BoundingBox);
                     if (possNearestSoul != null && (possNearestSoul.GetComponent(typeof(LootSoulController)) as LootSoulController).soulState != LootSoulState.Dying)
                     {
                         targetedSoul = possNearestSoul;
@@ -124,6 +124,10 @@ namespace KazgarsRevenge
                             {
                                 move.Normalize();
                                 move.Y = 0;
+                            }
+                            if (move.Z == 0)
+                            {
+                                move.Z = .000001f;
                             }
                             move *= groundSpeed;
                             physicalData.LinearVelocity = move;
@@ -175,7 +179,6 @@ namespace KazgarsRevenge
                                 {
                                     loot.Add(toAdd[i]);
                                 }
-                                //may not be necessary
                                 Vector3 newPos = physicalData.Position + (hitEntity.GetSharedData(typeof(Entity)) as Entity).Position;
                                 newPos /= 2;
 

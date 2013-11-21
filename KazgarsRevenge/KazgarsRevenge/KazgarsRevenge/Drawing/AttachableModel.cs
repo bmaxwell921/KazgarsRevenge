@@ -9,12 +9,14 @@ namespace KazgarsRevenge
 {
     public class AttachableModel
     {
-        public Model model;
-        public string otherBoneName;
-        public AttachableModel(Model model, string otherBoneName)
+        public Model model { get; private set; }
+        public string otherBoneName { get; private set; }
+        public float xRotation { get; private set; }
+        public AttachableModel(Model model, string otherBoneName, float xRotation)
         {
             this.model = model;
             this.otherBoneName = otherBoneName;
+            this.xRotation = xRotation;
         }
     }
 }

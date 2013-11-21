@@ -29,6 +29,11 @@ namespace KazgarsRevenge
             playerMap = new Dictionary<Identification, GameEntity>();
         }
 
+        public void Reset()
+        {
+            //(playerMap[myId].GetSharedData(typeof(Entity)) as Entity).Position = new Vector3(200, 0, -200);
+        }
+
         public void CreateMainPlayer(Vector3 position, Identification id)
         {
             GameEntity player = new GameEntity("localplayer", FactionType.Players);

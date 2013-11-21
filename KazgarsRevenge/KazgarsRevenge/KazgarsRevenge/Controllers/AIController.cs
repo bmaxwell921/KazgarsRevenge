@@ -37,7 +37,7 @@ namespace KazgarsRevenge
             return yaw;
         }
 
-        protected GameEntity QueryNearest(string entityName, BoundingSphere s)
+        protected GameEntity QueryNearest(string entityName, BoundingBox s)
         {
             
             var entries=Resources.GetBroadPhaseEntryList();
@@ -47,7 +47,13 @@ namespace KazgarsRevenge
                 GameEntity other = entry.Tag as GameEntity;
                 if (other != null && other.Name == entityName)
                 {
-                    return other;
+                    BoundingBox entryBox = entry.BoundingBox;
+                    Vector3 entrymid = (entryBox.Max + entryBox.Min) / 2;
+                    Vector3 selfmid = (s.Max + s.Min) / 2;
+                    if (entrymid != selfmid)
+                    {
+                        return other;
+                    }
                 }
             }
             return null;

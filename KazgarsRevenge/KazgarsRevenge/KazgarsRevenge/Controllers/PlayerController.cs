@@ -129,6 +129,7 @@ namespace KazgarsRevenge
         Item[,] inventory = new Item[15, 15];
         public void EquipGear(Equippable equipMe, GearSlot slot)
         {
+            float xRot = 0;
             //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand
             Weapon possWep = equipMe as Weapon;
             if (possWep != null)
@@ -142,6 +143,11 @@ namespace KazgarsRevenge
                     }
                     UnequipGear(GearSlot.Lefthand);
                 }
+
+                if (slot == GearSlot.Righthand)
+                {
+                    xRot = MathHelper.Pi;
+                }
             }
 
             //otherwise, carry on
@@ -149,7 +155,7 @@ namespace KazgarsRevenge
             gear[slot] = equipMe;
             RecalculateStats();
 
-            attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot)));
+            attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot));
         }
         /// <summary>
         /// tries to put equipped item into inventory. If there was no inventory space, returns false.
@@ -911,6 +917,7 @@ namespace KazgarsRevenge
             }
         }
 
+        AttachableModel attachedArrow;
         /// <summary>
         /// handles animation transitions
         /// </summary>
@@ -971,7 +978,11 @@ namespace KazgarsRevenge
                 if(attState == AttackState.GrabbingArrow 
                     && millisShotArrowAttachCounter >= millisShotArrowAttachLength)
                 {
-                    attached.Add("arrow", ((MainGame)Game).GetAttachable("arrow", "sword", "Bone_001_R_004"));
+                    if (attachedArrow == null)
+                    {
+                        attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0);
+                    }
+                    attached.Add("arrow", attachedArrow);
                     attState = AttackState.DrawingString;
                     millisShotArrowAttachCounter = 0;
                 }

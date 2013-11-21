@@ -44,7 +44,6 @@
       <Name>sword01</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
-      <ProcessorParameters_RotationX>180</ProcessorParameters_RotationX>
     </Compile>
     <Compile Include="Models\Enemies\Pigman\pig_idle.fbx">
       <Name>pig_idle</Name>

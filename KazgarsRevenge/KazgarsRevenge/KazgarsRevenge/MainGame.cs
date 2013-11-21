@@ -70,8 +70,8 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
-            /*
-            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            
+            /*graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.IsFullScreen = true;
             graphics.ApplyChanges();*/
@@ -159,22 +159,6 @@ namespace KazgarsRevenge
             base.LoadContent();
         }
 
-        string attachDir = "Models\\Attachables\\";
-        public AttachableModel GetAttachable(string modelName, string textureName, string otherAttachPoint)
-        {
-            AttachableModel m;
-            if (attachables.TryGetValue(modelName + otherAttachPoint, out m))
-            {
-                return m;
-            }
-            else
-            {
-                m = new AttachableModel(attacks.GetUnanimatedModel(attachDir + modelName), otherAttachPoint);
-                attachables.Add(modelName + otherAttachPoint, m);
-                return m;
-            }
-        }
-
         protected override void Update(GameTime gameTime)
         {
             physics.Update();
@@ -194,7 +178,7 @@ namespace KazgarsRevenge
                     }
                     break;
                 case GameState.ConnectionScreen:
-                    if (Keyboard.GetState().IsKeyDown(Keys.Space) && nmm.connections.Count != 0)
+                    if (Keyboard.GetState().IsKeyDown(Keys.Enter) && nmm.connections.Count != 0)
                     {
                         Console.WriteLine("Connecting to Server 0");
                         // TODO change this to proper connection number based on input
