@@ -23,7 +23,6 @@ namespace KazgarsRevenge
             Following,
             BeingLooted,
             Dying,
-            Uniting,
         }
         public LootSoulState soulState { get; private set; }
 
@@ -39,12 +38,11 @@ namespace KazgarsRevenge
             }
         }
 
-        public LootSoulController(KazgarsRevengeGame game, GameEntity entity, int wanderSeed, List<Item> loot, int totalSouls, Entity soulSensor)
+        public LootSoulController(KazgarsRevengeGame game, GameEntity entity, int wanderSeed, List<Item> loot, int totalSouls)
             : base(game, entity)
         {
             this.loot = loot;
             this.totalSouls = totalSouls;
-            this.soulSensor = soulSensor;
             soulState = LootSoulState.Wandering;
 
             rand = new Random();//new Random(wanderSeed);
@@ -52,24 +50,30 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleSoulCollision;
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             animations.StartClip("pig_walk");
-
+            
 
             deathLength = 70;//animations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
         }
 
+        const int soulSensorSize = 400;
+        private BoundingBox GetSoulSensor()
+        {
+            Vector3 min = new Vector3(physicalData.Position.X - soulSensorSize, 0, physicalData.Position.Z - soulSensorSize);
+            Vector3 max = new Vector3(physicalData.Position.X + soulSensorSize, 20, physicalData.Position.Z + soulSensorSize);
+            BoundingBox b = new BoundingBox(min, max);
+            return b;
+        }
         GameEntity targetedSoul;
         Entity targetData;
-        Entity soulSensor;
         Random rand;
         double wanderCounter = 0;
         double wanderLength = 0;
         float groundSpeed = 5.0f;
+        float followSpeed = 15.0f;
         double deathCounter = 0;
         double deathLength;
         public override void Update(GameTime gameTime)
         {
-            //centering sensor
-            soulSensor.Position = physicalData.Position;
             switch (soulState)
             {
                 case LootSoulState.Wandering:
@@ -94,7 +98,7 @@ namespace KazgarsRevenge
                     }
 
                     //looking for nearby souls to unite with
-                    GameEntity possNearestSoul = QueryNearest("loot", soulSensor.CollisionInformation.BoundingBox);
+                    GameEntity possNearestSoul = QueryNearest("loot", GetSoulSensor());
                     if (possNearestSoul != null && (possNearestSoul.GetComponent(typeof(LootSoulController)) as LootSoulController).soulState != LootSoulState.Dying)
                     {
                         targetedSoul = possNearestSoul;
@@ -129,7 +133,7 @@ namespace KazgarsRevenge
                             {
                                 move.Z = .000001f;
                             }
-                            move *= groundSpeed;
+                            move *= followSpeed;
                             physicalData.LinearVelocity = move;
                             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(move), 0, 0);
                         }
@@ -197,11 +201,6 @@ namespace KazgarsRevenge
             soulState = LootSoulState.Dying;
             physicalData.LinearVelocity = Vector3.Zero;
             return Loot;
-        }
-
-        public override void End()
-        {
-            (Game.Services.GetService(typeof(Space)) as Space).Remove(soulSensor);
         }
     }
 }

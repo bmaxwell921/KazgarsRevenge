@@ -44,13 +44,6 @@ namespace KazgarsRevenge
             lootPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             lootSoul.AddSharedData(typeof(Entity), lootPhysicalData);
 
-            
-            //creating a box on top of this soul to find any other loot souls around it to join with
-            Entity soulSensor = new Box(position, 300, 50, 300);
-            soulSensor.CollisionInformation.CollisionRules.Group = mainGame.SensorLootCollisionGroup;
-            (Game.Services.GetService(typeof(Space)) as Space).Add(soulSensor);
-
-
             Model lootModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
             AnimationPlayer lootAnimations = new AnimationPlayer(lootModel.Tag as SkinningData);
             lootSoul.AddSharedData(typeof(AnimationPlayer), lootAnimations);
@@ -60,7 +53,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent lootPhysics = new PhysicsComponent(mainGame, lootSoul);
             AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE)), Vector3.Zero);
-            LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot, totalSouls, soulSensor);
+            LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot, totalSouls);
 
             lootSoul.AddComponent(typeof(PhysicsComponent), lootPhysics);
             genComponentManager.AddComponent(lootPhysics);

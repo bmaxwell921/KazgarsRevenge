@@ -1061,6 +1061,10 @@ namespace KazgarsRevenge
         {
             return physicalData.OrientationMatrix.Forward;
         }
+        private bool MouseCollidesWithGui()
+        {
+            return false;
+        }
         #endregion
 
         SpriteFont font;

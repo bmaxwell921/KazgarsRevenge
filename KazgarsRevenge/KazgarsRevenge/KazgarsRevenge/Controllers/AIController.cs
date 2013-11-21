@@ -39,7 +39,6 @@ namespace KazgarsRevenge
 
         protected GameEntity QueryNearest(string entityName, BoundingBox s)
         {
-            
             var entries=Resources.GetBroadPhaseEntryList();
             (Game.Services.GetService(typeof(Space)) as Space).BroadPhase.QueryAccelerator.GetEntries(s, entries);
             foreach (BroadPhaseEntry entry in entries)
@@ -50,54 +49,13 @@ namespace KazgarsRevenge
                     BoundingBox entryBox = entry.BoundingBox;
                     Vector3 entrymid = (entryBox.Max + entryBox.Min) / 2;
                     Vector3 selfmid = (s.Max + s.Min) / 2;
-                    if (entrymid != selfmid)
+                    if (Math.Abs(entrymid.X - selfmid.X) > .1f && Math.Abs(entrymid.Z - selfmid.Z) > .1f)
                     {
                         return other;
                     }
                 }
             }
             return null;
-        }
-
-        protected GameEntity LookForNearest(string entityName, Entity sensor)
-        {
-            GameEntity closest = null;
-            float nearestLength = float.MaxValue;
-            //look for contacts
-            foreach (var c in sensor.CollisionInformation.Pairs)
-            {
-                //found colliding pair
-                if (PairIsColliding(c))
-                {
-                    //getting other entity (don't know if sensor is EntityB or EntityA until we check)
-                    Entity e;
-                    if (c.EntityA == sensor)
-                    {
-                        e = c.EntityB;
-                    }
-                    else
-                    {
-                        e = c.EntityA;
-                    }
-
-                    if (e != null)
-                    {
-                        GameEntity other = e.CollisionInformation.Tag as GameEntity;
-                        if (other != null && other.Name == entityName)
-                        {
-                            //check if it's nearer than the last result
-                            float distance = (e.Position - sensor.Position).Length();
-                            if (distance < nearestLength && distance != 0)
-                            {
-                                //found new nearest entity
-                                closest = other;
-                                nearestLength = distance;
-                            }
-                        }
-                    }
-                }
-            }
-            return closest;
         }
 
         protected bool PairIsColliding(CollidablePairHandler pair)

@@ -79,7 +79,6 @@ namespace KazgarsRevenge
             {
                 Matrix[] worldbones = animationPlayer.GetWorldTransforms();
                 Matrix[] transforms;
-                Matrix attachedRot = Matrix.CreateFromYawPitchRoll(0, MathHelper.Pi, 0);
                 foreach (AttachableModel a in attachedModels.Values)
                 {
                     transforms = new Matrix[a.model.Bones.Count];
@@ -89,7 +88,7 @@ namespace KazgarsRevenge
                         foreach (Effect effect in mesh.Effects)
                         {
                             effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                            Matrix world = transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
+                            Matrix world = Matrix.CreateFromYawPitchRoll(a.xRotation, 0, 0) * transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
                             effect.Parameters["World"].SetValue(world);
                             effect.Parameters["ViewProj"].SetValue(view * projection);
                             effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
