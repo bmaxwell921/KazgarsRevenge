@@ -510,7 +510,6 @@ namespace KazgarsRevenge
                     }
                 }
                 bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
-                
                 newTarget = CheckButtons() || newTarget;
                 
                 CheckMouseRay(newTarget);
@@ -528,7 +527,6 @@ namespace KazgarsRevenge
                 if (curMouse.LeftButton == ButtonState.Pressed && mouseHoveredHealth != null && mouseHoveredHealth.Dead)
                 {
                     ResetTargettedEntity();
-                    targetedPhysicalData = null;
                 }
                 if (attState == AttackState.None)
                 {
@@ -598,44 +596,48 @@ namespace KazgarsRevenge
                 mouseHoveredLocation = r.Position + r.Direction * distance.Value;
             }
 
+            //check if ray hits GameEntity if not holding down mouse button
+            List<RayCastResult> results = new List<RayCastResult>();
+            physics.RayCast(r, 10000, rayCastFilter, results);
 
+            if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+            {
+                targetedPhysicalData = null;
+            }
 
-                //check if ray hits GameEntity if not holding down mouse button
-                List<RayCastResult> results = new List<RayCastResult>();
-                physics.RayCast(r, 10000, rayCastFilter, results);
-
-                if (newTarget)
+            if (newTarget)
+            {
+                ResetTargettedEntity();
+            }
+            foreach (RayCastResult result in results)
+            {
+                if (result.HitObject != null)
                 {
-                    ResetTargettedEntity();
-                }
-                foreach (RayCastResult result in results)
-                {
-                    if (result.HitObject != null)
+                    mouseHoveredEntity = result.HitObject.Tag as GameEntity;
+                    if (mouseHoveredEntity != null)
                     {
-                        mouseHoveredEntity = result.HitObject.Tag as GameEntity;
-                        if (mouseHoveredEntity != null)
+                        if (mouseHoveredEntity.Name == "loot")
                         {
-                            if (mouseHoveredEntity.Name == "loot")
+                            targetedLootData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
+                            ResetTargettedEntity();
+                        }
+                        //if the left mouse button was either just clicked or not pressed down at all, or if any other ability input was just clicked
+                        else if (newTarget)
+                        {
+                            mouseHoveredHealth = mouseHoveredEntity.GetHealth();
+                            if (mouseHoveredHealth == null)
                             {
-                                targetedLootData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
+                                ResetTargettedEntity();
                             }
-                            //if the left mouse button was either just clicked or not pressed down at all, or if any other ability input was just clicked
-                            else if(newTarget)
+                            else if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
                             {
-                                mouseHoveredHealth = mouseHoveredEntity.GetHealth();
-                                if (mouseHoveredHealth == null)
-                                {
-                                    ResetTargettedEntity();
-                                }
-                                else if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
-                                {
-                                    targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
-                                }
-                                break;
+                                targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
                             }
+                            break;
                         }
                     }
                 }
+            }
         }
 
         /// <summary>

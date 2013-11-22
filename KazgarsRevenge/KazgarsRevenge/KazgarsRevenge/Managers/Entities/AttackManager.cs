@@ -109,7 +109,7 @@ namespace KazgarsRevenge
 
             spikes.AddSharedData(typeof(Dictionary<string, AttachableModel>), new Dictionary<string, AttachableModel>());
 
-            AnimatedModelComponent spikesGraphics = new AnimatedModelComponent(mainGame, spikes, spikeModel, new Vector3(5), Vector3.Down * 20);
+            AnimatedModelComponent spikesGraphics = new AnimatedModelComponent(mainGame, spikes, spikeModel, new Vector3(7), Vector3.Down * 20);
             CursorSpikeController spikesController = new CursorSpikeController(mainGame, spikes);
 
             spikes.AddComponent(typeof(AnimatedModelComponent), spikesGraphics);
