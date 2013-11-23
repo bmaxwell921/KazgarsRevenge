@@ -53,7 +53,24 @@ namespace KazgarsRevenge
             AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, new Vector3(10f), Vector3.Down * 18);
             HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(mainGame, brute);
 
-            BruteController bruteController = new BruteController(mainGame, brute);
+
+            EnemyControllerSettings bruteSettings = new EnemyControllerSettings();
+            #region settings init
+            bruteSettings.attackAniName = "pig_attack";
+            bruteSettings.idleAniName = "pig_idle";
+            bruteSettings.runAniName = "pig_walk";
+            bruteSettings.walkAniName = "pig_walk";
+            bruteSettings.hitAniName = "pig_hit";
+            bruteSettings.attackDamage = 10;
+            bruteSettings.attackLength = bruteAnimations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
+            bruteSettings.attackRange = 25;
+            bruteSettings.noticePlayerRange = 200;
+            bruteSettings.stopChasingRange = 600;
+            bruteSettings.runSpeed = 80;
+            bruteSettings.walkSpeed = 40;
+            #endregion
+
+            EnemyController bruteController = new EnemyController(mainGame, brute, bruteSettings);
 
             brute.AddComponent(typeof(PhysicsComponent), brutePhysics);
             genComponentManager.AddComponent(brutePhysics);

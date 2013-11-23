@@ -55,14 +55,7 @@ namespace KazgarsRevenge
             deathLength = 70;//animations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
         }
 
-        const int soulSensorSize = 400;
-        private BoundingBox GetSoulSensor()
-        {
-            Vector3 min = new Vector3(physicalData.Position.X - soulSensorSize, 0, physicalData.Position.Z - soulSensorSize);
-            Vector3 max = new Vector3(physicalData.Position.X + soulSensorSize, 20, physicalData.Position.Z + soulSensorSize);
-            BoundingBox b = new BoundingBox(min, max);
-            return b;
-        }
+        const float soulSensorSize = 400;
         GameEntity targetedSoul;
         Entity targetData;
         Random rand;
@@ -98,8 +91,8 @@ namespace KazgarsRevenge
                     }
 
                     //looking for nearby souls to unite with
-                    GameEntity possNearestSoul = QueryNearest("loot", GetSoulSensor());
-                    if (possNearestSoul != null && (possNearestSoul.GetComponent(typeof(LootSoulController)) as LootSoulController).soulState != LootSoulState.Dying)
+                    GameEntity possNearestSoul = QueryNearest("loot", GetSensor(physicalData.Position, soulSensorSize));
+                    if (possNearestSoul != null)
                     {
                         targetedSoul = possNearestSoul;
                         targetData = targetedSoul.GetSharedData(typeof(Entity)) as Entity;

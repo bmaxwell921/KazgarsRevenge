@@ -37,6 +37,14 @@ namespace KazgarsRevenge
             return yaw;
         }
 
+        protected BoundingBox GetSensor(Vector3 position, float radius)
+        {
+            Vector3 min = new Vector3(position.X - radius, 0, position.Z - radius);
+            Vector3 max = new Vector3(position.X + radius, 20, position.Z + radius);
+            BoundingBox b = new BoundingBox(min, max);
+            return b;
+        }
+
         protected GameEntity QueryNearest(string entityName, BoundingBox s)
         {
             var entries=Resources.GetBroadPhaseEntryList();

@@ -94,7 +94,7 @@
     <Compile Include="Common\Networking\BaseNetworkMessageManager.cs" />
     <Compile Include="Common\Networking\Handlers\BaseHandler.cs" />
     <Compile Include="Controllers\AIController.cs" />
-    <Compile Include="Controllers\BruteController.cs" />
+    <Compile Include="Controllers\EnemyController.cs" />
     <Compile Include="Controllers\CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedModelComponent.cs" />

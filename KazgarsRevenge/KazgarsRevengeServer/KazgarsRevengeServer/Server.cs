@@ -33,6 +33,7 @@ namespace KazgarsRevengeServer
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            isClient = false;
         }
 
         protected override void Initialize()

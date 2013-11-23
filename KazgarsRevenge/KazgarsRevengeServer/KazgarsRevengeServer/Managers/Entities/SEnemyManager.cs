@@ -50,7 +50,21 @@ namespace KazgarsRevengeServer
 
             HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(game, brute);
 
-            BruteController bruteController = new BruteController(game, brute);
+            EnemyControllerSettings bruteSettings = new EnemyControllerSettings();
+            #region settings init
+            bruteSettings.attackAniName = "pig_attack";
+            bruteSettings.attackDamage = 10;
+            bruteSettings.attackLength = 20;
+            bruteSettings.attackRange = 25;
+            bruteSettings.idleAniName = "pig_idle";
+            bruteSettings.noticePlayerRange = 200;
+            bruteSettings.runAniName = "pig_walk";
+            bruteSettings.runSpeed = 20;
+            bruteSettings.walkAniName = "pig_walk";
+            bruteSettings.walkSpeed = 13;
+            #endregion
+
+            EnemyController bruteController = new EnemyController(game, brute, bruteSettings);
 
             brute.AddComponent(typeof(PhysicsComponent), brutePhysics);
             gcm.AddComponent(brutePhysics);
