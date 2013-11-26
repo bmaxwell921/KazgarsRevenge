@@ -12,11 +12,13 @@ using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.Collidables;
 using BEPUphysics.Collidables.MobileCollidables;
 using SkinnedModelLib;
+using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
     public class AttackController : Component
     {
+        SoundEffectLibrary sounds;
         Entity physicalData;
         int damage;
         double lifeCounter = 0;
@@ -32,7 +34,7 @@ namespace KazgarsRevenge
             this.factionToHit = factionToHit;
             physicalData.IsAffectedByGravity = false;
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
-
+            sounds = game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
         }
 
         public override void Update(GameTime gameTime)
@@ -53,6 +55,10 @@ namespace KazgarsRevenge
                 {
                     //makes arrows stick in walls
                     (entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
+                    if (physicalData.LinearVelocity.Length() > 2)
+                    {
+                        sounds.playHardSmack();
+                    }
                 }
                 if (hitEntity.Faction == factionToHit)
                 {

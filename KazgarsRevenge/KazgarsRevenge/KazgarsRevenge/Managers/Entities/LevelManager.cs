@@ -25,7 +25,7 @@ namespace KazgarsRevenge
 
         public void DemoLevel()
         {
-            CreateLevel("Models\\Levels\\tempChunk", new Vector3(200, -20, -200), 0);
+            CreateLevel("Models\\Levels\\4x4Final02", new Vector3(200, -20, -200), 0);
         }
 
         #region Level Creation
