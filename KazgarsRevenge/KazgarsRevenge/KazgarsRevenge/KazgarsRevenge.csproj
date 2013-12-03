@@ -124,6 +124,15 @@
     <Compile Include="Managers\Entities\PlayerManager.cs" />
     <Compile Include="Managers\Entities\AttackManager.cs" />
     <Compile Include="Non-Component\Weapon.cs" />
+    <Compile Include="Particles\Base Classes\ParticleEmitter.cs" />
+    <Compile Include="Particles\Base Classes\ParticleSettings.cs" />
+    <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
+    <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
+    <Compile Include="Particles\Systems\ExplosionParticleSystem.cs" />
+    <Compile Include="Particles\Systems\ExplosionSmokeParticleSystem.cs" />
+    <Compile Include="Particles\Systems\FireParticleSystem.cs" />
+    <Compile Include="Particles\Systems\ProjectileTrailParticleSystem.cs" />
+    <Compile Include="Particles\Systems\SmokePlumeParticleSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="MainGame.cs" />

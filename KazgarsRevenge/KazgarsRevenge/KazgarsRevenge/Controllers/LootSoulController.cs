@@ -49,7 +49,7 @@ namespace KazgarsRevenge
             physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleSoulCollision;
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
-            animations.StartClip("pig_walk");
+            animations.StartClip("soul_wander");
             
 
             deathLength = 70;//animations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
@@ -147,13 +147,13 @@ namespace KazgarsRevenge
         public void OpenLoot()
         {
             soulState = LootSoulState.BeingLooted;
-            animations.StartClip("pig_idle");
+            animations.StartClip("soul_wander");
         }
 
         public void CloseLoot()
         {
             soulState = LootSoulState.Wandering;
-            animations.StartClip("pig_walk");
+            animations.StartClip("soul_wander");
         }
 
         protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)

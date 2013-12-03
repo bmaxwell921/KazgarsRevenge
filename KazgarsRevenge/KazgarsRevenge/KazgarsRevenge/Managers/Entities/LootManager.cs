@@ -44,7 +44,7 @@ namespace KazgarsRevenge
             lootPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             lootSoul.AddSharedData(typeof(Entity), lootPhysicalData);
 
-            Model lootModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
+            Model lootModel = GetAnimatedModel("Models\\soul_idle");
             AnimationPlayer lootAnimations = new AnimationPlayer(lootModel.Tag as SkinningData);
             lootSoul.AddSharedData(typeof(AnimationPlayer), lootAnimations);
 
