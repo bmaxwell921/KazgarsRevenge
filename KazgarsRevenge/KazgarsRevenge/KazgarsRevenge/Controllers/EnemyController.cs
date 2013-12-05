@@ -19,6 +19,7 @@ namespace KazgarsRevenge
         public string walkAniName;
         public string runAniName;
         public string hitAniName;
+        public string deathAniName;
 
         public float walkSpeed;
         public float runSpeed;
@@ -67,7 +68,10 @@ namespace KazgarsRevenge
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
         public override void PlayHit()
         {
-            animations.MixClipOnce(settings.hitAniName, armBoneIndices);
+            if (state != EnemyState.Dying)
+            {
+                animations.MixClipOnce(settings.hitAniName, armBoneIndices);
+            }
         }
 
         string currentAniName;
@@ -81,6 +85,8 @@ namespace KazgarsRevenge
         Entity targetedPlayerData;
         double wanderCounter;
         double wanderLength;
+        double deathCounter;
+        double deathLength;
         bool chillin = false;
         Random rand;
         double attackCounter = double.MaxValue;
@@ -88,9 +94,13 @@ namespace KazgarsRevenge
         Vector3 curVel = Vector3.Zero;
         public override void Update(GameTime gameTime)
         {
-            if (health.Dead)
+            if (state != EnemyState.Dying && health.Dead)
             {
-                entity.Kill();
+                state = EnemyState.Dying;
+                deathLength = animations.GetAniMillis(settings.deathAniName);
+                deathCounter = 0;
+                PlayAnimation(settings.deathAniName);
+                animations.StopMixing();
                 return;
             }
             switch (state)
@@ -221,6 +231,11 @@ namespace KazgarsRevenge
                     }
                     break;
                 case EnemyState.Dying:
+                    deathCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if (deathCounter >= deathLength)
+                    {
+                        entity.Kill();
+                    }
                     break;
             }
 

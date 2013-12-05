@@ -48,6 +48,10 @@ namespace SkinnedModelLib
 
         #endregion
 
+        public double GetAniMillis(string aniName)
+        {
+            return skinningDataValue.AnimationClips[aniName].Duration.TotalMilliseconds;
+        }
 
         /// <summary>
         /// Constructs a new animation player.

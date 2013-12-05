@@ -55,9 +55,7 @@ namespace KazgarsRevenge
         #endregion
 
         public RenderTarget2D RenderTarget { get { return renderTarget; } }
-
         float screenScale = 1;
-
 
         public MainGame()
         {
@@ -160,6 +158,9 @@ namespace KazgarsRevenge
 
             base.LoadContent();
         }
+
+        Dictionary<Type, ParticleSystem> particles = new Dictionary<Type, ParticleSystem>();
+        
 
         protected override void Update(GameTime gameTime)
         {

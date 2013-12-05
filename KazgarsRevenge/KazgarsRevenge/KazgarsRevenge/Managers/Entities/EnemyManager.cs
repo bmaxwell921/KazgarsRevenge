@@ -61,6 +61,7 @@ namespace KazgarsRevenge
             bruteSettings.runAniName = "pig_walk";
             bruteSettings.walkAniName = "pig_walk";
             bruteSettings.hitAniName = "pig_hit";
+            bruteSettings.deathAniName = "pig_death";
             bruteSettings.attackDamage = 10;
             bruteSettings.attackLength = bruteAnimations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
             bruteSettings.attackRange = 25;

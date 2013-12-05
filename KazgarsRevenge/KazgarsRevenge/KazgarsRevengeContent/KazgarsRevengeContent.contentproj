@@ -50,7 +50,7 @@
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
-      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Pigman\\pig_attack.fbx%3bModels\\Enemies\\Pigman\\pig_hit.fbx%3bModels\\Enemies\\Pigman\\pig_walk.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Pigman\\pig_attack.fbx%3bModels\\Enemies\\Pigman\\pig_hit.fbx%3bModels\\Enemies\\Pigman\\pig_walk.fbx%3bModels\\Enemies\\Pigman\\pig_death.fbx%3b</ProcessorParameters_MergeAnimations>
     </Compile>
     <Compile Include="Models\Levels\4x4Final02.fbx">
       <Name>4x4Final02</Name>

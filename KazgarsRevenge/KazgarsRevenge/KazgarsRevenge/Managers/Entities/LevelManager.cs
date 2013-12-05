@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BEPUphysics;
@@ -25,7 +26,29 @@ namespace KazgarsRevenge
 
         public void DemoLevel()
         {
-            CreateLevel("Models\\Levels\\tempChunk", new Vector3(200, -20, -200), 0);
+            CreateLevel("Models\\Levels\\tempChunk", new Vector3(200, -20, -200), MathHelper.PiOver2);
+        }
+
+        public void ReadFile()
+        {
+            string filetext;
+            try
+            {
+                using (StreamReader sr = new StreamReader("test.txt"))
+                {
+                    filetext = sr.ReadToEnd();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Couldn't read the level file. " + e.Message);
+            }
+
+            string[] lines = filetext.Split(new char[] { '\n' });
+            foreach (string s in lines)
+            {
+
+            }
         }
 
         #region Level Creation
