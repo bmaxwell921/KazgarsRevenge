@@ -15,26 +15,53 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
+    class RoomData
+    {
+        public string filename;
+        public float x;
+        public float z;
+        public float yaw;
+        public RoomData(string filename, float x, float z, float yaw)
+        {
+            this.filename=filename;
+            this.x=x;
+            this.z=z;
+            this.yaw=yaw;
+        }
+    }
+
+    public enum FloorNames
+    {
+        Dungeon,
+        Library,
+        TortureChamber,
+        Lab,
+        GrandHall,
+    }
+
     public class LevelManager : EntityManager
     {
         List<GameEntity> rooms = new List<GameEntity>();
         public LevelManager(KazgarsRevengeGame game)
             : base(game)
         {
-            
+            ReadFile("Dungeon");
         }
 
         public void DemoLevel()
         {
-            CreateLevel("Models\\Levels\\tempChunk", new Vector3(200, -20, -200), MathHelper.PiOver2);
+            //CreateRoom("Models\\Levels\\tempChunk", new Vector3(200, -20, -200), MathHelper.PiOver2);
+            CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
         }
 
-        public void ReadFile()
+        Dictionary<string, List<RoomData>> chunkDefinitions = new Dictionary<string, List<RoomData>>();
+        string levelPath = "Models\\Levels\\";
+        public void ReadFile(string floorName)
         {
             string filetext;
             try
             {
-                using (StreamReader sr = new StreamReader("test.txt"))
+                using (StreamReader sr = new StreamReader(floorName + ".txt"))
                 {
                     filetext = sr.ReadToEnd();
                 }
@@ -44,16 +71,49 @@ namespace KazgarsRevenge
                 throw new Exception("Couldn't read the level file. " + e.Message);
             }
 
-            string[] lines = filetext.Split(new char[] { '\n' });
-            foreach (string s in lines)
-            {
+            string[] lines = filetext.Split(new char[] { '\n', '\r' });
+            List<RoomData> chunkDef = new List<RoomData>();
 
+            string chunkId = "";
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                string[] tokens = lines[i].Split(new char[] { ' ' });
+                if (tokens[0] == "CHUNK")
+                {
+                    //done with last chunk, defining new chunk
+                    if (chunkDef.Count > 0)
+                    {
+                        chunkDefinitions.Add(floorName + chunkId, chunkDef);
+                    }
+                    chunkId = tokens[1];
+                    chunkDef = new List<RoomData>();
+                }
+
+                else if (tokens.Length == 4)
+                {
+                    chunkDef.Add(new RoomData(levelPath + tokens[0], Convert.ToSingle(tokens[1]) * 10, Convert.ToSingle(tokens[2]) * 10, -MathHelper.ToRadians(Convert.ToSingle(tokens[3]))));
+                }
+            }
+
+            if (chunkDef.Count > 0)
+            {
+                chunkDefinitions.Add(floorName + chunkId, chunkDef);
             }
         }
 
         #region Level Creation
-        public void CreateLevel(string modelPath, Vector3 position, float yaw)
+        public void CreateChunk(string chunkid, Vector3 chunkTranslation, float chunkRotation)
         {
+            List<RoomData> chunkDef = chunkDefinitions[chunkid];
+            foreach(RoomData room in chunkDef)
+            {
+                CreateRoom(room.filename, new Vector3(room.x + chunkTranslation.X, 0, room.z + chunkTranslation.Z), room.yaw);
+            }
+        }
+
+        private void CreateRoom(string modelPath, Vector3 position, float yaw)
+        {
+            position.Y -= 20;
             float roomScale = 10;
 
             GameEntity room = new GameEntity("room", FactionType.Players);
@@ -95,7 +155,7 @@ namespace KazgarsRevenge
             // TODO actually implement
             float yaw;
             string modelPath = this.TranslateIdToPathYaw(0, out yaw);
-            CreateLevel(modelPath, new Vector3(200, -20, -200), yaw);
+            CreateRoom(modelPath, new Vector3(200, -20, -200), yaw);
 
             mainGame.gameState = GameState.Playing;
         }

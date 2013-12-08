@@ -67,6 +67,8 @@ namespace KazgarsRevenge
 
             isClient = true;
         }
+        
+        Dictionary<Type, ParticleSystem> particles = new Dictionary<Type, ParticleSystem>();
 
         protected override void Initialize()
         {
@@ -85,6 +87,7 @@ namespace KazgarsRevenge
 
             Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
 
+            #region XNA Component Initialization
             camera = new CameraComponent(this);
             Components.Add(camera);
             Services.AddService(typeof(CameraComponent), camera);
@@ -127,7 +130,11 @@ namespace KazgarsRevenge
 
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
+            #endregion
 
+            #region Particle systems Initialization
+
+            #endregion
 
             base.Initialize();
         }
@@ -159,9 +166,7 @@ namespace KazgarsRevenge
             base.LoadContent();
         }
 
-        Dictionary<Type, ParticleSystem> particles = new Dictionary<Type, ParticleSystem>();
         
-
         protected override void Update(GameTime gameTime)
         {
             physics.Update();

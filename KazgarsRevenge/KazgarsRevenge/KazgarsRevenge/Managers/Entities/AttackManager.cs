@@ -129,5 +129,14 @@ namespace KazgarsRevenge
             rotation.Up = Vector3.Up;
             return rotation;
         }
+
+
+        #region Particles
+
+        public void WeaponSparks(Vector3 position)
+        {
+
+        }
+        #endregion
     }
 }
