@@ -171,6 +171,8 @@ namespace KazgarsRevenge
             }
 
             base.Initialize();
+
+            LoadContent();
         }
 
 

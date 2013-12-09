@@ -29,7 +29,6 @@ namespace KazgarsRevenge
         public override void Initialize()
         {
             base.Initialize();
-            camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
 
@@ -39,18 +38,14 @@ namespace KazgarsRevenge
             systems.Add(typeof(FireParticleSystem), new FireParticleSystem(Game, Game.Content));
             systems.Add(typeof(ProjectileTrailParticleSystem), new ProjectileTrailParticleSystem(Game, Game.Content));
             systems.Add(typeof(SmokePlumeParticleSystem), new SmokePlumeParticleSystem(Game, Game.Content));
-        }
-
-        CameraComponent camera;
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)
             {
-                k.Value.SetCamera(this.camera.View, this.camera.Projection);
+                k.Value.Initialize();
+                (Game as MainGame).AddSystem(k.Value);
             }
         }
+
 
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
         public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType arrowFaction)
@@ -107,6 +102,9 @@ namespace KazgarsRevenge
 
             attacks.Add(newAttack);
             soundEffects.playMeleeSound();
+
+
+            SpawnWeaponSparks(position);
         }
 
         public void CreateMagicAttack()
@@ -152,7 +150,7 @@ namespace KazgarsRevenge
 
         #region Particles
         Dictionary<Type, ParticleSystem> systems = new Dictionary<Type, ParticleSystem>();
-        public void WeaponSparks(Vector3 position)
+        public void SpawnWeaponSparks(Vector3 position)
         {
             ParticleSystem explosions = systems[typeof(ExplosionParticleSystem)];
             for (int i = 0; i < 30; ++i)
