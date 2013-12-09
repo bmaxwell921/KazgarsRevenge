@@ -29,8 +29,27 @@ namespace KazgarsRevenge
         public override void Initialize()
         {
             base.Initialize();
+            camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
+
+            //particles
+            systems.Add(typeof(ExplosionParticleSystem), new ExplosionParticleSystem(Game, Game.Content));
+            systems.Add(typeof(ExplosionSmokeParticleSystem), new ExplosionSmokeParticleSystem(Game, Game.Content));
+            systems.Add(typeof(FireParticleSystem), new FireParticleSystem(Game, Game.Content));
+            systems.Add(typeof(ProjectileTrailParticleSystem), new ProjectileTrailParticleSystem(Game, Game.Content));
+            systems.Add(typeof(SmokePlumeParticleSystem), new SmokePlumeParticleSystem(Game, Game.Content));
+        }
+
+        CameraComponent camera;
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            foreach (KeyValuePair<Type, ParticleSystem> k in systems)
+            {
+                k.Value.SetCamera(this.camera.View, this.camera.Projection);
+            }
         }
 
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
@@ -132,10 +151,14 @@ namespace KazgarsRevenge
 
 
         #region Particles
-
+        Dictionary<Type, ParticleSystem> systems = new Dictionary<Type, ParticleSystem>();
         public void WeaponSparks(Vector3 position)
         {
-
+            ParticleSystem explosions = systems[typeof(ExplosionParticleSystem)];
+            for (int i = 0; i < 30; ++i)
+            {
+                explosions.AddParticle(position, Vector3.Zero);
+            }
         }
         #endregion
     }

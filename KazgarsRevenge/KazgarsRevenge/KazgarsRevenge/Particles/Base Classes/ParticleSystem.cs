@@ -217,7 +217,7 @@ namespace KazgarsRevenge
         /// </summary>
         void LoadParticleEffect()
         {
-            Effect effect = content.Load<Effect>("ParticleEffect");
+            Effect effect = content.Load<Effect>("Shaders\\ParticleEffect");
 
             // If we have several particle systems, the content manager will return
             // a single shared effect instance to them all. But we want to preconfigure
@@ -253,7 +253,7 @@ namespace KazgarsRevenge
                 new Vector2(settings.MinEndSize, settings.MaxEndSize));
 
             // Load the particle texture, and set it onto the effect.
-            Texture2D texture = content.Load<Texture2D>(settings.TextureName);
+            Texture2D texture = content.Load<Texture2D>("Textures\\Particles\\"+settings.TextureName);
 
             parameters["Texture"].SetValue(texture);
         }

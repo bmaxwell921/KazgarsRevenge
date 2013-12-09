@@ -67,8 +67,6 @@ namespace KazgarsRevenge
 
             isClient = true;
         }
-        
-        Dictionary<Type, ParticleSystem> particles = new Dictionary<Type, ParticleSystem>();
 
         protected override void Initialize()
         {
