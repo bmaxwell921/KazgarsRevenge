@@ -61,6 +61,7 @@ namespace KazgarsRevenge
         Dictionary<string, AttachableModel> attached;
         Entity physicalData;
         Random rand;
+        HealthData mainPlayerHealth;
 
         //variables for target
         Entity targetedPhysicalData;
@@ -261,6 +262,8 @@ namespace KazgarsRevenge
             InitGeneralFields();
 
             InitNewPlayer();
+
+            mainPlayerHealth = entity.GetSharedData(typeof(HealthData)) as HealthData;
 
             //adding sword and bow for demo
             EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
@@ -1224,27 +1227,43 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)), Color.Green * 0.5f);
             //Mini Map (square for now)
             s.Draw(texWhitePixel, new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)), Color.Orange * 0.5f);
+
+            #region main player frame
             //Main Player Frame Pic
             s.Draw(texWhitePixel, new Rectangle(0, 0, (int)(160 * average), (int)(160 * average)), Color.Blue * 0.5f);
             //Main Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(160 * average), 0, (int)(310 * average), (int)(52 * average)), Color.Blue * 0.5f);
+            //main player health
+            s.Draw(texWhitePixel, new Rectangle((int)(163 * average), 3, (int)(304 * mainPlayerHealth.HealthPercent * average), (int)(46 * average)), Color.Green);
+            #endregion
+
+            #region second player frame
             //Second Player Frame Pic
             s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(180 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
             //Second Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(180 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
+            #endregion
+
+            #region third player frame
             //Third Player Frame Pic
             s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(254 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
             //Third Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(254 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
+            #endregion
+
+            #region fourth player frame
             //Fourth Player Frame Pic
             s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(328 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
             //Fourth Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(328 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
+            #endregion
+
+            #region fifth player frame
             //Fifth Player Frame Pic
             s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(402 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
             //Fifth Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(402 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
-
+            #endregion
             #endregion
             #endregion
 

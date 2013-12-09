@@ -75,6 +75,9 @@
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib" />
+    <Reference Include="SkinnedModelLib">
+      <HintPath>..\..\SkinnedModelLib\bin\x86\Debug\SkinnedModelLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -151,10 +154,6 @@
     <Content Include="TextFile1.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SkinnedModelLib\SkinnedModelLib.csproj">
-      <Project>{75303409-E0B0-43B2-A1F4-F2A506CBBDDC}</Project>
-      <Name>SkinnedModelLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\KazgarsRevengeContent\KazgarsRevengeContent.contentproj">
       <Name>KazgarsRevengeContent %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
