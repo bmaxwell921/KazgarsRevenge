@@ -289,11 +289,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Levels\1x1-1E.fbx">
-      <Name>1x1-1E</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="Models\Levels\1x1-4NESW.fbx">
       <Name>1x1-4NESW</Name>
       <Importer>FbxImporter</Importer>
@@ -325,6 +320,20 @@
     </Compile>
     <Compile Include="Textures\Particles\smoke.png">
       <Name>smoke</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\1x1-1E.fbx">
+      <Name>1x1-1E</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\health_bar.png">
+      <Name>health_bar</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

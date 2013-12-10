@@ -89,8 +89,10 @@ namespace KazgarsRevenge
         Ability[] boundAbilities = new Ability[9];
         #endregion
 
+        #region UI Textures
         #region UI Frames
         Texture2D icon_selected;
+        Texture2D health_bar;
         #endregion
 
         #region Ability Icons
@@ -110,6 +112,7 @@ namespace KazgarsRevenge
 
         #region Item Icons
         Texture2D healthPot;
+        #endregion
         #endregion
 
         #region Variables for UI
@@ -339,6 +342,7 @@ namespace KazgarsRevenge
 
             #region UI Frame Load
             icon_selected = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\icon_selected");
+            health_bar = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\health_bar");
             #endregion
 
             #region Ability Image Load
@@ -1227,14 +1231,14 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)), Color.Green * 0.5f);
             //Mini Map (square for now)
             s.Draw(texWhitePixel, new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)), Color.Orange * 0.5f);
-
+            
             #region main player frame
             //Main Player Frame Pic
             s.Draw(texWhitePixel, new Rectangle(0, 0, (int)(160 * average), (int)(160 * average)), Color.Blue * 0.5f);
             //Main Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(160 * average), 0, (int)(310 * average), (int)(52 * average)), Color.Blue * 0.5f);
             //main player health
-            s.Draw(texWhitePixel, new Rectangle((int)(163 * average), 3, (int)(304 * mainPlayerHealth.HealthPercent * average), (int)(46 * average)), Color.Green);
+            s.Draw(health_bar, new Rectangle((int)(163 * average), 3, (int)(304 * mainPlayerHealth.HealthPercent * average), (int)(46 * average)), new Rectangle(0, 0, (int)(health_bar.Width * mainPlayerHealth.HealthPercent * average), (int)health_bar.Height), Color.White);
             #endregion
 
             #region second player frame
