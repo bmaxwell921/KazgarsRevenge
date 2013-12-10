@@ -32,18 +32,7 @@ namespace KazgarsRevenge
 
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
 
-            //particles
-            systems.Add(typeof(WeaponSparksSystem), new WeaponSparksSystem(Game, Game.Content));
-            systems.Add(typeof(ExplosionSmokeParticleSystem), new ExplosionSmokeParticleSystem(Game, Game.Content));
-            systems.Add(typeof(FireParticleSystem), new FireParticleSystem(Game, Game.Content));
-            systems.Add(typeof(ProjectileTrailParticleSystem), new ProjectileTrailParticleSystem(Game, Game.Content));
-            systems.Add(typeof(SmokePlumeParticleSystem), new SmokePlumeParticleSystem(Game, Game.Content));
-
-            foreach (KeyValuePair<Type, ParticleSystem> k in systems)
-            {
-                k.Value.Initialize();
-                (Game as MainGame).AddSystem(k.Value);
-            }
+            particles = Game.Services.GetService(typeof(ParticleManager)) as ParticleManager;
         }
 
 
@@ -104,7 +93,7 @@ namespace KazgarsRevenge
             soundEffects.playMeleeSound();
 
 
-            SpawnWeaponSparks(position);
+            SpawnWeaponSparks(position + Vector3.Down * 18);
         }
 
         public void CreateMagicAttack()
@@ -149,14 +138,13 @@ namespace KazgarsRevenge
 
 
         #region Particles
-        Dictionary<Type, ParticleSystem> systems = new Dictionary<Type, ParticleSystem>();
+        ParticleManager particles;
         public void SpawnWeaponSparks(Vector3 position)
         {
-            ParticleSystem explosions = systems[typeof(WeaponSparksSystem)];
-            Vector3 pos = position + Vector3.Down * 20;
+            ParticleSystem explosions = particles.GetSystem(typeof(WeaponSparksSystem));
             for (int i = 0; i < 10; ++i)
             {
-                explosions.AddParticle(pos, Vector3.Zero);
+                explosions.AddParticle(position, Vector3.Zero);
             }
         }
         #endregion

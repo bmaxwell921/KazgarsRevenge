@@ -41,6 +41,8 @@ namespace KazgarsRevenge
         protected LevelManager levels;
         protected EnemyManager enemies;
         protected AttackManager attacks;
+
+        ParticleManager particleManager;
         #endregion
 
         #region Content
@@ -56,6 +58,8 @@ namespace KazgarsRevenge
 
         public RenderTarget2D RenderTarget { get { return renderTarget; } }
         float screenScale = 1;
+
+        
 
         public MainGame()
         {
@@ -85,7 +89,6 @@ namespace KazgarsRevenge
 
             Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
 
-            #region XNA Component Initialization
             camera = new CameraComponent(this);
             Components.Add(camera);
             Services.AddService(typeof(CameraComponent), camera);
@@ -126,13 +129,12 @@ namespace KazgarsRevenge
             Components.Add(attacks);
             Services.AddService(typeof(AttackManager), attacks);
 
+            particleManager = new ParticleManager(this);
+            Components.Add(particleManager);
+            Services.AddService(typeof(ParticleManager), particleManager);
+
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
-            #endregion
-
-            #region Particle systems Initialization
-
-            #endregion
 
             base.Initialize();
         }
@@ -164,21 +166,9 @@ namespace KazgarsRevenge
             base.LoadContent();
         }
 
-
-        List<ParticleSystem> systems = new List<ParticleSystem>();
-        public void AddSystem(ParticleSystem s)
-        {
-            systems.Add(s);
-        }
-
         protected override void Update(GameTime gameTime)
         {
             physics.Update();
-            foreach (ParticleSystem s in systems)
-            {
-                s.Update(gameTime);
-                s.SetCamera(camera.View, camera.Projection);
-            }
 
             nmm.Update(gameTime);
             switch (gameState)
@@ -282,14 +272,11 @@ namespace KazgarsRevenge
                     GraphicsDevice.SetRenderTarget(renderTarget);
                     GraphicsDevice.Clear(Color.Black);
                     renderManager.Draw(gameTime, false);
-                    //particles
-                    foreach (ParticleSystem s in systems)
-                    {
-                        s.Draw(gameTime);
-                    }
-                    GraphicsDevice.BlendState = BlendState.Opaque;
-                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
+                    //draw particles
+                    particleManager.Draw(gameTime);
+
+                    //reset graphics device
                     GraphicsDevice.SetRenderTarget(null);
 
 
