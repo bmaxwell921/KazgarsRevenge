@@ -28,7 +28,7 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "explosion";
+            settings.TextureName = "spark";
 
             settings.MaxParticles = 500;
 
@@ -50,11 +50,11 @@ namespace KazgarsRevenge
             settings.MinRotateSpeed = -1;
             settings.MaxRotateSpeed = 1;
 
-            settings.MinStartSize = 10;
-            settings.MaxStartSize = 10;
+            settings.MinStartSize = 5;
+            settings.MaxStartSize = 5;
 
-            settings.MinEndSize = 1;
-            settings.MaxEndSize = 1;
+            settings.MinEndSize = 0;
+            settings.MaxEndSize = .5f;
 
             // Use additive blending.
             settings.BlendState = BlendState.Additive;
