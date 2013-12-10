@@ -45,13 +45,13 @@ namespace KazgarsRevenge
         public LevelManager(KazgarsRevengeGame game)
             : base(game)
         {
-            ReadFile("Dungeon");
+            //ReadFile("Dungeon");
         }
 
         public void DemoLevel()
         {
-            //CreateRoom("Models\\Levels\\tempChunk", new Vector3(200, -20, -200), MathHelper.PiOver2);
-            CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
+            CreateRoom("Models\\Levels\\tempChunk", new Vector3(200, 0, -200), MathHelper.PiOver2);
+            //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
         }
 
         Dictionary<string, List<RoomData>> chunkDefinitions = new Dictionary<string, List<RoomData>>();

@@ -1025,9 +1025,9 @@ namespace KazgarsRevenge
             switch (s)
             {
                 case GearSlot.Lefthand:
-                    return "Bone_001_L_004";
+                    return "Hand_L";
                 case GearSlot.Righthand:
-                    return "Bone_001_R_004";
+                    return "Hand_R";
                 default:
                     return "RootNode";
             }
