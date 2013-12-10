@@ -33,7 +33,7 @@ namespace KazgarsRevenge
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
 
             //particles
-            systems.Add(typeof(ExplosionParticleSystem), new ExplosionParticleSystem(Game, Game.Content));
+            systems.Add(typeof(WeaponSparksSystem), new WeaponSparksSystem(Game, Game.Content));
             systems.Add(typeof(ExplosionSmokeParticleSystem), new ExplosionSmokeParticleSystem(Game, Game.Content));
             systems.Add(typeof(FireParticleSystem), new FireParticleSystem(Game, Game.Content));
             systems.Add(typeof(ProjectileTrailParticleSystem), new ProjectileTrailParticleSystem(Game, Game.Content));
@@ -152,10 +152,11 @@ namespace KazgarsRevenge
         Dictionary<Type, ParticleSystem> systems = new Dictionary<Type, ParticleSystem>();
         public void SpawnWeaponSparks(Vector3 position)
         {
-            ParticleSystem explosions = systems[typeof(ExplosionParticleSystem)];
-            for (int i = 0; i < 30; ++i)
+            ParticleSystem explosions = systems[typeof(WeaponSparksSystem)];
+            Vector3 pos = position + Vector3.Down * 20;
+            for (int i = 0; i < 10; ++i)
             {
-                explosions.AddParticle(position, Vector3.Zero);
+                explosions.AddParticle(pos, Vector3.Zero);
             }
         }
         #endregion

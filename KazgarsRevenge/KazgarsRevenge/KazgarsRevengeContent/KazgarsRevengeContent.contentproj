@@ -67,7 +67,7 @@
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
-      <ProcessorParameters_MergeAnimations>Models\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_fire_arrow.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_onehanded_swing.fbx%3bModels\\Player\\k_run.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_onehanded_swing.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fire_arrow.fbx%3bModels\\Player\\k_fighting_stance.fbx%3b</ProcessorParameters_MergeAnimations>
     </Compile>
     <Compile Include="Models\spikes.fbx">
       <Name>spikes</Name>

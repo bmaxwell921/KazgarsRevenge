@@ -151,7 +151,7 @@ namespace KazgarsRevenge
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             renderTarget = new RenderTarget2D(GraphicsDevice, 
                                                 pp.BackBufferWidth, pp.BackBufferHeight, false,
-                                                pp.BackBufferFormat, pp.DepthStencilFormat);
+                                                pp.BackBufferFormat, pp.DepthStencilFormat, 0, RenderTargetUsage.PreserveContents);
 
             normalDepthRenderTarget = new RenderTarget2D(graphics.GraphicsDevice,
                                                          pp.BackBufferWidth, pp.BackBufferHeight, false,
@@ -274,25 +274,25 @@ namespace KazgarsRevenge
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                     GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-                    
-                    //particles
-                    /*
-                    foreach (ParticleSystem s in systems)
-                    {
-                        s.Draw(gameTime);
-                    }
-                    GraphicsDevice.BlendState = BlendState.Opaque;
-                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;*/
-
-
                     renderManager.Draw(gameTime, true);
+
 
 
                     //draw scene render target
                     GraphicsDevice.SetRenderTarget(renderTarget);
                     GraphicsDevice.Clear(Color.Black);
                     renderManager.Draw(gameTime, false);
+                    //particles
+                    foreach (ParticleSystem s in systems)
+                    {
+                        s.Draw(gameTime);
+                    }
+                    GraphicsDevice.BlendState = BlendState.Opaque;
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
                     GraphicsDevice.SetRenderTarget(null);
+
+
                     
 
                     //pass in depth render target to the edge detection shader
@@ -304,6 +304,7 @@ namespace KazgarsRevenge
                     spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effectOutline);
                     spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
                     spriteBatch.End();
+
 
 
                     /*
