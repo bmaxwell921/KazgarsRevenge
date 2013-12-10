@@ -19,9 +19,9 @@ namespace KazgarsRevenge
     /// <summary>
     /// Custom particle system for creating the fiery part of the explosions.
     /// </summary>
-    class ExplosionParticleSystem : ParticleSystem
+    class WeaponSparksSystem : ParticleSystem
     {
-        public ExplosionParticleSystem(Game game, ContentManager content)
+        public WeaponSparksSystem(Game game, ContentManager content)
             : base(game, content)
         { }
 
@@ -30,17 +30,18 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "explosion";
 
-            settings.MaxParticles = 100;
+            settings.MaxParticles = 500;
 
-            settings.Duration = TimeSpan.FromSeconds(2);
+            settings.Duration = TimeSpan.FromSeconds(.5);
             settings.DurationRandomness = 1;
 
-            settings.MinHorizontalVelocity = 20;
-            settings.MaxHorizontalVelocity = 30;
+            settings.MinHorizontalVelocity = -60;
+            settings.MaxHorizontalVelocity = 60;
 
-            settings.MinVerticalVelocity = -20;
-            settings.MaxVerticalVelocity = 20;
+            settings.MinVerticalVelocity = 60;
+            settings.MaxVerticalVelocity = 80;
 
+            settings.Gravity = new Vector3(0, -45, 0);
             settings.EndVelocity = 0;
 
             settings.MinColor = Color.DarkGray;
@@ -49,11 +50,11 @@ namespace KazgarsRevenge
             settings.MinRotateSpeed = -1;
             settings.MaxRotateSpeed = 1;
 
-            settings.MinStartSize = 7;
-            settings.MaxStartSize = 7;
+            settings.MinStartSize = 10;
+            settings.MaxStartSize = 10;
 
-            settings.MinEndSize = 70;
-            settings.MaxEndSize = 140;
+            settings.MinEndSize = 1;
+            settings.MaxEndSize = 1;
 
             // Use additive blending.
             settings.BlendState = BlendState.Additive;
