@@ -30,11 +30,7 @@ Networking? (location and running animations for multiple players)
 
 art needed:
 flip the bow shooting animation (needs to be fired while holding bow in right hand, since our basic attack is always based on the right hand)
-adjust attachment points so that weapons aren't sticking into wrists
-
-concept art for enemies, to be put in design doc
 loot soul blob (animations: creation, wander, dying, being looted)
-pig man death animation
 moar enemies!
 Kazgar casting animation
 moar levels!

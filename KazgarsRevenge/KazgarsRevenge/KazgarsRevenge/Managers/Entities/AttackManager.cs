@@ -69,7 +69,7 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateMelleAttack(Vector3 position, int damage, FactionType faction)
+        public void CreateMelleAttack(Vector3 position, int damage, FactionType faction, bool sparks)
         {
             GameEntity newAttack = new GameEntity("arrow", faction);
 
@@ -92,8 +92,10 @@ namespace KazgarsRevenge
             attacks.Add(newAttack);
             soundEffects.playMeleeSound();
 
-
-            SpawnWeaponSparks(position + Vector3.Down * 18);
+            if (sparks)
+            {
+                SpawnWeaponSparks(position + Vector3.Down * 18);
+            }
         }
 
         public void CreateMagicAttack()

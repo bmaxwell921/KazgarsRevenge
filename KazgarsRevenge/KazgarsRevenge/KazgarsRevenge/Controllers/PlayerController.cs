@@ -1016,7 +1016,7 @@ namespace KazgarsRevenge
                 if (attState == AttackState.InitialSwing && millisMelleCounter >= aniDurations["melleDamage"])
                 {
                     Vector3 forward = GetForward();
-                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, FactionType.Players);
+                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, FactionType.Players, true);
                     attState = AttackState.FinishSwing;
                     millisMelleCounter = 0;
                 }

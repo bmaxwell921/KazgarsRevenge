@@ -19,16 +19,16 @@ namespace KazgarsRevenge
     /// <summary>
     /// Custom particle system for leaving smoke trails behind the rocket projectiles.
     /// </summary>
-    class ProjectileTrailParticleSystem : ParticleSystem
+    class SoulTrailParticleSystem : ParticleSystem
     {
-        public ProjectileTrailParticleSystem(Game game, ContentManager content)
+        public SoulTrailParticleSystem(Game game, ContentManager content)
             : base(game, content)
         { }
 
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "smoke";
+            settings.TextureName = "soulTrail";
 
             settings.MaxParticles = 1000;
 
@@ -50,11 +50,11 @@ namespace KazgarsRevenge
             settings.MinRotateSpeed = -4;
             settings.MaxRotateSpeed = 4;
 
-            settings.MinStartSize = 1;
-            settings.MaxStartSize = 3;
+            settings.MinStartSize = 5;
+            settings.MaxStartSize = 10;
 
-            settings.MinEndSize = 4;
-            settings.MaxEndSize = 11;
+            settings.MinEndSize = .1f;
+            settings.MaxEndSize = 5;
         }
     }
 }

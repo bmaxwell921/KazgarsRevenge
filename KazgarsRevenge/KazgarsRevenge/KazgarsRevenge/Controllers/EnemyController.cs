@@ -197,7 +197,7 @@ namespace KazgarsRevenge
                 case EnemyState.AttackingPlayer:
                     if (swinging)
                     {
-                        attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies);
+                        attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false);
                         attackCounter = 0;
                         swinging = false;
                     }

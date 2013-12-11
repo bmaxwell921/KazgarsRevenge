@@ -55,10 +55,6 @@ namespace KazgarsRevenge
                 {
                     //makes arrows stick in walls
                     (entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
-                    if (physicalData.LinearVelocity.Length() > 2)
-                    {
-                        sounds.playHardSmack();
-                    }
                 }
                 if (hitEntity.Faction == factionToHit)
                 {
