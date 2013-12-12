@@ -32,29 +32,26 @@ namespace KazgarsRevenge
 
             settings.MaxParticles = 1000;
 
-            settings.Duration = TimeSpan.FromSeconds(3);
+            settings.Duration = TimeSpan.FromSeconds(5);
 
             settings.DurationRandomness = 1.5f;
 
             settings.EmitterVelocitySensitivity = 0.1f;
 
-            settings.MinHorizontalVelocity = 0;
+            settings.MinHorizontalVelocity = -1;
             settings.MaxHorizontalVelocity = 1;
 
             settings.MinVerticalVelocity = -1;
             settings.MaxVerticalVelocity = 1;
 
-            settings.MinColor = new Color(64, 96, 128, 255);
-            settings.MaxColor = new Color(255, 255, 255, 128);
+            settings.MinRotateSpeed = 0;
+            settings.MaxRotateSpeed = 0;
 
-            settings.MinRotateSpeed = -4;
-            settings.MaxRotateSpeed = 4;
+            settings.MinStartSize = 2;
+            settings.MaxStartSize = 3;
 
-            settings.MinStartSize = 5;
-            settings.MaxStartSize = 10;
-
-            settings.MinEndSize = .1f;
-            settings.MaxEndSize = 5;
+            settings.MinEndSize = 0;
+            settings.MaxEndSize = 2;
         }
     }
 }

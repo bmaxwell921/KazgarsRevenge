@@ -135,7 +135,7 @@
     <Compile Include="Particles\Systems\WeaponSparksSystem.cs" />
     <Compile Include="Particles\Systems\ExplosionSmokeParticleSystem.cs" />
     <Compile Include="Particles\Systems\FireParticleSystem.cs" />
-    <Compile Include="Particles\Systems\ProjectileTrailParticleSystem.cs" />
+    <Compile Include="Particles\Systems\SoulTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\SmokePlumeParticleSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

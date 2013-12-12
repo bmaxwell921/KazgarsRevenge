@@ -29,6 +29,7 @@ namespace KazgarsRevenge
         public int totalSouls { get; private set; }
         Entity physicalData;
         AnimationPlayer animations;
+        ParticleEmitter trailEmitter;
         private List<Item> loot;
         public List<Item> Loot
         {
@@ -38,11 +39,12 @@ namespace KazgarsRevenge
             }
         }
 
-        public LootSoulController(KazgarsRevengeGame game, GameEntity entity, int wanderSeed, List<Item> loot, int totalSouls)
+        public LootSoulController(KazgarsRevengeGame game, GameEntity entity, int wanderSeed, List<Item> loot, int totalSouls, ParticleEmitter trailEmitter)
             : base(game, entity)
         {
             this.loot = loot;
             this.totalSouls = totalSouls;
+            this.trailEmitter = trailEmitter;
             soulState = LootSoulState.Wandering;
 
             rand = new Random();//new Random(wanderSeed);
@@ -65,8 +67,11 @@ namespace KazgarsRevenge
         float followSpeed = 15.0f;
         double deathCounter = 0;
         double deathLength;
+        float newDir;
+        float curDir;
         public override void Update(GameTime gameTime)
         {
+            this.trailEmitter.Update(gameTime, physicalData.Position + Vector3.Up * 5);
             switch (soulState)
             {
                 case LootSoulState.Wandering:
@@ -83,12 +88,10 @@ namespace KazgarsRevenge
                     {
                         wanderCounter = 0;
                         wanderLength = rand.Next(4000, 10000);
-                        float newDir = rand.Next(1, 627) / 10.0f;
-                        Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
-                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(newVel), 0, 0);
-                        newVel *= groundSpeed;
-                        physicalData.LinearVelocity = newVel;
+                        newDir = rand.Next(1, 627) / 100.0f;
                     }
+
+                    CalcDir();
 
                     //looking for nearby souls to unite with
                     GameEntity possNearestSoul = QueryNearest("loot", GetSensor(physicalData.Position, soulSensorSize));
@@ -116,19 +119,10 @@ namespace KazgarsRevenge
                         }
                         else
                         {
-                            Vector3 move = targetData.Position - physicalData.Position;
-                            if (move != Vector3.Zero)
-                            {
-                                move.Normalize();
-                                move.Y = 0;
-                            }
-                            if (move.Z == 0)
-                            {
-                                move.Z = .000001f;
-                            }
-                            move *= followSpeed;
-                            physicalData.LinearVelocity = move;
-                            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(move), 0, 0);
+                            Vector3 move = - targetData.Position + physicalData.Position;
+                            move.Y = 0;
+                            newDir = GetYaw(move);
+                            CalcDir();
                         }
                     }
                     break;
@@ -141,6 +135,33 @@ namespace KazgarsRevenge
                         entity.Kill();
                     }
                     break;
+            }
+        }
+
+        private void CalcDir()
+        {
+            if (Math.Abs(curDir - newDir) > .06f)
+            {
+
+                float add = .05f;
+                float diff = curDir - newDir;
+                if (diff > 0 && diff < MathHelper.Pi || diff < 0 && -diff > MathHelper.Pi)
+                {
+                    add *= -1;
+                }
+                curDir += add;
+                if (curDir > MathHelper.Pi * 2)
+                {
+                    curDir -= MathHelper.Pi * 2;
+                }
+                else if (curDir < 0)
+                {
+                    curDir += MathHelper.Pi * 2;
+                }
+                Vector3 newVel = new Vector3((float)Math.Cos(curDir), 0, (float)Math.Sin(curDir));
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(newVel), 0, 0);
+                newVel *= groundSpeed;
+                physicalData.LinearVelocity = newVel;
             }
         }
 

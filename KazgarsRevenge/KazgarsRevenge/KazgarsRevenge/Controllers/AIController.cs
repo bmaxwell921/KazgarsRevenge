@@ -26,6 +26,19 @@ namespace KazgarsRevenge
 
         protected float GetYaw(Vector3 move)
         {
+            Vector3 lmove = new Vector3();
+            lmove.X = move.X;
+            lmove.Y = move.Y;
+            lmove.Z = move.Z;
+            if (lmove == Vector3.Zero)
+            {
+                lmove.Z = .00000001f;
+            }
+            else
+            {
+
+                lmove.Normalize();
+            }
             //orientation
             float yaw = (float)Math.Atan(move.X / move.Z);
             if (move.Z < 0 && move.X >= 0
