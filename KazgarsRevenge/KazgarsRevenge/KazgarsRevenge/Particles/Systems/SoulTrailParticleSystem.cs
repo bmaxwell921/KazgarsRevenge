@@ -32,7 +32,7 @@ namespace KazgarsRevenge
 
             settings.MaxParticles = 1000;
 
-            settings.Duration = TimeSpan.FromSeconds(5);
+            settings.Duration = TimeSpan.FromSeconds(10);
 
             settings.DurationRandomness = 1.5f;
 

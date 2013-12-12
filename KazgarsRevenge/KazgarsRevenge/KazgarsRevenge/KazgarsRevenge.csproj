@@ -133,7 +133,7 @@
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
     <Compile Include="Particles\Systems\WeaponSparksSystem.cs" />
-    <Compile Include="Particles\Systems\ExplosionSmokeParticleSystem.cs" />
+    <Compile Include="Particles\Systems\SoulCreationParticleSystem.cs" />
     <Compile Include="Particles\Systems\FireParticleSystem.cs" />
     <Compile Include="Particles\Systems\SoulTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\SmokePlumeParticleSystem.cs" />

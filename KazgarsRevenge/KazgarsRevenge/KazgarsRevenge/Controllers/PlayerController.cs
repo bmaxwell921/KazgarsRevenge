@@ -991,7 +991,10 @@ namespace KazgarsRevenge
                     {
                         attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0);
                     }
-                    attached.Add("arrow", attachedArrow);
+                    if (!attached.ContainsKey("arrow"))
+                    {
+                        attached.Add("arrow", attachedArrow);
+                    }
                     attState = AttackState.DrawingString;
                     millisShotArrowAttachCounter = 0;
                 }

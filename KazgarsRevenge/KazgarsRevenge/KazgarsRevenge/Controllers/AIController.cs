@@ -24,7 +24,7 @@ namespace KazgarsRevenge
 
         }
 
-        protected float GetYaw(Vector3 move)
+        protected float GetGraphicsYaw(Vector3 move)
         {
             Vector3 lmove = new Vector3();
             lmove.X = move.X;
@@ -36,18 +36,31 @@ namespace KazgarsRevenge
             }
             else
             {
-
                 lmove.Normalize();
             }
-            //orientation
-            float yaw = (float)Math.Atan(move.X / move.Z);
-            if (move.Z < 0 && move.X >= 0
-                || move.Z < 0 && move.X < 0)
+            float yaw = (float)Math.Atan(lmove.X / lmove.Z);
+            if (lmove.Z < 0 && lmove.X >= 0
+                || lmove.Z < 0 && lmove.X < 0)
             {
                 yaw += MathHelper.Pi;
             }
             yaw += MathHelper.Pi;
             return yaw;
+        }
+
+        protected float GetPhysicsYaw(Vector3 move)
+        {
+            float retYaw = -GetGraphicsYaw(move) - MathHelper.PiOver2;
+            while(retYaw > MathHelper.TwoPi)
+            {
+                retYaw -= MathHelper.TwoPi;
+            }
+            while(retYaw < 0)
+            {
+                retYaw += MathHelper.TwoPi;
+            }
+
+            return retYaw;
         }
 
         protected BoundingBox GetSensor(Vector3 position, float radius)

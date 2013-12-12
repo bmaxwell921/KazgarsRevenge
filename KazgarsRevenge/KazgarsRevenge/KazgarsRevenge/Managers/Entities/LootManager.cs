@@ -60,7 +60,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent lootPhysics = new PhysicsComponent(mainGame, lootSoul);
             AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE)), Vector3.Zero);
-            LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot, totalSouls, new ParticleEmitter(particles.GetSystem(typeof(SoulTrailParticleSystem)), 10, position, (int)size / 2));
+            LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot, totalSouls, new ParticleEmitter(particles.GetSystem(typeof(SoulTrailParticleSystem)), 8, position, (int)size / 2));
 
             lootSoul.AddComponent(typeof(PhysicsComponent), lootPhysics);
             genComponentManager.AddComponent(lootPhysics);
@@ -70,6 +70,11 @@ namespace KazgarsRevenge
 
             lootSoul.AddComponent(typeof(LootSoulController), lootController);
             genComponentManager.AddComponent(lootController);
+
+            for (int i = 0; i < 20; ++i)
+            {
+                particles.GetSystem(typeof(SoulCreationParticleSystem)).AddParticle(position, Vector3.Zero);
+            }
         }
 
         #region Loot Creation

@@ -127,7 +127,7 @@ namespace KazgarsRevenge
                             wanderLength = rand.Next(4000, 8000);
                             float newDir = rand.Next(1, 627) / 10.0f;
                             Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
-                            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(newVel), 0, 0);
+                            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
                             newVel *= settings.walkSpeed;
                             curVel = newVel;
                             physicalData.LinearVelocity = curVel;
@@ -178,9 +178,12 @@ namespace KazgarsRevenge
                         }
                         else
                         {//otherwise, run towards it
-                            diff.Normalize();
+                            if (diff != Vector3.Zero)
+                            {
+                                diff.Normalize();
+                            }
                             physicalData.LinearVelocity = diff * settings.runSpeed;
-                            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(diff), 0, 0);
+                            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                             if (currentAniName != settings.runAniName)
                             {
                                 PlayAnimation(settings.runAniName);

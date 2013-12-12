@@ -54,7 +54,6 @@ namespace KazgarsRevenge
         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
-            Matrix3X3 bepurot = physicalData.OrientationMatrix;
 
             Matrix worldWithoutBone = rot
                 //* Matrix.CreateFromQuaternion(physicalData.Orientation)

@@ -69,7 +69,7 @@ namespace KazgarsRevenge.Libraries
 
         public void playScratch()
         {
-            soundEffects[("scratching")].Play();
+            //soundEffects[("scratching")].Play();
         }
     }
 }

@@ -119,9 +119,9 @@ namespace KazgarsRevenge
                         }
                         else
                         {
-                            Vector3 move = - targetData.Position + physicalData.Position;
+                            Vector3 move = targetData.Position - physicalData.Position;
                             move.Y = 0;
-                            newDir = GetYaw(move);
+                            newDir = GetPhysicsYaw(move);
                             CalcDir();
                         }
                     }
@@ -142,24 +142,23 @@ namespace KazgarsRevenge
         {
             if (Math.Abs(curDir - newDir) > .06f)
             {
-
-                float add = .05f;
+                float add = .01f;
                 float diff = curDir - newDir;
                 if (diff > 0 && diff < MathHelper.Pi || diff < 0 && -diff > MathHelper.Pi)
                 {
                     add *= -1;
                 }
                 curDir += add;
-                if (curDir > MathHelper.Pi * 2)
+                if (curDir > MathHelper.TwoPi)
                 {
-                    curDir -= MathHelper.Pi * 2;
+                    curDir -= MathHelper.TwoPi;
                 }
                 else if (curDir < 0)
                 {
-                    curDir += MathHelper.Pi * 2;
+                    curDir += MathHelper.TwoPi;
                 }
                 Vector3 newVel = new Vector3((float)Math.Cos(curDir), 0, (float)Math.Sin(curDir));
-                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(newVel), 0, 0);
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
                 newVel *= groundSpeed;
                 physicalData.LinearVelocity = newVel;
             }
