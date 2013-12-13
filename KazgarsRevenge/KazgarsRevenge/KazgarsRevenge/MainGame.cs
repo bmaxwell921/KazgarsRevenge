@@ -17,6 +17,7 @@ using BEPUphysics.CollisionRuleManagement;
 using BEPUphysicsDrawer;
 using BEPUphysicsDrawer.Lines;
 using KazgarsRevenge.Libraries;
+using System.Threading;
 
 namespace KazgarsRevenge
 {
@@ -47,6 +48,14 @@ namespace KazgarsRevenge
 
         #region Content
         SpriteFont normalFont;
+        SpriteFont titleFont;
+
+        enum mainMenu { PLAY, SETTINGS };
+        mainMenu mainMenuState;
+        int numMenuStates;
+        KeyboardState keyboardState;
+        KeyboardState previousKeyboardState;
+
         BasicEffect effectModelDrawer;
         Texture2D texCursor;
         Effect effectOutline;
@@ -57,6 +66,7 @@ namespace KazgarsRevenge
         #endregion
 
         public RenderTarget2D RenderTarget { get { return renderTarget; } }
+        private Thread loadingThread;
         float screenScale = 1;
 
         
@@ -74,18 +84,27 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
-            
-            /*graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            graphics.IsFullScreen = true;
-            graphics.ApplyChanges();*/
+            bool fullscreen = false;
+            loadingThread = new Thread(DemoLevel);
 
-            
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 650;
-            graphics.ApplyChanges();
- 
-            screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
+            if (fullscreen)
+            {
+                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                graphics.IsFullScreen = true;
+                graphics.ApplyChanges();
+            }
+            else
+            {
+                graphics.PreferredBackBufferWidth = 800;
+                graphics.PreferredBackBufferHeight = 650;
+                graphics.IsFullScreen = false;
+                graphics.ApplyChanges();
+                screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
+            }
+
+            mainMenuState = mainMenu.PLAY;
+            numMenuStates = Enum.GetNames(typeof(mainMenu)).Length;
 
             Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
 
@@ -142,6 +161,7 @@ namespace KazgarsRevenge
         protected override void LoadContent()
         {
             normalFont = Content.Load<SpriteFont>("Verdana");
+            titleFont = Content.Load<SpriteFont>("Title");
             texCursor = Content.Load<Texture2D>("Textures\\whiteCursor");
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -171,21 +191,57 @@ namespace KazgarsRevenge
             physics.Update();
 
             nmm.Update(gameTime);
+            previousKeyboardState = keyboardState;
+            keyboardState = Keyboard.GetState();
+
             switch (gameState)
             {
                 case GameState.StartMenu:
-                    if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                    if ((keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter)))
                     {
-                        // TODO uncomment this for networking fun!
-                        //Console.WriteLine("Transitioning to ConnectionScreen");
-                        //gameState = GameState.ConnectionScreen;
+                        if (mainMenuState == mainMenu.PLAY)
+                        {
+                            // TODO uncomment this for networking fun!
+                            //Console.WriteLine("Transitioning to ConnectionScreen");
+                            //gameState = GameState.ConnectionScreen;
 
-                        gameState = GameState.Playing;
-                        DemoLevel();
+                            gameState = GameState.Loading;
+                            loadingThread.Start();
+                        }
+                        else if (mainMenuState == mainMenu.SETTINGS)
+                        {
+                            gameState = GameState.Settings;
+                        }
+                    }
+
+                    if (keyboardState.IsKeyDown(Keys.Escape))
+                    {
+                        Exit();
+                    }
+                                        
+                    if ((keyboardState.IsKeyDown(Keys.Down) && previousKeyboardState.IsKeyUp(Keys.Down)))
+                    {
+                        if ((int) mainMenuState < numMenuStates - 1)
+                        {
+                            mainMenuState++;
+                        }
+                    }
+
+                    if ((keyboardState.IsKeyDown(Keys.Up) && previousKeyboardState.IsKeyUp(Keys.Up)))
+                    {
+                        if ((int) mainMenuState > 0)
+                        {
+                            mainMenuState--;
+                        }
                     }
                     break;
+                case GameState.Loading:
+                    break;
+                case GameState.Settings:
+                    gameState = GameState.StartMenu;
+                    break;
                 case GameState.ConnectionScreen:
-                    if (Keyboard.GetState().IsKeyDown(Keys.Enter) && nmm.connections.Count != 0)
+                    if (keyboardState.IsKeyDown(Keys.Enter) && nmm.connections.Count != 0)
                     {
                         Console.WriteLine("Connecting to Server 0");
                         // TODO change this to proper connection number based on input
@@ -197,7 +253,7 @@ namespace KazgarsRevenge
                     // Since isHost starts as false, we'll only be able to play
                     // once the server gets back to us with whether we're host
                     // this is desired since that message comes with our id as well
-                    if (nmm.isHost && Keyboard.GetState().IsKeyDown(Keys.Space))
+                    if (nmm.isHost && keyboardState.IsKeyDown(Keys.Space))
                     {
                         Console.WriteLine("Starting game");
                         nmm.StartGame();
@@ -227,18 +283,20 @@ namespace KazgarsRevenge
                     enemies.CreateBrute(new Vector3(130 + i * 200, 0, -100 - j * 200));
                 }
             }
+
+            gameState = GameState.Playing;
         }
 
         Vector2 vecLoadingText;
         Rectangle rectMouse;
-        float guiScale = 1;
+        Vector2 guiScale = new Vector2(1,1);
         private void initDrawingParams()
         {
             vecLoadingText = new Vector2(50, 50);
             rectMouse = new Rectangle(0, 0, 25, 25);
             float xRatio = GraphicsDevice.Viewport.Width / 1920f;
             float yRatio = GraphicsDevice.Viewport.Height / 1080f;
-            guiScale = (xRatio + yRatio) / 2;
+            guiScale = new Vector2(xRatio, yRatio);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -254,6 +312,37 @@ namespace KazgarsRevenge
             rs.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rs;
 
+            //need to move
+            Texture2D backgroundTexture;
+            int screenWidth = graphics.PreferredBackBufferWidth;//GraphicsDevice.Viewport.Width;
+            int screenHeight = graphics.PreferredBackBufferHeight;//GraphicsDevice.Viewport.Height;
+            backgroundTexture = Content.Load<Texture2D>("Textures\\Menu\\menuBackground");
+            Rectangle screenRectangle = new Rectangle(0, 0, screenWidth, screenHeight);
+
+            String titleString = "Kazgar's Revenge";
+            String startString = "Start";
+            String settingsString = "Settings";
+            String loadingString = "Loading";
+
+            Vector2 titleSize = titleFont.MeasureString(titleString);
+            Vector2 startSize = normalFont.MeasureString(startString);
+            Vector2 settingsSize = normalFont.MeasureString(settingsString);
+            Vector2 loadingSize = normalFont.MeasureString(loadingString);
+
+            Vector2 titlePosition = new Vector2(screenWidth / 2, screenHeight * .35f);
+            Vector2 startGamePosition = new Vector2(screenWidth / 2, screenHeight * .47f);
+            Vector2 loadGamePosition = new Vector2(screenWidth / 2, screenHeight * .47f);
+            Vector2 settingsPosition = new Vector2(screenWidth / 2, screenHeight * .55f);
+
+            Vector2 titleOrigin = new Vector2(titleSize.X / 2, titleSize.Y / 2);
+            Vector2 startOrigin = new Vector2(startSize.X / 2, startSize.Y / 2);
+            Vector2 settingsOrigin = new Vector2(settingsSize.X / 2, settingsSize.Y / 2);
+            Vector2 loadingOrigin = new Vector2(loadingSize.X / 2, loadingSize.Y / 2);
+
+            Color titleColor = Color.White;
+            Color startColor = Color.White;
+            Color settingsColor = Color.White;
+            Color loadingColor = Color.White;
 
             switch (gameState)
             {
@@ -265,9 +354,7 @@ namespace KazgarsRevenge
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                     GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
                     renderManager.Draw(gameTime, true);
-
-
-
+                    
                     //draw scene render target
                     GraphicsDevice.SetRenderTarget(renderTarget);
                     GraphicsDevice.Clear(Color.Black);
@@ -278,9 +365,6 @@ namespace KazgarsRevenge
 
                     //reset graphics device
                     GraphicsDevice.SetRenderTarget(null);
-
-
-                    
 
                     //pass in depth render target to the edge detection shader
                     Texture2D normalDepthTexture = normalDepthRenderTarget;
@@ -312,8 +396,27 @@ namespace KazgarsRevenge
                     spriteBatch.End();
                     break;
                 case GameState.StartMenu:
+                    if ((int) mainMenuState == 0)
+                    {
+                        startColor = Color.Red;
+                    }
+                    else if ((int) mainMenuState == 1)
+                    {
+                        settingsColor = Color.Red;
+                    }
+
                     spriteBatch.Begin();
-                    spriteBatch.DrawString(normalFont, "Press Space To Start", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.Draw(backgroundTexture, screenRectangle, Color.White);
+                    spriteBatch.DrawString(titleFont, titleString, titlePosition, titleColor, 0, titleOrigin, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, startString, startGamePosition, startColor, 0, startOrigin, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, settingsString, settingsPosition, settingsColor, 0, settingsOrigin, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.End();
+                    break;
+                case GameState.Loading:
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(backgroundTexture, screenRectangle, Color.White);
+                    spriteBatch.DrawString(titleFont, titleString, titlePosition, titleColor, 0, titleOrigin, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, loadingString, loadGamePosition, loadingColor, 0, loadingOrigin, guiScale, SpriteEffects.None, 0);
                     spriteBatch.End();
                     break;
                 case GameState.ConnectionScreen:

@@ -13,6 +13,8 @@ namespace KazgarsRevenge
         ReceivingMap,
         Paused,
         StartMenu,
+        Settings,
+        Loading,
 
         // Used on server
         GenerateMap
