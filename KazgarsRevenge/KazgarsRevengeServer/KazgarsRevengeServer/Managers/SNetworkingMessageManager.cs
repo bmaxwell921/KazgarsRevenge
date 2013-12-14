@@ -68,14 +68,49 @@ namespace KazgarsRevengeServer
             return server.ReadMessage();
         }
 
-        // TODO If this is just using random generation...can we get away with just sending a seed?
-        public void SendLevel(string p)
+        /*
+         * If this is what our map looks like:
+         *      [ 5 | 3 | 2 ]
+         *      [ 2 | 1 | 3 ]
+         *      [ 4 | 1 | 4 ]
+         * And playerPosMap looks like this:
+         *      0 -> (0, 0, 0)
+         *      1 -> (10, 0, 0)
+         * The the message has this form:
+         *      1) Map data
+         *      2) Number of players
+         *      3) Pairs of <playerId, position>
+         *      
+         * So with the given information we have a message like this:
+         *      5, 3, 2, 2, 1, 3, 4, 1, 4       (This is the map data)
+         *      2                               (Number of players)
+         *      0, 0, 0, 0                      (Player 0's position)
+         *      1, 10, 0, 0                     (Player 1's position)
+         * 
+         * 
+         */
+        public void SendLevel(byte[] chunkIds, IDictionary<Identification, Vector3> playerPosMap)
         {
             NetOutgoingMessage nom = server.CreateMessage();
             nom.Write((byte)MessageType.MapData);
-            foreach (string id in p.Split(','))
+
+            // Send the actual map data
+            foreach (byte chunk in chunkIds)
             {
-                nom.Write(id);
+                nom.Write(chunk);
+            }
+
+            // number of players
+            nom.Write((byte)playerPosMap.Keys.Count);
+
+            // Then send where everyone is
+            foreach (Identification playerId in playerPosMap.Keys)
+            {
+                nom.Write(playerId.id);
+                Vector3 pos = playerPosMap[playerId];
+                nom.Write(pos.X);
+                nom.Write(pos.Y);
+                nom.Write(pos.Z);
             }
 
             // Tell everyone the info!

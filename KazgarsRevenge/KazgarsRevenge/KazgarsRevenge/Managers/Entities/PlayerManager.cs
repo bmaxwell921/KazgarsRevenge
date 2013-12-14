@@ -148,5 +148,11 @@ namespace KazgarsRevenge
 
             playerMap[id] = player;
         }
+
+        public void SetPlayerLocation(Vector3 pos, Identification id)
+        {
+            Entity sharedData = playerMap[id].GetSharedData(typeof(Entity)) as Entity;
+            sharedData.Position = pos;
+        }
     }
 }

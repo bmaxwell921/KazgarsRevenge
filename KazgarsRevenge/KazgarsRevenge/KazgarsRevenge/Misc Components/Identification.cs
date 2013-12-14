@@ -24,6 +24,11 @@ namespace KazgarsRevenge
             this.id = id;
         }
 
+        public override string ToString()
+        {
+            return id.ToString();
+        }
+
         public override bool Equals(object obj)
         {
             return obj != null && (obj as Identification).id == this.id;

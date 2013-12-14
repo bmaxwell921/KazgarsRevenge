@@ -55,7 +55,7 @@ namespace KazgarsRevengeServer
                  *      byte: playerId
                  *      bool: isHost
                  */
-                Identification newId = playerManager.createNewPlayer();
+                Identification newId = playerManager.GetId();
                 NetOutgoingMessage outMsg = nmm.server.CreateMessage();
                 outMsg.Write((byte)MessageType.Connected);
                 outMsg.Write(newId.id);

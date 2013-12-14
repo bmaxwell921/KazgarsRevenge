@@ -37,6 +37,10 @@ namespace KazgarsRevenge
 
         Random rand;
 
+        // TODO is there a better place for this?
+        public int levelWidth = 1;
+        public int levelHeight = 1;
+
         public KazgarsRevengeGame()
         {
             InitPhysics();

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
     public class ReceivingMapHandler : BaseHandler
     {
         LevelManager lm;
+        PlayerManager pm;
         public ReceivingMapHandler(KazgarsRevengeGame game)
             : base(game)
         {
@@ -15,6 +17,7 @@ namespace KazgarsRevenge
         }
 
         // Reads level bytes into a string, passes off to level manager
+        // TODO player starting locations should also be here
         public override void Handle(Lidgren.Network.NetIncomingMessage nim)
         {
             Console.WriteLine("Receiving map data from server");
@@ -22,15 +25,26 @@ namespace KazgarsRevenge
             {
                 lm = game.Services.GetService(typeof(LevelManager)) as LevelManager;
             }
-            // TODO make this read ALL BYTES once we actually do level generation
-            byte[] mapData = nim.ReadBytes(1);
-            string map = "";
-            foreach (byte b in mapData)
+            if (pm == null)
             {
-                map += b + ",";
+                pm = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
             }
+            
+            // game width and height are the width and height of each level
+            byte[] mapData = nim.ReadBytes(game.levelWidth * game.levelHeight);
 
-            lm.CreateMapFrom(map);
+            lm.CreateMapFrom(mapData);
+
+            int numPlayers = nim.ReadByte();
+
+            // Get the actual player location data
+            for (int i = 0; i < numPlayers; ++i)
+            {
+                byte id = nim.ReadByte();
+                Vector3 position = new Vector3(nim.ReadFloat(), nim.ReadFloat(), nim.ReadFloat());
+
+                pm.SetPlayerLocation(position, new Identification(id));
+            }
         }
     }
 }

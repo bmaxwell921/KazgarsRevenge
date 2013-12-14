@@ -149,14 +149,11 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        // Reads the map data from a CSV string and builds the level, moves gameState into playing
-        public void CreateMapFrom(string map)
+        // Reads the map from the given array of bytes, representing chunk types
+        public void CreateMapFrom(byte[] map)
         {
-            // TODO actually implement
-            float yaw;
-            string modelPath = this.TranslateIdToPathYaw(0, out yaw);
-            CreateRoom(modelPath, new Vector3(200, -20, -200), yaw);
-
+            // TODO actually implement                     
+            DemoLevel();
             mainGame.gameState = GameState.Playing;
         }
 

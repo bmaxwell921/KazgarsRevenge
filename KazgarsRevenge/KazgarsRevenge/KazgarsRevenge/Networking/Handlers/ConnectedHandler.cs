@@ -38,7 +38,7 @@ namespace KazgarsRevenge
             bool isHost = nim.ReadBoolean();
 
             // TODO remove this for a position from the server
-            pm.CreateMainPlayer(new Vector3(200, 0 , -200), new Identification(clientId));
+            pm.CreateMainPlayer(new Vector3(200, 0, -200), new Identification(clientId));
             nmm.isHost = isHost;
         }
     }

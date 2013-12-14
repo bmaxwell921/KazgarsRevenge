@@ -5,6 +5,8 @@ using System.Text;
 
 using KazgarsRevenge;
 using Microsoft.Xna.Framework;
+using BEPUphysics.Entities;
+using BEPUphysics.Entities.Prefabs;
 
 namespace KazgarsRevengeServer
 {
@@ -18,6 +20,14 @@ namespace KazgarsRevengeServer
             protected set;
         }
 
+        public int NumPlayers
+        {
+            get
+            {
+                return players.Keys.Count;
+            }
+        }
+
         public SPlayerManager(KazgarsRevengeGame game)
             : base(game)
         {
@@ -28,22 +38,59 @@ namespace KazgarsRevengeServer
         /// Creates and adds a new player to the game, returning the new player's identification
         /// </summary>
         /// <returns></returns>
-        public Identification createNewPlayer()
+        public Identification GetId()
         {
             Identification newId = IdentificationFactory.GenerateNextId();
-            //TODO do stuff - actually setting it up
-
+            players[newId] = null;
             return newId;
         }
 
-        public void UpdatePlayerPosition(Identification id, Vector3 velocity)
+        public void SetUpPlayer(Vector3 position, Identification id)
         {
-            // TODO Update the position based on velocity?? - I feel like Bepu won't like me doing that -.-
+            if (gcm == null)
+            {
+                gcm = game.Services.GetService(typeof(GeneralComponentManager)) as GeneralComponentManager;
+            }
+            GameEntity player = new GameEntity("netPlayer" + id.id, FactionType.Players);
+            
+            // shared physical data
+            Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
+            // assigning collision group to the physics
+            playerPhysicalData.CollisionInformation.CollisionRules.Group = game.PlayerCollisionGroup;
+
+            // lock rotation go bumping into other players doesn't cause it to tip over
+            playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            // more accurate collision detection for player
+            playerPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
+            player.AddSharedData(typeof(Entity), playerPhysicalData);
+
+            HealthData playerHealth = new HealthData(100);
+            player.AddSharedData(typeof(HealthData), playerHealth);
+
+            // components to make up player
+            PhysicsComponent playerPhysics = new PhysicsComponent(game, player);
+            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(game, player);
+
+            // TODO make controller for players? - is this going to be the same as the client?
+
+            player.AddComponent(typeof(PhysicsComponent), playerPhysics);
+            gcm.AddComponent(playerPhysics);
+
+            player.AddComponent(typeof(HealthHandlerComponent), playerHealthHandler);
+            gcm.AddComponent(playerHealthHandler);
+
+            players[id] = player;
         }
 
         public Vector3 GetPlayerPosition(Identification id)
         {
-            return Vector3.Zero;
+            return (players[id].GetSharedData(typeof(Entity)) as Entity).Position;
+        }
+
+        public void SetPlayerLocation(Vector3 pos, Identification id)
+        {
+            Entity sharedData = players[id].GetSharedData(typeof(Entity)) as Entity;
+            sharedData.Position = pos;
         }
     }
 }

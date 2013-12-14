@@ -41,7 +41,7 @@ namespace KazgarsRevengeServer
             Identification pId = new Identification(nim.ReadByte());
             Vector3 vel = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
             Vector3 curPos = playerManager.GetPlayerPosition(pId);
-            playerManager.UpdatePlayerPosition(pId, curPos + vel);
+            playerManager.SetPlayerLocation(curPos + vel, pId);
 
             SendMessages(pId, curPos + vel);
         }

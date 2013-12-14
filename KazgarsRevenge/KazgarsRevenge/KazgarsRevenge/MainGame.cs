@@ -241,7 +241,7 @@ namespace KazgarsRevenge
                     gameState = GameState.StartMenu;
                     break;
                 case GameState.ConnectionScreen:
-                    if (keyboardState.IsKeyDown(Keys.Enter) && nmm.connections.Count != 0)
+                    if (keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter) && nmm.connections.Count != 0)
                     {
                         Console.WriteLine("Connecting to Server 0");
                         // TODO change this to proper connection number based on input
@@ -253,7 +253,7 @@ namespace KazgarsRevenge
                     // Since isHost starts as false, we'll only be able to play
                     // once the server gets back to us with whether we're host
                     // this is desired since that message comes with our id as well
-                    if (nmm.isHost && keyboardState.IsKeyDown(Keys.Space))
+                    if (nmm.isHost && keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter))
                     {
                         Console.WriteLine("Starting game");
                         nmm.StartGame();
@@ -424,7 +424,7 @@ namespace KazgarsRevenge
                     break;
                 case GameState.Lobby:
                     spriteBatch.Begin();
-                    spriteBatch.DrawString(normalFont, "If you're host, press space to begin!", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, "If you're host, press enter to begin!", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
                     spriteBatch.End();
                     break;
                 case GameState.ReceivingMap:

@@ -69,5 +69,10 @@ namespace KazgarsRevengeServer
         {
             base.Update(gameTime);
         }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            
+        }
     }
 }
