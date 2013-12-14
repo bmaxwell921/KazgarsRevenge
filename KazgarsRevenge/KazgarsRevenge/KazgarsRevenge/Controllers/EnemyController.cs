@@ -87,6 +87,7 @@ namespace KazgarsRevenge
         double wanderLength;
         double deathCounter;
         double deathLength;
+        double swingCounter;
         bool chillin = false;
         Random rand;
         double attackCounter = double.MaxValue;
@@ -106,17 +107,17 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case EnemyState.Wandering:
-                    GameEntity possTargetPlayer = QueryNearest("localplayer", GetSensor(physicalData.Position, 100));
+                    GameEntity possTargetPlayer = QueryNearest("localplayer", physicalData.Position, 100);
                     if (possTargetPlayer != null)
                     {
                         targetHealth = possTargetPlayer.GetSharedData(typeof(HealthData)) as HealthData;
-                    }
-                    if (targetHealth != null && !targetHealth.Dead)
-                    {
-                        targetedPlayerData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                        state = EnemyState.RunningToPlayer;
-                        animations.StartClip(settings.runAniName);
-                        return;
+                        if (targetHealth != null && !targetHealth.Dead)
+                        {
+                            targetedPlayerData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
+                            state = EnemyState.RunningToPlayer;
+                            animations.StartClip(settings.runAniName);
+                            return;
+                        }
                     }
                     wanderCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
                     if (chillin)
@@ -147,7 +148,7 @@ namespace KazgarsRevenge
                         //wandering
                         if (wanderCounter >= wanderLength)
                         {
-                            //once we've wandered a little ways, sit still for a bit
+                            //once it's wandered a little ways, sit still for a bit
                             wanderCounter = 0;
                             wanderLength = rand.Next(1000, 5000);
                             physicalData.LinearVelocity = Vector3.Zero;
@@ -200,11 +201,15 @@ namespace KazgarsRevenge
                 case EnemyState.AttackingPlayer:
                     if (swinging)
                     {
-                        attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false);
-                        attackCounter = 0;
-                        swinging = false;
+                        swingCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                        if (swingCounter >= settings.attackLength / 2)
+                        {
+                            attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false);
+                            attackCounter = 0;
+                            swinging = false;
+                        }
                     }
-                    if (targetHealth != null && targetedPlayerData != null && !targetHealth.Dead)
+                    else if (targetHealth != null && targetedPlayerData != null && !targetHealth.Dead)
                     {
                         attackCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
                         if (attackCounter >= settings.attackLength)
@@ -217,6 +222,7 @@ namespace KazgarsRevenge
                                 attackCounter = 0;
                                 PlayAnimation(settings.attackAniName);
                                 swinging = true;
+                                swingCounter = 0;
                             }
                             else
                             {

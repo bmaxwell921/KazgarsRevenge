@@ -30,7 +30,7 @@ namespace KazgarsRevenge
             lmove.X = move.X;
             lmove.Y = move.Y;
             lmove.Z = move.Z;
-            if (lmove == Vector3.Zero)
+            if (lmove.Z == 0)
             {
                 lmove.Z = .00000001f;
             }
@@ -63,18 +63,17 @@ namespace KazgarsRevenge
             return retYaw;
         }
 
-        protected BoundingBox GetSensor(Vector3 position, float radius)
+        /// <summary>
+        /// grabs the entity of an entityName within radius of position (not necessarily the nearest, just the first one it sees)
+        /// </summary>
+        protected GameEntity QueryNearest(string entityName, Vector3 position, float radius)
         {
             Vector3 min = new Vector3(position.X - radius, 0, position.Z - radius);
             Vector3 max = new Vector3(position.X + radius, 20, position.Z + radius);
             BoundingBox b = new BoundingBox(min, max);
-            return b;
-        }
 
-        protected GameEntity QueryNearest(string entityName, BoundingBox s)
-        {
             var entries=Resources.GetBroadPhaseEntryList();
-            (Game.Services.GetService(typeof(Space)) as Space).BroadPhase.QueryAccelerator.GetEntries(s, entries);
+            (Game.Services.GetService(typeof(Space)) as Space).BroadPhase.QueryAccelerator.GetEntries(b, entries);
             foreach (BroadPhaseEntry entry in entries)
             {
                 GameEntity other = entry.Tag as GameEntity;
@@ -82,7 +81,7 @@ namespace KazgarsRevenge
                 {
                     BoundingBox entryBox = entry.BoundingBox;
                     Vector3 entrymid = (entryBox.Max + entryBox.Min) / 2;
-                    Vector3 selfmid = (s.Max + s.Min) / 2;
+                    Vector3 selfmid = (b.Max + b.Min) / 2;
                     if (Math.Abs(entrymid.X - selfmid.X) > .1f && Math.Abs(entrymid.Z - selfmid.Z) > .1f)
                     {
                         return other;
