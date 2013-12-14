@@ -20,6 +20,7 @@ namespace KazgarsRevenge
         protected SpriteManager spriteManager;
         protected GeneralComponentManager genComponentManager;
         protected PlayerManager players;
+        protected BaseNetworkMessageManager nmm;
 
         protected KazgarsRevengeGame mainGame;
 
@@ -37,6 +38,7 @@ namespace KazgarsRevenge
             genComponentManager = Game.Services.GetService(typeof(GeneralComponentManager)) as GeneralComponentManager;
             spriteManager = Game.Services.GetService(typeof(SpriteManager)) as SpriteManager;
             players = Game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
+            nmm = Game.Services.GetService(typeof(NetworkMessageManager)) as NetworkMessageManager;
             toonAnimatedEffect = Game.Content.Load<Effect>("Shaders\\ToonSkinnedEffect");
             effectCellShading = Game.Content.Load<Effect>("Shaders\\CellShader");
 

@@ -127,7 +127,7 @@ namespace KazgarsRevengeServer
         private IDictionary<Identification, Vector3> PlacePlayers()
         {
             Vector3 dummyStartingPos = new Vector3(200, 0, -200);
-            int translate = 10;
+            int translate = 100;
             IDictionary<Identification, Vector3> ret = new Dictionary<Identification, Vector3>();
 
             /* Since we allow a max of 5 players, the 'best' arrangement would be 
@@ -152,7 +152,7 @@ namespace KazgarsRevengeServer
                     }
 
                     // Actual place to put him
-                    Vector3 playerLoc = dummyStartingPos + new Vector3(i * translate, j * translate, 0);
+                    Vector3 playerLoc = dummyStartingPos + new Vector3(i * translate, 0, j * translate);
                     ret[new Identification((byte)numPlaced)] = playerLoc;
 
                     // Let the player manager know

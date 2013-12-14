@@ -16,8 +16,11 @@ namespace KazgarsRevenge
 
         }
 
-        // Reads level bytes into a string, passes off to level manager
-        // TODO player starting locations should also be here
+        /// <summary>
+        /// Gets the level information message from the server and translates
+        /// the message into an actual level
+        /// </summary>
+        /// <param name="nim"></param>
         public override void Handle(Lidgren.Network.NetIncomingMessage nim)
         {
             Console.WriteLine("Receiving map data from server");
@@ -45,6 +48,9 @@ namespace KazgarsRevenge
 
                 pm.SetPlayerLocation(position, new Identification(id));
             }
+
+            // Time to play!
+            game.gameState = GameState.Playing;
         }
     }
 }

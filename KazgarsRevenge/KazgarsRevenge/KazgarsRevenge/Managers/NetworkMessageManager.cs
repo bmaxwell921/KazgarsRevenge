@@ -27,6 +27,7 @@ namespace KazgarsRevenge
             SetUpClient();
         }
 
+        // Lidgren initialization
         private void SetUpClient()
         {
             NetPeerConfiguration config = new NetPeerConfiguration(Constants.CONNECTION_KEY);
@@ -46,6 +47,7 @@ namespace KazgarsRevenge
             enemies = Game.Services.GetService(typeof(EnemyManager)) as EnemyManager;
         }
 
+        #region Pregame messaging
         public void ConnectTo(int connIndex)
         {
             Client.Connect(connections[connIndex].ServerEndpoint);
@@ -55,7 +57,6 @@ namespace KazgarsRevenge
         {
             msgHandlers[NetIncomingMessageType.DiscoveryResponse] = new DiscoveryResponseHandler(Game as KazgarsRevengeGame);
             msgHandlers[NetIncomingMessageType.Data] = new DataMessageHandler(Game as KazgarsRevengeGame);
-
         }
 
         protected override NetIncomingMessage ReadMessage()
@@ -73,9 +74,38 @@ namespace KazgarsRevenge
             Client.SendMessage(nom, NetDeliveryMethod.ReliableOrdered);
         }
 
+        #endregion
+        
         public override void HandleMessages()
         {
             base.HandleMessages();
         }
+
+        #region In Game Messaging
+        
+        /// <summary>
+        /// Sends a message to the server about this client's velocity
+        /// Messages are of the form:
+        ///     byte - MessageType
+        ///     byte - PlayerId
+        ///     int32 - xVel
+        ///     int32 - yVel
+        ///     int32 - zVel
+        /// </summary>
+        /// <param name="vel"></param>
+        public void SendVelocityMessage(Vector3 vel)
+        {
+            NetOutgoingMessage nom = Client.CreateMessage();
+            nom.Write((byte)MessageType.InGame_Kinetic);
+            nom.Write((byte)this.players.myId.id);
+
+            nom.Write((Int32)vel.X);
+            nom.Write((Int32)vel.Y);
+            nom.Write((Int32)vel.Z);
+
+            // If it gets there that's good, if not meh
+            Client.SendMessage(nom, NetDeliveryMethod.Unreliable);
+        }
+        #endregion
     }
 }

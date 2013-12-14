@@ -29,11 +29,6 @@ namespace KazgarsRevenge
             playerMap = new Dictionary<Identification, GameEntity>();
         }
 
-        public void Reset()
-        {
-            //(playerMap[myId].GetSharedData(typeof(Entity)) as Entity).Position = new Vector3(200, 0, -200);
-        }
-
         public void CreateMainPlayer(Vector3 position, Identification id)
         {
             GameEntity player = new GameEntity("localplayer", FactionType.Players);
@@ -63,12 +58,12 @@ namespace KazgarsRevenge
             HealthData playerHealth = new HealthData(100);
             player.AddSharedData(typeof(HealthData), playerHealth);
 
-
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
             HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
             PlayerController playerController = new PlayerController(mainGame, player);
+            NetMovementComponent nmc = new NetMovementComponent(mainGame, player);
 
             //adding the controllers to their respective managers 
             //(need to decide what kinds of components need their own managers; currently 
@@ -83,8 +78,10 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(playerHealthHandler);
 
             player.AddComponent(typeof(PlayerController), playerController);
-
             spriteManager.AddComponent(playerController);
+            
+            player.AddComponent(typeof(NetMovementComponent), nmc);
+            nmm.AddComponent(nmc);
 
             playerMap[id] = player;
             myId = id;
@@ -151,8 +148,13 @@ namespace KazgarsRevenge
 
         public void SetPlayerLocation(Vector3 pos, Identification id)
         {
-            Entity sharedData = playerMap[id].GetSharedData(typeof(Entity)) as Entity;
-            sharedData.Position = pos;
+            if (playerMap.ContainsKey(id))
+            {
+                Entity sharedData = playerMap[id].GetSharedData(typeof(Entity)) as Entity;
+                sharedData.Position = pos;
+                return;
+            }
+            CreateNetworkedPlayer(pos, id);
         }
     }
 }

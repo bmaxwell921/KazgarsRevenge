@@ -11,10 +11,11 @@ namespace KazgarsRevenge
     {
         // Dictionary of objects used to handle incoming messages
         protected IDictionary<NetIncomingMessageType, BaseHandler> msgHandlers;
-
+        private IList<Component> components;
         public BaseNetworkMessageManager(KazgarsRevengeGame game)
             : base(game)
         {
+            components = new List<Component>();
             msgHandlers = new Dictionary<NetIncomingMessageType, BaseHandler>();
             AddHandlers();
         }
@@ -24,7 +25,22 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             HandleMessages();
+            for (int i = components.Count - 1; i >= 0; --i)
+            {
+                components[i].Update(gameTime);
+                if (components[i].Remove)
+                {
+                    components[i].End();
+                    components.RemoveAt(i);
+                }
+            }
             base.Update(gameTime);
+        }
+
+        public void AddComponent(Component comp)
+        {
+            comp.Start();
+            components.Add(comp);
         }
 
         // Just lets the correct Handler handle messages. The Handlers can send messages too

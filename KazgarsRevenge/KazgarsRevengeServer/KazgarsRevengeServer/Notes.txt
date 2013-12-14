@@ -1,8 +1,12 @@
 ﻿================================================================================================
-NEXT TASK
+TASKS
 ================================================================================================
-	- Implement Clients connecting to servers
-		- currently we can just see a list of possible servers to connect to
+	- Get player movement implemented
+		- need something to send all our requests to the server
+		- need something to handle requests on the server side - done
+		- need something to handle networked player movements on the client side
+	- Get player attacks implemented
+		- Clients can't see other client's weapons cause I left off the attachables i think
 
 ================================================================================================
 TRANSITIONS

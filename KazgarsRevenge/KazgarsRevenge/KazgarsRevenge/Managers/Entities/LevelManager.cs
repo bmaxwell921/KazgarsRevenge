@@ -144,8 +144,6 @@ namespace KazgarsRevenge
 
 
             rooms.Add(room);
-
-            players.Reset();
         }
         #endregion
 

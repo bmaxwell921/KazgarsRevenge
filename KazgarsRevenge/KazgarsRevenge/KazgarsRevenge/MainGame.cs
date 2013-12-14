@@ -434,7 +434,8 @@ namespace KazgarsRevenge
                     break;
                 case GameState.Lobby:
                     spriteBatch.Begin();
-                    spriteBatch.DrawString(normalFont, "If you're host, press enter to begin!", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+                    string message = (nmm.isHost) ? "Press enter to begin!" : "Waiting for host to start";
+                    spriteBatch.DrawString(normalFont, message, vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
                     spriteBatch.End();
                     break;
                 case GameState.ReceivingMap:
