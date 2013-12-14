@@ -50,7 +50,7 @@ namespace KazgarsRevenge
         SpriteFont normalFont;
         SpriteFont titleFont;
 
-        enum mainMenu { PLAY, SETTINGS };
+        enum mainMenu { PLAY, SETTINGS, NETWORKED };
         mainMenu mainMenuState;
         int numMenuStates;
         KeyboardState keyboardState;
@@ -201,16 +201,17 @@ namespace KazgarsRevenge
                     {
                         if (mainMenuState == mainMenu.PLAY)
                         {
-                            // TODO uncomment this for networking fun!
-                            //Console.WriteLine("Transitioning to ConnectionScreen");
-                            //gameState = GameState.ConnectionScreen;
-
                             gameState = GameState.Loading;
                             loadingThread.Start();
                         }
                         else if (mainMenuState == mainMenu.SETTINGS)
                         {
                             gameState = GameState.Settings;
+                        }
+                        else if (mainMenuState == mainMenu.NETWORKED)
+                        {
+                            Console.WriteLine("Transitioning to ConnectionScreen");
+                            gameState = GameState.ConnectionScreen;
                         }
                     }
 
@@ -323,6 +324,7 @@ namespace KazgarsRevenge
             String startString = "Start";
             String settingsString = "Settings";
             String loadingString = "Loading";
+            String networkingString = "Networking";
 
             Vector2 titleSize = titleFont.MeasureString(titleString);
             Vector2 startSize = normalFont.MeasureString(startString);
@@ -333,6 +335,7 @@ namespace KazgarsRevenge
             Vector2 startGamePosition = new Vector2(screenWidth / 2, screenHeight * .47f);
             Vector2 loadGamePosition = new Vector2(screenWidth / 2, screenHeight * .47f);
             Vector2 settingsPosition = new Vector2(screenWidth / 2, screenHeight * .55f);
+            Vector2 networkingPosition = new Vector2(screenWidth / 2, screenHeight * .61f);
 
             Vector2 titleOrigin = new Vector2(titleSize.X / 2, titleSize.Y / 2);
             Vector2 startOrigin = new Vector2(startSize.X / 2, startSize.Y / 2);
@@ -343,6 +346,7 @@ namespace KazgarsRevenge
             Color startColor = Color.White;
             Color settingsColor = Color.White;
             Color loadingColor = Color.White;
+            Color networkingColor = Color.White;
 
             switch (gameState)
             {
@@ -404,12 +408,18 @@ namespace KazgarsRevenge
                     {
                         settingsColor = Color.Red;
                     }
+                    else if ((int)mainMenuState == 2)
+                    {
+                        networkingColor = Color.Red;
+                    }
+                    
 
                     spriteBatch.Begin();
                     spriteBatch.Draw(backgroundTexture, screenRectangle, Color.White);
                     spriteBatch.DrawString(titleFont, titleString, titlePosition, titleColor, 0, titleOrigin, guiScale, SpriteEffects.None, 0);
                     spriteBatch.DrawString(normalFont, startString, startGamePosition, startColor, 0, startOrigin, guiScale, SpriteEffects.None, 0);
                     spriteBatch.DrawString(normalFont, settingsString, settingsPosition, settingsColor, 0, settingsOrigin, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, networkingString, networkingPosition, networkingColor,0 , settingsOrigin, guiScale, SpriteEffects.None, 0);
                     spriteBatch.End();
                     break;
                 case GameState.Loading:
