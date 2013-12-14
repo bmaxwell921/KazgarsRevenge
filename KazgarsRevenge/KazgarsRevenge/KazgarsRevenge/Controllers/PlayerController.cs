@@ -55,6 +55,7 @@ namespace KazgarsRevenge
         SoundEffectLibrary soundEffects;
         AttackManager attacks;
         LootManager gearGenerator;
+        NetworkMessageManager nmm;
 
         //data
         AnimationPlayer animations;
@@ -333,6 +334,7 @@ namespace KazgarsRevenge
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
             gearGenerator = Game.Services.GetService(typeof(LootManager)) as LootManager;
+            nmm = Game.Services.GetService(typeof(NetworkMessageManager)) as NetworkMessageManager;
 
             //required content
             texWhitePixel = Game.Content.Load<Texture2D>("Textures\\whitePixel");
@@ -1058,6 +1060,10 @@ namespace KazgarsRevenge
         private void ChangeVelocity(Vector3 newVel)
         {
             physicalData.LinearVelocity = newVel;
+
+            // Here
+            nmm.SendVelocityMessage(newVel);
+            
         }
         private void ResetTargettedEntity()
         {

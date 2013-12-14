@@ -40,11 +40,22 @@ namespace KazgarsRevengeServer
             }
             Identification pId = new Identification(nim.ReadByte());
             Vector3 vel = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
+            if (count % 100 == 0)
+            {
+                Console.WriteLine("Received velocity of: " + vel);
+            }
             Vector3 curPos = playerManager.GetPlayerPosition(pId);
+            if (curPos.Y < 0)
+            {
+                curPos.Y = 0;
+            }
+
             playerManager.SetPlayerLocation(curPos + vel, pId);
 
             SendMessages(pId, curPos + vel);
         }
+
+        int count = 0;
 
         /*
          * Outgoing Message Format:
@@ -61,9 +72,9 @@ namespace KazgarsRevengeServer
             NetOutgoingMessage nom = nmm.server.CreateMessage();
             nom.Write((byte)MessageType.InGame_Kinetic);
             nom.Write(pId.id);
-            nom.Write(loc.X);
-            nom.Write(loc.Y);
-            nom.Write(loc.Z);
+            nom.Write((int)loc.X);
+            nom.Write((int)loc.Y);
+            nom.Write((int)loc.Z);
 
             foreach (NetConnection player in nmm.server.Connections)
             {

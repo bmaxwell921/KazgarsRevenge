@@ -324,12 +324,13 @@ namespace KazgarsRevenge
             String startString = "Start";
             String settingsString = "Settings";
             String loadingString = "Loading";
-            String networkingString = "Networking";
+            String networkingString = "Networking - beware, this doesn't work properly yet.";
 
             Vector2 titleSize = titleFont.MeasureString(titleString);
             Vector2 startSize = normalFont.MeasureString(startString);
             Vector2 settingsSize = normalFont.MeasureString(settingsString);
             Vector2 loadingSize = normalFont.MeasureString(loadingString);
+            Vector2 networkingSize = normalFont.MeasureString(networkingString);
 
             Vector2 titlePosition = new Vector2(screenWidth / 2, screenHeight * .35f);
             Vector2 startGamePosition = new Vector2(screenWidth / 2, screenHeight * .47f);
@@ -341,6 +342,7 @@ namespace KazgarsRevenge
             Vector2 startOrigin = new Vector2(startSize.X / 2, startSize.Y / 2);
             Vector2 settingsOrigin = new Vector2(settingsSize.X / 2, settingsSize.Y / 2);
             Vector2 loadingOrigin = new Vector2(loadingSize.X / 2, loadingSize.Y / 2);
+            Vector2 networkingOrigin = new Vector2(networkingSize.X / 2, networkingSize.Y / 2);
 
             Color titleColor = Color.White;
             Color startColor = Color.White;
@@ -419,7 +421,7 @@ namespace KazgarsRevenge
                     spriteBatch.DrawString(titleFont, titleString, titlePosition, titleColor, 0, titleOrigin, guiScale, SpriteEffects.None, 0);
                     spriteBatch.DrawString(normalFont, startString, startGamePosition, startColor, 0, startOrigin, guiScale, SpriteEffects.None, 0);
                     spriteBatch.DrawString(normalFont, settingsString, settingsPosition, settingsColor, 0, settingsOrigin, guiScale, SpriteEffects.None, 0);
-                    spriteBatch.DrawString(normalFont, networkingString, networkingPosition, networkingColor,0 , settingsOrigin, guiScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, networkingString, networkingPosition, networkingColor, 0, networkingOrigin, guiScale, SpriteEffects.None, 0);
                     spriteBatch.End();
                     break;
                 case GameState.Loading:

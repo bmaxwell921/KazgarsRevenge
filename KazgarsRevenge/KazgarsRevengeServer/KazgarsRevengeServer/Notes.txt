@@ -2,9 +2,13 @@
 TASKS
 ================================================================================================
 	- Get player movement implemented
-		- need something to send all our requests to the server
+		- need something to send all our requests to the server - done
 		- need something to handle requests on the server side - done
 		- need something to handle networked player movements on the client side
+			- The problem here is that I'm calculating the new position wrong...I need to implement more of
+			the server side code for this to work properly i think.
+				- Queue up movement requests, every certain amount of time go thru the requests and apply them
+				to the game work, then send out updates to everyone.
 	- Get player attacks implemented
 		- Clients can't see other client's weapons cause I left off the attachables i think
 

@@ -99,9 +99,9 @@ namespace KazgarsRevenge
             nom.Write((byte)MessageType.InGame_Kinetic);
             nom.Write((byte)this.players.myId.id);
 
-            nom.Write((Int32)vel.X);
-            nom.Write((Int32)vel.Y);
-            nom.Write((Int32)vel.Z);
+            nom.Write((int)vel.X);
+            nom.Write((int)vel.Y);
+            nom.Write((int)vel.Z);
 
             // If it gets there that's good, if not meh
             Client.SendMessage(nom, NetDeliveryMethod.Unreliable);
