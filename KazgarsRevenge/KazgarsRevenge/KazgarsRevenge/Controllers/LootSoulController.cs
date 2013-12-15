@@ -35,7 +35,7 @@ namespace KazgarsRevenge
         {
             get
             {
-                return soulState == LootSoulState.Dying ? new List<Item>() : loot;
+                return loot;
             }
         }
 
@@ -63,7 +63,7 @@ namespace KazgarsRevenge
         Random rand;
         double wanderCounter = 0;
         double wanderLength = 0;
-        float groundSpeed = 15.0f;
+        float groundSpeed = 25.0f;
         double deathCounter = 0;
         double deathLength;
         float newDir;
@@ -86,10 +86,22 @@ namespace KazgarsRevenge
                     if (wanderCounter >= wanderLength)
                     {
                         wanderCounter = 0;
-                        wanderLength = rand.Next(2000, 6000);
+                        wanderLength = rand.Next(1000, 4000);
+
+
+                        //looking for nearby souls to unite with
+                        GameEntity possOtherSoul = QueryNearEntity("loot", physicalData.Position, 2, soulSensorSize);
+                        if (possOtherSoul != null)
+                        {
+                            targetedSoul = possOtherSoul;
+                            targetData = targetedSoul.GetSharedData(typeof(Entity)) as Entity;
+                            soulState = LootSoulState.Following;
+                            return;
+                        }
+
 
                         //wander towards player
-                        GameEntity possPlayer = QueryNearest("localplayer", physicalData.Position, 10000);
+                        GameEntity possPlayer = QueryNearEntity("localplayer", physicalData.Position, 0, 10000);
                         if (possPlayer != null)
                         {
                             Vector3 dir = (possPlayer.GetSharedData(typeof(Entity)) as Entity).Position;
@@ -106,14 +118,6 @@ namespace KazgarsRevenge
 
                     CalcDir();
 
-                    //looking for nearby souls to unite with
-                    GameEntity possOtherSoul = QueryNearest("loot", physicalData.Position, soulSensorSize);
-                    if (possOtherSoul != null)
-                    {
-                        targetedSoul = possOtherSoul;
-                        targetData = targetedSoul.GetSharedData(typeof(Entity)) as Entity;
-                        soulState = LootSoulState.Following;
-                    }
                     break;
                 case LootSoulState.Following:
                     if (Loot.Count == 0)
@@ -155,7 +159,7 @@ namespace KazgarsRevenge
         {
             if (Math.Abs(curDir - newDir) > .06f)
             {
-                float add = .05f;
+                float add = .04f;
                 float diff = curDir - newDir;
                 if (diff > 0 && diff < MathHelper.Pi || diff < 0 && -diff > MathHelper.Pi)
                 {
@@ -181,6 +185,7 @@ namespace KazgarsRevenge
         {
             soulState = LootSoulState.BeingLooted;
             animations.StartClip("soul_wander");
+            physicalData.LinearVelocity = Vector3.Zero;
         }
 
         public void CloseLoot()
@@ -199,7 +204,7 @@ namespace KazgarsRevenge
                     //if we hit another soul, merge with it
                     if (hitEntity.Name == "loot")
                     {
-                        LootSoulController otherSoul = hitEntity.GetComponent(typeof(LootSoulController)) as LootSoulController;
+                        LootSoulController otherSoul = hitEntity.GetComponent(typeof(AIController)) as LootSoulController;
                         if (otherSoul != null)
                         {
                             if (otherSoul.soulState != LootSoulState.Dying)

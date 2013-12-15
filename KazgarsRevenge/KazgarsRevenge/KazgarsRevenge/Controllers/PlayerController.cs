@@ -10,6 +10,7 @@ using BEPUphysics.Entities;
 using BEPUphysics.MathExtensions;
 using BEPUphysics.BroadPhaseEntries;
 using BEPUphysics.CollisionRuleManagement;
+using BEPUphysics.ResourceManagement;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.Collidables;
 using SkinnedModelLib;
@@ -118,6 +119,8 @@ namespace KazgarsRevenge
 
         #region Variables for UI
         bool[] UISlotUsed = new bool[14];     //0-7 abilities, 8 primary, 9 secondary, 10-13 items
+        bool showInventory = false;
+        bool looting = false;
         #endregion
 
         #region stats
@@ -128,10 +131,12 @@ namespace KazgarsRevenge
         Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
         #endregion
 
-        #region equipped gear
+        #region inventory and gear
+        int maxInventorySlots = int.MaxValue;
+        LootSoulController lootingSoul = null;
         Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
         //inventory
-        Item[,] inventory = new Item[15, 15];
+        List<Item> inventory = new List<Item>();
         public void EquipGear(Equippable equipMe, GearSlot slot)
         {
             float xRot = 0;
@@ -146,7 +151,10 @@ namespace KazgarsRevenge
                         EquipGear(equipMe, GearSlot.Righthand);
                         return;
                     }
-                    UnequipGear(GearSlot.Lefthand);
+                    if (!UnequipGear(GearSlot.Lefthand))
+                    {
+                        return;
+                    }
                 }
 
                 if (slot == GearSlot.Righthand)
@@ -156,11 +164,13 @@ namespace KazgarsRevenge
             }
 
             //otherwise, carry on
-            UnequipGear(slot);
-            gear[slot] = equipMe;
-            RecalculateStats();
+            if (UnequipGear(slot))
+            {
+                gear[slot] = equipMe;
+                RecalculateStats();
 
-            attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot));
+                attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot));
+            }
         }
         /// <summary>
         /// tries to put equipped item into inventory. If there was no inventory space, returns false.
@@ -195,18 +205,12 @@ namespace KazgarsRevenge
             {
                 return true;
             }
-            for (int i = 0; i < inventory.GetLength(0); ++i)
+            if (inventory.Count >= maxInventorySlots)
             {
-                for (int j = 0; j < inventory.GetLength(1); ++j)
-                {
-                    if (inventory[i, j] == null)
-                    {
-                        inventory[i, j] = toAdd;
-                        return true;
-                    }
-                }
+                return false;
             }
-            return false;
+            inventory.Add(toAdd);
+            return true;
         }
         public void RecalculateStats()
         {
@@ -414,7 +418,6 @@ namespace KazgarsRevenge
             InitialSwing,
             FinishSwing,
             CastingSpell,
-            Looting,
         }
 
 
@@ -519,7 +522,7 @@ namespace KazgarsRevenge
                     }
                 }
                 bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
-                newTarget = CheckButtons() || newTarget;
+                newTarget = CheckGUIButtons() || newTarget;
                 
                 CheckMouseRay(newTarget);
 
@@ -537,13 +540,13 @@ namespace KazgarsRevenge
                 {
                     ResetTargettedEntity();
                 }
-                if (attState == AttackState.None)
+                if (attState == AttackState.None  && !looting)
                 {
                     CheckAbilities(move, (float)currentTime);
                 }
 
                 //targets ground location to start running to if holding mouse button
-                if (curMouse.LeftButton == ButtonState.Pressed && attState == AttackState.None)
+                if (curMouse.LeftButton == ButtonState.Pressed && attState == AttackState.None && !looting)
                 {
                     groundTargetLocation = mouseHoveredLocation;
                     if (prevMouse.LeftButton == ButtonState.Released && targetedPhysicalData == null)
@@ -561,7 +564,7 @@ namespace KazgarsRevenge
                     }
                 }
 
-                if (attState == AttackState.None)
+                if (attState == AttackState.None && !looting)
                 {
                     MoveCharacter(groundMove);
                 }
@@ -653,8 +656,40 @@ namespace KazgarsRevenge
         /// Checks which buttons are pressed down
         /// </summary>
         /// <returns></returns>
-        private bool CheckButtons()
+        private bool CheckGUIButtons()
         {
+            if (looting && lootingSoul != null && lootingSoul.Remove)
+            {
+                lootingSoul = null;
+                looting = false;
+            }
+
+            //loot nearby soul
+            if (attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space))
+            {
+                if (!looting)
+                {
+                    GameEntity possLoot = QueryNearEntity("loot", physicalData.Position, 50);
+                    if (possLoot!= null)
+                    {
+                        lootingSoul = (possLoot.GetComponent(typeof(AIController)) as LootSoulController);
+                        lootingSoul.OpenLoot();
+                        looting = true;
+                    }
+                }
+                else
+                {
+                    if (lootingSoul != null)
+                    {
+                        lootingSoul.CloseLoot();
+                    }
+                    lootingSoul = null;
+                    looting = false;
+                }
+            }
+
+            if (curKeys.IsKeyDown(Keys.I)) showInventory = !showInventory;
+
             //UI Abilities Used Frame
             if (curKeys.IsKeyDown(Keys.Q)) UISlotUsed[0] = true;
             if (curKeys.IsKeyDown(Keys.W)) UISlotUsed[1] = true;
@@ -1083,6 +1118,24 @@ namespace KazgarsRevenge
         {
             return false;
         }
+        protected GameEntity QueryNearEntity(string entityName, Vector3 position, float insideOfRadius)
+        {
+            Vector3 min = new Vector3(position.X - insideOfRadius, 0, position.Z - insideOfRadius);
+            Vector3 max = new Vector3(position.X + insideOfRadius, 20, position.Z + insideOfRadius);
+            BoundingBox b = new BoundingBox(min, max);
+
+            var entries = Resources.GetBroadPhaseEntryList();
+            (Game.Services.GetService(typeof(Space)) as Space).BroadPhase.QueryAccelerator.GetEntries(b, entries);
+            foreach (BroadPhaseEntry entry in entries)
+            {
+                GameEntity other = entry.Tag as GameEntity;
+                if (other != null && other.Name == entityName)
+                {
+                    return other;
+                }
+            }
+            return null;
+        }
         #endregion
 
         SpriteFont font;
@@ -1121,7 +1174,6 @@ namespace KazgarsRevenge
                 s.Draw(texWhitePixel, new Rectangle(RectEnemyHealthBar.X, RectEnemyHealthBar.Y, (int)(RectEnemyHealthBar.Width * mouseHoveredHealth.HealthPercent), RectEnemyHealthBar.Height), Color.Green);
             }
 
-            #region UI
             #region UIBase
             //Chat Pane
             s.Draw(texWhitePixel, new Rectangle(0, (int) ((maxY-444*average)), (int) (362*average), (int)(444*average)) , Color.Black*0.5f);
@@ -1277,7 +1329,28 @@ namespace KazgarsRevenge
             //Fifth Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(402 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
             #endregion
+
+            #region inventory
+            if (showInventory)
+            {
+                for (int i = 0; i < inventory.Count; ++i)
+                {
+                    s.DrawString(font, inventory[i].Name, new Vector2(maxX / 4, maxY / 4 + i * 20), Color.White);
+                }
+            }
+
+            if (looting)
+            {
+                s.Draw(texWhitePixel, new Rectangle((int)(150 * average), (int)(150 * average), 150, 300), Color.Black * .5f);
+
+                List<Item> loot = lootingSoul.Loot;
+                for (int i = 0; i < loot.Count && i < 4; ++i)
+                {
+                    s.Draw(loot[i].Icon, new Rectangle((int)(165 * average), (int)(165 * average + i * 65), 50, 50), Color.White);
+                }
+            }
             #endregion
+            
             #endregion
 
         }

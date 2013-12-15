@@ -66,10 +66,10 @@ namespace KazgarsRevenge
         /// <summary>
         /// grabs the entity of an entityName within radius of position (not necessarily the nearest, just the first one it sees)
         /// </summary>
-        protected GameEntity QueryNearest(string entityName, Vector3 position, float radius)
+        protected GameEntity QueryNearEntity(string entityName, Vector3 position, float outsideOfRadius, float insideOfRadius)
         {
-            Vector3 min = new Vector3(position.X - radius, 0, position.Z - radius);
-            Vector3 max = new Vector3(position.X + radius, 20, position.Z + radius);
+            Vector3 min = new Vector3(position.X - insideOfRadius, 0, position.Z - insideOfRadius);
+            Vector3 max = new Vector3(position.X + insideOfRadius, 20, position.Z + insideOfRadius);
             BoundingBox b = new BoundingBox(min, max);
 
             var entries=Resources.GetBroadPhaseEntryList();
@@ -79,10 +79,17 @@ namespace KazgarsRevenge
                 GameEntity other = entry.Tag as GameEntity;
                 if (other != null && other.Name == entityName)
                 {
-                    BoundingBox entryBox = entry.BoundingBox;
-                    Vector3 entrymid = (entryBox.Max + entryBox.Min) / 2;
-                    Vector3 selfmid = (b.Max + b.Min) / 2;
-                    if (Math.Abs(entrymid.X - selfmid.X) > .1f && Math.Abs(entrymid.Z - selfmid.Z) > .1f)
+                    if (outsideOfRadius != 0)
+                    {
+                        BoundingBox entryBox = entry.BoundingBox;
+                        Vector3 entrymid = (entryBox.Max + entryBox.Min) / 2;
+                        Vector3 selfmid = (b.Max + b.Min) / 2;
+                        if (Math.Abs(entrymid.X - selfmid.X) > outsideOfRadius && Math.Abs(entrymid.Z - selfmid.Z) > outsideOfRadius)
+                        {
+                            return other;
+                        }
+                    }
+                    else
                     {
                         return other;
                     }

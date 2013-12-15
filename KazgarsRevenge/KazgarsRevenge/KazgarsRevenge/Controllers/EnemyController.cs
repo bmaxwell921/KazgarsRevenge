@@ -107,7 +107,7 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case EnemyState.Wandering:
-                    GameEntity possTargetPlayer = QueryNearest("localplayer", physicalData.Position, 100);
+                    GameEntity possTargetPlayer = QueryNearEntity("localplayer", physicalData.Position, 0, 100);
                     if (possTargetPlayer != null)
                     {
                         targetHealth = possTargetPlayer.GetSharedData(typeof(HealthData)) as HealthData;

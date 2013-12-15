@@ -68,7 +68,7 @@ namespace KazgarsRevenge
             lootSoul.AddComponent(typeof(UnanimatedModelComponent), lootGraphics);
             modelManager.AddComponent(lootGraphics);
 
-            lootSoul.AddComponent(typeof(LootSoulController), lootController);
+            lootSoul.AddComponent(typeof(AIController), lootController);
             genComponentManager.AddComponent(lootController);
 
             for (int i = 0; i < 20; ++i)
@@ -86,10 +86,10 @@ namespace KazgarsRevenge
             switch (gearName)
             {
                 case "sword":
-                    texName += "whitePixel";
+                    texName += "UI\\Abilities\\HS";
                     break;
                 default:
-                    texName += "whitePixel";
+                    texName += "UI\\Abilities\\HS";
                     break;
             }
 
