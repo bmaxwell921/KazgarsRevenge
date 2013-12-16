@@ -658,6 +658,9 @@ namespace KazgarsRevenge
         /// <returns></returns>
         private bool CheckGUIButtons()
         {
+            //switch weapon hands (for demo)
+            if (curKeys.IsKeyDown(Keys.Tab) && prevKeys.IsKeyUp(Keys.Tab) && !(gear[GearSlot.Righthand] as Weapon).TwoHanded) SwapWeapons();
+
             if (looting && lootingSoul != null && lootingSoul.Remove)
             {
                 lootingSoul = null;
@@ -688,7 +691,7 @@ namespace KazgarsRevenge
                 }
             }
 
-            if (curKeys.IsKeyDown(Keys.I)) showInventory = !showInventory;
+            if (curKeys.IsKeyDown(Keys.I) && prevKeys.IsKeyUp(Keys.I)) showInventory = !showInventory;
 
             //UI Abilities Used Frame
             if (curKeys.IsKeyDown(Keys.Q)) UISlotUsed[0] = true;
@@ -723,15 +726,6 @@ namespace KazgarsRevenge
             dir.Z = move.Z;
             float distance = 0;
 
-            //switch weapon hands (for demo)
-            if (curKeys.IsKeyDown(Keys.Tab) && prevKeys.IsKeyUp(Keys.Tab))
-            {
-                Equippable r = gear[GearSlot.Righthand];
-                Equippable l = gear[GearSlot.Lefthand];
-
-                EquipGear(r, GearSlot.Lefthand);
-                EquipGear(l, GearSlot.Righthand);
-            }
 
             if (targetedPhysicalData != null)
             {
@@ -1064,6 +1058,22 @@ namespace KazgarsRevenge
         }
 
         #region helpers
+        private void SwapWeapons()
+        {
+            Equippable r = gear[GearSlot.Righthand];
+            Equippable l = gear[GearSlot.Lefthand];
+            AttachableModel ar = attached[GearSlot.Righthand.ToString()];
+            AttachableModel al = attached[GearSlot.Lefthand.ToString()];
+
+            attached.Remove(GearSlot.Righthand.ToString());
+            attached.Remove(GearSlot.Lefthand.ToString());
+
+            attached.Add(GearSlot.Righthand.ToString(), al);
+            attached.Add(GearSlot.Lefthand.ToString(), ar);
+
+            gear[GearSlot.Righthand] = l;
+            gear[GearSlot.Lefthand] = r;
+        }
         public string GearSlotToBoneName(GearSlot s)
         {
             switch (s)
@@ -1136,6 +1146,7 @@ namespace KazgarsRevenge
             }
             return null;
         }
+
         #endregion
 
         SpriteFont font;
@@ -1333,9 +1344,10 @@ namespace KazgarsRevenge
             #region inventory
             if (showInventory)
             {
+                s.Draw(texWhitePixel, new Rectangle(maxX / 2, 0, maxX / 2, maxY), Color.Black * .5f);
                 for (int i = 0; i < inventory.Count; ++i)
                 {
-                    s.DrawString(font, inventory[i].Name, new Vector2(maxX / 4, maxY / 4 + i * 20), Color.White);
+                    s.DrawString(font, inventory[i].Name, new Vector2(maxX / 2 + 20, i * 40 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 }
             }
 
