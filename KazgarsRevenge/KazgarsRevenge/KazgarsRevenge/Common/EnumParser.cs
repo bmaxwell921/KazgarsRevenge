@@ -66,6 +66,10 @@ namespace KazgarsRevenge
             {
                 return MessageType.Connected;
             }
+            if (b == (byte)MessageType.GameSnapshot)
+            {
+                return MessageType.GameSnapshot;
+            }
             throw new ArgumentException("Unknown MessageType");
         }
     }
