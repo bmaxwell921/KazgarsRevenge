@@ -997,14 +997,28 @@ namespace KazgarsRevenge
         {
             Equippable r = gear[GearSlot.Righthand];
             Equippable l = gear[GearSlot.Lefthand];
-            AttachableModel ar = attached[GearSlot.Righthand.ToString()];
-            AttachableModel al = attached[GearSlot.Lefthand.ToString()];
 
-            attached.Remove(GearSlot.Righthand.ToString());
-            attached.Remove(GearSlot.Lefthand.ToString());
+            AttachableModel ar = null;
+            AttachableModel al = null;
+            if (r != null)
+            {
+                ar = attached[GearSlot.Righthand.ToString()];
+                attached.Remove(GearSlot.Righthand.ToString());
+            }
+            if (l != null)
+            {
+                al = attached[GearSlot.Lefthand.ToString()];
+                attached.Remove(GearSlot.Lefthand.ToString());
+            }
 
-            attached.Add(GearSlot.Righthand.ToString(), al);
-            attached.Add(GearSlot.Lefthand.ToString(), ar);
+            if (ar != null)
+            {
+                attached.Add(GearSlot.Lefthand.ToString(), ar);
+            }
+            if (al != null)
+            {
+                attached.Add(GearSlot.Righthand.ToString(), al);
+            }
 
             gear[GearSlot.Righthand] = l;
             gear[GearSlot.Lefthand] = r;
@@ -1014,7 +1028,7 @@ namespace KazgarsRevenge
             switch (s)
             {
                 case GearSlot.Lefthand:
-                    return "Hand_L";
+                    return "Bone_001_L_005";
                 case GearSlot.Righthand:
                     return "Hand_R";
                 default:
@@ -1095,6 +1109,8 @@ namespace KazgarsRevenge
         int maxX;
         int maxY;
         float average = 1;
+        Dictionary<string, Rectangle> guiRectsBack;
+        Dictionary<string, Rectangle> guiTexRects;
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
@@ -1106,6 +1122,21 @@ namespace KazgarsRevenge
             screenRatio = new Vector2(xRatio, yRatio);
             RectEnemyHealthBar = new Rectangle((int)(mid.X - 75 * average), (int)(53 * average), (int)(200 * average), (int)(40 * average));
             vecName = new Vector2(RectEnemyHealthBar.X, 5);
+
+            guiRectsBack = new Dictionary<string, Rectangle>();
+            guiRectsBack.Add("abilities", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 158 * average)), (int)(622 * average), (int)(158 * average)));
+            guiRectsBack.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
+            guiRectsBack.Add("damage", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
+            guiRectsBack.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
+
+            guiTexRects = new Dictionary<string, Rectangle>();
+            guiTexRects.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
+            guiTexRects.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
+            guiTexRects.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
+            guiTexRects.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
+            guiTexRects.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+            guiTexRects.Add("item4", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+
         }
 
         public override void Draw(SpriteBatch s)
@@ -1126,7 +1157,7 @@ namespace KazgarsRevenge
 
             #region Ability Bar
             //Ability Bar
-            s.Draw(texWhitePixel, new Rectangle((int)((maxX/2 -311 * average)), (int)((maxY - 158 * average)), (int)(622 * average), (int)(158 * average)), Color.Red * 0.5f);
+            s.Draw(texWhitePixel, guiRectsBack["abilities"], Color.Red * 0.5f);
             for (int i = 0; i < 4; ++i)
             {
                 s.Draw(boundAbilities[i].Value.icon, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
@@ -1138,27 +1169,27 @@ namespace KazgarsRevenge
             {
                 case AttackType.None:
                 case AttackType.Melle:
-                    s.Draw(texMelee, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                    s.Draw(texMelee, guiTexRects["primary"], Color.White);
                     break;
                 case AttackType.Magic:
-                    s.Draw(texMagic, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                    s.Draw(texMagic, guiTexRects["primary"], Color.White);
                     break;
                 case AttackType.Ranged:
-                    s.Draw(texRange, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                    s.Draw(texRange, guiTexRects["primary"], Color.White);
                     break;
             }
                 
             //RM
-            s.Draw(texPlaceHolder, new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(texPlaceHolder, guiTexRects["rightmouse"], Color.White);
 
             //Item 1
-            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(healthPot, guiTexRects["item1"], Color.White);
             //Item 2
-            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(healthPot, guiTexRects["item2"], Color.White);
             //Item 3
-            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(healthPot, guiTexRects["item3"], Color.White);
             //Item 4
-            s.Draw(healthPot, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+            s.Draw(healthPot, guiTexRects["item4"], Color.White);
 
             #endregion
             
@@ -1222,11 +1253,11 @@ namespace KazgarsRevenge
             #endregion
 
             //XP Area
-            s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)), Color.Brown * 0.5f);
+            s.Draw(texWhitePixel, guiRectsBack["xp"], Color.Brown * 0.5f);
             //Damage Tracker
-            s.Draw(texWhitePixel, new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)), Color.Green * 0.5f);
+            s.Draw(texWhitePixel, guiRectsBack["damage"], Color.Green * 0.5f);
             //Mini Map (square for now)
-            s.Draw(texWhitePixel, new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)), Color.Orange * 0.5f);
+            s.Draw(texWhitePixel, guiRectsBack["map"], Color.Orange * 0.5f);
             
             #region main player frame
             //Main Player Frame Pic

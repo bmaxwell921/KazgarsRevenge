@@ -149,6 +149,16 @@ namespace KazgarsRevenge
                 explosions.AddParticle(position, Vector3.Zero);
             }
         }
+
+        public void SpawnBloodSpurt(Vector3 position, Vector3 forward)
+        {
+            ParticleSystem blood = particles.GetSystem(typeof(BloodParticleSystem));
+            forward *= 25;
+            for (int i = 0; i < 10; ++i)
+            {
+                blood.AddParticle(position, forward);
+            }
+        }
         #endregion
     }
 }

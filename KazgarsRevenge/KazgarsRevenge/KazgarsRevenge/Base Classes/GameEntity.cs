@@ -55,6 +55,7 @@ namespace KazgarsRevenge
             if (components.TryGetValue(typeof(AIController), out possAI))
             {
                 (possAI as AIController).PlayHit();
+
             }
             
         }

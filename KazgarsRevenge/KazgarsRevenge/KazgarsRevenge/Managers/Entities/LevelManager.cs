@@ -50,7 +50,7 @@ namespace KazgarsRevenge
 
         public void DemoLevel()
         {
-            CreateRoom("Models\\Levels\\tempChunk", new Vector3(200, 0, -200), MathHelper.PiOver2);
+            CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2);
             //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
         }
 

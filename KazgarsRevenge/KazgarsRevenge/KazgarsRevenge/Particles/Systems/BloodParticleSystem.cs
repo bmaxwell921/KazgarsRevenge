@@ -19,40 +19,34 @@ namespace KazgarsRevenge
     /// <summary>
     /// Custom particle system for creating a giant plume of long lasting smoke.
     /// </summary>
-    class SmokePlumeParticleSystem : ParticleSystem
+    class BloodParticleSystem : ParticleSystem
     {
-        public SmokePlumeParticleSystem(Game game, ContentManager content)
+        public BloodParticleSystem(Game game, ContentManager content)
             : base(game, content)
         { }
 
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "smoke";
+            settings.TextureName = "blood";
 
             settings.MaxParticles = 600;
 
-            settings.Duration = TimeSpan.FromSeconds(10);
+            settings.Duration = TimeSpan.FromSeconds(2);
 
-            settings.MinHorizontalVelocity = 0;
+            settings.MinHorizontalVelocity = -15;
             settings.MaxHorizontalVelocity = 15;
 
-            settings.MinVerticalVelocity = 10;
-            settings.MaxVerticalVelocity = 20;
+            settings.MinVerticalVelocity = 0;
+            settings.MaxVerticalVelocity = 60;
 
-            // Create a wind effect by tilting the gravity vector sideways.
-            settings.Gravity = new Vector3(-20, -5, 0);
+            settings.Gravity = new Vector3(0, -140, 0);
 
-            settings.EndVelocity = 0.75f;
+            settings.MinStartSize = 10;
+            settings.MaxStartSize = 10;
 
-            settings.MinRotateSpeed = -1;
-            settings.MaxRotateSpeed = 1;
-
-            settings.MinStartSize = 4;
-            settings.MaxStartSize = 7;
-
-            settings.MinEndSize = 35;
-            settings.MaxEndSize = 140;
+            settings.MinEndSize = 20;
+            settings.MaxEndSize = 20;
         }
     }
 }

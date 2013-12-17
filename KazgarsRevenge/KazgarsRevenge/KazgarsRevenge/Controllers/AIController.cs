@@ -16,7 +16,6 @@ namespace KazgarsRevenge
         public AIController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
-
         }
 
         public virtual void PlayHit()

@@ -71,6 +71,7 @@ namespace KazgarsRevenge
             if (state != EnemyState.Dying)
             {
                 animations.MixClipOnce(settings.hitAniName, armBoneIndices);
+                attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
             }
         }
 
