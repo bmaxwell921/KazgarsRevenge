@@ -9,6 +9,9 @@ namespace KazgarsRevenge
 {
     class Ability
     {
+        public string AniName { get; private set; }
+
+
         int abilityLevel;
         int levelLearned;
         public Texture2D icon { get; private set; }
@@ -19,14 +22,15 @@ namespace KazgarsRevenge
         String tooltip = "N/A";
         AttackType type;
 
-        public Ability(int abilityLevelIn, int levelLearnedIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn)
-        {
+        public Ability(int abilityLevelIn, int levelLearnedIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn, string aniName)
+        {   
             abilityLevel = abilityLevelIn;
             levelLearned = levelLearnedIn;
             icon = iconIn;
             cooldownSeconds = cooldownSecondsIn;
             type = typeIn;
             timeRemaining = cooldownSeconds;
+            this.AniName = aniName;
         }
 
         public void setToolTip(String toolTipString)
