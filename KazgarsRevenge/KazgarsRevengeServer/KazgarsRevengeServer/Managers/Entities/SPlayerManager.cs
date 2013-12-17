@@ -82,6 +82,24 @@ namespace KazgarsRevengeServer
             players[id] = player;
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            MessageQueue mq = game.Services.GetService(typeof(MessageQueue)) as MessageQueue;
+            IList<BaseMessage> msgs = mq.GetAllOf(typeof(VelocityMessage));
+
+            foreach (BaseMessage bm in msgs)
+            {
+                VelocityMessage vm = (VelocityMessage) bm;
+                SetPlayerVel(vm.id, vm.vel);
+            }
+            base.Update(gameTime);
+        }
+
+        private void SetPlayerVel(Identification id, Vector3 vel)
+        {
+            (players[id].GetSharedData(typeof(Entity)) as Entity).LinearVelocity = vel;
+        }
+
         public Vector3 GetPlayerPosition(Identification id)
         {
             return (players[id].GetSharedData(typeof(Entity)) as Entity).Position;

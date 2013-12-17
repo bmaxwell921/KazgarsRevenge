@@ -22,6 +22,14 @@ namespace KazgarsRevenge
             protected set;
         }
 
+        public int numPlayers
+        {
+            get
+            {
+                return playerMap.Keys.Count;
+            }
+        }
+
         IDictionary<Identification, GameEntity> playerMap;
         public PlayerManager(KazgarsRevengeGame game)
             : base(game)

@@ -6,11 +6,11 @@ using KazgarsRevenge;
 
 namespace KazgarsRevengeServer
 {
-    public class BasePacket
+    public class BaseMessage
     {
-        protected MessageType type;
+        public MessageType type;
 
-        public BasePacket(MessageType type)
+        public BaseMessage(MessageType type)
         {
             this.type = type;
         }

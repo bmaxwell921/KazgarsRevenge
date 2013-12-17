@@ -26,7 +26,6 @@ namespace KazgarsRevenge
         #endregion
 
         public GameState gameState;
-        public bool isClient { get; protected set; }
 
         public CollisionGroup GoodProjectileCollisionGroup;
         public CollisionGroup PlayerCollisionGroup;

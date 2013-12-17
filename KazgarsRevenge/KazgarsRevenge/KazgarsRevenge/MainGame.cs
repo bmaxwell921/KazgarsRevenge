@@ -78,8 +78,6 @@ namespace KazgarsRevenge
 
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
-            isClient = true;
         }
 
         protected override void Initialize()

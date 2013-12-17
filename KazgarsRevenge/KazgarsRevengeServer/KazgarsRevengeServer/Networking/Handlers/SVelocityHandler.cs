@@ -8,11 +8,11 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevengeServer
 {
-    class SPositionHandler : BaseHandler
+    class SVelocityHandler : BaseHandler
     {
         SPlayerManager playerManager;
         SNetworkingMessageManager nmm;
-        public SPositionHandler(KazgarsRevengeGame game)
+        public SVelocityHandler(KazgarsRevengeGame game)
             : base(game)
         {
         }
@@ -38,21 +38,26 @@ namespace KazgarsRevengeServer
             {
                 playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
             }
+
+            // Just queue up the message to be applied later
             Identification pId = new Identification(nim.ReadByte());
             Vector3 vel = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
-            if (count % 100 == 0)
-            {
-                Console.WriteLine("Received velocity of: " + vel);
-            }
-            Vector3 curPos = playerManager.GetPlayerPosition(pId);
-            if (curPos.Y < 0)
-            {
-                curPos.Y = 0;
-            }
+            MessageQueue mq = game.Services.GetService(typeof(MessageQueue)) as MessageQueue;
+            mq.AddMessage(new VelocityMessage(MessageType.InGame_Kinetic, pId, vel));
 
-            playerManager.SetPlayerLocation(curPos + vel, pId);
+            //if (count % 100 == 0)
+            //{
+            //    Console.WriteLine("Received velocity of: " + vel);
+            //}
+            //Vector3 curPos = playerManager.GetPlayerPosition(pId);
+            //if (curPos.Y < 0)
+            //{
+            //    curPos.Y = 0;
+            //}
 
-            SendMessages(pId, curPos + vel);
+            //playerManager.SetPlayerLocation(curPos + vel, pId);
+
+            //SendMessages(pId, curPos + vel);
         }
 
         int count = 0;

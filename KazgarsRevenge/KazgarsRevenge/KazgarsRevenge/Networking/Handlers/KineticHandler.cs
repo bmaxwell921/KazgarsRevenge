@@ -32,19 +32,20 @@ namespace KazgarsRevenge
         /// <param name="nim"></param>
         public override void Handle(NetIncomingMessage nim)
         {
-            if (pm == null)
-            {
-                pm = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
-            }
-            Identification id = new Identification(nim.ReadByte());
-            Vector3 newLoc = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
+            Console.WriteLine("These messages shouldn't exist!");
+            //if (pm == null)
+            //{
+            //    pm = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
+            //}
+            //Identification id = new Identification(nim.ReadByte());
+            //Vector3 newLoc = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
 
-            if (count % 100 == 0)
-            {
-                //Console.WriteLine("Setting: " + id.id + " to position: " + newLoc);
-            }
+            //if (count % 100 == 0)
+            //{
+            //    //Console.WriteLine("Setting: " + id.id + " to position: " + newLoc);
+            //}
 
-            pm.SetPlayerLocation(newLoc, id);
+            //pm.SetPlayerLocation(newLoc, id);
         }
     }
 }

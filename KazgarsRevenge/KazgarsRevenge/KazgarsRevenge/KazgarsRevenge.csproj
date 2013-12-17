@@ -92,6 +92,7 @@
     <Compile Include="Networking\Handlers\GameStateChangeHandler.cs" />
     <Compile Include="Networking\Handlers\KineticHandler.cs" />
     <Compile Include="Networking\Handlers\ReceivingMapHandler.cs" />
+    <Compile Include="Networking\Handlers\SnapshotHandler.cs" />
     <Compile Include="Non-Component\Ability.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\EnumParser.cs" />

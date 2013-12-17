@@ -94,9 +94,10 @@
     <Compile Include="Networking\Handlers\SDataMessageHandler.cs" />
     <Compile Include="Networking\Handlers\SDiscoveryRequestHandler.cs" />
     <Compile Include="Networking\Handlers\SGameStateChangeHandler.cs" />
-    <Compile Include="Networking\Handlers\SPositionHandler.cs" />
-    <Compile Include="Networking\Messages\BasePacket.cs" />
-    <Compile Include="Networking\Parsers\MessageParser.cs" />
+    <Compile Include="Networking\Handlers\SVelocityHandler.cs" />
+    <Compile Include="Networking\MessageQueue.cs" />
+    <Compile Include="Networking\Messages\BaseMessage.cs" />
+    <Compile Include="Networking\Messages\VelocityMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Server.cs" />

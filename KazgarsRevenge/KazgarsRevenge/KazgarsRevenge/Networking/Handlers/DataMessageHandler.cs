@@ -17,6 +17,7 @@ namespace KazgarsRevenge
             handlers[MessageType.MapData] = new ReceivingMapHandler(game);
             handlers[MessageType.GameStateChange] = new GameStateChangeHandler(game);
             handlers[MessageType.InGame_Kinetic] = new KineticHandler(game);
+            handlers[MessageType.GameSnapshot] = new SnapshotHandler(game);
         }
     }
 }

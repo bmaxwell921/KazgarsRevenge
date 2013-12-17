@@ -22,26 +22,32 @@ namespace KazgarsRevengeServer
     public class Server : KazgarsRevengeGame
     {
         GraphicsDeviceManager graphics;
-        SNetworkingMessageManager msgManager;
+        SNetworkingMessageManager nmm;
         
         protected SLevelManager levels;
         protected SEnemyManager enemies;
         protected SAttackManager attacks;
         protected SPlayerManager players;
+
+        protected MessageQueue msgQ;
+
+        // Milliseconds between each time step
+        private readonly int TIME_STEP = 100;
+        private int timeToUpdate;
      
         public Server() : base()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            isClient = false;
+            timeToUpdate = TIME_STEP;
         }
 
         protected override void Initialize()
         {
             base.Initialize();
-            msgManager = new SNetworkingMessageManager(this);
-            Components.Add(msgManager);
-            Services.AddService(typeof(SNetworkingMessageManager), msgManager);
+            nmm = new SNetworkingMessageManager(this);
+            Components.Add(nmm);
+            Services.AddService(typeof(SNetworkingMessageManager), nmm);
 
             levels = new SLevelManager(this);
             Components.Add(levels);
@@ -58,6 +64,9 @@ namespace KazgarsRevengeServer
             players = new SPlayerManager(this);
             Components.Add(players);
             Services.AddService(typeof(SPlayerManager), players);
+
+            msgQ = new MessageQueue();
+            Services.AddService(typeof(MessageQueue), msgQ);
         }
 
         /// <summary>
@@ -67,12 +76,28 @@ namespace KazgarsRevengeServer
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-        }
+            /*
+             * For in game updates
+             */ 
+            if (gameState == GameState.Playing)
+            {
+                // Only update the game every once in a while to save bandwidth
+                if (timeToUpdate <= 0)
+                {
+                    timeToUpdate = TIME_STEP;
+                    // Base update should just have 
+                    base.Update(gameTime);
+                    physics.Update();
+                    nmm.SendGameSnapshot();
+                    return;
+                }
+                timeToUpdate -= gameTime.ElapsedGameTime.Milliseconds;
 
-        protected override void Draw(GameTime gameTime)
-        {
-            
+                // Always receive messages
+                nmm.Update(gameTime);
+                return;
+            }
+            base.Update(gameTime);
         }
     }
 }

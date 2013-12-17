@@ -23,7 +23,7 @@ namespace KazgarsRevengeServer
         protected override void AddHandlers()
         {
             handlers[MessageType.GameStateChange] = new SGameStateChangeHandler(game);
-            handlers[MessageType.InGame_Kinetic] = new SPositionHandler(game);
+            handlers[MessageType.InGame_Kinetic] = new SVelocityHandler(game);
         }
     }
 }

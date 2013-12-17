@@ -119,5 +119,37 @@ namespace KazgarsRevengeServer
                 server.SendMessage(nom, player, NetDeliveryMethod.ReliableOrdered);
             }
         }
+
+        /*
+         * Game Snapshot looks like:
+         *      MessageType - GameSnapshot
+         *      byte - playerId1
+         *      int - player1.x
+         *      int - player1.y
+         *      int - player1.z
+         *      
+         * etc
+         */ 
+        public void SendGameSnapshot()
+        {
+            SPlayerManager pm = Game.Services.GetService(typeof(SPlayerManager)) as SPlayerManager;
+            // TODO send everything - right now, just all the player locations
+            NetOutgoingMessage nom = server.CreateMessage();
+            nom.Write((byte)MessageType.GameSnapshot);
+
+            foreach (Identification id in pm.players.Keys)
+            {
+                Vector3 loc = pm.GetPlayerPosition(id);
+                nom.Write(id.id);
+                nom.Write((int)loc.X);
+                nom.Write((int)loc.Y);
+                nom.Write((int)loc.Z);
+            }
+
+            foreach (NetConnection player in server.Connections)
+            {
+                server.SendMessage(nom, player, NetDeliveryMethod.ReliableOrdered);
+            }
+        }
     }
 }
