@@ -25,7 +25,7 @@ Started GUI
 
 prototype 3
 ================
-particle system
+particles
 enemy AI
 level generation
 Looting
@@ -38,8 +38,6 @@ Networking (location and running animations for multiple players)
 
 art needed
 ===========
-flip the bow shooting animation (needs to be fired while holding bow in right hand, since our basic attack is always based on the right hand)
 loot soul blob (animations: creation, dying, being looted)
-blood particle texture
 GUI textures - behind health, in front of / encasing health, 
 Kazgar casting animation
