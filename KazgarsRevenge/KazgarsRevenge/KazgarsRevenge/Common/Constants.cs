@@ -31,6 +31,7 @@ namespace KazgarsRevenge
         // Server -> Client Only
         MapData,
         Connected, // Used for clients to parse out their Id and host 
+        GameSnapshot,
     }
 
     public class Constants
