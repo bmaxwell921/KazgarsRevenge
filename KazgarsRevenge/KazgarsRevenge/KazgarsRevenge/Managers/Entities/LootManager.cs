@@ -71,6 +71,11 @@ namespace KazgarsRevenge
             lootSoul.AddComponent(typeof(AIController), lootController);
             genComponentManager.AddComponent(lootController);
 
+            SpawnSoulPoof(position);
+        }
+
+        public void SpawnSoulPoof(Vector3 position)
+        {
             for (int i = 0; i < 20; ++i)
             {
                 particles.GetSystem(typeof(SoulCreationParticleSystem)).AddParticle(position, Vector3.Zero);

@@ -132,6 +132,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region inventory and gear
+        const int NUM_LOOT_SHOWN = 4;
         int maxInventorySlots = int.MaxValue;
         LootSoulController lootingSoul = null;
         Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
@@ -528,6 +529,7 @@ namespace KazgarsRevenge
                 CheckMouseRay(newTarget, guiClick);
 
                 //appropriate action for gui element collided with
+                //happens on left mouse released
                 if (collides != null && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
                     switch (collides)
@@ -536,10 +538,13 @@ namespace KazgarsRevenge
 
                             break;
                         case "loot":
-                            Rectangle temprect = guiTexRects["loot1"];
-                            if (curMouse.X >= temprect.X && curMouse.X <= temprect.X + temprect.Width && curMouse.Y >= temprect.Y && curMouse.Y <= temprect.Y + temprect.Height)
+                            for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
                             {
-                                //add to inventory
+                                if (RectContains(guiTexRects["loot" + i], curMouse.X, curMouse.Y))
+                                {
+                                    //clicked on item, add to inventory
+                                    AddToInventory(lootingSoul.GetLoot(i));
+                                }
                             }
                             break;
 
@@ -1120,10 +1125,9 @@ namespace KazgarsRevenge
 
             foreach(KeyValuePair<string, Rectangle> k in guiRectsBack)
             {
-                Rectangle tempRect = k.Value;
-                if (curMouse.X >= tempRect.X && curMouse.X <= tempRect.X + tempRect.Width
-                    && curMouse.Y >= tempRect.Y && curMouse.Y <= tempRect.Y + tempRect.Height)
+                if (RectContains(k.Value, curMouse.X, curMouse.Y))
                 {
+                    //only check against inventory or loot if they are shown
                     if (k.Key == "inventory" && !showInventory || k.Key == "loot" && !looting)
                     {
                         continue;
@@ -1135,7 +1139,7 @@ namespace KazgarsRevenge
             }
             return null;
         }
-        protected GameEntity QueryNearEntity(string entityName, Vector3 position, float insideOfRadius)
+        private GameEntity QueryNearEntity(string entityName, Vector3 position, float insideOfRadius)
         {
             Vector3 min = new Vector3(position.X - insideOfRadius, 0, position.Z - insideOfRadius);
             Vector3 max = new Vector3(position.X + insideOfRadius, 20, position.Z + insideOfRadius);
@@ -1152,6 +1156,15 @@ namespace KazgarsRevenge
                 }
             }
             return null;
+        }
+        private bool RectContains(Rectangle rect, int x, int y)
+        {
+            if (x >= rect.X && x <= rect.X + rect.Width 
+                && y >= rect.Y && y <= rect.Y + rect.Height)
+            {
+                return true;
+            }
+            return false;
         }
 
         #endregion
@@ -1197,7 +1210,7 @@ namespace KazgarsRevenge
             guiTexRects.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
             guiTexRects.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
             guiTexRects.Add("item4", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
             {
                 guiTexRects.Add("loot" + i, new Rectangle((int)(165 * average), (int)(165 * average + i * 65), 50, 50));
             }
@@ -1376,7 +1389,7 @@ namespace KazgarsRevenge
                 s.Draw(texWhitePixel, guiRectsBack["loot"], Color.Black * .5f);
 
                 List<Item> loot = lootingSoul.Loot;
-                for (int i = 0; i < loot.Count && i < 4; ++i)
+                for (int i = 0; i < loot.Count && i < NUM_LOOT_SHOWN; ++i)
                 {
                     s.Draw(loot[i].Icon, guiTexRects["loot"+i], Color.White);
                 }

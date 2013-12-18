@@ -87,6 +87,7 @@
   <ItemGroup>
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
+    <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Misc Components\NetMovementComponent.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
     <Compile Include="Networking\Handlers\GameStateChangeHandler.cs" />

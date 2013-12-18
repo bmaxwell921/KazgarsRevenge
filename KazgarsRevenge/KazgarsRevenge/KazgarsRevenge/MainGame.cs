@@ -184,6 +184,12 @@ namespace KazgarsRevenge
             base.LoadContent();
         }
 
+        List<FloatingText> alertText = new List<FloatingText>();
+        Vector2 alertStart = Vector2.Zero;
+        public void AddAlert(string text)
+        {
+            alertText.Add(new FloatingText(alertStart, text));
+        }
         protected override void Update(GameTime gameTime)
         {
             physics.Update();
@@ -263,6 +269,11 @@ namespace KazgarsRevenge
 
                     break;
                 case GameState.Playing:
+                    for (int i = alertText.Count - 1; i >= 0; ++i)
+                    {
+                        alertText[i].alpha -= .01f;
+                        alertText[i].position.Y -= 1;
+                    }
                     base.Update(gameTime);
                     break;
             }
@@ -289,13 +300,21 @@ namespace KazgarsRevenge
         Vector2 vecLoadingText;
         Rectangle rectMouse;
         Vector2 guiScale = new Vector2(1,1);
+        int maxX;
+        int maxY;
+        float average;
         private void initDrawingParams()
         {
+            maxX = GraphicsDevice.Viewport.Width;
+            maxY = GraphicsDevice.Viewport.Height;
+            float xRatio = maxX / 1920f;
+            float yRatio = maxY / 1080f;
+            average = (xRatio + yRatio) / 2;
+
             vecLoadingText = new Vector2(50, 50);
             rectMouse = new Rectangle(0, 0, 25, 25);
-            float xRatio = GraphicsDevice.Viewport.Width / 1920f;
-            float yRatio = GraphicsDevice.Viewport.Height / 1080f;
             guiScale = new Vector2(xRatio, yRatio);
+            alertStart = new Vector2(maxX, maxY);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -381,7 +400,7 @@ namespace KazgarsRevenge
                     spriteBatch.End();
 
 
-
+                    //debugging physics
                     /*
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
@@ -397,6 +416,10 @@ namespace KazgarsRevenge
                     //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
                     //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
                     spriteBatch.Draw(texCursor, rectMouse, Color.White);
+                    foreach (FloatingText f in alertText)
+                    {
+                        spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
+                    }
                     spriteBatch.End();
                     break;
                 case GameState.StartMenu:

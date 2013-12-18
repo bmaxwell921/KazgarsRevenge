@@ -197,6 +197,42 @@ namespace KazgarsRevenge
             }
         }
 
+        public Item GetLoot(int lootIndex)
+        {
+            if (loot.Count < lootIndex)
+            {
+                //that loot doesn't exist
+                return null;
+            }
+            else
+            {
+                //TODO: ask server to remove this item from this soul's loot?
+                if (RequestLootFromServer(lootIndex))
+                {
+                    Item retLoot = loot[lootIndex];
+                    loot.RemoveAt(lootIndex);
+                    return retLoot;
+                }
+                else
+                {
+                    //TODO: display "already looted" message?
+                    (Game as MainGame).AddAlert("that has already been looted");
+                    return null;
+                }
+            }
+        }
+
+        public bool RequestLootFromServer(int i)
+        {
+            return true;
+        }
+
+        public override void End()
+        {
+            (Game.Services.GetService(typeof(LootManager)) as LootManager).SpawnSoulPoof(physicalData.Position);
+            base.End();
+        }
+
         protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
             if (soulState != LootSoulState.Dying)
