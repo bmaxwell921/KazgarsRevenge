@@ -113,7 +113,7 @@ namespace KazgarsRevenge
 
         private void CreateRoom(string modelPath, Vector3 position, float yaw)
         {
-            position.Y -= 20;
+            position.Y -= 18.5f;
             float roomScale = 10;
 
             GameEntity room = new GameEntity("room", FactionType.Players);

@@ -41,10 +41,14 @@ namespace KazgarsRevenge
         {
             GameEntity player = new GameEntity("localplayer", FactionType.Players);
 
-            //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController
+            //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController)
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
             //assigns a collision group to the physics
             playerPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.PlayerCollisionGroup;
+
+            //taking away friction
+            playerPhysicalData.Material.KineticFriction = 0;
+            playerPhysicalData.Material.StaticFriction = 0;
 
             //locking rotation on axis (so that bumping into something won't make the player tip over)
             playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
@@ -74,8 +78,6 @@ namespace KazgarsRevenge
             NetMovementComponent nmc = new NetMovementComponent(mainGame, player);
 
             //adding the controllers to their respective managers 
-            //(need to decide what kinds of components need their own managers; currently 
-            //it's just a 2d renderer, a 3d renderer, and a general manager)
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
             genComponentManager.AddComponent(playerPhysics);
 
@@ -100,22 +102,16 @@ namespace KazgarsRevenge
             // TODO ISSUE #9
             GameEntity player = new GameEntity("netplayer", FactionType.Players);
 
-            //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
-            //assigns a collision group to the physics
-            playerPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.PlayerCollisionGroup;
+            playerPhysicalData.Material.KineticFriction = 0;
+            playerPhysicalData.Material.StaticFriction = 0;
+            playerPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.NetworkedPlayerCollisionGroup;
 
-            //locking rotation on axis (so that bumping into something won't make the player tip over)
             playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            //more accurate collision detection for the player
             playerPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             player.AddSharedData(typeof(Entity), playerPhysicalData);
 
-            // DON'T MAKE THE CAMERA FOLLOW EVERYONE
-            //(Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).AssignEntity(playerPhysicalData);
-
             Model playerModel = GetAnimatedModel("Models\\Player\\k_idle1");
-            //shared animation data (need this to be in the player controller component as well as the graphics component, so that the controller can determine when to play animations)
             AnimationPlayer playerAnimations = new AnimationPlayer(playerModel.Tag as SkinningData);
             player.AddSharedData(typeof(AnimationPlayer), playerAnimations);
 
@@ -125,8 +121,6 @@ namespace KazgarsRevenge
             HealthData playerHealth = new HealthData(100);
             player.AddSharedData(typeof(HealthData), playerHealth);
 
-
-            //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
             HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
@@ -135,9 +129,6 @@ namespace KazgarsRevenge
             // TODO ISSUE #10
             //PlayerController playerController = new PlayerController(mainGame, player);
 
-            //adding the controllers to their respective managers 
-            //(need to decide what kinds of components need their own managers; currently 
-            //it's just a 2d renderer, a 3d renderer, and a general manager)
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
             genComponentManager.AddComponent(playerPhysics);
 
@@ -148,7 +139,6 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(playerHealthHandler);
 
             //player.AddComponent(typeof(PlayerController), playerController);
-
             //spriteManager.AddComponent(playerController);
 
             playerMap[id] = player;
@@ -161,7 +151,7 @@ namespace KazgarsRevenge
                 Entity sharedData = playerMap[id].GetSharedData(typeof(Entity)) as Entity;
                 if (sharedData.Position != pos)
                 {
-                    sharedData.Position = pos;
+                    sharedData.Position = new Vector3(pos.X, pos.Y, pos.Z);
                 }
                 return;
             }

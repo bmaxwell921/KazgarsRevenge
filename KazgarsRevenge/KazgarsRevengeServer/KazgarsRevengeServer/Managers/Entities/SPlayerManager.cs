@@ -58,6 +58,10 @@ namespace KazgarsRevengeServer
             // assigning collision group to the physics
             playerPhysicalData.CollisionInformation.CollisionRules.Group = game.PlayerCollisionGroup;
 
+            //no friction
+            playerPhysicalData.Material.KineticFriction = 0;
+            playerPhysicalData.Material.StaticFriction = 0;
+
             // lock rotation go bumping into other players doesn't cause it to tip over
             playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             // more accurate collision detection for player
@@ -92,12 +96,29 @@ namespace KazgarsRevengeServer
                 VelocityMessage vm = (VelocityMessage) bm;
                 SetPlayerVel(vm.id, vm.vel);
             }
+
+            foreach (KeyValuePair<Identification, GameEntity> k in players)
+            {
+                if (k.Value != null && playerVels.ContainsKey(k.Key))
+                {
+                    (k.Value.GetSharedData(typeof(Entity)) as Entity).LinearVelocity = playerVels[k.Key];
+                }
+            }
             base.Update(gameTime);
         }
 
+        Dictionary<Identification, Vector3> playerVels = new Dictionary<Identification, Vector3>();
         private void SetPlayerVel(Identification id, Vector3 vel)
         {
-            (players[id].GetSharedData(typeof(Entity)) as Entity).LinearVelocity = vel;
+            //(players[id].GetSharedData(typeof(Entity)) as Entity).LinearVelocity = vel;
+            if (!playerVels.ContainsKey(id))
+            {
+                playerVels.Add(id, vel);
+            }
+            else
+            {
+                playerVels[id] = vel;
+            }
         }
 
         public Vector3 GetPlayerPosition(Identification id)

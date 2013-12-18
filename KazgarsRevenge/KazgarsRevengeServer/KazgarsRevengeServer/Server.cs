@@ -81,13 +81,13 @@ namespace KazgarsRevengeServer
              */ 
             if (gameState == GameState.Playing)
             {
+                physics.Update();
                 // Only update the game every once in a while to save bandwidth
                 if (timeToUpdate <= 0)
                 {
                     timeToUpdate = TIME_STEP;
                     // Base update should just have 
                     base.Update(gameTime);
-                    physics.Update();
                     nmm.SendGameSnapshot();
                     return;
                 }

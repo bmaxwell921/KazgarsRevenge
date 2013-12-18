@@ -37,7 +37,7 @@ namespace KazgarsRevengeServer
 
         public void DemoLevel()
         {
-            CreateRoom("Models\\Levels\\tempChunk", new Vector3(200, 0, -200), MathHelper.PiOver2);
+            CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2);
 
             IDictionary<Identification, Vector3> playerPos = PlacePlayers();
             // ONCE DONE SEND MAP DATA
@@ -65,7 +65,7 @@ namespace KazgarsRevengeServer
                 gcm = game.Services.GetService(typeof(GeneralComponentManager)) as GeneralComponentManager;
             }
 
-            position.Y -= 20;
+            position.Y -= 18.5f;
             float roomScale = 10;
 
             GameEntity room = new GameEntity("room", FactionType.Players);

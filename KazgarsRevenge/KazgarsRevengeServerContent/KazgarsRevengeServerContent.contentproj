@@ -36,15 +36,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Levels\4x4Final02Co.fbx">
-      <Name>4x4Final02Co</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\Levels\tempChunk.fbx">
-      <Name>tempChunk</Name>
+    <Compile Include="Models\Levels\tempChunk3.fbx">
+      <Name>tempChunk3</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
