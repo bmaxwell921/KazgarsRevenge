@@ -67,7 +67,7 @@ namespace KazgarsRevenge
             Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
             player.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
-            HealthData playerHealth = new HealthData(100);
+            HealthData playerHealth = new HealthData(1000);
             player.AddSharedData(typeof(HealthData), playerHealth);
 
             //the components that make up the player

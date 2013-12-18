@@ -85,6 +85,8 @@ namespace KazgarsRevenge
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(NetworkedPlayerCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(NetworkedPlayerCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
 
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(EnemyCollisionGroup, EnemyCollisionGroup), CollisionRule.NoBroadPhase);
+
             //loot dont collide with nuthin
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, NetworkedPlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
