@@ -47,7 +47,9 @@ namespace KazgarsRevenge
             HealthData bruteHealth = new HealthData(100);
             brute.AddSharedData(typeof(HealthData), bruteHealth);
 
-            brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), new Dictionary<string, AttachableModel>());
+            Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
+            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R", 0));
+            brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brute);
             AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, new Vector3(10f), Vector3.Down * 18);

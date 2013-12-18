@@ -203,10 +203,11 @@ namespace KazgarsRevenge
                     if (swinging)
                     {
                         swingCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                        attackCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
                         if (swingCounter >= settings.attackLength / 2)
                         {
                             attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false);
-                            attackCounter = 0;
+                            swingCounter = 0;
                             swinging = false;
                         }
                     }
@@ -215,6 +216,7 @@ namespace KazgarsRevenge
                         attackCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
                         if (attackCounter >= settings.attackLength)
                         {
+                            attackCounter = 0;
                             //if the player is within attack radius, swing
                             Vector3 diff = new Vector3(targetedPlayerData.Position.X - physicalData.Position.X, 0, targetedPlayerData.Position.Z - physicalData.Position.Z);
 

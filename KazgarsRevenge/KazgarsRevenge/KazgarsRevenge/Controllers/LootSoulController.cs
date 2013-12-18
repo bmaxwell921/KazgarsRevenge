@@ -199,7 +199,7 @@ namespace KazgarsRevenge
 
         public Item GetLoot(int lootIndex)
         {
-            if (loot.Count < lootIndex)
+            if (loot.Count - 1 < lootIndex)
             {
                 //that loot doesn't exist
                 return null;
