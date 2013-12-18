@@ -471,6 +471,7 @@ namespace KazgarsRevenge
         MouseState prevMouse = Mouse.GetState();
         KeyboardState curKeys = Keyboard.GetState();
         KeyboardState prevKeys = Keyboard.GetState();
+        bool guiClick = false;
         public override void Update(GameTime gameTime)
         {
             curMouse = Mouse.GetState();
@@ -525,8 +526,8 @@ namespace KazgarsRevenge
                 newTarget = CheckGUIButtons() || newTarget;
 
                 string collides = MouseCollidesWithGui();
-                bool guiClick = collides != null;
-                CheckMouseRay(newTarget, guiClick);
+                bool mouseOnGui = collides != null;
+                CheckMouseRay(newTarget, mouseOnGui);
 
                 //appropriate action for gui element collided with
                 //happens on left mouse released
@@ -540,7 +541,7 @@ namespace KazgarsRevenge
                         case "loot":
                             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
                             {
-                                if (RectContains(guiTexRects["loot" + i], curMouse.X, curMouse.Y))
+                                if (RectContains(guiInsideRects["loot" + i], curMouse.X, curMouse.Y))
                                 {
                                     //clicked on item, add to inventory
                                     AddToInventory(lootingSoul.GetLoot(i));
@@ -571,11 +572,16 @@ namespace KazgarsRevenge
                     CheckAbilities(move, (float)currentTime);
                 }
 
+                if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                {
+                    guiClick = mouseOnGui;
+                }
+
                 //targets ground location to start running to if holding mouse button
-                if (!guiClick && curMouse.LeftButton == ButtonState.Pressed && attState == AttackState.None && !looting)
+                if ((!mouseOnGui || Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) > .01f && !guiClick) && curMouse.LeftButton == ButtonState.Pressed && attState == AttackState.None && !looting)
                 {
                     groundTargetLocation = mouseHoveredLocation;
-                    if (prevMouse.LeftButton == ButtonState.Released && targetedPhysicalData == null)
+                    if (!mouseOnGui && prevMouse.LeftButton == ButtonState.Released && targetedPhysicalData == null)
                     {
                         attacks.CreateMouseSpikes(groundTargetLocation);
                     }
@@ -590,9 +596,10 @@ namespace KazgarsRevenge
                     }
                 }
 
+                bool closeEnough = (physicalData.Position - groundTargetLocation).Length() <= stopRadius;
                 if (attState == AttackState.None && !looting)
                 {
-                    MoveCharacter(groundMove);
+                    MoveCharacter(groundMove, closeEnough);
                 }
                 else
                 {
@@ -875,7 +882,7 @@ namespace KazgarsRevenge
         /// handles character movement
         /// </summary>
         /// <param name="groundHitPos"></param>
-        private void MoveCharacter(Vector3 move)
+        private void MoveCharacter(Vector3 move, bool closeEnough)
         {
             //click:      target enemy if ray catches one to move to / attack
             //held down:  path towards mousehovered location (or targetted entity if its data isn't null and it's not in range) / if in range of targetted entity, auto attack
@@ -883,7 +890,7 @@ namespace KazgarsRevenge
 
             Vector3 moveVec = move * stats[(int)StatType.RunSpeed];
             moveVec.Y = 0;
-            bool closeEnough = (physicalData.Position - groundTargetLocation).Length() <= stopRadius;
+            
             if (curMouse.LeftButton == ButtonState.Pressed)
             {
                 if (!closeEnough)
@@ -895,13 +902,13 @@ namespace KazgarsRevenge
                     if (currentAniName != "k_run")
                     {
                         PlayAnimation("k_run");
-                }
+                    }
                 }
             }
             else if (closeEnough || millisRunningCounter >= millisRunTime)
             {
                 //stop if within stopRadius of targetted ground location
-                ChangeVelocity(new Vector3(0, 0, 0));
+                ChangeVelocity(Vector3.Zero);
                 //just stopped moving
                 if (currentAniName == "k_run")
                 {
@@ -1123,7 +1130,7 @@ namespace KazgarsRevenge
         private string MouseCollidesWithGui()
         {
 
-            foreach(KeyValuePair<string, Rectangle> k in guiRectsBack)
+            foreach(KeyValuePair<string, Rectangle> k in guiOutsideRects)
             {
                 if (RectContains(k.Value, curMouse.X, curMouse.Y))
                 {
@@ -1180,8 +1187,8 @@ namespace KazgarsRevenge
         int maxX;
         int maxY;
         float average = 1;
-        Dictionary<string, Rectangle> guiRectsBack;
-        Dictionary<string, Rectangle> guiTexRects;
+        Dictionary<string, Rectangle> guiOutsideRects;
+        Dictionary<string, Rectangle> guiInsideRects;
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
@@ -1194,25 +1201,25 @@ namespace KazgarsRevenge
             RectEnemyHealthBar = new Rectangle((int)(mid.X - 75 * average), (int)(53 * average), (int)(200 * average), (int)(40 * average));
             vecName = new Vector2(RectEnemyHealthBar.X, 5);
 
-            guiRectsBack = new Dictionary<string, Rectangle>();
-            guiRectsBack.Add("abilities", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 158 * average)), (int)(622 * average), (int)(158 * average)));
-            guiRectsBack.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
-            guiRectsBack.Add("damage", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
-            guiRectsBack.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
-            guiRectsBack.Add("inventory", new Rectangle(maxX / 2, 0, maxX / 2, maxY));
-            guiRectsBack.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
-            guiRectsBack.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
+            guiOutsideRects = new Dictionary<string, Rectangle>();
+            guiOutsideRects.Add("abilities", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 158 * average)), (int)(622 * average), (int)(158 * average)));
+            guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
+            guiOutsideRects.Add("damage", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
+            guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
+            guiOutsideRects.Add("inventory", new Rectangle(maxX / 2, 0, maxX / 2, maxY));
+            guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
+            guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
-            guiTexRects = new Dictionary<string, Rectangle>();
-            guiTexRects.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
-            guiTexRects.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
-            guiTexRects.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-            guiTexRects.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-            guiTexRects.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
-            guiTexRects.Add("item4", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+            guiInsideRects = new Dictionary<string, Rectangle>();
+            guiInsideRects.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
+            guiInsideRects.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
+            guiInsideRects.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
+            guiInsideRects.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
+            guiInsideRects.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+            guiInsideRects.Add("item4", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
             {
-                guiTexRects.Add("loot" + i, new Rectangle((int)(165 * average), (int)(165 * average + i * 65), 50, 50));
+                guiInsideRects.Add("loot" + i, new Rectangle((int)(165 * average), (int)(165 * average + i * 65), 50, 50));
             }
 
         }
@@ -1231,11 +1238,11 @@ namespace KazgarsRevenge
 
             #region UIBase
             //Chat Pane
-            s.Draw(texWhitePixel, guiRectsBack["chat"], Color.Black*0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["chat"], Color.Black*0.5f);
 
             #region Ability Bar
             //Ability Bar
-            s.Draw(texWhitePixel, guiRectsBack["abilities"], Color.Red * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Red * 0.5f);
             for (int i = 0; i < 4; ++i)
             {
                 s.Draw(boundAbilities[i].Value.icon, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
@@ -1247,27 +1254,27 @@ namespace KazgarsRevenge
             {
                 case AttackType.None:
                 case AttackType.Melle:
-                    s.Draw(texMelee, guiTexRects["primary"], Color.White);
+                    s.Draw(texMelee, guiInsideRects["primary"], Color.White);
                     break;
                 case AttackType.Magic:
-                    s.Draw(texMagic, guiTexRects["primary"], Color.White);
+                    s.Draw(texMagic, guiInsideRects["primary"], Color.White);
                     break;
                 case AttackType.Ranged:
-                    s.Draw(texRange, guiTexRects["primary"], Color.White);
+                    s.Draw(texRange, guiInsideRects["primary"], Color.White);
                     break;
             }
                 
             //RM
-            s.Draw(texPlaceHolder, guiTexRects["rightmouse"], Color.White);
+            s.Draw(texPlaceHolder, guiInsideRects["rightmouse"], Color.White);
 
             //Item 1
-            s.Draw(healthPot, guiTexRects["item1"], Color.White);
+            s.Draw(healthPot, guiInsideRects["item1"], Color.White);
             //Item 2
-            s.Draw(healthPot, guiTexRects["item2"], Color.White);
+            s.Draw(healthPot, guiInsideRects["item2"], Color.White);
             //Item 3
-            s.Draw(healthPot, guiTexRects["item3"], Color.White);
+            s.Draw(healthPot, guiInsideRects["item3"], Color.White);
             //Item 4
-            s.Draw(healthPot, guiTexRects["item4"], Color.White);
+            s.Draw(healthPot, guiInsideRects["item4"], Color.White);
 
             #endregion
             
@@ -1331,11 +1338,11 @@ namespace KazgarsRevenge
             #endregion
 
             //XP Area
-            s.Draw(texWhitePixel, guiRectsBack["xp"], Color.Brown * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["xp"], Color.Brown * 0.5f);
             //Damage Tracker
-            s.Draw(texWhitePixel, guiRectsBack["damage"], Color.Green * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["damage"], Color.Green * 0.5f);
             //Mini Map (square for now)
-            s.Draw(texWhitePixel, guiRectsBack["map"], Color.Orange * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Orange * 0.5f);
             
             #region main player frame
             //Main Player Frame Pic
@@ -1377,7 +1384,7 @@ namespace KazgarsRevenge
             #region inventory
             if (showInventory)
             {
-                s.Draw(texWhitePixel, guiRectsBack["inventory"], Color.Black * .5f);
+                s.Draw(texWhitePixel, guiOutsideRects["inventory"], Color.Black * .5f);
                 for (int i = 0; i < inventory.Count; ++i)
                 {
                     s.DrawString(font, inventory[i].Name, new Vector2(maxX / 2 + 20, i * 40 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
@@ -1386,12 +1393,12 @@ namespace KazgarsRevenge
 
             if (looting)
             {
-                s.Draw(texWhitePixel, guiRectsBack["loot"], Color.Black * .5f);
+                s.Draw(texWhitePixel, guiOutsideRects["loot"], Color.Black * .5f);
 
                 List<Item> loot = lootingSoul.Loot;
                 for (int i = 0; i < loot.Count && i < NUM_LOOT_SHOWN; ++i)
                 {
-                    s.Draw(loot[i].Icon, guiTexRects["loot"+i], Color.White);
+                    s.Draw(loot[i].Icon, guiInsideRects["loot"+i], Color.White);
                 }
             }
             #endregion

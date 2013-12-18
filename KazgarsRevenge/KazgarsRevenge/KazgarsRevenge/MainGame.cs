@@ -82,7 +82,7 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
-            bool fullscreen = false;
+            bool fullscreen = true;
             loadingThread = new Thread(DemoLevel);
 
             if (fullscreen)
@@ -341,7 +341,7 @@ namespace KazgarsRevenge
             String startString = "Start";
             String settingsString = "Settings";
             String loadingString = "Loading";
-            String networkingString = "Networking - beware, this doesn't work properly yet.";
+            String networkingString = "Multiplayer";
 
             Vector2 titleSize = titleFont.MeasureString(titleString);
             Vector2 startSize = normalFont.MeasureString(startString);
