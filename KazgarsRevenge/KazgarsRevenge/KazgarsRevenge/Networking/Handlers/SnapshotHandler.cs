@@ -36,7 +36,10 @@ namespace KazgarsRevenge
             {
                 Identification id = new Identification(nim.ReadByte());
                 Vector3 loc = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
-                pm.SetPlayerLocation(loc, id);
+                if (!pm.myId.Equals(id))
+                {
+                    pm.SetPlayerLocation(loc, id);
+                }
             }
         }
     }

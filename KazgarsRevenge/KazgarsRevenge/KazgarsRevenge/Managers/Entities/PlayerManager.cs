@@ -154,17 +154,15 @@ namespace KazgarsRevenge
             playerMap[id] = player;
         }
 
-        int count = 0;
         public void SetPlayerLocation(Vector3 pos, Identification id)
         {
             if (playerMap.ContainsKey(id))
             {
                 Entity sharedData = playerMap[id].GetSharedData(typeof(Entity)) as Entity;
-                if (count++ % 100 == 0)
+                if (sharedData.Position != pos)
                 {
-                    Console.WriteLine("old location: " + sharedData.Position + " new position: " + pos);
+                    sharedData.Position = pos;
                 }
-                sharedData.Position = pos;
                 return;
             }
             CreateNetworkedPlayer(pos, id);
