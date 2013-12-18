@@ -159,7 +159,7 @@ namespace KazgarsRevenge
         {
             if (Math.Abs(curDir - newDir) > .06f)
             {
-                float add = .04f;
+                float add = .045f;
                 float diff = curDir - newDir;
                 if (diff > 0 && diff < MathHelper.Pi || diff < 0 && -diff > MathHelper.Pi)
                 {
@@ -190,8 +190,11 @@ namespace KazgarsRevenge
 
         public void CloseLoot()
         {
-            soulState = LootSoulState.Wandering;
-            animations.StartClip("soul_wander");
+            if (soulState != LootSoulState.Dying)
+            {
+                soulState = LootSoulState.Wandering;
+                animations.StartClip("soul_wander");
+            }
         }
 
         protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)

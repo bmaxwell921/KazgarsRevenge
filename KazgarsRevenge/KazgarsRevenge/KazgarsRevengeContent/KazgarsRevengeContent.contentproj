@@ -62,6 +62,13 @@
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="Models\Player\k_idle1.fbx">
+      <Name>k_idle1</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_onehanded_swing.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fire_arrow.fbx%3bModels\\Player\\k_fighting_stance.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
     <Compile Include="Models\spikes.fbx">
       <Name>spikes</Name>
       <Importer>FbxImporter</Importer>
@@ -367,21 +374,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Player\k_idle1.fbx">
-      <Name>k_idle1</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_onehanded_swing.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fire_arrow.fbx%3bModels\\Player\\k_fighting_stance.fbx%3b</ProcessorParameters_MergeAnimations>
-      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Particles\blood.png">
       <Name>blood</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

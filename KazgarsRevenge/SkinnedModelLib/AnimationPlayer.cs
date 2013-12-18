@@ -73,8 +73,7 @@ namespace SkinnedModelLib
             mixing = false;
             secondClipValue = null;
         }
-
-        /// <summary>
+         /// <summary>
         /// Starts decoding the specified animation clip.
         /// </summary>
         public void StartClip(string clipName)
