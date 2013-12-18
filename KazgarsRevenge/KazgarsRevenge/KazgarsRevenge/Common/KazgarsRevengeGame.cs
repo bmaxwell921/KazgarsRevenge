@@ -59,6 +59,7 @@ namespace KazgarsRevenge
                 }
             }
             physics.ForceUpdater.Gravity = new Vector3(0, -80f, 0);
+            physics.TimeStepSettings.MaximumTimeStepsPerFrame = 10;
             Services.AddService(typeof(Space), physics);
 
 

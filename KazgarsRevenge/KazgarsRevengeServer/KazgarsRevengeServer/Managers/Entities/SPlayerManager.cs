@@ -97,28 +97,12 @@ namespace KazgarsRevengeServer
                 SetPlayerVel(vm.id, vm.vel);
             }
 
-            foreach (KeyValuePair<Identification, GameEntity> k in players)
-            {
-                if (k.Value != null && playerVels.ContainsKey(k.Key))
-                {
-                    (k.Value.GetSharedData(typeof(Entity)) as Entity).LinearVelocity = playerVels[k.Key];
-                }
-            }
             base.Update(gameTime);
         }
 
-        Dictionary<Identification, Vector3> playerVels = new Dictionary<Identification, Vector3>();
         private void SetPlayerVel(Identification id, Vector3 vel)
         {
-            //(players[id].GetSharedData(typeof(Entity)) as Entity).LinearVelocity = vel;
-            if (!playerVels.ContainsKey(id))
-            {
-                playerVels.Add(id, vel);
-            }
-            else
-            {
-                playerVels[id] = vel;
-            }
+            (players[id].GetSharedData(typeof(Entity)) as Entity).LinearVelocity = vel;
         }
 
         public Vector3 GetPlayerPosition(Identification id)
