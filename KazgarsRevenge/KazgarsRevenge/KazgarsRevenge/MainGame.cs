@@ -82,7 +82,7 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
-            bool fullscreen = true;
+            bool fullscreen = false;
             loadingThread = new Thread(DemoLevel);
 
             if (fullscreen)

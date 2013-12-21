@@ -15,7 +15,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class LootSoulController : AIController
+    class LootSoulController : SmoothAIController
     {
         public enum LootSoulState
         {
@@ -27,7 +27,6 @@ namespace KazgarsRevenge
         public LootSoulState soulState { get; private set; }
 
         public int totalSouls { get; private set; }
-        Entity physicalData;
         AnimationPlayer animations;
         ParticleEmitter trailEmitter;
         private List<Item> loot;
@@ -47,8 +46,7 @@ namespace KazgarsRevenge
             this.trailEmitter = trailEmitter;
             soulState = LootSoulState.Wandering;
 
-            rand = new Random();//new Random(wanderSeed);
-            physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
+            rand = new Random();
             physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleSoulCollision;
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             animations.StartClip("soul_wander");
@@ -63,11 +61,9 @@ namespace KazgarsRevenge
         Random rand;
         double wanderCounter = 0;
         double wanderLength = 0;
-        float groundSpeed = 25.0f;
         double deathCounter = 0;
         double deathLength;
-        float newDir;
-        float curDir;
+        protected float groundSpeed = 25.0f;
         public override void Update(GameTime gameTime)
         {
             this.trailEmitter.Update(gameTime, physicalData.Position + Vector3.Up * 5);
@@ -116,7 +112,7 @@ namespace KazgarsRevenge
                         }
                     }
 
-                    CalcDir();
+                    AdjustDir(groundSpeed, .045f);
 
                     break;
                 case LootSoulState.Following:
@@ -139,7 +135,7 @@ namespace KazgarsRevenge
                             Vector3 move = targetData.Position - physicalData.Position;
                             move.Y = 0;
                             newDir = GetPhysicsYaw(move);
-                            CalcDir();
+                            AdjustDir(groundSpeed, .045f);
                         }
                     }
                     break;
@@ -155,31 +151,7 @@ namespace KazgarsRevenge
             }
         }
 
-        private void CalcDir()
-        {
-            if (Math.Abs(curDir - newDir) > .06f)
-            {
-                float add = .045f;
-                float diff = curDir - newDir;
-                if (diff > 0 && diff < MathHelper.Pi || diff < 0 && -diff > MathHelper.Pi)
-                {
-                    add *= -1;
-                }
-                curDir += add;
-                if (curDir > MathHelper.TwoPi)
-                {
-                    curDir -= MathHelper.TwoPi;
-                }
-                else if (curDir < 0)
-                {
-                    curDir += MathHelper.TwoPi;
-                }
-                Vector3 newVel = new Vector3((float)Math.Cos(curDir), 0, (float)Math.Sin(curDir));
-                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
-                newVel *= groundSpeed;
-                physicalData.LinearVelocity = newVel;
-            }
-        }
+
 
         public void OpenLoot()
         {

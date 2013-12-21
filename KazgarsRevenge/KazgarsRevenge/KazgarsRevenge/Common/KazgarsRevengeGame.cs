@@ -29,11 +29,12 @@ namespace KazgarsRevenge
 
         public CollisionGroup GoodProjectileCollisionGroup;
         public CollisionGroup PlayerCollisionGroup;
-        public CollisionGroup NetworkedPlayerCollisionGroup;
         public CollisionGroup BadProjectileCollisionGroup;
         public CollisionGroup EnemyCollisionGroup;
         public CollisionGroup LootCollisionGroup;
         public CollisionGroup SensorLootCollisionGroup;
+        public CollisionGroup LevelCollisionGroup;
+        public CollisionGroup NetworkedPlayerCollisionGroup;
 
         Random rand;
 
@@ -67,32 +68,37 @@ namespace KazgarsRevenge
             //collision groups
             GoodProjectileCollisionGroup = new CollisionGroup();
             PlayerCollisionGroup = new CollisionGroup();
-            NetworkedPlayerCollisionGroup = new CollisionGroup();
             BadProjectileCollisionGroup = new CollisionGroup();
             EnemyCollisionGroup = new CollisionGroup();
             LootCollisionGroup = new CollisionGroup();
             SensorLootCollisionGroup = new CollisionGroup();
+            LevelCollisionGroup = new CollisionGroup();
+            NetworkedPlayerCollisionGroup = new CollisionGroup();
 
             //players
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(PlayerCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
+
+            //projectiles
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(GoodProjectileCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(BadProjectileCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
 
-            //networked players (only collide with rooms)
-            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(NetworkedPlayerCollisionGroup, EnemyCollisionGroup), CollisionRule.NoBroadPhase);
+            //networked players
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(NetworkedPlayerCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(NetworkedPlayerCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(NetworkedPlayerCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
-            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(NetworkedPlayerCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(NetworkedPlayerCollisionGroup, LootCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(NetworkedPlayerCollisionGroup, LevelCollisionGroup), CollisionRule.NoBroadPhase);
 
+            //enemies don't collide with each other
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(EnemyCollisionGroup, EnemyCollisionGroup), CollisionRule.NoBroadPhase);
 
             //loot dont collide with nuthin
-            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, NetworkedPlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, GoodProjectileCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, BadProjectileCollisionGroup), CollisionRule.NoBroadPhase);
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, EnemyCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(LootCollisionGroup, LevelCollisionGroup), CollisionRule.NoBroadPhase);
 
             //loot sensors don't collide with anything, but generate contacts with loot
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(SensorLootCollisionGroup, LootCollisionGroup), CollisionRule.NoSolver);

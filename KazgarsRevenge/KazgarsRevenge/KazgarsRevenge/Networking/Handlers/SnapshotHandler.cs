@@ -38,7 +38,12 @@ namespace KazgarsRevenge
                 Vector3 loc = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
                 if (!pm.myId.Equals(id))
                 {
-                    pm.SetPlayerLocation(loc, id);
+                    pm.SetPlayerTarget(loc, id);
+                }
+                else
+                {
+                    //TODO: set main player's location if it's far enough away?
+
                 }
             }
         }

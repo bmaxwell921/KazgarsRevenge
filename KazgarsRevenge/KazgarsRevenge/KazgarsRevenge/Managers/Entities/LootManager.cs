@@ -45,10 +45,10 @@ namespace KazgarsRevenge
             GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral);
             float size = 3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE);
 
-            //soul's entity
-            Entity lootPhysicalData = new Box(position, size, size, size);
+            Entity lootPhysicalData = new Box(position, size, size, size, 1);
             lootPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.LootCollisionGroup;
             lootPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            lootPhysicalData.IsAffectedByGravity = false;
             lootSoul.AddSharedData(typeof(Entity), lootPhysicalData);
 
             Model lootModel = GetAnimatedModel("Models\\soul_idle");

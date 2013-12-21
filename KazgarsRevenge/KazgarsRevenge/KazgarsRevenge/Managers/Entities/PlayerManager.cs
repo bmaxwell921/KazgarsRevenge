@@ -102,13 +102,13 @@ namespace KazgarsRevenge
             // TODO ISSUE #9
             GameEntity player = new GameEntity("netplayer", FactionType.Players);
 
-            Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
+            Entity playerPhysicalData = new Box(position, 37, 6, 2);
+
+            playerPhysicalData.IsAffectedByGravity = false;
+            playerPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.NetworkedPlayerCollisionGroup;
+            playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             playerPhysicalData.Material.KineticFriction = 0;
             playerPhysicalData.Material.StaticFriction = 0;
-            playerPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.NetworkedPlayerCollisionGroup;
-
-            playerPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            playerPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             player.AddSharedData(typeof(Entity), playerPhysicalData);
 
             Model playerModel = GetAnimatedModel("Models\\Player\\k_idle1");
@@ -124,10 +124,7 @@ namespace KazgarsRevenge
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
             HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
-            
-            // NETWORKED PLAYERS ARE NOT CONTROLLED BY THIS CLIENT 
-            // TODO ISSUE #10
-            //PlayerController playerController = new PlayerController(mainGame, player);
+            NetworkPlayerController controller = new NetworkPlayerController(mainGame, player);
 
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
             genComponentManager.AddComponent(playerPhysics);
@@ -138,8 +135,8 @@ namespace KazgarsRevenge
             player.AddComponent(typeof(HealthHandlerComponent), playerHealthHandler);
             genComponentManager.AddComponent(playerHealthHandler);
 
-            //player.AddComponent(typeof(PlayerController), playerController);
-            //spriteManager.AddComponent(playerController);
+            player.AddComponent(typeof(NetworkPlayerController), controller);
+            genComponentManager.AddComponent(controller);
 
             playerMap[id] = player;
         }
@@ -151,11 +148,31 @@ namespace KazgarsRevenge
                 Entity sharedData = playerMap[id].GetSharedData(typeof(Entity)) as Entity;
                 if (sharedData.Position != pos)
                 {
+                    //give new target to the controller to go to
                     sharedData.Position = new Vector3(pos.X, pos.Y, pos.Z);
                 }
-                return;
             }
-            CreateNetworkedPlayer(pos, id);
+            else
+            {
+                CreateNetworkedPlayer(pos, id);
+            }
+        }
+
+        public void SetPlayerTarget(Vector3 pos, Identification id)
+        {
+            if (playerMap.ContainsKey(id))
+            {
+                NetworkPlayerController controller = playerMap[id].GetComponent(typeof(NetworkPlayerController)) as NetworkPlayerController;
+                if (controller != null)
+                {
+                    //give new target to the controller to go to
+                    controller.SetPosition(pos);
+                }
+            }
+            else
+            {
+                CreateNetworkedPlayer(pos, id);
+            }
         }
     }
 }

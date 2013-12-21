@@ -75,6 +75,7 @@ namespace KazgarsRevengeServer
             int[] indices;
             TriangleMesh.GetVerticesAndIndicesFromModel(roomCollisionModel, out verts, out indices);
             StaticMesh roomMesh = new StaticMesh(verts, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
+            roomMesh.CollisionRules.Group = game.LevelCollisionGroup;
             room.AddSharedData(typeof(StaticMesh), roomMesh);
 
             StaticMeshComponent roomPhysics = new StaticMeshComponent(game, room);

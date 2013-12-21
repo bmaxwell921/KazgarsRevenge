@@ -405,10 +405,6 @@ namespace KazgarsRevenge
         "k_from_fighting_stance" - transition from fighting to idle
          */
 
-        /* Bones:
-         "Bone_001_L_004" - left hand
-         "Bone_001_R_004" - right hand 
-         */
         private enum AttackState
         {
             None,
