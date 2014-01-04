@@ -89,6 +89,9 @@
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\NetworkPlayerController.cs" />
     <Compile Include="Controllers\SmoothAIController.cs" />
+    <Compile Include="Logging\ALogger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\Impl\FileWriteLogger.cs" />
     <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Misc Components\NetMovementComponent.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
