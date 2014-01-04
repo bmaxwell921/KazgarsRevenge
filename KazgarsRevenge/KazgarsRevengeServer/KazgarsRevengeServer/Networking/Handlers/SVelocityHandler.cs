@@ -60,8 +60,6 @@ namespace KazgarsRevengeServer
             //SendMessages(pId, curPos + vel);
         }
 
-        int count = 0;
-
         /*
          * Outgoing Message Format:
          *      - byte MessageType
