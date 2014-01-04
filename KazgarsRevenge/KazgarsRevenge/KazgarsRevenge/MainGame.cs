@@ -43,6 +43,8 @@ namespace KazgarsRevenge
         protected EnemyManager enemies;
         protected AttackManager attacks;
 
+        private LoggerManager lm;
+
         ParticleManager particleManager;
         #endregion
 
@@ -82,6 +84,9 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
+            // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
+            SetUpLoggers();
+
             bool fullscreen = false;
             loadingThread = new Thread(DemoLevel);
 
@@ -152,8 +157,16 @@ namespace KazgarsRevenge
 
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
-
             base.Initialize();
+        }
+
+        protected void SetUpLoggers()
+        {
+            lm = new LoggerManager();
+            // Log to both the console and a file
+            lm.AddLogger(new FileWriteLogger(FileWriteLogger.CLIENT_SUB_DIR));
+            lm.AddLogger(new ConsoleLogger());
+            Services.AddService(typeof(LoggerManager), lm);
         }
 
         protected override void LoadContent()
@@ -214,7 +227,7 @@ namespace KazgarsRevenge
                         }
                         else if (mainMenuState == mainMenu.NETWORKED)
                         {
-                            Console.WriteLine("Transitioning to ConnectionScreen");
+                            lm.Log(Level.DEBUG, "Transitioning to ConnectionScreen");
                             gameState = GameState.ConnectionScreen;
                         }
                     }
@@ -248,7 +261,7 @@ namespace KazgarsRevenge
                 case GameState.ConnectionScreen:
                     if (keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter) && nmm.connections.Count != 0)
                     {
-                        Console.WriteLine("Connecting to Server 0");
+                        lm.Log(Level.DEBUG, "Connecting to Server 0");
                         // TODO change this to proper connection number based on input
                         nmm.ConnectTo(0);
                         gameState = GameState.Lobby;
@@ -260,7 +273,7 @@ namespace KazgarsRevenge
                     // this is desired since that message comes with our id as well
                     if (nmm.isHost && keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter))
                     {
-                        Console.WriteLine("Starting game");
+                        lm.Log(Level.DEBUG, "Starting game");
                         nmm.StartGame();
                         gameState = GameState.ReceivingMap;
                     }

@@ -47,6 +47,7 @@ namespace KazgarsRevenge
         public virtual void HandleMessages()
         {
             NetIncomingMessage msg;
+            LoggerManager lm = (LoggerManager)Game.Services.GetService(typeof(LoggerManager));
 
             while ((msg = ReadMessage()) != null)
             {
@@ -55,8 +56,7 @@ namespace KazgarsRevenge
 
                 if (handler == null)
                 {
-                    Console.WriteLine("ERROR: OH GOD MESSAGE TYPE WE DON'T HANDLE! " + msg.MessageType);
-                    Console.WriteLine("Message: " + msg.ReadString());
+                    lm.Log(Level.DEBUG, String.Format("Unhandled message type: {0}. Message was: {1}", msg.MessageType, msg.ReadString()));
                     continue;
                 }
 

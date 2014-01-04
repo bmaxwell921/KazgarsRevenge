@@ -23,7 +23,7 @@ namespace KazgarsRevenge
         /// <param name="nim"></param>
         public override void Handle(Lidgren.Network.NetIncomingMessage nim)
         {
-            Console.WriteLine("Receiving map data from server");
+            ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, "Receiving map data from server");
             if (lm == null)
             {
                 lm = game.Services.GetService(typeof(LevelManager)) as LevelManager;

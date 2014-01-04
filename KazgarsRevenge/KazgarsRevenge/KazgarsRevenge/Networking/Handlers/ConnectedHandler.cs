@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Lidgren.Network;
 
 namespace KazgarsRevenge
 {
     class ConnectedHandler : BaseHandler
     {
-        PlayerManager pm;
-        NetworkMessageManager nmm;
-
         public ConnectedHandler(KazgarsRevengeGame game)
             : base(game)
         {
@@ -22,17 +20,12 @@ namespace KazgarsRevenge
         ///        bool isHost
         /// </summary>
         /// <param name="nim"></param>
-        public override void Handle(Lidgren.Network.NetIncomingMessage nim)
+        public override void Handle(NetIncomingMessage nim)
         {
-            Console.WriteLine("Receiving Connection info from server");
-            if (pm == null)
-            {
-                pm = (PlayerManager)game.Services.GetService(typeof(PlayerManager));
-            }
-            if (nmm == null)
-            {
-                nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
-            }
+            PlayerManager pm = (PlayerManager)game.Services.GetService(typeof(PlayerManager));
+            NetworkMessageManager nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
+            LoggerManager lm = (LoggerManager)game.Services.GetService(typeof(LoggerManager));
+            lm.Log(Level.DEBUG, "Receiving Connection info from server");
 
             byte clientId = nim.ReadByte();
             bool isHost = nim.ReadBoolean();

@@ -22,7 +22,7 @@ namespace KazgarsRevengeServer
         public override void Handle(NetIncomingMessage nim)
         {
             // TODO send back if we have room for any connections?
-            ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.INFO, "Received a DiscoveryRequest");
+            ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, "Received a DiscoveryRequest");
             SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
             ServerConfig sc = (ServerConfig)game.Services.GetService(typeof(ServerConfig));
 

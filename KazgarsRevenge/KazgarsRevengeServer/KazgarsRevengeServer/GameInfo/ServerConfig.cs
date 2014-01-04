@@ -48,7 +48,7 @@ namespace KazgarsRevengeServer
             {
                 if (value > MAX_NUM_PLAYERS || value <= 0)
                 {
-                    lm.Log(Level.INFO, String.Format("Invalid max number of players: %d. Using default value of: %d.", value, DEFAULT_MAX_NUM_PLAYERS));
+                    lm.Log(Level.DEBUG, String.Format("Invalid max number of players: %d. Using default value of: %d.", value, DEFAULT_MAX_NUM_PLAYERS));
                     value = DEFAULT_MAX_NUM_PLAYERS;
                 }
                 _maxNumPlayers = value;

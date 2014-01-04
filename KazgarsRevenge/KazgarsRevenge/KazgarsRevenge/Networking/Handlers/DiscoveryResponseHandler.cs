@@ -11,7 +11,6 @@ namespace KazgarsRevenge
     /// </summary>
     public class DiscoveryResponseHandler : BaseHandler
     {
-        NetworkMessageManager nmm;
         public DiscoveryResponseHandler(KazgarsRevengeGame game)
             : base(game)
         {
@@ -20,11 +19,10 @@ namespace KazgarsRevenge
 
         public override void Handle(NetIncomingMessage nim)
         {
-            Console.WriteLine("Adding some server info");
-            if (nmm == null)
-            {
-                nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
-            }
+            NetworkMessageManager nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
+            LoggerManager lm = (LoggerManager)game.Services.GetService(typeof(LoggerManager));
+            lm.Log(Level.DEBUG, "Adding some server info");
+
             ServerInfo si = new ServerInfo(nim.ReadString(), nim.SenderEndpoint);
 
             nmm.connections.Add(si);            

@@ -111,7 +111,6 @@ namespace KazgarsRevenge
         protected override void Initialize()
         {
             rand = new Random();
-
             genComponentManager = new GeneralComponentManager(this);
             Components.Add(genComponentManager);
             Services.AddService(typeof(GeneralComponentManager), genComponentManager);

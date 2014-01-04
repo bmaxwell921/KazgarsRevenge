@@ -25,10 +25,11 @@ namespace KazgarsRevenge
             MessageType mt = EnumParser.GetMessageType(nim.ReadByte());
             handlers.TryGetValue(mt, out handler);
 
+            LoggerManager lm = (LoggerManager)game.Services.GetService(typeof(LoggerManager));
+
             if (handler == null)
             {
-                Console.WriteLine("ERROR: OH GOD PANIC THE DATA MESSAGE HANDLER DIDN'T RECOGNIZE THE MESSAGETYPE!!!");
-                Console.WriteLine("MessageType: " + mt);
+                lm.Log(Level.DEBUG, String.Format("Unhandled MessageType: {0}", mt));
                 return;
             }
             handler.Handle(nim);

@@ -32,7 +32,7 @@ namespace KazgarsRevenge
         /// <param name="nim"></param>
         public override void Handle(NetIncomingMessage nim)
         {
-            Console.WriteLine("These messages shouldn't exist!");
+            ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, "These messages shouldn't exist!");
             //if (pm == null)
             //{
             //    pm = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;

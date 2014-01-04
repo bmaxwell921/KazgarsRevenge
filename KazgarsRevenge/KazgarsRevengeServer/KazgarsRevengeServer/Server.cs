@@ -45,7 +45,7 @@ namespace KazgarsRevengeServer
         protected override void Initialize()
         {
             base.Initialize();
-
+            
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
             SetUpLoggers();
 
@@ -76,7 +76,7 @@ namespace KazgarsRevengeServer
             Services.AddService(typeof(MessageQueue), msgQ);
         }
 
-        private void SetUpLoggers()
+        protected void SetUpLoggers()
         {
             LoggerManager logM = new LoggerManager();
             // Log to both the console and a file

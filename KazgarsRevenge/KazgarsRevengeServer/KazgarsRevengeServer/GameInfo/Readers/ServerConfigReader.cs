@@ -18,9 +18,6 @@ namespace KazgarsRevengeServer
         // Mapping from human readable config names and ServerConfig variable names
         private static IDictionary<string, string> variableMap;
 
-        // Ugh this is a bit dirty
-        private static LoggerManager lm;
-
         static ServerConfigReader()
         {
             variableMap = new Dictionary<string, string>();
@@ -32,7 +29,6 @@ namespace KazgarsRevengeServer
         {
             ServerConfig serverConfig = new ServerConfig(lm);
             string configFilePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), ServerConfig.CONFIG_FILE_PATH);
-            LoggerManager.lm = lm;
 
             if (!File.Exists(configFilePath))
             {
@@ -44,7 +40,8 @@ namespace KazgarsRevengeServer
                 return serverConfig;
             }
 
-            ReadConfigFile(configFilePath, serverConfig);
+            lm.Log(Level.INFO, "Reading server.config file");
+            ReadConfigFile(configFilePath, serverConfig, lm);
 
             return serverConfig;
         }
@@ -60,19 +57,19 @@ namespace KazgarsRevengeServer
         }
 
         // reads the config file into serverConfig
-        private static void ReadConfigFile(string filePath, ServerConfig serverConfig)
+        private static void ReadConfigFile(string filePath, ServerConfig serverConfig, LoggerManager lm)
         {
             using (StreamReader sr = new StreamReader(filePath))
             {
                 string line = "";
                 while ((line = sr.ReadLine()) != null)
                 {
-                    if (!ValidLine(line))
+                    if (!ValidLine(line, lm))
                     {
                         continue;
                     }
                     string[] splat = line.Split(ServerConfig.FILE_KEY_VALUE_SEPARATOR);
-                    SetConfigValue(splat[0].Trim(), splat[1], serverConfig);
+                    SetConfigValue(splat[0].Trim(), splat[1], serverConfig, lm);
                 }
             }
         }
@@ -81,7 +78,7 @@ namespace KazgarsRevengeServer
          * config lines have to be in the form:
          *  configKey = configValue
          */ 
-        private static bool ValidLine(String line)
+        private static bool ValidLine(String line, LoggerManager lm)
         {
             string[] splat = line.Split(ServerConfig.FILE_KEY_VALUE_SEPARATOR);
             if (splat.Count() != 2)
@@ -102,7 +99,7 @@ namespace KazgarsRevengeServer
         /*
          * Uses reflection to set the correct serverConfig property if it exists
          */
-        private static void SetConfigValue(string key, string value, ServerConfig serverConfig)
+        private static void SetConfigValue(string key, string value, ServerConfig serverConfig, LoggerManager lm)
         {
             string propName = variableMap[key];
             PropertyInfo prop = serverConfig.GetType().GetProperty(propName, BindingFlags.Public | BindingFlags.Instance);
@@ -118,8 +115,8 @@ namespace KazgarsRevengeServer
             }
             catch (Exception e)
             {
-                lm.Log(Level.ERROR, String.Format("Unable to set property: %s", propName));
-                lm.Log(Level.ERROR, e.StackTrace);
+                lm.Log(Level.DEBUG, String.Format("Unable to set property: %s", propName));
+                lm.Log(Level.DEBUG, e.StackTrace);
             }
         }
     }
