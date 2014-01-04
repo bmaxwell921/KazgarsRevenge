@@ -25,20 +25,5 @@ namespace KazgarsRevenge
         /// <param name="level"></param>
         /// <param name="message"></param>
         void Log(Level level, string message);
-
-        /// <summary>
-        /// Enables logging for the given levels. Method calls to Log at a level not found 
-        /// in the given array will not be logged.
-        /// 
-        /// Note: params keyword works just like the ellipsis in java
-        /// </summary>
-        /// <param name="levels"></param>
-        void EnableLoggingLevels(params Level[] levels);
-
-        /// <summary>
-        /// Disables logging for the given levels.
-        /// </summary>
-        /// <param name="levels"></param>
-        void DisableLoggingLevels(params Level[] levels);
     }
 }

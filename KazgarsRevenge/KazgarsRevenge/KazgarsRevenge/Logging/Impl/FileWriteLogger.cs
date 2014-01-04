@@ -11,8 +11,17 @@ namespace KazgarsRevenge
     /// </summary>
     public class FileWriteLogger : ALogger
     {
+        // Used as constructor params
+        public static readonly string SERVER_SUB_DIR = "Server";
+        public static readonly string CLIENT_SUB_DIR = "Client";
+
+
+        private static readonly string LOG_DIR = "Logging";
+        private static readonly string LOG_EXTENSION = ".log";
+        
         // Location of all the logs
-        public static readonly string FILE_DIRECTORY = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "Logging");
+        public readonly string FILE_DIRECTORY;
+        
         // Format for file names
         public static readonly string FILE_NAME_FORMAT = "yyyy-MM-dd-HH-mm";
 
@@ -25,11 +34,12 @@ namespace KazgarsRevenge
         /// <param name="subDir"></param>
         public FileWriteLogger(string subDir)
         {
-            filePath = Path.Combine(FILE_DIRECTORY, subDir, DateTime.Now.ToString(FILE_NAME_FORMAT), ".log");
+            FILE_DIRECTORY = Path.Combine(Directory.GetCurrentDirectory(), LOG_DIR, subDir);
+            filePath = Path.Combine(FILE_DIRECTORY, DateTime.Now.ToString(FILE_NAME_FORMAT) + LOG_EXTENSION);
             CreateLoggingFile(filePath);
         }
 
-        protected override void PerformLog(Level level, string message)
+        public override void Log(Level level, string message)
         {
             string output = String.Format(ALogger.OUTPUT_FORMAT, level, message);
             using (StreamWriter sw = File.AppendText(filePath))

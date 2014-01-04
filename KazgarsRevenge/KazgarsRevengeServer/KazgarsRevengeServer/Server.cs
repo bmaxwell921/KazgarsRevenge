@@ -46,6 +46,9 @@ namespace KazgarsRevengeServer
         {
             base.Initialize();
 
+            // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
+            SetUpLoggers();
+
             ServerConfig sc = ServerConfigReader.ReadConfig();
             Services.AddService(typeof(ServerConfig), sc);
 
@@ -71,6 +74,15 @@ namespace KazgarsRevengeServer
 
             msgQ = new MessageQueue();
             Services.AddService(typeof(MessageQueue), msgQ);
+        }
+
+        private void SetUpLoggers()
+        {
+            LoggerManager logM = new LoggerManager();
+            // Log to both the console and a file
+            logM.AddLogger(new FileWriteLogger(FileWriteLogger.SERVER_SUB_DIR));
+            logM.AddLogger(new ConsoleLogger());
+            Services.AddService(typeof(LoggerManager), logM);
         }
 
         /// <summary>
