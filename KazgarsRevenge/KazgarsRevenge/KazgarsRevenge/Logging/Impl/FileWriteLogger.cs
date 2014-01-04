@@ -19,10 +19,13 @@ namespace KazgarsRevenge
         // Each file name will the time when this logger was created to avoid overwriting
         private string filePath;
 
-        public FileWriteLogger()
-            : base()
+        /// <summary>
+        /// Creates a FileWriteLogger. subDir should be 'Client' for clients and 'Server' for servers
+        /// </summary>
+        /// <param name="subDir"></param>
+        public FileWriteLogger(string subDir)
         {
-            filePath = System.IO.Path.Combine(FILE_DIRECTORY, DateTime.Now.ToString(FILE_NAME_FORMAT), ".log");
+            filePath = Path.Combine(FILE_DIRECTORY, subDir, DateTime.Now.ToString(FILE_NAME_FORMAT), ".log");
             CreateLoggingFile(filePath);
         }
 
