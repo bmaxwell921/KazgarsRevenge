@@ -10,8 +10,6 @@ namespace KazgarsRevengeServer
 {
     class SVelocityHandler : BaseHandler
     {
-        SPlayerManager playerManager;
-        SNetworkingMessageManager nmm;
         public SVelocityHandler(KazgarsRevengeGame game)
             : base(game)
         {
@@ -30,34 +28,15 @@ namespace KazgarsRevengeServer
          */
         public override void Handle(NetIncomingMessage nim)
         {
-            if (nmm == null)
-            {
-                nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
-            }
-            if (playerManager == null)
-            {
-                playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
-            }
+            SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
+
+            SPlayerManager playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
 
             // Just queue up the message to be applied later
             Identification pId = new Identification(nim.ReadByte());
             Vector3 vel = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
             MessageQueue mq = game.Services.GetService(typeof(MessageQueue)) as MessageQueue;
             mq.AddMessage(new VelocityMessage(MessageType.InGame_Kinetic, pId, vel));
-
-            //if (count % 100 == 0)
-            //{
-            //    Console.WriteLine("Received velocity of: " + vel);
-            //}
-            //Vector3 curPos = playerManager.GetPlayerPosition(pId);
-            //if (curPos.Y < 0)
-            //{
-            //    curPos.Y = 0;
-            //}
-
-            //playerManager.SetPlayerLocation(curPos + vel, pId);
-
-            //SendMessages(pId, curPos + vel);
         }
 
         /*
@@ -70,20 +49,20 @@ namespace KazgarsRevengeServer
          *      
          *  Last 3 int32s are position values since the clients are told by the server where things are
          */ 
-        private void SendMessages(Identification pId, Vector3 loc)
-        {
-            NetOutgoingMessage nom = nmm.server.CreateMessage();
-            nom.Write((byte)MessageType.InGame_Kinetic);
-            nom.Write(pId.id);
-            nom.Write((int)loc.X);
-            nom.Write((int)loc.Y);
-            nom.Write((int)loc.Z);
+        //private void SendMessages(SNetworkingMessageManager nmm, Identification pId, Vector3 loc)
+        //{
+        //    NetOutgoingMessage nom = nmm.server.CreateMessage();
+        //    nom.Write((byte)MessageType.InGame_Kinetic);
+        //    nom.Write(pId.id);
+        //    nom.Write((int)loc.X);
+        //    nom.Write((int)loc.Y);
+        //    nom.Write((int)loc.Z);
 
-            foreach (NetConnection player in nmm.server.Connections)
-            {
-                // Meh, hopefully it gets there
-                nmm.server.SendMessage(nom, player, NetDeliveryMethod.Unreliable);
-            }
-        }
+        //    foreach (NetConnection player in nmm.server.Connections)
+        //    {
+        //        // Meh, hopefully it gets there
+        //        nmm.server.SendMessage(nom, player, NetDeliveryMethod.Unreliable);
+        //    }
+        //}
     }
 }

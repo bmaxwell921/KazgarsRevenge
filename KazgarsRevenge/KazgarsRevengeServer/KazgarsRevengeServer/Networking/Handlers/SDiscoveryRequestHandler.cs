@@ -14,8 +14,6 @@ namespace KazgarsRevengeServer
     /// </summary>
     public class SDiscoveryRequestHandler : BaseHandler
     {
-        SNetworkingMessageManager nmm;
-
         public SDiscoveryRequestHandler(KazgarsRevengeGame game)
             : base(game)
         {
@@ -23,13 +21,13 @@ namespace KazgarsRevengeServer
 
         public override void Handle(NetIncomingMessage nim)
         {
+            // TODO send back if we have room for any connections?
             Console.WriteLine("Received a DiscoveryRequest");
-            if (nmm == null)
-            {
-                nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
-            }
+            SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
+            ServerConfig sc = (ServerConfig)game.Services.GetService(typeof(ServerConfig));
+
             NetOutgoingMessage outMsg = nmm.server.CreateMessage();
-            outMsg.Write(nmm.DUMMY_NAME);
+            outMsg.Write(sc.serverName);
             nmm.server.SendDiscoveryResponse(outMsg, nim.SenderEndpoint);
         }
     }

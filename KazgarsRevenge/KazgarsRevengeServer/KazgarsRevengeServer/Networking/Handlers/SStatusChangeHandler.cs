@@ -13,9 +13,6 @@ namespace KazgarsRevengeServer
     /// </summary>
     public class SStatusChangeHandler : BaseHandler
     {
-        SPlayerManager playerManager;
-        SNetworkingMessageManager nmm;
-
         public SStatusChangeHandler(KazgarsRevengeGame game)
             : base(game)
         {
@@ -26,27 +23,22 @@ namespace KazgarsRevengeServer
         /// <param name="nim"></param>
         public override void Handle(NetIncomingMessage nim)
         {
-            if (playerManager == null)
-            {
-                playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
-            }
-            if (nmm == null)
-            {
-                nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
-                Thread.Sleep(10);
-            }
+            SPlayerManager playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
+            SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
+            ServerConfig sc = (ServerConfig)game.Services.GetService(typeof(ServerConfig));
+
             NetConnectionStatus status = (NetConnectionStatus)nim.ReadByte();
 
             // TODO what about other types??
             if (status == NetConnectionStatus.Connected)
             {
                 Console.WriteLine("New player connecting!");
-                if (nmm.connectedPlayers > Constants.MAX_NUM_CONNECTIONS)
+                if (nmm.connectedPlayers > sc.maxNumPlayers)
                 {
-                    // TODO log this issue
+                    // TODO log this issue. Tell player they can't join? Or should that be sent when they send the discovery? <- this probs
                     return;
                 }
-                bool pHost = isHost();
+                bool pHost = isHost(nmm);
 
                 ++nmm.connectedPlayers;
 
@@ -67,7 +59,7 @@ namespace KazgarsRevengeServer
 
         }
 
-        private bool isHost()
+        private bool isHost(SNetworkingMessageManager nmm)
         {
             return nmm.connectedPlayers == 0;
         }

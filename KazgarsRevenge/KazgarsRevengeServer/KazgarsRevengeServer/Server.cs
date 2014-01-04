@@ -45,6 +45,10 @@ namespace KazgarsRevengeServer
         protected override void Initialize()
         {
             base.Initialize();
+
+            ServerConfig sc = ServerConfigReader.ReadConfig();
+            Services.AddService(typeof(ServerConfig), sc);
+
             nmm = new SNetworkingMessageManager(this);
             Components.Add(nmm);
             Services.AddService(typeof(SNetworkingMessageManager), nmm);

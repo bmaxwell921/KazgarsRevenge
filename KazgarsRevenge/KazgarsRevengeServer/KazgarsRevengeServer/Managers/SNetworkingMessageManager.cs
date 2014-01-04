@@ -11,7 +11,6 @@ namespace KazgarsRevengeServer
 {
     class SNetworkingMessageManager : BaseNetworkMessageManager
     {
-        public string DUMMY_NAME = "Server Name";
         public static readonly Boolean DEBUGGING = true;
 
         // Server from Lidgren
@@ -50,7 +49,7 @@ namespace KazgarsRevengeServer
             config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
             config.Port = Constants.PORT;
 
-            config.MaximumConnections = Constants.MAX_NUM_CONNECTIONS;
+            config.MaximumConnections = ((ServerConfig)Game.Services.GetService(typeof(ServerConfig))).maxNumPlayers;
 
             server = new NetServer(config);
             server.Start();

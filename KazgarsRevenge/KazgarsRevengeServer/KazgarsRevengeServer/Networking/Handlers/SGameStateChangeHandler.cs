@@ -8,7 +8,6 @@ namespace KazgarsRevengeServer
 {
     class SGameStateChangeHandler : BaseHandler
     {
-        SNetworkingMessageManager nmm;
         public SGameStateChangeHandler(KazgarsRevengeGame game)
             : base(game)
         {
@@ -23,10 +22,8 @@ namespace KazgarsRevengeServer
          */
         public override void Handle(NetIncomingMessage nim)
         {
-            if (nmm == null)
-            {
-                nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
-            }
+            SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
+            
             byte pId = nim.ReadByte();
 
             if (pId != 0)
@@ -39,7 +36,7 @@ namespace KazgarsRevengeServer
 
             Console.WriteLine("Changing to gameState: " + game.gameState);
 
-            this.SendMessages();
+            this.SendMessages(nmm);
         }
 
         /*
@@ -47,7 +44,7 @@ namespace KazgarsRevengeServer
          *      - byte MessageType
          *      - byte GameState
          */ 
-        private void SendMessages()
+        private void SendMessages(SNetworkingMessageManager nmm)
         {
             NetOutgoingMessage msg = nmm.server.CreateMessage();
             GameState state = game.gameState;
