@@ -49,7 +49,7 @@ namespace KazgarsRevengeServer
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
             SetUpLoggers();
 
-            ServerConfig sc = ServerConfigReader.ReadConfig();
+            ServerConfig sc = ServerConfigReader.ReadConfig((LoggerManager)Services.GetService(typeof(LoggerManager)));
             Services.AddService(typeof(ServerConfig), sc);
 
             nmm = new SNetworkingMessageManager(this);

@@ -15,6 +15,7 @@ namespace KazgarsRevenge
         protected IDictionary<Level, bool> levelStatus;
 
         private ISet<ILogger> loggers;
+        public static LoggerManager lm;
 
         /// <summary>
         /// Creates a LoggerManager with no loggers. By default all Logging levels are enabled

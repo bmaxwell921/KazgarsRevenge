@@ -32,7 +32,7 @@ namespace KazgarsRevengeServer
             // TODO what about other types??
             if (status == NetConnectionStatus.Connected)
             {
-                Console.WriteLine("New player connecting!");
+                ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.INFO, "New player connecting!");
                 if (nmm.connectedPlayers > sc.maxNumPlayers)
                 {
                     // TODO log this issue. Tell player they can't join? Or should that be sent when they send the discovery? <- this probs

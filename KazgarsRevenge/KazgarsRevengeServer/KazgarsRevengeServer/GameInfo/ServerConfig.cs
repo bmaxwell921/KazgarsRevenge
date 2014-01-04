@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using KazgarsRevenge;
 
 namespace KazgarsRevengeServer
 {
@@ -22,6 +23,8 @@ namespace KazgarsRevengeServer
         public static readonly int DEFAULT_MAX_NUM_PLAYERS = 5;
         public static readonly int MAX_NUM_PLAYERS = 5;
         #endregion
+
+        private LoggerManager lm;
 
         #region Values
         // name of the server sent to clients
@@ -45,7 +48,7 @@ namespace KazgarsRevengeServer
             {
                 if (value > MAX_NUM_PLAYERS || value <= 0)
                 {
-                    Console.WriteLine("Invalid max number of players: %d. Using default value of: %d.", value, DEFAULT_MAX_NUM_PLAYERS);
+                    lm.Log(Level.INFO, String.Format("Invalid max number of players: %d. Using default value of: %d.", value, DEFAULT_MAX_NUM_PLAYERS));
                     value = DEFAULT_MAX_NUM_PLAYERS;
                 }
                 _maxNumPlayers = value;
@@ -56,9 +59,10 @@ namespace KazgarsRevengeServer
         // TODO should this have the level width?
         // public int levelWidth;
 
-        public ServerConfig()
+        public ServerConfig(LoggerManager lm)
             : this(DEFAULT_SERVER_NAME, DEFAULT_MAX_NUM_PLAYERS)
         {
+            this.lm = lm;
         }
 
         public ServerConfig(string serverName, int maxNumPlayers)

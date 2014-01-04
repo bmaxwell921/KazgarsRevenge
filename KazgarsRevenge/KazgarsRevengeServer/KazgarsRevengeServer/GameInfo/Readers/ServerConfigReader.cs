@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Threading;
 using System.Reflection;
+using KazgarsRevenge;
 
 
 namespace KazgarsRevengeServer
@@ -16,6 +17,10 @@ namespace KazgarsRevengeServer
     {
         // Mapping from human readable config names and ServerConfig variable names
         private static IDictionary<string, string> variableMap;
+
+        // Ugh this is a bit dirty
+        private static LoggerManager lm;
+
         static ServerConfigReader()
         {
             variableMap = new Dictionary<string, string>();
@@ -23,14 +28,15 @@ namespace KazgarsRevengeServer
             variableMap[ServerConfig.READABLE_MAX_NUM_PLAYERS_KEY] = "maxNumPlayers";
         }
 
-        public static ServerConfig ReadConfig()
+        public static ServerConfig ReadConfig(LoggerManager lm)
         {
-            ServerConfig serverConfig = new ServerConfig();
+            ServerConfig serverConfig = new ServerConfig(lm);
             string configFilePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), ServerConfig.CONFIG_FILE_PATH);
+            LoggerManager.lm = lm;
 
             if (!File.Exists(configFilePath))
             {
-                Console.WriteLine("server.config file doesn't exist, generating one and using defaults.");
+                lm.Log(Level.INFO, "Server.config file doesn't exist, generating one and using defaults.");
                 
                 // fire up a new thread to save...and do some magic with lambda expressions to make it work
                 new Thread(() => CreateConfigFile(configFilePath, serverConfig)).Start();
@@ -46,10 +52,11 @@ namespace KazgarsRevengeServer
         // creates and writes a new config file 
         private static void CreateConfigFile(string filePath, ServerConfig serverConfig)
         {
-            StreamWriter sw = File.CreateText(filePath);
-            sw.Write(serverConfig.ToString());
-            sw.Flush();
-            sw.Close();
+            using (StreamWriter sw = File.CreateText(filePath))
+            {
+                sw.Write(serverConfig.ToString());
+                sw.Flush();
+            }
         }
 
         // reads the config file into serverConfig
@@ -79,13 +86,13 @@ namespace KazgarsRevengeServer
             string[] splat = line.Split(ServerConfig.FILE_KEY_VALUE_SEPARATOR);
             if (splat.Count() != 2)
             {
-                Console.WriteLine("Invalid server config line: %s\n\tIncorrect number of equals signs.");
+                lm.Log(Level.DEBUG, String.Format("Invalid server config line: %s\n\tIncorrect number of equals signs.", line));
                 return false;
             }
 
             if (!variableMap.ContainsKey(splat[0].Trim()))
             {
-                Console.WriteLine("Invalid server config line: %s\n\tUnrecognized key.");
+                lm.Log(Level.DEBUG, String.Format("Invalid server config line: %s\n\tUnrecognized key.", line));
                 return false;
             }
 
@@ -102,7 +109,7 @@ namespace KazgarsRevengeServer
 
             if (prop == null || !prop.CanWrite)
             {
-                Console.Write("ERROR: Unable to write property named: %s\n\tMake sure it's a property...not just a variable", propName);
+                lm.Log(Level.DEBUG, String.Format("Unable to write property named: %s\n\tMake sure it's a property...not just a variable", propName));
                 return;
             }
             try
@@ -111,8 +118,8 @@ namespace KazgarsRevengeServer
             }
             catch (Exception e)
             {
-                Console.WriteLine("ERROR: Unable to set property: %s", propName);
-                Console.WriteLine(e.StackTrace);
+                lm.Log(Level.ERROR, String.Format("Unable to set property: %s", propName));
+                lm.Log(Level.ERROR, e.StackTrace);
             }
         }
     }
