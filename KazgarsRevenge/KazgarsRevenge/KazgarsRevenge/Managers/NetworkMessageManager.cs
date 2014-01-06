@@ -110,7 +110,18 @@ namespace KazgarsRevenge
 
         public void CloseConnection()
         {
-            Client.Shutdown("bye bye");
+            // Send this client id so the server knows who to disconnect
+            Client.Shutdown(String.Format("{0}", players.myId.id));
+        }
+
+        // For now this is just so the current client can know if it's host or not
+        public void UpdateHost(byte newHost)
+        {
+            if (players.myId.id == newHost)
+            {
+                ((LoggerManager)Game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, String.Format("I, id: {0}, am host, bitches!!!", players.myId));
+                this.isHost = true;
+            }
         }
     }
 }

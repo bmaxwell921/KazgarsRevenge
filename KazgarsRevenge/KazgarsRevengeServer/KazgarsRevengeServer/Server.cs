@@ -31,6 +31,7 @@ namespace KazgarsRevengeServer
 
         protected MessageQueue msgQ;
         protected SMessageSender sms;
+        protected LoggerManager lm;
 
         // Milliseconds between each time step
         private readonly int TIME_STEP = 100;
@@ -38,6 +39,7 @@ namespace KazgarsRevengeServer
      
         public Server() : base()
         {
+            gameState = GameState.ServerStart;
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             timeToUpdate = TIME_STEP;
@@ -52,6 +54,10 @@ namespace KazgarsRevengeServer
 
             ServerConfig sc = ServerConfigReader.ReadConfig((LoggerManager)Services.GetService(typeof(LoggerManager)));
             Services.AddService(typeof(ServerConfig), sc);
+
+            SGameStateMonitor gsm = new SGameStateMonitor(this);
+            Components.Add(gsm);
+            Services.AddService(typeof(SGameStateMonitor), gsm);
 
             nmm = new SNetworkingMessageManager(this);
             Components.Add(nmm);
@@ -82,11 +88,11 @@ namespace KazgarsRevengeServer
 
         protected void SetUpLoggers()
         {
-            LoggerManager logM = new LoggerManager();
+            lm = new LoggerManager();
             // Log to both the console and a file
-            logM.AddLogger(new FileWriteLogger(FileWriteLogger.SERVER_SUB_DIR));
-            logM.AddLogger(new ConsoleLogger());
-            Services.AddService(typeof(LoggerManager), logM);
+            lm.AddLogger(new FileWriteLogger(FileWriteLogger.SERVER_SUB_DIR));
+            lm.AddLogger(new ConsoleLogger());
+            Services.AddService(typeof(LoggerManager), lm);
         }
 
         /// <summary>
@@ -118,6 +124,26 @@ namespace KazgarsRevengeServer
                 return;
             }
             base.Update(gameTime);
+        }
+
+        public void TransitionBackToServerStart()
+        {
+            // TODO other unloading things?
+            gameState = GameState.ServerStart;
+
+            // Reset the id counts
+            IdentificationFactory.Reset();
+
+            // Reset the hostId to the default
+            nmm.hostId = new Identification(0);
+
+            // Reset all the managers....
+            players.Reset();
+
+            levels.Reset();
+            enemies.Reset();
+            attacks.Reset();
+            msgQ.Reset(); ;
         }
     }
 }

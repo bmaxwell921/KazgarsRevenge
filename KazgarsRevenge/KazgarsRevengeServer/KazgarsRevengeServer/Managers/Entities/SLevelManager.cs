@@ -176,5 +176,10 @@ namespace KazgarsRevengeServer
             base.Update(gameTime);
         }
         #endregion
+
+        public void Reset()
+        {
+            rooms.Clear();
+        }
     }
 }

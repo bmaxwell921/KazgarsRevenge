@@ -26,9 +26,10 @@ namespace KazgarsRevengeServer
             
             byte pId = nim.ReadByte();
 
-            if (pId != 0)
+            if (!nmm.isHost(new Identification(pId)))
             {
                 // Lol you wish, not host
+                ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, String.Format("Not host tried to send a gamestate change. HostId: {0}, SenderId: {1}", nmm.hostId, pId));
                 return;
             }
 

@@ -174,5 +174,13 @@ namespace KazgarsRevenge
                 CreateNetworkedPlayer(pos, id);
             }
         }
+
+        public void DeletePlayer(Identification id)
+        {
+            // TODO Remove all components associated with the given player id
+
+            // This line implemented so other clients don't read too much data from snapshots
+            playerMap.Remove(id);
+        }
     }
 }

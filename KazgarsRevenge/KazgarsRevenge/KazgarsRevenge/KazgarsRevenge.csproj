@@ -94,6 +94,8 @@
     <Compile Include="Logging\Impl\ConsoleLogger.cs" />
     <Compile Include="Logging\Impl\FileWriteLogger.cs" />
     <Compile Include="Logging\LoggerManager.cs" />
+    <Compile Include="Networking\Handlers\DisconnectedPlayerHandler.cs" />
+    <Compile Include="Networking\Handlers\HostUpdateHandler.cs" />
     <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Misc Components\NetMovementComponent.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />

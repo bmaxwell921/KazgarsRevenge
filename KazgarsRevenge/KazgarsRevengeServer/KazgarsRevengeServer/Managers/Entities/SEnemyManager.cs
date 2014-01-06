@@ -78,5 +78,10 @@ namespace KazgarsRevengeServer
             enemies.Add(brute);
         }
         #endregion
+
+        public void Reset()
+        {
+            enemies.Clear();
+        }
     }
 }

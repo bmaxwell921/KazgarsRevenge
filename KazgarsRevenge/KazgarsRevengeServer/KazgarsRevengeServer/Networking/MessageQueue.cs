@@ -53,5 +53,10 @@ namespace KazgarsRevengeServer
             }
             msgQueues[msgType].Clear();
         }
+
+        public void Reset()
+        {
+            msgQueues.Clear();
+        }
     }
 }

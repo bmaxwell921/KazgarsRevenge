@@ -13,7 +13,6 @@ namespace KazgarsRevengeServer
     public class SPlayerManager : SEntityManager
     {
         // Map of Identifications to players
-        // HOST IS ALWAYS IDENTIFICATION 0 
         public Dictionary<Identification, GameEntity> players
         {
             get;
@@ -102,18 +101,58 @@ namespace KazgarsRevengeServer
 
         private void SetPlayerVel(Identification id, Vector3 vel)
         {
+            if (!players.ContainsKey(id))
+            {
+                //((LoggerManager)Game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, String.Format("Unknown player with id: {0}", id));
+                return;
+            }
             (players[id].GetSharedData(typeof(Entity)) as Entity).LinearVelocity = vel;
         }
 
         public Vector3 GetPlayerPosition(Identification id)
         {
+            if (!players.ContainsKey(id))
+            {
+                // hack
+                return Vector3.Zero;
+            }
             return (players[id].GetSharedData(typeof(Entity)) as Entity).Position;
         }
 
         public void SetPlayerLocation(Vector3 pos, Identification id)
         {
+            if (!players.ContainsKey(id))
+            {
+                return;
+            }
             Entity sharedData = players[id].GetSharedData(typeof(Entity)) as Entity;
             sharedData.Position = pos;
+        }
+
+        public void Reset()
+        {
+            players.Clear();
+        }
+
+        public void DisconnectPlayer(byte id)
+        {
+            players.Remove(new Identification(id));            
+        }
+
+        // Used for getting the new host lol
+        public Identification GetLowestId()
+        {
+            Identification min = null;
+
+            foreach (Identification curId in players.Keys)
+            {
+                if (min == null || min.id > curId.id)
+                {
+                    min = curId;
+                }
+            }
+
+            return min;
         }
     }
 }

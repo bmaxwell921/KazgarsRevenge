@@ -9,13 +9,18 @@ namespace KazgarsRevengeServer
     /// <summary>
     /// Convenience class to generate new Ids
     /// </summary>
-    class IdentificationFactory
+    public class IdentificationFactory
     {
-        static byte lastId = 0;
+        private static byte lastId = 0;
 
         public static Identification GenerateNextId()
         {
             return new Identification(lastId++);
+        }
+
+        public static void Reset()
+        {
+            lastId = 0;
         }
     }
 }

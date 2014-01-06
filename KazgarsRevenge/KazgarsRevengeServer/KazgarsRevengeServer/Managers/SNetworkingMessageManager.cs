@@ -11,8 +11,6 @@ namespace KazgarsRevengeServer
 {
     class SNetworkingMessageManager : BaseNetworkMessageManager
     {
-        public static readonly Boolean DEBUGGING = true;
-
         // Server from Lidgren
         public NetServer server
         {
@@ -28,17 +26,23 @@ namespace KazgarsRevengeServer
         }
 
         // number of people connected, must be < MAX_NUM_CONNECTIONS
-        public int connectedPlayers;
+        public int connectedPlayers
+        {
+            get
+            {
+                return server.ConnectionsCount;
+            }
+        }
+
+        public Identification hostId;
 
         public SNetworkingMessageManager(KazgarsRevengeGame game)
             : base(game)
         {
             SetUpNetServer();
 
-            // Server starts in the lobby state since it's awaiting connections
-            ((KazgarsRevengeGame)Game).gameState = GameState.Lobby;
+            hostId = new Identification(0);
 
-            connectedPlayers = 0;
             nextUpdateTime = NetTime.Now;
         }
 
@@ -66,13 +70,30 @@ namespace KazgarsRevengeServer
         {
             return server.ReadMessage();
         }
-        int i = 0;
-        public override void Update(GameTime gameTime)
+
+        public bool isHost(Identification id)
         {
-            base.Update(gameTime);
-            LoggerManager lm = (LoggerManager)Game.Services.GetService(typeof(LoggerManager));
-            if (i++ % 50 == 0)
-                lm.Log(Level.DEBUG, String.Format("Number of connections: {0}", server.ConnectionsCount));
+            return id.Equals(hostId);
+        }
+
+        public void DisconnectPlayer(byte id)
+        {
+            if (hostId.Equals(new Identification(id)))
+            {
+                // Choose a new host
+                SPlayerManager pm = (SPlayerManager)Game.Services.GetService(typeof(SPlayerManager));
+
+                // Just get the lowest id...
+                hostId = pm.GetLowestId();
+
+                if (hostId == null)
+                {
+                    // Everyone already disconnected so we'll be going back to the start state 
+                    return;
+                }
+                // Tell everyone about it
+                ((SMessageSender)Game.Services.GetService(typeof(SMessageSender))).SendNewHost(hostId);
+            }
         }
     }
 }

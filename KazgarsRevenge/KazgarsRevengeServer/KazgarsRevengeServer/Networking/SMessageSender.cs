@@ -151,12 +151,36 @@ namespace KazgarsRevengeServer
             this.SendMessageToAll(nom, NetDeliveryMethod.ReliableOrdered);
         }
 
+        /*
+         * Sends the new host id to all clients. This is a bit of a hack since we only need to send this to the client becoming host,
+         * but their connection isn't saved anywhere. So I decided to send it to everyone
+         */ 
+        public void SendNewHost(Identification hostId)
+        {
+            NetOutgoingMessage nom = server.CreateMessage();
+            nom.Write((byte)MessageType.HostUpdate);
+            nom.Write(hostId.id);
+            this.SendMessageToAll(nom, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        // Let all the clients know that someone disconnected
+        public void SendDisconnectedPlayerMessage(byte id)
+        {
+            NetOutgoingMessage nom = server.CreateMessage();
+            nom.Write((byte)MessageType.DisconnectedPlayer);
+            nom.Write(id);
+            this.SendMessageToAll(nom, NetDeliveryMethod.ReliableOrdered);
+        }
+
         // Sends the message to all connections with the given delivery method
         private void SendMessageToAll(NetOutgoingMessage nom, NetDeliveryMethod delivMethod)
         {
             foreach (NetConnection nc in server.Connections)
             {
-                server.SendMessage(nom, nc, delivMethod);
+                if (!nom.IsSent)
+                {
+                    server.SendMessage(nom, nc, delivMethod);
+                }
             }
         }
     }

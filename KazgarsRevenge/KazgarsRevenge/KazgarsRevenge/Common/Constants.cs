@@ -17,6 +17,7 @@ namespace KazgarsRevenge
         Loading,
 
         // Used on server
+        ServerStart,
         GenerateMap
     }
 
@@ -32,6 +33,8 @@ namespace KazgarsRevenge
         MapData,
         Connected, // Used for clients to parse out their Id and host 
         GameSnapshot,
+        HostUpdate,
+        DisconnectedPlayer,
     }
 
     public class Constants

@@ -70,6 +70,14 @@ namespace KazgarsRevenge
             {
                 return MessageType.GameSnapshot;
             }
+            if (b == (byte)MessageType.HostUpdate)
+            {
+                return MessageType.HostUpdate;
+            }
+            if (b == (byte)MessageType.DisconnectedPlayer)
+            {
+                return MessageType.DisconnectedPlayer;
+            }
             throw new ArgumentException("Unknown MessageType");
         }
     }

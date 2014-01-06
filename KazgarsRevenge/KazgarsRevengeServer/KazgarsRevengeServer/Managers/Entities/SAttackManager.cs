@@ -81,5 +81,10 @@ namespace KazgarsRevengeServer
             rotation.Up = Vector3.Up;
             return rotation;
         }
+
+        public void Reset()
+        {
+            attacks.Clear();
+        }
     }
 }
