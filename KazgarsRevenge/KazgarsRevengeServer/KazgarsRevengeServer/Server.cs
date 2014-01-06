@@ -30,6 +30,7 @@ namespace KazgarsRevengeServer
         protected SPlayerManager players;
 
         protected MessageQueue msgQ;
+        protected SMessageSender sms;
 
         // Milliseconds between each time step
         private readonly int TIME_STEP = 100;
@@ -55,6 +56,9 @@ namespace KazgarsRevengeServer
             nmm = new SNetworkingMessageManager(this);
             Components.Add(nmm);
             Services.AddService(typeof(SNetworkingMessageManager), nmm);
+
+            sms = new SMessageSender(nmm.server, (LoggerManager)Services.GetService(typeof(LoggerManager)));
+            Services.AddService(typeof(SMessageSender), sms);
 
             levels = new SLevelManager(this);
             Components.Add(levels);
@@ -104,7 +108,7 @@ namespace KazgarsRevengeServer
                     timeToUpdate = TIME_STEP;
                     // Base update should just have 
                     base.Update(gameTime);
-                    nmm.SendGameSnapshot();
+                    sms.SendGameSnapshot(players);
                     return;
                 }
                 timeToUpdate -= gameTime.ElapsedGameTime.Milliseconds;

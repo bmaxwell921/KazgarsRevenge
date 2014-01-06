@@ -16,7 +16,6 @@ namespace KazgarsRevengeServer
         }
         
         /*
-         * TODO: For now just accept the player's movement request and pass to everyone else
          * Messages come in as
          *      - byte MessageType -> has already been read
          *      - byte playerId
@@ -38,31 +37,5 @@ namespace KazgarsRevengeServer
             MessageQueue mq = game.Services.GetService(typeof(MessageQueue)) as MessageQueue;
             mq.AddMessage(new VelocityMessage(MessageType.InGame_Kinetic, pId, vel));
         }
-
-        /*
-         * Outgoing Message Format:
-         *      - byte MessageType
-         *      - byte playerId
-         *      - int32 x
-         *      - int32 y
-         *      - int32 z
-         *      
-         *  Last 3 int32s are position values since the clients are told by the server where things are
-         */ 
-        //private void SendMessages(SNetworkingMessageManager nmm, Identification pId, Vector3 loc)
-        //{
-        //    NetOutgoingMessage nom = nmm.server.CreateMessage();
-        //    nom.Write((byte)MessageType.InGame_Kinetic);
-        //    nom.Write(pId.id);
-        //    nom.Write((int)loc.X);
-        //    nom.Write((int)loc.Y);
-        //    nom.Write((int)loc.Z);
-
-        //    foreach (NetConnection player in nmm.server.Connections)
-        //    {
-        //        // Meh, hopefully it gets there
-        //        nmm.server.SendMessage(nom, player, NetDeliveryMethod.Unreliable);
-        //    }
-        //}
     }
 }

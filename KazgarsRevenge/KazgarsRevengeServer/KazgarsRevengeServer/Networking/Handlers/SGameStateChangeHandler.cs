@@ -46,20 +46,12 @@ namespace KazgarsRevengeServer
          */ 
         private void SendMessages(SNetworkingMessageManager nmm)
         {
-            NetOutgoingMessage msg = nmm.server.CreateMessage();
             GameState state = game.gameState;
             if (game.gameState == GameState.GenerateMap)
             {
                 state = GameState.ReceivingMap;
             }
-            msg.Write((byte)MessageType.GameStateChange);
-            msg.Write((byte)state);
-
-            foreach (NetConnection player in nmm.server.Connections)
-            {
-                // Use ReliableOrdered because this message has to get there?
-                nmm.server.SendMessage(msg, player, NetDeliveryMethod.ReliableOrdered);
-            }
+            ((SMessageSender)game.Services.GetService(typeof(SMessageSender))).SendGameStateChange(state);
         }
     }
 }

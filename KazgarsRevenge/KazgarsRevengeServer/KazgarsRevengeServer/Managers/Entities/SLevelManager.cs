@@ -41,7 +41,7 @@ namespace KazgarsRevengeServer
 
             IDictionary<Identification, Vector3> playerPos = PlacePlayers();
             // ONCE DONE SEND MAP DATA
-            nmm.SendLevel(this.GetLevelIds(), playerPos);
+            ((SMessageSender)game.Services.GetService(typeof(SMessageSender))).SendMapData(this.GetLevelIds(), playerPos);
 
             game.gameState = GameState.Playing;
         }

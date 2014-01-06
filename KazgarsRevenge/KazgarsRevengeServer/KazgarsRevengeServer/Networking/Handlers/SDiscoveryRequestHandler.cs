@@ -23,12 +23,8 @@ namespace KazgarsRevengeServer
         {
             // TODO send back if we have room for any connections?
             ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, "Received a DiscoveryRequest");
-            SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
             ServerConfig sc = (ServerConfig)game.Services.GetService(typeof(ServerConfig));
-
-            NetOutgoingMessage outMsg = nmm.server.CreateMessage();
-            outMsg.Write(sc.serverName);
-            nmm.server.SendDiscoveryResponse(outMsg, nim.SenderEndpoint);
+            ((SMessageSender)game.Services.GetService(typeof(SMessageSender))).SendDiscoveryResponse(sc.serverName, nim.SenderEndpoint);
         }
     }
 }

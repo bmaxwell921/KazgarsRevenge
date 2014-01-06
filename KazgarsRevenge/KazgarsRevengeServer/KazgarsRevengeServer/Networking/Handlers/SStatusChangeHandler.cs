@@ -36,6 +36,7 @@ namespace KazgarsRevengeServer
                 if (nmm.connectedPlayers > sc.maxNumPlayers)
                 {
                     // TODO log this issue. Tell player they can't join? Or should that be sent when they send the discovery? <- this probs
+                    ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, "Player tried to connect when we have max players already.");
                     return;
                 }
                 bool pHost = isHost(nmm);
@@ -48,13 +49,11 @@ namespace KazgarsRevengeServer
                  *      bool: isHost
                  */
                 Identification newId = playerManager.GetId();
-                NetOutgoingMessage outMsg = nmm.server.CreateMessage();
-                outMsg.Write((byte)MessageType.Connected);
-                outMsg.Write(newId.id);
-                outMsg.Write(pHost);
-
-                // Tell the new connection who they are in the game
-                nmm.server.SendMessage(outMsg, nim.SenderConnection, NetDeliveryMethod.ReliableOrdered);
+                ((SMessageSender)game.Services.GetService(typeof(SMessageSender))).SendConnectedMessage(nim.SenderConnection, newId, pHost);
+            }
+            else
+            {
+                ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, String.Format("Unhandled connection status: {0}", status));
             }
 
         }
