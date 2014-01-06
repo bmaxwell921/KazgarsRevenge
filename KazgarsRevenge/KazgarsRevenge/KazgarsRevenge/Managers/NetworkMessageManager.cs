@@ -107,5 +107,10 @@ namespace KazgarsRevenge
             Client.SendMessage(nom, NetDeliveryMethod.Unreliable);
         }
         #endregion
+
+        public void CloseConnection()
+        {
+            Client.Shutdown("bye bye");
+        }
     }
 }

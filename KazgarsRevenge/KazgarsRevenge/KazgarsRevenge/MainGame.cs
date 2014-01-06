@@ -494,5 +494,13 @@ namespace KazgarsRevenge
             }
             spriteBatch.End();
         }
+
+        // Overridden so we can let the server know we aren't playing anymore
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            base.OnExiting(sender, args);
+
+            nmm.CloseConnection();
+        }
     }
 }

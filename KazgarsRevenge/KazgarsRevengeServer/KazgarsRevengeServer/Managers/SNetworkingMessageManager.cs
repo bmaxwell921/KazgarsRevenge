@@ -50,7 +50,7 @@ namespace KazgarsRevengeServer
             config.Port = Constants.PORT;
 
             config.MaximumConnections = ((ServerConfig)Game.Services.GetService(typeof(ServerConfig))).maxNumPlayers;
-
+            config.ConnectionTimeout = 2000f; // 2 seconds?
             server = new NetServer(config);
             server.Start();
         }
@@ -65,6 +65,14 @@ namespace KazgarsRevengeServer
         protected override NetIncomingMessage ReadMessage()
         {
             return server.ReadMessage();
+        }
+        int i = 0;
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+            LoggerManager lm = (LoggerManager)Game.Services.GetService(typeof(LoggerManager));
+            if (i++ % 50 == 0)
+                lm.Log(Level.DEBUG, String.Format("Number of connections: {0}", server.ConnectionsCount));
         }
     }
 }
