@@ -23,7 +23,7 @@ namespace KazgarsRevengeServer
             attacks = new List<GameEntity>();
         }
 
-        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType faction)
+        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType faction, GameEntity creator)
         {
             GameEntity arrow = new GameEntity("arrow", faction);
             position.Y += 20;
@@ -36,7 +36,7 @@ namespace KazgarsRevengeServer
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(game, arrow);
 
-            AttackController arrowAI = new AttackController(game, arrow, arrowData, damage, 3000, faction == FactionType.Players? FactionType.Enemies : FactionType.Players);
+            AttackController arrowAI = new AttackController(game, arrow, arrowData, damage, 3000, faction == FactionType.Players? FactionType.Enemies : FactionType.Players, creator);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             gcm.AddComponent(arrowPhysics);
@@ -47,7 +47,7 @@ namespace KazgarsRevengeServer
             attacks.Add(arrow);
         }
 
-        public void CreateMeleeAttack(Vector3 position, int damage, FactionType faction)
+        public void CreateMeleeAttack(Vector3 position, int damage, FactionType faction, GameEntity creator)
         {
             GameEntity newAttack = new GameEntity("sword", faction);
             Entity attackData = new Box(position, 35, 47, 35, .01f);
@@ -58,7 +58,7 @@ namespace KazgarsRevengeServer
 
             PhysicsComponent attackPhysics = new PhysicsComponent(game, newAttack);
 
-            AttackController attackAI = new AttackController(game, newAttack, attackData, damage, 300, faction == FactionType.Players ? FactionType.Enemies : FactionType.Players);
+            AttackController attackAI = new AttackController(game, newAttack, attackData, damage, 300, faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             gcm.AddComponent(attackPhysics);

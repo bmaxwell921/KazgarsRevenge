@@ -19,15 +19,15 @@ namespace KazgarsRevenge
             this.health = entity.GetSharedData(typeof(HealthData)) as HealthData;
         }
 
-        public void Damage(int d)
+        public int Damage(int d)
         {
-            health.Damage(d);
             entity.Hit();
+            return health.Damage(d);
         }
 
-        public void Damage(NegativeEffect n, int d)
+        public int Damage(NegativeEffect n, int d)
         {
-            health.Damage(d);
+            return health.Damage(d);
 
             //handle negative effect
         }

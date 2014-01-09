@@ -18,6 +18,8 @@ namespace KazgarsRevenge
 {
     public class AttackController : Component
     {
+        //the entity that created this attack
+        GameEntity creator;
         SoundEffectLibrary sounds;
         Entity physicalData;
         int damage;
@@ -25,13 +27,14 @@ namespace KazgarsRevenge
         double lifeLength;
         //either "good" or "bad", for now
         FactionType factionToHit;
-        public AttackController(KazgarsRevengeGame game, GameEntity entity, Entity physicalData, int damage, double millisDuration, FactionType factionToHit)
+        public AttackController(KazgarsRevengeGame game, GameEntity entity, Entity physicalData, int damage, double millisDuration, FactionType factionToHit, GameEntity creator)
             : base(game, entity)
         {
             this.physicalData = physicalData;
             this.damage = damage;
             this.lifeLength = millisDuration;
             this.factionToHit = factionToHit;
+            this.creator = creator;
             physicalData.IsAffectedByGravity = false;
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
             sounds = game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
@@ -61,7 +64,12 @@ namespace KazgarsRevenge
                     HealthHandlerComponent healthData = hitEntity.GetComponent(typeof(HealthHandlerComponent)) as HealthHandlerComponent;
                     if (healthData != null)
                     {
-                        healthData.Damage(damage);
+                        int actualDamage = healthData.Damage(damage);
+                        PlayerController possPlayer = creator.GetComponent(typeof(PlayerController)) as PlayerController;
+                        if (possPlayer != null)
+                        {
+                            possPlayer.HandleDamageDealt(actualDamage);
+                        }
                     }
                     entity.Kill();
                 }

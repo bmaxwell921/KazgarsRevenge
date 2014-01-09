@@ -37,7 +37,7 @@ namespace KazgarsRevenge
 
 
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
-        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType arrowFaction)
+        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType arrowFaction, GameEntity creator)
         {
             GameEntity arrow = new GameEntity("arrow", arrowFaction);
             position.Y += 20;
@@ -53,7 +53,7 @@ namespace KazgarsRevenge
                 new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                     new Vector3(10), Vector3.Zero, arrowGraphicRot);
 
-            AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, arrowFaction == FactionType.Players ? FactionType.Enemies : FactionType.Players);
+            AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, arrowFaction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -69,7 +69,7 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateMelleAttack(Vector3 position, int damage, FactionType faction, bool sparks)
+        public void CreateMelleAttack(Vector3 position, int damage, FactionType faction, bool sparks, GameEntity creator)
         {
             GameEntity newAttack = new GameEntity("arrow", faction);
 
@@ -81,7 +81,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
 
-            AttackController attackAI = new AttackController(mainGame, newAttack, attackData, damage, 300, faction == FactionType.Players? FactionType.Enemies : FactionType.Players);
+            AttackController attackAI = new AttackController(mainGame, newAttack, attackData, damage, 300, faction == FactionType.Players? FactionType.Enemies : FactionType.Players, creator);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             genComponentManager.AddComponent(attackPhysics);

@@ -34,14 +34,17 @@ namespace KazgarsRevenge
             this.Dead = false;
         }
 
-        public void Damage(int d)
+        public int Damage(int d)
         {
-            Health -= d;
+            //TODO: armor and resistance calculations
+            int actualDamage = d;
+            Health -= actualDamage;
             if (Health <= 0)
             {
                 Health = 0;
                 Dead = true;
             }
+            return actualDamage;
         }
     }
 }

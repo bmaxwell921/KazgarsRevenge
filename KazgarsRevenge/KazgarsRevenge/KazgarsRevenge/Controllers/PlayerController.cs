@@ -999,7 +999,7 @@ namespace KazgarsRevenge
                 {
                     Vector3 forward = GetForward();
                     attached.Remove("arrow");
-                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, FactionType.Players);
+                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, FactionType.Players, this.entity);
                     attState = AttackState.LettingGo;
                     millisShotAniCounter = 0;
                 }
@@ -1016,12 +1016,20 @@ namespace KazgarsRevenge
                 if (attState == AttackState.InitialSwing && millisMelleCounter >= aniDurations["melleDamage"])
                 {
                     Vector3 forward = GetForward();
-                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, FactionType.Players, true);
+                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, FactionType.Players, true, this.entity);
                     attState = AttackState.FinishSwing;
                     millisMelleCounter = 0;
                 }
             }
         }
+
+        #region Damage
+        //TODO: damage tracker and "in combat" status
+        public void HandleDamageDealt(int amount)
+        {
+            
+        }
+        #endregion
 
         #region helpers
         private void CloseLoot()
