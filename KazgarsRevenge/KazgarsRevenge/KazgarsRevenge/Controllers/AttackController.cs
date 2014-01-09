@@ -49,6 +49,7 @@ namespace KazgarsRevenge
             }
         }
 
+        int damageDealt = 0;
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
             GameEntity hitEntity = other.Tag as GameEntity;
@@ -64,16 +65,21 @@ namespace KazgarsRevenge
                     HealthHandlerComponent healthData = hitEntity.GetComponent(typeof(HealthHandlerComponent)) as HealthHandlerComponent;
                     if (healthData != null)
                     {
-                        int actualDamage = healthData.Damage(damage);
-                        PlayerController possPlayer = creator.GetComponent(typeof(PlayerController)) as PlayerController;
-                        if (possPlayer != null)
-                        {
-                            possPlayer.HandleDamageDealt(actualDamage);
-                        }
+                        damageDealt += healthData.Damage(damage);
                     }
                     entity.Kill();
                 }
             }
+        }
+
+        public override void End()
+        {
+            PlayerController possPlayer = creator.GetComponent(typeof(PlayerController)) as PlayerController;
+            if (possPlayer != null)
+            {
+                possPlayer.HandleDamageDealt(damageDealt);
+            }
+            base.End();
         }
     }
 }
