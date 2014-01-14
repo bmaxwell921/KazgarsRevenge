@@ -13,8 +13,8 @@ import main.kazgarsrevenge.model.IRoomBlock;
 public class DefaultBuildableRoom extends DefaultRoom implements
 		IAttachableRoom {
 
-	public DefaultBuildableRoom(List<IRoomBlock> rooms) {
-		super(rooms);
+	public DefaultBuildableRoom(String name, List<IRoomBlock> rooms) {
+		super(name, rooms);
 	}
 
 	@Override

@@ -17,6 +17,9 @@ import main.kazgarsrevenge.model.IRoomBlock;
  */
 public class DefaultRoom implements IRoom {
 
+	// The 'name' of this room
+	private String name;
+	
 	// This room's location in 2D space
 	private Location loc;
 	
@@ -28,7 +31,8 @@ public class DefaultRoom implements IRoom {
 	 * the given list should not be empty
 	 * @param rooms
 	 */
-	public DefaultRoom(List<IRoomBlock> rooms) {
+	public DefaultRoom(String name, List<IRoomBlock> rooms) {
+		this.name = name;
 		if (rooms == null) {
 			this.rooms = new ArrayList<>();
 			return;
@@ -45,6 +49,11 @@ public class DefaultRoom implements IRoom {
 	@Override
 	public Location getLocation() {
 		return loc;
+	}
+	
+	@Override
+	public String getRoomName() {
+		return name;
 	}
 
 	@Override
@@ -104,5 +113,4 @@ public class DefaultRoom implements IRoom {
 	private int getValue(Location loc, boolean useX) {
 		return useX ? loc.getX() : loc.getY();
 	}
-
 }

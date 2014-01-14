@@ -29,4 +29,10 @@ public interface IRoom {
 	 * @return
 	 */
 	public Rectangle getBoundingRect();
+	
+	/**
+	 * Returns the name of this room
+	 * @return
+	 */
+	public String getRoomName();
 }

@@ -1,0 +1,9 @@
+[
+	{
+		"Name":"Room1",
+		"Floor": [
+			{"x":0,"y":0,"Rotation":"Zero"},
+			{"x":0,"y":0,"Rotation":"Zero"}
+		]
+	}
+]
