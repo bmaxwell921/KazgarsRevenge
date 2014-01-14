@@ -11,18 +11,15 @@ using BEPUphysics.Entities;
 namespace KazgarsRevenge
 {
 
-    class BlobShadow : DrawableComponentDecal
+    public class BlobShadowDecal : DrawableComponentDecal
     {
-        BasicEffect shadowEffect;
-
         VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[4];
         short[] indices = new short[6];
 
         float width;
-        public BlobShadow(KazgarsRevengeGame game, GameEntity entity, float width, BasicEffect shadowEffect)
+        public BlobShadowDecal(KazgarsRevengeGame game, GameEntity entity, float width)
             : base(game, entity)
         {
-            this.shadowEffect = shadowEffect;
             this.width = width;
 
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
@@ -31,19 +28,18 @@ namespace KazgarsRevenge
         Entity physicalData;
         public override void Update(GameTime gameTime)
         {
-            UpdateVerts(new Vector3(physicalData.Position.X, 0, physicalData.Position.Z));
+            UpdateVerts(new Vector3(physicalData.Position.X, 40, physicalData.Position.Z));
         }
 
-        Vector3 normal = Vector3.Up;
         private void UpdateVerts(Vector3 origin)
         {
-            // Calculate the quad corners
-            Vector3 Left = Vector3.Cross(normal, Vector3.Up);
-            Vector3 uppercenter = (Vector3.Up * width / 2) + origin;
-            Vector3 UpperLeft = uppercenter + (Left * width / 2);
-            Vector3 UpperRight = uppercenter - (Left * width / 2);
-            Vector3 LowerLeft = UpperLeft - (Vector3.Up * width);
-            Vector3 LowerRight = UpperRight - (Vector3.Up * width);
+            Vector3 uppercenter =  origin + (Vector3.Forward * width / 2);
+
+            // Calculate the quad corners (flat, horizontal quad)
+            Vector3 UpperLeft = uppercenter + (Vector3.Left * width / 2);
+            Vector3 UpperRight = uppercenter - (Vector3.Left * width / 2);
+            Vector3 LowerLeft = UpperLeft - (Vector3.Forward * width);
+            Vector3 LowerRight = UpperRight - (Vector3.Forward * width);
 
             // position
             vertices[0].Position = LowerLeft;
@@ -61,7 +57,7 @@ namespace KazgarsRevenge
             // normal
             for (int i = 0; i < vertices.Length; i++)
             {
-                vertices[i].Normal = normal;
+                vertices[i].Normal = Vector3.Up;
             }
 
             // texture coords
@@ -88,13 +84,10 @@ namespace KazgarsRevenge
 
         public override void Draw(Matrix view, Matrix projection)
         {
-            shadowEffect.CurrentTechnique.Passes[0].Apply();
-
-            Game.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
+            Game.GraphicsDevice.DrawUserIndexedPrimitives(
                 PrimitiveType.TriangleList,
                 vertices, 0, 4,
                 indices, 0, 2);
-
         }
     }
 }

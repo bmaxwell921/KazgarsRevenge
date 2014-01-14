@@ -404,6 +404,7 @@ namespace KazgarsRevenge
                     //draw particles
                     particleManager.Draw(gameTime);
 
+
                     //reset graphics device
                     GraphicsDevice.SetRenderTarget(null);
 
@@ -416,6 +417,10 @@ namespace KazgarsRevenge
                     spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effectOutline);
                     spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
                     spriteBatch.End();
+
+
+                    //draw decals
+                    decalManager.Draw();
 
 
                     //debugging physics

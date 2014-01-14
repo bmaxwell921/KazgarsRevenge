@@ -61,8 +61,10 @@ namespace KazgarsRevenge
             PhysicsComponent lootPhysics = new PhysicsComponent(mainGame, lootSoul);
             AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE)), Vector3.Zero);
             LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot, totalSouls);
+            BlobShadowDecal lootShadow = new BlobShadowDecal(mainGame, lootSoul, 500);
             EmitterComponent soulEmitters = new EmitterComponent(mainGame, lootSoul);
             soulEmitters.AddEmitter(typeof(SoulTrailParticleSystem), 8, (int)size / 2, Vector3.Up * 5);
+
             //soulEmitters.AddEmitter(typeof(ShadowParticleSystem), 20, 0, new Vector3(0, -size + .1f, 0));
 
             lootSoul.AddComponent(typeof(PhysicsComponent), lootPhysics);
@@ -73,6 +75,9 @@ namespace KazgarsRevenge
 
             lootSoul.AddComponent(typeof(AIController), lootController);
             genComponentManager.AddComponent(lootController);
+
+            lootSoul.AddComponent(typeof(BlobShadowDecal), lootShadow);
+            decalManager.AddBlobShadow(lootShadow);
 
             lootSoul.AddComponent(typeof(EmitterComponent), soulEmitters);
             genComponentManager.AddComponent(soulEmitters);

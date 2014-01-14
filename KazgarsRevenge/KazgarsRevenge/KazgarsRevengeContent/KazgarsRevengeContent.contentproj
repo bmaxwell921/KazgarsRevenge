@@ -389,6 +389,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Textures\blob.png">
+      <Name>blob</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Textures\Particles\blob.png">
       <Name>blob</Name>
       <Importer>TextureImporter</Importer>

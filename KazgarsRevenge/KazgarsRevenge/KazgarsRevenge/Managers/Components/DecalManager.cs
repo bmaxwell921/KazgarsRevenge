@@ -9,7 +9,7 @@ namespace KazgarsRevenge
 {
     public class DecalManager : GameComponent
     {
-        List<DrawableComponentDecal> components = new List<DrawableComponentDecal>();
+        Dictionary<Type, List<DrawableComponentDecal>> components = new Dictionary<Type, List<DrawableComponentDecal>>();
         public DecalManager(KazgarsRevengeGame game)
             : base(game)
         {
@@ -25,40 +25,58 @@ namespace KazgarsRevenge
             shadowEffect.EnableDefaultLighting();
             shadowEffect.World = Matrix.Identity;
             shadowEffect.TextureEnabled = true;
-            shadowEffect.Texture = Game.Content.Load<Texture2D>("Textures\\Particles\\blob");
+            shadowEffect.Texture = Game.Content.Load<Texture2D>("Textures\\blob");
+            effects.Add(typeof(BlobShadowDecal), shadowEffect);
         }
 
         public override void Update(GameTime gameTime)
         {
-            foreach (KeyValuePair<Type, BasicEffect> k in effects)
+            foreach (KeyValuePair<Type, List<DrawableComponentDecal>> k in components)
             {
-                k.Value.View = camera.View;
-                k.Value.Projection = camera.Projection;
-            }
-            for (int i = components.Count - 1; i >= 0; --i)
-            {
-                components[i].Update(gameTime);
-                if (components[i].Remove)
+                List<DrawableComponentDecal> componentList = k.Value;
+                for (int i = componentList.Count - 1; i >= 0; --i)
                 {
-                    components[i].End();
-                    components.RemoveAt(i);
+                    componentList[i].Update(gameTime);
+                    if (componentList[i].Remove)
+                    {
+                        componentList[i].End();
+                        componentList.RemoveAt(i);
+                    }
                 }
             }
         }
 
-        public void AddComponent(DrawableComponentDecal c)
+        public void AddBlobShadow(BlobShadowDecal b)
+        {
+            AddComponent(typeof(BlobShadowDecal), b);
+        }
+
+        public void AddComponent(Type t, DrawableComponentDecal c)
         {
             c.Start();
-            components.Add(c);
+            if (!components.ContainsKey(t))
+            {
+                components.Add(t, new List<DrawableComponentDecal>());
+            }
+            components[t].Add(c);
         }
 
         CameraComponent camera;
         public void Draw()
         {
-            
-            for (int i = components.Count - 1; i >= 0; --i)
+            foreach (KeyValuePair<Type, List<DrawableComponentDecal>> k in components)
             {
-                components[i].Draw(camera.View, camera.Projection);
+                List<DrawableComponentDecal> componentList = k.Value;
+
+                //apply corresponding effect before rendering
+                effects[k.Key].View = camera.View;
+                effects[k.Key].Projection = camera.Projection;
+                effects[k.Key].CurrentTechnique.Passes[0].Apply();
+
+                for (int i = componentList.Count - 1; i >= 0; --i)
+                {
+                    componentList[i].Draw(camera.View, camera.Projection);
+                }
             }
         }
     }

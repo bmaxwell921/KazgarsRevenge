@@ -89,7 +89,7 @@
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\NetworkPlayerController.cs" />
     <Compile Include="Controllers\SmoothAIController.cs" />
-    <Compile Include="Drawing\BlobShadow.cs" />
+    <Compile Include="Drawing\BlobShadowDecal.cs" />
     <Compile Include="Drawing\DrawableComponentDecal.cs" />
     <Compile Include="Logging\ALogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
