@@ -1,9 +1,13 @@
 [
 	{
-		"Name":"Room1",
-		"Floor": [
-			{"x":0,"y":0,"Rotation":"Zero"},
-			{"x":0,"y":0,"Rotation":"Zero"}
+		"name" : "Room1", 
+		"blocks" :
+		[
+			{
+				"type":"Floor",
+				"roomLoc":{"x":0,"y":0},
+				"rot":"NINETY"
+			}
 		]
 	}
 ]

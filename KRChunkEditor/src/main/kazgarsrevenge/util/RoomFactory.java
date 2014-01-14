@@ -1,17 +1,25 @@
 package main.kazgarsrevenge.util;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import main.kazgarsrevenge.model.IRoomBlock;
+import main.kazgarsrevenge.model.blocks.impl.ARoomBlock;
+import main.kazgarsrevenge.model.blocks.impl.BossRoom;
+import main.kazgarsrevenge.model.blocks.impl.DefaultBlock;
+import main.kazgarsrevenge.model.blocks.impl.DoorBlock;
+import main.kazgarsrevenge.model.blocks.impl.FloorBlock;
+import main.kazgarsrevenge.model.blocks.impl.MobSpawn;
+import main.kazgarsrevenge.model.blocks.impl.PlayerSpawn;
 import main.kazgarsrevenge.model.rooms.impl.DefaultRoom;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -30,33 +38,10 @@ import com.google.gson.JsonParser;
  */
 public class RoomFactory {
 	
+	private static final String NAME_KEY = "name";
+	private static final String BLOCKS_KEY = "blocks";
+	
 	public static void main(String[] args) throws IOException { 
-
-//		JsonObject blockOne = new JsonObject();
-//		blockOne.addProperty("x", 0);
-//		blockOne.addProperty("y", 0);
-//		blockOne.addProperty("Rotation", "Zero");
-//		
-//		JsonObject blockTwo = new JsonObject();
-//		blockTwo.addProperty("x", 0);
-//		blockTwo.addProperty("y", 0);
-//		blockTwo.addProperty("Rotation", "Zero");
-//		
-//		JsonArray floorArr = new JsonArray();
-//		floorArr.add(blockOne);
-//		floorArr.add(blockTwo);
-//		
-//		JsonObject roomOne = new JsonObject();
-//		roomOne.addProperty("Name", "Room1");
-//		roomOne.add("Floor", floorArr);
-//		
-//		JsonArray file = new JsonArray();
-//		file.add(roomOne);
-//		
-//		BufferedWriter bw = new BufferedWriter(new FileWriter("./Rooms.txt"));
-//		bw.write(file.toString());
-//		bw.close();
-
 		
 		// TODO do this elsewhere
 		BufferedReader br = new BufferedReader(new FileReader("./Rooms.txt"));
@@ -69,38 +54,49 @@ public class RoomFactory {
 		JsonParser parser = new JsonParser();
 		JsonArray rooms = parser.parse(sb.toString()).getAsJsonArray();
 		
+		RoomFactory fr = new RoomFactory();
 		for (JsonElement room : rooms) {
-			System.out.println(new RoomFactory().getRoom(room));
+			System.out.println(fr.getRoom(room));
 		}
-		
-	}
 	
-	public DefaultRoom getRoom(JsonElement roomJson) {
-		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(DefaultRoom.class, new RoomDeserializer());
-		Gson gson = builder.create();
-		return gson.fromJson(roomJson, DefaultRoom.class);		
 	}
 	
 	/**
-	 * Converts the json into a DefaultRoom object
-	 * @author Brandon
-	 *
+	 * Converts the given json representation of a DefaultRoom into a concrete object.
+	 * 
+	 * Room Json should be:
+	 * 		{
+	 * 			name : <ROOM_NAME>,
+	 * 			blocks : 
+	 * 			[
+	 * 				{
+	 * 					type : <FLOOR_TYPE>,
+	 * 					roomLoc : 
+	 * 					{
+	 * 						x : <X_LOC>,
+	 * 						y : <Y_LOC>
+	 * 					},
+	 * 					rot : <ROTATION_ENUM_NAME>
+	 * 				}
+	 * 
+	 * 		}
+	 * 
+	 * Where the values in <> are filled in appropriately
+	 * @param json
+	 * @return
 	 */
-	private static class RoomDeserializer implements JsonDeserializer<DefaultRoom> {
-
-		// TODO finish implementing this
-		@Override
-		public DefaultRoom deserialize(final JsonElement json, final Type type,
-				final JsonDeserializationContext context) throws JsonParseException {
-			final JsonObject obj = json.getAsJsonObject();
-			System.out.println("In here!");
-			for (Map.Entry<String, JsonElement> prop : obj.entrySet()) {
-				
-			}
-			
-			return null;
+	public DefaultRoom getRoom(JsonElement json) {
+		Gson gson = new Gson();
+		JsonObject jsonRoom = json.getAsJsonObject();
+		
+		String name = jsonRoom.get(NAME_KEY).toString();
+		JsonArray blocks = jsonRoom.get(BLOCKS_KEY).getAsJsonArray();
+		List<IRoomBlock> blockList = new ArrayList<IRoomBlock>();
+		
+		for (JsonElement block : blocks) {
+			blockList.add(gson.fromJson(block, DefaultBlock.class));
 		}
 		
+		return new DefaultRoom(name, blockList);
 	}
 }

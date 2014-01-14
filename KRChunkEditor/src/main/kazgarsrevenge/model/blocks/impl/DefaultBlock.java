@@ -1,22 +1,21 @@
 package main.kazgarsrevenge.model.blocks.impl;
 
-import java.lang.reflect.Constructor;
-
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.data.Rotation;
 import main.kazgarsrevenge.model.IRoomBlock;
 
 /**
- * Abstract implementation of the IRoomBlock interface.
- * Implementing classes only need to implement the toString method.
- * 
- * Default blocks are only 1x1
+ * This class might work to just read in the block types...
+ * Pretty much makes all the other block types useless
  * @author Brandon
  *
  */
-public abstract class ARoomBlock implements IRoomBlock, Cloneable {
+public class DefaultBlock implements IRoomBlock {
 
-	private static final int DEFAULT_SIZE = 1;
+	// Default blocks are 1x1
+	private static final int SIZE = 1;
+	
+	private String type;
 	
 	// Location of the block
 	private Location roomLoc;
@@ -24,11 +23,12 @@ public abstract class ARoomBlock implements IRoomBlock, Cloneable {
 	// Rotation of the block
 	private Rotation rot;
 	
-	public ARoomBlock() {
-		this(new Location(), Rotation.ZERO);
+	public DefaultBlock() {
+		this("Floor", new Location(), Rotation.ZERO);
 	}
 	
-	public ARoomBlock(Location roomLoc, Rotation rot) {
+	public DefaultBlock(String type, Location roomLoc, Rotation rot) {
+		this.type = type;
 		this.roomLoc = roomLoc;
 		this.rot = rot;
 	}
@@ -52,10 +52,15 @@ public abstract class ARoomBlock implements IRoomBlock, Cloneable {
 	public void setRotation(Rotation rot) {
 		this.rot = rot;
 	}
-	
+
+	@Override
+	public String getStringRep() {
+		return type;
+	}
+
 	@Override
 	public int getSideLength() {
-		return DEFAULT_SIZE;
+		return SIZE;
 	}
 	
 	@Override
@@ -66,13 +71,16 @@ public abstract class ARoomBlock implements IRoomBlock, Cloneable {
 	
 	@Override
 	public Object clone() {
-		// Clone works for subtypes as well
-		Constructor<?> cons = getClass().getConstructors()[0];
 		try {
-			return cons.newInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
+			DefaultBlock ret = (DefaultBlock) super.clone();
+			ret.roomLoc = this.roomLoc;
+			ret.rot = this.rot;
+			ret.type = this.type;
+			return ret;
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace();
 			return null;
 		}
 	}
+
 }
