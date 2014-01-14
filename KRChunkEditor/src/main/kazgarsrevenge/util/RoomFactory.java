@@ -44,7 +44,7 @@ public class RoomFactory {
 	public static void main(String[] args) throws IOException { 
 		
 		// TODO do this elsewhere
-		BufferedReader br = new BufferedReader(new FileReader("./Rooms.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("./Rooms.json"));
 		StringBuilder sb = new StringBuilder();
 		String read = "";
 		
