@@ -33,6 +33,7 @@ namespace KazgarsRevenge
         CameraComponent camera;
         ModelManager renderManager;
         SpriteManager spriteManager;
+        DecalManager decalManager;
         LootManager gearGenerator;
 
         PlayerManager players;
@@ -123,6 +124,10 @@ namespace KazgarsRevenge
             spriteManager = new SpriteManager(this);
             Components.Add(spriteManager);
             Services.AddService(typeof(SpriteManager), spriteManager);
+
+            decalManager = new DecalManager(this);
+            Components.Add(decalManager);
+            Services.AddService(typeof(DecalManager), decalManager);
 
             players = new PlayerManager(this);
             Components.Add(players);

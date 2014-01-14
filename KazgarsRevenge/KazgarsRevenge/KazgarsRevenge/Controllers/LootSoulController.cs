@@ -28,7 +28,6 @@ namespace KazgarsRevenge
 
         public int totalSouls { get; private set; }
         AnimationPlayer animations;
-        ParticleEmitter trailEmitter;
         private List<Item> loot;
         public List<Item> Loot
         {
@@ -38,12 +37,11 @@ namespace KazgarsRevenge
             }
         }
 
-        public LootSoulController(KazgarsRevengeGame game, GameEntity entity, int wanderSeed, List<Item> loot, int totalSouls, ParticleEmitter trailEmitter)
+        public LootSoulController(KazgarsRevengeGame game, GameEntity entity, int wanderSeed, List<Item> loot, int totalSouls)
             : base(game, entity)
         {
             this.loot = loot;
             this.totalSouls = totalSouls;
-            this.trailEmitter = trailEmitter;
             soulState = LootSoulState.Wandering;
 
             rand = new Random();
@@ -66,7 +64,6 @@ namespace KazgarsRevenge
         protected float groundSpeed = 25.0f;
         public override void Update(GameTime gameTime)
         {
-            this.trailEmitter.Update(gameTime, physicalData.Position + Vector3.Up * 5);
             switch (soulState)
             {
                 case LootSoulState.Wandering:

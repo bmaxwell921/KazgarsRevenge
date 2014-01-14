@@ -34,6 +34,7 @@ namespace KazgarsRevenge
         float timeLeftOver;
         Random rand;
         int maxOffset;
+        Vector3 offset;
 
         #endregion
 
@@ -42,7 +43,7 @@ namespace KazgarsRevenge
         /// Constructs a new particle emitter object.
         /// </summary>
         public ParticleEmitter(ParticleSystem particleSystem,
-                               float particlesPerSecond, Vector3 initialPosition, int maxOffset)
+                               float particlesPerSecond, Vector3 initialPosition, int maxOffset, Vector3 offset)
         {
             this.particleSystem = particleSystem;
 
@@ -52,6 +53,7 @@ namespace KazgarsRevenge
 
             rand = new Random();
             this.maxOffset = maxOffset;
+            this.offset = offset;
         }
 
 
@@ -93,7 +95,7 @@ namespace KazgarsRevenge
                     Vector3 position = Vector3.Lerp(previousPosition, newPosition, mu);
 
                     // Create the particle.
-                    particleSystem.AddParticle(position + new Vector3(rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset), velocity);
+                    particleSystem.AddParticle(position + offset + new Vector3(rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset), velocity);
                 }
 
                 // Store any time we didn't use, so it can be part of the next update.

@@ -24,7 +24,7 @@ namespace KazgarsRevenge
 
             systems.Add(typeof(WeaponSparksSystem), new WeaponSparksSystem(Game, Game.Content));
             systems.Add(typeof(SoulCreationParticleSystem), new SoulCreationParticleSystem(Game, Game.Content));
-            systems.Add(typeof(FireParticleSystem), new FireParticleSystem(Game, Game.Content));
+            systems.Add(typeof(ShadowParticleSystem), new ShadowParticleSystem(Game, Game.Content));
             systems.Add(typeof(SoulTrailParticleSystem), new SoulTrailParticleSystem(Game, Game.Content));
             systems.Add(typeof(BloodParticleSystem), new BloodParticleSystem(Game, Game.Content));
 
