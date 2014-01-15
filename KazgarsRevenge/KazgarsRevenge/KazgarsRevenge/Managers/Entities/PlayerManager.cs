@@ -129,7 +129,7 @@ namespace KazgarsRevenge
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
             HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
             NetworkPlayerController controller = new NetworkPlayerController(mainGame, player);
-            BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 6);
+            BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
             genComponentManager.AddComponent(playerPhysics);
