@@ -24,7 +24,7 @@ public class DefaultBlock implements IRoomBlock {
 	private Rotation rot;
 	
 	public DefaultBlock() {
-		this("Floor", new Location(), Rotation.ZERO);
+		this(null, new Location(), Rotation.ZERO);
 	}
 	
 	public DefaultBlock(String type, Location roomLoc, Rotation rot) {

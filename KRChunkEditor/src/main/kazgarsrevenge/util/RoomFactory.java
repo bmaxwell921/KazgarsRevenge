@@ -41,25 +41,25 @@ public class RoomFactory {
 	private static final String NAME_KEY = "name";
 	private static final String BLOCKS_KEY = "blocks";
 	
-	public static void main(String[] args) throws IOException { 
-		
-		// TODO do this elsewhere
-		BufferedReader br = new BufferedReader(new FileReader("./Rooms.json"));
-		StringBuilder sb = new StringBuilder();
-		String read = "";
-		
-		while ((read = br.readLine()) != null) {
-			sb.append(read);
-		}		
-		JsonParser parser = new JsonParser();
-		JsonArray rooms = parser.parse(sb.toString()).getAsJsonArray();
-		
-		RoomFactory fr = new RoomFactory();
-		for (JsonElement room : rooms) {
-			System.out.println(fr.getRoom(room));
-		}
-	
-	}
+//	public static void main(String[] args) throws IOException { 
+//		
+//		// TODO do this elsewhere
+//		BufferedReader br = new BufferedReader(new FileReader("./Rooms.json"));
+//		StringBuilder sb = new StringBuilder();
+//		String read = "";
+//		
+//		while ((read = br.readLine()) != null) {
+//			sb.append(read);
+//		}		
+//		JsonParser parser = new JsonParser();
+//		JsonArray rooms = parser.parse(sb.toString()).getAsJsonArray();
+//		
+//		RoomFactory fr = new RoomFactory();
+//		for (JsonElement room : rooms) {
+//			System.out.println(fr.getRoom(room));
+//		}
+//	
+//	}
 	
 	/**
 	 * Converts the given json representation of a DefaultRoom into a concrete object.
