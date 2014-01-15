@@ -76,6 +76,7 @@ namespace KazgarsRevenge
             HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
             PlayerController playerController = new PlayerController(mainGame, player);
             NetMovementComponent nmc = new NetMovementComponent(mainGame, player);
+            BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
             //adding the controllers to their respective managers 
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
@@ -92,6 +93,9 @@ namespace KazgarsRevenge
             
             player.AddComponent(typeof(NetMovementComponent), nmc);
             nmm.AddComponent(nmc);
+
+            player.AddComponent(typeof(BlobShadowDecal), shadow);
+            decalManager.AddBlobShadow(shadow);
 
             playerMap[id] = player;
             myId = id;
@@ -125,6 +129,7 @@ namespace KazgarsRevenge
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
             HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
             NetworkPlayerController controller = new NetworkPlayerController(mainGame, player);
+            BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 6);
 
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
             genComponentManager.AddComponent(playerPhysics);
@@ -137,6 +142,9 @@ namespace KazgarsRevenge
 
             player.AddComponent(typeof(NetworkPlayerController), controller);
             genComponentManager.AddComponent(controller);
+
+            player.AddComponent(typeof(BlobShadowDecal), shadow);
+            decalManager.AddBlobShadow(shadow);
 
             playerMap[id] = player;
         }

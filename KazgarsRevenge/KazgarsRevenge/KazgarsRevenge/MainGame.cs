@@ -404,6 +404,9 @@ namespace KazgarsRevenge
                     //draw particles
                     particleManager.Draw(gameTime);
 
+                    //draw decals
+                    decalManager.Draw();
+
 
                     //reset graphics device
                     GraphicsDevice.SetRenderTarget(null);
@@ -419,8 +422,6 @@ namespace KazgarsRevenge
                     spriteBatch.End();
 
 
-                    //draw decals
-                    decalManager.Draw();
 
 
                     //debugging physics

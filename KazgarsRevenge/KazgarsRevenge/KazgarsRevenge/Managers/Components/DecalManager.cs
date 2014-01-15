@@ -64,6 +64,10 @@ namespace KazgarsRevenge
         CameraComponent camera;
         public void Draw()
         {
+
+            Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            Game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+
             foreach (KeyValuePair<Type, List<DrawableComponentDecal>> k in components)
             {
                 List<DrawableComponentDecal> componentList = k.Value;
@@ -78,6 +82,9 @@ namespace KazgarsRevenge
                     componentList[i].Draw(camera.View, camera.Projection);
                 }
             }
+
+
+
         }
     }
 }

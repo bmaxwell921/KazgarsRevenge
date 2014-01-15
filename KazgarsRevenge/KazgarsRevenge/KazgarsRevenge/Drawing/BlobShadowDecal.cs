@@ -23,12 +23,14 @@ namespace KazgarsRevenge
             this.width = width;
 
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
+
+            FillVertices();
         }
 
         Entity physicalData;
         public override void Update(GameTime gameTime)
         {
-            UpdateVerts(new Vector3(physicalData.Position.X, 40, physicalData.Position.Z));
+            UpdateVerts(new Vector3(physicalData.Position.X, -18.4f, physicalData.Position.Z));
         }
 
         private void UpdateVerts(Vector3 origin)

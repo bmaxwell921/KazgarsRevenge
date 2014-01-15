@@ -54,7 +54,7 @@ namespace KazgarsRevenge
             PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brute);
             AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, new Vector3(10f), Vector3.Down * 18);
             HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(mainGame, brute);
-
+            BlobShadowDecal bruteShadow = new BlobShadowDecal(mainGame, brute, 15);
 
             EnemyControllerSettings bruteSettings = new EnemyControllerSettings();
             #region settings init
@@ -86,6 +86,9 @@ namespace KazgarsRevenge
 
             brute.AddComponent(typeof(AIController), bruteController);
             genComponentManager.AddComponent(bruteController);
+
+            brute.AddComponent(typeof(BlobShadowDecal), bruteShadow);
+            decalManager.AddBlobShadow(bruteShadow);
 
             enemies.Add(brute);
         }
