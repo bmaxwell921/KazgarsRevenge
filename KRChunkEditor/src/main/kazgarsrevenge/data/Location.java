@@ -68,5 +68,15 @@ public class Location {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace();
+			return null;
+		}
+	}
 
 }

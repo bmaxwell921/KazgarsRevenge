@@ -113,4 +113,18 @@ public class DefaultRoom implements IRoom {
 	private int getValue(Location loc, boolean useX) {
 		return useX ? loc.getX() : loc.getY();
 	}
+	
+	@Override
+	public Object clone() {
+		try {
+			DefaultRoom clone = (DefaultRoom) super.clone();
+			clone.name = this.name;
+			clone.loc = this.loc;
+			clone.rooms = new ArrayList<>(this.rooms);
+			return clone;
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace();
+			return null;
+		}
+	}
 }
