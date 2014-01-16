@@ -1,8 +1,12 @@
 package main.kazgarsrevenge.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -53,8 +57,11 @@ public class Main {
 	
 	private SidePanel setUpRoomsPanel() {
 		SidePanel roomsPanel = new SidePanel("Rooms");
-		for (String name : ImageLoader.getImageNames()) {
+		List<String> names = new ArrayList<>(ImageLoader.getImageNames());
+		Collections.sort(names);
+		for (String name : names){
 			JPanel imgDesc = new ImageDescriptionPanel(name, ImageLoader.getImage(name));
+			imgDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
 			roomsPanel.addPanel(imgDesc);
 		}
 		return roomsPanel;
