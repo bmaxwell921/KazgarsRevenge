@@ -1,12 +1,17 @@
 [
 	{
-		"name" : "Room1", 
+		"name" : "room1", 
 		"blocks" :
 		[
 			{
-				"type":"Floor",
+				"type":"floor",
 				"roomLoc":{"x":0,"y":0},
 				"rot":"NINETY"
+			},
+			{
+				"type":"playerSpawn",
+				"roomLoc":{"x":1,"y":0},
+				"rot":"ZERO"
 			}
 		]
 	}
