@@ -7,10 +7,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    public class DecalManager : GameComponent
+    public class BillBoardManager : GameComponent
     {
-        Dictionary<Type, List<DrawableComponentDecal>> components = new Dictionary<Type, List<DrawableComponentDecal>>();
-        public DecalManager(KazgarsRevengeGame game)
+        Dictionary<Type, List<DrawableComponentBillboard>> components = new Dictionary<Type, List<DrawableComponentBillboard>>();
+        public BillBoardManager(KazgarsRevengeGame game)
             : base(game)
         {
 
@@ -31,9 +31,9 @@ namespace KazgarsRevenge
 
         public override void Update(GameTime gameTime)
         {
-            foreach (KeyValuePair<Type, List<DrawableComponentDecal>> k in components)
+            foreach (KeyValuePair<Type, List<DrawableComponentBillboard>> k in components)
             {
-                List<DrawableComponentDecal> componentList = k.Value;
+                List<DrawableComponentBillboard> componentList = k.Value;
                 for (int i = componentList.Count - 1; i >= 0; --i)
                 {
                     componentList[i].Update(gameTime);
@@ -51,12 +51,12 @@ namespace KazgarsRevenge
             AddComponent(typeof(BlobShadowDecal), b);
         }
 
-        public void AddComponent(Type t, DrawableComponentDecal c)
+        public void AddComponent(Type t, DrawableComponentBillboard c)
         {
             c.Start();
             if (!components.ContainsKey(t))
             {
-                components.Add(t, new List<DrawableComponentDecal>());
+                components.Add(t, new List<DrawableComponentBillboard>());
             }
             components[t].Add(c);
         }
@@ -68,9 +68,9 @@ namespace KazgarsRevenge
             Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             Game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            foreach (KeyValuePair<Type, List<DrawableComponentDecal>> k in components)
+            foreach (KeyValuePair<Type, List<DrawableComponentBillboard>> k in components)
             {
-                List<DrawableComponentDecal> componentList = k.Value;
+                List<DrawableComponentBillboard> componentList = k.Value;
 
                 //apply corresponding effect before rendering
                 effects[k.Key].View = camera.View;

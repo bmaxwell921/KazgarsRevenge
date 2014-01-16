@@ -33,7 +33,7 @@ namespace KazgarsRevenge
         CameraComponent camera;
         ModelManager renderManager;
         SpriteManager spriteManager;
-        DecalManager decalManager;
+        BillBoardManager decalManager;
         LootManager gearGenerator;
 
         PlayerManager players;
@@ -125,9 +125,9 @@ namespace KazgarsRevenge
             Components.Add(spriteManager);
             Services.AddService(typeof(SpriteManager), spriteManager);
 
-            decalManager = new DecalManager(this);
+            decalManager = new BillBoardManager(this);
             Components.Add(decalManager);
-            Services.AddService(typeof(DecalManager), decalManager);
+            Services.AddService(typeof(BillBoardManager), decalManager);
 
             players = new PlayerManager(this);
             Components.Add(players);
@@ -308,7 +308,7 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < 10; ++j)
                 {
-                    enemies.CreateBrute(new Vector3(130 + i * 200, 0, -100 - j * 200));
+                    enemies.CreateBrute(new Vector3(130 + i * 200, 5, -100 - j * 200));
                 }
             }
 
