@@ -1,7 +1,10 @@
 package main.kazgarsrevenge.ui.panels;
 
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Image;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,6 +30,7 @@ public class ImageDescriptionPanel extends JPanel {
 	public ImageDescriptionPanel(String roomName, Image roomImage) {
 		this.roomName = roomName;
 		this.roomImage = roomImage;
+		this.setLayout(new FlowLayout(FlowLayout.LEFT));
 		initialize();
 	}
 	
@@ -37,5 +41,7 @@ public class ImageDescriptionPanel extends JPanel {
 		
 		JLabel roomNameLabel = new JLabel(roomName);
 		this.add(roomNameLabel);
+		
+		this.setBorder(BorderFactory.createLineBorder(Color.RED));
 	}
 }
