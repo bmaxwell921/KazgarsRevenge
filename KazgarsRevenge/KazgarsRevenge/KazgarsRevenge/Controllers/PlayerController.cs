@@ -499,25 +499,28 @@ namespace KazgarsRevenge
             }
             //ability CD updates
             //TODO make into loop for all bound abilities and items
-            foreach(KeyValuePair<Keys, Ability> k in boundAbilities)
+            foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
             {
                 k.Value.update(currentTime);
             }
             #endregion
 
+            if (curMouse.LeftButton == ButtonState.Pressed)
+            {
+                millisRunningCounter = 0;
+            }
+            else
+            {
+                if (attState != AttackState.None)
+                {
+                    targetedPhysicalData = null;
+                }
+            }
+
+
+            Vector3 groundMove = Vector3.Zero;
             if (Game.IsActive)
             {
-                if (curMouse.LeftButton == ButtonState.Pressed)
-                {
-                    millisRunningCounter = 0;
-                }
-                else
-                {
-                    if (attState != AttackState.None)
-                    {
-                        targetedPhysicalData = null;
-                    }
-                }
                 bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
                 newTarget = CheckGUIButtons() || newTarget;
 
@@ -563,7 +566,7 @@ namespace KazgarsRevenge
                 {
                     ResetTargettedEntity();
                 }
-                if (attState == AttackState.None  && !looting)
+                if (attState == AttackState.None && !looting)
                 {
                     CheckAbilities(move, (float)currentTime);
                 }
@@ -582,33 +585,33 @@ namespace KazgarsRevenge
                         attacks.CreateMouseSpikes(groundTargetLocation);
                     }
                 }
-                Vector3 groundMove = move;
-                if (targetedPhysicalData == null)
-                {
-                    groundMove = new Vector3(groundTargetLocation.X - physicalData.Position.X, 0, groundTargetLocation.Z - physicalData.Position.Z);
-                    if (groundMove != Vector3.Zero)
-                    {
-                        groundMove.Normalize();
-                    }
-                }
 
-                bool closeEnough = (physicalData.Position - groundTargetLocation).Length() <= stopRadius;
-                if (attState == AttackState.None && !looting)
-                {
-                    MoveCharacter(groundMove, closeEnough);
-                }
-                else
-                {
-                    ChangeVelocity(Vector3.Zero);
-                }
+                groundMove = move;
+                
+            }
 
+            if (targetedPhysicalData == null)
+            {
+                groundMove = new Vector3(groundTargetLocation.X - physicalData.Position.X, 0, groundTargetLocation.Z - physicalData.Position.Z);
+            }
 
-                CheckAnimations();
+            if (groundMove != Vector3.Zero)
+            {
+                groundMove.Normalize();
+            }
+
+            bool closeEnough = (physicalData.Position - groundTargetLocation).Length() <= stopRadius;
+            if (attState == AttackState.None && !looting)
+            {
+                MoveCharacter(groundMove, closeEnough);
             }
             else
             {
                 ChangeVelocity(Vector3.Zero);
             }
+
+
+            CheckAnimations();
 
             prevMouse = curMouse;
             prevKeys = curKeys;

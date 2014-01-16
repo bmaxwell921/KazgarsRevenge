@@ -11,7 +11,7 @@ using BEPUphysics.Entities;
 namespace KazgarsRevenge
 {
 
-    public class BlobShadowDecal : DrawableComponentDecal
+    public class BlobShadowDecal : DrawableComponentBillboard
     {
         VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[4];
         short[] indices = new short[6];

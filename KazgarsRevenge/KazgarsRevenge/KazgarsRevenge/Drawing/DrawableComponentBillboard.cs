@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    public class DrawableComponentDecal: Component
+    public class DrawableComponentBillboard: Component
     {
-        public DrawableComponentDecal(KazgarsRevengeGame game, GameEntity entity)
+        public DrawableComponentBillboard(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
 
