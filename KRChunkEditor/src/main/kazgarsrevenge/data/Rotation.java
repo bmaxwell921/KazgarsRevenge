@@ -14,5 +14,21 @@ package main.kazgarsrevenge.data;
  */
 public enum Rotation {
 
-	ZERO, NINETY, ONE_EIGHTY, TWO_FORTY
+	ZERO, NINETY, ONE_EIGHTY, TWO_FORTY;
+	
+	public static double toDegrees(Rotation rot) {
+		if (rot == Rotation.ZERO) {
+			return 0;
+		} else if (rot == Rotation.NINETY) {
+			return 90;
+		} else if (rot == Rotation.ONE_EIGHTY) {
+			return 180;
+		} else {
+			return 240;
+		}
+	}
+	
+	public static double toRadians(Rotation rot) {
+		return Math.toRadians(Rotation.toDegrees(rot));
+	}
 }

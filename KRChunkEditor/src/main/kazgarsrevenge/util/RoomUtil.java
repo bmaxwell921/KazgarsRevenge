@@ -20,7 +20,7 @@ import com.google.gson.JsonParser;
  * @author bmaxwell
  *
  */
-public class RoomFileUtil {
+public class RoomUtil {
 
 	private static final String ROOMS_FILE_PATH = "." + File.separatorChar + "Rooms.json";
 	
