@@ -1,5 +1,6 @@
 package main.kazgarsrevenge.model.chunks.impl;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,17 @@ public class DefaultChunk implements IChunk {
 	
 	@Override
 	public void addRoom(IRoom... rooms) {
+		// JAVA GOTO!
+		outer:
 		for (IRoom room : rooms) {
+			for (IRoom other : this.rooms) {
+				Rectangle roomBound = room.getBoundingRect();
+				Rectangle otherBound = other.getBoundingRect();
+				if (room.getBoundingRect().intersects(other.getBoundingRect())) {
+					System.out.println("Found a collision, moving on");
+					continue outer;
+				}
+			}
 			this.rooms.add(room);
 		}
 	}

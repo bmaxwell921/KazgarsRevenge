@@ -133,7 +133,7 @@ public class Main {
 	}
 	
 	private void setUpTimer() {
-		Timer timer = new Timer(30, new UpdateListener(mainPanel));
+		Timer timer = new Timer(100, new UpdateListener(mainPanel));
 		timer.start();
 	}
 	

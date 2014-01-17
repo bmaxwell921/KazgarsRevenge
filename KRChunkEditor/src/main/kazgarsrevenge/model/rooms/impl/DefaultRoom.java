@@ -9,6 +9,7 @@ import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.data.Rotation;
 import main.kazgarsrevenge.model.IRoom;
 import main.kazgarsrevenge.model.IRoomBlock;
+import main.kazgarsrevenge.util.ImageLoader;
 
 /**
  * Object used to represent pre-defined rooms. Default 
@@ -115,7 +116,10 @@ public class DefaultRoom implements IRoom, Cloneable {
 		int maxYVal = findMax(maxY, false);
 		int minYVal = findMax(minY, false);
 		
-		return new Rectangle(minXVal, minYVal, maxXVal - minXVal + 1, maxYVal - minYVal + 1);
+		Location offset = (loc != null) ? loc : new Location();
+		
+		return new Rectangle(offset.getX() + minXVal, offset.getY() + minYVal, 
+				ImageLoader.IMAGE_SIZE * (maxXVal - minXVal + 1), (maxYVal - minYVal + 1) * ImageLoader.IMAGE_SIZE);
 	}
 	
 	private int findMax(Comparator<Location> comp, boolean useX) {

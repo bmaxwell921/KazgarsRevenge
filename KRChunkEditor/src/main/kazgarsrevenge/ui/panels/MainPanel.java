@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -72,34 +73,6 @@ public class MainPanel extends JPanel {
 		// Make sure to put the room at the right location
 		selCopy.setLocation(new Location((int) selectedArea.getX(), (int) selectedArea.getY()));
 		selCopy.setRotation(currentRot);
-		snapToClosest(selCopy);
-	}
-	
-	// Since the selection can move in between cells we need to 'snap' to a grid location
-	private void snapToClosest(IRoom selCopy) {
-		// TODO handle rotation
-		Location selLoc = selCopy.getLocation();
-		
-		// If the selectedCopy is intersecting 2 cells, this gets the x location of the leftmost cell
-		int leftCellX = (selLoc.getX() / ImageLoader.IMAGE_SIZE) * ImageLoader.IMAGE_SIZE;
-		int rightCellX = leftCellX + ImageLoader.IMAGE_SIZE;
-		
-		int leftXDiff = leftCellX - selLoc.getX();
-		int rightXDiff = rightCellX - selLoc.getX();
-		
-		int topCellY = (selLoc.getY() / ImageLoader.IMAGE_SIZE) * ImageLoader.IMAGE_SIZE;
-		int bottomCellY = topCellY + ImageLoader.IMAGE_SIZE;
-		
-		int topYDiff = topCellY - selLoc.getY();
-		int bottomYDiff = bottomCellY - selLoc.getY();
-		
-		Location correction = new Location();
-		correction.setX(Math.abs(leftXDiff) < Math.abs(rightXDiff) ? leftXDiff : rightXDiff);
-		correction.setY(Math.abs(topYDiff) < Math.abs(bottomYDiff) ? topYDiff : bottomYDiff);
-		
-		Location finalLoc = new Location(selLoc.getX() + correction.getX(), selLoc.getY() + correction.getY());
-		
-		selCopy.setLocation(finalLoc);
 		currentChunk.addRoom(selCopy);
 	}
 	

@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.ui.panels.MainPanel;
+import main.kazgarsrevenge.util.ImageLoader;
 import main.kazgarsrevenge.util.InputManager;
 
 /**
@@ -17,7 +18,7 @@ import main.kazgarsrevenge.util.InputManager;
  */
 public class UpdateListener implements ActionListener {
 
-	private static final int MOVE_AMT = 2;
+	private static final int MOVE_AMT = ImageLoader.IMAGE_SIZE;
 	
 	// The main panel to update
 	private final MainPanel mp;
