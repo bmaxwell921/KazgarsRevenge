@@ -77,6 +77,7 @@ public class MainPanel extends JPanel {
 	
 	// Since the selection can move in between cells we need to 'snap' to a grid location
 	private void snapToClosest(IRoom selCopy) {
+		// TODO handle rotation
 		Location selLoc = selCopy.getLocation();
 		
 		// If the selectedCopy is intersecting 2 cells, this gets the x location of the leftmost cell
@@ -139,8 +140,8 @@ public class MainPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		paintGrid(g2);
 		paintChunk(g2);
+		paintGrid(g2);
 		paintSelection(g2);
 	}
 	
@@ -176,13 +177,14 @@ public class MainPanel extends JPanel {
 			g2.fill(new Rectangle(selectedArea.x, selectedArea.y, ImageLoader.IMAGE_SIZE, ImageLoader.IMAGE_SIZE));
 			return;
 		}
+		
 		drawRotatedImage(g2, selectedImage, 
 				new Location((int) (selectedArea.getX() + viewRectangle.x), (int) (selectedArea.getY() + viewRectangle.y)), 
 				currentRot);
 	}
 	
 	private void drawRotatedImage(Graphics2D g2, BufferedImage img, Location loc, Rotation rot) {
-		AffineTransform tx = AffineTransform.getRotateInstance(Rotation.toRadians(rot), loc.getX(), loc.getY());
+		AffineTransform tx = AffineTransform.getRotateInstance(Rotation.toRadians(rot), img.getWidth() / 2, img.getHeight() / 2);
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 		g2.drawImage(op.filter(img, null), loc.getX(), loc.getY(), null);
 	}
@@ -198,5 +200,6 @@ public class MainPanel extends JPanel {
 			return;
 		}
 		currentRot = Rotation.rotateCounter(currentRot);
+		System.out.println("Rotated to: " + currentRot);
 	}
 }

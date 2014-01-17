@@ -11,21 +11,24 @@ import java.util.Map;
  * 	ZERO = (1, 0)
  * 	NINETY = (0, 1)
  * 	ONE_EIGHTY = (-1, 0)
- * 	TWO_FORTY = (0, -1)
+ * 	TWO_SEVENTY = (0, -1)
  * @author Brandon
  *
  */
 public enum Rotation {
-
-	ZERO, NINETY, ONE_EIGHTY, TWO_FORTY;
 	
-	private static final Map<Integer, Rotation> ordinalMap;
+	ZERO, NINETY, ONE_EIGHTY, TWO_SEVENTY;
+	
+	private static final Map<Integer, Rotation> degreesMap;
+	
+	private static final int ROTATE_AMT = 90;
 	
 	static {
-		ordinalMap = new HashMap<>();
-		for (Rotation rot : Rotation.values()) {
-			ordinalMap.put(rot.ordinal(), rot);
-		}
+		degreesMap = new HashMap<>();
+		degreesMap.put(0, Rotation.ZERO);
+		degreesMap.put(90, Rotation.NINETY);
+		degreesMap.put(180, Rotation.ONE_EIGHTY);
+		degreesMap.put(270, Rotation.TWO_SEVENTY);
 	}
 	
 	public static double toDegrees(Rotation rot) {
@@ -36,7 +39,7 @@ public enum Rotation {
 		} else if (rot == Rotation.ONE_EIGHTY) {
 			return 180;
 		} else {
-			return 240;
+			return 270;
 		}
 	}
 	
@@ -45,8 +48,9 @@ public enum Rotation {
 	}
 	
 	public static Rotation rotateCounter(Rotation first) {
-		int firstOrd = first.ordinal();
-		int nextOrd = ((firstOrd == 0) ? Rotation.values().length : firstOrd) - 1;
-		return ordinalMap.get(nextOrd);		
+		int firstOrdinal = first.ordinal();
+		int secondOrdinal = firstOrdinal + 1;
+		int newDegrees = (secondOrdinal * ROTATE_AMT) % 360;
+		return degreesMap.get(newDegrees);
 	}
 }
