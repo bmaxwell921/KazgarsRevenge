@@ -28,6 +28,13 @@ public class UpdateListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		handleMovement();
+		handlePlacement();
+		handleRotation();
+	}
+	
+	// Handles checking and moving as needed
+	private void handleMovement() {
 		final Location move = new Location();
 		InputManager im = InputManager.getInstance();
 		if (im.isPressed(KeyEvent.VK_LEFT)) {
@@ -55,6 +62,47 @@ public class UpdateListener implements ActionListener {
 				});
 			}
 		}.start();
+	}
+	
+	// Handles placing a room
+	private void handlePlacement() {
+		InputManager im = InputManager.getInstance();
+		if (im.isPressed(KeyEvent.VK_ENTER)) {
+			// consume!
+			im.updateValue(KeyEvent.VK_ENTER, false);
+			new Thread() {
+				@Override
+				public void run() {
+					mp.placeRoom();
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							mp.repaint();
+						}
+					});
+				}
+			}.start();
+		}
+	}
+	
+	private void handleRotation() {
+		InputManager im = InputManager.getInstance();
+		if (im.isPressed(KeyEvent.VK_R)) {
+			// consume!
+			im.updateValue(KeyEvent.VK_R, false);
+			new Thread() {
+				@Override
+				public void run() {
+					mp.rotate();
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							mp.repaint();
+						}
+					});
+				}
+			}.start();
+		}
 	}
 
 }

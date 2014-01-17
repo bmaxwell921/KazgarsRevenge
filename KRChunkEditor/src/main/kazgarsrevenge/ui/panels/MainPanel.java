@@ -18,6 +18,7 @@ import main.kazgarsrevenge.model.IRoom;
 import main.kazgarsrevenge.model.chunks.impl.DefaultChunk;
 import main.kazgarsrevenge.model.rooms.impl.DefaultRoom;
 import main.kazgarsrevenge.util.ImageLoader;
+import main.kazgarsrevenge.util.RoomUtil;
 
 /**
  * UI that actually shows what the user is building
@@ -58,7 +59,7 @@ public class MainPanel extends JPanel {
 		currentRot = Rotation.ZERO;
 		updateSelectedArea(); 
 		
-		
+		setSelectedRoom(RoomUtil.createRoom("room1"));
 	}
 	
 	// Called when the user presses enter and has a room selected
@@ -70,6 +71,7 @@ public class MainPanel extends JPanel {
 		IRoom selCopy = (IRoom) selectedRoom.clone();
 		// Make sure to put the room at the right location
 		selCopy.setLocation(new Location((int) selectedArea.getX(), (int) selectedArea.getY()));
+		selCopy.setRotation(currentRot);
 		snapToClosest(selCopy);
 	}
 	
@@ -94,7 +96,9 @@ public class MainPanel extends JPanel {
 		correction.setX(Math.abs(leftXDiff) < Math.abs(rightXDiff) ? leftXDiff : rightXDiff);
 		correction.setY(Math.abs(topYDiff) < Math.abs(bottomYDiff) ? topYDiff : bottomYDiff);
 		
-		selCopy.setLocation(correction);
+		Location finalLoc = new Location(selLoc.getX() + correction.getX(), selLoc.getY() + correction.getY());
+		
+		selCopy.setLocation(finalLoc);
 		currentChunk.addRoom(selCopy);
 	}
 	
@@ -104,6 +108,7 @@ public class MainPanel extends JPanel {
 	 */
 	public void setSelectedRoom(DefaultRoom room) {
 		this.selectedRoom = room;
+		selectedImage = ImageLoader.getRoomImage(room.getRoomName());
 		updateSelectedArea();
 	}
 	
@@ -159,7 +164,8 @@ public class MainPanel extends JPanel {
 		for (IRoom room : rooms) {
 			Location roomLoc = room.getLocation();
 			BufferedImage roomImage = (BufferedImage) ImageLoader.getRoomImage(room.getRoomName());
-			drawRotatedImage(g2, roomImage, new Location(roomLoc.getX() + viewRectangle.x, roomLoc.getY() + viewRectangle.y), null);
+			drawRotatedImage(g2, roomImage, 
+					new Location(roomLoc.getX() + viewRectangle.x, roomLoc.getY() + viewRectangle.y), room.getRotation());
 		}
 	}
 	
@@ -184,5 +190,13 @@ public class MainPanel extends JPanel {
 	public void moveSelection(Location direction) {
 		selectedArea.x += direction.getX();
 		selectedArea.y += direction.getY();
+	}
+	
+	public void rotate() {
+		if (selectedRoom == null) {
+			System.out.println("No selected room to rotate");
+			return;
+		}
+		currentRot = Rotation.rotateCounter(currentRot);
 	}
 }

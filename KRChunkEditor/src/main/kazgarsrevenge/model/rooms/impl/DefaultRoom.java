@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import main.kazgarsrevenge.data.Location;
+import main.kazgarsrevenge.data.Rotation;
 import main.kazgarsrevenge.model.IRoom;
 import main.kazgarsrevenge.model.IRoomBlock;
 
@@ -23,6 +24,9 @@ public class DefaultRoom implements IRoom, Cloneable {
 	// This room's location in 2D space
 	private Location loc;
 	
+	// This room's rotation in 2D space
+	private Rotation rot;
+	
 	// The blocks making up this room
 	protected List<IRoomBlock> rooms;
 	
@@ -33,6 +37,7 @@ public class DefaultRoom implements IRoom, Cloneable {
 	 */
 	public DefaultRoom(String name, List<IRoomBlock> rooms) {
 		this.name = name;
+		rot = Rotation.ZERO;
 		if (rooms == null) {
 			this.rooms = new ArrayList<>();
 			return;
@@ -54,6 +59,16 @@ public class DefaultRoom implements IRoom, Cloneable {
 	@Override
 	public void setLocation(Location loc) {
 		this.loc = loc;
+	}
+	
+	@Override
+	public Rotation getRotation() {
+		return rot;
+	}
+	
+	@Override
+	public void setRotation(Rotation rot) {
+		this.rot = rot;
 	}
 	
 	@Override

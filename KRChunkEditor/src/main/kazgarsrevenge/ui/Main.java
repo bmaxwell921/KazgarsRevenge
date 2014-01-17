@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
-import main.kazgarsrevenge.ui.keybinds.MoveAction;
+import main.kazgarsrevenge.ui.keybinds.KeyAction;
 import main.kazgarsrevenge.ui.listeners.UpdateListener;
 import main.kazgarsrevenge.ui.panels.ImageDescriptionPanel;
 import main.kazgarsrevenge.ui.panels.MainPanel;
@@ -108,12 +108,15 @@ public class Main {
 		registerMovementBinding("RIGHT", KeyEvent.VK_RIGHT);
 		registerMovementBinding("UP", KeyEvent.VK_UP);
 		registerMovementBinding("DOWN", KeyEvent.VK_DOWN);
+		
+		registerMovementBinding("ENTER", KeyEvent.VK_ENTER);
+		registerMovementBinding("R", KeyEvent.VK_R);
 	}
 	
 	// Handles multiple key inputs
 	private void registerMovementBinding(String name, int keyCode) {
-		MoveAction pressed = new MoveAction(keyCode, true);
-		MoveAction released = new MoveAction(keyCode, false);
+		KeyAction pressed = new KeyAction(keyCode, true);
+		KeyAction released = new KeyAction(keyCode, false);
 		
 		String pressedCommand = name + " Pressed";
 		String releasedCommand = name + " Released";

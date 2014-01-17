@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.util.List;
 
 import main.kazgarsrevenge.data.Location;
+import main.kazgarsrevenge.data.Rotation;
 
 /**
  * An object used to represent a room. Rooms are made up of blocks
@@ -29,6 +30,18 @@ public interface IRoom {
 	 * @param loc
 	 */
 	public void setLocation(Location loc);
+	
+	/**
+	 * This room's rotation in 2D space
+	 * @return
+	 */
+	public Rotation getRotation();
+	
+	/**
+	 * Sets this room's rotation
+	 * @param rot
+	 */
+	public void setRotation(Rotation rot);
 	
 	/**
 	 * Returns the bounds of this room, as a rectangle  

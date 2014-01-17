@@ -7,7 +7,7 @@ import javax.swing.AbstractAction;
 
 import main.kazgarsrevenge.util.InputManager;
 
-public class MoveAction extends AbstractAction implements ActionListener {
+public class KeyAction extends AbstractAction implements ActionListener {
 
 	// Whether this is for keyPresses or releases
 	private boolean pressed;
@@ -15,7 +15,7 @@ public class MoveAction extends AbstractAction implements ActionListener {
 	// keyCode for this moveAction
 	private int keyCode;
 	
-	public MoveAction(int keyCode, boolean pressed) {
+	public KeyAction(int keyCode, boolean pressed) {
 		this.pressed = pressed;
 		this.keyCode = keyCode;
 	}

@@ -27,6 +27,8 @@ public class InputManager {
 		keyPressedMap.put(KeyEvent.VK_RIGHT, false);
 		keyPressedMap.put(KeyEvent.VK_DOWN, false);
 		keyPressedMap.put(KeyEvent.VK_UP, false);
+		keyPressedMap.put(KeyEvent.VK_ENTER, false);
+		keyPressedMap.put(KeyEvent.VK_R, false);
 	}
 	
 	/**
