@@ -1,7 +1,5 @@
 package main.kazgarsrevenge.util;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,6 +11,8 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 public class ImageLoader {
+	
+	public static final int IMAGE_SIZE = 25;
 	
 	// Where the images are located
 	private static final String BASE_BLOCK_FILE_PATH = "." + File.separatorChar + "img" + File.separatorChar + "blocks";	

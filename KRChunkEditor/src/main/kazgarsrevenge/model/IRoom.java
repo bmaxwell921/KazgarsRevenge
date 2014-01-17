@@ -25,6 +25,12 @@ public interface IRoom {
 	public Location getLocation();
 	
 	/**
+	 * Sets this room's location
+	 * @param loc
+	 */
+	public void setLocation(Location loc);
+	
+	/**
 	 * Returns the bounds of this room, as a rectangle  
 	 * @return
 	 */

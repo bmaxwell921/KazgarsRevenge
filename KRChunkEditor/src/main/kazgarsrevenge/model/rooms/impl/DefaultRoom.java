@@ -15,7 +15,7 @@ import main.kazgarsrevenge.model.IRoomBlock;
  * @author Brandon
  *
  */
-public class DefaultRoom implements IRoom {
+public class DefaultRoom implements IRoom, Cloneable {
 
 	// The 'name' of this room
 	private String name;
@@ -49,6 +49,11 @@ public class DefaultRoom implements IRoom {
 	@Override
 	public Location getLocation() {
 		return loc;
+	}
+	
+	@Override
+	public void setLocation(Location loc) {
+		this.loc = loc;
 	}
 	
 	@Override

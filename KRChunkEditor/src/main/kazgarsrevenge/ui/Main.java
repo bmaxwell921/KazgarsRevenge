@@ -1,20 +1,20 @@
 package main.kazgarsrevenge.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import main.kazgarsrevenge.ui.panels.ImageDescriptionPanel;
+import main.kazgarsrevenge.ui.panels.MainPanel;
 import main.kazgarsrevenge.ui.panels.SidePanel;
 import main.kazgarsrevenge.util.ImageLoader;
 import main.kazgarsrevenge.util.RoomFileUtil;
@@ -47,6 +47,10 @@ public class Main {
 		Container content = frame.getContentPane();		
 		content.setLayout(new BorderLayout());
 		
+		MainPanel main = new MainPanel(new Rectangle(0, 0, 500, 360));
+		main.setPreferredSize(new Dimension(500, 360));
+		content.add(main, BorderLayout.CENTER);
+		
 		JPanel sidePanels = new JPanel();
 		sidePanels.setPreferredSize(new Dimension(200, 200));
 		sidePanels.setLayout(new GridLayout(2, 1));
@@ -57,6 +61,7 @@ public class Main {
 		content.add(sidePanels, BorderLayout.EAST);
 		
 		frame.getContentPane().setPreferredSize(new Dimension(700, 400));
+		frame.setResizable(false);
 		frame.pack();
 		frame.setVisible(true);
 	}
