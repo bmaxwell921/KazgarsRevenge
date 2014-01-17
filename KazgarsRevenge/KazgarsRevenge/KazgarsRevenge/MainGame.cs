@@ -186,20 +186,25 @@ namespace KazgarsRevenge
             effectOutline = Content.Load<Effect>("Shaders\\EdgeDetection");
             effectCellShading = Content.Load<Effect>("shaders\\CellShader");
 
-            PresentationParameters pp = GraphicsDevice.PresentationParameters;
-            renderTarget = new RenderTarget2D(GraphicsDevice, 
-                                                pp.BackBufferWidth, pp.BackBufferHeight, false,
-                                                pp.BackBufferFormat, pp.DepthStencilFormat, 0, RenderTargetUsage.PreserveContents);
-
-            normalDepthRenderTarget = new RenderTarget2D(graphics.GraphicsDevice,
-                                                         pp.BackBufferWidth, pp.BackBufferHeight, false,
-                                                         pp.BackBufferFormat, pp.DepthStencilFormat);
+            SetUpRenderTargets();
 
             initDrawingParams();
 
             Texture2D empty=Content.Load<Texture2D>("Textures\\whitePixel");
 
             base.LoadContent();
+        }
+
+        private void SetUpRenderTargets()
+        {
+            PresentationParameters pp = GraphicsDevice.PresentationParameters;
+            renderTarget = new RenderTarget2D(GraphicsDevice,
+                                                pp.BackBufferWidth, pp.BackBufferHeight, false,
+                                                pp.BackBufferFormat, pp.DepthStencilFormat, 0, RenderTargetUsage.PreserveContents);
+
+            normalDepthRenderTarget = new RenderTarget2D(graphics.GraphicsDevice,
+                                                         pp.BackBufferWidth, pp.BackBufferHeight, false,
+                                                         pp.BackBufferFormat, pp.DepthStencilFormat);
         }
 
         List<FloatingText> alertText = new List<FloatingText>();
@@ -388,6 +393,11 @@ namespace KazgarsRevenge
             switch (gameState)
             {
                 case GameState.Playing:
+                    if (renderTarget.IsContentLost || normalDepthRenderTarget.IsContentLost)
+                    {
+                        SetUpRenderTargets();
+                    }
+
                     //draw depth render target
                     GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
                     GraphicsDevice.Clear(Color.Black);
