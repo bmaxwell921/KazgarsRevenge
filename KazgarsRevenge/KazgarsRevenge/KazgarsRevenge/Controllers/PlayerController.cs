@@ -133,7 +133,7 @@ namespace KazgarsRevenge
 
         #region inventory and gear
         const int NUM_LOOT_SHOWN = 4;
-        int maxInventorySlots = int.MaxValue;
+        int maxInventorySlots = 16;
         LootSoulController lootingSoul = null;
         Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
         //inventory
@@ -1213,7 +1213,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
             guiOutsideRects.Add("damage", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
-            guiOutsideRects.Add("inventory", new Rectangle(maxX / 2, 0, maxX / 2, maxY));
+            guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 410 * average), (int)(410 * average), (int)(400 * average), (int)(575 * average)));
             guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
             guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
@@ -1394,7 +1394,9 @@ namespace KazgarsRevenge
                 s.Draw(texWhitePixel, guiOutsideRects["inventory"], Color.Black * .5f);
                 for (int i = 0; i < inventory.Count; ++i)
                 {
-                    s.DrawString(font, inventory[i].Name, new Vector2(maxX / 2 + 20, i * 40 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                    //Nate working here
+                    //guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 410 * average), (int)(410 * average), (int)(400 * average), (int)(575 * average)));
+                    s.DrawString(font, inventory[i].Name, new Vector2(maxX - 400 * average, (420 + i * 40 )* average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 }
             }
 
