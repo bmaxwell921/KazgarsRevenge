@@ -60,7 +60,7 @@ public class MainPanel extends JPanel {
 		currentRot = Rotation.ZERO;
 		updateSelectedArea(); 
 		
-		setSelectedRoom(RoomUtil.createRoom("room1"));
+//		setSelectedRoom(RoomUtil.createRoom("room1"));
 	}
 	
 	// Called when the user presses enter and has a room selected
@@ -71,7 +71,8 @@ public class MainPanel extends JPanel {
 		}
 		IRoom selCopy = (IRoom) selectedRoom.clone();
 		// Make sure to put the room at the right location
-		selCopy.setLocation(new Location((int) selectedArea.getX(), (int) selectedArea.getY()));
+		selCopy.setLocation(new Location((int) selectedArea.getX() / ImageLoader.IMAGE_SIZE, 
+				(int) selectedArea.getY() / ImageLoader.IMAGE_SIZE));
 		selCopy.setRotation(currentRot);
 		currentChunk.addRoom(selCopy);
 	}
@@ -81,6 +82,12 @@ public class MainPanel extends JPanel {
 	 * @param room
 	 */
 	public void setSelectedRoom(DefaultRoom room) {
+		// Clicking on the same room with de-select
+		if (selectedRoom != null && selectedRoom.equals(room)) {
+			System.out.println("Deselecting");
+			clearSelectedRoom();
+			return;
+		}
 		this.selectedRoom = room;
 		selectedImage = ImageLoader.getRoomImage(room.getRoomName());
 		updateSelectedArea();
@@ -91,6 +98,7 @@ public class MainPanel extends JPanel {
 	 */
 	public void clearSelectedRoom() {
 		this.selectedRoom = null;
+		this.selectedImage = null;
 		this.currentRot = Rotation.ZERO;
 		updateSelectedArea();
 	}
@@ -101,7 +109,13 @@ public class MainPanel extends JPanel {
 	public void updateSelectedArea() {
 		// TODO handle rotation properly
 		if (selectedRoom == null) {
-			selectedArea = new Rectangle(0, 0, ImageLoader.IMAGE_SIZE, ImageLoader.IMAGE_SIZE);
+			if (selectedArea == null) {
+				selectedArea = new Rectangle(0, 0, ImageLoader.IMAGE_SIZE, ImageLoader.IMAGE_SIZE);
+				return;
+			}
+			// Leave the position where it is if we've already made a selection before
+			selectedArea.width = ImageLoader.IMAGE_SIZE;
+			selectedArea.height = ImageLoader.IMAGE_SIZE;
 			return;
 		}
 		Rectangle bound = selectedRoom.getBoundingRect();
@@ -139,7 +153,8 @@ public class MainPanel extends JPanel {
 			Location roomLoc = room.getLocation();
 			BufferedImage roomImage = (BufferedImage) ImageLoader.getRoomImage(room.getRoomName());
 			drawRotatedImage(g2, roomImage, 
-					new Location(roomLoc.getX() + viewRectangle.x, roomLoc.getY() + viewRectangle.y), room.getRotation());
+					new Location((roomLoc.getX() + viewRectangle.x) * ImageLoader.IMAGE_SIZE, 
+							(roomLoc.getY() + viewRectangle.y) * ImageLoader.IMAGE_SIZE), room.getRotation());
 		}
 	}
 	
@@ -157,7 +172,8 @@ public class MainPanel extends JPanel {
 	}
 	
 	private void drawRotatedImage(Graphics2D g2, BufferedImage img, Location loc, Rotation rot) {
-		AffineTransform tx = AffineTransform.getRotateInstance(Rotation.toRadians(rot), img.getWidth() / 2, img.getHeight() / 2);
+//		AffineTransform tx = AffineTransform.getRotateInstance(Rotation.toRadians(rot), img.getWidth() / 2, img.getHeight() / 2);
+		AffineTransform tx = AffineTransform.getRotateInstance(Rotation.toRadians(rot), img.getWidth(), img.getHeight());
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 		g2.drawImage(op.filter(img, null), loc.getX(), loc.getY(), null);
 	}

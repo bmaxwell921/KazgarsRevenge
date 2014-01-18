@@ -19,6 +19,7 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 import main.kazgarsrevenge.ui.keybinds.KeyAction;
+import main.kazgarsrevenge.ui.listeners.SelectRoomListener;
 import main.kazgarsrevenge.ui.listeners.UpdateListener;
 import main.kazgarsrevenge.ui.panels.ImageDescriptionPanel;
 import main.kazgarsrevenge.ui.panels.MainPanel;
@@ -88,6 +89,7 @@ public class Main {
 		for (String name : names) {
 			JPanel imgDesc = new ImageDescriptionPanel(name, ImageLoader.getRoomImage(name));
 			roomsPanel.addPanel(imgDesc);
+			imgDesc.addMouseListener(new SelectRoomListener(mainPanel, RoomUtil.createRoom(name)));
 		}
 		return roomsPanel;
 	}

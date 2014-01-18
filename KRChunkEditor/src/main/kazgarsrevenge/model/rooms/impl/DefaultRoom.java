@@ -118,8 +118,7 @@ public class DefaultRoom implements IRoom, Cloneable {
 		
 		Location offset = (loc != null) ? loc : new Location();
 		
-		return new Rectangle(offset.getX() + minXVal, offset.getY() + minYVal, 
-				ImageLoader.IMAGE_SIZE * (maxXVal - minXVal + 1), (maxYVal - minYVal + 1) * ImageLoader.IMAGE_SIZE);
+		return new Rectangle(offset.getX() + minXVal, offset.getY() + minYVal, (maxXVal - minXVal + 1), (maxYVal - minYVal + 1));
 	}
 	
 	private int findMax(Comparator<Location> comp, boolean useX) {

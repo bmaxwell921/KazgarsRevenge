@@ -26,7 +26,6 @@ public class SidePanel extends ScrollPane {
 		container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 		container.add(new JLabel(name));
-//		container.setPreferredSize(new Dimension(200, 200));
 		this.add(container);
 	}
 	
