@@ -1,6 +1,7 @@
 package main.kazgarsrevenge.ui.panels;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Image;
 
@@ -42,6 +43,7 @@ public class ImageDescriptionPanel extends JPanel {
 		JLabel roomNameLabel = new JLabel(roomName);
 		this.add(roomNameLabel);
 		
-		this.setBorder(BorderFactory.createLineBorder(Color.RED));
+		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
 }
