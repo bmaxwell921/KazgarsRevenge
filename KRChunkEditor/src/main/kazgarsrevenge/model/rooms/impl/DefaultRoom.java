@@ -9,6 +9,7 @@ import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.data.Rotation;
 import main.kazgarsrevenge.model.IRoom;
 import main.kazgarsrevenge.model.IRoomBlock;
+import main.kazgarsrevenge.model.blocks.impl.DefaultBlock;
 import main.kazgarsrevenge.util.ImageLoader;
 
 /**
@@ -29,14 +30,21 @@ public class DefaultRoom implements IRoom, Cloneable {
 	private Rotation rot;
 	
 	// The blocks making up this room
-	protected List<IRoomBlock> rooms;
+	protected List<DefaultBlock> rooms;
+	
+	public DefaultRoom() {
+		this.name = "";
+		this.rooms = new ArrayList<>();
+		loc = new Location();
+		rot = Rotation.ZERO;
+	}
 	
 	/**
 	 * Constructs a room with the given blocks. For proper performance
 	 * the given list should not be empty
 	 * @param rooms
 	 */
-	public DefaultRoom(String name, List<IRoomBlock> rooms) {
+	public DefaultRoom(String name, List<DefaultBlock> rooms) {
 		this.name = name;
 		rot = Rotation.ZERO;
 		if (rooms == null) {
@@ -47,7 +55,7 @@ public class DefaultRoom implements IRoom, Cloneable {
 	}
 
 	@Override
-	public List<IRoomBlock> getRoomBlocks() {
+	public List<DefaultBlock> getRoomBlocks() {
 		// nobody is messin with my shit
 		return new ArrayList<>(rooms);
 	}

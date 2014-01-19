@@ -7,6 +7,7 @@ import java.util.List;
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.model.IChunk;
 import main.kazgarsrevenge.model.IRoom;
+import main.kazgarsrevenge.model.rooms.impl.DefaultRoom;
 
 import com.google.gson.Gson;
 
@@ -21,7 +22,7 @@ public class DefaultChunk implements IChunk {
 	private String name;
 	
 	// All of the rooms in this chunk
-	private List<IRoom> rooms;
+	private List<DefaultRoom> rooms;
 	
 	// This chunk's location in 2D space
 	private Location location;
@@ -33,10 +34,10 @@ public class DefaultChunk implements IChunk {
 	}
 	
 	@Override
-	public void addRoom(IRoom... rooms) {
+	public void addRoom(DefaultRoom... rooms) {
 		// JAVA GOTO!
 		outer:
-		for (IRoom room : rooms) {
+		for (DefaultRoom room : rooms) {
 			for (IRoom other : this.rooms) {
 				Rectangle roomBound = room.getBoundingRect();
 				Rectangle otherBound = other.getBoundingRect();
@@ -50,7 +51,7 @@ public class DefaultChunk implements IChunk {
 	}
 	
 	@Override
-	public List<IRoom> getRooms() {
+	public List<DefaultRoom> getRooms() {
 		return new ArrayList<>(rooms);
 	}
 
