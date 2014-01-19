@@ -2,6 +2,7 @@ package main.kazgarsrevenge.ui.panels;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
 
@@ -9,6 +10,8 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import main.kazgarsrevenge.util.ImageLoader;
 
 /**
  * Panel for displaying the image for a single room and its name
@@ -38,7 +41,6 @@ public class ImageDescriptionPanel extends JPanel {
 	private void initialize() {
 		JLabel imageButton = new JLabel(new ImageIcon(roomImage));
 		this.add(imageButton);
-		// TODO register an action listener
 		
 		JLabel roomNameLabel = new JLabel(roomName);
 		this.add(roomNameLabel);
