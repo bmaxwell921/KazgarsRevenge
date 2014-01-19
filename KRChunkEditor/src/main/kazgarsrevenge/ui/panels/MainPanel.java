@@ -51,14 +51,19 @@ public class MainPanel extends JPanel {
 	// The image of the currently selected room
 	private BufferedImage selectedImage;
 	
-	// The area of the grid that can currently be seen
-	private Rectangle viewRectangle;
+	// The width of the editable grid
+	private int gridWidth;
 	
-	public MainPanel(Rectangle viewRectangle) {
+	// The height of the editable grid
+	private int gridHeight;
+	
+	public MainPanel(int gridWidth, int gridHeight) {
 		currentChunk = new DefaultChunk(DEFAULT_NAME, new Location());
 		this.setBackground(Color.CYAN);
 		
-		this.viewRectangle = viewRectangle;
+		this.gridWidth = gridWidth;
+		this.gridHeight = gridHeight;
+		
 		currentRot = Rotation.ZERO;
 		updateSelectedArea(); 
 	}
@@ -147,13 +152,10 @@ public class MainPanel extends JPanel {
 	}
 	
 	// Paints the grid on screen
-	private void paintGrid(Graphics2D g2) {
-		int rightBound = viewRectangle.x + viewRectangle.width;
-		int lowerBound = viewRectangle.y + viewRectangle.height;
-		
+	private void paintGrid(Graphics2D g2) {		
 		g2.setColor(Color.BLACK);
-		for (int i = 0; (i * ImageLoader.IMAGE_SIZE) < rightBound; ++i) {
-			for (int j = 0; (j * ImageLoader.IMAGE_SIZE) < lowerBound; ++j) {
+		for (int i = 0; (i * ImageLoader.IMAGE_SIZE) < gridWidth; ++i) {
+			for (int j = 0; (j * ImageLoader.IMAGE_SIZE) < gridHeight; ++j) {
 				g2.draw(new Rectangle(i * ImageLoader.IMAGE_SIZE, j * ImageLoader.IMAGE_SIZE, 
 						ImageLoader.IMAGE_SIZE, ImageLoader.IMAGE_SIZE));
 			}
@@ -167,8 +169,8 @@ public class MainPanel extends JPanel {
 			Location roomLoc = room.getLocation();
 			BufferedImage roomImage = (BufferedImage) ImageLoader.getRoomImage(room.getRoomName());
 			drawRotatedImage(g2, roomImage, 
-					new Location((roomLoc.getX() + viewRectangle.x) * ImageLoader.IMAGE_SIZE, 
-							(roomLoc.getY() + viewRectangle.y) * ImageLoader.IMAGE_SIZE), room.getRotation());
+					new Location(roomLoc.getX() * ImageLoader.IMAGE_SIZE, 
+							roomLoc.getY() * ImageLoader.IMAGE_SIZE), room.getRotation());
 		}
 	}
 	
@@ -183,9 +185,7 @@ public class MainPanel extends JPanel {
 		g2.setColor(Color.YELLOW);
 		g2.draw(selectedArea);
 		
-		drawRotatedImage(g2, selectedImage, 
-				new Location((int) (selectedArea.getX() + viewRectangle.x), (int) (selectedArea.getY() + viewRectangle.y)), 
-				currentRot);
+		drawRotatedImage(g2, selectedImage, new Location((int) selectedArea.getX(), (int) selectedArea.getY()), currentRot);
 	}
 	
 	private void drawRotatedImage(Graphics2D g2, BufferedImage img, Location loc, Rotation rot) {
@@ -212,24 +212,22 @@ public class MainPanel extends JPanel {
 	}
 	
 	private void checkSelectionOB() {
-		if (selectedArea.x < viewRectangle.x) {
-			selectedArea.x = viewRectangle.x;
+		if (selectedArea.x < 0) {
+			selectedArea.x = 0;
 		}
-		if (selectedArea.y < viewRectangle.y) {
-			selectedArea.y = viewRectangle.y;
+		if (selectedArea.y < 0) {
+			selectedArea.y = 0;
 		}
-		double bottomBound = viewRectangle.y + viewRectangle.height;
 		double selBottom = selectedArea.y + selectedArea.height;
 		
-		if (selBottom > bottomBound) {
-			selectedArea.y = (int) bottomBound - selectedArea.height;
+		if (selBottom > gridHeight) {
+			selectedArea.y = gridHeight - selectedArea.height;
 		}
-		
-		double rightBound = viewRectangle.x + viewRectangle.width;
+	
 		double selRight = selectedArea.x + selectedArea.width;
 		
-		if (selRight > rightBound) {
-			selectedArea.x = (int) rightBound - selectedArea.width;
+		if (selRight > gridWidth) {
+			selectedArea.x = (int) gridWidth - selectedArea.width;
 		}
 	}
 	

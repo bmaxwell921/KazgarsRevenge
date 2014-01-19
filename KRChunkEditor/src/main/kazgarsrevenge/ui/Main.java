@@ -49,10 +49,6 @@ public class Main {
 		createAndShowGUI();
 	}
 	
-	public MainPanel getMainPanel() {
-		return mainPanel;
-	}
-	
 	public void createAndShowGUI() {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,7 +63,7 @@ public class Main {
 		Container content = frame.getContentPane();		
 		content.setLayout(new BorderLayout());
 		
-		mainPanel = new MainPanel(new Rectangle(0, 0, 600, 600));
+		mainPanel = new MainPanel(600, 600);
 		mainPanel.setPreferredSize(new Dimension(600, 600));
 		content.add(mainPanel, BorderLayout.CENTER);
 		
