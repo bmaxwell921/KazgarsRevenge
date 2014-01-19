@@ -1,7 +1,5 @@
 package main.kazgarsrevenge.data;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Representation of rotations by 90 degrees.
@@ -17,40 +15,32 @@ import java.util.Map;
  */
 public enum Rotation {
 	
-	ZERO, NINETY, ONE_EIGHTY, TWO_SEVENTY;
-	
-	private static final Map<Integer, Rotation> degreesMap;
+	ZERO(0), NINETY(90), ONE_EIGHTY(180), TWO_SEVENTY(270);
 	
 	private static final int ROTATE_AMT = 90;
+	private static final int FULL_CIRCLE = 360;
 	
-	static {
-		degreesMap = new HashMap<>();
-		degreesMap.put(0, Rotation.ZERO);
-		degreesMap.put(90, Rotation.NINETY);
-		degreesMap.put(180, Rotation.ONE_EIGHTY);
-		degreesMap.put(270, Rotation.TWO_SEVENTY);
+	private int degrees;
+	
+	private Rotation(int degrees) {
+		this.degrees = degrees;
 	}
 	
-	public static double toDegrees(Rotation rot) {
-		if (rot == Rotation.ZERO) {
-			return 0;
-		} else if (rot == Rotation.NINETY) {
-			return 90;
-		} else if (rot == Rotation.ONE_EIGHTY) {
-			return 180;
-		} else {
-			return 270;
-		}
+	public int getDegrees() {
+		return degrees;
 	}
 	
-	public static double toRadians(Rotation rot) {
-		return Math.toRadians(Rotation.toDegrees(rot));
+	public double getRadians() {
+		return Math.toRadians(this.getDegrees());
 	}
 	
 	public static Rotation rotateCounter(Rotation first) {
-		int firstOrdinal = first.ordinal();
-		int secondOrdinal = firstOrdinal + 1;
-		int newDegrees = (secondOrdinal * ROTATE_AMT) % 360;
-		return degreesMap.get(newDegrees);
+		int newDegrees = (first.getDegrees() + ROTATE_AMT) % FULL_CIRCLE;
+		for (Rotation rot : Rotation.values()) {
+			if (rot.getDegrees() == newDegrees) {
+				return rot;
+			}
+		}
+		return null;
 	}
 }
