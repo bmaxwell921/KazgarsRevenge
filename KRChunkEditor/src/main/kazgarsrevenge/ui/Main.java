@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,6 +20,9 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 import main.kazgarsrevenge.ui.keybinds.KeyAction;
+import main.kazgarsrevenge.ui.listeners.LoadChunkClickListener;
+import main.kazgarsrevenge.ui.listeners.NewChunkClickListener;
+import main.kazgarsrevenge.ui.listeners.SaveChunkClickListener;
 import main.kazgarsrevenge.ui.listeners.SelectRoomListener;
 import main.kazgarsrevenge.ui.listeners.UpdateListener;
 import main.kazgarsrevenge.ui.panels.ImageDescriptionPanel;
@@ -63,8 +67,8 @@ public class Main {
 		Container content = frame.getContentPane();		
 		content.setLayout(new BorderLayout());
 		
-		mainPanel = new MainPanel(new Rectangle(0, 0, 500, 360));
-		mainPanel.setPreferredSize(new Dimension(500, 360));
+		mainPanel = new MainPanel(new Rectangle(0, 0, 600, 600));
+		mainPanel.setPreferredSize(new Dimension(600, 600));
 		content.add(mainPanel, BorderLayout.CENTER);
 		
 		JPanel sidePanels = new JPanel();
@@ -75,8 +79,9 @@ public class Main {
 		sidePanels.add(setUpBlocksPanel());
 		
 		content.add(sidePanels, BorderLayout.EAST);
+		content.add(setUpButtonsPanel(frame), BorderLayout.PAGE_END);
 		
-		frame.getContentPane().setPreferredSize(new Dimension(700, 400));
+		frame.getContentPane().setPreferredSize(new Dimension(800, 630));
 		frame.setResizable(false);
 		frame.pack();
 		frame.setVisible(true);
@@ -103,6 +108,24 @@ public class Main {
 			roomsPanel.addPanel(imgDesc);
 		}
 		return roomsPanel;
+	}
+	
+	private JPanel setUpButtonsPanel(JFrame frame) {
+		JPanel bp = new JPanel();
+		bp.setPreferredSize(new Dimension(800, 30));
+
+		JButton newButton = new JButton("NEW");
+		newButton.addMouseListener(new NewChunkClickListener(frame, mainPanel));
+		bp.add(newButton);
+		
+		JButton loadButton = new JButton("LOAD");
+		loadButton.addMouseListener(new LoadChunkClickListener(frame, mainPanel));
+		bp.add(loadButton);
+		
+		JButton saveButton = new JButton("SAVE");
+		saveButton.addMouseListener(new SaveChunkClickListener(frame, mainPanel));
+		bp.add(saveButton);
+		return bp;
 	}
 	
 	private void registerKeyBindings() {

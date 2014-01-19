@@ -55,7 +55,7 @@ public class RoomFactory {
 		
 		String name = jsonRoom.get(NAME_KEY).getAsString();
 		JsonArray blocks = jsonRoom.get(BLOCKS_KEY).getAsJsonArray();
-		List<IRoomBlock> blockList = new ArrayList<IRoomBlock>();
+		List<DefaultBlock> blockList = new ArrayList<>();
 		
 		for (JsonElement block : blocks) {
 			blockList.add(gson.fromJson(block, DefaultBlock.class));

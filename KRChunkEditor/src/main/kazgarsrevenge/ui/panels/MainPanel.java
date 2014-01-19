@@ -3,11 +3,13 @@ package main.kazgarsrevenge.ui.panels;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
+import java.awt.geom.PathIterator;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -19,7 +21,7 @@ import main.kazgarsrevenge.model.IRoom;
 import main.kazgarsrevenge.model.chunks.impl.DefaultChunk;
 import main.kazgarsrevenge.model.rooms.impl.DefaultRoom;
 import main.kazgarsrevenge.util.ImageLoader;
-import main.kazgarsrevenge.util.RoomUtil;
+import main.kazgarsrevenge.util.Rotater;
 
 /**
  * UI that actually shows what the user is building
@@ -54,13 +56,11 @@ public class MainPanel extends JPanel {
 	
 	public MainPanel(Rectangle viewRectangle) {
 		currentChunk = new DefaultChunk(DEFAULT_NAME, new Location());
-		this.setBackground(Color.WHITE);
+		this.setBackground(Color.CYAN);
 		
 		this.viewRectangle = viewRectangle;
 		currentRot = Rotation.ZERO;
 		updateSelectedArea(); 
-		
-//		setSelectedRoom(RoomUtil.createRoom("room1"));
 	}
 	
 	// Called when the user presses enter and has a room selected
@@ -69,7 +69,7 @@ public class MainPanel extends JPanel {
 			System.out.println("No selected room");
 			return;
 		}
-		IRoom selCopy = (IRoom) selectedRoom.clone();
+		DefaultRoom selCopy = (DefaultRoom) selectedRoom.clone();
 		// Make sure to put the room at the right location
 		selCopy.setLocation(new Location((int) selectedArea.getX() / ImageLoader.IMAGE_SIZE, 
 				(int) selectedArea.getY() / ImageLoader.IMAGE_SIZE));
@@ -84,12 +84,12 @@ public class MainPanel extends JPanel {
 	public void setSelectedRoom(DefaultRoom room) {
 		// Clicking on the same room with de-select
 		if (selectedRoom != null && selectedRoom.equals(room)) {
-			System.out.println("Deselecting");
 			clearSelectedRoom();
 			return;
 		}
 		this.selectedRoom = room;
 		selectedImage = ImageLoader.getRoomImage(room.getRoomName());
+		currentRot = Rotation.ZERO;
 		updateSelectedArea();
 	}
 	
@@ -132,12 +132,26 @@ public class MainPanel extends JPanel {
 		paintSelection(g2);
 	}
 	
+	public void newChunk() {
+		this.setCurrentChunk(new DefaultChunk(DEFAULT_NAME, new Location()));
+	}
+	
+	public void setCurrentChunk(IChunk chunk) {
+		currentChunk = chunk;
+		this.selectedArea = null;
+		clearSelectedRoom();
+	}
+	
+	public IChunk getCurrentChunk() {
+		return currentChunk;
+	}
+	
 	// Paints the grid on screen
 	private void paintGrid(Graphics2D g2) {
 		int rightBound = viewRectangle.x + viewRectangle.width;
 		int lowerBound = viewRectangle.y + viewRectangle.height;
 		
-		g2.setColor(Color.GRAY);
+		g2.setColor(Color.BLACK);
 		for (int i = 0; (i * ImageLoader.IMAGE_SIZE) < rightBound; ++i) {
 			for (int j = 0; (j * ImageLoader.IMAGE_SIZE) < lowerBound; ++j) {
 				g2.draw(new Rectangle(i * ImageLoader.IMAGE_SIZE, j * ImageLoader.IMAGE_SIZE, 
@@ -148,7 +162,7 @@ public class MainPanel extends JPanel {
 	
 	// Paints the entire chunk on screen
 	private void paintChunk(Graphics2D g2) {
-		List<IRoom> rooms = currentChunk.getRooms();		
+		List<DefaultRoom> rooms = currentChunk.getRooms();		
 		for (IRoom room : rooms) {
 			Location roomLoc = room.getLocation();
 			BufferedImage roomImage = (BufferedImage) ImageLoader.getRoomImage(room.getRoomName());
@@ -166,6 +180,9 @@ public class MainPanel extends JPanel {
 			return;
 		}
 		
+		g2.setColor(Color.YELLOW);
+		g2.draw(selectedArea);
+		
 		drawRotatedImage(g2, selectedImage, 
 				new Location((int) (selectedArea.getX() + viewRectangle.x), (int) (selectedArea.getY() + viewRectangle.y)), 
 				currentRot);
@@ -173,22 +190,73 @@ public class MainPanel extends JPanel {
 	
 	private void drawRotatedImage(Graphics2D g2, BufferedImage img, Location loc, Rotation rot) {
 //		AffineTransform tx = AffineTransform.getRotateInstance(Rotation.toRadians(rot), img.getWidth() / 2, img.getHeight() / 2);
-		AffineTransform tx = AffineTransform.getRotateInstance(Rotation.toRadians(rot), img.getWidth(), img.getHeight());
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-		g2.drawImage(op.filter(img, null), loc.getX(), loc.getY(), null);
+//		AffineTransform tx = AffineTransform.getRotateInstance(rot.getRadians(), loc.getX(), loc.getY());
+//		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+//		g2.drawImage(op.filter(img, null), loc.getX(), loc.getY(), null);
+//		
+		
+		
+//		BufferedImage rotated = Rotater.otherRotateImage(img, rot);
+//		g2.drawImage(rotated, loc.getX(), loc.getY(), null);
+		
+		
+//		AffineTransformOp ato = new AffineTransformOp(Rotater.getSimpleRotation(selectedArea, rot), null);
+//		g2.drawImage(ato.filter(img, null), loc.getX(), loc.getY(), null);
+		g2.drawImage(img, loc.getX(), loc.getY(), null);
 	}
 	
-	public void moveSelection(Location direction) {
+	public void moveSelection(Location direction) {	
 		selectedArea.x += direction.getX();
 		selectedArea.y += direction.getY();
+		checkSelectionOB();
+	}
+	
+	private void checkSelectionOB() {
+		if (selectedArea.x < viewRectangle.x) {
+			selectedArea.x = viewRectangle.x;
+		}
+		if (selectedArea.y < viewRectangle.y) {
+			selectedArea.y = viewRectangle.y;
+		}
+		double bottomBound = viewRectangle.y + viewRectangle.height;
+		double selBottom = selectedArea.y + selectedArea.height;
+		
+		if (selBottom > bottomBound) {
+			selectedArea.y = (int) bottomBound - selectedArea.height;
+		}
+		
+		double rightBound = viewRectangle.x + viewRectangle.width;
+		double selRight = selectedArea.x + selectedArea.width;
+		
+		if (selRight > rightBound) {
+			selectedArea.x = (int) rightBound - selectedArea.width;
+		}
 	}
 	
 	public void rotate() {
+		// Rotate selected area
 		if (selectedRoom == null) {
 			System.out.println("No selected room to rotate");
 			return;
 		}
 		currentRot = Rotation.rotateCounter(currentRot);
-		System.out.println("Rotated to: " + currentRot);
+		this.rotateSelectedArea();
+	}
+	
+	private void rotateSelectedArea() {
+		Polygon p = new Polygon(); 
+
+		AffineTransform at = Rotater.getRotationTransform(selectedArea, currentRot);
+		
+        PathIterator i = selectedArea.getPathIterator(at);
+        while (!i.isDone()) {
+            double[] xy = new double[2];
+            i.currentSegment(xy);
+            p.addPoint((int) xy[0], (int) xy[1]);
+
+            i.next();
+        }
+        
+//        selectedArea = p.getBounds();
 	}
 }
