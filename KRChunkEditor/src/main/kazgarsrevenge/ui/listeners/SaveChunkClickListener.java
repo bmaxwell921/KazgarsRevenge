@@ -8,8 +8,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import main.kazgarsrevenge.ui.panels.MainPanel;
-import main.kazgarsrevenge.util.ChunkIO;
+import main.kazgarsrevenge.ui.panels.KREditorPanel;
 import main.kazgarsrevenge.util.JsonFolderFilter;
 
 public class SaveChunkClickListener extends MouseAdapter {
@@ -18,11 +17,11 @@ public class SaveChunkClickListener extends MouseAdapter {
 	private final Frame parent;
 	
 	// main panel to act on
-	private final MainPanel mp;
+	private final KREditorPanel editorPanel;
 	
-	public SaveChunkClickListener(Frame parent, MainPanel mp) {
+	public SaveChunkClickListener(Frame parent, KREditorPanel editorPanel) {
 		this.parent = parent;
-		this.mp = mp;
+		this.editorPanel = editorPanel;
 	}
 	
 	@Override
@@ -44,8 +43,8 @@ public class SaveChunkClickListener extends MouseAdapter {
 						selectedFile = new File(selectedFile + ".json");
 					}
 					
-					ChunkIO.saveChunk(mp.getCurrentChunk(), selectedFile, errors);
-					if (!errors.toString().isEmpty()) {
+					editorPanel.save(selectedFile, errors);
+					if (errors.length() != 0) {
 						JOptionPane.showMessageDialog(parent, errors.toString());
 					}
 				}

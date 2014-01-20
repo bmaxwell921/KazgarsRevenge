@@ -5,8 +5,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
-import main.kazgarsrevenge.ui.panels.MainPanel;
+import main.kazgarsrevenge.ui.panels.KREditorPanel;
 
 public class NewChunkClickListener extends MouseAdapter {
 
@@ -14,11 +15,11 @@ public class NewChunkClickListener extends MouseAdapter {
 	private final Frame parent;
 	
 	// MainPanel to act on
-	private final MainPanel mp;
+	private final KREditorPanel editorPanel;
 	
-	public NewChunkClickListener(Frame parent, MainPanel mp) {
+	public NewChunkClickListener(Frame parent, KREditorPanel editorPanel) {
 		this.parent = parent;
-		this.mp = mp;
+		this.editorPanel = editorPanel;
 	}
 	
 	@Override
@@ -29,8 +30,14 @@ public class NewChunkClickListener extends MouseAdapter {
 			public void run() {
 				int result = JOptionPane.showConfirmDialog(parent, "Creating a new chunk will clear unsaved content, continue?", "", JOptionPane.YES_NO_OPTION);
 				if (result == JOptionPane.YES_OPTION) {
-					mp.newChunk();
+					editorPanel.newEditable();
 				}
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						editorPanel.repaint();
+					}
+				});
 			}
 		}.start();
 	}

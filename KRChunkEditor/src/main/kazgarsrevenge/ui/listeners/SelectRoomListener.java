@@ -5,20 +5,19 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.SwingUtilities;
 
-import main.kazgarsrevenge.model.rooms.impl.DefaultRoom;
-import main.kazgarsrevenge.ui.panels.MainPanel;
+import main.kazgarsrevenge.ui.panels.KREditorPanel;
 
 public class SelectRoomListener extends MouseAdapter {
 	
 	// MainPanel to act on
-	private final MainPanel mp;
+	private final KREditorPanel editorPanel;
 	
-	// The room to select
-	private final DefaultRoom room;
+	// The roomName to select
+	private final String roomName;
 	
-	public SelectRoomListener(MainPanel mp, DefaultRoom room) {
-		this.mp = mp;
-		this.room = room;
+	public SelectRoomListener(KREditorPanel editorPanel, String roomName) {
+		this.editorPanel = editorPanel;
+		this.roomName = roomName;
 	}
 	
 	@Override
@@ -26,11 +25,11 @@ public class SelectRoomListener extends MouseAdapter {
 		new Thread() {
 			@Override
 			public void run() {
-				mp.setSelectedRoom(room);
+				editorPanel.select(roomName);
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						mp.repaint();
+						editorPanel.repaint();
 					}
 				});
 			}

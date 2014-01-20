@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import main.kazgarsrevenge.data.Location;
@@ -15,14 +14,16 @@ import main.kazgarsrevenge.model.ChunkComponent;
 import main.kazgarsrevenge.model.EditableChunkComponent;
 
 /**
- * A room is only ever made up of blocks, which are 1x1
+ * A room is only ever made up of blockMap, which are 1x1.
+ * 
+ * Well this USED to be super awesome with how i held the blocks, but since GSON APPARENTLY CAN'T 
+ * HANDLE DESERIALIZING MAPS I HAD TO CHANGE IT TO USING A SHITTY LIST!
  * @author Brandon
  *
  */
-public class Room extends EditableChunkComponent {
-
-	// Since RoomBlocks only take up a 1x1 space we map from location to block for convenient collision detection
-	private Map<Location, RoomBlock> blocks;
+public class Room extends EditableChunkComponent<RoomBlock> {
+	
+	private List<RoomBlock> blocks;
 	
 	public Room() {
 		this(ChunkComponent.DEFAULT_LOCATION, ChunkComponent.DEFAULT_NAME, ChunkComponent.DEFAULT_ROTATION);
@@ -30,41 +31,47 @@ public class Room extends EditableChunkComponent {
 
 	public Room(Location location, String name, Rotation rotation) {
 		super(location, name, rotation);
-		blocks = new HashMap<>();
+		blocks = new ArrayList<RoomBlock>();
 	}
 
 	/**
 	 * This will throw a ClassCastException is anything but RoomBlocks are added
 	 */
 	@Override
-	public boolean add(ChunkComponent item) {
+	public boolean add(RoomBlock item) {
 		// Only add if there isn't a collision with something already there
 		if (hasCollision(item)) {
 			return false;
 		}
-		blocks.put(item.getLocation(), (RoomBlock)item);
+		blocks.add((RoomBlock) item);
 		return true;
 	}
 	
 	private boolean hasCollision(ChunkComponent item) {
-		// Checks to see if this added location collides with any other blocks
-		if (!blocks.containsKey(item.getLocation())) {
-			return false;
+		// Checks to see if this added location collides with any other blockMap
+		for (RoomBlock block : blocks) {
+			if (block.getLocation().equals(item.getLocation())) {
+				return true;
+			}
 		}
-		ChunkComponent resident = blocks.get(item.getLocation());
-		return !resident.equals(item);
+		
+		return false;
 	}
 
 	@Override
-	public ChunkComponent remove(Location location) {	
-		if (!blocks.containsKey(location)) {
-			return null;
+	public RoomBlock remove(Location location) {	
+		for (Iterator<RoomBlock> iter = blocks.iterator(); iter.hasNext(); ){
+			RoomBlock cur = iter.next();
+			if (cur.getLocation().equals(location)) {
+				iter.remove();
+				return cur;
+			}
 		}
-		return blocks.remove(location);
+		return null;
 	}
 
 	@Override
-	public int getWidth() {
+	public int getWidth() {		
 		if (blocks.isEmpty()) {
 			return 0;
 		}
@@ -73,8 +80,9 @@ public class Room extends EditableChunkComponent {
 			return RoomBlock.BLOCK_SIZE;
 		}
 		
-		// If there's at least 2 blocks we subtract the largest x location from the smallest x location
-		List<Location> sortedLocs = new ArrayList<>(blocks.keySet());
+		// If there's at least 2 blockMap we subtract the largest x location from the smallest x location
+		List<Location> sortedLocs = getOccupiedLocations();
+		
 		Collections.sort(sortedLocs, new XComponentComp());
 		
 		// Add 1 because that's how it works. Truuuuust me ;)
@@ -92,13 +100,18 @@ public class Room extends EditableChunkComponent {
 		}
 
 		// Works the exact same was as above
-		List<Location> sortedLocs = new ArrayList<>(blocks.keySet());
+		List<Location> sortedLocs = getOccupiedLocations();
+		
 		Collections.sort(sortedLocs, new YComponentComp());
 		return sortedLocs.get(sortedLocs.size() - 1).getY() - sortedLocs.get(0).getY() + 1;
 	}
 	
-	public Set<Location> getOccupiedLocations() {
-		return blocks.keySet();
+	public List<Location> getOccupiedLocations() {
+		List<Location> locs = new ArrayList<>();
+		for (RoomBlock block : blocks) {
+			locs.add(block.getLocation());
+		}
+		return locs;
 	}
 	
 	@Override
@@ -142,5 +155,10 @@ public class Room extends EditableChunkComponent {
 			return lhs.getY() - rhs.getY();
 		}
 		
+	}
+
+	@Override
+	public List<RoomBlock> getComponents() {
+		return blocks;
 	}
 }

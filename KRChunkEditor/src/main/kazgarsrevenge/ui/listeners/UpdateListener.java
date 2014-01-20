@@ -7,9 +7,9 @@ import java.awt.event.KeyEvent;
 import javax.swing.SwingUtilities;
 
 import main.kazgarsrevenge.data.Location;
-import main.kazgarsrevenge.ui.panels.MainPanel;
+import main.kazgarsrevenge.ui.panels.KREditorPanel;
 import main.kazgarsrevenge.util.ImageLoader;
-import main.kazgarsrevenge.util.InputManager;
+import main.kazgarsrevenge.util.managers.InputManager;
 
 /**
  * Used in conjunction with the InputManager to allow multiple key presses
@@ -21,10 +21,10 @@ public class UpdateListener implements ActionListener {
 	private static final int MOVE_AMT = ImageLoader.IMAGE_SIZE;
 	
 	// The main panel to update
-	private final MainPanel mp;
+	private final KREditorPanel editorPanel;
 	
-	public UpdateListener(MainPanel mp) {
-		this.mp = mp;
+	public UpdateListener(KREditorPanel editorPanel) {
+		this.editorPanel = editorPanel;
 	}
 
 	@Override
@@ -50,15 +50,20 @@ public class UpdateListener implements ActionListener {
 			move.setY(MOVE_AMT);
 		}
 		
+		if (move.equals(new Location())) {
+			// Don't bother if it's no movement
+			return;
+		}
+		
 		// Do it!
 		new Thread() {
 			@Override
 			public void run() {
-				mp.moveSelection(move);
+				editorPanel.moveSelection(move);
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						mp.repaint();
+						editorPanel.repaint();
 					}
 				});
 			}
@@ -74,11 +79,11 @@ public class UpdateListener implements ActionListener {
 			new Thread() {
 				@Override
 				public void run() {
-					mp.placeRoom();
+					editorPanel.placeSelection();
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							mp.repaint();
+							editorPanel.repaint();
 						}
 					});
 				}
@@ -94,11 +99,11 @@ public class UpdateListener implements ActionListener {
 			new Thread() {
 				@Override
 				public void run() {
-					mp.rotate();
+					editorPanel.rotateSelection();
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							mp.repaint();
+							editorPanel.repaint();
 						}
 					});
 				}

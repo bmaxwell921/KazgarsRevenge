@@ -1,5 +1,7 @@
 package main.kazgarsrevenge.model;
 
+import java.lang.reflect.Constructor;
+
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.data.Rotation;
 
@@ -120,6 +122,22 @@ public abstract class ChunkComponent implements Locatable, Nameable, Rotatable {
 	public String toString() {
 		return "ChunkComponent [location=" + location + ", name=" + name
 				+ ", rotation=" + rotation + "]";
+	}
+	
+	@Override
+	public Object clone() {
+		// Get the default constructor
+		Constructor<?> cons = this.getClass().getConstructors()[0];
+		try {
+			ChunkComponent clone = (ChunkComponent) cons.newInstance();
+			clone.location = (Location) this.location.clone();
+			clone.name = new String(this.name);
+			clone.rotation = this.rotation;
+			return clone;
+		} catch (Exception e) {
+			System.out.println("Problems cloning");
+			return null;
+		}
 	}
 	
 	public String getJsonRep() {

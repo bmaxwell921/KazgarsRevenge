@@ -7,10 +7,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import main.kazgarsrevenge.model.IChunk;
-import main.kazgarsrevenge.ui.panels.MainPanel;
-import main.kazgarsrevenge.util.ChunkIO;
+import main.kazgarsrevenge.model.impl.Chunk;
+import main.kazgarsrevenge.ui.panels.KREditorPanel;
 import main.kazgarsrevenge.util.JsonFolderFilter;
+import main.kazgarsrevenge.util.IO.ChunkComponentIO;
 
 public class LoadChunkClickListener extends MouseAdapter {
 
@@ -18,11 +18,11 @@ public class LoadChunkClickListener extends MouseAdapter {
 	private final Frame parent;
 	
 	// The MainPanel to act on
-	private final MainPanel mp;
+	private final KREditorPanel editorPanel;
 	
-	public LoadChunkClickListener(Frame parent, MainPanel mp) {
+	public LoadChunkClickListener(Frame parent, KREditorPanel editorPanel) {
 		this.parent = parent;
-		this.mp = mp;
+		this.editorPanel = editorPanel;
 	}
 	
 	@Override
@@ -34,13 +34,14 @@ public class LoadChunkClickListener extends MouseAdapter {
 				jfc.setFileFilter(new JsonFolderFilter());
 				int result = jfc.showOpenDialog(parent);
 				if (result == JFileChooser.APPROVE_OPTION) {
-					StringBuilder errors = new StringBuilder();
-					IChunk loaded = ChunkIO.loadChunk(jfc.getSelectedFile(), errors);
-					if (loaded == null) {
+					StringBuilder errors = new StringBuilder();;
+					
+					editorPanel.load(jfc.getSelectedFile(), errors);
+					
+					if (errors.length() != 0) {
 						JOptionPane.showMessageDialog(parent, errors.toString());
 						return;
 					}
-					mp.setCurrentChunk(loaded);
 				}
 			}
 		}.start();

@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 
-import main.kazgarsrevenge.util.InputManager;
+import main.kazgarsrevenge.util.managers.InputManager;
 
 public class KeyAction extends AbstractAction implements ActionListener {
 

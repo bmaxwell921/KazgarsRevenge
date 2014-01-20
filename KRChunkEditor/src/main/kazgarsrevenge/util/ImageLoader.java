@@ -1,6 +1,5 @@
 package main.kazgarsrevenge.util;
 
-import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -12,6 +11,9 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import main.kazgarsrevenge.model.impl.Room;
+import main.kazgarsrevenge.model.impl.RoomBlock;
+
 public class ImageLoader {
 	
 	public static final int IMAGE_SIZE = 25;
@@ -19,7 +21,7 @@ public class ImageLoader {
 	// Where the images are located
 	private static final String BASE_BLOCK_FILE_PATH = "." + File.separatorChar + "img" + File.separatorChar + "blocks";	
 	private static final String BASE_ROOM_FILE_PATH = "." + File.separatorChar + "img" + File.separatorChar + "rooms";	
-	private static final String UNKNOWN_IMAGE_PATH = "." + File.separatorChar + "unknown.png";
+	private static final String UNKNOWN_IMAGE_PATH = "." + File.separatorChar + "img" + File.separator + "unknown.png";
 	
 	private static Map<String, BufferedImage> roomImageMap;
 	private static Map<String, BufferedImage> blockImageMap;
@@ -82,7 +84,7 @@ public class ImageLoader {
 	
 	public static BufferedImage getRoomImage(String name) {
 		if (!roomImageMap.containsKey(name)) {
-			System.out.println(String.format("Couldn't find a room with the name: %s", name));
+//			System.out.println(String.format("Couldn't find a room with the name: %s", name));
 			return UNKNOWN_IMAGE;
 		}
 		return roomImageMap.get(name);
@@ -90,6 +92,15 @@ public class ImageLoader {
 	
 	public static Set<String> getRoomImageNames() {
 		return roomImageMap.keySet();
+	}
+	
+	public static BufferedImage getImage(Class<?> clazz, String name) {
+		if (clazz.equals(Room.class)) {
+			return getRoomImage(name);
+		} else if (clazz.equals(RoomBlock.class)) {
+			return getBlockImage(name);
+		}
+		return null;
 	}
 
 }

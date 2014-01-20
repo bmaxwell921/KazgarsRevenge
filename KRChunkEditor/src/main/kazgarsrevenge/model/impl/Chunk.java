@@ -1,8 +1,10 @@
 package main.kazgarsrevenge.model.impl;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import main.kazgarsrevenge.data.Location;
@@ -15,7 +17,7 @@ import main.kazgarsrevenge.model.EditableChunkComponent;
  * @author Brandon
  *
  */
-public class Chunk extends EditableChunkComponent {
+public class Chunk extends EditableChunkComponent<Room> {
 
 	// Apparently we decided this?
 	public static final int CHUNK_SIZE = 24;
@@ -28,11 +30,12 @@ public class Chunk extends EditableChunkComponent {
 	}
 	
 	public Chunk(Location location, String name, Rotation rotation) {
+		super(location, name, rotation);
 		this.rooms = new HashSet<>();
 	}
 
 	@Override
-	public boolean add(ChunkComponent item) {
+	public boolean add(Room item) {
 		if (hasCollision(item)) {
 			return false;
 		}
@@ -65,8 +68,8 @@ public class Chunk extends EditableChunkComponent {
 	}
 	
 	private boolean hasBlockCollision(Room add, Room existing) {
-		Set<Location> addLocs = add.getOccupiedLocations();
-		Set<Location> existingLocs = existing.getOccupiedLocations();
+		List<Location> addLocs = add.getOccupiedLocations();
+		List<Location> existingLocs = existing.getOccupiedLocations();
 		
 		for (Location addL : addLocs) {
 			if (existingLocs.contains(addL)) {
@@ -77,7 +80,7 @@ public class Chunk extends EditableChunkComponent {
 	}
 
 	@Override
-	public ChunkComponent remove(Location location) {
+	public Room remove(Location location) {
 		// Good ol' iterators
 		for (Iterator<Room> iter = rooms.iterator(); iter.hasNext(); ) {
 			Room cur = iter.next();
@@ -98,11 +101,9 @@ public class Chunk extends EditableChunkComponent {
 	public int getHeight() {
 		return CHUNK_SIZE;
 	}
-	
-	public static void main(String[] args) {
-		Chunk c = new Chunk(new Location(), "My Chunk", Rotation.ZERO);
-		Room r = new Room(new Location(), "My Room", Rotation.ZERO);
-		c.add(r);
-		System.out.println(c.getJsonRep());
+
+	@Override
+	public List<Room> getComponents() {
+		return new ArrayList<>(rooms);
 	}
 }
