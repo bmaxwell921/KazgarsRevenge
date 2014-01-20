@@ -13,7 +13,7 @@ import com.google.gson.GsonBuilder;
  * @author Brandon
  *
  */
-public abstract class ChunkComponent implements Locatable, Nameable, Rotatable {
+public abstract class ChunkComponent implements Locatable, Nameable, Rotatable, Cloneable {
 
 	protected static final Location DEFAULT_LOCATION = new Location();
 	protected static final String DEFAULT_NAME = "DEFAULT";
@@ -127,8 +127,8 @@ public abstract class ChunkComponent implements Locatable, Nameable, Rotatable {
 	@Override
 	public Object clone() {
 		// Get the default constructor
-		Constructor<?> cons = this.getClass().getConstructors()[0];
 		try {
+			Constructor<?> cons = this.getClass().getConstructor(new Class[] {});
 			ChunkComponent clone = (ChunkComponent) cons.newInstance();
 			clone.location = (Location) this.location.clone();
 			clone.name = new String(this.name);

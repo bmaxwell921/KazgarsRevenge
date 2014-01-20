@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -18,10 +19,16 @@ import main.kazgarsrevenge.data.Rotation;
 import main.kazgarsrevenge.model.ChunkComponent;
 import main.kazgarsrevenge.model.EditableChunkComponent;
 import main.kazgarsrevenge.ui.keybinds.KeyAction;
+import main.kazgarsrevenge.ui.listeners.LoadClickListener;
+import main.kazgarsrevenge.ui.listeners.NewClickListener;
+import main.kazgarsrevenge.ui.listeners.SaveClickListener;
 import main.kazgarsrevenge.ui.listeners.UpdateListener;
 import main.kazgarsrevenge.util.IO.ChunkComponentIO;
+import main.kazgarsrevenge.util.managers.UpdaterManager;
 
 public abstract class KREditorPanel extends JPanel {
+	
+	protected static final int SQUARE_SIZE = 25;
 	
 	// The Frame this panel is in
 	protected final Frame parent;
@@ -81,7 +88,22 @@ public abstract class KREditorPanel extends JPanel {
 	/**
 	 * Sets up the buttons needed for the editing panel as needed
 	 */
-	protected abstract void createButtonPanel();
+	protected void createButtonPanel() {
+		buttonPanel = new JPanel();
+		JButton newButton = new JButton("NEW");
+		newButton.addMouseListener(new NewClickListener(parent, this));
+		buttonPanel.add(newButton);
+		
+		JButton loadButton = new JButton("LOAD");
+		loadButton.addMouseListener(new LoadClickListener(parent, this));
+		buttonPanel.add(loadButton);
+		
+		JButton saveButton = new JButton("SAVE");
+		saveButton.addMouseListener(new SaveClickListener(parent, this));
+		buttonPanel.add(saveButton);
+		
+		this.add(buttonPanel, BorderLayout.PAGE_END);
+	}
 	
 	private void setUpKeyBindings() {
 		registerMovementBinding("LEFT", KeyEvent.VK_LEFT);
@@ -112,7 +134,9 @@ public abstract class KREditorPanel extends JPanel {
 	}
 	
 	private void setUpTimer() {
-		new Timer(100, new UpdateListener(this)).start();
+		UpdateListener updater = new UpdateListener(this);
+		UpdaterManager.getInstance().registerListener(this.getClass(), updater);
+		new Timer(100, updater).start();
 	}
 	
 	/**
@@ -170,6 +194,8 @@ public abstract class KREditorPanel extends JPanel {
 	
 	/**
 	 * 'Selects' the a new selectable with the given name.
+	 * Subclasses should provide additional implementation, this just
+	 * toggles off the selection if it's pressed twice
 	 * @param selectionName
 	 */
 	public abstract void select(String selectionName);

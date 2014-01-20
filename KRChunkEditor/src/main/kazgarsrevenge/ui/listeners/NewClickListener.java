@@ -9,7 +9,7 @@ import javax.swing.SwingUtilities;
 
 import main.kazgarsrevenge.ui.panels.KREditorPanel;
 
-public class NewChunkClickListener extends MouseAdapter {
+public class NewClickListener extends MouseAdapter {
 
 	// The parent frame, used for dialogs
 	private final Frame parent;
@@ -17,7 +17,7 @@ public class NewChunkClickListener extends MouseAdapter {
 	// MainPanel to act on
 	private final KREditorPanel editorPanel;
 	
-	public NewChunkClickListener(Frame parent, KREditorPanel editorPanel) {
+	public NewClickListener(Frame parent, KREditorPanel editorPanel) {
 		this.parent = parent;
 		this.editorPanel = editorPanel;
 	}
@@ -28,7 +28,7 @@ public class NewChunkClickListener extends MouseAdapter {
 		new Thread() {
 			@Override 
 			public void run() {
-				int result = JOptionPane.showConfirmDialog(parent, "Creating a new chunk will clear unsaved content, continue?", "", JOptionPane.YES_NO_OPTION);
+				int result = JOptionPane.showConfirmDialog(parent, "Creating a new item will clear unsaved content, continue?", "", JOptionPane.YES_NO_OPTION);
 				if (result == JOptionPane.YES_OPTION) {
 					editorPanel.newEditable();
 				}

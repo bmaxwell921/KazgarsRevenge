@@ -9,28 +9,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.data.Rotation;
 import main.kazgarsrevenge.model.ChunkComponent;
-import main.kazgarsrevenge.model.impl.Chunk;
 import main.kazgarsrevenge.model.impl.Room;
-import main.kazgarsrevenge.ui.listeners.LoadClickListener;
-import main.kazgarsrevenge.ui.listeners.NewClickListener;
-import main.kazgarsrevenge.ui.listeners.NewRoomClickListener;
-import main.kazgarsrevenge.ui.listeners.SaveClickListener;
+import main.kazgarsrevenge.model.impl.RoomBlock;
 import main.kazgarsrevenge.ui.listeners.SelectRoomListener;
 import main.kazgarsrevenge.util.ImageLoader;
 import main.kazgarsrevenge.util.IO.ChunkComponentIO;
 import main.kazgarsrevenge.util.managers.ComponentManager;
 
-public class ChunkEditorPanel extends KREditorPanel {
-
-	private static final int GRID_SIZE = 24;
+public class RoomEditorPanel extends KREditorPanel {
 	
-	public ChunkEditorPanel(Frame frame, int width, int height) {
+	private static final int GRID_SIZE = 10;
+	
+	public RoomEditorPanel(Frame frame, int width, int height) {
 		super(frame, width, height);
 	}
 
@@ -42,15 +37,15 @@ public class ChunkEditorPanel extends KREditorPanel {
 
 	@Override
 	protected void createSidePanel() {
-		// Gets all of the room names from the ComponentManager, then creates ImageDescriptionPanels for them		
-		super.selectables = new SidePanel("Rooms");
-		super.selectables.setPreferredSize(new Dimension(200, 620));
+		// This side panel consists of roomblocks
+		super.selectables = new SidePanel("Blocks");
+		super.selectables.setPreferredSize(new Dimension(200, 250));
 		ComponentManager cm = ComponentManager.getInstance();
-		List<String> roomNames = new ArrayList<>(cm.getNames(Room.class));
-		Collections.sort(roomNames);
+		List<String> blockNames = new ArrayList<>(cm.getNames(RoomBlock.class));
+		Collections.sort(blockNames);
 		
-		for (String name : roomNames) {
-			JPanel imgDesc = new ImageDescriptionPanel(name, ImageLoader.getRoomImage(name));
+		for (String name : blockNames) {
+			JPanel imgDesc = new ImageDescriptionPanel(name, ImageLoader.getBlockImage(name));
 			super.selectables.addPanel(imgDesc);
 			imgDesc.addMouseListener(new SelectRoomListener(this, name));
 		}
@@ -60,44 +55,40 @@ public class ChunkEditorPanel extends KREditorPanel {
 	@Override
 	protected void createButtonPanel() {
 		super.createButtonPanel();
-		
-		super.buttonPanel.setPreferredSize(new Dimension(800, 30));
-		JButton newRoom = new JButton("NEW ROOM");
-		newRoom.addMouseListener(new NewRoomClickListener(super.parent, this));
-		super.buttonPanel.add(newRoom);
+		super.buttonPanel.setPreferredSize(new Dimension(450, 50));
 	}
 
 	@Override
 	public void load(File loadFile, StringBuilder errors) {
 		newEditable();
-		super.editing = ChunkComponentIO.loadChunkComponent(Chunk.class, loadFile, errors);
+		super.editing = ChunkComponentIO.loadChunkComponent(Room.class, loadFile, errors);
 	}
 
 	@Override
 	public void newEditable() {
-		super.editing = new Chunk(new Location(), "Chunk", Rotation.ZERO);
+		super.editing = new Room(new Location(), "RoomName", Rotation.ZERO);
 		super.editGrid.reset(GRID_SIZE, GRID_SIZE);
 	}
 
 	@Override
 	public void select(String selectionName) {
-		// Deselect if they clicked the same one
+		// Deselect if they pressed the same one
 		if (super.selectedItem != null && super.selectedItem.getName().equals(selectionName)) {
 			super.editGrid.resetSelectedArea(selectedItem.getLocation().getX(), selectedItem.getLocation().getY());
 			super.selectedItem = null;
 			return;
 		}
-		
-		ChunkComponent newSel = ComponentManager.getInstance().getComponent(Room.class, selectionName);
+		ChunkComponent newSel = ComponentManager.getInstance().getComponent(RoomBlock.class, selectionName);
 		super.selectedItem = newSel;
 		super.selectedItem.setLocation(editGrid.getSelectedLocation());
 	}
-	
+
 	@Override
 	public BufferedImage getSelectedImage() {
-		if (!hasSelection()) {
+		if (!hasSelection()){
 			return null;
 		}
-		return ImageLoader.getRoomImage(super.selectedItem.getName());
+		return ImageLoader.getBlockImage(super.selectedItem.getName());
 	}
+
 }

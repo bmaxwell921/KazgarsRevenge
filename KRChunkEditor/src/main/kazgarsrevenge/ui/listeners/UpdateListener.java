@@ -23,12 +23,27 @@ public class UpdateListener implements ActionListener {
 	// The main panel to update
 	private final KREditorPanel editorPanel;
 	
+	// Whether or not to perform updates
+	private boolean enabled;
+	
 	public UpdateListener(KREditorPanel editorPanel) {
 		this.editorPanel = editorPanel;
+		enabled = true;
+	}
+	
+	public void disable() {
+		enabled = false;
+	}
+	
+	public void enable() {
+		enabled = true;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (!enabled) {
+			return;
+		}
 		handleMovement();
 		handlePlacement();
 		handleRotation();

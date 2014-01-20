@@ -73,6 +73,7 @@ public class EditGrid extends JPanel {
 	}
 	
 	private void paintEditable(Graphics2D g2) {
+		// TODO this isn't painting
 		List<? extends ChunkComponent> components = parent.editing.getComponents();              
         for (ChunkComponent comp: components) {
                 Location roomLoc = comp.getLocation();
@@ -95,7 +96,25 @@ public class EditGrid extends JPanel {
 	}
 	
 	public void moveSelection(Location moveAmt) {
-		selectedArea.translate(moveAmt.getX(), moveAmt.getY());
+		Location reqMove = new Location(moveAmt.getX() + selectedArea.x, moveAmt.getY() + selectedArea.y);
+		fixBounds(reqMove);
+		selectedArea.setLocation(reqMove.getX(), reqMove.getY());
+	}
+	
+	private void fixBounds(Location loc) {
+		if (loc.getX() < 0) {
+			loc.setX(0);
+		}
+		if (loc.getX() + SQUARE_SIZE > gridWidth * SQUARE_SIZE) {
+			loc.setX(gridWidth * SQUARE_SIZE - SQUARE_SIZE);
+		}
+		
+		if (loc.getY() < 0) {
+			loc.setY(0);
+		}
+		if (loc.getY() + SQUARE_SIZE > gridHeight * SQUARE_SIZE) {
+			loc.setY(gridHeight * SQUARE_SIZE - SQUARE_SIZE); 
+		}
 	}
 	
 	public void reset(int gridWidth, int gridHeight) {

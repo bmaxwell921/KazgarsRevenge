@@ -23,5 +23,4 @@ public class KeyAction extends AbstractAction implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		InputManager.getInstance().updateValue(keyCode, pressed);
 	}
-
 }

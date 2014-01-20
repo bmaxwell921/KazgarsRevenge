@@ -65,8 +65,9 @@ public class ComponentManager {
 	 */
 	public ChunkComponent getComponent(Class<? extends ChunkComponent> clazz, String componentName) {
 		Map<String, ChunkComponent> map = components.get(clazz);
-		if (map.containsKey(componentName)) {
+		if (!map.containsKey(componentName)) {
 			System.out.println(String.format("Unrecognized component name: %s, type: %s", componentName, clazz));
+			return null;
 		}
 		return (ChunkComponent) map.get(componentName).clone();
 	}
