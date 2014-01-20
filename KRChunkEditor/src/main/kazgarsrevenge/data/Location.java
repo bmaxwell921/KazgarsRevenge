@@ -5,7 +5,7 @@ package main.kazgarsrevenge.data;
  * @author Brandon
  *
  */
-public class Location {
+public class Location implements Cloneable {
 
 	// X component
 	private int x;
