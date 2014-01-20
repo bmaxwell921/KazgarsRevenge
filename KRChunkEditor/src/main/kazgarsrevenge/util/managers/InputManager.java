@@ -1,4 +1,4 @@
-package main.kazgarsrevenge.util;
+package main.kazgarsrevenge.util.managers;
 
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
