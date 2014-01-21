@@ -80,7 +80,7 @@ public class RoomEditorPanel extends KREditorPanel {
 		}
 		ChunkComponent newSel = ComponentManager.getInstance().getComponent(RoomBlock.class, selectionName);
 		super.selectedItem = newSel;
-		super.selectedItem.setLocation(editGrid.getSelectedLocation());
+		editGrid.changedSelected(selectedItem.getWidth(), selectedItem.getHeight());
 	}
 
 	@Override

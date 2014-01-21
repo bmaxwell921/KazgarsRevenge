@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.model.ChunkComponent;
+import main.kazgarsrevenge.model.Locatable;
 import main.kazgarsrevenge.util.ImageLoader;
 
 /**
@@ -55,9 +56,9 @@ public class EditGrid extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
+		paintEditable(g2);
 		paintGrid(g2);
 		paintSelection(g2);
-		paintEditable(g2);
 	}
 
 	private void paintGrid(Graphics2D g2) {
@@ -72,12 +73,12 @@ public class EditGrid extends JPanel {
 		}
 	}
 	
+	// Paints the item that is currently being edited
 	private void paintEditable(Graphics2D g2) {
-		// TODO this isn't painting
 		List<? extends ChunkComponent> components = parent.editing.getComponents();              
         for (ChunkComponent comp: components) {
                 Location roomLoc = comp.getLocation();
-                BufferedImage roomImage = ImageLoader.getImage(comp.getClass(), comp.getName());
+                BufferedImage roomImage = ImageLoader.getImage(comp.getClass(), comp.getName());                
                 g2.drawImage(roomImage, roomLoc.getX() * SQUARE_SIZE, roomLoc.getY() * SQUARE_SIZE, null);
         }
 	}
@@ -86,8 +87,6 @@ public class EditGrid extends JPanel {
 		g2.setColor(Color.YELLOW);
 		
 		if (parent.hasSelection()) {
-			selectedArea.setBounds(parent.selectedItem.getLocation().getX(), parent.selectedItem.getLocation().getY(), 
-					parent.selectedItem.getWidth(), parent.selectedItem.getHeight());
 			g2.fill(selectedArea);
 			g2.drawImage(parent.getSelectedImage(), selectedArea.x, selectedArea.y, null);
 		} else {
@@ -120,15 +119,28 @@ public class EditGrid extends JPanel {
 	public void reset(int gridWidth, int gridHeight) {
 		this.gridWidth = gridWidth;
 		this.gridHeight = gridHeight;
-		resetSelectedArea(0, 0);
+		setSelectedArea(0, 0, SQUARE_SIZE, SQUARE_SIZE);
 	}
 	
 	public void resetSelectedArea(int x, int y) {
-		selectedArea.setBounds(x, y, SQUARE_SIZE, SQUARE_SIZE);
+		setSelectedArea(x, y, SQUARE_SIZE, SQUARE_SIZE);
 	}
 	
-	public Location getSelectedLocation() {
-		return new Location(selectedArea.x, selectedArea.y);
+	public void changedSelected(int newWidth, int newHeight) {
+		setSelectedArea(selectedArea.x, selectedArea.y, newWidth, newHeight);
+	}
+	
+	public void setSelectedArea(int x, int y, int width, int height) {
+		selectedArea.setBounds(x, y, width, height);
+	}
+	
+	/**
+	 * Sets the given item's location to the current selected location
+	 * @param item
+	 */
+	public void setAtCurrentLocation(Locatable item) {
+		Location correct = new Location(selectedArea.x / SQUARE_SIZE, selectedArea.y / SQUARE_SIZE);
+		item.setLocation(correct);
 	}
 	
 	public void rotateSelectedArea() {

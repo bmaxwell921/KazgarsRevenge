@@ -5,7 +5,15 @@
         "x": 0,
         "y": 0
       },
-      "name": "bossSpawn",
+      "name": "playerSpawn",
+      "rotation": "ZERO"
+    },
+    {
+      "location": {
+        "x": 1,
+        "y": 0
+      },
+      "name": "floor",
       "rotation": "ZERO"
     },
     {
@@ -13,7 +21,7 @@
         "x": 0,
         "y": 1
       },
-      "name": "playerSpawn",
+      "name": "door",
       "rotation": "ZERO"
     }
   ],
@@ -21,6 +29,6 @@
     "x": 0,
     "y": 0
   },
-  "name": "room1",
+  "name": "room3",
   "rotation": "ZERO"
 }

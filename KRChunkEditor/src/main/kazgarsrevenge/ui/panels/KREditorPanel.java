@@ -144,7 +144,14 @@ public abstract class KREditorPanel extends JPanel {
 	 * @param saveFile
 	 */
 	public void save(File saveFile, StringBuilder errors) {
+		setEditableName(saveFile);
 		ChunkComponentIO.saveChunkComponent(editing, saveFile, errors);
+	}
+	
+	private void setEditableName(File saveFile) {
+		String name = saveFile.getName();
+		name = name.substring(0, name.indexOf(".json"));
+		editing.setName(name);
 	}
 	
 	/**
@@ -163,7 +170,9 @@ public abstract class KREditorPanel extends JPanel {
 	 * Places the current selection in the current location
 	 */
 	public void placeSelection() {
-		if (!editing.add(selectedItem)) {
+		ChunkComponent editClone = (ChunkComponent) selectedItem.clone();
+		editGrid.setAtCurrentLocation(editClone);
+		if (!editing.add(editClone)) {
 			System.out.println("Unable to place item");
 		}
 	}
@@ -174,10 +183,6 @@ public abstract class KREditorPanel extends JPanel {
 	 * @param moveAmt
 	 */
 	public void moveSelection(Location moveAmt) {
-		if (selectedItem != null) {
-			Location itemLoc = selectedItem.getLocation();
-			selectedItem.setLocation(new Location(moveAmt.getX() + itemLoc.getX(), moveAmt.getY() + itemLoc.getY()));
-		}
 		editGrid.moveSelection(moveAmt);
 	}
 	
