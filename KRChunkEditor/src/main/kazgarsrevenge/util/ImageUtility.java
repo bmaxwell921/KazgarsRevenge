@@ -54,23 +54,22 @@ public class ImageUtility {
 	}
 	
 	/**
-	 * Returns a new Image that is a copy of the given image, rotated to the given rotation.
+	 * Returns a new Image that is a copy of the given image, rotated by the given amount, in the counter clockwise
+	 * direction.
 	 * The given image must be a square for this to work
 	 * @param image
-	 * @param newRotation
+	 * @param counterClockRotation
 	 * @return
 	 */
-	public static BufferedImage rotateSquareImage(BufferedImage image, Rotation newRotation) {
+	public static BufferedImage rotateSquareImage(BufferedImage image, Rotation counterClockRotation) {
 		BufferedImage rotated = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 		
 		Graphics2D g2 = rotated.createGraphics();
 		AffineTransform at = new AffineTransform();
-//		at.translate(image.getWidth() / 2, image.getHeight() / 2);
-//		at.rotate(newRotation.getRadians());
-//		at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
-
-		// Why does this rotate backwards?
-		at = AffineTransform.getQuadrantRotateInstance(3, image.getWidth() / 2, image.getHeight() / 2);
+		at.translate(image.getWidth() / 2, image.getHeight() / 2);
+		// Do the negative because AffineTransform rotates backwards...
+		at.rotate(-counterClockRotation.getRadians());
+		at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
 		
 		g2.drawImage(image, at, null);
 		
@@ -86,15 +85,15 @@ public class ImageUtility {
 		final BufferedImage rotatedDoor = ImageUtility.rotateSquareImage(door, Rotation.NINETY);
 		final RoomBlock doorBlock = new RoomBlock(new Location(0, 1), "door", Rotation.NINETY);
 		
-		Map<BufferedImage, List<RoomBlock>> rooms = new HashMap<>();
-		rooms.put(player, new ArrayList<RoomBlock>() {{
-			add(playerBlock);
-		}});
-		rooms.put(rotatedDoor, new ArrayList<RoomBlock>() {{
-			add(doorBlock);
-		}});
-		
-		BufferedImage result = ImageUtility.stitchRoomBlocksTogether(rooms, 25, 2, 1);
-		ImageIO.write(result, "png", new File(".\\img\\rooms\\test.png"));
+//		Map<BufferedImage, List<RoomBlock>> rooms = new HashMap<>();
+//		rooms.put(player, new ArrayList<RoomBlock>() {{
+//			add(playerBlock);
+//		}});
+//		rooms.put(rotatedDoor, new ArrayList<RoomBlock>() {{
+//			add(doorBlock);
+//		}});
+//		
+//		BufferedImage result = ImageUtility.stitchRoomBlocksTogether(rooms, 25, 2, 1);
+		ImageIO.write(rotatedDoor, "png", new File(".\\img\\rooms\\test.png"));
 	}
 }
