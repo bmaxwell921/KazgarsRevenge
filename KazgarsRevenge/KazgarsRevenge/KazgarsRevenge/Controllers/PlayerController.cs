@@ -42,6 +42,7 @@ namespace KazgarsRevenge
         Head,
         Chest,
         Legs,
+        Feet,
         Righthand,
         Lefthand,
     }

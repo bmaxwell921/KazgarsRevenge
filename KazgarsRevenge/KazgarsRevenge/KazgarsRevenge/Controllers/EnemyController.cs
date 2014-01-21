@@ -35,12 +35,11 @@ namespace KazgarsRevenge
     {
         enum EnemyState
         {
-            Wandering,
-            RunningToPlayer,
-            AttackingPlayer,
+            Normal,
             Dying,
+            Decaying,
         }
-        EnemyState state = EnemyState.Wandering;
+        EnemyState state = EnemyState.Normal;
 
         HealthData health;
         Entity physicalData;
@@ -48,6 +47,7 @@ namespace KazgarsRevenge
         LootManager lewts;
         AttackManager attacks;
 
+        Random rand;
         EnemyControllerSettings settings;
 
         public EnemyController(KazgarsRevengeGame game, GameEntity entity, EnemyControllerSettings settings)
@@ -63,6 +63,8 @@ namespace KazgarsRevenge
             PlayAnimation(settings.attackAniName);
 
             rand = new Random();
+
+            currentUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
         }
 
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
@@ -84,172 +86,200 @@ namespace KazgarsRevenge
 
         HealthData targetHealth;
         Entity targetedPlayerData;
-        double wanderCounter;
-        double wanderLength;
-        double deathCounter;
-        double deathLength;
-        double swingCounter;
-        bool chillin = false;
-        Random rand;
-        double attackCounter = double.MaxValue;
-        bool swinging = false;
+        double timerCounter;
+        double timerLength;
         Vector3 curVel = Vector3.Zero;
+
+        protected delegate void AIUpdateFunction(double millis);
+
+        AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
         {
             if (state != EnemyState.Dying && health.Dead)
             {
                 state = EnemyState.Dying;
-                deathLength = animations.GetAniMillis(settings.deathAniName);
-                deathCounter = 0;
+                timerLength = animations.GetAniMillis(settings.deathAniName);
+                timerCounter = 0;
                 PlayAnimation(settings.deathAniName);
                 animations.StopMixing();
+                AIDeath();
                 return;
             }
             switch (state)
             {
-                case EnemyState.Wandering:
-                    GameEntity possTargetPlayer = QueryNearEntity("localplayer", physicalData.Position, 0, 100);
-                    if (possTargetPlayer != null)
-                    {
-                        targetHealth = possTargetPlayer.GetSharedData(typeof(HealthData)) as HealthData;
-                        if (targetHealth != null && !targetHealth.Dead)
-                        {
-                            targetedPlayerData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                            state = EnemyState.RunningToPlayer;
-                            animations.StartClip(settings.runAniName);
-                            return;
-                        }
-                    }
-                    wanderCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    if (chillin)
-                    {
-                        if (wanderCounter >= wanderLength)
-                        {
-                            wanderCounter = 0;
-                            wanderLength = rand.Next(4000, 8000);
-                            float newDir = rand.Next(1, 627) / 10.0f;
-                            Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
-                            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
-                            newVel *= settings.walkSpeed;
-                            curVel = newVel;
-                            physicalData.LinearVelocity = curVel;
-
-                            PlayAnimation(settings.walkAniName);
-                            chillin = false;
-                        }
-                    }
-                    else
-                    {
-                        if (physicalData.LinearVelocity.Length() < .1f)
-                        {
-                            PlayAnimation(settings.idleAniName);
-                            chillin = true;
-                        }
-                        physicalData.LinearVelocity = curVel;
-                        //wandering
-                        if (wanderCounter >= wanderLength)
-                        {
-                            //once it's wandered a little ways, sit still for a bit
-                            wanderCounter = 0;
-                            wanderLength = rand.Next(1000, 5000);
-                            physicalData.LinearVelocity = Vector3.Zero;
-
-                            PlayAnimation(settings.idleAniName);
-                            chillin = true;
-                        }
-                    }
+                case EnemyState.Normal:
+                    currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
                     break;
-                case EnemyState.RunningToPlayer:
-                    if (targetHealth != null && targetedPlayerData != null && !targetHealth.Dead)
-                    {
-                        //if the player is within attack radius, go to attack state
-                        Vector3 diff = new Vector3(targetedPlayerData.Position.X - physicalData.Position.X, 0, targetedPlayerData.Position.Z - physicalData.Position.Z);
-
-                        if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
-                        {
-                            state = EnemyState.AttackingPlayer;
-                            physicalData.LinearVelocity = Vector3.Zero;
-                        }
-                        else if (Math.Abs(diff.X) > settings.stopChasingRange && Math.Abs(diff.Z) > settings.stopChasingRange)
-                        {
-                            //player out of range, wander again
-                            state = EnemyState.Wandering;
-                            chillin = false;
-                            PlayAnimation(settings.walkAniName);
-                            wanderCounter = 0;
-                        }
-                        else
-                        {//otherwise, run towards it
-                            if (diff != Vector3.Zero)
-                            {
-                                diff.Normalize();
-                            }
-                            physicalData.LinearVelocity = diff * settings.runSpeed;
-                            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
-                            if (currentAniName != settings.runAniName)
-                            {
-                                PlayAnimation(settings.runAniName);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        targetHealth = null;
-                        targetedPlayerData = null;
-                        state = EnemyState.Wandering;
-                    }
-                    break;
-                case EnemyState.AttackingPlayer:
-                    if (swinging)
-                    {
-                        swingCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-                        attackCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-                        if (swingCounter >= settings.attackLength / 2)
-                        {
-                            attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false, this.entity);
-                            swingCounter = 0;
-                            swinging = false;
-                        }
-                    }
-                    else if (targetHealth != null && targetedPlayerData != null && !targetHealth.Dead)
-                    {
-                        attackCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-                        if (attackCounter >= settings.attackLength)
-                        {
-                            attackCounter = 0;
-                            //if the player is within attack radius, swing
-                            Vector3 diff = new Vector3(targetedPlayerData.Position.X - physicalData.Position.X, 0, targetedPlayerData.Position.Z - physicalData.Position.Z);
-
-                            if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
-                            {
-                                attackCounter = 0;
-                                PlayAnimation(settings.attackAniName);
-                                swinging = true;
-                                swingCounter = 0;
-                            }
-                            else
-                            {
-                                //otherwise, go to run state
-                                state = EnemyState.RunningToPlayer;
-                                attackCounter = double.MaxValue;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        targetHealth = null;
-                        targetedPlayerData = null;
-                        state = EnemyState.Wandering;
-                    }
-                    break;
+                case EnemyState.Decaying:
                 case EnemyState.Dying:
-                    deathCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    if (deathCounter >= deathLength)
-                    {
-                        entity.Kill();
-                    }
+                    AIDying(gameTime.ElapsedGameTime.TotalMilliseconds);
                     break;
             }
+
+        }
+
+        bool chillin = false;
+        protected virtual void AIWanderingHostile(double millis)
+        {
+            GameEntity possTargetPlayer = QueryNearEntity("localplayer", physicalData.Position, 0, 100);
+            if (possTargetPlayer != null)
+            {
+                targetHealth = possTargetPlayer.GetSharedData(typeof(HealthData)) as HealthData;
+                if (targetHealth != null && !targetHealth.Dead)
+                {
+                    targetedPlayerData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
+                    currentUpdateFunction = new AIUpdateFunction(AIAttackingTarget);
+                    animations.StartClip(settings.runAniName);
+                    return;
+                }
+            }
+
+            AIKinematicWander(millis);
+        }
+
+        protected virtual void AIKinematicWander(double millis)
+        {
+            timerCounter += millis;
+            if (chillin)
+            {
+                if (timerCounter >= timerLength)
+                {
+                    timerCounter = 0;
+                    timerLength = rand.Next(4000, 8000);
+                    float newDir = rand.Next(1, 627) / 10.0f;
+                    Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
+                    newVel *= settings.walkSpeed;
+                    curVel = newVel;
+                    physicalData.LinearVelocity = curVel;
+
+                    PlayAnimation(settings.walkAniName);
+                    chillin = false;
+                }
+            }
+            else
+            {
+                if (physicalData.LinearVelocity.Length() < .1f)
+                {
+                    PlayAnimation(settings.idleAniName);
+                    chillin = true;
+                }
+                physicalData.LinearVelocity = curVel;
+                //wandering
+                if (timerCounter >= timerLength)
+                {
+                    //once it's wandered a little ways, sit still for a bit
+                    timerCounter = 0;
+                    timerLength = rand.Next(1000, 5000);
+                    physicalData.LinearVelocity = Vector3.Zero;
+
+                    PlayAnimation(settings.idleAniName);
+                    chillin = true;
+                }
+            }
+        }
+
+        double swingCounter;
+        double attackCounter = double.MaxValue;
+        bool swinging = false;
+        protected virtual void AIAttackingTarget(double millis)
+        {
+            if (swinging)
+            {
+                swingCounter += millis;
+                attackCounter += millis;
+                if (swingCounter >= settings.attackLength / 2)
+                {
+                    attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false, this.entity);
+                    swingCounter = 0;
+                    swinging = false;
+                }
+            }
+            else if (targetHealth != null && targetedPlayerData != null && !targetHealth.Dead)
+            {
+                attackCounter += millis;
+                if (attackCounter >= settings.attackLength)
+                {
+                    attackCounter = 0;
+                    //if the player is within attack radius, swing
+                    Vector3 diff = new Vector3(targetedPlayerData.Position.X - physicalData.Position.X, 0, targetedPlayerData.Position.Z - physicalData.Position.Z);
+
+                    if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
+                    {
+                        attackCounter = 0;
+                        PlayAnimation(settings.attackAniName);
+                        swinging = true;
+                        swingCounter = 0;
+                    }
+                    else
+                    {
+                        //otherwise, go to run state
+                        currentUpdateFunction = new AIUpdateFunction(AIRunningToTarget);
+                        attackCounter = double.MaxValue;
+                    }
+                }
+            }
+            else
+            {
+                targetHealth = null;
+                targetedPlayerData = null;
+                currentUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
+            }
+        }
+
+        protected virtual void AIRunningToTarget(double millis)
+        {
+            if (targetHealth != null && targetedPlayerData != null && !targetHealth.Dead)
+            {
+                //if the target is within attack radius, go to attack state
+                Vector3 diff = new Vector3(targetedPlayerData.Position.X - physicalData.Position.X, 0, targetedPlayerData.Position.Z - physicalData.Position.Z);
+
+                if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
+                {
+                    currentUpdateFunction = new AIUpdateFunction(AIAttackingTarget);
+                    physicalData.LinearVelocity = Vector3.Zero;
+                }
+                else if (Math.Abs(diff.X) > settings.stopChasingRange && Math.Abs(diff.Z) > settings.stopChasingRange)
+                {
+                    //player out of range, wander again
+                    currentUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
+                    chillin = false;
+                    PlayAnimation(settings.walkAniName);
+                    timerCounter = 0;
+                }
+                else
+                {//otherwise, run towards it
+                    if (diff != Vector3.Zero)
+                    {
+                        diff.Normalize();
+                    }
+                    physicalData.LinearVelocity = diff * settings.runSpeed;
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                    if (currentAniName != settings.runAniName)
+                    {
+                        PlayAnimation(settings.runAniName);
+                    }
+                }
+            }
+            else
+            {
+                targetHealth = null;
+                targetedPlayerData = null;
+                currentUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
+            }
+        }
+
+        protected void AIDying(double millis)
+        {
+            timerCounter += millis;
+            if (timerCounter>= timerLength)
+            {
+                entity.Kill();
+            }
+        }
+
+        protected virtual void AIDeath()
+        {
 
         }
 
