@@ -23,7 +23,7 @@ import main.kazgarsrevenge.ui.listeners.LoadClickListener;
 import main.kazgarsrevenge.ui.listeners.NewClickListener;
 import main.kazgarsrevenge.ui.listeners.SaveClickListener;
 import main.kazgarsrevenge.ui.listeners.UpdateListener;
-import main.kazgarsrevenge.util.IO.ChunkComponentIO;
+import main.kazgarsrevenge.util.IO.ComponentIO;
 import main.kazgarsrevenge.util.managers.UpdaterManager;
 
 public abstract class KREditorPanel extends JPanel {
@@ -149,7 +149,7 @@ public abstract class KREditorPanel extends JPanel {
 	 */
 	public void save(File saveFile, StringBuilder errors) {
 		setEditableName(saveFile);
-		ChunkComponentIO.saveChunkComponent(editing, saveFile, errors);
+		ComponentIO.saveChunkComponent(editing, saveFile, errors);
 	}
 	
 	private void setEditableName(File saveFile) {

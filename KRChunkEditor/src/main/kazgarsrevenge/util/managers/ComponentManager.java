@@ -8,10 +8,10 @@ import java.util.Set;
 import main.kazgarsrevenge.model.ChunkComponent;
 import main.kazgarsrevenge.model.impl.Room;
 import main.kazgarsrevenge.model.impl.RoomBlock;
-import main.kazgarsrevenge.util.IO.ChunkComponentIO;
+import main.kazgarsrevenge.util.IO.ComponentIO;
 
 /**
- * Class uses to get get instances of each type of component. Uses factory pattern for convenience
+ * Class uses to get get instances of each type of component. Uses singleton pattern for convenience
  * @author Brandon
  *
  */
@@ -30,7 +30,7 @@ public class ComponentManager {
 	
 	private void addBlocks() {
 		Map<String, ChunkComponent> blockMap = new HashMap<>();
-		List<RoomBlock> blocks = ChunkComponentIO.loadAllBlocks();
+		List<RoomBlock> blocks = ComponentIO.loadAllBlocks();
 		for (RoomBlock block : blocks) {
 			blockMap.put(block.getName(), block);
 		}
@@ -39,7 +39,7 @@ public class ComponentManager {
 	
 	private void addRooms() {
 		Map<String, ChunkComponent> roomMap = new HashMap<>();
-		List<Room> rooms = ChunkComponentIO.loadAllRooms();
+		List<Room> rooms = ComponentIO.loadAllRooms();
 		for (Room room : rooms) {
 			roomMap.put(room.getName(), room);
 		}

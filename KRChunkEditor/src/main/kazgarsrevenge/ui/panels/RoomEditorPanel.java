@@ -17,9 +17,10 @@ import main.kazgarsrevenge.model.ChunkComponent;
 import main.kazgarsrevenge.model.impl.Room;
 import main.kazgarsrevenge.model.impl.RoomBlock;
 import main.kazgarsrevenge.ui.listeners.SelectRoomListener;
-import main.kazgarsrevenge.util.ImageLoader;
-import main.kazgarsrevenge.util.IO.ChunkComponentIO;
+import main.kazgarsrevenge.util.IO.ComponentIO;
+import main.kazgarsrevenge.util.IO.KRImageIO;
 import main.kazgarsrevenge.util.managers.ComponentManager;
+import main.kazgarsrevenge.util.managers.ImageManager;
 
 public class RoomEditorPanel extends KREditorPanel {
 	
@@ -45,7 +46,7 @@ public class RoomEditorPanel extends KREditorPanel {
 		Collections.sort(blockNames);
 		
 		for (String name : blockNames) {
-			JPanel imgDesc = new ImageDescriptionPanel(name, ImageLoader.getBlockImage(name));
+			JPanel imgDesc = new ImageDescriptionPanel(name, ImageManager.getInstance().getImage(RoomBlock.class, name));
 			super.selectables.addPanel(imgDesc);
 			imgDesc.addMouseListener(new SelectRoomListener(this, name));
 		}
@@ -61,7 +62,7 @@ public class RoomEditorPanel extends KREditorPanel {
 	@Override
 	public void load(File loadFile, StringBuilder errors) {
 		newEditable();
-		super.editing = ChunkComponentIO.loadChunkComponent(Room.class, loadFile, errors);
+		super.editing = ComponentIO.loadChunkComponent(Room.class, loadFile, errors);
 	}
 
 	@Override
@@ -88,7 +89,7 @@ public class RoomEditorPanel extends KREditorPanel {
 		if (!hasSelection()){
 			return null;
 		}
-		return ImageLoader.getBlockImage(super.selectedItem.getName());
+		return ImageManager.getInstance().getImage(super.selectedItem.getClass(), super.selectedItem.getName());
 	}
 
 }

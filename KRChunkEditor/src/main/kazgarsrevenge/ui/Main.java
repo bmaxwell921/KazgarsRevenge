@@ -5,8 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 import main.kazgarsrevenge.ui.panels.ChunkEditorPanel;
-import main.kazgarsrevenge.util.ImageLoader;
+import main.kazgarsrevenge.util.IO.KRImageIO;
 import main.kazgarsrevenge.util.managers.ComponentManager;
+import main.kazgarsrevenge.util.managers.ImageManager;
 
 public class Main {
 
@@ -19,8 +20,8 @@ public class Main {
 	}
 	
 	public Main() {
-		ImageLoader.loadImages();
 		// load
+		ImageManager.getInstance();
 		ComponentManager.getInstance();
 		createAndShowGUI();
 	}

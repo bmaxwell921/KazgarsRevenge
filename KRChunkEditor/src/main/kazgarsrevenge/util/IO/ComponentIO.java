@@ -20,7 +20,7 @@ import com.google.gson.Gson;
  * @author Brandon
  *
  */
-public class ChunkComponentIO {
+public class ComponentIO {
 	
 	private static final String DEFAULT_ROOMS_PATH = "." + File.separatorChar + "rooms";
 	private static final String DEFAULT_BLOCKS_PATH = "." + File.separatorChar + "blocks";
@@ -70,7 +70,7 @@ public class ChunkComponentIO {
 		File defaultLoc = new File(DEFAULT_ROOMS_PATH);
 		for (File subFile : defaultLoc.listFiles()) {
 			if (!subFile.isDirectory()) {
-				rooms.add(ChunkComponentIO.loadChunkComponent(Room.class, subFile, errors));
+				rooms.add(ComponentIO.loadChunkComponent(Room.class, subFile, errors));
 			}
 		}
 		if (!errors.toString().isEmpty()) {
@@ -90,7 +90,7 @@ public class ChunkComponentIO {
 		File defaultLoc = new File(DEFAULT_BLOCKS_PATH);
 		for (File subFile : defaultLoc.listFiles()) {
 			if (!subFile.isDirectory()) {
-				rooms.add(ChunkComponentIO.loadChunkComponent(RoomBlock.class, subFile, errors));
+				rooms.add(ComponentIO.loadChunkComponent(RoomBlock.class, subFile, errors));
 			}
 		}
 		if (!errors.toString().isEmpty()) {

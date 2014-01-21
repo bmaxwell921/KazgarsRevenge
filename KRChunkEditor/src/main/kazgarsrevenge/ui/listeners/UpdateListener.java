@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.ui.panels.KREditorPanel;
-import main.kazgarsrevenge.util.ImageLoader;
+import main.kazgarsrevenge.util.IO.KRImageIO;
 import main.kazgarsrevenge.util.managers.InputManager;
 
 /**
@@ -18,7 +18,7 @@ import main.kazgarsrevenge.util.managers.InputManager;
  */
 public class UpdateListener implements ActionListener {
 
-	private static final int MOVE_AMT = ImageLoader.IMAGE_SIZE;
+	private static final int MOVE_AMT = KRImageIO.IMAGE_SIZE;
 	
 	// The main panel to update
 	private final KREditorPanel editorPanel;

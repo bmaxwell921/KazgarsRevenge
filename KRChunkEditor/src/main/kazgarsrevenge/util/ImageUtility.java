@@ -2,6 +2,7 @@ package main.kazgarsrevenge.util;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +15,9 @@ import javax.imageio.ImageIO;
 
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.data.Rotation;
+import main.kazgarsrevenge.model.impl.Room;
 import main.kazgarsrevenge.model.impl.RoomBlock;
+import main.kazgarsrevenge.util.managers.ImageManager;
 
 public class ImageUtility {
 
@@ -22,6 +25,8 @@ public class ImageUtility {
 	 * A method used to 'stitch' together images to create a new room. The images should all 
 	 * be square and the same size, otherwise this won't work...that's why it's for making
 	 * rooms. 
+	 * 
+	 * The images will be rotated and located according to each the RoomBlocks found in rooms
 	 * 
 	 * 	[0][1]
 	 * 	[2][3]
@@ -46,11 +51,37 @@ public class ImageUtility {
 		
 		for (BufferedImage key : rooms.keySet()) {
 			for (RoomBlock room : rooms.get(key)) {
-				g2.drawImage(key, room.getLocation().getX() * imageSize, room.getLocation().getY() * imageSize, null);
+				BufferedImage rotated = ImageUtility.rotateSquareImage(key, room.getRotation());
+				g2.drawImage(rotated, room.getLocation().getX() * imageSize, room.getLocation().getY() * imageSize, null);
 			}
 		}
 		
 		return stitched;
+	}
+	
+	/**
+	 * Creates a new bufferedImage for the given room
+	 * @param room
+	 * @param imageSize
+	 * 				The size of a single RoomBlock image
+	 * @return
+	 */
+	public static BufferedImage createImageFor(Room room, int imageSize) {
+		Map<BufferedImage, List<RoomBlock>> rooms = new HashMap<>();
+		List<RoomBlock> blocks = room.getComponents();
+		
+		// Create the map to send to stitch
+		for (RoomBlock block : blocks) {
+			BufferedImage baseImage = ImageManager.getInstance().getImage(RoomBlock.class, block.getName());
+			List<RoomBlock> associatedRooms = rooms.get(baseImage);
+			if (associatedRooms == null) {
+				associatedRooms = new ArrayList<>();
+			}
+			associatedRooms.add(block);
+			rooms.put(baseImage, associatedRooms);
+		}
+		
+		return ImageUtility.stitchRoomBlocksTogether(rooms, imageSize, room.getHeight(), room.getWidth());
 	}
 	
 	/**
@@ -76,24 +107,24 @@ public class ImageUtility {
 		return rotated;
 	}
 	
+	/**
+	 * Returns a new image representing the scaled version of the given image
+	 * @param img
+	 * @param scale
+	 * @return
+	 */
+	public static BufferedImage scaleImage(BufferedImage img, double scale) {
+		AffineTransform at = new AffineTransform();
+		at.scale(scale, scale);
+		AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+		return scaleOp.filter(img, null);
+	}
+	
 	public static void main(String[] args) throws IOException {
-		ImageLoader.loadImages();
-		final BufferedImage player = ImageLoader.getBlockImage("playerSpawn");
-		final RoomBlock playerBlock = new RoomBlock();
-		
-		final BufferedImage door = ImageLoader.getBlockImage("door");
-		final BufferedImage rotatedDoor = ImageUtility.rotateSquareImage(door, Rotation.NINETY);
-		final RoomBlock doorBlock = new RoomBlock(new Location(0, 1), "door", Rotation.NINETY);
-		
-//		Map<BufferedImage, List<RoomBlock>> rooms = new HashMap<>();
-//		rooms.put(player, new ArrayList<RoomBlock>() {{
-//			add(playerBlock);
-//		}});
-//		rooms.put(rotatedDoor, new ArrayList<RoomBlock>() {{
-//			add(doorBlock);
-//		}});
-//		
-//		BufferedImage result = ImageUtility.stitchRoomBlocksTogether(rooms, 25, 2, 1);
-		ImageIO.write(rotatedDoor, "png", new File(".\\img\\rooms\\test.png"));
+		Room newRoom = new Room();
+		newRoom.add(new RoomBlock(new Location(), "playerSpawn", Rotation.ZERO));
+		newRoom.add(new RoomBlock(new Location(0, 1), "door", Rotation.NINETY));
+		BufferedImage result = ImageUtility.createImageFor(newRoom, 25);
+		ImageIO.write(result, "png", new File(".\\img\\rooms\\test2.png"));
 	}
 }

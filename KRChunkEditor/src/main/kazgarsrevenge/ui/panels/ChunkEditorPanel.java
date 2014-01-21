@@ -20,9 +20,10 @@ import main.kazgarsrevenge.model.impl.Chunk;
 import main.kazgarsrevenge.model.impl.Room;
 import main.kazgarsrevenge.ui.listeners.NewRoomClickListener;
 import main.kazgarsrevenge.ui.listeners.SelectRoomListener;
-import main.kazgarsrevenge.util.ImageLoader;
-import main.kazgarsrevenge.util.IO.ChunkComponentIO;
+import main.kazgarsrevenge.util.IO.ComponentIO;
+import main.kazgarsrevenge.util.IO.KRImageIO;
 import main.kazgarsrevenge.util.managers.ComponentManager;
+import main.kazgarsrevenge.util.managers.ImageManager;
 
 public class ChunkEditorPanel extends KREditorPanel {
 
@@ -53,7 +54,7 @@ public class ChunkEditorPanel extends KREditorPanel {
 		Collections.sort(roomNames);
 		
 		for (String name : roomNames) {
-			JPanel imgDesc = new ImageDescriptionPanel(name, ImageLoader.getRoomImage(name));
+			JPanel imgDesc = new ImageDescriptionPanel(name, ImageManager.getInstance().getImage(Room.class, name));
 			super.selectables.addPanel(imgDesc);
 			imgDesc.addMouseListener(new SelectRoomListener(this, name));
 		}
@@ -79,7 +80,7 @@ public class ChunkEditorPanel extends KREditorPanel {
 	@Override
 	public void load(File loadFile, StringBuilder errors) {
 		newEditable();
-		super.editing = ChunkComponentIO.loadChunkComponent(Chunk.class, loadFile, errors);
+		super.editing = ComponentIO.loadChunkComponent(Chunk.class, loadFile, errors);
 	}
 
 	@Override
@@ -106,6 +107,6 @@ public class ChunkEditorPanel extends KREditorPanel {
 		if (!hasSelection()) {
 			return null;
 		}
-		return ImageLoader.getRoomImage(super.selectedItem.getName());
+		return ImageManager.getInstance().getImage(super.selectedItem.getClass(), super.selectedItem.getName());
 	}
 }

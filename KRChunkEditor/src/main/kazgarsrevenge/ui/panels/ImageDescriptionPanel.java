@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.kazgarsrevenge.util.ImageLoader;
+import main.kazgarsrevenge.util.IO.KRImageIO;
 
 /**
  * Panel for displaying the image for a single room and its name

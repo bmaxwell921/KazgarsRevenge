@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 import main.kazgarsrevenge.model.impl.Chunk;
 import main.kazgarsrevenge.ui.panels.KREditorPanel;
 import main.kazgarsrevenge.util.JsonFolderFilter;
-import main.kazgarsrevenge.util.IO.ChunkComponentIO;
+import main.kazgarsrevenge.util.IO.ComponentIO;
 
 public class LoadClickListener extends MouseAdapter {
 
