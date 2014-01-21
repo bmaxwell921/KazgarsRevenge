@@ -1,5 +1,6 @@
 #include "Skinning.fxh"
 
+float alpha = 1;
 
 float3 vLightDirection = normalize(float3(1,1,1));
 
@@ -91,7 +92,8 @@ float4 PSSkinnedVertexLighting(ToonVSOutput pin) : SV_Target0
         light = ToonBrightnessLevels[2];
                 
     Color.rgb *= light;
-    
+    Color.a = alpha;
+
     return Color;
 }
 

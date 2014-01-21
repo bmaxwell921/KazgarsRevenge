@@ -401,7 +401,7 @@ namespace KazgarsRevenge
                     //draw depth render target
                     GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
                     GraphicsDevice.Clear(Color.Black);
-                    GraphicsDevice.BlendState = BlendState.Opaque;
+                    GraphicsDevice.BlendState = BlendState.AlphaBlend;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                     GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
                     renderManager.Draw(gameTime, true);

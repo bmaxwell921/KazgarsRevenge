@@ -64,7 +64,8 @@ namespace KazgarsRevenge
 
             rand = new Random();
 
-            currentUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
+            idleUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
+            currentUpdateFunction = idleUpdateFunction;
         }
 
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
@@ -92,6 +93,10 @@ namespace KazgarsRevenge
 
         protected delegate void AIUpdateFunction(double millis);
 
+        //change this to adjust what the AI falls back on when there is nothing around to kill
+        AIUpdateFunction idleUpdateFunction;
+
+        //change this to switch states
         AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
         {
@@ -110,6 +115,7 @@ namespace KazgarsRevenge
                 case EnemyState.Normal:
                     currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
                     break;
+                //TODO: decaying will be its own state where the entity has no physics and fades out (slowly adjusts alpha of model to zero, then kills the entity)
                 case EnemyState.Decaying:
                 case EnemyState.Dying:
                     AIDying(gameTime.ElapsedGameTime.TotalMilliseconds);
@@ -117,6 +123,9 @@ namespace KazgarsRevenge
             }
 
         }
+
+
+        #region State Definitions
 
         bool chillin = false;
         protected virtual void AIWanderingHostile(double millis)
@@ -128,7 +137,7 @@ namespace KazgarsRevenge
                 if (targetHealth != null && !targetHealth.Dead)
                 {
                     targetedPlayerData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                    currentUpdateFunction = new AIUpdateFunction(AIAttackingTarget);
+                    currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
                     animations.StartClip(settings.runAniName);
                     return;
                 }
@@ -182,7 +191,7 @@ namespace KazgarsRevenge
         double swingCounter;
         double attackCounter = double.MaxValue;
         bool swinging = false;
-        protected virtual void AIAttackingTarget(double millis)
+        protected virtual void AIAutoAttackingTarget(double millis)
         {
             if (swinging)
             {
@@ -223,7 +232,7 @@ namespace KazgarsRevenge
             {
                 targetHealth = null;
                 targetedPlayerData = null;
-                currentUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
+                currentUpdateFunction = idleUpdateFunction;
             }
         }
 
@@ -236,13 +245,13 @@ namespace KazgarsRevenge
 
                 if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                 {
-                    currentUpdateFunction = new AIUpdateFunction(AIAttackingTarget);
+                    currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
                     physicalData.LinearVelocity = Vector3.Zero;
                 }
                 else if (Math.Abs(diff.X) > settings.stopChasingRange && Math.Abs(diff.Z) > settings.stopChasingRange)
                 {
-                    //player out of range, wander again
-                    currentUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
+                    //target out of range, wander again
+                    currentUpdateFunction = idleUpdateFunction;
                     chillin = false;
                     PlayAnimation(settings.walkAniName);
                     timerCounter = 0;
@@ -265,7 +274,7 @@ namespace KazgarsRevenge
             {
                 targetHealth = null;
                 targetedPlayerData = null;
-                currentUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
+                currentUpdateFunction = idleUpdateFunction;
             }
         }
 
@@ -277,6 +286,9 @@ namespace KazgarsRevenge
                 entity.Kill();
             }
         }
+
+        #endregion
+
 
         protected virtual void AIDeath()
         {

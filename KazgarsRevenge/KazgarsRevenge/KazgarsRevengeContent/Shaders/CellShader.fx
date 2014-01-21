@@ -1,3 +1,5 @@
+float alpha = 1;
+
 
 float ToonThresholds[2] = { 0.8, 0.4 };
 float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
@@ -61,7 +63,8 @@ float4 ToonPS(ToonVSOut pin) : COLOR
     //    light = ToonBrightnessLevels[2];
                 
     Color.rgb *= light;
-    
+    Color.a = alpha;
+
     return Color;
 }
 
