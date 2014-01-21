@@ -64,8 +64,6 @@ public class ImageLoader {
 	}
 	
 	private static BufferedImage scaleImage(BufferedImage img) {
-//		BufferedImage scaledImage = img.getScaledInstance(img.getWidth() / 4, img.getHeight() / 4, Image.SCALE_DEFAULT);
-//		return scaledImage;
 		AffineTransform at = new AffineTransform();
 		at.scale(0.25, 0.25);
 		AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
@@ -74,7 +72,9 @@ public class ImageLoader {
 	
 	// Gets the specified image
 	public static BufferedImage getBlockImage(String name) {
-		if (!blockImageMap.containsKey(name)) throw new IllegalArgumentException(String.format("Image name not found: %s", name));
+		if (!blockImageMap.containsKey(name)) {
+			return UNKNOWN_IMAGE;
+		}
 		return blockImageMap.get(name);
 	}
 	
@@ -84,7 +84,6 @@ public class ImageLoader {
 	
 	public static BufferedImage getRoomImage(String name) {
 		if (!roomImageMap.containsKey(name)) {
-//			System.out.println(String.format("Couldn't find a room with the name: %s", name));
 			return UNKNOWN_IMAGE;
 		}
 		return roomImageMap.get(name);

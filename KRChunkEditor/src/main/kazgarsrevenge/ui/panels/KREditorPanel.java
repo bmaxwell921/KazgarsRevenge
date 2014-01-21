@@ -85,6 +85,10 @@ public abstract class KREditorPanel extends JPanel {
 	 */
 	protected abstract void createSidePanel();
 	
+	public void recreateSidePanel() {
+		selectables.removeAll();
+	}
+	
 	/**
 	 * Sets up the buttons needed for the editing panel as needed
 	 */
@@ -170,6 +174,9 @@ public abstract class KREditorPanel extends JPanel {
 	 * Places the current selection in the current location
 	 */
 	public void placeSelection() {
+		if (!hasSelection()) {
+			return;
+		}
 		ChunkComponent editClone = (ChunkComponent) selectedItem.clone();
 		editGrid.setAtCurrentLocation(editClone);
 		if (!editing.add(editClone)) {

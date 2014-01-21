@@ -1,6 +1,7 @@
 package main.kazgarsrevenge.ui.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.image.BufferedImage;
@@ -17,10 +18,7 @@ import main.kazgarsrevenge.data.Rotation;
 import main.kazgarsrevenge.model.ChunkComponent;
 import main.kazgarsrevenge.model.impl.Chunk;
 import main.kazgarsrevenge.model.impl.Room;
-import main.kazgarsrevenge.ui.listeners.LoadClickListener;
-import main.kazgarsrevenge.ui.listeners.NewClickListener;
 import main.kazgarsrevenge.ui.listeners.NewRoomClickListener;
-import main.kazgarsrevenge.ui.listeners.SaveClickListener;
 import main.kazgarsrevenge.ui.listeners.SelectRoomListener;
 import main.kazgarsrevenge.util.ImageLoader;
 import main.kazgarsrevenge.util.IO.ChunkComponentIO;
@@ -45,6 +43,11 @@ public class ChunkEditorPanel extends KREditorPanel {
 		// Gets all of the room names from the ComponentManager, then creates ImageDescriptionPanels for them		
 		super.selectables = new SidePanel("Rooms");
 		super.selectables.setPreferredSize(new Dimension(200, 620));
+		this.addImageDesc();
+		this.add(super.selectables, BorderLayout.EAST);
+	}
+	
+	private void addImageDesc() {
 		ComponentManager cm = ComponentManager.getInstance();
 		List<String> roomNames = new ArrayList<>(cm.getNames(Room.class));
 		Collections.sort(roomNames);
@@ -54,7 +57,13 @@ public class ChunkEditorPanel extends KREditorPanel {
 			super.selectables.addPanel(imgDesc);
 			imgDesc.addMouseListener(new SelectRoomListener(this, name));
 		}
-		this.add(super.selectables, BorderLayout.EAST);
+	}
+	
+	@Override
+	public void recreateSidePanel() {
+		// Calls selectables.removeAll();
+		super.recreateSidePanel();
+		addImageDesc();
 	}
 
 	@Override

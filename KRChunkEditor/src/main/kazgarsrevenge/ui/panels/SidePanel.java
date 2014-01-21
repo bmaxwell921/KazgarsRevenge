@@ -34,5 +34,11 @@ public class SidePanel extends ScrollPane {
 		panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		container.add(panel);
 	}
-
+	
+	@Override
+	public void removeAll() {
+		container.removeAll();
+		container.revalidate();
+		container.repaint();
+	}
 }

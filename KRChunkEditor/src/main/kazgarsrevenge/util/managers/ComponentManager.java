@@ -46,6 +46,11 @@ public class ComponentManager {
 		components.put(Room.class, roomMap);
 	}
 	
+	public void reloadAllRooms() {
+		components.remove(Room.class);
+		this.addRooms();
+	}
+	
 	/**
 	 * Method used to get a ComponentManager object
 	 * @return

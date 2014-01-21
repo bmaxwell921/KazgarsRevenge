@@ -5,9 +5,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import main.kazgarsrevenge.ui.panels.KREditorPanel;
 import main.kazgarsrevenge.ui.panels.RoomEditorPanel;
+import main.kazgarsrevenge.util.managers.ComponentManager;
 import main.kazgarsrevenge.util.managers.UpdaterManager;
 
 public class NewRoomClickListener extends MouseAdapter {
@@ -31,5 +33,21 @@ public class NewRoomClickListener extends MouseAdapter {
 				null, new String[] {"Finish"}, "Finish");
 		UpdaterManager.getInstance().enableListeners(chunkEditor.getClass());
 		UpdaterManager.getInstance().disableListeners(rep.getClass());
+		
+		// Load up the new side Panels
+		new Thread() {
+			@Override
+			public void run() {
+				ComponentManager.getInstance().reloadAllRooms();
+				chunkEditor.recreateSidePanel();		
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						chunkEditor.revalidate();
+						chunkEditor.repaint();
+					}
+				});
+			}
+		}.start();
 	}
 }
