@@ -50,14 +50,4 @@ public abstract class EditableChunkComponent<T extends ChunkComponent> extends C
 		// Just the formula for rotating by 90 degrees counterclockwise
 		return new Location(loc.getY(), width - loc.getX() - 1);
 	}
-	
-//	public static void main(String[] args){
-//		for (int i = 0; i < 3; ++i) {
-//			for (int j = 0; j < 2; ++j) {
-//				Location rot = EditableChunkComponent.ninetyRotation(new Location(i, j), 3, 2);
-//				System.out.println(String.format("(%d,%d)->(%d,%d)", i, j, rot.getX(), rot.getY()));
-//			}
-//		}
-//		
-//	}
 }

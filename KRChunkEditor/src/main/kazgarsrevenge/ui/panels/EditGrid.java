@@ -90,7 +90,6 @@ public class EditGrid extends JPanel {
 		g2.setColor(Color.YELLOW);
 		
 		if (parent.hasSelection()) {
-			g2.fill(selectedArea);
 			g2.drawImage(parent.getSelectedImage(), selectedArea.x, selectedArea.y, null);
 		} else {
 			g2.fill(selectedArea);

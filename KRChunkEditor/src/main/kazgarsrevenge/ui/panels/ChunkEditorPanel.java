@@ -91,7 +91,6 @@ public class ChunkEditorPanel extends KREditorPanel {
 	public void select(String selectionName) {
 		// Deselect if they clicked the same one
 		if (super.selectedItem != null && super.selectedItem.getName().equals(selectionName)) {
-			super.editGrid.resetSelectedArea(selectedItem.getLocation().getX(), selectedItem.getLocation().getY());
 			super.selectedItem = null;
 			return;
 		}
