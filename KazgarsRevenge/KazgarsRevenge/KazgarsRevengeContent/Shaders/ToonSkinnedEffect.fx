@@ -1,6 +1,7 @@
 #include "Skinning.fxh"
 
-float alpha =1;
+float alpha = 1;
+float lineIntensity = 1;
 
 float3 vLightDirection = normalize(float3(1,1,1));
 
@@ -131,7 +132,7 @@ NormalDepthVSOutput VSDepthOneBone(VSInputNmTxWeights vin)
     float3 worldNormal = mul(vin.Normal, World);
 
     // The output color holds the normal, scaled to fit into a 0 to 1 range.
-    output.Color.rgb = (worldNormal + 1) / 2;
+    output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
 
     // The output alpha holds the depth, scaled to fit into a 0 to 1 range.
     output.Color.a = output.Position.z / output.Position.w;
@@ -147,7 +148,7 @@ NormalDepthVSOutput VSDepthTwoBone(VSInputNmTxWeights vin)
 	
     output.Position = mul(vin.Position, WorldViewProj);
     float3 worldNormal = mul(vin.Normal, World);
-    output.Color.rgb = (worldNormal + 1) / 2;
+    output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
     output.Color.a = output.Position.z / output.Position.w;
     
     return output;
@@ -161,7 +162,7 @@ NormalDepthVSOutput VSDepthFourBone(VSInputNmTxWeights vin)
 	
     output.Position = mul(vin.Position, WorldViewProj);
     float3 worldNormal = mul(vin.Normal, World);
-    output.Color.rgb = (worldNormal + 1) / 2;
+    output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
     output.Color.a = output.Position.z / output.Position.w;
     
     return output;
