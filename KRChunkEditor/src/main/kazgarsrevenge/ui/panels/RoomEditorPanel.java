@@ -58,6 +58,13 @@ public class RoomEditorPanel extends KREditorPanel {
 	}
 
 	@Override
+	public void save(File saveFile, StringBuilder errors) {
+		// We pull all the blocks to the top left corner so there's no wasted space
+		((Room) super.editing).bindToUpperLeft();
+		super.save(saveFile, errors);
+	}
+	
+	@Override
 	public void load(File loadFile, StringBuilder errors) {
 		newEditable();
 		super.editing = (Room) ComponentIO.loadChunkComponent(Room.class, loadFile, errors);

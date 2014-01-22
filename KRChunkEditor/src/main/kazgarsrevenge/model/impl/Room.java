@@ -3,10 +3,8 @@ package main.kazgarsrevenge.model.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.data.Rotation;
@@ -80,7 +78,7 @@ public class Room extends EditableChunkComponent<RoomBlock> {
 			return RoomBlock.BLOCK_SIZE;
 		}
 		
-		// If there's at least 2 blockMap we subtract the largest x location from the smallest x location
+		// If there's at least 2 blocks we subtract the largest x location from the smallest x location
 		List<Location> sortedLocs = getOccupiedLocations();
 		
 		Collections.sort(sortedLocs, new XComponentComp());
@@ -104,6 +102,37 @@ public class Room extends EditableChunkComponent<RoomBlock> {
 		
 		Collections.sort(sortedLocs, new YComponentComp());
 		return sortedLocs.get(sortedLocs.size() - 1).getY() - sortedLocs.get(0).getY() + 1;
+	}
+	
+	/**
+	 * Seems to me like it's a good idea to pull all the blocks up to 0,0. Otherwise getWidth and
+	 * getHeight won't work
+	 */
+	public void bindToUpperLeft() {
+		if (blocks.isEmpty()) {
+			return;
+		}
+		// Easy if there's just one cause we can just set its location to 0, 0
+		if (blocks.size() == 1) {
+			blocks.get(0).setLocation(new Location());
+		}
+		
+		/*
+		 * Otherwise what we do is get the left-most block and then the top most block.
+		 * Those points are the amount we translate everything
+		 */
+		List<Location> occup = getOccupiedLocations();
+		Collections.sort(occup, new XComponentComp());
+		int smallestX = occup.get(0).getX();
+		
+		Collections.sort(occup, new YComponentComp());
+		int smallestY = occup.get(0).getY();		
+		
+		for (RoomBlock block : blocks) {
+			Location curLoc = block.getLocation();
+			Location newLoc = new Location(curLoc.getX() - smallestX, curLoc.getY() - smallestY);
+			block.setLocation(newLoc);
+		}
 	}
 	
 	public List<Location> getOccupiedLocations() {
@@ -144,17 +173,18 @@ public class Room extends EditableChunkComponent<RoomBlock> {
 		return "Room [" + this.getName() + "]";
 	}
 
+	// Compares Locations from smallest X to largest
 	private class XComponentComp implements Comparator<Location> {
 		public int compare(Location lhs, Location rhs) {
 			return lhs.getX() - rhs.getX();
 		}
 	}
 	
+	// Compares Locations from smallest Y to largest
 	private class YComponentComp implements Comparator<Location> {
 		public int compare(Location lhs, Location rhs) {
 			return lhs.getY() - rhs.getY();
 		}
-		
 	}
 
 	@Override

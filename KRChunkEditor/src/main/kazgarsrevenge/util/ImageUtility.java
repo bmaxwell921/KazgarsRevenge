@@ -46,7 +46,7 @@ public class ImageUtility {
 		int totalHeight = imageSize * rows;
 		
 		// The image to return
-		BufferedImage stitched = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_RGB);
+		BufferedImage stitched = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = stitched.createGraphics();
 		
 		for (BufferedImage key : rooms.keySet()) {
@@ -93,7 +93,7 @@ public class ImageUtility {
 	 * @return
 	 */
 	public static BufferedImage rotateSquareImage(BufferedImage image, Rotation counterClockRotation) {
-		BufferedImage rotated = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		BufferedImage rotated = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		
 		Graphics2D g2 = rotated.createGraphics();
 		AffineTransform at = new AffineTransform();
@@ -118,13 +118,5 @@ public class ImageUtility {
 		at.scale(scale, scale);
 		AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
 		return scaleOp.filter(img, null);
-	}
-	
-	public static void main(String[] args) throws IOException {
-		Room newRoom = new Room();
-		newRoom.add(new RoomBlock(new Location(), "playerSpawn", Rotation.ZERO));
-		newRoom.add(new RoomBlock(new Location(0, 1), "door", Rotation.NINETY));
-		BufferedImage result = ImageUtility.createImageFor(newRoom, 25);
-		ImageIO.write(result, "png", new File(".\\img\\rooms\\test2.png"));
 	}
 }
