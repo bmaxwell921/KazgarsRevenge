@@ -143,7 +143,7 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(roomPhysics);
 
             room.AddComponent(typeof(UnanimatedModelComponent), roomGraphics);
-            modelManager.AddComponent(roomGraphics);
+            levelModelManager.AddComponent(roomGraphics);
 
             rooms.Add(room);
         }

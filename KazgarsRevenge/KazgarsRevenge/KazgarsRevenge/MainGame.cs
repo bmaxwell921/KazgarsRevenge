@@ -34,7 +34,8 @@ namespace KazgarsRevenge
         ModelManager renderManager;
         SpriteManager spriteManager;
         BillBoardManager decalManager;
-        LootManager gearGenerator;
+        LootManager lootManager;
+        LevelModelManager levelModelManager;
 
         PlayerManager players;
         NetworkMessageManager nmm;
@@ -133,9 +134,9 @@ namespace KazgarsRevenge
             Components.Add(players);
             Services.AddService(typeof(PlayerManager), players);
 
-            gearGenerator = new LootManager(this);
-            Components.Add(gearGenerator);
-            Services.AddService(typeof(LootManager), gearGenerator);
+            lootManager = new LootManager(this);
+            Components.Add(lootManager);
+            Services.AddService(typeof(LootManager), lootManager);
 
             nmm = new NetworkMessageManager(this);
             Components.Add(nmm);
@@ -159,6 +160,10 @@ namespace KazgarsRevenge
             particleManager = new ParticleManager(this);
             Components.Add(particleManager);
             Services.AddService(typeof(ParticleManager), particleManager);
+
+            levelModelManager = new LevelModelManager(this);
+            Components.Add(levelModelManager);
+            Services.AddService(typeof(LevelModelManager), levelModelManager);
 
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
@@ -407,8 +412,10 @@ namespace KazgarsRevenge
                     renderManager.Draw(gameTime, true);
                     
                     //draw scene render target
+
                     GraphicsDevice.SetRenderTarget(renderTarget);
                     GraphicsDevice.Clear(Color.Black);
+                    levelModelManager.Draw(gameTime, false);
                     renderManager.Draw(gameTime, false);
 
                     //draw particles
