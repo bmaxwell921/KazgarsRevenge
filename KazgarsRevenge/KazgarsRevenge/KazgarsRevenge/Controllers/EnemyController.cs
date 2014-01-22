@@ -87,6 +87,7 @@ namespace KazgarsRevenge
 
         HealthData targetHealth;
         Entity targetedPlayerData;
+
         double timerCounter;
         double timerLength;
         Vector3 curVel = Vector3.Zero;
@@ -100,10 +101,10 @@ namespace KazgarsRevenge
         AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
         {
-            if (state != EnemyState.Dying && health.Dead)
+            if (state != EnemyState.Dying && state != EnemyState.Decaying && health.Dead)
             {
                 state = EnemyState.Dying;
-                timerLength = animations.GetAniMillis(settings.deathAniName);
+                timerLength = animations.GetAniMillis(settings.deathAniName) - 100;
                 timerCounter = 0;
                 PlayAnimation(settings.deathAniName);
                 animations.StopMixing();
@@ -115,10 +116,11 @@ namespace KazgarsRevenge
                 case EnemyState.Normal:
                     currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
                     break;
-                //TODO: decaying will be its own state where the entity has no physics and fades out (slowly adjusts alpha of model to zero, then kills the entity)
-                case EnemyState.Decaying:
                 case EnemyState.Dying:
                     AIDying(gameTime.ElapsedGameTime.TotalMilliseconds);
+                    break;
+                case EnemyState.Decaying:
+                    AIDecaying(gameTime.ElapsedGameTime.TotalMilliseconds);
                     break;
             }
 
@@ -283,8 +285,29 @@ namespace KazgarsRevenge
             timerCounter += millis;
             if (timerCounter>= timerLength)
             {
+                timerCounter = 0;
+                timerLength = 3000;
+                state = EnemyState.Decaying;
+                animations.PauseAnimation();
+                modelParams = entity.GetSharedData(typeof(SharedEffectParams)) as SharedEffectParams;
+                entity.GetComponent(typeof(PhysicsComponent)).Kill();
+
+                lewts.CreateLootSoul(physicalData.Position, new List<Item>() { lewts.GenerateSword() });
+            }
+        }
+
+        SharedEffectParams modelParams;
+        protected void AIDecaying(double millis)
+        {
+            //fade out model until completely transparent, then kill the entity
+            timerCounter += millis;
+            if(timerCounter >= timerLength)
+            {
                 entity.Kill();
             }
+
+            float alpha = (float)(1 - timerCounter / timerLength);
+            modelParams.alpha = alpha;
         }
 
         #endregion
@@ -293,13 +316,6 @@ namespace KazgarsRevenge
         protected virtual void AIDeath()
         {
 
-        }
-
-        public override void End()
-        {
-            Vector3 pos = physicalData.Position;
-            pos.Y = 10;
-            lewts.CreateLootSoul(pos, new List<Item>() { lewts.GenerateSword() });
         }
     }
 }

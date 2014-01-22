@@ -86,6 +86,17 @@ namespace SkinnedModelLib
             skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
         }
 
+        bool paused = false;
+        public void PauseAnimation()
+        {
+            paused = true;
+        }
+
+        public void UnpauseAnimation()
+        {
+            paused = false;
+        }
+
         /// <summary>
         /// Mixes a clip with the one already playing, but stops after one run
         /// </summary>
@@ -119,6 +130,7 @@ namespace SkinnedModelLib
             UpdateBoneTransforms(time, relativeToCurrentTime);
             UpdateWorldTransforms(rootTransform);
             UpdateSkinTransforms();
+
         }
 
         private void UpdateCurrentTime(TimeSpan time, bool relativeToCurrentTime)
@@ -191,11 +203,14 @@ namespace SkinnedModelLib
 
             TimeSpan secondTime = time;
 
-            UpdateCurrentTime(time, relativeToCurrentTime);
-
-            if (mixing)
+            if (!paused)
             {
-                UpdateSecondTime(secondTime, relativeToCurrentTime);
+                UpdateCurrentTime(time, relativeToCurrentTime);
+
+                if (mixing)
+                {
+                    UpdateSecondTime(secondTime, relativeToCurrentTime);
+                }
             }
 
             // Read keyframe matrices.

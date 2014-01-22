@@ -41,6 +41,8 @@ namespace KazgarsRevenge
 
     public class LevelManager : EntityManager
     {
+        public FloorNames CurrentFloor { get; private set; }
+
         List<GameEntity> rooms = new List<GameEntity>();
         public LevelManager(KazgarsRevengeGame game)
             : base(game)

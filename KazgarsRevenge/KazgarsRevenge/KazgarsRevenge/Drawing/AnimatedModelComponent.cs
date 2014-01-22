@@ -12,7 +12,16 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KazgarsRevenge
 {
-    class AnimatedModelComponent : DrawableComponent3D
+    public class SharedEffectParams
+    {
+        public float alpha;
+        public SharedEffectParams()
+        {
+            alpha = 1f;
+        }
+    }
+
+    public class AnimatedModelComponent : DrawableComponent3D
     {
         //components
         protected Entity physicalData;
@@ -25,6 +34,8 @@ namespace KazgarsRevenge
         protected Dictionary<string, AttachableModel> attachedModels;
         protected Matrix yawOffset = Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0);
 
+        protected SharedEffectParams modelParams;
+
         public AnimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 drawOffset)
             : base(game, entity)
         {
@@ -36,6 +47,9 @@ namespace KazgarsRevenge
             this.animationPlayer = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
 
             PlayAnimation(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
+
+            modelParams = new SharedEffectParams();
+            entity.AddSharedData(typeof(SharedEffectParams), modelParams);
         }
 
         protected Vector3 vLightDirection = new Vector3(-1.0f, -.5f, 1.0f);
@@ -64,6 +78,7 @@ namespace KazgarsRevenge
             {
                 foreach (CustomSkinnedEffect effect in mesh.Effects)
                 {
+                    effect.Parameters["alpha"].SetValue(modelParams.alpha);
                     effect.CurrentTechnique = effect.Techniques[edgeDetection? "NormalDepth" : "Toon"];
                     effect.SetBoneTransforms(bones);
 

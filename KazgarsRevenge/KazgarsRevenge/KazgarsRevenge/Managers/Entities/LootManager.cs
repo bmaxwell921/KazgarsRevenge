@@ -42,6 +42,7 @@ namespace KazgarsRevenge
 
         public void CreateLootSoul(Vector3 position, List<Item> containedLoot, int totalSouls)
         {
+            position.Y = 10;
             GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral);
             float size = 3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE);
 

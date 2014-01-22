@@ -1,6 +1,6 @@
 #include "Skinning.fxh"
 
-float alpha = 1;
+float alpha =1;
 
 float3 vLightDirection = normalize(float3(1,1,1));
 
