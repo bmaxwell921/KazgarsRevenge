@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 import main.kazgarsrevenge.ui.panels.KREditorPanel;
 import main.kazgarsrevenge.ui.panels.RoomEditorPanel;
 import main.kazgarsrevenge.util.managers.ComponentManager;
+import main.kazgarsrevenge.util.managers.ImageManager;
 import main.kazgarsrevenge.util.managers.UpdaterManager;
 
 public class NewRoomClickListener extends MouseAdapter {
@@ -38,7 +39,8 @@ public class NewRoomClickListener extends MouseAdapter {
 		new Thread() {
 			@Override
 			public void run() {
-				ComponentManager.getInstance().reloadAllRooms();
+				ComponentManager.getInstance().loadNewRooms();
+				ImageManager.getInstance().loadNewRooms();
 				chunkEditor.recreateSidePanel();		
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override

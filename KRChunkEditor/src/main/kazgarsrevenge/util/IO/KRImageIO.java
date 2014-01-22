@@ -36,9 +36,6 @@ public class KRImageIO {
 	 * 		A mapping from imageName to image for all the rooms
 	 */
 	public static Map<String, BufferedImage> loadRooms() {
-//		Map<String, BufferedImage> rooms = new HashMap<>();
-//		loadImagesInto(new HashSet<String>(), BASE_ROOM_FILE_PATH, rooms);
-//		return rooms;
 		return loadNewRooms(new HashSet<String>());
 	}
 	
@@ -102,7 +99,6 @@ public class KRImageIO {
 	
 	private static String getExtension(File file) {
 		String fullName = file.getName();
-		String ext = fullName.substring(fullName.indexOf('.'));
 		return fullName.substring(fullName.indexOf('.'));
 	}
 	
@@ -114,6 +110,18 @@ public class KRImageIO {
 			System.out.println(String.format("Unable to load image: %s", location.getAbsolutePath()));
 			ioe.printStackTrace();
 			return null;
+		}
+	}
+	
+	public static void saveNewRoom(BufferedImage image, String imageName) {
+		if (!imageName.endsWith(".png")) {
+			imageName += ".png";
+		}
+		try {
+			ImageIO.write(image, "png", new File(BASE_ROOM_FILE_PATH + File.separatorChar + imageName));
+		} catch (IOException e) {
+			System.out.println("Unable to save image");
+			e.printStackTrace();
 		}
 	}
 }

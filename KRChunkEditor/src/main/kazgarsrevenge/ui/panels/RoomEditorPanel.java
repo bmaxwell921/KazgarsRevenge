@@ -3,7 +3,6 @@ package main.kazgarsrevenge.ui.panels;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +17,6 @@ import main.kazgarsrevenge.model.impl.Room;
 import main.kazgarsrevenge.model.impl.RoomBlock;
 import main.kazgarsrevenge.ui.listeners.SelectRoomListener;
 import main.kazgarsrevenge.util.IO.ComponentIO;
-import main.kazgarsrevenge.util.IO.KRImageIO;
 import main.kazgarsrevenge.util.managers.ComponentManager;
 import main.kazgarsrevenge.util.managers.ImageManager;
 
@@ -62,7 +60,7 @@ public class RoomEditorPanel extends KREditorPanel {
 	@Override
 	public void load(File loadFile, StringBuilder errors) {
 		newEditable();
-		super.editing = ComponentIO.loadChunkComponent(Room.class, loadFile, errors);
+		super.editing = (Room) ComponentIO.loadChunkComponent(Room.class, loadFile, errors);
 	}
 
 	@Override
@@ -83,13 +81,4 @@ public class RoomEditorPanel extends KREditorPanel {
 		super.selectedItem = newSel;
 		editGrid.changedSelected(selectedItem.getWidth(), selectedItem.getHeight());
 	}
-
-	@Override
-	public BufferedImage getSelectedImage() {
-		if (!hasSelection()){
-			return null;
-		}
-		return ImageManager.getInstance().getImage(super.selectedItem.getClass(), super.selectedItem.getName());
-	}
-
 }

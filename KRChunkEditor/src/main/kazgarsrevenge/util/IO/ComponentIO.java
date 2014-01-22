@@ -5,10 +5,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import main.kazgarsrevenge.data.Location;
-import main.kazgarsrevenge.data.Rotation;
 import main.kazgarsrevenge.model.ChunkComponent;
 import main.kazgarsrevenge.model.impl.Room;
 import main.kazgarsrevenge.model.impl.RoomBlock;
@@ -33,7 +34,7 @@ public class ComponentIO {
 	 * @param errors
 	 * @return
 	 */
-	public static <T extends ChunkComponent> T loadChunkComponent(Class<T> componentClass, File file, StringBuilder errors) {
+	public static ChunkComponent loadChunkComponent(Class<? extends ChunkComponent> componentClass, File file, StringBuilder errors) {
 		StringBuilder fileContents = FullFileIO.readEntirely(file, errors);
 		try {
 			return new Gson().fromJson(fileContents.toString(), componentClass);
@@ -67,12 +68,13 @@ public class ComponentIO {
 		List<Room> rooms = new ArrayList<>();
 		StringBuilder errors = new StringBuilder();
 		
-		File defaultLoc = new File(DEFAULT_ROOMS_PATH);
-		for (File subFile : defaultLoc.listFiles()) {
-			if (!subFile.isDirectory()) {
-				rooms.add(ComponentIO.loadChunkComponent(Room.class, subFile, errors));
-			}
-		}
+//		File defaultLoc = new File(DEFAULT_ROOMS_PATH);
+//		for (File subFile : defaultLoc.listFiles()) {
+//			if (!subFile.isDirectory()) {
+//				rooms.add(ComponentIO.loadChunkComponent(Room.class, subFile, errors));
+//			}
+//		}
+		loadAllComponents(Room.class, new HashSet<String>(), DEFAULT_ROOMS_PATH, rooms);
 		if (!errors.toString().isEmpty()) {
 			System.out.println(errors.toString());
 		}
@@ -84,18 +86,58 @@ public class ComponentIO {
 	 * @return
 	 */
 	public static List<RoomBlock> loadAllBlocks() {
-		List<RoomBlock> rooms = new ArrayList<>();
+		List<RoomBlock> blocks = new ArrayList<>();
 		StringBuilder errors = new StringBuilder();
 		
-		File defaultLoc = new File(DEFAULT_BLOCKS_PATH);
-		for (File subFile : defaultLoc.listFiles()) {
-			if (!subFile.isDirectory()) {
-				rooms.add(ComponentIO.loadChunkComponent(RoomBlock.class, subFile, errors));
-			}
-		}
+//		File defaultLoc = new File(DEFAULT_BLOCKS_PATH);
+//		for (File subFile : defaultLoc.listFiles()) {
+//			if (!subFile.isDirectory()) {
+//				rooms.add(ComponentIO.loadChunkComponent(RoomBlock.class, subFile, errors));
+//			}
+//		}
+		loadAllComponents(RoomBlock.class, new HashSet<String>(), DEFAULT_BLOCKS_PATH, blocks);
 		if (!errors.toString().isEmpty()) {
 			System.out.println(errors.toString());
 		}
-		return rooms;
+		return blocks;
+	}
+	
+	private static void loadAllComponents(Class<? extends ChunkComponent> clazz, Set<String> knownComps, 
+			String folderPath, List destination) {
+		File[] comps = new File(folderPath).listFiles();
+		for (File comp : comps) {
+			if (comp.isDirectory()) {
+				loadAllComponents(clazz, knownComps, comp.getAbsolutePath(), destination);
+				continue;
+			}
+			
+			if (!isComponent(comp)) {
+				continue;
+			}
+			
+			String compName = comp.getName().substring(0, comp.getName().indexOf('.'));
+			
+			if (knownComps.contains(compName)) {
+				continue;
+			}
+			
+			// There's the warning here, but it should be ok. Idk how else to fix it
+			destination.add(loadChunkComponent(clazz, comp, new StringBuilder()));
+		}
+	}
+	
+	private static boolean isComponent(File comp) {
+		return comp.getName().endsWith(".json");
+	}
+
+	/**
+	 * Returns all rooms whose file names aren't in the given set
+	 * @param knownRooms
+	 * @return
+	 */
+	public static List<ChunkComponent> loadNewRooms(Set<String> knownRooms) {
+		List<ChunkComponent> newRooms = new ArrayList<>();
+		loadAllComponents(Room.class, knownRooms, DEFAULT_ROOMS_PATH, newRooms);
+		return newRooms;
 	}
 }

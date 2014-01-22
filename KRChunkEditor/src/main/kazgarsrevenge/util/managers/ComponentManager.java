@@ -1,5 +1,6 @@
 package main.kazgarsrevenge.util.managers;
 
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,9 @@ import java.util.Set;
 import main.kazgarsrevenge.model.ChunkComponent;
 import main.kazgarsrevenge.model.impl.Room;
 import main.kazgarsrevenge.model.impl.RoomBlock;
+import main.kazgarsrevenge.util.ImageUtility;
 import main.kazgarsrevenge.util.IO.ComponentIO;
+import main.kazgarsrevenge.util.IO.KRImageIO;
 
 /**
  * Class uses to get get instances of each type of component. Uses singleton pattern for convenience
@@ -46,9 +49,19 @@ public class ComponentManager {
 		components.put(Room.class, roomMap);
 	}
 	
-	public void reloadAllRooms() {
-		components.remove(Room.class);
-		this.addRooms();
+	/**
+	 * Loads any rooms that have been newly created into memory
+	 */
+	public void loadNewRooms() {
+		Map<String, ChunkComponent> knownComp = components.get(Room.class);
+		List<ChunkComponent> newComps = ComponentIO.loadNewRooms(knownComp.keySet());
+		
+		for (ChunkComponent newComp: newComps) {
+			BufferedImage newImage = ImageUtility.createImageFor((Room) newComp, KRImageIO.IMAGE_SIZE);
+			newImage = ImageUtility.scaleImage(newImage, 1 / KRImageIO.IMAGE_SCALE);
+			KRImageIO.saveNewRoom(newImage, newComp.getName());
+			knownComp.put(newComp.getName(), newComp);
+		}
 	}
 	
 	/**
