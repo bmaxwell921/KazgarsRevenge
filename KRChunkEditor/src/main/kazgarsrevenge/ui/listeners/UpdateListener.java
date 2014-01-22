@@ -47,6 +47,7 @@ public class UpdateListener implements ActionListener {
 		handleMovement();
 		handlePlacement();
 		handleRotation();
+		handleDeletion();
 	}
 	
 	// Handles checking and moving as needed
@@ -115,6 +116,27 @@ public class UpdateListener implements ActionListener {
 				@Override
 				public void run() {
 					editorPanel.rotateSelection();
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							editorPanel.repaint();
+						}
+					});
+				}
+			}.start();
+		}
+	}
+	
+	private void handleDeletion() {
+		InputManager im = InputManager.getInstance();
+		if (im.isPressed(KeyEvent.VK_BACK_SPACE)) {
+			im.updateValue(KeyEvent.VK_BACK_SPACE, false);
+			System.out.println("Backspace entered!");
+			
+			new Thread() {
+				@Override
+				public void run() {
+					editorPanel.removeFromEditing();
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {

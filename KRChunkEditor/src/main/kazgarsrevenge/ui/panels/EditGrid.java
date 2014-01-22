@@ -145,7 +145,7 @@ public class EditGrid extends JPanel {
 		item.setLocation(correct);
 	}
 	
-	public void rotateSelectedArea() {
-		// TODO
+	public Location getSelectedLocation() {
+		return new Location(selectedArea.x, selectedArea.y);
 	}
 }

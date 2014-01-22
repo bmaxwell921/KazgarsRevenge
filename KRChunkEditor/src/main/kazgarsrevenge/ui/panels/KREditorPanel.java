@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+import javax.imageio.ImageIO;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -119,6 +120,7 @@ public abstract class KREditorPanel extends JPanel {
 		
 		registerMovementBinding("ENTER", KeyEvent.VK_ENTER);
 		registerMovementBinding("R", KeyEvent.VK_R);
+		registerMovementBinding("BACK_SPACE", KeyEvent.VK_BACK_SPACE);
 	}
 	
 	private void registerMovementBinding(String name, int keyCode) {
@@ -186,6 +188,12 @@ public abstract class KREditorPanel extends JPanel {
 		}
 	}
 	
+	public void removeFromEditing() {
+		Location screenLoc = editGrid.getSelectedLocation();
+		Location realLoc = new Location(screenLoc.getX() / SQUARE_SIZE, screenLoc.getY() / SQUARE_SIZE);
+		editing.remove(realLoc);
+	}
+	
 	/**
 	 * Moves the selectedArea by the given amount. 
 	 * Negative x is left, negative y is up
@@ -203,7 +211,6 @@ public abstract class KREditorPanel extends JPanel {
 		Rotation cur = selectedItem.getRotation();
 		cur = Rotation.rotateCounter(cur);
 		selectedItem.setRotation(cur);
-		editGrid.rotateSelectedArea();
 	}
 	
 	/**
