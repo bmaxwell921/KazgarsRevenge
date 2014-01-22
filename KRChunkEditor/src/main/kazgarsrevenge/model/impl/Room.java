@@ -19,7 +19,7 @@ import main.kazgarsrevenge.model.EditableChunkComponent;
  * @author Brandon
  *
  */
-public class Room extends EditableChunkComponent<RoomBlock> {
+public class Room extends EditableChunkComponent<RoomBlock> implements Cloneable {
 	
 	private List<RoomBlock> blocks;
 	
@@ -46,7 +46,7 @@ public class Room extends EditableChunkComponent<RoomBlock> {
 	}
 	
 	private boolean hasCollision(ChunkComponent item) {
-		// Checks to see if this added location collides with any other blockMap
+		// Checks to see if this added location collides with any other block
 		for (RoomBlock block : blocks) {
 			if (block.getLocation().equals(item.getLocation())) {
 				return true;
@@ -171,6 +171,13 @@ public class Room extends EditableChunkComponent<RoomBlock> {
 	@Override
 	public String toString() {
 		return "Room [" + this.getName() + "]";
+	}
+	
+	@Override
+	public Object clone() {
+		Room clone = (Room) super.clone();
+		clone.blocks = new ArrayList<RoomBlock>(this.blocks);
+		return clone;
 	}
 
 	// Compares Locations from smallest X to largest

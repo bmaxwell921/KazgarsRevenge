@@ -23,6 +23,7 @@ import main.kazgarsrevenge.ui.listeners.LoadClickListener;
 import main.kazgarsrevenge.ui.listeners.NewClickListener;
 import main.kazgarsrevenge.ui.listeners.SaveClickListener;
 import main.kazgarsrevenge.ui.listeners.UpdateListener;
+import main.kazgarsrevenge.util.ImageUtility;
 import main.kazgarsrevenge.util.IO.ComponentIO;
 import main.kazgarsrevenge.util.managers.ImageManager;
 import main.kazgarsrevenge.util.managers.UpdaterManager;
@@ -199,9 +200,9 @@ public abstract class KREditorPanel extends JPanel {
 	 * @param newRotation
 	 */
 	public void rotateSelection() {
-		Rotation cur = editing.getRotation();
+		Rotation cur = selectedItem.getRotation();
 		cur = Rotation.rotateCounter(cur);
-		editing.setRotation(cur);
+		selectedItem.setRotation(cur);
 		editGrid.rotateSelectedArea();
 	}
 	
@@ -230,6 +231,7 @@ public abstract class KREditorPanel extends JPanel {
 		if (!hasSelection()) {
 			return null;
 		}
-		return ImageManager.getInstance().getImage(selectedItem.getClass(), selectedItem.getName());
+		BufferedImage unRotated = ImageManager.getInstance().getImage(selectedItem.getClass(), selectedItem.getName());
+		return ImageUtility.rotateImage(unRotated, selectedItem.getRotation());
 	}
 }

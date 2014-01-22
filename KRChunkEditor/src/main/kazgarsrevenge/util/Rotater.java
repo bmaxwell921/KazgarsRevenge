@@ -68,7 +68,7 @@ public class Rotater {
         int h = src.getHeight();
 
         AffineTransform t = new AffineTransform();
-        double ang = rot.getRadians();
+        double ang = -rot.getRadians();
         t.setToRotation(ang, w / 2d, h / 2d);
 
         // source image rectangle

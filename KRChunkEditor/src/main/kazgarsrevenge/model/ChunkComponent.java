@@ -61,8 +61,6 @@ public abstract class ChunkComponent implements Locatable, Nameable, Rotatable, 
 	@Override
 	public void setRotation(Rotation newRotation) {
 		this.rotation = newRotation;
-		
-		// TODO this needs to move the points around
 	}
 	
 	@Override
@@ -71,16 +69,38 @@ public abstract class ChunkComponent implements Locatable, Nameable, Rotatable, 
 	}
 	
 	/**
-	 * Returns the width of this component
+	 * Returns the Rotation.ZERO width of this component
 	 * @return
 	 */
 	public abstract int getWidth();
 	
 	/**
-	 * Returns the height of this component
+	 * Returns the Rotation.ZERO height of this component
 	 * @return
 	 */
 	public abstract int getHeight();
+	
+	/**
+	 * Returns the width of the component, applying its current rotation
+	 * @return
+	 */
+	public int getRotatedWidth() {
+		if (this.rotation == Rotation.NINETY || this.rotation == Rotation.ONE_EIGHTY) {
+			return this.getHeight();
+		}
+		return this.getWidth();
+	}
+	
+	/**
+	 * Returns the height of the component, applying its current rotation
+	 * @return
+	 */
+	public int getRotatedHeight() {
+		if (this.rotation == Rotation.NINETY || this.rotation == Rotation.ONE_EIGHTY) {
+			return this.getWidth();
+		}
+		return this.getHeight();
+	}
 
 	@Override
 	public int hashCode() {

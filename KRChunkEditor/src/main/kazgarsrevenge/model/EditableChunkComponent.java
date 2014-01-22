@@ -1,5 +1,6 @@
 package main.kazgarsrevenge.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import main.kazgarsrevenge.data.Location;
@@ -23,4 +24,40 @@ public abstract class EditableChunkComponent<T extends ChunkComponent> extends C
 	}
 	
 	public abstract List<T> getComponents();
+	
+	/**
+	 * Returns a list of all the occupied locations in this object, based on how it's rotated
+	 * @return
+	 */
+	public List<Location> getRotatedLocations() {
+		List<T> components = this.getComponents();
+		List<Location> result = new ArrayList<Location>();
+		int width = this.getWidth();
+		int height = this.getHeight();
+		for (T comp : components) {
+			Location rotated = comp.getLocation();
+			int num90Rotations = this.getRotation().getDegrees() / 90;
+			// Rotate 90 degrees multiple times
+			for (int i = 0; i < num90Rotations; ++i) {
+				rotated = this.ninetyRotation(rotated, width, height);
+			}
+			result.add(rotated);
+		}
+		return result;
+	}
+	
+	private Location ninetyRotation(Location loc, int width, int height) {
+		// Just the formula for rotating by 90 degrees counterclockwise
+		return new Location(loc.getY(), width - loc.getX() - 1);
+	}
+	
+//	public static void main(String[] args){
+//		for (int i = 0; i < 3; ++i) {
+//			for (int j = 0; j < 2; ++j) {
+//				Location rot = EditableChunkComponent.ninetyRotation(new Location(i, j), 3, 2);
+//				System.out.println(String.format("(%d,%d)->(%d,%d)", i, j, rot.getX(), rot.getY()));
+//			}
+//		}
+//		
+//	}
 }

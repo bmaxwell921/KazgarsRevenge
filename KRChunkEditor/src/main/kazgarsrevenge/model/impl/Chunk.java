@@ -44,6 +44,9 @@ public class Chunk extends EditableChunkComponent<Room> {
 	}
 	
 	private boolean hasCollision(ChunkComponent item) {
+		if (rooms.isEmpty()) {
+			return false;
+		}
 		// We already have to iterate over everything so just check if it's there already
 		if (rooms.contains(item)) {
 			return true;
@@ -56,10 +59,14 @@ public class Chunk extends EditableChunkComponent<Room> {
 		 *  	2) If we see a bounding box collision, that doesn't mean there's going to be
 		 *  		a RoomBlock collision, so check all the Rooms to make sure.
 		 */
-		Rectangle addBox = new Rectangle(item.getLocation().getX(), item.getLocation().getY(), item.getWidth(), item.getHeight());
+		// Make sure to apply the right rotation for width and height
+		Rectangle addBox = new Rectangle(item.getLocation().getX(), item.getLocation().getY(), item.getRotatedWidth(), 
+				item.getRotatedHeight());
 		
 		for (Room room : rooms) {
-			Rectangle otherBox = new Rectangle(room.getLocation().getX(), room.getLocation().getY(), room.getWidth(), room.getHeight());
+			// Make sure to apply the right rotation for width and height			
+			Rectangle otherBox = new Rectangle(room.getLocation().getX(), room.getLocation().getY(), room.getRotatedWidth(), 
+					room.getRotatedHeight());
 			if (addBox.intersects(otherBox) && hasBlockCollision((Room) item, room)) {
 				return true;
 			}
@@ -68,8 +75,8 @@ public class Chunk extends EditableChunkComponent<Room> {
 	}
 	
 	private boolean hasBlockCollision(Room add, Room existing) {
-		List<Location> addLocs = add.getOccupiedLocations();
-		List<Location> existingLocs = existing.getOccupiedLocations();
+		List<Location> addLocs = add.getRotatedLocations();
+		List<Location> existingLocs = existing.getRotatedLocations();
 		
 		for (Location addL : addLocs) {
 			if (existingLocs.contains(addL)) {

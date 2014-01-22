@@ -108,6 +108,16 @@ public class ImageUtility {
 	}
 	
 	/**
+	 * Returns a copy of the given image, rotated by the given amount
+	 * @param image
+	 * @param counterClockRotation
+	 * @return
+	 */
+	public static BufferedImage rotateImage(BufferedImage image, Rotation counterClockRotation) {
+		return Rotater.otherRotateImage(image, counterClockRotation);
+	}
+	
+	/**
 	 * Returns a new image representing the scaled version of the given image
 	 * @param img
 	 * @param scale

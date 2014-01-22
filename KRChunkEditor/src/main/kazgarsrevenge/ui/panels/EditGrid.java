@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.model.ChunkComponent;
 import main.kazgarsrevenge.model.Locatable;
+import main.kazgarsrevenge.util.ImageUtility;
 import main.kazgarsrevenge.util.IO.KRImageIO;
 import main.kazgarsrevenge.util.managers.ImageManager;
 
@@ -79,8 +80,9 @@ public class EditGrid extends JPanel {
 		List<? extends ChunkComponent> components = parent.editing.getComponents();              
         for (ChunkComponent comp: components) {
                 Location roomLoc = comp.getLocation();
-                BufferedImage roomImage = ImageManager.getInstance().getImage(comp.getClass(), comp.getName());                
-                g2.drawImage(roomImage, roomLoc.getX() * SQUARE_SIZE, roomLoc.getY() * SQUARE_SIZE, null);
+                BufferedImage roomImage = ImageManager.getInstance().getImage(comp.getClass(), comp.getName());
+                BufferedImage rotated = ImageUtility.rotateImage(roomImage, comp.getRotation());
+                g2.drawImage(rotated, roomLoc.getX() * SQUARE_SIZE, roomLoc.getY() * SQUARE_SIZE, null);
         }
 	}
 	
