@@ -133,6 +133,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region inventory and gear
+        int gold = 0;
         const int NUM_LOOT_SHOWN = 4;
         int maxInventorySlots = 16;
         LootSoulController lootingSoul = null;
@@ -211,6 +212,13 @@ namespace KazgarsRevenge
             {
                 return false;
             }
+
+            if (toAdd.Name == "gold")
+            {
+                gold += toAdd.Quantity;
+                return true;
+            }
+
             inventory.Add(toAdd);
             return true;
         }

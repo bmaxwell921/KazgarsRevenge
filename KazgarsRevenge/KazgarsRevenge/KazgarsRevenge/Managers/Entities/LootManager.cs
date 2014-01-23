@@ -35,9 +35,14 @@ namespace KazgarsRevenge
             this.particles = Game.Services.GetService(typeof(ParticleManager)) as ParticleManager;
         }
 
-        public void CreateLootSoul(Vector3 position, List<Item> containedLoot)
+        public void CreateLootSoul(Vector3 position, string entityName)
         {
-            CreateLootSoul(position, containedLoot, 1);
+            CreateLootSoul(position, GetLootFor(entityName), 1);
+        }
+
+        public void CreateLootSoul(Vector3 position, List<Item> first, List<Item> second, int totalSouls)
+        {
+            CreateLootSoul(position, CombineLoot(first, second), totalSouls);
         }
 
         public void CreateLootSoul(Vector3 position, List<Item> containedLoot, int totalSouls)
@@ -94,9 +99,151 @@ namespace KazgarsRevenge
             }
         }
 
-        #region Loot Creation
-        Dictionary<string, Texture2D> equippableIcons = new Dictionary<string, Texture2D>();
+
+
+
+
+
+
+
+
+        #region Loot
+
+        Random rand = new Random();
+        private List<Item> GetLootFor(string entityName)
+        {
+            List<Item> retItems = new List<Item>();
+            int level = (int)levelManager.CurrentFloor;
+
+            //get gold
+            int goldQuantity = 5 * level * level;
+            int extra = rand.Next(0, level * level + 1);
+            if (rand.Next(10) < 5)
+            {
+                goldQuantity += extra;
+            }
+            else
+            {
+                goldQuantity -= extra;
+            }
+
+            retItems.Add(new Item(GetGoldIcon(goldQuantity), "gold", goldQuantity));
+
+            //decide on gear
+            if (rand.Next(30) < 5)
+            {
+                retItems.Add(GetGear(level));
+            }
+
+            //decide on consumable
+
+            //decide on essence
+
+            //decide on recipe
+
+
+            return retItems;
+        }
+
+        
+        private Item GetGear(int level)
+        {
+            return GetSword();
+        }
+
+        private List<Item> GearBossGear(int level)
+        {
+            return null;
+        }
+
+
+        #region Helpers
+        public List<Item> CombineLoot(List<Item> first, List<Item> second)
+        {
+            List<Item> retItems = new List<Item>();
+
+            //adding all first items
+            for (int i = 0; i < first.Count; ++i)
+            {
+                retItems.Add(first[i]);
+            }
+
+            //merging second list with first (checking for stackables)
+            int prevMaxIndex = retItems.Count;
+            for (int i = 0; i < second.Count; ++i)
+            {
+                //merge stacks
+                if (second[i].Stackable)
+                {
+                    for (int j = 0; j <= prevMaxIndex; ++j)
+                    {
+                        if (retItems[j].Name == second[i].Name)
+                        {
+                            retItems[j].AddQuantity(second[i].Quantity);
+                            //if it's gold, make sure the icon is appropriate for the amount of gold
+                            if (retItems[j].Name == "gold")
+                            {
+                                int quantity = retItems[j].Quantity;
+                                retItems[j] = new Item(GetGoldIcon(quantity), "gold", quantity);
+                            }
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    retItems.Add(second[i]);
+                }
+            }
+
+            return retItems;
+        }
+        
+        private Dictionary<StatType, float> GetStats(string itemName)
+        {
+            Dictionary<StatType, float> itemStats = new Dictionary<StatType, float>();
+            switch (itemName)
+            {
+                case "sword":
+                    itemStats.Add(StatType.Strength, 5);
+                    break;
+                default:
+                    itemStats.Add(StatType.Strength, 5);
+                    break;
+            }
+            return itemStats;
+        }
+
+        /// <summary>
+        /// generates new sword with random stats
+        /// </summary>
+        public Equippable GenerateSword()
+        {
+            return GetSword();
+        }
+
         string attachDir = "Models\\Attachables\\";
+        /// <summary>
+        /// loads a saved sword with predefined stats
+        /// </summary>
+        public Equippable GetSword()
+        {
+            return new Weapon(GetIcon("sword"), "sword01", GetStats("sword"), GetUnanimatedModel(attachDir + "sword01"), AttackType.Melle, false);
+        }
+
+        public Equippable GenerateBow()
+        {
+            return GetBow();
+        }
+
+        public Equippable GetBow()
+        {
+            return new Weapon(GetIcon("bow"), "bow", GetStats("bow"), GetUnanimatedModel(attachDir + "bow01"), AttackType.Ranged, false);
+        }
+        #endregion
+
+        #region Icons
+        Dictionary<string, Texture2D> equippableIcons = new Dictionary<string, Texture2D>();
         private Texture2D GetIcon(string gearName)
         {
             string texName = "Textures\\";
@@ -119,46 +266,25 @@ namespace KazgarsRevenge
             return retTex;
         }
 
-        private Dictionary<StatType, float> GetStats(string itemName)
+        private Texture2D GetGoldIcon(int quantity)
         {
-            Dictionary<StatType, float> itemStats = new Dictionary<StatType, float>();
-            switch (itemName)
+            Texture2D goldIcon;
+            if (quantity <= 10)
             {
-                case "sword":
-                    itemStats.Add(StatType.Strength, 5);
-                    break;
-                default:
-                    itemStats.Add(StatType.Strength, 5);
-                    break;
+                goldIcon = Game.Content.Load<Texture2D>("Textures\\gold1");
             }
-            return itemStats;
+            else if (quantity <= 30)
+            {
+                goldIcon = Game.Content.Load<Texture2D>("Textures\\gold2");
+            }
+            else
+            {
+                goldIcon = Game.Content.Load<Texture2D>("Textures\\gold3");
+            }
+            return goldIcon;
         }
+        #endregion
 
-        /// <summary>
-        /// generates new sword with random stats
-        /// </summary>
-        public Equippable GenerateSword()
-        {
-            return GetSword(GetStats("sword"));
-        }
-
-        /// <summary>
-        /// loads a saved sword with predefined stats
-        /// </summary>
-        public Equippable GetSword(Dictionary<StatType, float> swordStats)
-        {
-            return new Weapon(GetIcon("sword"), "sword01", swordStats, GetUnanimatedModel(attachDir + "sword01"), AttackType.Melle, false);
-        }
-
-        public Equippable GenerateBow()
-        {
-            return GetBow(GetStats("bow"));
-        }
-
-        public Equippable GetBow(Dictionary<StatType, float> bowStats)
-        {
-            return new Weapon(GetIcon("bow"), "bow", bowStats, GetUnanimatedModel(attachDir + "bow01"), AttackType.Ranged, false);
-        }
         #endregion
     }
 }

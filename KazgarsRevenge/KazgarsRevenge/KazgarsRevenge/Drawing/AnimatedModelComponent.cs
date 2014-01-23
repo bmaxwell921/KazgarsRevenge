@@ -15,9 +15,11 @@ namespace KazgarsRevenge
     public class SharedEffectParams
     {
         public float alpha;
+        public float lineIntensity;
         public SharedEffectParams()
         {
             alpha = 1f;
+            lineIntensity = 1f;
         }
     }
 
@@ -79,6 +81,7 @@ namespace KazgarsRevenge
                 foreach (CustomSkinnedEffect effect in mesh.Effects)
                 {
                     effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                    effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                     effect.CurrentTechnique = effect.Techniques[edgeDetection? "NormalDepth" : "Toon"];
                     effect.SetBoneTransforms(bones);
 
@@ -101,6 +104,8 @@ namespace KazgarsRevenge
                     {
                         foreach (Effect effect in mesh.Effects)
                         {
+                            effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                            effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                             effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                             Matrix world = Matrix.CreateFromYawPitchRoll(a.xRotation, 0, 0) * transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
                             effect.Parameters["World"].SetValue(world);

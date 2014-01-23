@@ -292,7 +292,7 @@ namespace KazgarsRevenge
                 modelParams = entity.GetSharedData(typeof(SharedEffectParams)) as SharedEffectParams;
                 entity.GetComponent(typeof(PhysicsComponent)).Kill();
 
-                lewts.CreateLootSoul(physicalData.Position, new List<Item>() { lewts.GenerateSword() });
+                lewts.CreateLootSoul(physicalData.Position, entity.Name);
             }
         }
 
@@ -306,8 +306,9 @@ namespace KazgarsRevenge
                 entity.Kill();
             }
 
-            float alpha = (float)(1 - timerCounter / timerLength);
-            modelParams.alpha = alpha;
+            float percent = (float)(1 - timerCounter / timerLength);
+            modelParams.alpha = percent;
+            modelParams.lineIntensity = percent;
         }
 
         #endregion

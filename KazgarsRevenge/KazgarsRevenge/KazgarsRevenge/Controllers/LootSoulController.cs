@@ -218,16 +218,15 @@ namespace KazgarsRevenge
                             if (otherSoul.soulState != LootSoulState.Dying)
                             {
                                 List<Item> toAdd = otherSoul.Unite();
-                                for (int i = 0; i < toAdd.Count; ++i)
-                                {
-                                    loot.Add(toAdd[i]);
-                                }
+                                
                                 Vector3 newPos = physicalData.Position + (hitEntity.GetSharedData(typeof(Entity)) as Entity).Position;
                                 newPos /= 2;
 
                                 soulState = LootSoulState.Dying;
                                 physicalData.LinearVelocity = Vector3.Zero;
-                                (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateLootSoul(newPos, loot, totalSouls + otherSoul.totalSouls);
+
+                                LootManager manager = (Game.Services.GetService(typeof(LootManager)) as LootManager);
+                                manager.CreateLootSoul(newPos, loot, toAdd, totalSouls + otherSoul.totalSouls);
                             }
                         }
                     }

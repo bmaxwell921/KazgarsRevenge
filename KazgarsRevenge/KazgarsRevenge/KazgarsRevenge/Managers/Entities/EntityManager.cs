@@ -23,6 +23,7 @@ namespace KazgarsRevenge
         protected PlayerManager players;
         protected BaseNetworkMessageManager nmm;
         protected LevelModelManager levelModelManager;
+        protected LevelManager levelManager;
 
         protected KazgarsRevengeGame mainGame;
 
@@ -43,6 +44,7 @@ namespace KazgarsRevenge
             players = Game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
             nmm = Game.Services.GetService(typeof(NetworkMessageManager)) as NetworkMessageManager;
             levelModelManager = Game.Services.GetService(typeof(LevelModelManager)) as LevelModelManager;
+            levelManager = Game.Services.GetService(typeof(LevelManager)) as LevelManager;
             toonAnimatedEffect = Game.Content.Load<Effect>("Shaders\\ToonSkinnedEffect");
             effectCellShading = Game.Content.Load<Effect>("Shaders\\CellShader");
         }

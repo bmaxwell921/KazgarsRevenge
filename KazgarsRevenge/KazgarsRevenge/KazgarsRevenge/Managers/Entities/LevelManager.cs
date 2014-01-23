@@ -32,11 +32,11 @@ namespace KazgarsRevenge
 
     public enum FloorNames
     {
-        Dungeon,
-        Library,
-        TortureChamber,
-        Lab,
-        GrandHall,
+        Dungeon=1,
+        Library=2,
+        TortureChamber=3,
+        Lab=4,
+        GrandHall=5,
     }
 
     public class LevelManager : EntityManager
@@ -48,6 +48,7 @@ namespace KazgarsRevenge
             : base(game)
         {
             //ReadFile("Dungeon");
+            CurrentFloor = FloorNames.Dungeon;
         }
 
         public void DemoLevel()
