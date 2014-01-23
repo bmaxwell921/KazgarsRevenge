@@ -13,18 +13,28 @@ namespace KazgarsRevenge
         Enemies,
         Neutral,
     }
+    public enum EntityType
+    {
+        NormalEnemy,
+        EliteEnemy,
+        Boss,
+        Player,
+        Misc,
+    }
     public class GameEntity
     {
-        public string Name { get; protected set; }
-        public FactionType Faction { get; protected set; }
-        public bool Dead { get; protected set; }
+        public EntityType Type { get; private set; }
+        public string Name { get; private set; }
+        public FactionType Faction { get; private set; }
+        public bool Dead { get; private set; }
         private Dictionary<Type, Component> components = new Dictionary<Type, Component>();
         private Dictionary<Type, Object> sharedData = new Dictionary<Type, Object>();
 
-        public GameEntity(string name, FactionType faction)
+        public GameEntity(string name, FactionType faction, EntityType type)
         {
             this.Name = name;
             this.Faction = faction;
+            this.Type = type;
             Dead = false;
         }
 

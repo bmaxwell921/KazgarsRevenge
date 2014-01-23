@@ -35,9 +35,9 @@ namespace KazgarsRevenge
             this.particles = Game.Services.GetService(typeof(ParticleManager)) as ParticleManager;
         }
 
-        public void CreateLootSoul(Vector3 position, string entityName)
+        public void CreateLootSoul(Vector3 position, EntityType type)
         {
-            CreateLootSoul(position, GetLootFor(entityName), 1);
+            CreateLootSoul(position, GetLootFor(type), 1);
         }
 
         public void CreateLootSoul(Vector3 position, List<Item> first, List<Item> second, int totalSouls)
@@ -48,7 +48,7 @@ namespace KazgarsRevenge
         public void CreateLootSoul(Vector3 position, List<Item> containedLoot, int totalSouls)
         {
             position.Y = 10;
-            GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral);
+            GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral, EntityType.Misc);
             float size = 3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE);
 
             Entity lootPhysicalData = new Box(position, size, size, size, 1);
@@ -103,14 +103,10 @@ namespace KazgarsRevenge
 
 
 
-
-
-
-
         #region Loot
 
         Random rand = new Random();
-        private List<Item> GetLootFor(string entityName)
+        private List<Item> GetLootFor(EntityType type)
         {
             List<Item> retItems = new List<Item>();
             int level = (int)levelManager.CurrentFloor;
@@ -118,7 +114,7 @@ namespace KazgarsRevenge
             //get gold
             int goldQuantity = 5 * level * level;
             int extra = rand.Next(0, level * level + 1);
-            if (rand.Next(10) < 5)
+            if (diceRoll(1, 2) == 1)
             {
                 goldQuantity += extra;
             }
@@ -127,15 +123,48 @@ namespace KazgarsRevenge
                 goldQuantity -= extra;
             }
 
-            retItems.Add(new Item(GetGoldIcon(goldQuantity), "gold", goldQuantity));
-
-            //decide on gear
-            if (rand.Next(30) < 5)
+            if (diceRoll(1, 20) <= 3)
             {
-                retItems.Add(GetGear(level));
+                //15% chance to triple gold drop
+                goldQuantity *= 3;
             }
 
-            //decide on consumable
+            retItems.Add(new Item(ItemType.Gold, GetGoldIcon(goldQuantity), "gold", goldQuantity));
+
+            //decide on gear
+            int baseItemLevel = (level - 1) * 10;
+            switch (type)
+            {
+                case EntityType.NormalEnemy:
+                    if (diceRoll(1, 6) == 1)
+                    {
+                        retItems.Add(GetNormalGear(baseItemLevel));
+                    }
+                    break;
+                case EntityType.EliteEnemy:
+                    if (diceRoll(1, 12) < 3)
+                    {
+                        retItems.Add(GetEliteGear(baseItemLevel));
+                    }
+                    break;
+                case EntityType.Boss:
+                    List<Item> bossGear = GetBossGear(baseItemLevel);
+                    for (int i = 0; i < bossGear.Count; ++i)
+                    {
+                        retItems.Add(bossGear[i]);
+                    }
+                    break;
+            }
+
+            //decide on consumable (37.5% chance to drop some potion or other)
+            if (diceRoll(1, 8) < 4)
+            {
+                //small chance to drop rarer potion
+                if (diceRoll(1, 4) == 3)
+                {
+
+                }
+            }
 
             //decide on essence
 
@@ -146,18 +175,48 @@ namespace KazgarsRevenge
         }
 
         
-        private Item GetGear(int level)
+        private Item GetNormalGear(int itemBase)
         {
             return GetSword();
         }
 
-        private List<Item> GearBossGear(int level)
+        private Item GetEliteGear(int itemBase)
         {
-            return null;
+            return GetSword();
+        }
+
+        private List<Item> GetBossGear(int level)
+        {
+            List<Item> retItems = new List<Item>();
+
+            retItems.Add(GetSword());
+
+            return retItems;
+        }
+
+        private Item GetPotion()
+        {
+            return new Item(ItemType.Potion, GetIcon("daf"), "potion", 1);
         }
 
 
         #region Helpers
+        /// <summary>
+        /// returns (rolls)d(sides)
+        /// diceRoll(3, 6) is the result of 3d6
+        /// </summary>
+        /// <param name="rolls">how many dice to roll</param>
+        /// <param name="sides">how many sides the dice have</param>
+        /// <returns>the combines result</returns>
+        public int diceRoll(int rolls, int sides)
+        {
+            int ret = 0;
+            for (int i = 0; i < rolls; ++i)
+            {
+                ret += rand.Next(1, sides + 1);
+            }
+            return ret;
+        }
         public List<Item> CombineLoot(List<Item> first, List<Item> second)
         {
             List<Item> retItems = new List<Item>();
@@ -184,7 +243,7 @@ namespace KazgarsRevenge
                             if (retItems[j].Name == "gold")
                             {
                                 int quantity = retItems[j].Quantity;
-                                retItems[j] = new Item(GetGoldIcon(quantity), "gold", quantity);
+                                retItems[j] = new Item(ItemType.Gold, GetGoldIcon(quantity), "gold", quantity);
                             }
                             break;
                         }

@@ -25,7 +25,7 @@ namespace KazgarsRevengeServer
 
         public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType faction, GameEntity creator)
         {
-            GameEntity arrow = new GameEntity("arrow", faction);
+            GameEntity arrow = new GameEntity("arrow", faction, EntityType.Misc);
             position.Y += 20;
             Entity arrowData = new Box(position, 10, 17, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = faction == FactionType.Players? game.GoodProjectileCollisionGroup : game.BadProjectileCollisionGroup;
@@ -49,7 +49,7 @@ namespace KazgarsRevengeServer
 
         public void CreateMeleeAttack(Vector3 position, int damage, FactionType faction, GameEntity creator)
         {
-            GameEntity newAttack = new GameEntity("sword", faction);
+            GameEntity newAttack = new GameEntity("sword", faction, EntityType.Misc);
             Entity attackData = new Box(position, 35, 47, 35, .01f);
             attackData.CollisionInformation.CollisionRules.Group = faction == FactionType.Players ? game.GoodProjectileCollisionGroup : game.BadProjectileCollisionGroup;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();

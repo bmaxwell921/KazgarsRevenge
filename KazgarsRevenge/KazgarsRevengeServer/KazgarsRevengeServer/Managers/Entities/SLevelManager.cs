@@ -68,7 +68,7 @@ namespace KazgarsRevengeServer
             position.Y -= 18.5f;
             float roomScale = 10;
 
-            GameEntity room = new GameEntity("room", FactionType.Players);
+            GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 
             Model roomCollisionModel = Game.Content.Load<Model>(modelPath);
             Vector3[] verts;

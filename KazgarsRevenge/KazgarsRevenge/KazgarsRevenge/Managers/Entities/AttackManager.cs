@@ -39,7 +39,7 @@ namespace KazgarsRevenge
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
         public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType arrowFaction, GameEntity creator)
         {
-            GameEntity arrow = new GameEntity("arrow", arrowFaction);
+            GameEntity arrow = new GameEntity("arrow", arrowFaction, EntityType.Misc);
             position.Y += 20;
             Entity arrowData = new Box(position, 10, 17, 10, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = arrowFaction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
@@ -71,7 +71,7 @@ namespace KazgarsRevenge
 
         public void CreateMelleAttack(Vector3 position, int damage, FactionType faction, bool sparks, GameEntity creator)
         {
-            GameEntity newAttack = new GameEntity("arrow", faction);
+            GameEntity newAttack = new GameEntity("arrow", faction, EntityType.Misc);
 
             Entity attackData = new Box(position, 35, 47, 35, .01f);
             attackData.CollisionInformation.CollisionRules.Group = faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
@@ -106,7 +106,7 @@ namespace KazgarsRevenge
 
         public void CreateMouseSpikes(Vector3 position)
         {
-            GameEntity spikes = new GameEntity("cursor", FactionType.Neutral);
+            GameEntity spikes = new GameEntity("cursor", FactionType.Neutral, EntityType.Misc);
 
             Entity spikesPhysical = new Box(position, 1, 1, 1);
             spikes.AddSharedData(typeof(Entity), spikesPhysical);

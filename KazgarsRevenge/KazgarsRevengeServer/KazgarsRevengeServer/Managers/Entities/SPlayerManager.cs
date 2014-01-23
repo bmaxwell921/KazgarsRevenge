@@ -50,7 +50,7 @@ namespace KazgarsRevengeServer
             {
                 gcm = game.Services.GetService(typeof(GeneralComponentManager)) as GeneralComponentManager;
             }
-            GameEntity player = new GameEntity("netPlayer" + id.id, FactionType.Players);
+            GameEntity player = new GameEntity("netPlayer" + id.id, FactionType.Players, EntityType.Player);
             
             // shared physical data
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);

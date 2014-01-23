@@ -19,14 +19,12 @@ namespace KazgarsRevenge
 
         private NetPlayerState state;
 
-        Entity physicalData;
         Vector3 targetPos = Vector3.Zero;
         const float stopRadius = 2;
         AnimationPlayer animations;
         public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
-            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.targetPos = physicalData.Position;
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
         }

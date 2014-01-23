@@ -292,7 +292,7 @@ namespace KazgarsRevenge
                 modelParams = entity.GetSharedData(typeof(SharedEffectParams)) as SharedEffectParams;
                 entity.GetComponent(typeof(PhysicsComponent)).Kill();
 
-                lewts.CreateLootSoul(physicalData.Position, entity.Name);
+                lewts.CreateLootSoul(physicalData.Position, entity.Type);
             }
         }
 

@@ -14,7 +14,7 @@ namespace KazgarsRevenge
         public GearSlot Slot { get; private set; }
         public GearSlot Slot2 { get; private set; }
         public Equippable(Texture2D icon, string name, Dictionary<StatType, float> statEffects, Model gearModel, GearSlot slot, GearSlot secondSlot)
-            : base(icon, name)
+            : base(ItemType.Equippable, icon, name, 1)
         {
             this.StatEffects = statEffects;
             this.GearModel = gearModel;

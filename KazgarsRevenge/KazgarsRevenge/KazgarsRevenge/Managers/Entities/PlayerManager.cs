@@ -39,7 +39,7 @@ namespace KazgarsRevenge
 
         public void CreateMainPlayer(Vector3 position, Identification id)
         {
-            GameEntity player = new GameEntity("localplayer", FactionType.Players);
+            GameEntity player = new GameEntity("localplayer", FactionType.Players, EntityType.Player);
 
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController)
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
@@ -104,7 +104,7 @@ namespace KazgarsRevenge
         public void CreateNetworkedPlayer(Vector3 position, Identification id)
         {
             // TODO ISSUE #9
-            GameEntity player = new GameEntity("netplayer", FactionType.Players);
+            GameEntity player = new GameEntity("netplayer", FactionType.Players, EntityType.Player);
 
             Entity playerPhysicalData = new Box(position, 37, 6, 2);
 

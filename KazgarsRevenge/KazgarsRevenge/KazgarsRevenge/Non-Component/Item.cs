@@ -7,9 +7,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
+    public enum ItemType
+    {
+        Potion,
+        Gold,
+        Essence,
+        Equippable,
+        Recipe,
+    }
     public class Item
     {
-
         public bool Stackable { get; private set; }
         public int Quantity { get; private set; }
         public Texture2D Icon { get; private set; }
@@ -18,26 +25,20 @@ namespace KazgarsRevenge
         /// <summary>
         /// creates a stackable item
         /// </summary>
-        public Item(Texture2D icon, string name, int quantity)
+        public Item(ItemType type, Texture2D icon, string name, int quantity)
         {
             this.Icon = icon;
             this.Name = name;
-            this.Quantity = quantity;
-            if (quantity > 1)
+            if (type == ItemType.Gold || type == ItemType.Essence || type == ItemType.Potion)
             {
                 this.Stackable = true;
+                this.Quantity = quantity;
             }
-        }
-
-        /// <summary>
-        /// creates a non-stackable item
-        /// </summary>
-        public Item(Texture2D icon, string name)
-        {
-            this.Icon = icon;
-            this.Name = name;
-            this.Stackable = false;
-            Quantity = 1;
+            else
+            {
+                this.Stackable = false;
+                this.Quantity = 1;
+            }
         }
 
         /// <summary>
