@@ -12,6 +12,7 @@ using BEPUphysics.MathExtensions;
 using BEPUphysics.Collidables;
 using BEPUphysics.DataStructures;
 using SkinnedModelLib;
+using Newtonsoft.Json;
 
 namespace KazgarsRevenge
 {
@@ -30,7 +31,7 @@ namespace KazgarsRevenge
         }
     }
 
-    public enum FloorNames
+    public enum FloorName
     {
         Dungeon=1,
         Library=2,
@@ -41,14 +42,14 @@ namespace KazgarsRevenge
 
     public class LevelManager : EntityManager
     {
-        public FloorNames CurrentFloor { get; private set; }
+        public FloorName CurrentFloor { get; private set; }
 
         List<GameEntity> rooms = new List<GameEntity>();
         public LevelManager(KazgarsRevengeGame game)
             : base(game)
         {
             //ReadFile("Dungeon");
-            CurrentFloor = FloorNames.Dungeon;
+            CurrentFloor = FloorName.Dungeon;
         }
 
         public void DemoLevel()
@@ -57,23 +58,39 @@ namespace KazgarsRevenge
             //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
         }
 
+        public void CreateLevel(FloorName level)
+        {
+            switch (level)
+            {
+                default:
+                case FloorName.Dungeon:
+
+                    break;
+            }
+        }
+
         Dictionary<string, List<RoomData>> chunkDefinitions = new Dictionary<string, List<RoomData>>();
         string levelPath = "Models\\Levels\\";
-        public void ReadFile(string floorName)
+        public void ReadFile(FloorName floor)
         {
+            chunkDefinitions.Clear();
+
             string filetext;
             try
             {
-                using (StreamReader sr = new StreamReader(floorName + ".txt"))
+                using (StreamReader sr = new StreamReader(floor.ToString() + ".json"))
                 {
                     filetext = sr.ReadToEnd();
                 }
             }
             catch (Exception e)
             {
-                throw new Exception("Couldn't read the level file. " + e.Message);
+                throw new Exception("Couldn't read the level file.\n" + e.Message);
             }
 
+
+
+            /*
             string[] lines = filetext.Split(new char[] { '\n', '\r' });
             List<RoomData> chunkDef = new List<RoomData>();
 
@@ -101,7 +118,7 @@ namespace KazgarsRevenge
             if (chunkDef.Count > 0)
             {
                 chunkDefinitions.Add(floorName + chunkId, chunkDef);
-            }
+            }*/
         }
 
         #region Level Creation
