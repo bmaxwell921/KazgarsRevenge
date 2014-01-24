@@ -421,6 +421,7 @@ namespace KazgarsRevenge
                     //draw particles
                     particleManager.Draw(gameTime);
 
+                    GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
                     //draw decals
                     decalManager.Draw();
 

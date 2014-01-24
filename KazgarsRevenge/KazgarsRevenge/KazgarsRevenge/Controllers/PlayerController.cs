@@ -1405,7 +1405,7 @@ namespace KazgarsRevenge
                 for (int i = 0; i < inventory.Count; ++i)
                 {
                     //Nate working here
-                    guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 410 * average), (int)(410 * average), (int)(400 * average), (int)(575 * average)));
+                    //guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 410 * average), (int)(410 * average), (int)(400 * average), (int)(575 * average)));
                     s.DrawString(font, inventory[i].Name, new Vector2(maxX - 400 * average, (420 + i * 40 )* average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 }
             }
