@@ -270,6 +270,29 @@ namespace KazgarsRevenge
                 return AttackType.None;
             }
         }
+
+        private void UseItem(Item i)
+        {
+            switch (i.Type)
+            {
+                case ItemType.Equippable:
+                    Equippable equip = i as Equippable;
+                    if (equip != null)
+                    {
+                        EquipGear(equip, equip.Slot);
+                    }
+                    break;
+                case ItemType.Potion:
+
+                    break;
+                case ItemType.Recipe:
+
+                    break;
+                case ItemType.Essence:
+
+                    break;
+            }
+        }
         #endregion
 
         public PlayerController(KazgarsRevengeGame game, GameEntity entity)

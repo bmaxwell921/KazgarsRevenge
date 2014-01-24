@@ -18,9 +18,10 @@ namespace KazgarsRevenge
     public class Item
     {
         public bool Stackable { get; private set; }
-        public int Quantity { get; private set; }
-        public Texture2D Icon { get; private set; }
-        public string Name { get; private set; }
+        public int Quantity { get; protected set; }
+        public ItemType Type { get; protected set; }
+        public Texture2D Icon { get; protected set; }
+        public string Name { get; protected set; }
 
         /// <summary>
         /// creates a stackable item
@@ -29,6 +30,7 @@ namespace KazgarsRevenge
         {
             this.Icon = icon;
             this.Name = name;
+            this.Type = type;
             if (type == ItemType.Gold || type == ItemType.Essence || type == ItemType.Potion)
             {
                 this.Stackable = true;
