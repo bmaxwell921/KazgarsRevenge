@@ -67,13 +67,6 @@ public class ComponentIO {
 	public static List<Room> loadAllRooms() {
 		List<Room> rooms = new ArrayList<>();
 		StringBuilder errors = new StringBuilder();
-		
-//		File defaultLoc = new File(DEFAULT_ROOMS_PATH);
-//		for (File subFile : defaultLoc.listFiles()) {
-//			if (!subFile.isDirectory()) {
-//				rooms.add(ComponentIO.loadChunkComponent(Room.class, subFile, errors));
-//			}
-//		}
 		loadAllComponents(Room.class, new HashSet<String>(), DEFAULT_ROOMS_PATH, rooms);
 		if (!errors.toString().isEmpty()) {
 			System.out.println(errors.toString());
@@ -89,12 +82,6 @@ public class ComponentIO {
 		List<RoomBlock> blocks = new ArrayList<>();
 		StringBuilder errors = new StringBuilder();
 		
-//		File defaultLoc = new File(DEFAULT_BLOCKS_PATH);
-//		for (File subFile : defaultLoc.listFiles()) {
-//			if (!subFile.isDirectory()) {
-//				rooms.add(ComponentIO.loadChunkComponent(RoomBlock.class, subFile, errors));
-//			}
-//		}
 		loadAllComponents(RoomBlock.class, new HashSet<String>(), DEFAULT_BLOCKS_PATH, blocks);
 		if (!errors.toString().isEmpty()) {
 			System.out.println(errors.toString());
@@ -105,6 +92,9 @@ public class ComponentIO {
 	private static void loadAllComponents(Class<? extends ChunkComponent> clazz, Set<String> knownComps, 
 			String folderPath, List destination) {
 		File[] comps = new File(folderPath).listFiles();
+		if (comps == null) {
+			return;
+		}
 		for (File comp : comps) {
 			if (comp.isDirectory()) {
 				loadAllComponents(clazz, knownComps, comp.getAbsolutePath(), destination);

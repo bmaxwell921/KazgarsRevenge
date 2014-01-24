@@ -70,6 +70,9 @@ public class KRImageIO {
 	 */
 	private static void loadImagesInto(Set<String> knownImages, String folderPath, Map<String, BufferedImage> destination) {
 		File[] images = new File(folderPath).listFiles();
+		if (images == null) {
+			return;
+		}
 		for (File image : images) {
 			if (image.isDirectory()) {
 				loadImagesInto(knownImages, image.getAbsolutePath(), destination);
