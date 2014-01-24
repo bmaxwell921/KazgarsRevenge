@@ -34,6 +34,7 @@ public class ChunkEditorPanel extends KREditorPanel {
 	@Override
 	protected void createEditGrid() {
 		super.editGrid = new EditGrid(this, SQUARE_SIZE, GRID_SIZE, GRID_SIZE);
+		super.editGrid.markChunkDoorLocations();
 		this.add(super.editGrid, BorderLayout.CENTER);
 	}
 

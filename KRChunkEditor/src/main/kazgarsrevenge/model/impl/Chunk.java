@@ -18,7 +18,7 @@ import main.kazgarsrevenge.model.EditableChunkComponent;
  *
  */
 public class Chunk extends EditableChunkComponent<Room> {
-
+	
 	// Apparently we decided this?
 	public static final int CHUNK_SIZE = 24;
 	
@@ -79,8 +79,12 @@ public class Chunk extends EditableChunkComponent<Room> {
 		List<Location> existingLocs = existing.getRotatedLocations();
 		
 		for (Location addL : addLocs) {
-			if (existingLocs.contains(addL)) {
-				return true;
+			Location transAdd = new Location(addL.getX() + add.getLocation().getX(), addL.getY() + add.getLocation().getY());
+			for (Location existL : existingLocs) {
+				Location transExist = new Location(existL.getX() + existing.getLocation().getX(), existL.getY() + existing.getLocation().getY());
+				if (transExist.equals(transAdd)) {
+					return true;
+				}
 			}
 		}
 		return false;

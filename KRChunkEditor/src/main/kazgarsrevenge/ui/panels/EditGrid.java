@@ -30,6 +30,9 @@ public class EditGrid extends JPanel {
 	 */
 	private static final long serialVersionUID = 1;
 
+	// If we should mark the default door locations for chunks. <Hack>
+	private boolean markDoors;
+	
 	private final int SQUARE_SIZE;
 	
 	// The parent for this EditGrid
@@ -50,7 +53,7 @@ public class EditGrid extends JPanel {
 		this.gridWidth = gridWidth;
 		this.gridHeight = gridHeight;
 		this.selectedArea = new Rectangle(0, 0, SQUARE_SIZE, SQUARE_SIZE);
-		
+		markDoors = false;
 		this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 	}
 
@@ -58,6 +61,9 @@ public class EditGrid extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
+		if (markDoors) {
+			paintChunkDoorLocations(g2);
+		}
 		paintEditable(g2);
 		paintGrid(g2);
 		paintSelection(g2);
@@ -93,6 +99,15 @@ public class EditGrid extends JPanel {
 			g2.drawImage(parent.getSelectedImage(), selectedArea.x, selectedArea.y, null);
 		} else {
 			g2.fill(selectedArea);
+		}
+	}
+	
+	private void paintChunkDoorLocations(Graphics2D g2) {
+		Location[] doorLocs = {new Location(0, 5), new Location(0, 19), new Location(5, 0), new Location(5, 23),
+				new Location(19, 0), new Location(19, 23), new Location(23, 5), new Location(23, 19)};
+		for (Location loc : doorLocs) {
+			g2.setColor(Color.RED);
+			g2.fill(new Rectangle(loc.getX() * SQUARE_SIZE, loc.getY() * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE));
 		}
 	}
 	
@@ -147,5 +162,9 @@ public class EditGrid extends JPanel {
 	
 	public Location getSelectedLocation() {
 		return new Location(selectedArea.x, selectedArea.y);
+	}
+	
+	public void markChunkDoorLocations() {
+		markDoors = true;
 	}
 }

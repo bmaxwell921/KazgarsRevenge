@@ -29,6 +29,7 @@ public class UpdateListener implements ActionListener {
 	public UpdateListener(KREditorPanel editorPanel) {
 		this.editorPanel = editorPanel;
 		enabled = true;
+		move = true;
 	}
 	
 	public void disable() {
@@ -38,13 +39,18 @@ public class UpdateListener implements ActionListener {
 	public void enable() {
 		enabled = true;
 	}
+	
+	private boolean move;
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (!enabled) {
 			return;
 		}
-		handleMovement();
+		if (move) {
+			handleMovement();
+		}
+		move = !move;
 		handlePlacement();
 		handleRotation();
 		handleDeletion();

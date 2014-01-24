@@ -144,7 +144,7 @@ public abstract class KREditorPanel extends JPanel {
 	private void setUpTimer() {
 		UpdateListener updater = new UpdateListener(this);
 		UpdaterManager.getInstance().registerListener(this.getClass(), updater);
-		new Timer(100, updater).start();
+		new Timer(50, updater).start();
 	}
 	
 	/**
