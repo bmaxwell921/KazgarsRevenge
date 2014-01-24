@@ -162,7 +162,11 @@ namespace KazgarsRevenge
                 //small chance to drop rarer potion
                 if (diceRoll(1, 4) == 3)
                 {
-
+                    retItems.Add(GetRarePotion());
+                }
+                else
+                {
+                    retItems.Add(GetPotion());
                 }
             }
 
@@ -196,9 +200,24 @@ namespace KazgarsRevenge
 
         private Item GetPotion()
         {
-            return new Item(ItemType.Potion, GetIcon("daf"), "potion", 1);
+            if (diceRoll(1, 4) == 1)
+            {
+                return new Item(ItemType.Potion, GetIcon("potion"), "Super Health Potion", diceRoll(1, 2));
+            }
+            return new Item(ItemType.Potion, GetIcon("potion"), "Health Potion", diceRoll(1, 2));
         }
 
+        private Item GetRarePotion()
+        {
+            if (diceRoll(1, 12) == 2)
+            {
+                return new Item(ItemType.Potion, GetIcon("potion"), "Potion of Luck", 1);
+            }
+            else
+            {
+                return new Item(ItemType.Potion, GetIcon("potion"), "Potion of Instant Health", 1);
+            }
+        }
 
         #region Helpers
         /// <summary>
@@ -234,7 +253,7 @@ namespace KazgarsRevenge
                 //merge stacks
                 if (second[i].Stackable)
                 {
-                    for (int j = 0; j <= prevMaxIndex; ++j)
+                    for (int j = 0; j < prevMaxIndex; ++j)
                     {
                         if (retItems[j].Name == second[i].Name)
                         {
@@ -303,16 +322,19 @@ namespace KazgarsRevenge
 
         #region Icons
         Dictionary<string, Texture2D> equippableIcons = new Dictionary<string, Texture2D>();
-        private Texture2D GetIcon(string gearName)
+        private Texture2D GetIcon(string name)
         {
-            string texName = "Textures\\";
-            switch (gearName)
+            string texName = "Textures\\UI\\";
+            switch (name)
             {
                 case "sword":
-                    texName += "UI\\Abilities\\HS";
+                    texName += "Abilities\\HS";
+                    break;
+                case "potion":
+                    texName += "Items\\HP";
                     break;
                 default:
-                    texName += "UI\\Abilities\\HS";
+                    texName += "Abilities\\HS";
                     break;
             }
 
