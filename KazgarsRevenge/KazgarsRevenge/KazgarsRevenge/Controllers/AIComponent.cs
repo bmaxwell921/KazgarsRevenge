@@ -11,16 +11,69 @@ using BEPUphysics.ResourceManagement;
 
 namespace KazgarsRevenge
 {
-    public class AIController : Component
+    abstract public class AIComponent : DrawableComponent2D
     {
-        public AIController(KazgarsRevengeGame game, GameEntity entity)
+
+        public AIComponent(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
+            physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
         }
 
-        public virtual void PlayHit()
+        /// <summary>
+        /// damage on the controller's part. Deals with aggro, animations, and particles
+        /// </summary>
+        /// <param name="damage"></param>
+        /// <param name="from"></param>
+        protected virtual void TakeDamage(int damage, GameEntity from)
         {
 
+        }
+
+        protected Entity physicalData;
+        protected float newDir;
+        protected float curDir;
+
+        /// <summary>
+        /// used for turning model smoothly. slowly adjusts orientation towards 
+        /// the newDir and changes velocity based on given speeds
+        /// </summary>
+        protected void AdjustDir(float runSpeed, float turnSpeed)
+        {
+            if (curDir != newDir)
+            {
+
+                if (Math.Abs(curDir - newDir) <= turnSpeed * 1.3f)
+                {
+                    curDir = newDir;
+                    Vector3 newVel = new Vector3((float)Math.Cos(curDir), 0, (float)Math.Sin(curDir));
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
+                    newVel *= runSpeed;
+                    physicalData.LinearVelocity = newVel;
+                }
+                else
+                {
+                    float add = turnSpeed;
+                    float diff = curDir - newDir;
+                    if (diff > 0 && diff < MathHelper.Pi || diff < 0 && -diff > MathHelper.Pi)
+                    {
+                        add *= -1;
+                    }
+                    curDir += add;
+                    if (curDir > MathHelper.TwoPi)
+                    {
+                        curDir -= MathHelper.TwoPi;
+                    }
+                    else if (curDir < 0)
+                    {
+                        curDir += MathHelper.TwoPi;
+                    }
+                    Vector3 newVel = new Vector3((float)Math.Cos(curDir), 0, (float)Math.Sin(curDir));
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
+                    newVel *= runSpeed;
+                    physicalData.LinearVelocity = newVel;
+                }
+            }
         }
 
         protected float GetGraphicsYaw(Vector3 move)
@@ -107,6 +160,11 @@ namespace KazgarsRevenge
                 }
             }
             return false;
+        }
+
+        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch s)
+        {
+
         }
     }
 }

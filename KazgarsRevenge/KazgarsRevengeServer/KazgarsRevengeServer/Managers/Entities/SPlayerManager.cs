@@ -67,19 +67,16 @@ namespace KazgarsRevengeServer
             playerPhysicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
             player.AddSharedData(typeof(Entity), playerPhysicalData);
 
-            HealthData playerHealth = new HealthData(100);
-            player.AddSharedData(typeof(HealthData), playerHealth);
-
             // components to make up player
             PhysicsComponent playerPhysics = new PhysicsComponent(game, player);
-            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(game, player);
+            AliveComponent playerHealthHandler = new AliveComponent(game, player, 1);
 
             // TODO make controller for players? - is this going to be the same as the client?
 
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
             gcm.AddComponent(playerPhysics);
 
-            player.AddComponent(typeof(HealthHandlerComponent), playerHealthHandler);
+            player.AddComponent(typeof(AliveComponent), playerHealthHandler);
             gcm.AddComponent(playerHealthHandler);
 
             players[id] = player;

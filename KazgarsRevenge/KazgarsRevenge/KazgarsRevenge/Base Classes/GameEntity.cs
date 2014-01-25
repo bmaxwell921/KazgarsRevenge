@@ -59,15 +59,19 @@ namespace KazgarsRevenge
             components.Add(t, o);
         }
 
-        public void Hit()
+        /// <summary>
+        /// tries to hit this entity for the damage given. returns true if it was an entity with health that could be hit.
+        /// </summary>
+        public bool Hit(DeBuff neg, int d, GameEntity from)
         {
             Component possAI;
-            if (components.TryGetValue(typeof(AIController), out possAI))
+            if (components.TryGetValue(typeof(AliveComponent), out possAI))
             {
-                (possAI as AIController).PlayHit();
-
+                AliveComponent health = components[typeof(AliveComponent)] as AliveComponent;
+                (possAI as AliveComponent).Damage(neg, d, from);
+                return true;
             }
-            
+            return false;
         }
 
         public void Kill()
@@ -94,20 +98,6 @@ namespace KazgarsRevenge
             components.TryGetValue(t, out retComponent);
             //will be null if key is not found
             return retComponent;
-        }
-
-        public HealthData GetHealth()
-        {
-            Component possHealth = null;
-            components.TryGetValue(typeof(HealthHandlerComponent), out possHealth);
-            if (possHealth != null)
-            {
-                return (possHealth as HealthHandlerComponent).GetHealthData();
-            }
-            else
-            {
-                return null;
-            }
         }
     }
 }

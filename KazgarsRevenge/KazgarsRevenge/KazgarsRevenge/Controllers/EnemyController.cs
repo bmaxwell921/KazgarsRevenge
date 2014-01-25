@@ -14,6 +14,7 @@ namespace KazgarsRevenge
 {
     public struct EnemyControllerSettings
     {
+
         public string idleAniName;
         public string attackAniName;
         public string walkAniName;
@@ -30,8 +31,10 @@ namespace KazgarsRevenge
         
         public double attackLength;
         public int attackDamage;
+
+        public int level;
     }
-    public class EnemyController : AIController
+    public class EnemyController : AliveComponent
     {
         enum EnemyState
         {
@@ -41,8 +44,6 @@ namespace KazgarsRevenge
         }
         EnemyState state = EnemyState.Normal;
 
-        HealthData health;
-        Entity physicalData;
         AnimationPlayer animations;
         LootManager lewts;
         AttackManager attacks;
@@ -51,10 +52,8 @@ namespace KazgarsRevenge
         EnemyControllerSettings settings;
 
         public EnemyController(KazgarsRevengeGame game, GameEntity entity, EnemyControllerSettings settings)
-            : base(game, entity)
+            : base(game, entity, settings.level)
         {
-            this.health = entity.GetSharedData(typeof(HealthData)) as HealthData;
-            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             this.settings = settings;
             lewts = game.Services.GetService(typeof(LootManager)) as LootManager;
@@ -69,7 +68,7 @@ namespace KazgarsRevenge
         }
 
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
-        public override void PlayHit()
+        protected override void TakeDamage(int d, GameEntity from)
         {
             if (state != EnemyState.Dying)
             {
@@ -85,8 +84,8 @@ namespace KazgarsRevenge
             currentAniName = animationName;
         }
 
-        HealthData targetHealth;
-        Entity targetedPlayerData;
+        AliveComponent targetHealth;
+        Entity targetData;
 
         double timerCounter;
         double timerLength;
@@ -101,7 +100,7 @@ namespace KazgarsRevenge
         AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
         {
-            if (state != EnemyState.Dying && state != EnemyState.Decaying && health.Dead)
+            if (state != EnemyState.Dying && state != EnemyState.Decaying && Dead)
             {
                 state = EnemyState.Dying;
                 timerLength = animations.GetAniMillis(settings.deathAniName) - 100;
@@ -135,10 +134,10 @@ namespace KazgarsRevenge
             GameEntity possTargetPlayer = QueryNearEntity("localplayer", physicalData.Position, 0, 100);
             if (possTargetPlayer != null)
             {
-                targetHealth = possTargetPlayer.GetSharedData(typeof(HealthData)) as HealthData;
+                targetHealth = possTargetPlayer.GetComponent(typeof(AliveComponent)) as AliveComponent;
                 if (targetHealth != null && !targetHealth.Dead)
                 {
-                    targetedPlayerData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
+                    targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
                     currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
                     animations.StartClip(settings.runAniName);
                     return;
@@ -201,19 +200,19 @@ namespace KazgarsRevenge
                 attackCounter += millis;
                 if (swingCounter >= settings.attackLength / 2)
                 {
-                    attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false, this.entity);
+                    attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false, this);
                     swingCounter = 0;
                     swinging = false;
                 }
             }
-            else if (targetHealth != null && targetedPlayerData != null && !targetHealth.Dead)
+            else if (targetHealth != null && targetData != null && !targetHealth.Dead)
             {
                 attackCounter += millis;
                 if (attackCounter >= settings.attackLength)
                 {
                     attackCounter = 0;
                     //if the player is within attack radius, swing
-                    Vector3 diff = new Vector3(targetedPlayerData.Position.X - physicalData.Position.X, 0, targetedPlayerData.Position.Z - physicalData.Position.Z);
+                    Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
 
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
@@ -233,17 +232,17 @@ namespace KazgarsRevenge
             else
             {
                 targetHealth = null;
-                targetedPlayerData = null;
+                targetData = null;
                 currentUpdateFunction = idleUpdateFunction;
             }
         }
 
         protected virtual void AIRunningToTarget(double millis)
         {
-            if (targetHealth != null && targetedPlayerData != null && !targetHealth.Dead)
+            if (targetHealth != null && targetData != null && !targetHealth.Dead)
             {
                 //if the target is within attack radius, go to attack state
-                Vector3 diff = new Vector3(targetedPlayerData.Position.X - physicalData.Position.X, 0, targetedPlayerData.Position.Z - physicalData.Position.Z);
+                Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
 
                 if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                 {
@@ -275,7 +274,7 @@ namespace KazgarsRevenge
             else
             {
                 targetHealth = null;
-                targetedPlayerData = null;
+                targetData = null;
                 currentUpdateFunction = idleUpdateFunction;
             }
         }
@@ -289,10 +288,10 @@ namespace KazgarsRevenge
                 timerLength = 3000;
                 state = EnemyState.Decaying;
                 animations.PauseAnimation();
-                modelParams = entity.GetSharedData(typeof(SharedEffectParams)) as SharedEffectParams;
-                entity.GetComponent(typeof(PhysicsComponent)).Kill();
+                modelParams = Entity.GetSharedData(typeof(SharedEffectParams)) as SharedEffectParams;
+                Entity.GetComponent(typeof(PhysicsComponent)).Kill();
 
-                lewts.CreateLootSoul(physicalData.Position, entity.Type);
+                lewts.CreateLootSoul(physicalData.Position, Entity.Type);
             }
         }
 
@@ -303,7 +302,7 @@ namespace KazgarsRevenge
             timerCounter += millis;
             if(timerCounter >= timerLength)
             {
-                entity.Kill();
+                Entity.Kill();
             }
 
             float percent = (float)(1 - timerCounter / timerLength);

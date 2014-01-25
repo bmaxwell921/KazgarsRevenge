@@ -15,7 +15,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class LootSoulController : SmoothAIController
+    class LootSoulController : AIComponent
     {
         public enum LootSoulState
         {
@@ -142,7 +142,7 @@ namespace KazgarsRevenge
                     deathCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
                     if (deathCounter > deathLength)
                     {
-                        entity.Kill();
+                        Entity.Kill();
                     }
                     break;
             }
@@ -212,7 +212,7 @@ namespace KazgarsRevenge
                     //if we hit another soul, merge with it
                     if (hitEntity.Name == "loot")
                     {
-                        LootSoulController otherSoul = hitEntity.GetComponent(typeof(AIController)) as LootSoulController;
+                        LootSoulController otherSoul = hitEntity.GetComponent(typeof(AIComponent)) as LootSoulController;
                         if (otherSoul != null)
                         {
                             if (otherSoul.soulState != LootSoulState.Dying)
@@ -239,6 +239,11 @@ namespace KazgarsRevenge
             soulState = LootSoulState.Dying;
             physicalData.LinearVelocity = Vector3.Zero;
             return Loot;
+        }
+
+        protected override void TakeDamage(int damage, GameEntity from)
+        {
+            //this can't take damage... hmm. architecture design problems.
         }
     }
 }

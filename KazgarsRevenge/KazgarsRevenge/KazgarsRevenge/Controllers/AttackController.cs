@@ -19,7 +19,7 @@ namespace KazgarsRevenge
     public class AttackController : Component
     {
         //the entity that created this attack
-        GameEntity creator;
+        AliveComponent creator;
         SoundEffectLibrary sounds;
         Entity physicalData;
         int damage;
@@ -27,7 +27,7 @@ namespace KazgarsRevenge
         double lifeLength;
         //either "good" or "bad", for now
         FactionType factionToHit;
-        public AttackController(KazgarsRevengeGame game, GameEntity entity, Entity physicalData, int damage, double millisDuration, FactionType factionToHit, GameEntity creator)
+        public AttackController(KazgarsRevengeGame game, GameEntity entity, Entity physicalData, int damage, double millisDuration, FactionType factionToHit, AliveComponent creator)
             : base(game, entity)
         {
             this.physicalData = physicalData;
@@ -45,7 +45,7 @@ namespace KazgarsRevenge
             lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (lifeCounter >= lifeLength)
             {
-                entity.Kill();
+                Entity.Kill();
             }
         }
 
@@ -58,27 +58,23 @@ namespace KazgarsRevenge
                 if (hitEntity.Name == "room")
                 {
                     //makes arrows stick in walls
-                    (entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
+                    (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
                 }
                 if (hitEntity.Faction == factionToHit)
                 {
-                    HealthHandlerComponent healthData = hitEntity.GetComponent(typeof(HealthHandlerComponent)) as HealthHandlerComponent;
+                    AliveComponent healthData = hitEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
                     if (healthData != null)
                     {
-                        damageDealt += healthData.Damage(damage);
+                        damageDealt += healthData.Damage(DeBuff.None, damage, creator.Entity);
                     }
-                    entity.Kill();
+                    Entity.Kill();
                 }
             }
         }
 
         public override void End()
         {
-            PlayerController possPlayer = creator.GetComponent(typeof(PlayerController)) as PlayerController;
-            if (possPlayer != null)
-            {
-                possPlayer.HandleDamageDealt(damageDealt);
-            }
+            creator.HandleDamageDealt(damageDealt);
             base.End();
         }
     }

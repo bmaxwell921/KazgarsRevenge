@@ -39,6 +39,9 @@ namespace KazgarsRevenge
 
         public void CreateMainPlayer(Vector3 position, Identification id)
         {
+            //TODO: actually load from file (inside of PlayerSave class, maybe)
+            PlayerSave saveFile = new PlayerSave();
+
             GameEntity player = new GameEntity("localplayer", FactionType.Players, EntityType.Player);
 
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController)
@@ -67,14 +70,10 @@ namespace KazgarsRevenge
             Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
             player.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
-            HealthData playerHealth = new HealthData(1000);
-            player.AddSharedData(typeof(HealthData), playerHealth);
-
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
-            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
-            PlayerController playerController = new PlayerController(mainGame, player);
+            PlayerController playerController = new PlayerController(mainGame, player, saveFile);
             NetMovementComponent nmc = new NetMovementComponent(mainGame, player);
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
@@ -85,10 +84,7 @@ namespace KazgarsRevenge
             player.AddComponent(typeof(AnimatedModelComponent), playerGraphics);
             modelManager.AddComponent(playerGraphics);
 
-            player.AddComponent(typeof(HealthHandlerComponent), playerHealthHandler);
-            genComponentManager.AddComponent(playerHealthHandler);
-
-            player.AddComponent(typeof(PlayerController), playerController);
+            player.AddComponent(typeof(AliveComponent), playerController);
             spriteManager.AddComponent(playerController);
             
             player.AddComponent(typeof(NetMovementComponent), nmc);
@@ -122,12 +118,8 @@ namespace KazgarsRevenge
             Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
             player.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
-            HealthData playerHealth = new HealthData(100);
-            player.AddSharedData(typeof(HealthData), playerHealth);
-
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
-            HealthHandlerComponent playerHealthHandler = new HealthHandlerComponent(mainGame, player);
             NetworkPlayerController controller = new NetworkPlayerController(mainGame, player);
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
@@ -136,9 +128,6 @@ namespace KazgarsRevenge
 
             player.AddComponent(typeof(AnimatedModelComponent), playerGraphics);
             modelManager.AddComponent(playerGraphics);
-
-            player.AddComponent(typeof(HealthHandlerComponent), playerHealthHandler);
-            genComponentManager.AddComponent(playerHealthHandler);
 
             player.AddComponent(typeof(NetworkPlayerController), controller);
             genComponentManager.AddComponent(controller);

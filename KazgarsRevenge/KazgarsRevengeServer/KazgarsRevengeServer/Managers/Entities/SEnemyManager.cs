@@ -30,7 +30,7 @@ namespace KazgarsRevengeServer
         }
 
         #region Entities
-        public void CreateBrute(Vector3 position)
+        public void CreateBrute(Vector3 position, int level)
         {
             GameEntity brute = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
 
@@ -41,27 +41,20 @@ namespace KazgarsRevengeServer
             brutePhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
             brute.AddSharedData(typeof(Entity), brutePhysicalData);
 
-            HealthData bruteHealth = new HealthData(100);
-            brute.AddSharedData(typeof(HealthData), bruteHealth);
-
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), new Dictionary<string, AttachableModel>());
 
             PhysicsComponent brutePhysics = new PhysicsComponent(game, brute);
 
-            HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(game, brute);
-
             EnemyControllerSettings bruteSettings = new EnemyControllerSettings();
             #region settings init
-            bruteSettings.attackAniName = "pig_attack";
-            bruteSettings.attackDamage = 10;
-            bruteSettings.attackLength = 20;
+            bruteSettings.attackDamage = 5;
+            bruteSettings.level = level;
             bruteSettings.attackRange = 25;
-            bruteSettings.idleAniName = "pig_idle";
+            bruteSettings.attackLength = 100;
             bruteSettings.noticePlayerRange = 200;
-            bruteSettings.runAniName = "pig_walk";
-            bruteSettings.runSpeed = 20;
-            bruteSettings.walkAniName = "pig_walk";
-            bruteSettings.walkSpeed = 13;
+            bruteSettings.stopChasingRange = 600;
+            bruteSettings.runSpeed = 80;
+            bruteSettings.walkSpeed = 40;
             #endregion
 
             EnemyController bruteController = new EnemyController(game, brute, bruteSettings);
@@ -69,10 +62,7 @@ namespace KazgarsRevengeServer
             brute.AddComponent(typeof(PhysicsComponent), brutePhysics);
             gcm.AddComponent(brutePhysics);
 
-            brute.AddComponent(typeof(HealthHandlerComponent), bruteHealthHandler);
-            gcm.AddComponent(bruteHealthHandler);
-
-            brute.AddComponent(typeof(AIController), bruteController);
+            brute.AddComponent(typeof(AliveComponent), bruteController);
             gcm.AddComponent(bruteController);
 
             enemies.Add(brute);

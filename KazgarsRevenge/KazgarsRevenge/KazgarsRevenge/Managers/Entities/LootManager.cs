@@ -79,7 +79,7 @@ namespace KazgarsRevenge
             lootSoul.AddComponent(typeof(UnanimatedModelComponent), lootGraphics);
             modelManager.AddComponent(lootGraphics);
 
-            lootSoul.AddComponent(typeof(AIController), lootController);
+            lootSoul.AddComponent(typeof(AIComponent), lootController);
             genComponentManager.AddComponent(lootController);
 
             lootSoul.AddComponent(typeof(BlobShadowDecal), lootShadow);

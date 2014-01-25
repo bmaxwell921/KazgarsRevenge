@@ -318,7 +318,7 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < 10; ++j)
                 {
-                    enemies.CreateBrute(new Vector3(130 + i * 200, 5, -100 - j * 200));
+                    enemies.CreateBrute(new Vector3(130 + i * 200, 5, -100 - j * 200), 1);
                 }
             }
 

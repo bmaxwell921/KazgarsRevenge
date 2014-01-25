@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace KazgarsRevenge.Non_Component
+namespace KazgarsRevenge
 {
     public enum PotionType
     {

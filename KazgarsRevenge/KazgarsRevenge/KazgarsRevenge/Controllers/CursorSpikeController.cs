@@ -23,7 +23,7 @@ namespace KazgarsRevenge
             millisCreated += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (millisCreated >= millisLife)
             {
-                entity.Kill();
+                Entity.Kill();
             }
         }
     }

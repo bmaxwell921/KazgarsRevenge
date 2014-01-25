@@ -10,7 +10,7 @@ namespace KazgarsRevenge
     public abstract class Component
     {
         protected KazgarsRevengeGame Game;
-        protected GameEntity entity;
+        public GameEntity Entity { get; private set; }
         public bool Remove { get; protected set; }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace KazgarsRevenge
         public Component(KazgarsRevengeGame game, GameEntity entity)
         {
             this.Game = game;
-            this.entity = entity;
+            this.Entity = entity;
             Remove = false;
         }
 

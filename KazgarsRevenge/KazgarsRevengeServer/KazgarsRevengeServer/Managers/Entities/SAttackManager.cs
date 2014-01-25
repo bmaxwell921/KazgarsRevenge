@@ -23,7 +23,7 @@ namespace KazgarsRevengeServer
             attacks = new List<GameEntity>();
         }
 
-        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType faction, GameEntity creator)
+        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType faction, AliveComponent creator)
         {
             GameEntity arrow = new GameEntity("arrow", faction, EntityType.Misc);
             position.Y += 20;
@@ -47,7 +47,7 @@ namespace KazgarsRevengeServer
             attacks.Add(arrow);
         }
 
-        public void CreateMeleeAttack(Vector3 position, int damage, FactionType faction, GameEntity creator)
+        public void CreateMeleeAttack(Vector3 position, int damage, FactionType faction, AliveComponent creator)
         {
             GameEntity newAttack = new GameEntity("sword", faction, EntityType.Misc);
             Entity attackData = new Box(position, 35, 47, 35, .01f);

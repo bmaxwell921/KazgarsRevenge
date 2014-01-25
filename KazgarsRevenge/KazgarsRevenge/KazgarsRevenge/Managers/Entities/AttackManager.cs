@@ -37,7 +37,7 @@ namespace KazgarsRevenge
 
 
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
-        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType arrowFaction, GameEntity creator)
+        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType arrowFaction, AliveComponent creator)
         {
             GameEntity arrow = new GameEntity("arrow", arrowFaction, EntityType.Misc);
             position.Y += 20;
@@ -69,7 +69,7 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateMelleAttack(Vector3 position, int damage, FactionType faction, bool sparks, GameEntity creator)
+        public void CreateMelleAttack(Vector3 position, int damage, FactionType faction, bool sparks, AliveComponent creator)
         {
             GameEntity newAttack = new GameEntity("arrow", faction, EntityType.Misc);
 

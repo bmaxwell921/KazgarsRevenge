@@ -9,7 +9,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class NetworkPlayerController : SmoothAIController
+    public class NetworkPlayerController : AIComponent
     {
         enum NetPlayerState
         {
@@ -82,6 +82,11 @@ namespace KazgarsRevenge
                     }
                     break;
             }
+        }
+
+        protected override void TakeDamage(int damage, GameEntity from)
+        {
+            //particles?
         }
     }
 }

@@ -30,7 +30,7 @@ namespace KazgarsRevenge
         }
 
         #region entities
-        public void CreateBrute(Vector3 position)
+        public void CreateBrute(Vector3 position, int level)
         {
             GameEntity brute = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
 
@@ -44,16 +44,12 @@ namespace KazgarsRevenge
             AnimationPlayer bruteAnimations = new AnimationPlayer(bruteModel.Tag as SkinningData);
             brute.AddSharedData(typeof(AnimationPlayer), bruteAnimations);
 
-            HealthData bruteHealth = new HealthData(100);
-            brute.AddSharedData(typeof(HealthData), bruteHealth);
-
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
             attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R", 0));
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brute);
             AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, new Vector3(10f), Vector3.Down * 18);
-            HealthHandlerComponent bruteHealthHandler = new HealthHandlerComponent(mainGame, brute);
             BlobShadowDecal bruteShadow = new BlobShadowDecal(mainGame, brute, 15);
 
             EnemyControllerSettings bruteSettings = new EnemyControllerSettings();
@@ -66,6 +62,7 @@ namespace KazgarsRevenge
             bruteSettings.deathAniName = "pig_death";
             bruteSettings.attackDamage = 5;
             bruteSettings.attackLength = bruteAnimations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
+            bruteSettings.level = level;
             bruteSettings.attackRange = 25;
             bruteSettings.noticePlayerRange = 200;
             bruteSettings.stopChasingRange = 600;
@@ -81,10 +78,7 @@ namespace KazgarsRevenge
             brute.AddComponent(typeof(AnimatedModelComponent), bruteGraphics);
             modelManager.AddComponent(bruteGraphics);
 
-            brute.AddComponent(typeof(HealthHandlerComponent), bruteHealthHandler);
-            genComponentManager.AddComponent(bruteHealthHandler);
-
-            brute.AddComponent(typeof(AIController), bruteController);
+            brute.AddComponent(typeof(AliveComponent), bruteController);
             genComponentManager.AddComponent(bruteController);
 
             brute.AddComponent(typeof(BlobShadowDecal), bruteShadow);

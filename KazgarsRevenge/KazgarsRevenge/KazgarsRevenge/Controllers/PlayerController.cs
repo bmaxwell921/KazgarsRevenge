@@ -47,7 +47,7 @@ namespace KazgarsRevenge
         Lefthand,
     }
     
-    public class PlayerController : DrawableComponent2D
+    public class PlayerController : AliveComponent
     {
 
         #region member variables
@@ -62,15 +62,13 @@ namespace KazgarsRevenge
         //data
         AnimationPlayer animations;
         Dictionary<string, AttachableModel> attached;
-        Entity physicalData;
         Random rand;
-        HealthData mainPlayerHealth;
 
         //variables for target
         Entity targetedPhysicalData;
         Entity targetedLootData;
         GameEntity mouseHoveredEntity;
-        HealthData mouseHoveredHealth;
+        AliveComponent mouseHoveredHealth;
 
         //variables for movement
         const float stopRadius = 10;
@@ -251,7 +249,7 @@ namespace KazgarsRevenge
             Equippable e = gear[GearSlot.Righthand];
             if (e != null)
             {
-                return (e as Weapon).Type;
+                return (e as Weapon).PrimaryAttackType;
             }
             else
             {
@@ -263,7 +261,7 @@ namespace KazgarsRevenge
             Equippable e = gear[GearSlot.Lefthand];
             if (e != null)
             {
-                return (e as Weapon).Type;
+                return (e as Weapon).PrimaryAttackType;
             }
             else
             {
@@ -295,14 +293,12 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        public PlayerController(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity)
+        public PlayerController(KazgarsRevengeGame game, GameEntity entity, PlayerSave savefile)
+            : base(game, entity, savefile.CharacterLevel)
         {
             InitGeneralFields();
 
             InitNewPlayer();
-
-            mainPlayerHealth = entity.GetSharedData(typeof(HealthData)) as HealthData;
 
             //adding sword and bow for demo
             EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
@@ -356,9 +352,8 @@ namespace KazgarsRevenge
         {
             #region members
             //shared data
-            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
-            this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
-            this.attached = entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
+            this.animations = Entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
+            this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
 
             //misc
             rand = new Random();
@@ -700,7 +695,7 @@ namespace KazgarsRevenge
                         //if the left mouse button was either just clicked or not pressed down at all, or if any other ability input was just clicked
                         else if (newTarget)
                         {
-                            mouseHoveredHealth = mouseHoveredEntity.GetHealth();
+                            mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
                             if (mouseHoveredHealth == null)
                             {
                                 ResetTargettedEntity();
@@ -1034,7 +1029,7 @@ namespace KazgarsRevenge
                 {
                     Vector3 forward = GetForward();
                     attached.Remove("arrow");
-                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, FactionType.Players, this.entity);
+                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, FactionType.Players, this);
                     attState = AttackState.LettingGo;
                     millisShotAniCounter = 0;
                 }
@@ -1051,7 +1046,7 @@ namespace KazgarsRevenge
                 if (attState == AttackState.InitialSwing && millisMelleCounter >= aniDurations["melleDamage"])
                 {
                     Vector3 forward = GetForward();
-                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, FactionType.Players, true, this.entity);
+                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, FactionType.Players, true, this);
                     attState = AttackState.FinishSwing;
                     millisMelleCounter = 0;
                 }
@@ -1060,9 +1055,15 @@ namespace KazgarsRevenge
 
         #region Damage
         //TODO: damage tracker and "in combat" status
-        public void HandleDamageDealt(int amount)
+        public override void HandleDamageDealt(int damageDealt)
         {
             
+        }
+
+        //TODO: particles for being hit / sound?
+        protected override void TakeDamage(int damage, GameEntity from)
+        {
+
         }
         #endregion
 
@@ -1083,7 +1084,7 @@ namespace KazgarsRevenge
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position, 50);
             if (possLoot != null)
             {
-                lootingSoul = (possLoot.GetComponent(typeof(AIController)) as LootSoulController);
+                lootingSoul = (possLoot.GetComponent(typeof(AIComponent)) as LootSoulController);
                 lootingSoul.OpenLoot();
                 looting = true;
             }
@@ -1390,7 +1391,7 @@ namespace KazgarsRevenge
             //Main Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(160 * average), 0, (int)(310 * average), (int)(52 * average)), Color.Blue * 0.5f);
             //main player health
-            s.Draw(health_bar, new Rectangle((int)(163 * average), 3, (int)(304 * mainPlayerHealth.HealthPercent * average), (int)(46 * average)), new Rectangle(0, 0, (int)(health_bar.Width * mainPlayerHealth.HealthPercent * average), (int)health_bar.Height), Color.White);
+            s.Draw(health_bar, new Rectangle((int)(163 * average), 3, (int)(304 * HealthPercent * average), (int)(46 * average)), new Rectangle(0, 0, (int)(health_bar.Width * HealthPercent * average), (int)health_bar.Height), Color.White);
             #endregion
 
             #region second player frame
@@ -1448,5 +1449,6 @@ namespace KazgarsRevenge
             #endregion
 
         }
+
     }
 }
