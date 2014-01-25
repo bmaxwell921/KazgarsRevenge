@@ -42,6 +42,7 @@ soul looting animation
 GUI textures - behind health, in front of / encasing health,
 Icons - gold (4 different icons to signify greater amounts of gold), potion (red, redder, purple, gold, clear), sword, bow, armor (head, chest, legs, feet)
 levels (ground floor/hub area would be nice)
+armor
 
 
 gui work needed

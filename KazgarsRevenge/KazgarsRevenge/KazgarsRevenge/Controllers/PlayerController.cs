@@ -18,17 +18,6 @@ using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
-    public enum StatType
-    {
-        RunSpeed,
-        AttackSpeed,
-        Strength,
-        Agility,
-        Intellect,
-        CooldownReduction,
-        CritChance,
-        Health,
-    }
     public enum AttackType
     {
         None,
@@ -120,14 +109,6 @@ namespace KazgarsRevenge
         bool[] UISlotUsed = new bool[14];     //0-7 abilities, 8 primary, 9 secondary, 10-13 items
         bool showInventory = false;
         bool looting = false;
-        #endregion
-
-        #region stats
-        //array with one position per type of stat
-        //                                move    attspeed   str  agi  intel  cd   crit   hp
-        float[] baseStats = new float[] { 120,    .05f,      1,   1,   1,     0,   0,     100 };
-
-        Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
         #endregion
 
         #region inventory and gear
@@ -304,6 +285,8 @@ namespace KazgarsRevenge
             EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
             EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
         }
+
+
 
         private void InitNewPlayer()
         {

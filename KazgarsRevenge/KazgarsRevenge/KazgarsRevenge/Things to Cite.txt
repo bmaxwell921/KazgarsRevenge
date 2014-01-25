@@ -1,0 +1,3 @@
+﻿BepuPhysics (apache license)
+JSON.NET (MIT license)
+Microsoft's code? (cell shader, edge detection, skinned effect, shawn hargreave's animation pipeline)

@@ -6,6 +6,17 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
+    public enum StatType
+    {
+        RunSpeed,
+        AttackSpeed,
+        Strength,
+        Agility,
+        Intellect,
+        CooldownReduction,
+        CritChance,
+        Health,
+    }
     public enum DeBuff
     {
         None,
@@ -34,8 +45,14 @@ namespace KazgarsRevenge
         }
         public bool Dead { get; private set; }
 
+        
+        #region stats
+        //array with one position per type of stat
+        //                                          move    attspeed   str  agi  intel  cd   crit   hp
+        protected float[] baseStats = new float[] { 120,    .05f,      1,   1,   1,     0,   0,     100 };
 
-        //todo: put stats here?
+        protected Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
+        #endregion
 
 
         public AliveComponent(KazgarsRevengeGame game, GameEntity entity, int level)
