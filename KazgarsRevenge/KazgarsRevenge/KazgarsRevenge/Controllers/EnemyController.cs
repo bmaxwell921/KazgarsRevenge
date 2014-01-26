@@ -12,6 +12,21 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
+    public class EntityIntPair
+    {
+        public GameEntity Entity;
+        public int amount;
+        public EntityIntPair(GameEntity entity, int amount)
+        {
+            this.Entity = entity;
+            this.amount = amount;
+        }
+
+        public void AddAmount(int d)
+        {
+            amount += d;
+        }
+    }
     public struct EnemyControllerSettings
     {
 
@@ -65,16 +80,71 @@ namespace KazgarsRevenge
 
             idleUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
             currentUpdateFunction = idleUpdateFunction;
+
+            attackingUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
         }
 
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
+        List<EntityIntPair> threatLevels = new List<EntityIntPair>();
         protected override void TakeDamage(int d, GameEntity from)
         {
-            if (state != EnemyState.Dying)
+            if (state != EnemyState.Dying && state != EnemyState.Decaying)
             {
                 animations.MixClipOnce(settings.hitAniName, armBoneIndices);
                 attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
+                CalculateThreat(d, from);
+                minChaseCounter = 0;
             }
+        }
+
+        /// <summary>
+        /// calculate threat and switch to attacker if it is now the highest
+        /// </summary>
+        protected void CalculateThreat(int d, GameEntity from)
+        {
+
+            //find entity
+            int i;
+            for (i = 0; i < threatLevels.Count; ++i)
+            {
+                if (threatLevels[i].Entity == from)
+                {
+                    break;
+                }
+            }
+            //entity needs to be added to threat list
+            if (i == threatLevels.Count)
+            {
+                threatLevels.Add(new EntityIntPair(from, d));
+            }
+            
+            //add threat
+            threatLevels[i].AddAmount(d);
+
+            //if bigger than next in list, take out and reinsert
+            if (i > 0 && threatLevels[i - 1].amount > threatLevels[i].amount)
+            {
+                EntityIntPair tempEnt = threatLevels[i];
+                threatLevels.RemoveAt(i);
+                InsertThreatEntity(tempEnt);
+            }
+
+            currentUpdateFunction = attackingUpdateFunction;
+            targetData = threatLevels[0].Entity.GetSharedData(typeof(Entity)) as Entity;
+            targetHealth = threatLevels[0].Entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+        }
+
+        private void InsertThreatEntity(EntityIntPair ent)
+        {
+            for (int i = 0; i < threatLevels.Count; ++i)
+            {
+                if (threatLevels[i].amount < ent.amount)
+                {
+                    threatLevels.Insert(i, ent);
+                    return;
+                }
+            }
+            threatLevels.Add(ent);
         }
 
         string currentAniName;
@@ -96,6 +166,8 @@ namespace KazgarsRevenge
         //change this to adjust what the AI falls back on when there is nothing around to kill
         AIUpdateFunction idleUpdateFunction;
 
+        AIUpdateFunction attackingUpdateFunction;
+
         //change this to switch states
         AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
@@ -108,6 +180,7 @@ namespace KazgarsRevenge
                 PlayAnimation(settings.deathAniName);
                 animations.StopMixing();
                 AIDeath();
+                Entity.GetComponent(typeof(PhysicsComponent)).Kill();
                 return;
             }
             switch (state)
@@ -131,6 +204,8 @@ namespace KazgarsRevenge
         bool chillin = false;
         protected virtual void AIWanderingHostile(double millis)
         {
+            threatLevels.Clear();
+
             GameEntity possTargetPlayer = QueryNearEntity("localplayer", physicalData.Position, 0, 100);
             if (possTargetPlayer != null)
             {
@@ -237,8 +312,11 @@ namespace KazgarsRevenge
             }
         }
 
+        double minChaseCounter;
+        double minChaseLength = 7000;
         protected virtual void AIRunningToTarget(double millis)
         {
+            minChaseCounter += millis;
             if (targetHealth != null && targetData != null && !targetHealth.Dead)
             {
                 //if the target is within attack radius, go to attack state
@@ -249,7 +327,7 @@ namespace KazgarsRevenge
                     currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
                     physicalData.LinearVelocity = Vector3.Zero;
                 }
-                else if (Math.Abs(diff.X) > settings.stopChasingRange && Math.Abs(diff.Z) > settings.stopChasingRange)
+                else if (minChaseCounter > minChaseLength && (Math.Abs(diff.X) > settings.stopChasingRange || Math.Abs(diff.Z) > settings.stopChasingRange))
                 {
                     //target out of range, wander again
                     currentUpdateFunction = idleUpdateFunction;
@@ -289,7 +367,6 @@ namespace KazgarsRevenge
                 state = EnemyState.Decaying;
                 animations.PauseAnimation();
                 modelParams = Entity.GetSharedData(typeof(SharedEffectParams)) as SharedEffectParams;
-                Entity.GetComponent(typeof(PhysicsComponent)).Kill();
 
                 lewts.CreateLootSoul(physicalData.Position, Entity.Type);
             }

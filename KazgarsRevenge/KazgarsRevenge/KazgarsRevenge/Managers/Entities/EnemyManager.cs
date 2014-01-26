@@ -65,7 +65,7 @@ namespace KazgarsRevenge
             bruteSettings.level = level;
             bruteSettings.attackRange = 25;
             bruteSettings.noticePlayerRange = 200;
-            bruteSettings.stopChasingRange = 600;
+            bruteSettings.stopChasingRange = 650;
             bruteSettings.runSpeed = 80;
             bruteSettings.walkSpeed = 40;
             #endregion

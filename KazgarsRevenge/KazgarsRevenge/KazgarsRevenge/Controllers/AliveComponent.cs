@@ -58,8 +58,8 @@ namespace KazgarsRevenge
         public AliveComponent(KazgarsRevengeGame game, GameEntity entity, int level)
             : base(game, entity)
         {
-            this.Health = 100;
-            this.MaxHealth = 100;
+            this.MaxHealth = 100 * level;
+            this.Health = MaxHealth;
             this.Dead = false;
         }
 
