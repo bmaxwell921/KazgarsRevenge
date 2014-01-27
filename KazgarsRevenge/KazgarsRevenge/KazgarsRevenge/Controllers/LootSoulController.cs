@@ -19,10 +19,11 @@ namespace KazgarsRevenge
     {
         public enum LootSoulState
         {
+            Dying,
+            Scared,
             Wandering,
             Following,
             BeingLooted,
-            Dying,
         }
         public LootSoulState soulState { get; private set; }
 
@@ -48,38 +49,33 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleSoulCollision;
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             animations.StartClip("soul_wander");
-            
-
-            deathLength = 70;//animations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
         }
 
         const float soulSensorSize = 400;
         GameEntity targetedSoul;
         Entity targetData;
         Random rand;
-        double wanderCounter = 0;
-        double wanderLength = 0;
-        double deathCounter = 0;
-        double deathLength;
-        protected float groundSpeed = 25.0f;
+        double timerCounter = 0;
+        double timerLength = 0;
+        float groundSpeed = 25.0f;
+        float scaredSpeed = 50.0f;
         public override void Update(GameTime gameTime)
         {
+            timerCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
             switch (soulState)
             {
                 case LootSoulState.Wandering:
                     if (Loot.Count == 0)
                     {
-                        soulState = LootSoulState.Dying;
                         physicalData.LinearVelocity = Vector3.Zero;
                         return;
                     }
 
                     //wandering
-                    wanderCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    if (wanderCounter >= wanderLength)
+                    if (timerCounter >= timerLength)
                     {
-                        wanderCounter = 0;
-                        wanderLength = rand.Next(1000, 4000);
+                        timerCounter = 0;
+                        timerLength = rand.Next(1000, 4000);
 
 
                         //looking for nearby souls to unite with
@@ -115,7 +111,6 @@ namespace KazgarsRevenge
                 case LootSoulState.Following:
                     if (Loot.Count == 0)
                     {
-                        soulState = LootSoulState.Dying;
                         physicalData.LinearVelocity = Vector3.Zero;
                         return;
                     }
@@ -136,34 +131,69 @@ namespace KazgarsRevenge
                         }
                     }
                     break;
-                case LootSoulState.BeingLooted:
-                    break;
-                case LootSoulState.Dying:
-                    deathCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    if (deathCounter > deathLength)
+                case LootSoulState.Scared:
+                    newDir += (float)rand.Next(-3, 3) / 10.0f;
+                    AdjustDir(scaredSpeed, .09f);
+
+                    if (timerCounter >= timerLength)
                     {
-                        Entity.Kill();
+                        soulState = LootSoulState.Wandering;
+                        timerCounter = 0;
+
+                        newDir = curDir;
+                        physicalData.LinearVelocity = Vector3.Zero;
+                    }
+                    break;
+                case LootSoulState.BeingLooted:
+                    if (timerCounter >= timerLength)
+                    {
+                        if (currentAni == "soul_loot")
+                        {
+                            currentAni = "soul_loot_spin";
+                            animations.StartClip(currentAni);
+                            timerLength = 10000;
+                        }
+                        else if (currentAni == "soul_loot_smash")
+                        {
+                            if (loot.Count == 0)
+                            {
+                                Entity.Kill();
+                            }
+                            else
+                            {
+                                currentAni = "soul_wander";
+                                animations.StartClip(currentAni);
+                                soulState = LootSoulState.Scared;
+                                timerLength = 5000;
+                                physicalData.Position = new Vector3(physicalData.Position.X, 10, physicalData.Position.Z);
+                            }
+                        }
+                        timerCounter = 0;
                     }
                     break;
             }
         }
 
 
-
-        public void OpenLoot()
+        string currentAni = "";
+        public void OpenLoot(Vector3 position, Quaternion q)
         {
+            physicalData.Position = position;
+            physicalData.Orientation = q;
             soulState = LootSoulState.BeingLooted;
-            animations.StartClip("soul_wander");
+            currentAni = "soul_loot";
+            animations.StartClip(currentAni);
+            timerCounter = 0;
+            timerLength = animations.GetAniMillis(currentAni);
             physicalData.LinearVelocity = Vector3.Zero;
         }
 
         public void CloseLoot()
         {
-            if (soulState != LootSoulState.Dying)
-            {
-                soulState = LootSoulState.Wandering;
-                animations.StartClip("soul_wander");
-            }
+            currentAni = "soul_loot_smash";
+            animations.StartClip(currentAni);
+            timerCounter = 0;
+            timerLength = animations.GetAniMillis(currentAni);
         }
 
         public Item GetLoot(int lootIndex)
@@ -191,6 +221,13 @@ namespace KazgarsRevenge
             }
         }
 
+        public List<Item> Unite()
+        {
+            soulState = LootSoulState.Dying;
+            Entity.Kill();
+            return loot;
+        }
+
         public bool RequestLootFromServer(int i)
         {
             return true;
@@ -213,37 +250,26 @@ namespace KazgarsRevenge
                     if (hitEntity.Name == "loot")
                     {
                         LootSoulController otherSoul = hitEntity.GetComponent(typeof(AIComponent)) as LootSoulController;
-                        if (otherSoul != null)
+                        if (otherSoul != null && otherSoul.soulState != LootSoulState.Dying)
                         {
-                            if (otherSoul.soulState != LootSoulState.Dying)
-                            {
-                                List<Item> toAdd = otherSoul.Unite();
-                                
-                                Vector3 newPos = physicalData.Position + (hitEntity.GetSharedData(typeof(Entity)) as Entity).Position;
-                                newPos /= 2;
+                            List<Item> toAdd = otherSoul.Unite();
 
-                                soulState = LootSoulState.Dying;
-                                physicalData.LinearVelocity = Vector3.Zero;
+                            Vector3 newPos = physicalData.Position + (hitEntity.GetSharedData(typeof(Entity)) as Entity).Position;
+                            newPos /= 2;
 
-                                LootManager manager = (Game.Services.GetService(typeof(LootManager)) as LootManager);
-                                manager.CreateLootSoul(newPos, loot, toAdd, totalSouls + otherSoul.totalSouls);
-                            }
+                            LootManager manager = (Game.Services.GetService(typeof(LootManager)) as LootManager);
+                            manager.CreateLootSoul(newPos, loot, toAdd, totalSouls + otherSoul.totalSouls);
+                            soulState = LootSoulState.Dying;
+                            Entity.Kill();
                         }
                     }
                 }
             }
         }
 
-        public List<Item> Unite()
-        {
-            soulState = LootSoulState.Dying;
-            physicalData.LinearVelocity = Vector3.Zero;
-            return Loot;
-        }
-
         protected override void TakeDamage(int damage, GameEntity from)
         {
-            //this can't take damage... hmm. architecture design problems.
+            //this can't take damage... hmm. design problems.
         }
     }
 }

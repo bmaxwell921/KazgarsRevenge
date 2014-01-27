@@ -9,6 +9,7 @@ namespace KazgarsRevenge
 {
     public class AttachableModel
     {
+        public bool Draw { get; set; }
         public Model model { get; private set; }
         public string otherBoneName { get; private set; }
         public float xRotation { get; private set; }
@@ -17,6 +18,7 @@ namespace KazgarsRevenge
             this.model = model;
             this.otherBoneName = otherBoneName;
             this.xRotation = xRotation;
+            this.Draw = true;
         }
     }
 }

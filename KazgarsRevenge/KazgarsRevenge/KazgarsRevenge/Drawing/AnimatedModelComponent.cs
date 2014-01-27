@@ -48,7 +48,7 @@ namespace KazgarsRevenge
             this.attachedModels = entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
             this.animationPlayer = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
 
-            PlayAnimation(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
+            animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
 
             modelParams = new SharedEffectParams();
             entity.AddSharedData(typeof(SharedEffectParams), modelParams);
@@ -98,21 +98,24 @@ namespace KazgarsRevenge
                 Matrix[] transforms;
                 foreach (AttachableModel a in attachedModels.Values)
                 {
-                    transforms = new Matrix[a.model.Bones.Count];
-                    a.model.CopyAbsoluteBoneTransformsTo(transforms);
-                    foreach (ModelMesh mesh in a.model.Meshes)
+                    if (a.Draw)
                     {
-                        foreach (Effect effect in mesh.Effects)
+                        transforms = new Matrix[a.model.Bones.Count];
+                        a.model.CopyAbsoluteBoneTransformsTo(transforms);
+                        foreach (ModelMesh mesh in a.model.Meshes)
                         {
-                            effect.Parameters["alpha"].SetValue(modelParams.alpha);
-                            effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                            effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                            Matrix world = Matrix.CreateFromYawPitchRoll(a.xRotation, 0, 0) * transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
-                            effect.Parameters["World"].SetValue(world);
-                            effect.Parameters["ViewProj"].SetValue(view * projection);
-                            effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
+                            foreach (Effect effect in mesh.Effects)
+                            {
+                                effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                                effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                                effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                                Matrix world = Matrix.CreateFromYawPitchRoll(a.xRotation, 0, 0) * transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
+                                effect.Parameters["World"].SetValue(world);
+                                effect.Parameters["ViewProj"].SetValue(view * projection);
+                                effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
+                            }
+                            mesh.Draw();
                         }
-                        mesh.Draw();
                     }
                 }
             }
@@ -123,9 +126,5 @@ namespace KazgarsRevenge
             return animationPlayer.skinningDataValue.AnimationClips[clipName];
         }
 
-        public void PlayAnimation(string animationName)
-        {
-            animationPlayer.StartClip(animationName);
-        }
     }
 }

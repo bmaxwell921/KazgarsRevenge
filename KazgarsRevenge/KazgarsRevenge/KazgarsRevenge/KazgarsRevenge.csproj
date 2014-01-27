@@ -175,6 +175,7 @@
     </Content>
     <Content Include="TextFile1.txt" />
     <Content Include="Things to Cite.txt" />
+    <Content Include="ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KazgarsRevengeContent\KazgarsRevengeContent.contentproj">

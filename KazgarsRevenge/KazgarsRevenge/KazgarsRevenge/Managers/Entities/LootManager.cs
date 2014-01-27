@@ -49,7 +49,7 @@ namespace KazgarsRevenge
         {
             position.Y = 10;
             GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral, EntityType.Misc);
-            float size = 3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE);
+            float size = 10;// 3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE);
 
             Entity lootPhysicalData = new Box(position, size, size, size, 1);
             lootPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.LootCollisionGroup;
@@ -65,13 +65,11 @@ namespace KazgarsRevenge
             lootSoul.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
             PhysicsComponent lootPhysics = new PhysicsComponent(mainGame, lootSoul);
-            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE)), Vector3.Zero);
+            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(size), Vector3.Zero);
             LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot, totalSouls);
             BlobShadowDecal lootShadow = new BlobShadowDecal(mainGame, lootSoul, size);
             EmitterComponent soulEmitters = new EmitterComponent(mainGame, lootSoul);
-            soulEmitters.AddEmitter(typeof(SoulTrailParticleSystem), 8, (int)size / 2, Vector3.Up * 5);
-
-            //soulEmitters.AddEmitter(typeof(ShadowParticleSystem), 20, 0, new Vector3(0, -size + .1f, 0));
+            soulEmitters.AddEmitter(typeof(SoulTrailParticleSystem), 8, Math.Max(1, (int)size / 2), Vector3.Up * 5);
 
             lootSoul.AddComponent(typeof(PhysicsComponent), lootPhysics);
             genComponentManager.AddComponent(lootPhysics);

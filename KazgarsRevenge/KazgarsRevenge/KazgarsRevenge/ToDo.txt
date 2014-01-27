@@ -1,0 +1,42 @@
+﻿art needed
+===========
+soul looting animation
+GUI textures - behind health, in front of / encasing health,
+Icons - gold (4 different icons to signify greater amounts of gold), potion (red, redder, purple, gold, clear), sword, bow, armor (head, chest, legs, feet)
+levels (ground floor/hub area would be nice)
+armor
+
+new kazgar mesh? (the one with more detailed hands)
+
+
+gui work needed
+=================
+inventory
+	-display gold
+	-display grid of items (their icons and quantity)
+	-mouse interaction (hover and mouse down, along with click and drag equipping)
+	-display what character is wearing
+scrollable loot (or clickable arrows to see next/previous items)
+
+
+
+
+Levels
+======
+get json.net working and parse chunk files
+
+Loot Souls
+============
+implement the new looting animation
+adjust AI so that they run around after being released by kazgar
+
+
+Enemy AI
+========
+first boss's AI
+pathfinding (need level generation first)
+
+
+Abilities
+===========
+implement them

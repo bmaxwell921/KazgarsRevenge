@@ -30,6 +30,7 @@ namespace KazgarsRevenge
         }
 
         #region entities
+        const float melleRange = 40;
         public void CreateBrute(Vector3 position, int level)
         {
             GameEntity brute = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
@@ -61,9 +62,9 @@ namespace KazgarsRevenge
             bruteSettings.hitAniName = "pig_hit";
             bruteSettings.deathAniName = "pig_death";
             bruteSettings.attackDamage = 5;
-            bruteSettings.attackLength = bruteAnimations.skinningDataValue.AnimationClips["pig_attack"].Duration.TotalMilliseconds;
+            bruteSettings.attackLength = bruteAnimations.GetAniMillis("pig_attack");
             bruteSettings.level = level;
-            bruteSettings.attackRange = 25;
+            bruteSettings.attackRange = 30;
             bruteSettings.noticePlayerRange = 200;
             bruteSettings.stopChasingRange = 650;
             bruteSettings.runSpeed = 80;

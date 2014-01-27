@@ -449,7 +449,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                millisAniDuration = aniDurations[animationName];
+                millisAniDuration = aniDurations[animationName] - 20;
             }
 
             currentAniName = animationName;
@@ -707,14 +707,13 @@ namespace KazgarsRevenge
                 SwapWeapons();
             }
 
-            if (looting && lootingSoul != null && lootingSoul.Remove)
+            if (looting && lootingSoul != null && lootingSoul.Remove && currentAniName != "k_loot_smash")
             {
-                lootingSoul = null;
-                looting = false;
+                CloseLoot();
             }
 
             //loot nearby soul
-            if (attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space))
+            if (attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
             {
                 if (!looting)
                 {
@@ -725,7 +724,7 @@ namespace KazgarsRevenge
                     CloseLoot();
                 }
             }
-            else if (lootingSoul != null && lootingSoul.Loot.Count == 0)
+            else if (looting && (lootingSoul == null || lootingSoul.Loot.Count == 0) && currentAniName != "k_loot_smash")
             {
                 CloseLoot();
             }
@@ -948,6 +947,20 @@ namespace KazgarsRevenge
             {
                 switch (currentAniName)
                 {
+                    case "k_loot":
+                        PlayAnimation("k_loot_spin");
+                        break;
+                    case "k_loot_spin":
+                        break;
+                    case "k_loot_smash":
+                        lootingSoul = null;
+                        looting = false;
+                        if (attached[GearSlot.Righthand.ToString()] != null)
+                        {
+                            attached[GearSlot.Righthand.ToString()].Draw = true;
+                        }
+                        PlayAnimation("k_fighting_stance");
+                        break;
                     case "k_idle1":
                         int aniRand = rand.Next(1, 7);
                         if (aniRand < 4)
@@ -971,9 +984,7 @@ namespace KazgarsRevenge
                             }
                         }
                         break;
-                    case "k_flip":
-                    case "k_onehanded_swing":
-                    case "k_fire_arrow":
+                    default:
                         PlayAnimation("k_fighting_stance");
                         attState = AttackState.None;
                         break;
@@ -986,6 +997,8 @@ namespace KazgarsRevenge
                     case "k_idle4":
                     case "k_idle5":
                         PlayAnimation("k_idle1");
+                        break;
+                    case "k_run":
                         break;
                 }
                 millisAniCounter = 0;
@@ -1053,22 +1066,25 @@ namespace KazgarsRevenge
         #region helpers
         private void CloseLoot()
         {
-            PlayAnimation("k_fighting_stance");
+
+            PlayAnimation("k_loot_smash");
             if (lootingSoul != null)
             {
                 lootingSoul.CloseLoot();
             }
-            lootingSoul = null;
-            looting = false;
         }
         private void OpenLoot()
         {
-            PlayAnimation("k_idle1");
-            GameEntity possLoot = QueryNearEntity("loot", physicalData.Position, 50);
+            GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
             if (possLoot != null)
             {
+                PlayAnimation("k_loot");
+                if (attached[GearSlot.Righthand.ToString()] != null)
+                {
+                    attached[GearSlot.Righthand.ToString()].Draw = false;
+                }
                 lootingSoul = (possLoot.GetComponent(typeof(AIComponent)) as LootSoulController);
-                lootingSoul.OpenLoot();
+                lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);
                 looting = true;
             }
         }
@@ -1417,7 +1433,7 @@ namespace KazgarsRevenge
                 }
             }
 
-            if (looting)
+            if (looting && lootingSoul != null)
             {
                 s.Draw(texWhitePixel, guiOutsideRects["loot"], Color.Black * .5f);
 
