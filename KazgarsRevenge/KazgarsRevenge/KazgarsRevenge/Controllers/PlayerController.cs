@@ -187,6 +187,7 @@ namespace KazgarsRevenge
             {
                 return true;
             }
+
             if (inventory.Count >= maxInventorySlots)
             {
                 return false;
@@ -552,8 +553,11 @@ namespace KazgarsRevenge
                             {
                                 if (RectContains(guiInsideRects["loot" + i], curMouse.X, curMouse.Y))
                                 {
-                                    //clicked on item, add to inventory
-                                    AddToInventory(lootingSoul.GetLoot(i));
+                                    if (inventory.Count >= maxInventorySlots)
+                                    {
+                                        //clicked on item, add to inventory
+                                        AddToInventory(lootingSoul.GetLoot(i));
+                                    }
                                 }
                             }
                             break;
