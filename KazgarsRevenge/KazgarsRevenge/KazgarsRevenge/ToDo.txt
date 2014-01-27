@@ -35,6 +35,7 @@ Enemy AI
 ========
 first boss's AI
 pathfinding (need level generation first)
+stop enemies from spawning underneath the level
 
 
 Abilities

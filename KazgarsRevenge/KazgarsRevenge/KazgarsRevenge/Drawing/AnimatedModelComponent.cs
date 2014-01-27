@@ -54,10 +54,34 @@ namespace KazgarsRevenge
             entity.AddSharedData(typeof(SharedEffectParams), modelParams);
         }
 
+
+        Dictionary<Type, ParticleEmitter> emitters = new Dictionary<Type, ParticleEmitter>();
+        public void AddEmitter(Type particleType, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter)
+        {
+            if (!emitters.ContainsKey(particleType))
+            {
+                emitters.Add(particleType, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
+                    particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter));
+            }
+
+        }
+
+        public void RemoveEmitter(Type particleType)
+        {
+            emitters.Remove(particleType);
+        }
+
+
         protected Vector3 vLightDirection = new Vector3(-1.0f, -.5f, 1.0f);
         Matrix rot = Matrix.Identity;
         public override void Update(GameTime gameTime)
         {
+            foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
+            {
+                k.Value.Update(gameTime, physicalData.Position);
+            }
+
+
             //need to do this conversion from Matrix3x3 to Matrix; Matrix3x3 is just a bepu thing
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
             //either do this or Matrix.CreateFromQuaternion(physicalData.Orientation);
