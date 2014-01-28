@@ -26,9 +26,9 @@ public class KRImageIO {
 	}};
 	
 	// Where the images are located
-	private static final String BASE_BLOCK_FILE_PATH = "." + File.separatorChar + "img" + File.separatorChar + "blocks";	
-	private static final String BASE_ROOM_FILE_PATH = "." + File.separatorChar + "img" + File.separatorChar + "rooms";	
-	private static final String UNKNOWN_IMAGE_PATH = "." + File.separatorChar + "img" + File.separator + "unknown.png";
+	public static final String BASE_BLOCK_FILE_PATH = "." + File.separatorChar + "img" + File.separatorChar + "blocks";	
+	public static final String BASE_ROOM_FILE_PATH = "." + File.separatorChar + "img" + File.separatorChar + "rooms";	
+	public static final String UNKNOWN_IMAGE_PATH = "." + File.separatorChar + "img" + File.separator + "unknown.png";
 	
 	/**
 	 * Loads all of the room images and returns them in a map.

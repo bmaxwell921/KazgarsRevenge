@@ -23,8 +23,8 @@ import com.google.gson.Gson;
  */
 public class ComponentIO {
 	
-	private static final String DEFAULT_ROOMS_PATH = "." + File.separatorChar + "rooms";
-	private static final String DEFAULT_BLOCKS_PATH = "." + File.separatorChar + "blocks";
+	public static final String DEFAULT_ROOMS_PATH = "." + File.separatorChar + "rooms";
+	public static final String DEFAULT_BLOCKS_PATH = "." + File.separatorChar + "blocks";
 	
 	/**
 	 * Loads the specified chunkComponent from the given file. If there are any errors while loading,
