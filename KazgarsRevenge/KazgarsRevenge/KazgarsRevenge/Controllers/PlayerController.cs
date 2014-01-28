@@ -553,7 +553,7 @@ namespace KazgarsRevenge
                             {
                                 if (RectContains(guiInsideRects["loot" + i], curMouse.X, curMouse.Y))
                                 {
-                                    if (inventory.Count >= maxInventorySlots)
+                                    if (inventory.Count < maxInventorySlots)
                                     {
                                         //clicked on item, add to inventory
                                         AddToInventory(lootingSoul.GetLoot(i));
