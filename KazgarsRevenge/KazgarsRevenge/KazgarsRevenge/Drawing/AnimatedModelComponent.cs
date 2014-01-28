@@ -65,7 +65,15 @@ namespace KazgarsRevenge
                 emitters.Add(particleType, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
                     particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter));
             }
+        }
 
+        public void AddEmitter(Type particleType, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachPoint)
+        {
+            if (!emitters.ContainsKey(particleType))
+            {
+                emitters.Add(particleType, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
+                    particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter, attachPoint));
+            }
         }
 
         public void RemoveEmitter(Type particleType)
@@ -80,7 +88,15 @@ namespace KazgarsRevenge
         {
             foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
             {
-                k.Value.Update(gameTime, physicalData.Position);
+                if (k.Value.BoneName == "")
+                {
+                    k.Value.Update(gameTime, physicalData.Position);
+                }
+                else
+                {
+                    Vector3 bonePos = animationPlayer.GetWorldTransforms()[6].Translation;
+                    k.Value.Update(gameTime, bonePos);
+                }
             }
 
 
