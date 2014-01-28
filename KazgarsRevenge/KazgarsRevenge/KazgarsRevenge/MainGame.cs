@@ -89,14 +89,14 @@ namespace KazgarsRevenge
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
             SetUpLoggers();
 
-            bool fullscreen = true;
+            bool fullscreen = false;
             loadingThread = new Thread(DemoLevel);
 
             if (fullscreen)
             {
                 graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                graphics.IsFullScreen = false;
+                graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
             }
             else

@@ -50,6 +50,8 @@ namespace KazgarsRevenge
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             animations.StartClip("soul_wander");
 
+            normalSpeed = 25 + totalSouls * 1.5f;
+            scaredSpeed = 75 + totalSouls * 6;
 
         }
         public override void Start()
@@ -63,8 +65,10 @@ namespace KazgarsRevenge
         Random rand;
         double timerCounter = 0;
         double timerLength = 0;
-        float groundSpeed = 25.0f;
-        float scaredSpeed = 50.0f;
+        double timer2Counter = 0;
+        double timer2Length = 1000;
+        float normalSpeed = 25.0f;
+        float scaredSpeed = 75.0f;
         public override void Update(GameTime gameTime)
         {
             timerCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -115,7 +119,7 @@ namespace KazgarsRevenge
                         }
                     }
 
-                    AdjustDir(groundSpeed, .045f);
+                    AdjustDir(normalSpeed, .045f);
 
                     break;
                 case LootSoulState.Following:
@@ -137,21 +141,26 @@ namespace KazgarsRevenge
                             Vector3 move = targetData.Position - physicalData.Position;
                             move.Y = 0;
                             newDir = GetPhysicsYaw(move);
-                            AdjustDir(groundSpeed, .045f);
+                            AdjustDir(normalSpeed, .075f);
                         }
                     }
                     break;
                 case LootSoulState.Scared:
-                    newDir += (float)rand.Next(-3, 3) / 10.0f;
+                    timer2Counter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if (timer2Counter > timer2Length)
+                    {
+                        newDir = (float)rand.Next(1, 627) / 100.0f;
+                        timer2Counter = 0;
+                    }
                     AdjustDir(scaredSpeed, .09f);
 
                     if (timerCounter >= timerLength)
                     {
                         soulState = LootSoulState.Wandering;
                         timerCounter = 0;
+                        timerLength = 3000;
 
                         newDir = curDir;
-                        physicalData.LinearVelocity = Vector3.Zero;
                     }
                     break;
                 case LootSoulState.BeingLooted:
@@ -178,6 +187,7 @@ namespace KazgarsRevenge
                                 soulState = LootSoulState.Scared;
                                 timerLength = 5000;
                                 physicalData.Position = new Vector3(physicalData.Position.X, 10, physicalData.Position.Z);
+                                timer2Counter = 10000;
                             }
                         }
                         timerCounter = 0;
