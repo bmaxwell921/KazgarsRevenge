@@ -7,14 +7,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    class Ability
+    public class Ability
     {
         public string AniName { get; private set; }
+        
+        public Texture2D icon { get; private set; }
+
 
 
         int abilityLevel;
         int levelLearned;
-        public Texture2D icon { get; private set; }
         public float cooldownSeconds;
         float lastUsed = -300f; //-5 minutes
         public bool onCooldown = false;

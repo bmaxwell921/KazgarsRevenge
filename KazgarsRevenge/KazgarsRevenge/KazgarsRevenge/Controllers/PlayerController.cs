@@ -734,6 +734,11 @@ namespace KazgarsRevenge
             {
                 CloseLoot();
             }
+            else if (looting && currentAniName != "k_loot_smash" && curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
+            {
+                CloseLoot();
+            }
+
 
             if (curKeys.IsKeyDown(Keys.I) && prevKeys.IsKeyUp(Keys.I)) showInventory = !showInventory;
 
@@ -1092,6 +1097,8 @@ namespace KazgarsRevenge
                 lootingSoul = (possLoot.GetComponent(typeof(AIComponent)) as LootSoulController);
                 lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);
                 looting = true;
+
+                groundTargetLocation = physicalData.Position;
             }
         }
         private void SwapWeapons()

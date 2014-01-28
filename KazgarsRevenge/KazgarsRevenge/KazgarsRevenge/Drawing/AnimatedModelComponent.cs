@@ -88,7 +88,7 @@ namespace KazgarsRevenge
         {
             foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
             {
-                if (k.Value.BoneIndex > 0)
+                if (k.Value.BoneIndex < 0)
                 {
                     k.Value.Update(gameTime, physicalData.Position);
                 }
