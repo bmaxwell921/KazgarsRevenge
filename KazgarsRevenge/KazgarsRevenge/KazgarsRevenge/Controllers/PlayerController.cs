@@ -102,6 +102,7 @@ namespace KazgarsRevenge
 
         #region Item Icons
         Texture2D healthPot;
+        Texture2D goldIcon;
         #endregion
         #endregion
 
@@ -379,6 +380,7 @@ namespace KazgarsRevenge
 
             #region Item Image Load
             healthPot = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\HP");
+            goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold3");
             #endregion
 
             #region animation setup
@@ -1250,11 +1252,21 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("damage", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             //Nate Here
-            guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(400 * average), (int)(402 * average), (int)(400 * average)));
+            guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average)));
+           
+
             guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
             guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Rectangle>();
+            //Inventory icons
+            for (int i = 0; i < 4; ++i)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    guiInsideRects.Add("inventory" + (i + j * 4), new Rectangle((int)(maxX - 390 * average + i * 98 * average), (int)(430 * average + j * 98 * average), (int)(88 * average), (int)(88 * average)));
+                }
+            }
             guiInsideRects.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
             guiInsideRects.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
             guiInsideRects.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
@@ -1265,6 +1277,7 @@ namespace KazgarsRevenge
             {
                 guiInsideRects.Add("loot" + i, new Rectangle((int)(165 * average), (int)(165 * average + i * 65), 50, 50));
             }
+
 
         }
 
@@ -1429,11 +1442,14 @@ namespace KazgarsRevenge
             if (showInventory)
             {
                 s.Draw(texWhitePixel, guiOutsideRects["inventory"], Color.Black * .5f);
+                //Gold display
+                s.Draw(goldIcon, new Rectangle((int)(maxX - 340 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
+                s.DrawString(font, gold.ToString() , new Vector2(maxX - 300 * average, 380 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 for (int i = 0; i < inventory.Count; ++i)
                 {
                     //Nate working here
-                    //guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 410 * average), (int)(410 * average), (int)(400 * average), (int)(575 * average)));
-                    s.DrawString(font, inventory[i].Name, new Vector2(maxX - 400 * average, (420 + i * 40 )* average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                    s.Draw(inventory[i].Icon, guiInsideRects["inventory"+i], Color.White);
+                    //s.DrawString(font, inventory[i].Name, new Vector2(maxX - 400 * average, (420 + i * 40 )* average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 }
             }
 

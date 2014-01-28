@@ -404,17 +404,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\gold1.png">
+    <Compile Include="Textures\UI\Items\gold1.png">
       <Name>gold1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\gold2.png">
+    <Compile Include="Textures\UI\Items\gold2.png">
       <Name>gold2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\gold3.png">
+    <Compile Include="Textures\UI\Items\gold3.png">
       <Name>gold3</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>

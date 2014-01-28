@@ -346,15 +346,15 @@ namespace KazgarsRevenge
             Texture2D goldIcon;
             if (quantity <= 10)
             {
-                goldIcon = Game.Content.Load<Texture2D>("Textures\\gold1");
+                goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold1");
             }
             else if (quantity <= 30)
             {
-                goldIcon = Game.Content.Load<Texture2D>("Textures\\gold2");
+                goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold2");
             }
             else
             {
-                goldIcon = Game.Content.Load<Texture2D>("Textures\\gold3");
+                goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold3");
             }
             return goldIcon;
         }
