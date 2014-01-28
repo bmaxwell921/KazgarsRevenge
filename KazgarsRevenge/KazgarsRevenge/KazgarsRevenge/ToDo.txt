@@ -1,8 +1,7 @@
 ﻿art needed
 ===========
-soul looting animation
+make soul_loot_smash animation end up in the air again
 GUI textures - behind health, in front of / encasing health,
-Icons - gold (4 different icons to signify greater amounts of gold), potion (red, redder, purple, gold, clear), sword, bow, armor (head, chest, legs, feet)
 levels (ground floor/hub area would be nice)
 armor
 
@@ -28,7 +27,7 @@ get json.net working and parse chunk files
 Loot Souls
 ============
 make escape close loot
-adjust AI so that they run around after being released by kazgar
+
 
 
 Enemy AI

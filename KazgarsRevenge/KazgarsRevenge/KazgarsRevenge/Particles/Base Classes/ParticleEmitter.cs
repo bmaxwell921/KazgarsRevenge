@@ -27,7 +27,7 @@ namespace KazgarsRevenge
     public class ParticleEmitter
     {
         #region Fields
-        public string BoneName { get; private set; }
+        public int BoneIndex { get; private set; }
 
         ParticleSystem particleSystem;
         float timeBetweenParticles;
@@ -56,11 +56,11 @@ namespace KazgarsRevenge
             this.maxOffset = maxOffset;
             this.offset = offset;
 
-            this.BoneName = "";
+            this.BoneIndex = -1;
         }
 
         public ParticleEmitter(ParticleSystem particleSystem,
-                       float particlesPerSecond, Vector3 initialPosition, int maxOffset, Vector3 offset, string boneName)
+                       float particlesPerSecond, Vector3 initialPosition, int maxOffset, Vector3 offset, int attachIndex)
         {
             this.particleSystem = particleSystem;
 
@@ -72,7 +72,7 @@ namespace KazgarsRevenge
             this.maxOffset = maxOffset;
             this.offset = offset;
 
-            this.BoneName = boneName;
+            this.BoneIndex = attachIndex;
         }
 
         /// <summary>

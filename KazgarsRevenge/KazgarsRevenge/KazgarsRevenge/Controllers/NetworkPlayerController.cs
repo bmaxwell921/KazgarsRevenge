@@ -9,7 +9,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    public class NetworkPlayerController : AIComponent
+    public class NetworkPlayerController : AliveComponent
     {
         enum NetPlayerState
         {
@@ -23,7 +23,7 @@ namespace KazgarsRevenge
         const float stopRadius = 2;
         AnimationPlayer animations;
         public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity)
+            : base(game, entity, 1)
         {
             this.targetPos = physicalData.Position;
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;

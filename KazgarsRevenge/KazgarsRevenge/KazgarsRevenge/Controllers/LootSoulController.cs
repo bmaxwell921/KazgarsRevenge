@@ -182,11 +182,12 @@ namespace KazgarsRevenge
                             }
                             else
                             {
+                                Vector3 smashedPos = GetBoneTranslation(6);
                                 currentAni = "soul_wander";
                                 animations.StartClip(currentAni);
                                 soulState = LootSoulState.Scared;
                                 timerLength = 5000;
-                                physicalData.Position = new Vector3(physicalData.Position.X, 10, physicalData.Position.Z);
+                                physicalData.Position = new Vector3(smashedPos.X, 10, smashedPos.Z);
                                 timer2Counter = 10000;
                             }
                         }
@@ -279,9 +280,11 @@ namespace KazgarsRevenge
 
         public override void End()
         {
-            (Game.Services.GetService(typeof(LootManager)) as LootManager).SpawnSoulPoof(physicalData.Position);
+            (Game.Services.GetService(typeof(LootManager)) as LootManager).SpawnSoulPoof(GetBoneTranslation(6));
             base.End();
         }
+
+
 
         protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
@@ -309,11 +312,6 @@ namespace KazgarsRevenge
                     }
                 }
             }
-        }
-
-        protected override void TakeDamage(int damage, GameEntity from)
-        {
-            //this can't take damage... hmm. design problems.
         }
     }
 }

@@ -119,6 +119,7 @@ namespace SkinnedModelLib
             secondClipValue = skinningDataValue.AnimationClips[clipName];
             secondTimeValue = TimeSpan.Zero;
             secondKeyframe = 0;
+            bonesToIgnore = null;
         }
 
         /// <summary>
@@ -168,6 +169,16 @@ namespace SkinnedModelLib
                 // If we reached the end, stop mixing
                 if(time >= secondClipValue.Duration)
                 {
+                    if (!playMixedOnce)
+                    {
+                        currentClipValue = secondClipValue;
+                        currentTimeValue = TimeSpan.Zero;
+                        currentKeyframe = 0;
+
+                        // Initialize bone transforms to the bind pose.
+                        skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
+                        UpdateCurrentTime(time, relativeToCurrentTime);
+                    }
                     StopMixing();
                     return;
                 }
@@ -246,10 +257,19 @@ namespace SkinnedModelLib
                     Matrix transform = keyframe.Transform;
                     float dur=(float)(secondClipValue.Duration.TotalMilliseconds);
                     float cur=(float)(secondTimeValue.TotalMilliseconds);
+                    float amt;
+                    if (playMixedOnce)
+                    {
+                        amt = (float)((dur - cur) / dur);
+                    }
+                    else
+                    {
+                        amt = cur / dur;
+                    }
                     bool lerp = bonesToIgnore == null;
                     if (lerp || !bonesToIgnore.Contains(keyframe.Bone))
                     {
-                        boneTransforms[keyframe.Bone] = Matrix.Lerp(boneTransforms[keyframe.Bone], transform, (float)((dur - cur) / dur));
+                        boneTransforms[keyframe.Bone] = Matrix.Lerp(boneTransforms[keyframe.Bone], transform, amt);
                     }
                     secondKeyframe++;
                 }
