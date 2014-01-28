@@ -49,6 +49,12 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleSoulCollision;
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             animations.StartClip("soul_wander");
+
+
+        }
+        public override void Start()
+        {
+            modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
         }
 
         const float soulSensorSize = 400;
@@ -62,6 +68,10 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             timerCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (soulState != LootSoulState.BeingLooted)
+            {
+                AdjustSizeTo(3 + totalSouls);
+            }
             switch (soulState)
             {
                 case LootSoulState.Wandering:
@@ -145,6 +155,8 @@ namespace KazgarsRevenge
                     }
                     break;
                 case LootSoulState.BeingLooted:
+                    AdjustSizeTo(10);
+
                     if (timerCounter >= timerLength)
                     {
                         if (currentAni == "soul_loot")
@@ -174,10 +186,32 @@ namespace KazgarsRevenge
             }
         }
 
+        private void AdjustSizeTo(float size)
+        {
+            float rate = .05f + Math.Abs(modelParams.size - size) / 10.0f;
+            if (modelParams.size < size)
+            {
+                modelParams.size += rate;
+                if (modelParams.size > size)
+                {
+                    modelParams.size = size;
+                }
+            }
+            else if (modelParams.size > size)
+            {
+                modelParams.size -= rate;
+                if (modelParams.size < size)
+                {
+                    modelParams.size = size;
+                }
+            }
+        }
 
         string currentAni = "";
+        SharedGraphicsParams modelParams = null;
         public void OpenLoot(Vector3 position, Quaternion q)
         {
+
             physicalData.Position = position;
             physicalData.Orientation = q;
             soulState = LootSoulState.BeingLooted;

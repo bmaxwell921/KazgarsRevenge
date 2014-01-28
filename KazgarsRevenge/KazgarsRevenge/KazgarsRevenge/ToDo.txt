@@ -27,7 +27,7 @@ get json.net working and parse chunk files
 
 Loot Souls
 ============
-implement the new looting animation
+make escape close loot
 adjust AI so that they run around after being released by kazgar
 
 

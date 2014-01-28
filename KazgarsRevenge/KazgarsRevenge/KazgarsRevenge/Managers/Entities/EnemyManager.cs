@@ -50,7 +50,7 @@ namespace KazgarsRevenge
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brute);
-            AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, new Vector3(10f), Vector3.Down * 18);
+            AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, 10, Vector3.Down * 18);
             BlobShadowDecal bruteShadow = new BlobShadowDecal(mainGame, brute, 15);
 
             EnemyControllerSettings bruteSettings = new EnemyControllerSettings();

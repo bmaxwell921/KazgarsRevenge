@@ -72,7 +72,7 @@ namespace KazgarsRevenge
 
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
-            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
+            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, 10f, Vector3.Down * 18);
             PlayerController playerController = new PlayerController(mainGame, player, saveFile);
             NetMovementComponent nmc = new NetMovementComponent(mainGame, player);
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
@@ -119,7 +119,7 @@ namespace KazgarsRevenge
             player.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
-            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
+            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, 10f, Vector3.Down * 18);
             NetworkPlayerController controller = new NetworkPlayerController(mainGame, player);
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 

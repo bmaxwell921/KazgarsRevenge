@@ -18,7 +18,6 @@ namespace KazgarsRevenge
 {
     class LootManager : EntityManager
     {
-        const float SOULS_PER_INCREASE = 1.0f;
 
         List<GameEntity> lootSouls = new List<GameEntity>();
 
@@ -49,7 +48,7 @@ namespace KazgarsRevenge
         {
             position.Y = 10;
             GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral, EntityType.Misc);
-            float size = 10;// 3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE);
+            float size = 3 + totalSouls;
 
             Entity lootPhysicalData = new Box(position, size, size, size, 1);
             lootPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.LootCollisionGroup;
@@ -65,7 +64,7 @@ namespace KazgarsRevenge
             lootSoul.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
             PhysicsComponent lootPhysics = new PhysicsComponent(mainGame, lootSoul);
-            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(size), Vector3.Zero);
+            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, size, Vector3.Zero);
             LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot, totalSouls);
             BlobShadowDecal lootShadow = new BlobShadowDecal(mainGame, lootSoul, size);
 

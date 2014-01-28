@@ -12,14 +12,16 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KazgarsRevenge
 {
-    public class SharedEffectParams
+    public class SharedGraphicsParams
     {
         public float alpha;
         public float lineIntensity;
-        public SharedEffectParams()
+        public float size;
+        public SharedGraphicsParams()
         {
             alpha = 1f;
             lineIntensity = 1f;
+            size = 1;
         }
     }
 
@@ -31,18 +33,16 @@ namespace KazgarsRevenge
 
         //fields
         protected Model model;
-        protected Vector3 drawScale = new Vector3(1);
         protected Vector3 localOffset = Vector3.Zero;
         protected Dictionary<string, AttachableModel> attachedModels;
         protected Matrix yawOffset = Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0);
 
-        protected SharedEffectParams modelParams;
+        protected SharedGraphicsParams modelParams;
 
-        public AnimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 drawOffset)
+        public AnimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, float drawScale, Vector3 drawOffset)
             : base(game, entity)
         {
             this.model = model;
-            this.drawScale = drawScale;
             this.localOffset = drawOffset;
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.attachedModels = entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
@@ -50,8 +50,10 @@ namespace KazgarsRevenge
 
             animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
 
-            modelParams = new SharedEffectParams();
-            entity.AddSharedData(typeof(SharedEffectParams), modelParams);
+            modelParams = new SharedGraphicsParams();
+            modelParams.size = drawScale;
+            entity.AddSharedData(typeof(SharedGraphicsParams), modelParams);
+
         }
 
 
@@ -89,7 +91,7 @@ namespace KazgarsRevenge
             rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
             rot *= yawOffset;
             animationPlayer.Update(gameTime.ElapsedGameTime, true,
-                rot * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
+                rot * Matrix.CreateScale(new Vector3(modelParams.size)) * Matrix.CreateTranslation(physicalData.Position + localOffset));
         }
         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
         {
@@ -97,7 +99,7 @@ namespace KazgarsRevenge
 
             Matrix worldWithoutBone = rot
                 //* Matrix.CreateFromQuaternion(physicalData.Orientation)
-                        * Matrix.CreateScale(drawScale)
+                        * Matrix.CreateScale(new Vector3(modelParams.size))
                         * Matrix.CreateTranslation(physicalData.Position + localOffset);
             //drawing with toon shader
             foreach (ModelMesh mesh in model.Meshes)
