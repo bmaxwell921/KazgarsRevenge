@@ -36,6 +36,10 @@ namespace KazgarsRevengeServer
         // Milliseconds between each time step
         private readonly int TIME_STEP = 100;
         private int timeToUpdate;
+
+        // hidef stuff
+        RenderTarget2D renderTarget;
+        RenderTarget2D normalDepthRenderTarget;
      
         public Server() : base()
         {
@@ -84,6 +88,24 @@ namespace KazgarsRevengeServer
 
             msgQ = new MessageQueue();
             Services.AddService(typeof(MessageQueue), msgQ);
+        }
+
+        protected override void LoadContent()
+        {
+            SetUpRenderTargets();
+            base.LoadContent();
+        }
+
+        private void SetUpRenderTargets()
+        {
+            PresentationParameters pp = GraphicsDevice.PresentationParameters;
+            renderTarget = new RenderTarget2D(GraphicsDevice,
+                                                pp.BackBufferWidth, pp.BackBufferHeight, false,
+                                                pp.BackBufferFormat, pp.DepthStencilFormat, 0, RenderTargetUsage.PreserveContents);
+
+            normalDepthRenderTarget = new RenderTarget2D(graphics.GraphicsDevice,
+                                                         pp.BackBufferWidth, pp.BackBufferHeight, false,
+                                                         pp.BackBufferFormat, pp.DepthStencilFormat);
         }
 
         protected void SetUpLoggers()
@@ -144,6 +166,15 @@ namespace KazgarsRevengeServer
             enemies.Reset();
             attacks.Reset();
             msgQ.Reset(); ;
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            if (renderTarget.IsContentLost || normalDepthRenderTarget.IsContentLost)
+            {
+                SetUpRenderTargets();
+            }
+            base.Draw(gameTime);
         }
     }
 }
