@@ -26,9 +26,8 @@ namespace KazgarsRevenge
             PlayerManager pm = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
             
             // game width and height are the width and height of each level
-            //byte[] mapData = nim.ReadBytes(game.levelWidth * game.levelHeight);
-            int[] mapData = new int[game.levelWidth * game.levelHeight];
-            for (int i = 0; i < game.levelWidth * game.levelHeight; ++i)
+            int[] mapData = new int[Constants.LEVEL_WIDTH * Constants.LEVEL_HEIGHT];
+            for (int i = 0; i < mapData.Count(); ++i)
             {
                 mapData[i] = nim.ReadInt32();
             }

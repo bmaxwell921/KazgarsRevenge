@@ -109,7 +109,7 @@ namespace KazgarsRevengeServer
         private int[] GetLevelIds()
         {
             // If this breaks, make sure rooms has the right amount of stuff
-            int[] ret = new int[game.levelWidth * game.levelHeight];
+            int[] ret = new int[Constants.LEVEL_HEIGHT * Constants.LEVEL_WIDTH];
 
             int i = 0;
             foreach (GameEntity room in rooms)

@@ -37,6 +37,12 @@ namespace KazgarsRevenge
         DisconnectedPlayer,
     }
 
+    // Used for locations of doors on chunks. North faces the top of the page, East faces to the right
+    public enum Direction
+    {      
+        NORTH, SOUTH, EAST, WEST
+    }
+
     public class Constants
     {
         public static readonly string CONNECTION_KEY = "Revengeance";
@@ -44,5 +50,11 @@ namespace KazgarsRevenge
         public static readonly int MAX_NUM_CONNECTIONS = 5;
 
         public static readonly int PORT = 14242;
+
+        // The width, in chunks, of one level of KR
+        public static readonly int LEVEL_WIDTH = 3;
+
+        // The height, in chunks, of one level of KR
+        public static readonly int LEVEL_HEIGHT = 3;
     }
 }
