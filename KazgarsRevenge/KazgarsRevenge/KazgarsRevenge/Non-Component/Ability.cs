@@ -16,7 +16,6 @@ namespace KazgarsRevenge
 
 
         int abilityLevel;
-        int levelLearned;
         public float cooldownSeconds;
         float lastUsed = -300f; //-5 minutes
         public bool onCooldown = false;
@@ -24,10 +23,9 @@ namespace KazgarsRevenge
         String tooltip = "N/A";
         AttackType type;
 
-        public Ability(int abilityLevelIn, int levelLearnedIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn, string aniName)
+        public Ability(int abilityLevelIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn, string aniName)
         {   
             abilityLevel = abilityLevelIn;
-            levelLearned = levelLearnedIn;
             icon = iconIn;
             cooldownSeconds = cooldownSecondsIn;
             type = typeIn;

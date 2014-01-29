@@ -139,6 +139,50 @@ namespace KazgarsRevenge
         }
 
 
+        #region Ability Definitions
+        public enum AbilityName
+        {
+            Snipe,
+
+            HeartStrike,
+
+            IceClawPrison,
+        }
+        public Ability GetAbility(AbilityName ability)
+        {
+            switch (ability)
+            {
+                case AbilityName.Snipe:
+                    return GetSnipe();
+                case AbilityName.HeartStrike:
+                    return GetHeartStrike();
+                case AbilityName.IceClawPrison:
+                    return GetIceClawPrison();
+                default:
+                    return null;
+            }
+        }
+
+
+
+
+
+        public Ability GetSnipe()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow");
+        }
+
+        public Ability GetHeartStrike()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow");
+        }
+
+        public Ability GetIceClawPrison()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow");
+        }
+        #endregion
+
         #region Particles
         ParticleManager particles;
         public void SpawnWeaponSparks(Vector3 position)
