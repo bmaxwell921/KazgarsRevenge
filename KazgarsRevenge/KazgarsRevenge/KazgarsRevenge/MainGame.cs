@@ -142,6 +142,9 @@ namespace KazgarsRevenge
             Components.Add(nmm);
             Services.AddService(typeof(NetworkMessageManager), nmm);
 
+            MessageSender ms = new MessageSender(nmm.Client, (LoggerManager)Services.GetService(typeof(LoggerManager)));
+            Services.AddService(typeof(MessageSender), ms);
+
             soundEffectLibrary = new SoundEffectLibrary(this);
             Services.AddService(typeof(SoundEffectLibrary), soundEffectLibrary);
 
@@ -289,7 +292,7 @@ namespace KazgarsRevenge
                     if (nmm.isHost && keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter))
                     {
                         lm.Log(Level.DEBUG, "Starting game");
-                        nmm.StartGame();
+                        ((MessageSender)Services.GetService(typeof(MessageSender))).SendStartGame(players.myId.id);
                         gameState = GameState.ReceivingMap;
                     }
                     break;

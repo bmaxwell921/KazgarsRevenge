@@ -102,6 +102,7 @@
     <Compile Include="Managers\Components\LevelModelManager.cs" />
     <Compile Include="Networking\Handlers\DisconnectedPlayerHandler.cs" />
     <Compile Include="Networking\Handlers\HostUpdateHandler.cs" />
+    <Compile Include="Networking\MessageSender.cs" />
     <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Misc Components\NetMovementComponent.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />

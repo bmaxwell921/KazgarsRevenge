@@ -1162,7 +1162,9 @@ namespace KazgarsRevenge
             physicalData.LinearVelocity = newVel;
 
             // Here
-            nmm.SendVelocityMessage(newVel);
+            PlayerManager players = (PlayerManager)Game.Services.GetService(typeof(PlayerManager));
+            ((MessageSender)Game.Services.GetService(typeof(MessageSender))).SendVelocityMessage(players.myId.id, newVel);
+            //nmm.SendVelocityMessage(newVel);
             
         }
         private void ResetTargettedEntity()

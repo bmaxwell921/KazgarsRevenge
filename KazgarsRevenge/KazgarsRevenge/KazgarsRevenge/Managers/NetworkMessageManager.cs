@@ -14,7 +14,7 @@ namespace KazgarsRevenge
         LevelManager levels;
         EnemyManager enemies;
 
-        NetClient Client;
+        public NetClient Client;
 
         public IList<ServerInfo> connections;
         public bool isHost;
@@ -64,15 +64,17 @@ namespace KazgarsRevenge
             return Client.ReadMessage();
         }
 
-        public void StartGame()
-        {
-            // TODO make sure we're connected to something???
-            NetOutgoingMessage nom = Client.CreateMessage();
-            nom.Write((byte)MessageType.GameStateChange);
-            nom.Write(players.myId.id);
-            nom.Write((byte)GameState.GenerateMap);
-            Client.SendMessage(nom, NetDeliveryMethod.ReliableOrdered);
-        }
+        //public void StartGame()
+        //{
+        //    // TODO remove this StartGame method
+        //    ((MessageSender)Game.Services.GetService(typeof(MessageSender))).SendStartGame(players.myId.id);
+        //    // TODO make sure we're connected to something???
+        //    //NetOutgoingMessage nom = Client.CreateMessage();
+        //    //nom.Write((byte)MessageType.GameStateChange);
+        //    //nom.Write(players.myId.id);
+        //    //nom.Write((byte)GameState.GenerateMap);
+        //    //Client.SendMessage(nom, NetDeliveryMethod.ReliableOrdered);
+        //}
 
         #endregion
         
@@ -93,19 +95,20 @@ namespace KazgarsRevenge
         ///     int32 - zVel
         /// </summary>
         /// <param name="vel"></param>
-        public void SendVelocityMessage(Vector3 vel)
-        {
-            NetOutgoingMessage nom = Client.CreateMessage();
-            nom.Write((byte)MessageType.InGame_Kinetic);
-            nom.Write((byte)this.players.myId.id);
+        //public void SendVelocityMessage(Vector3 vel)
+        //{
+        //    ((MessageSender)Game.Services.GetService(typeof(MessageSender))).SendVelocityMessage(players.myId.id, vel);
+        //    //NetOutgoingMessage nom = Client.CreateMessage();
+        //    //nom.Write((byte)MessageType.InGame_Kinetic);
+        //    //nom.Write((byte)this.players.myId.id);
 
-            nom.Write((int)vel.X);
-            nom.Write((int)vel.Y);
-            nom.Write((int)vel.Z);
+        //    //nom.Write((int)vel.X);
+        //    //nom.Write((int)vel.Y);
+        //    //nom.Write((int)vel.Z);
 
-            // If it gets there that's good, if not meh
-            Client.SendMessage(nom, NetDeliveryMethod.Unreliable);
-        }
+        //    //// If it gets there that's good, if not meh
+        //    //Client.SendMessage(nom, NetDeliveryMethod.Unreliable);
+        //}
         #endregion
 
         public void CloseConnection()
