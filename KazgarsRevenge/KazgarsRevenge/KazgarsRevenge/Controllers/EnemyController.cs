@@ -275,7 +275,7 @@ namespace KazgarsRevenge
                 attackCounter += millis;
                 if (swingCounter >= settings.attackLength / 2)
                 {
-                    attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false, this);
+                    attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, false, this);
                     swingCounter = 0;
                     swinging = false;
                 }

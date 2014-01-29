@@ -288,46 +288,6 @@ namespace KazgarsRevenge
             EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
         }
 
-
-
-        private void InitNewPlayer()
-        {
-            #region stats and inventory
-            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
-            {
-                stats.Add((StatType)i, 0);
-            }
-
-            RecalculateStats();
-
-            for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
-            {
-                gear.Add((GearSlot)i, null);
-            }
-            #endregion
-
-            #region ability initialization
-            //create initial abilities
-            allAbilities.Add("heartstrike", new Ability(1, texHeartStrikeIcon, 10f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I1", new Ability(1, I1, 5f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I2", new Ability(1, I2, 30f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I3", new Ability(1, I3, 60f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I4", new Ability(1, I4, 120f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I5", new Ability(1, I5, 120f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I6", new Ability(1, I6, 90f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I7", new Ability(1, I7, 300f, AttackType.Melle, "k_flip"));
-
-            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, allAbilities["heartstrike"]);
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, allAbilities["I1"]);
-            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, allAbilities["I2"]);
-            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, allAbilities["I3"]);
-            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, allAbilities["I4"]);
-            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, allAbilities["I5"]);
-            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, allAbilities["I6"]);
-            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, allAbilities["I7"]);
-            #endregion
-        }
-
         private void InitPlayerFromFile()
         {
 
@@ -401,6 +361,36 @@ namespace KazgarsRevenge
             }
 
             PlayAnimation("k_idle1");
+            #endregion
+        }
+
+        private void InitNewPlayer()
+        {
+            #region stats and inventory
+            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
+            {
+                stats.Add((StatType)i, 0);
+            }
+
+            RecalculateStats();
+
+            for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
+            {
+                gear.Add((GearSlot)i, null);
+            }
+            #endregion
+
+            #region ability initialization
+            //create initial abilities
+
+            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, attacks.GetAbility(AbilityName.Snipe));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, attacks.GetAbility(AbilityName.Snipe));
+            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, attacks.GetAbility(AbilityName.Snipe));
+            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, attacks.GetAbility(AbilityName.Snipe));
+            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, attacks.GetAbility(AbilityName.Snipe));
+            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, attacks.GetAbility(AbilityName.Snipe));
+            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, attacks.GetAbility(AbilityName.Snipe));
+            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, attacks.GetAbility(AbilityName.Snipe));
             #endregion
         }
 
@@ -1036,7 +1026,7 @@ namespace KazgarsRevenge
                 {
                     Vector3 forward = GetForward();
                     attached.Remove("arrow");
-                    attacks.CreateArrow(physicalData.Position + forward * 10, forward * 450, 25, FactionType.Players, this);
+                    attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this);
                     attState = AttackState.LettingGo;
                     millisShotAniCounter = 0;
                 }
@@ -1053,7 +1043,7 @@ namespace KazgarsRevenge
                 if (attState == AttackState.InitialSwing && millisMelleCounter >= aniDurations["melleDamage"])
                 {
                     Vector3 forward = GetForward();
-                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, FactionType.Players, true, this);
+                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, true, this);
                     attState = AttackState.FinishSwing;
                     millisMelleCounter = 0;
                 }

@@ -15,6 +15,14 @@ using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
+    public enum AbilityName
+    {
+        Snipe,
+
+        HeartStrike,
+
+        IceClawPrison,
+    }
     public class AttackManager : EntityManager
     {
         List<GameEntity> attacks = new List<GameEntity>();
@@ -37,15 +45,16 @@ namespace KazgarsRevenge
 
 
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
-        public void CreateArrow(Vector3 position, Vector3 initialTrajectory, int damage, FactionType arrowFaction, AliveComponent creator)
+        const float arrowSpeed = 450.0f;
+        public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
         {
-            GameEntity arrow = new GameEntity("arrow", arrowFaction, EntityType.Misc);
+            GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y += 20;
             Entity arrowData = new Box(position, 10, 17, 10, .001f);
-            arrowData.CollisionInformation.CollisionRules.Group = arrowFaction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            arrowData.LinearVelocity = initialTrajectory;
-            arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(initialTrajectory));
+            arrowData.LinearVelocity = dir * arrowSpeed;
+            arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             arrow.AddSharedData(typeof(Entity), arrowData);
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
@@ -53,7 +62,7 @@ namespace KazgarsRevenge
                 new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                     new Vector3(10), Vector3.Zero, arrowGraphicRot);
 
-            AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, arrowFaction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -69,19 +78,19 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateMelleAttack(Vector3 position, int damage, FactionType faction, bool sparks, AliveComponent creator)
+        public void CreateMelleAttack(Vector3 position, int damage, bool sparks, AliveComponent creator)
         {
-            GameEntity newAttack = new GameEntity("arrow", faction, EntityType.Misc);
+            GameEntity newAttack = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
 
             Entity attackData = new Box(position, 35, 47, 35, .01f);
-            attackData.CollisionInformation.CollisionRules.Group = faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
 
-            AttackController attackAI = new AttackController(mainGame, newAttack, attackData, damage, 300, faction == FactionType.Players? FactionType.Enemies : FactionType.Players, creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, attackData, damage, 300, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             genComponentManager.AddComponent(attackPhysics);
@@ -140,14 +149,6 @@ namespace KazgarsRevenge
 
 
         #region Ability Definitions
-        public enum AbilityName
-        {
-            Snipe,
-
-            HeartStrike,
-
-            IceClawPrison,
-        }
         public Ability GetAbility(AbilityName ability)
         {
             switch (ability)
@@ -169,17 +170,22 @@ namespace KazgarsRevenge
 
         public Ability GetSnipe()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow", new AbilityCallback(CreateSnipe));
+        }
+
+        public void CreateSnipe(Vector3 position, Vector3 dir, AliveComponent creator)
+        {
+            CreateArrow(position, dir, 100, creator);
         }
 
         public Ability GetHeartStrike()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow", new AbilityCallback(CreateSnipe));
         }
 
         public Ability GetIceClawPrison()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow", new AbilityCallback(CreateSnipe));
         }
         #endregion
 
