@@ -7,7 +7,7 @@ using Lidgren.Network;
 
 namespace KazgarsRevenge
 {
-    class NetworkMessageManager : BaseNetworkMessageManager
+    public class NetworkMessageManager : BaseNetworkMessageManager
     {
         AttackManager attacks;
         PlayerManager players;

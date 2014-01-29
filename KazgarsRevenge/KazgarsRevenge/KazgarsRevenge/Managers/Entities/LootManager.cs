@@ -16,7 +16,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class LootManager : EntityManager
+    public class LootManager : EntityManager
     {
 
         List<GameEntity> lootSouls = new List<GameEntity>();

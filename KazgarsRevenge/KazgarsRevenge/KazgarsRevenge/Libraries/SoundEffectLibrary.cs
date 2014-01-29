@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace KazgarsRevenge.Libraries
 {
-    class SoundEffectLibrary
+    public class SoundEffectLibrary
     {
         Dictionary<string, SoundEffect> soundEffects;
         Random rnd;

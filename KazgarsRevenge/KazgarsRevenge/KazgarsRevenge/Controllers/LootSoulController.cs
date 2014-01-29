@@ -15,7 +15,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class LootSoulController : AIComponent
+    public class LootSoulController : AIComponent
     {
         public enum LootSoulState
         {
