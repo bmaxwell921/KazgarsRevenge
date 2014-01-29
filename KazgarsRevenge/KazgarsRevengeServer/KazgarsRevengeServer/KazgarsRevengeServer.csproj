@@ -85,6 +85,8 @@
   <ItemGroup>
     <Compile Include="GameInfo\Readers\ServerConfigReader.cs" />
     <Compile Include="GameInfo\ServerConfig.cs" />
+    <Compile Include="LevelGeneration\ChunkFactory.cs" />
+    <Compile Include="LevelGeneration\ChunkInfo.cs" />
     <Compile Include="Managers\Entities\SAttackManager.cs" />
     <Compile Include="Managers\Entities\SEnemyManager.cs" />
     <Compile Include="Managers\Entities\SEntityManager.cs" />
