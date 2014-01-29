@@ -33,7 +33,7 @@ make escape close loot
 Enemy AI
 ========
 first boss's AI
-pathfinding (need level generation first)
+pathfinding (need level generation first (which needs more levels first))
 stop enemies from spawning underneath the level
 
 

@@ -1164,7 +1164,6 @@ namespace KazgarsRevenge
             // Here
             PlayerManager players = (PlayerManager)Game.Services.GetService(typeof(PlayerManager));
             ((MessageSender)Game.Services.GetService(typeof(MessageSender))).SendVelocityMessage(players.myId.id, newVel);
-            //nmm.SendVelocityMessage(newVel);
             
         }
         private void ResetTargettedEntity()

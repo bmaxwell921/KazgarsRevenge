@@ -33,7 +33,7 @@ namespace KazgarsRevengeServer
                 return;
             }
 
-            game.gameState = EnumParser.GetGameState(nim.ReadByte());
+            game.gameState = (GameState) Enum.ToObject(typeof(GameState), nim.ReadByte());
 
             ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, String.Format("Changing to gameState: {0}", game.gameState));
 

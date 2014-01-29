@@ -74,7 +74,6 @@ namespace KazgarsRevenge
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, 10f, Vector3.Down * 18);
             PlayerController playerController = new PlayerController(mainGame, player, saveFile);
-            NetMovementComponent nmc = new NetMovementComponent(mainGame, player);
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
             //adding the controllers to their respective managers 
@@ -86,9 +85,6 @@ namespace KazgarsRevenge
 
             player.AddComponent(typeof(AliveComponent), playerController);
             spriteManager.AddComponent(playerController);
-            
-            player.AddComponent(typeof(NetMovementComponent), nmc);
-            nmm.AddComponent(nmc);
 
             player.AddComponent(typeof(BlobShadowDecal), shadow);
             decalManager.AddBlobShadow(shadow);

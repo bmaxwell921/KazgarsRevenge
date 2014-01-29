@@ -21,8 +21,7 @@ namespace KazgarsRevenge
         public override void Handle(Lidgren.Network.NetIncomingMessage nim)
         {
             BaseHandler handler;
-            // TODO can we just cast...?
-            MessageType mt = EnumParser.GetMessageType(nim.ReadByte());
+            MessageType mt = (MessageType) Enum.ToObject(typeof(MessageType), nim.ReadByte());
             handlers.TryGetValue(mt, out handler);
 
             LoggerManager lm = (LoggerManager)game.Services.GetService(typeof(LoggerManager));
