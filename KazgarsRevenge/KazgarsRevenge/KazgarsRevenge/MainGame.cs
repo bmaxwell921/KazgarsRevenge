@@ -532,7 +532,7 @@ namespace KazgarsRevenge
         {
             base.OnExiting(sender, args);
 
-            nmm.CloseConnection();
+            ((MessageSender)Services.GetService(typeof(MessageSender))).CloseConnection(players.myId.id);
         }
     }
 }

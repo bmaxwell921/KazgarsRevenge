@@ -56,5 +56,17 @@ namespace KazgarsRevenge
             // If it gets there that's good, if not meh
             client.SendMessage(nom, NetDeliveryMethod.Unreliable);
         }
+
+        /// <summary>
+        /// Closes the connection with the server
+        /// </summary>
+        /// <param name="id">This client's id</param>
+        public void CloseConnection(int id)
+        {
+            // Send this client id so the server knows who to disconnect
+            String form = String.Format("{0}", id);
+            lm.Log(Level.DEBUG, String.Format("Sending disconnect message: {0}!", form)); ;
+            client.Shutdown(String.Format("{0}", id));
+        }
     }
 }

@@ -22,11 +22,137 @@ namespace KazgarsRevenge
         Vector3 targetPos = Vector3.Zero;
         const float stopRadius = 2;
         AnimationPlayer animations;
+
+        Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
+        Dictionary<string, AttachableModel> attached;
         public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity, 1)
         {
             this.targetPos = physicalData.Position;
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
+            this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
+            LootManager gearGenerator = Game.Services.GetService(typeof(LootManager)) as LootManager;
+            gear[GearSlot.Righthand] = null;
+            gear[GearSlot.Lefthand] = null;
+            EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
+            EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
+        }
+
+        /// <summary>
+        /// Copied from PlayerController, pull up hierarchy
+        /// </summary>
+        /// <param name="equipMe"></param>
+        /// <param name="slot"></param>
+        public void EquipGear(Equippable equipMe, GearSlot slot)
+        {
+            float xRot = 0;
+            //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand
+            Weapon possWep = equipMe as Weapon;
+            if (possWep != null)
+            {
+                if (possWep.TwoHanded)
+                {
+                    if (slot == GearSlot.Lefthand)
+                    {
+                        EquipGear(equipMe, GearSlot.Righthand);
+                        return;
+                    }
+                    if (!UnequipGear(GearSlot.Lefthand))
+                    {
+                        return;
+                    }
+                }
+
+                if (slot == GearSlot.Righthand)
+                {
+                    xRot = MathHelper.Pi;
+                }
+            }
+
+            //otherwise, carry on
+            if (UnequipGear(slot))
+            {
+                gear[slot] = equipMe;
+                RecalculateStats();
+
+                attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot));
+            }
+        }
+
+        /// <summary>
+        /// Copied from PlayerController, pull up hierarchy
+        /// </summary>
+        public string GearSlotToBoneName(GearSlot s)
+        {
+            switch (s)
+            {
+                case GearSlot.Lefthand:
+                    return "Bone_001_L_005";
+                case GearSlot.Righthand:
+                    return "Hand_R";
+                default:
+                    return "RootNode";
+            }
+        }
+
+        /// <summary>
+        /// Copied from PlayerController, pull up hierarchy
+        /// </summary>
+        public void RecalculateStats()
+        {
+            //add base stats, accounting for level
+            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
+            {
+                stats[(StatType)i] = baseStats[i];
+            }
+
+            //add stats for each piece of gear
+            foreach (KeyValuePair<GearSlot, Equippable> k in gear)
+            {
+                if (k.Value != null)
+                {
+                    AddStats(k.Value.StatEffects);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Copied from PlayerController, pull up hierarchy
+        /// </summary>
+        public void AddStats(Dictionary<StatType, float> statsToAdd)
+        {
+            foreach (KeyValuePair<StatType, float> k in statsToAdd)
+            {
+                stats[k.Key] += k.Value;
+            }
+        }
+
+        /// <summary>
+        ///  Copied from PlayerController, pull up hierarchy
+        /// tries to put equipped item into inventory. If there was no inventory space, returns false.
+        /// </summary>
+        public bool UnequipGear(GearSlot slot)
+        {
+            Equippable oldEquipped = gear[slot];
+            if (oldEquipped != null)
+            {
+                // Shouldn't need to do this check with networked players
+                //if (AddToInventory(oldEquipped))
+                //{
+                //    attached.Remove(slot.ToString());
+                //    return true;
+                //}
+                //else
+                //{
+                //    return false;
+                //}
+                return true;
+            }
+            else
+            {
+                //if there was nothing in there to start with, return true
+                return true;
+            }
         }
 
         public void SetPosition(Vector3 pos)
