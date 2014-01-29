@@ -308,14 +308,14 @@ namespace KazgarsRevenge
 
             #region ability initialization
             //create initial abilities
-            allAbilities.Add("heartstrike", new Ability(1, 1, texHeartStrikeIcon, 10f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I1", new Ability(1, 1, I1, 5f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I2", new Ability(1, 1, I2, 30f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I3", new Ability(1, 1, I3, 60f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I4", new Ability(1, 1, I4, 120f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I5", new Ability(1, 1, I5, 120f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I6", new Ability(1, 1, I6, 90f, AttackType.Melle, "k_flip"));
-            allAbilities.Add("I7", new Ability(1, 1, I7, 300f, AttackType.Melle, "k_flip"));
+            allAbilities.Add("heartstrike", new Ability(1, texHeartStrikeIcon, 10f, AttackType.Melle, "k_flip"));
+            allAbilities.Add("I1", new Ability(1, I1, 5f, AttackType.Melle, "k_flip"));
+            allAbilities.Add("I2", new Ability(1, I2, 30f, AttackType.Melle, "k_flip"));
+            allAbilities.Add("I3", new Ability(1, I3, 60f, AttackType.Melle, "k_flip"));
+            allAbilities.Add("I4", new Ability(1, I4, 120f, AttackType.Melle, "k_flip"));
+            allAbilities.Add("I5", new Ability(1, I5, 120f, AttackType.Melle, "k_flip"));
+            allAbilities.Add("I6", new Ability(1, I6, 90f, AttackType.Melle, "k_flip"));
+            allAbilities.Add("I7", new Ability(1, I7, 300f, AttackType.Melle, "k_flip"));
 
             boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, allAbilities["heartstrike"]);
             boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, allAbilities["I1"]);
