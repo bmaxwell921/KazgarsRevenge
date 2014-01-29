@@ -16,7 +16,7 @@ namespace KazgarsRevenge
 
         public override void Handle(NetIncomingMessage nim)
         {
-            Identification id = new Identification(nim.ReadByte());
+            Identification id = new Identification(nim.ReadInt32());
             ((PlayerManager)game.Services.GetService(typeof(PlayerManager))).DeletePlayer(id);
         }
     }

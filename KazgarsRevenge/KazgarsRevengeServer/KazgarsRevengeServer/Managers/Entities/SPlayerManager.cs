@@ -131,7 +131,7 @@ namespace KazgarsRevengeServer
             players.Clear();
         }
 
-        public void DisconnectPlayer(byte id)
+        public void DisconnectPlayer(int id)
         {
             players.Remove(new Identification(id));            
         }

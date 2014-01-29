@@ -97,13 +97,13 @@ namespace KazgarsRevengeServer
          * 
          * 
          */
-        public void SendMapData(byte[] chunkIds, IDictionary<Identification, Vector3> playerPosMap)
+        public void SendMapData(int[] chunkIds, IDictionary<Identification, Vector3> playerPosMap)
         {
             NetOutgoingMessage nom = server.CreateMessage();
             nom.Write((byte)MessageType.MapData);
 
             // Send the actual map data
-            foreach (byte chunk in chunkIds)
+            foreach (int chunk in chunkIds)
             {
                 nom.Write(chunk);
             }
@@ -164,7 +164,7 @@ namespace KazgarsRevengeServer
         }
 
         // Let all the clients know that someone disconnected
-        public void SendDisconnectedPlayerMessage(byte id)
+        public void SendDisconnectedPlayerMessage(int id)
         {
             NetOutgoingMessage nom = server.CreateMessage();
             nom.Write((byte)MessageType.DisconnectedPlayer);

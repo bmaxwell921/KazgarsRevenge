@@ -76,7 +76,7 @@ namespace KazgarsRevengeServer
             return id.Equals(hostId);
         }
 
-        public void DisconnectPlayer(byte id)
+        public void DisconnectPlayer(int id)
         {
             if (hostId.Equals(new Identification(id)))
             {

@@ -106,10 +106,10 @@ namespace KazgarsRevengeServer
          * 
          * TODO this will need to be updated once level generation actually works
          */
-        private byte[] GetLevelIds()
+        private int[] GetLevelIds()
         {
             // If this breaks, make sure rooms has the right amount of stuff
-            byte[] ret = new byte[game.levelWidth * game.levelHeight];
+            int[] ret = new int[game.levelWidth * game.levelHeight];
 
             int i = 0;
             foreach (GameEntity room in rooms)

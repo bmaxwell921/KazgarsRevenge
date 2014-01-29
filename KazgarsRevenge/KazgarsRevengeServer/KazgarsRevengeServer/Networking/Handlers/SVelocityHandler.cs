@@ -32,7 +32,7 @@ namespace KazgarsRevengeServer
             SPlayerManager playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
 
             // Just queue up the message to be applied later
-            Identification pId = new Identification(nim.ReadByte());
+            Identification pId = new Identification(nim.ReadInt32());
             Vector3 vel = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
             MessageQueue mq = game.Services.GetService(typeof(MessageQueue)) as MessageQueue;
             mq.AddMessage(new VelocityMessage(MessageType.InGame_Kinetic, pId, vel));

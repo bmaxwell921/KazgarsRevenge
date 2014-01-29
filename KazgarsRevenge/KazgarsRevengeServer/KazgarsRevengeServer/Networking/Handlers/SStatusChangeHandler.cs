@@ -70,7 +70,7 @@ namespace KazgarsRevengeServer
             /*
              * Parse out their id from the message, let the player manager and network manager know they're disconnecting.
              */ 
-            byte id = (byte)Convert.ToInt32(nim.ReadString());
+            int id = Convert.ToInt32(nim.ReadString());
             SPlayerManager pm = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
             SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
             

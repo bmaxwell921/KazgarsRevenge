@@ -17,7 +17,7 @@ namespace KazgarsRevenge
         public override void Handle(NetIncomingMessage nim)
         {
             NetworkMessageManager nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
-            nmm.UpdateHost(nim.ReadByte());
+            nmm.UpdateHost(nim.ReadInt32());
         }
     }
 }

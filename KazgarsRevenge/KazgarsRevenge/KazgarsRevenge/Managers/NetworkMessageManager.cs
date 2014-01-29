@@ -118,7 +118,7 @@ namespace KazgarsRevenge
         }
 
         // For now this is just so the current client can know if it's host or not
-        public void UpdateHost(byte newHost)
+        public void UpdateHost(int newHost)
         {
             if (players.myId.id == newHost)
             {

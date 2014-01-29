@@ -28,7 +28,7 @@ namespace KazgarsRevenge
         /// Sends a message to the server to start the game.
         /// </summary>
         /// <param name="id">The id of the player sending the message</param>
-        public void SendStartGame(byte id)
+        public void SendStartGame(int id)
         {
             // TODO make sure we're connected to something???
             NetOutgoingMessage nom = client.CreateMessage();
@@ -43,7 +43,7 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="id">The id of the player sending the message </param>
         /// <param name="vel">The player's velocity</param>
-        public void SendVelocityMessage(byte id, Vector3 vel)
+        public void SendVelocityMessage(int id, Vector3 vel)
         {
             NetOutgoingMessage nom = client.CreateMessage();
             nom.Write((byte)MessageType.InGame_Kinetic);

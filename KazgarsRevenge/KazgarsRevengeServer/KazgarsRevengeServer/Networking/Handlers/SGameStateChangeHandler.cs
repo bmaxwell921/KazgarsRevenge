@@ -24,7 +24,7 @@ namespace KazgarsRevengeServer
         {
             SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
             
-            byte pId = nim.ReadByte();
+            int pId = nim.ReadInt32();
 
             if (!nmm.isHost(new Identification(pId)))
             {

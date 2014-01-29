@@ -106,7 +106,6 @@
     <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
     <Compile Include="Networking\Handlers\GameStateChangeHandler.cs" />
-    <Compile Include="Networking\Handlers\KineticHandler.cs" />
     <Compile Include="Networking\Handlers\ReceivingMapHandler.cs" />
     <Compile Include="Networking\Handlers\SnapshotHandler.cs" />
     <Compile Include="Non-Component\Ability.cs" />

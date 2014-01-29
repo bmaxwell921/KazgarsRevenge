@@ -27,7 +27,7 @@ namespace KazgarsRevenge
             LoggerManager lm = (LoggerManager)game.Services.GetService(typeof(LoggerManager));
             lm.Log(Level.DEBUG, "Receiving Connection info from server");
 
-            byte clientId = nim.ReadByte();
+            int clientId = nim.ReadInt32();
             bool isHost = nim.ReadBoolean();
 
             // TODO remove this for a position from the server

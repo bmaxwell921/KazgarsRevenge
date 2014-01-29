@@ -168,7 +168,7 @@ namespace KazgarsRevenge
         #endregion
 
         // Reads the map from the given array of bytes, representing chunk types
-        public void CreateMapFrom(byte[] map)
+        public void CreateMapFrom(int[] map)
         {
             // TODO actually implement                     
             DemoLevel();

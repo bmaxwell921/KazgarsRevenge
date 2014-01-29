@@ -13,13 +13,13 @@ namespace KazgarsRevenge
     /// </summary>
     public class Identification
     {
-        public byte id
+        public int id
         {
             get;
             protected set;
         }
 
-        public Identification(byte id)
+        public Identification(int id)
         {
             this.id = id;
         }
