@@ -587,7 +587,7 @@ namespace KazgarsRevenge
         {
             base.RecalculateStats();
 
-            stateResetLength = 50;// 3000 * (1 - Math.Min(.8f, stats[StatType.AttackSpeed]));
+            stateResetLength = 3000 * (1 - Math.Min(.8f, stats[StatType.AttackSpeed]));
         }
         private void ResetTargettedEntity()
         {

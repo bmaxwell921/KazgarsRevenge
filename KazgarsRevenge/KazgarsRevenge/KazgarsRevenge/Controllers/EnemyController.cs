@@ -173,6 +173,10 @@ namespace KazgarsRevenge
         AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
         {
+            if (physicalData.Position.Y < -20)
+            {
+                Entity.Kill();
+            }
             if (state != EnemyState.Dying && state != EnemyState.Decaying && Dead)
             {
                 state = EnemyState.Dying;

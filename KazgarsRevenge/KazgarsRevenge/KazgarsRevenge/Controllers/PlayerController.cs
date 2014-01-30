@@ -551,7 +551,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 PlayAnimation("k_loot", MixType.None);
-                millisActionLength = animations.GetAniMillis("k_loot");
+                millisActionLength = animations.GetAniMillis("k_loot") - 20;
 
                 if (attached[GearSlot.Righthand.ToString()] != null)
                 {
@@ -605,13 +605,13 @@ namespace KazgarsRevenge
             {
                 PlayAnimation("k_flip", MixType.None);
                 attState = AttackState.Attacking;
-                millisActionLength = 300;
+                millisActionLength = 400;
             });
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
                 attacks.CreateMelleAttack(physicalData.Position + forward * 35, 50, true, this);
-                millisActionLength = 600;
+                millisActionLength = 500;
             });
             sequence.Add(() =>
             {
