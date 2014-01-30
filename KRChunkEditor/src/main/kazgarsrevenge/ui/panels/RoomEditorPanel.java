@@ -3,6 +3,7 @@ package main.kazgarsrevenge.ui.panels;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,12 +81,37 @@ public class RoomEditorPanel extends KREditorPanel {
 	public void select(String selectionName) {
 		// Deselect if they pressed the same one
 		if (super.selectedItem != null && super.selectedItem.getName().equals(selectionName)) {
-			super.editGrid.resetSelectedArea(selectedItem.getLocation().getX(), selectedItem.getLocation().getY());
 			super.selectedItem = null;
 			return;
 		}
 		ChunkComponent newSel = ComponentManager.getInstance().getComponent(RoomBlock.class, selectionName);
 		super.selectedItem = newSel;
 		editGrid.changedSelected(selectedItem.getWidth(), selectedItem.getHeight());
+	}
+	
+	public void doMultiDrop() {		
+		if (!super.editGrid.performingMultiDrop() || !hasSelection()) {
+			editGrid.cancelMultiDrop();
+			return;
+		}
+		Rectangle fillLocs = editGrid.findMultiSelectedArea();
+		for (int i = 0; i < fillLocs.width; ++i)
+		{
+			for (int j = 0; j < fillLocs.height; ++j)
+			{
+				ChunkComponent editClone = (ChunkComponent) selectedItem.clone();
+				editClone.setLocation(new Location(i + fillLocs.x , j + fillLocs.y));
+				editing.add(editClone);
+			}
+		}
+		editGrid.cancelMultiDrop();
+	}
+	
+	public void handleMulti() {
+		if (editGrid.performingMultiDrop()) {
+			doMultiDrop();
+			return;
+		}
+		editGrid.startMultiDrop();
 	}
 }

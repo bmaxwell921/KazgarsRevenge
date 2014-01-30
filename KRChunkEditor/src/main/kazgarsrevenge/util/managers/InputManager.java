@@ -30,6 +30,7 @@ public class InputManager {
 		keyPressedMap.put(KeyEvent.VK_ENTER, false);
 		keyPressedMap.put(KeyEvent.VK_R, false);
 		keyPressedMap.put(KeyEvent.VK_BACK_SPACE, false);
+		keyPressedMap.put(KeyEvent.VK_M, false);
 	}
 	
 	/**

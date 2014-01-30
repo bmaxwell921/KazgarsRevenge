@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 
 import main.kazgarsrevenge.data.Location;
 import main.kazgarsrevenge.ui.panels.KREditorPanel;
+import main.kazgarsrevenge.ui.panels.RoomEditorPanel;
 import main.kazgarsrevenge.util.IO.KRImageIO;
 import main.kazgarsrevenge.util.managers.InputManager;
 
@@ -54,6 +55,29 @@ public class UpdateListener implements ActionListener {
 		handlePlacement();
 		handleRotation();
 		handleDeletion();
+		
+		if (editorPanel.getClass() == RoomEditorPanel.class) {
+			handleMultiSelection();
+		}
+	}
+	
+	private void handleMultiSelection() {
+		if (!InputManager.getInstance().isPressed(KeyEvent.VK_M)) {
+			return;
+		}
+		InputManager.getInstance().updateValue(KeyEvent.VK_M, false);
+		new Thread() {
+			@Override
+			public void run() {
+				((RoomEditorPanel) editorPanel).handleMulti();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						editorPanel.repaint();
+					}
+				});
+			}
+		}.start();
 	}
 	
 	// Handles checking and moving as needed
