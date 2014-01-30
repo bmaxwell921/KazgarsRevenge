@@ -265,7 +265,7 @@ namespace SkinnedModelLib
                     // Use this keyframe.
                     Matrix transform = keyframe.Transform;
                     float dur = (float)(mixDur.Duration().TotalMilliseconds);
-                    float cur = (float)(secondTime.Duration().TotalMilliseconds);
+                    float cur = (float)(secondTimeValue.Duration().TotalMilliseconds);
                     float amt;
                     if (playMixedOnce)
                     {
@@ -275,8 +275,8 @@ namespace SkinnedModelLib
                     {
                         amt = cur / dur;
                     }
-                    bool lerp = bonesToIgnore == null;
-                    if (lerp || !bonesToIgnore.Contains(keyframe.Bone))
+                    bool alwayslerp = bonesToIgnore == null;
+                    if (alwayslerp || !bonesToIgnore.Contains(keyframe.Bone))
                     {
                         boneTransforms[keyframe.Bone] = Matrix.Lerp(boneTransforms[keyframe.Bone], transform, amt);
                     }

@@ -55,7 +55,7 @@ namespace KazgarsRevenge
 
 
         //variables for movement
-        protected const float stopRadius = 10;
+        protected float stopRadius = 10;
         protected const float targetResetDistance = 1000;
         protected Vector3 mouseHoveredLocation = Vector3.Zero;
         protected Vector3 groundTargetLocation = Vector3.Zero;
@@ -63,7 +63,7 @@ namespace KazgarsRevenge
         protected double millisRunTime = 2000;
         protected double millisCombatLength = 4000;
         protected double millisCombatCounter = 0;
-        protected bool inCombat;
+        protected bool inCombat = false;
         protected bool looting = false;
 
         #endregion
@@ -121,7 +121,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// tries to put equipped item into inventory. If there was no inventory space, returns false.
         /// </summary>
-        protected bool UnequipGear(GearSlot slot)
+        protected virtual bool UnequipGear(GearSlot slot)
         {
             Equippable oldEquipped = gear[slot];
             if (oldEquipped != null)
@@ -166,7 +166,7 @@ namespace KazgarsRevenge
             inventory.Add(toAdd);
             return true;
         }
-        protected void RecalculateStats()
+        protected virtual void RecalculateStats()
         {
             //add base stats, accounting for level
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
@@ -273,46 +273,9 @@ namespace KazgarsRevenge
             #endregion
 
             #region animation setup
-            aniDurations = new Dictionary<string, double>();
-            aniDurations["shotRelease"] = animations.skinningDataValue.AnimationClips["k_fire_arrow"].Duration.TotalMilliseconds / 2;
-            aniDurations["melleDamage"] = animations.skinningDataValue.AnimationClips["k_onehanded_swing"].Duration.TotalMilliseconds / 2;
-            foreach (KeyValuePair<string, AnimationClip> k in animations.skinningDataValue.AnimationClips)
-            {
-                string key = k.Key;
-                double length = k.Value.Duration.TotalMilliseconds;
-
-                if (key == "k_fighting_stance")
-                {
-                    length *= 2;
-                }
-
-                aniDurations.Add(key, length - 20);
-            }
-
             PlayAnimation("k_idle1", MixType.None);
 
-            animationActions = new Dictionary<string, List<Action>>();
-            List<Action> fireArrowSequence = new List<Action>();
-            
-            fireArrowSequence.Add(() =>
-            {
-                //start drawing; basically do nothing until next action
-
-            });
-            fireArrowSequence.Add(() =>
-            {
-                //attach arrow model to hand
-
-            });
-            fireArrowSequence.Add(() =>
-            {
-                //draw arrow back
-            });
-            fireArrowSequence.Add(() =>
-            {
-                //remove attached arrow, create arrow projectile, and finish animation
-            });
-
+            SetUpActionSequences();
             #endregion
         }
 
@@ -335,173 +298,382 @@ namespace KazgarsRevenge
             #region ability initialization
             //create initial abilities
 
-            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, attacks.GetAbility(AbilityName.Snipe));
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, attacks.GetAbility(AbilityName.Snipe));
-            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, attacks.GetAbility(AbilityName.Snipe));
-            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, attacks.GetAbility(AbilityName.Snipe));
-            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, attacks.GetAbility(AbilityName.Snipe));
-            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, attacks.GetAbility(AbilityName.Snipe));
-            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, attacks.GetAbility(AbilityName.Snipe));
-            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, attacks.GetAbility(AbilityName.Snipe));
+            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, attacks.GetAbility(AbilityName.HeartStrike));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, attacks.GetAbility(AbilityName.HeartStrike));
+            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, attacks.GetAbility(AbilityName.HeartStrike));
+            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, attacks.GetAbility(AbilityName.HeartStrike));
+            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, attacks.GetAbility(AbilityName.HeartStrike));
+            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, attacks.GetAbility(AbilityName.HeartStrike));
+            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, attacks.GetAbility(AbilityName.HeartStrike));
+            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, attacks.GetAbility(AbilityName.HeartStrike));
             #endregion
         }
 
-        #region animations
-        Dictionary<string, List<Action>> animationActions;
-        protected enum AttackState
+        #region Action Sequences
+
+        private string currentActionName = "";
+        private Dictionary<string, List<Action>> actionSequences;
+        protected bool needInterruptAction = true;
+        protected bool canInterrupt = false;
+        private Dictionary<string, Action> interruptActions;
+        //the first item in the list is called immediately (when you call StartSequence)
+        protected List<Action> currentSequence = null;
+        protected int actionIndex = 0;
+
+        protected void StartSequence(string name)
         {
-            None,
-            GrabbingArrow,
-            DrawingString,
-            LettingGo,
-            InitialSwing,
-            FinishSwing,
-            CastingSpell,
+            if (needInterruptAction)
+            {
+                InterruptCurrentSequence();
+            }
+            needInterruptAction = true;
+            canInterrupt = false;
+            currentSequence = actionSequences[name];
+            actionIndex = 0;
+            currentActionName = name;
+
+            currentSequence[0]();
+            millisActionCounter = 0;
+
+        }
+        private void InterruptCurrentSequence()
+        {
+            if (currentSequence != null && actionIndex < currentSequence.Count)
+            {
+                interruptActions[currentActionName]();
+                actionIndex = int.MaxValue;
+                currentSequence = null;
+            }
+        }
+        private void SetUpActionSequences()
+        {
+            interruptActions = new Dictionary<string, Action>();
+            actionSequences = new Dictionary<string, List<Action>>();
+            //idles
+            actionSequences.Add("idle", IdleActions());
+            actionSequences.Add("fightingstance", FightingStanceActions());
+            //primariy attacks
+            actionSequences.Add("swing", SwingActions());
+            actionSequences.Add("shoot", ShootActions());
+            //actionSequences.Add("punch", PunchActions());
+            //actionSequences.Add("magic", MagicActions());
+            //loot
+            actionSequences.Add("loot", LootActions());
+            actionSequences.Add("loot_spin", LootSpinActions());
+            actionSequences.Add("loot_smash", LootSmashActions());
+            //abilities
+            actionSequences.Add("flip", FlipActions());
+
+
+
+
+            //adding placeholder actions so that an exception is not thrown if this
+            //is called for something that doesn't care about being interrupted
+            //(and thus added nothing to the map)
+            foreach (string s in actionSequences.Keys)
+            {
+                if (!interruptActions.ContainsKey(s))
+                {
+                    interruptActions.Add(s, () => { });
+                }
+            }
         }
 
-        Dictionary<string, double> aniDurations;
-
-        protected double millisAniCounter;
-        protected double millisAniDuration;
-
-        protected AttackState attState = AttackState.None;
-        protected double millisShotAniCounter;
-        protected double millisShotArrowAttachLength = 200;
-        protected double millisShotArrowAttachCounter;
-
-        protected double millisMelleCounter;
-
-        protected string currentAniName;
-        protected void PlayAnimation(string animationName, MixType t)
+        private List<Action> IdleActions()
         {
-            animations.StartClip(animationName, t);
-            if (animationName == "k_idle1")
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
             {
-                millisAniDuration = rand.Next(2000, 4000);
-            }
-            else
+                PlayAnimation("k_idle1", MixType.None);
+                millisActionLength = rand.Next(2000, 4000);
+            });
+            sequence.Add(() =>
             {
-                millisAniDuration = aniDurations[animationName];
-            }
+                int randIdle = rand.Next(1, 7);
+                string idleAni = "";
+                if (randIdle < 4)
+                {
+                    idleAni = "k_idle2";
+                }
+                else
+                {
+                    switch (randIdle)
+                    {
+                        case 4:
+                            idleAni = "k_idle3";
+                            break;
+                        case 5:
+                            idleAni = "k_idle4";
+                            break;
+                        case 6:
+                            idleAni = "k_idle5";
+                            break;
+                    }
+                }
 
-            currentAniName = animationName;
-            millisAniCounter = 0;
-            millisShotAniCounter = 0;
+                PlayAnimation(idleAni, MixType.None);
+                millisActionLength = animations.GetAniMillis(idleAni);
+            });
+            sequence.Add(() =>
+            {
+                StartSequence("idle");
+            });
 
-            //TODO: send network signal
+            return sequence;
+        }
+        private List<Action> FightingStanceActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                PlayAnimation("k_fighting_stance", MixType.None);
+                millisActionLength = animations.GetAniMillis("k_fighting_stance");// *2;
+            });
+            sequence.Add(() =>
+            {
+                if (!inCombat)
+                {
+                    PlayAnimation("k_from_fighting_stance", MixType.None);
+                    millisActionLength = animations.GetAniMillis("k_from_fighting_stance") - 20;
+                }
+                else
+                {
+                    StartSequence("k_fighting_stance");
+                }
+            });
+            sequence.Add(() =>
+            {
+                StartSequence("idle");
+            });
 
+            return sequence;
+        }
+        private List<Action> ShootActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                //start playing shooting animation
+                canInterrupt = true;
+                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                attState = AttackState.Attacking;
+                stateResetCounter = 0;
+                millisActionLength = 200;
+            });
+            sequence.Add(() =>
+            {
+                //attach arrow model to hand
+                if (attachedArrow == null)
+                {
+                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0);
+                }
+                if (!attached.ContainsKey("handarrow"))
+                {
+                    attached.Add("handarrow", attachedArrow);
+                }
+
+                millisActionLength = animations.GetAniMillis("k_fire_arrow") / 2 - 200;
+            });
+            sequence.Add(() =>
+            {
+                //remove attached arrow, create arrow projectile, and finish animation
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this);
+                
+                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
+
+                needInterruptAction = false;
+            });
+
+            sequence.Add(() =>
+            {
+                //done, go back to fighting stance
+                StartSequence("fightingstance");
+                attState = AttackState.None;
+            });
+
+
+            //if interrupted, this should still fire an arrow
+            interruptActions.Add("shoot", () =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this);
+            });
+
+            return sequence;
+        }
+        private List<Action> SwingActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                canInterrupt = true;
+                PlayAnimation("k_onehanded_swing" + aniSuffix, MixType.None);
+                attState = AttackState.Attacking;
+                stateResetCounter = 0;
+                millisActionLength = animations.GetAniMillis("k_onehanded_swing") / 2;
+            });
+            sequence.Add(() =>
+            {
+                Vector3 forward = GetForward();
+                attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, true, this);
+                millisActionLength = animations.GetAniMillis("k_onehanded_swing") - millisActionLength;
+                needInterruptAction = false;
+            });
+            sequence.Add(() =>
+            {
+                StartSequence("fightingstance");
+                attState = AttackState.None;
+            });
+
+            //if interrupted, this should still create a melle attack
+            interruptActions.Add("swing", () =>
+            {
+                Vector3 forward = GetForward();
+                attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, true, this);
+            });
+
+            return sequence;
+        }
+        private List<Action> LootActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                PlayAnimation("k_loot", MixType.None);
+                millisActionLength = animations.GetAniMillis("k_loot");
+
+                if (attached[GearSlot.Righthand.ToString()] != null)
+                {
+                    attached[GearSlot.Righthand.ToString()].Draw = false;
+                }
+            });
+            sequence.Add(() =>
+            {
+                StartSequence("loot_spin");
+            });
+            return sequence;
+        }
+        private List<Action> LootSpinActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                PlayAnimation("k_loot_spin", MixType.None);
+                millisActionLength = animations.GetAniMillis("k_loot_spin");
+            });
+            sequence.Add(() =>
+            {
+                StartSequence("loot_spin");
+            });
+            return sequence;
+        }
+        private List<Action> LootSmashActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                PlayAnimation("k_loot_smash", MixType.MixInto);
+                millisActionLength = animations.GetAniMillis("k_loot_smash");
+            });
+            sequence.Add(() =>
+            {
+                lootingSoul = null;
+                looting = false;
+                if (attached[GearSlot.Righthand.ToString()] != null)
+                {
+                    attached[GearSlot.Righthand.ToString()].Draw = true;
+                }
+                PlayAnimation("k_fighting_stance", MixType.None);
+            });
+            return sequence;
+        }
+        private List<Action> FlipActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                PlayAnimation("k_flip", MixType.None);
+                attState = AttackState.Attacking;
+                millisActionLength = 300;
+            });
+            sequence.Add(() =>
+            {
+                Vector3 forward = GetForward();
+                attacks.CreateMelleAttack(physicalData.Position + forward * 35, 50, true, this);
+                millisActionLength = 600;
+            });
+            sequence.Add(() =>
+            {
+                Vector3 forward = GetForward();
+                attacks.CreateMelleAttack(physicalData.Position + forward * 35, 50, true, this);
+                millisActionLength = animations.GetAniMillis("k_flip") - 900;
+            });
+            sequence.Add(() =>
+            {
+                attState = AttackState.None;
+                StartSequence("fightingstance");
+            });
+
+            return sequence;
         }
 
         AttachableModel attachedArrow;
-        protected void CheckAnimations()
+        protected void UpdateActionSequences()
         {
-            //if the animation has played through its duration, do stuff
-            //(mainly to handle idle animations and fighting stance to idle)
-            if (millisAniCounter > millisAniDuration)
+            if (millisActionCounter >= millisActionLength)
             {
-                switch (currentAniName)
+                if (currentSequence != null && actionIndex < currentSequence.Count - 1)
                 {
-                    case "k_loot":
-                        PlayAnimation("k_loot_spin", MixType.None);
-                        break;
-                    case "k_loot_spin":
-                        break;
-                    case "k_loot_smash":
-                        lootingSoul = null;
-                        looting = false;
-                        if (attached[GearSlot.Righthand.ToString()] != null)
-                        {
-                            attached[GearSlot.Righthand.ToString()].Draw = true;
-                        }
-                        PlayAnimation("k_fighting_stance", MixType.None);
-                        break;
-                    case "k_idle1":
-                        int aniRand = rand.Next(1, 7);
-                        if (aniRand < 4)
-                        {
-                            PlayAnimation("k_idle2", MixType.None);
-                        }
-                        else
-                        {
-                            switch (aniRand)
-                            {
-                                case 4:
-                                    PlayAnimation("k_idle3", MixType.None);
-                                    break;
-                                case 5:
-                                    PlayAnimation("k_idle4", MixType.None);
-                                    break;
-                                case 6:
-                                    PlayAnimation("k_idle5", MixType.None);
-                                    soundEffects.playScratch();
-                                    break;
-                            }
-                        }
-                        break;
-                    default:
-                        PlayAnimation("k_fighting_stance", MixType.None);
-                        attState = AttackState.None;
-                        break;
-                    case "k_fighting_stance":
-                        PlayAnimation("k_from_fighting_stance", MixType.None);
-                        break;
-                    case "k_from_fighting_stance":
-                    case "k_idle2":
-                    case "k_idle3":
-                    case "k_idle4":
-                    case "k_idle5":
-                        PlayAnimation("k_idle1", MixType.None);
-                        break;
-                    case "k_run":
-                        break;
-                }
-                millisAniCounter = 0;
-            }
-
-            //shooting animation / arrow attachment / projectile creation
-            if (currentAniName == "k_fire_arrow")
-            {
-                if (attState == AttackState.GrabbingArrow
-                    && millisShotArrowAttachCounter >= millisShotArrowAttachLength)
-                {
-                    if (attachedArrow == null)
-                    {
-                        attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0);
-                    }
-                    if (!attached.ContainsKey("arrow"))
-                    {
-                        attached.Add("arrow", attachedArrow);
-                    }
-                    attState = AttackState.DrawingString;
-                    millisShotArrowAttachCounter = 0;
-                }
-                else if (attState == AttackState.DrawingString && millisShotAniCounter >= aniDurations["shotRelease"])
-                {
-                    Vector3 forward = GetForward();
-                    attached.Remove("arrow");
-                    attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this);
-                    attState = AttackState.LettingGo;
-                    millisShotAniCounter = 0;
-                }
-                else if (attState == AttackState.LettingGo && millisShotAniCounter >= aniDurations["shotRelease"] * stats[StatType.AttackSpeed])
-                {
-                    attState = AttackState.None;
-                    millisShotAniCounter = 0;
-                }
-            }
-
-            //swinging animation
-            if (currentAniName == "k_onehanded_swing" || currentAniName == "k_flip")
-            {
-                if (attState == AttackState.InitialSwing && millisMelleCounter >= aniDurations["melleDamage"])
-                {
-                    Vector3 forward = GetForward();
-                    attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, true, this);
-                    attState = AttackState.FinishSwing;
-                    millisMelleCounter = 0;
+                    ++actionIndex;
+                    currentSequence[actionIndex]();
+                    millisActionCounter = 0;
                 }
             }
         }
+        #endregion
+
+        #region animations
+        protected enum AttackState
+        {
+            None,
+            Attacking,
+            CastingSpell,
+        }
+
+        protected double stateResetCounter = 0;
+        //minimum milliseconds for an attack. decided in recalculatestats()
+        protected double stateResetLength = 0;
+        protected string aniSuffix = "";
+
+        protected double millisActionCounter;
+        protected double millisActionLength;
+
+        protected AttackState attState = AttackState.None;
+
+        protected string currentAniName;
+        protected void PlayAnimationInterrupt(string animationName, MixType t)
+        {
+            InterruptCurrentSequence();
+            PlayAnimation(animationName, t);
+
+        }
+        private void PlayAnimation(string animationName, MixType t)
+        {
+            animations.StartClip(animationName, t);
+            currentAniName = animationName;
+        }
+
         #endregion
 
 
@@ -509,7 +681,8 @@ namespace KazgarsRevenge
         //TODO: damage tracker and "in combat" status
         public override void HandleDamageDealt(int damageDealt)
         {
-            
+
+            millisCombatCounter = 0;
         }
 
         //TODO: particles for being hit / sound?
@@ -522,8 +695,7 @@ namespace KazgarsRevenge
         #region helpers
         protected void CloseLoot()
         {
-
-            PlayAnimation("k_loot_smash", MixType.MixInto);
+            StartSequence("loot_smash");
             if (lootingSoul != null)
             {
                 lootingSoul.CloseLoot();
@@ -534,11 +706,7 @@ namespace KazgarsRevenge
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
             if (possLoot != null)
             {
-                PlayAnimation("k_loot", MixType.None);
-                if (attached[GearSlot.Righthand.ToString()] != null)
-                {
-                    attached[GearSlot.Righthand.ToString()].Draw = false;
-                }
+                StartSequence("loot");
                 lootingSoul = (possLoot.GetComponent(typeof(AIComponent)) as LootSoulController);
                 lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);
                 looting = true;

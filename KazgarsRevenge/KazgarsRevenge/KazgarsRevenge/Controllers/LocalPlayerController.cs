@@ -63,7 +63,6 @@ namespace KazgarsRevenge
 
         //variables for target
         Entity targetedPhysicalData;
-        Entity targetedLootData;
         GameEntity mouseHoveredEntity;
         AliveComponent mouseHoveredHealth;
 
@@ -115,11 +114,17 @@ namespace KazgarsRevenge
             curKeys = Keyboard.GetState();
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
             float currentTime = (float)gameTime.TotalGameTime.TotalSeconds;
-            millisAniCounter += elapsed;
-            millisShotAniCounter += elapsed;
-            millisShotArrowAttachCounter += elapsed;
-            millisMelleCounter += elapsed;
+            millisActionCounter += elapsed;
             millisRunningCounter += elapsed;
+            stateResetCounter += elapsed;
+
+            
+            if (attState == AttackState.Attacking && stateResetCounter >= stateResetLength && canInterrupt)
+            {
+                attState = AttackState.None;
+            }
+
+            UpdateActionSequences();
 
             if (inCombat && millisCombatCounter >= millisCombatLength)
             {
@@ -160,12 +165,13 @@ namespace KazgarsRevenge
 
 
             Vector3 groundMove = Vector3.Zero;
+            bool moveTowardsTarget = curMouse.LeftButton == ButtonState.Pressed;
             if (Game.IsActive)
             {
                 bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
                 newTarget = CheckGUIButtons() || newTarget;
 
-                string collides = MouseCollidesWithGui();
+                string collides = CollidingGuiFrame();
                 bool mouseOnGui = collides != null;
                 CheckMouseRay(newTarget, mouseOnGui);
 
@@ -254,9 +260,6 @@ namespace KazgarsRevenge
                 ChangeVelocity(Vector3.Zero);
             }
 
-
-            CheckAnimations();
-
             prevMouse = curMouse;
             prevKeys = curKeys;
         }
@@ -312,9 +315,8 @@ namespace KazgarsRevenge
                     mouseHoveredEntity = result.HitObject.Tag as GameEntity;
                     if (mouseHoveredEntity != null)
                     {
-                        if (mouseHoveredEntity.Name == "loot")
+                        if (mouseHoveredEntity.Type == EntityType.Misc)
                         {
-                            targetedLootData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
                             ResetTargettedEntity();
                         }
                         //if the left mouse button was either just clicked or not pressed down at all, or if any other ability input was just clicked
@@ -444,7 +446,7 @@ namespace KazgarsRevenge
             if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targetedPhysicalData != null)
             {
                 //used to differentiate between left hand, right hand, and two hand animations
-                string aniSuffix = "right";
+                aniSuffix = "right";
 
                 //figure out what kind of weapon is in the main hand
                 AttackType mainHandType = GetMainhandType();
@@ -457,63 +459,52 @@ namespace KazgarsRevenge
                     {
                         aniSuffix = "twohanded";
                     }
-                    else if (mainHandType == offHandType)
-                    {
-                        aniSuffix = "dual";
-                    }
-
                 }
 
                 //remove this once we get more animations
                 aniSuffix = "";
 
-                bool inRange = false;
                 //attack if in range
                 switch (mainHandType)
                 {
                     case AttackType.None:
                         if (distance < melleRange)
                         {
-                            PlayAnimation("k_onehanded_swing" + aniSuffix, MixType.None);
-                            attState = AttackState.InitialSwing;
-                            inRange = true;
+                            //need punch animation
+                            StartSequence("punch");
+                            UpdateRotation(dir);
+                            mouseHoveredLocation = physicalData.Position;
+                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                     case AttackType.Melle:
                         if (distance < melleRange)
                         {
-                            PlayAnimation("k_onehanded_swing" + aniSuffix, MixType.None);
-                            attState = AttackState.InitialSwing;
-                            inRange = true;
+                            StartSequence("swing");
+                            UpdateRotation(dir);
+                            mouseHoveredLocation = physicalData.Position;
+                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                     case AttackType.Ranged:
                         if (distance < bowRange)
                         {
-                            PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
-                            attState = AttackState.GrabbingArrow;
-                            inRange = true;
+                            StartSequence("shoot");
+                            UpdateRotation(dir);
+                            mouseHoveredLocation = physicalData.Position;
+                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                     case AttackType.Magic:
                         if (distance < bowRange)
                         {
                             //need magic item animation here
-                            PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
-                            attState = AttackState.GrabbingArrow;
-                            inRange = true;
+                            StartSequence("shoot");
+                            UpdateRotation(dir);
+                            mouseHoveredLocation = physicalData.Position;
+                            groundTargetLocation = physicalData.Position;
                         }
                         break;
-                }
-
-                if (inRange)
-                {
-                    UpdateRotation(dir);
-                    millisMelleCounter = 0;
-                    millisShotAniCounter = 0;
-                    millisShotArrowAttachCounter = 0;
-                    mouseHoveredLocation = physicalData.Position;
-                    groundTargetLocation = physicalData.Position;
                 }
             }
 
@@ -532,23 +523,13 @@ namespace KazgarsRevenge
 
             if (useAbility)
             {
-                string ani = abilityToUse.AniName;
-                PlayAnimation(ani, MixType.MixInto);
-
-                //different sequence of animation states depending on attack type
-                switch (ani)
-                {
-                    case "k_flip":
-                        attState = AttackState.InitialSwing;
-                        break;
-                }
                 UpdateRotation(dir);
-                millisMelleCounter = 0;
-                millisShotAniCounter = 0;
-                millisShotArrowAttachCounter = 0;
                 mouseHoveredLocation = physicalData.Position;
                 groundTargetLocation = physicalData.Position;
                 targetedPhysicalData = null;
+
+
+                StartSequence(abilityToUse.ActionName);
             }
         }
 
@@ -575,7 +556,7 @@ namespace KazgarsRevenge
                     //just started running
                     if (currentAniName != "k_run")
                     {
-                        PlayAnimation("k_run", MixType.None);
+                        PlayAnimationInterrupt("k_run", MixType.None);
                     }
                 }
             }
@@ -586,7 +567,7 @@ namespace KazgarsRevenge
                 //just stopped moving
                 if (currentAniName == "k_run")
                 {
-                    PlayAnimation("k_fighting_stance", MixType.None);
+                    StartSequence("fightingstance");
                 }
             }
             else
@@ -596,19 +577,30 @@ namespace KazgarsRevenge
                 //just started running
                 if (currentAniName != "k_run")
                 {
-                    PlayAnimation("k_run", MixType.None);
+                    PlayAnimationInterrupt("k_run", MixType.None);
                 }
             }
         }
 
         #region Helpers
+        protected override void RecalculateStats()
+        {
+            base.RecalculateStats();
+
+            stateResetLength = 50;// 3000 * (1 - Math.Min(.8f, stats[StatType.AttackSpeed]));
+        }
         private void ResetTargettedEntity()
         {
             mouseHoveredEntity = null;
             mouseHoveredHealth = null;
         }
-        //Checks if mouse collides with GUI? #TODO #JARED
-        private string MouseCollidesWithGui()
+        
+        /// <summary>
+        /// Checks what frame of the gui that the mouse is colliding with and returns its name.
+        /// If the mouse is not colliding with the gui, returns null.
+        /// #Nate :P
+        /// </summary>
+        private string CollidingGuiFrame()
         {
 
             foreach (KeyValuePair<string, Rectangle> k in guiOutsideRects)

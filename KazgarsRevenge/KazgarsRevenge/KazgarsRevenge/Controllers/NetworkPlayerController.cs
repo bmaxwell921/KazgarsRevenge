@@ -20,7 +20,6 @@ namespace KazgarsRevenge
         private NetPlayerState state;
 
         Vector3 targetPos = Vector3.Zero;
-        const float stopRadius = 2;
         AnimationPlayer animations;
 
         Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
@@ -36,6 +35,8 @@ namespace KazgarsRevenge
             gear[GearSlot.Lefthand] = null;
             EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
             EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
+
+            stopRadius = 2;
         }
 
         /// <summary>
@@ -95,26 +96,6 @@ namespace KazgarsRevenge
             }
         }
 
-        /// <summary>
-        /// Copied from PlayerController, pull up hierarchy
-        /// </summary>
-        public void RecalculateStats()
-        {
-            //add base stats, accounting for level
-            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
-            {
-                stats[(StatType)i] = baseStats[i];
-            }
-
-            //add stats for each piece of gear
-            foreach (KeyValuePair<GearSlot, Equippable> k in gear)
-            {
-                if (k.Value != null)
-                {
-                    AddStats(k.Value.StatEffects);
-                }
-            }
-        }
 
         /// <summary>
         /// Copied from PlayerController, pull up hierarchy
@@ -129,9 +110,8 @@ namespace KazgarsRevenge
 
         /// <summary>
         ///  Copied from PlayerController, pull up hierarchy
-        /// tries to put equipped item into inventory. If there was no inventory space, returns false.
         /// </summary>
-        public bool UnequipGear(GearSlot slot)
+        protected override bool UnequipGear(GearSlot slot)
         {
             Equippable oldEquipped = gear[slot];
             if (oldEquipped != null)
@@ -203,7 +183,7 @@ namespace KazgarsRevenge
                     {
                         curDir = GetGraphicsYaw(diff);
                         physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(curDir, 0, 0);
-                        animations.StartClip("k_run", MixType.MixInto);
+                        animations.StartClip("k_run", MixType.None);
                         state = NetPlayerState.Running;
                     }
                     break;

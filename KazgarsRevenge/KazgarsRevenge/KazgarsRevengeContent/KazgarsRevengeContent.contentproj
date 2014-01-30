@@ -152,13 +152,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sound\scratching.wav">
-      <Name>scratching</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\UI\Abilities\HS.jpg">
       <Name>HS</Name>
       <Importer>TextureImporter</Importer>

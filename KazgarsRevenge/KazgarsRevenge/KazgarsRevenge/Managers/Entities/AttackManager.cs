@@ -147,7 +147,6 @@ namespace KazgarsRevenge
             return rotation;
         }
 
-
         #region Ability Definitions
         public Ability GetAbility(AbilityName ability)
         {
@@ -164,13 +163,9 @@ namespace KazgarsRevenge
             }
         }
 
-
-
-
-
         public Ability GetSnipe()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow", new AbilityCallback(CreateSnipe));
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "shoot", 1000);
         }
 
         public void CreateSnipe(Vector3 position, Vector3 dir, AliveComponent creator)
@@ -180,12 +175,12 @@ namespace KazgarsRevenge
 
         public Ability GetHeartStrike()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow", new AbilityCallback(CreateSnipe));
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6, AttackType.Ranged, "flip", 30);
         }
 
         public Ability GetIceClawPrison()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "k_fire_arrow", new AbilityCallback(CreateSnipe));
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "shoot", 1000);
         }
         #endregion
 

@@ -31,9 +31,6 @@ namespace KazgarsRevenge.Libraries
             {
                 soundEffects.Add("hardsmack" + i, game.Content.Load<SoundEffect>("Sound\\hardsmack" + i));
             }
-
-
-            soundEffects.Add("scratching", game.Content.Load<SoundEffect>("Sound\\scratching"));
         }
 
         public void playRangedSound()
@@ -65,11 +62,6 @@ namespace KazgarsRevenge.Libraries
         public void playEnemyDying()
         {
 
-        }
-
-        public void playScratch()
-        {
-            //soundEffects[("scratching")].Play();
         }
     }
 }

@@ -5,7 +5,8 @@ GUI textures - behind health, in front of / encasing health,
 levels (ground floor/hub area would be nice)
 armor
 
-new kazgar mesh? (the one with more detailed hands)
+updated kazgar mesh? (the one with more detailed hands)
+1h punch animation
 
 
 gui work needed

@@ -10,10 +10,10 @@ namespace KazgarsRevenge
     public delegate void AbilityCallback(Vector3 position, Vector3 orientation, AliveComponent creator);
     public class Ability
     {
-        public string AniName { get; private set; }
+        public string ActionName { get; private set; }
         public Texture2D icon { get; private set; }
         public AttackType Type { get; private set; }
-        public AbilityCallback AbilityCreator;
+        public float Range { get; private set; }
 
         int abilityLevel;
         public float cooldownSeconds;
@@ -22,14 +22,15 @@ namespace KazgarsRevenge
         public float timeRemaining;
         String tooltip = "N/A";
 
-        public Ability(int abilityLevelIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn, string aniName, AbilityCallback toCall)
+        public Ability(int abilityLevelIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn, string actionName, float range)
         {   
             abilityLevel = abilityLevelIn;
             icon = iconIn;
             cooldownSeconds = cooldownSecondsIn;
             Type = typeIn;
             timeRemaining = cooldownSeconds;
-            this.AniName = aniName;
+            this.ActionName = actionName;
+            this.Range = range;
         }
 
         public void setToolTip(String toolTipString)
