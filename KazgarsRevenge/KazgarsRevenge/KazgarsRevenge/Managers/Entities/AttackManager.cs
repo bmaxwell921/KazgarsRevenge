@@ -43,7 +43,7 @@ namespace KazgarsRevenge
             particles = Game.Services.GetService(typeof(ParticleManager)) as ParticleManager;
         }
 
-
+        #region Primaries
         Matrix arrowGraphicRot = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, 0, 0);
         const float arrowSpeed = 450.0f;
         public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
@@ -112,7 +112,44 @@ namespace KazgarsRevenge
 
             soundEffects.playMagicSound();
         }
+        #endregion
 
+        #region Abilities
+        public void CreateSnipe(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
+        {
+            GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
+            position.Y += 20;
+            Entity arrowData = new Box(position, 10, 17, 10, .001f);
+            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            arrowData.LinearVelocity = dir * arrowSpeed;
+            arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
+            arrow.AddSharedData(typeof(Entity), arrowData);
+
+            PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
+            UnanimatedModelComponent arrowGraphics =
+                new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
+                    new Vector3(30), Vector3.Zero, arrowGraphicRot);
+
+            AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+
+            arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
+            genComponentManager.AddComponent(arrowPhysics);
+
+            arrow.AddComponent(typeof(UnanimatedModelComponent), arrowGraphics);
+            modelManager.AddComponent(arrowGraphics);
+
+            arrow.AddComponent(typeof(AttackController), arrowAI);
+            genComponentManager.AddComponent(arrowAI);
+
+            attacks.Add(arrow);
+
+            soundEffects.playRangedSound();
+        }
+        #endregion
+
+
+        #region Misc
         public void CreateMouseSpikes(Vector3 position)
         {
             GameEntity spikes = new GameEntity("cursor", FactionType.Neutral, EntityType.Misc);
@@ -137,7 +174,6 @@ namespace KazgarsRevenge
 
             attacks.Add(spikes);
         }
-
         private Matrix CreateRotationFromForward(Vector3 forward)
         {
             Matrix rotation = Matrix.Identity;
@@ -146,6 +182,7 @@ namespace KazgarsRevenge
             rotation.Up = Vector3.Up;
             return rotation;
         }
+        #endregion
 
         #region Ability Definitions
         public Ability GetAbility(AbilityName ability)
@@ -165,12 +202,7 @@ namespace KazgarsRevenge
 
         public Ability GetSnipe()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "shoot", 1000);
-        }
-
-        public void CreateSnipe(Vector3 position, Vector3 dir, AliveComponent creator)
-        {
-            CreateArrow(position, dir, 100, creator);
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 6, AttackType.Ranged, "snipe", 1000);
         }
 
         public Ability GetHeartStrike()

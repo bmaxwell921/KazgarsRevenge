@@ -299,7 +299,7 @@ namespace KazgarsRevenge
             //create initial abilities
 
             boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, attacks.GetAbility(AbilityName.HeartStrike));
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, attacks.GetAbility(AbilityName.HeartStrike));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, attacks.GetAbility(AbilityName.Snipe));
             boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, attacks.GetAbility(AbilityName.HeartStrike));
             boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, attacks.GetAbility(AbilityName.HeartStrike));
             boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, attacks.GetAbility(AbilityName.HeartStrike));
@@ -363,6 +363,7 @@ namespace KazgarsRevenge
             actionSequences.Add("loot_smash", LootSmashActions());
             //abilities
             actionSequences.Add("flip", FlipActions());
+            actionSequences.Add("snipe", SnipeActions());
 
 
 
@@ -625,6 +626,54 @@ namespace KazgarsRevenge
                 StartSequence("fightingstance");
             });
 
+            return sequence;
+        }
+        private List<Action> SnipeActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                //start playing shooting animation
+                canInterrupt = false;
+                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                attState = AttackState.Attacking;
+                millisActionLength = 200;
+            });
+            sequence.Add(() =>
+            {
+                //attach arrow model to hand
+                if (attachedArrow == null)
+                {
+                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0);
+                }
+                if (!attached.ContainsKey("handarrow"))
+                {
+                    attached.Add("handarrow", attachedArrow);
+                }
+
+                millisActionLength = animations.GetAniMillis("k_fire_arrow") / 2 - 200;
+            });
+            sequence.Add(() =>
+            {
+                //remove attached arrow, create arrow projectile, and finish animation
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 100, this);
+
+                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
+
+                needInterruptAction = false;
+            });
+
+            sequence.Add(() =>
+            {
+                //done, go back to fighting stance
+                StartSequence("fightingstance");
+                attState = AttackState.None;
+            });
             return sequence;
         }
 
