@@ -35,6 +35,9 @@ namespace KazgarsRevenge
             #region UI Frame Load
             icon_selected = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\icon_selected");
             health_bar = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\health_bar");
+            rightArrow = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\rightArrow");
+            leftArrow = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\leftArrow");
+            helmetIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\helmetIcon");
             #endregion
 
             #region Ability Image Load
@@ -68,6 +71,10 @@ namespace KazgarsRevenge
         #region UI Frames
         Texture2D icon_selected;
         Texture2D health_bar;
+        Texture2D rightArrow;
+        Texture2D leftArrow;
+        //Equipment Base
+        Texture2D helmetIcon;
         #endregion
 
         #region Ability Icons
@@ -94,6 +101,7 @@ namespace KazgarsRevenge
         #region Variables for UI
         bool[] UISlotUsed = new bool[14];     //0-7 abilities, 8 primary, 9 secondary, 10-13 items
         bool showInventory = false;
+        bool showEquipment = false;
         #endregion
 
         MouseState curMouse = Mouse.GetState();
@@ -367,8 +375,27 @@ namespace KazgarsRevenge
                 CloseLoot();
             }
 
+            
+            //Inventory
+            if (curKeys.IsKeyDown(Keys.I) && prevKeys.IsKeyUp(Keys.I))
+            {
+                showInventory = !showInventory;
+                showEquipment = false;
+            }
+            //Equipment
+            if (curKeys.IsKeyDown(Keys.O) && prevKeys.IsKeyUp(Keys.O))
+            {
+                showEquipment = !showEquipment;
+                if (showEquipment) showInventory = true;
+                else showInventory = false;
+            }
+            //Esc closes all
+            if (curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
+            {
+                showEquipment = false;
+                showInventory = false;
+            }
 
-            if (curKeys.IsKeyDown(Keys.I) && prevKeys.IsKeyUp(Keys.I)) showInventory = !showInventory;
 
             //UI Abilities Used Frame
             if (curKeys.IsKeyDown(Keys.Q)) UISlotUsed[0] = true;
@@ -580,6 +607,7 @@ namespace KazgarsRevenge
             mouseHoveredEntity = null;
             mouseHoveredHealth = null;
         }
+        //Checks if mouse collides with GUI? #TODO #JARED
         private string MouseCollidesWithGui()
         {
 
@@ -588,7 +616,7 @@ namespace KazgarsRevenge
                 if (RectContains(k.Value, curMouse.X, curMouse.Y))
                 {
                     //only check against inventory or loot if they are shown
-                    if (k.Key == "inventory" && !showInventory || k.Key == "loot" && !looting)
+                    if (k.Key == "inventory" && !showInventory || k.Key == "equipment" && !showEquipment || k.Key == "loot" && !looting)
                     {
                         continue;
                     }
@@ -636,11 +664,17 @@ namespace KazgarsRevenge
             //Nate Here
             guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average)));
 
+            guiOutsideRects.Add("equipment", new Rectangle((int)(maxX - 700 * average), (int)(380 * average), (int)(300 * average), (int)(440 * average)));
+
+
 
             guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
             guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Rectangle>();
+            //Equipment Icons
+            guiInsideRects.Add("equipHead", new Rectangle((int)(maxX - 690 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
+            guiInsideRects.Add("equipShoulder", new Rectangle((int)(maxX - 500 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
             //Inventory icons
             for (int i = 0; i < 4; ++i)
             {
@@ -649,6 +683,7 @@ namespace KazgarsRevenge
                     guiInsideRects.Add("inventory" + (i + j * 4), new Rectangle((int)(maxX - 390 * average + i * 98 * average), (int)(430 * average + j * 98 * average), (int)(88 * average), (int)(88 * average)));
                 }
             }
+
             guiInsideRects.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
             guiInsideRects.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
             guiInsideRects.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
@@ -823,10 +858,28 @@ namespace KazgarsRevenge
             #region inventory
             if (showInventory)
             {
+                
+                //Equipment pane
+                if (showEquipment)
+                {
+                    s.Draw(texWhitePixel, guiOutsideRects["equipment"], Color.Black * .5f);
+                    //Collapse arrow
+                    s.Draw(rightArrow, new Rectangle((int)(maxX - 380 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
+                    s.Draw(helmetIcon, guiInsideRects["equipHead"], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["equipShoulder"], Color.White);
+                }
+                else
+                {
+                    //Open arrow
+                    s.Draw(leftArrow, new Rectangle((int)(maxX - 380 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
+                }
+
                 s.Draw(texWhitePixel, guiOutsideRects["inventory"], Color.Black * .5f);
                 //Gold display
-                s.Draw(goldIcon, new Rectangle((int)(maxX - 340 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
-                s.DrawString(font, gold.ToString(), new Vector2(maxX - 300 * average, 380 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+               
+                s.Draw(goldIcon, new Rectangle((int)(maxX - 320 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
+                s.DrawString(font, gold.ToString() , new Vector2(maxX - 280 * average, 380 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                //Draw inventory items
                 for (int i = 0; i < inventory.Count; ++i)
                 {
                     //Nate working here
