@@ -115,9 +115,9 @@ public class EditGrid extends JPanel {
 	}
 
 	private void paintChunkDoorLocations(Graphics2D g2) {
-		Location[] doorLocs = { new Location(0, 5), new Location(0, 19),
-				new Location(5, 0), new Location(5, 23), new Location(19, 0),
-				new Location(19, 23), new Location(23, 5), new Location(23, 19) };
+		Location[] doorLocs = { new Location(0, 4), new Location(0, 19),
+				new Location(4, 0), new Location(4, 23), new Location(19, 0),
+				new Location(19, 23), new Location(23, 4), new Location(23, 19) };
 		for (Location loc : doorLocs) {
 			g2.setColor(Color.RED);
 			g2.fill(new Rectangle(loc.getX() * SQUARE_SIZE, loc.getY()

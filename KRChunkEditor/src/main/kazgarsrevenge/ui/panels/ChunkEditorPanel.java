@@ -42,7 +42,7 @@ public class ChunkEditorPanel extends KREditorPanel {
 	protected void createSidePanel() {
 		// Gets all of the room names from the ComponentManager, then creates ImageDescriptionPanels for them		
 		super.selectables = new SidePanel("Rooms");
-		super.selectables.setPreferredSize(new Dimension(200, 620));
+		super.selectables.setPreferredSize(new Dimension(400, 620));
 		this.addImageDesc();
 		this.add(super.selectables, BorderLayout.EAST);
 	}

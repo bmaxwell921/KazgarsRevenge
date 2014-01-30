@@ -34,7 +34,7 @@ public class Main {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setFocusable(true);
 		frame.setResizable(false);
-		frame.getContentPane().add(new ChunkEditorPanel(frame, 800, 650));
+		frame.getContentPane().add(new ChunkEditorPanel(frame, 1000, 650));
 		
 		frame.pack();
 		frame.setVisible(true);
