@@ -20,10 +20,6 @@ namespace KazgarsRevenge
         private NetPlayerState state;
 
         Vector3 targetPos = Vector3.Zero;
-        AnimationPlayer animations;
-
-        Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
-        Dictionary<string, AttachableModel> attached;
         public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity, PlayerSave savefile)
             : base(game, entity, savefile)
         {
@@ -44,7 +40,7 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="equipMe"></param>
         /// <param name="slot"></param>
-        public void EquipGear(Equippable equipMe, GearSlot slot)
+        protected override void EquipGear(Equippable equipMe, GearSlot slot)
         {
             float xRot = 0;
             //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand
@@ -58,10 +54,6 @@ namespace KazgarsRevenge
                         EquipGear(equipMe, GearSlot.Righthand);
                         return;
                     }
-                    if (!UnequipGear(GearSlot.Lefthand))
-                    {
-                        return;
-                    }
                 }
 
                 if (slot == GearSlot.Righthand)
@@ -71,68 +63,10 @@ namespace KazgarsRevenge
             }
 
             //otherwise, carry on
-            if (UnequipGear(slot))
-            {
-                gear[slot] = equipMe;
-                RecalculateStats();
+            gear[slot] = equipMe;
+            RecalculateStats();
 
-                attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot));
-            }
-        }
-
-        /// <summary>
-        /// Copied from PlayerController, pull up hierarchy
-        /// </summary>
-        public string GearSlotToBoneName(GearSlot s)
-        {
-            switch (s)
-            {
-                case GearSlot.Lefthand:
-                    return "Bone_001_L_005";
-                case GearSlot.Righthand:
-                    return "Hand_R";
-                default:
-                    return "RootNode";
-            }
-        }
-
-
-        /// <summary>
-        /// Copied from PlayerController, pull up hierarchy
-        /// </summary>
-        public void AddStats(Dictionary<StatType, float> statsToAdd)
-        {
-            foreach (KeyValuePair<StatType, float> k in statsToAdd)
-            {
-                stats[k.Key] += k.Value;
-            }
-        }
-
-        /// <summary>
-        ///  Copied from PlayerController, pull up hierarchy
-        /// </summary>
-        protected override bool UnequipGear(GearSlot slot)
-        {
-            Equippable oldEquipped = gear[slot];
-            if (oldEquipped != null)
-            {
-                // Shouldn't need to do this check with networked players
-                //if (AddToInventory(oldEquipped))
-                //{
-                //    attached.Remove(slot.ToString());
-                //    return true;
-                //}
-                //else
-                //{
-                //    return false;
-                //}
-                return true;
-            }
-            else
-            {
-                //if there was nothing in there to start with, return true
-                return true;
-            }
+            attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot));
         }
 
         public void SetPosition(Vector3 pos)

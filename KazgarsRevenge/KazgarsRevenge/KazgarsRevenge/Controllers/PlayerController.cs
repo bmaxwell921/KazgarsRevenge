@@ -83,7 +83,7 @@ namespace KazgarsRevenge
         protected Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
         //inventory
         protected List<Item> inventory = new List<Item>();
-        protected void EquipGear(Equippable equipMe, GearSlot slot)
+        protected virtual void EquipGear(Equippable equipMe, GearSlot slot)
         {
             float xRot = 0;
             //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand
@@ -121,7 +121,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// tries to put equipped item into inventory. If there was no inventory space, returns false.
         /// </summary>
-        protected virtual bool UnequipGear(GearSlot slot)
+        protected bool UnequipGear(GearSlot slot)
         {
             Equippable oldEquipped = gear[slot];
             if (oldEquipped != null)
