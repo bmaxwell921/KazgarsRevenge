@@ -48,7 +48,7 @@ namespace KazgarsRevenge
             rand = new Random();
             physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleSoulCollision;
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
-            animations.StartClip("soul_wander");
+            animations.StartClip("soul_wander", MixType.None);
 
             normalSpeed = 25 + totalSouls * 1.5f;
             scaredSpeed = 75 + totalSouls * 6;
@@ -171,7 +171,7 @@ namespace KazgarsRevenge
                         if (currentAni == "soul_loot")
                         {
                             currentAni = "soul_loot_spin";
-                            animations.StartClip(currentAni);
+                            animations.StartClip(currentAni, MixType.None);
                             timerLength = 10000;
                         }
                         else if (currentAni == "soul_loot_smash")
@@ -184,7 +184,7 @@ namespace KazgarsRevenge
                             {
                                 Vector3 smashedPos = GetBoneTranslation(6);
                                 currentAni = "soul_wander";
-                                animations.StartClip(currentAni);
+                                animations.StartClip(currentAni, MixType.None);
                                 soulState = LootSoulState.Scared;
                                 timerLength = 5000;
                                 physicalData.Position = new Vector3(smashedPos.X, 10, smashedPos.Z);
@@ -227,7 +227,7 @@ namespace KazgarsRevenge
             physicalData.Orientation = q;
             soulState = LootSoulState.BeingLooted;
             currentAni = "soul_loot";
-            animations.StartClip(currentAni);
+            animations.StartClip(currentAni, MixType.None);
             timerCounter = 0;
             timerLength = animations.GetAniMillis(currentAni);
             physicalData.LinearVelocity = Vector3.Zero;
@@ -236,7 +236,7 @@ namespace KazgarsRevenge
         public void CloseLoot()
         {
             currentAni = "soul_loot_smash";
-            animations.StartClip(currentAni);
+            animations.StartClip(currentAni, MixType.MixInto);
             timerCounter = 0;
             timerLength = animations.GetAniMillis(currentAni);
         }

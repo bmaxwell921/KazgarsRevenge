@@ -48,7 +48,7 @@ namespace KazgarsRevenge
             this.attachedModels = entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
             this.animationPlayer = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
 
-            animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
+            animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips.Keys.First(), MixType.None);
 
             modelParams = new SharedGraphicsParams();
             modelParams.size = drawScale;

@@ -90,7 +90,8 @@ namespace KazgarsRevenge
         {
             if (state != EnemyState.Dying && state != EnemyState.Decaying)
             {
-                animations.MixClipOnce(settings.hitAniName, armBoneIndices);
+                animations.StartClip(settings.hitAniName, MixType.MixOnce);
+                animations.SetNonMixedBones(armBoneIndices);
                 attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
                 CalculateThreat(d, from);
                 minChaseCounter = 0;
@@ -150,7 +151,7 @@ namespace KazgarsRevenge
         string currentAniName;
         public void PlayAnimation(string animationName)
         {
-            animations.StartClip(animationName);
+            animations.StartClip(animationName, MixType.None);
             currentAniName = animationName;
         }
 
@@ -214,7 +215,7 @@ namespace KazgarsRevenge
                 {
                     targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
                     currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
-                    animations.StartClip(settings.runAniName);
+                    animations.StartClip(settings.runAniName, MixType.MixInto);
                     return;
                 }
             }

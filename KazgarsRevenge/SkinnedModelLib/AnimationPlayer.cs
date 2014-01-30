@@ -15,6 +15,12 @@ using Microsoft.Xna.Framework;
 
 namespace SkinnedModelLib
 {
+    public enum MixType
+    {
+        None,
+        MixOnce,
+        MixInto,
+    }
     /// <summary>
     /// The animation player is in charge of decoding bone position
     /// matrices from an animation clip.
@@ -22,7 +28,6 @@ namespace SkinnedModelLib
     public class AnimationPlayer
     {
         #region Fields
-
 
         // Information about the currently playing animation clip.
         AnimationClip currentClipValue;
@@ -34,7 +39,8 @@ namespace SkinnedModelLib
         AnimationClip secondClipValue = null;
         TimeSpan secondTimeValue;
         int secondKeyframe;
-        List<int> bonesToIgnore;
+        List<int> bonesToIgnore = null;
+        TimeSpan mixDur = TimeSpan.Zero;
 
         // Current animation transform matrices.
         Matrix[] boneTransforms;
@@ -76,14 +82,37 @@ namespace SkinnedModelLib
          /// <summary>
         /// Starts decoding the specified animation clip.
         /// </summary>
-        public void StartClip(string clipName)
+        public void StartClip(string clipName, MixType t)
         {
-            currentClipValue = skinningDataValue.AnimationClips[clipName];
-            currentTimeValue = TimeSpan.Zero;
-            currentKeyframe = 0;
+            switch (t)
+            {
+                case MixType.None:
+                    currentClipValue = skinningDataValue.AnimationClips[clipName];
+                    currentTimeValue = TimeSpan.Zero;
+                    currentKeyframe = 0;
 
-            // Initialize bone transforms to the bind pose.
-            skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
+                    // Initialize bone transforms to the bind pose.
+                    skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
+                    break;
+                case MixType.MixOnce:
+                    mixing = true;
+                    playMixedOnce = true;
+                    secondClipValue = skinningDataValue.AnimationClips[clipName];
+                    mixDur = secondClipValue.Duration;
+                    secondTimeValue = TimeSpan.Zero;
+                    secondKeyframe = 0;
+                    break;
+                case MixType.MixInto:
+                    playMixedOnce = false;
+                    mixing = true;
+                    secondClipValue = skinningDataValue.AnimationClips[clipName];
+                    //takes the shortest: 1 second, time remaining in current animation, or half of the new animation's duration
+                    mixDur = TimeSpan.FromMilliseconds(Math.Min(1000, Math.Min((currentClipValue.Duration - CurrentTime).TotalMilliseconds, secondClipValue.Duration.TotalMilliseconds / 2)));
+                    secondTimeValue = TimeSpan.Zero;
+                    secondKeyframe = 0;
+                    bonesToIgnore = null;
+                    break;
+            }
         }
 
         bool paused = false;
@@ -97,29 +126,9 @@ namespace SkinnedModelLib
             paused = false;
         }
 
-        /// <summary>
-        /// Mixes a clip with the one already playing, but stops after one run
-        /// </summary>
-        /// <param name="clipName">the clip to play</param>
-        /// <param name="boneIndicesToIgnore">a list of bone indices to ignore. just pass in null if you don't care</param>
-        public void MixClipOnce(string clipName, List<int> boneIndicesToIgnore)
+        public void SetNonMixedBones(List<int> boneIndicesToIgnore)
         {
-            mixing = true;
-            playMixedOnce = true;
-            secondClipValue = skinningDataValue.AnimationClips[clipName];
-            secondTimeValue = TimeSpan.Zero;
-            secondKeyframe = 0;
             this.bonesToIgnore = boneIndicesToIgnore;
-        }
-
-        public void BlendCurrentIntoClip(string clipName)
-        {
-            playMixedOnce = false;
-            mixing = true;
-            secondClipValue = skinningDataValue.AnimationClips[clipName];
-            secondTimeValue = TimeSpan.Zero;
-            secondKeyframe = 0;
-            bonesToIgnore = null;
         }
 
         /// <summary>
@@ -167,7 +176,7 @@ namespace SkinnedModelLib
                 time += secondTimeValue;
 
                 // If we reached the end, stop mixing
-                if(time >= secondClipValue.Duration)
+                if(time >= secondClipValue.Duration || (!playMixedOnce && time >= mixDur))
                 {
                     if (!playMixedOnce)
                     {
@@ -255,8 +264,8 @@ namespace SkinnedModelLib
 
                     // Use this keyframe.
                     Matrix transform = keyframe.Transform;
-                    float dur=(float)(secondClipValue.Duration.TotalMilliseconds);
-                    float cur=(float)(secondTimeValue.TotalMilliseconds);
+                    float dur = (float)(mixDur.Duration().TotalMilliseconds);
+                    float cur = (float)(secondTime.Duration().TotalMilliseconds);
                     float amt;
                     if (playMixedOnce)
                     {

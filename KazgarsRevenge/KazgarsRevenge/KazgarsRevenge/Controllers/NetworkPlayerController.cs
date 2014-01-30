@@ -9,7 +9,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    public class NetworkPlayerController : AliveComponent
+    public class NetworkPlayerController : PlayerController
     {
         enum NetPlayerState
         {
@@ -25,8 +25,8 @@ namespace KazgarsRevenge
 
         Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
         Dictionary<string, AttachableModel> attached;
-        public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity, 1)
+        public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity, PlayerSave savefile)
+            : base(game, entity, savefile)
         {
             this.targetPos = physicalData.Position;
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
@@ -191,7 +191,7 @@ namespace KazgarsRevenge
                     {
                         physicalData.LinearVelocity = Vector3.Zero;
                         state = NetPlayerState.Standing;
-                        animations.StartClip("k_fighting_stance");
+                        animations.StartClip("k_fighting_stance", MixType.None);
                     }
                     else
                     {
@@ -203,7 +203,7 @@ namespace KazgarsRevenge
                     {
                         curDir = GetGraphicsYaw(diff);
                         physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(curDir, 0, 0);
-                        animations.StartClip("k_run");
+                        animations.StartClip("k_run", MixType.MixInto);
                         state = NetPlayerState.Running;
                     }
                     break;

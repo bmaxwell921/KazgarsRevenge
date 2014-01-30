@@ -63,7 +63,8 @@ namespace KazgarsRevenge
             (Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).AssignEntity(playerPhysicalData);
 
             Model playerModel = GetAnimatedModel("Models\\Player\\k_idle1");
-            //shared animation data (need this to be in the player controller component as well as the graphics component, so that the controller can determine when to play animations)
+            //shared animation data (need this to be in the player controller component as 
+            // well as the graphics component, so that the controller can determine when to play animations)
             AnimationPlayer playerAnimations = new AnimationPlayer(playerModel.Tag as SkinningData);
             player.AddSharedData(typeof(AnimationPlayer), playerAnimations);
 
@@ -95,6 +96,8 @@ namespace KazgarsRevenge
 
         public void CreateNetworkedPlayer(Vector3 position, Identification id)
         {
+            PlayerSave characterInfo = new PlayerSave();
+
             // TODO ISSUE #9
             GameEntity player = new GameEntity("netplayer", FactionType.Players, EntityType.Player);
 
@@ -116,7 +119,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, 10f, Vector3.Down * 18);
-            NetworkPlayerController controller = new NetworkPlayerController(mainGame, player);
+            NetworkPlayerController controller = new NetworkPlayerController(mainGame, player, new PlayerSave());
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);

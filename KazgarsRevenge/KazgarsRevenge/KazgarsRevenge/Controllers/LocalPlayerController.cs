@@ -96,7 +96,6 @@ namespace KazgarsRevenge
         bool showInventory = false;
         #endregion
 
-
         MouseState curMouse = Mouse.GetState();
         MouseState prevMouse = Mouse.GetState();
         KeyboardState curKeys = Keyboard.GetState();
@@ -261,7 +260,6 @@ namespace KazgarsRevenge
                 && entry.CollisionRules.Personal <= CollisionRule.Normal
                 && (entry as StaticMesh) == null;
         }
-
 
         /// <summary>
         /// creates a raycast from the mouse, and returns the position on the ground that it hits.
@@ -449,7 +447,7 @@ namespace KazgarsRevenge
                     case AttackType.None:
                         if (distance < melleRange)
                         {
-                            PlayAnimation("k_onehanded_swing" + aniSuffix);
+                            PlayAnimation("k_onehanded_swing" + aniSuffix, MixType.None);
                             attState = AttackState.InitialSwing;
                             inRange = true;
                         }
@@ -457,7 +455,7 @@ namespace KazgarsRevenge
                     case AttackType.Melle:
                         if (distance < melleRange)
                         {
-                            PlayAnimation("k_onehanded_swing" + aniSuffix);
+                            PlayAnimation("k_onehanded_swing" + aniSuffix, MixType.None);
                             attState = AttackState.InitialSwing;
                             inRange = true;
                         }
@@ -465,7 +463,7 @@ namespace KazgarsRevenge
                     case AttackType.Ranged:
                         if (distance < bowRange)
                         {
-                            PlayAnimation("k_fire_arrow" + aniSuffix);
+                            PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
                             attState = AttackState.GrabbingArrow;
                             inRange = true;
                         }
@@ -474,7 +472,7 @@ namespace KazgarsRevenge
                         if (distance < bowRange)
                         {
                             //need magic item animation here
-                            PlayAnimation("k_fire_arrow" + aniSuffix);
+                            PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
                             attState = AttackState.GrabbingArrow;
                             inRange = true;
                         }
@@ -508,7 +506,7 @@ namespace KazgarsRevenge
             if (useAbility)
             {
                 string ani = abilityToUse.AniName;
-                PlayAnimation(ani);
+                PlayAnimation(ani, MixType.MixInto);
 
                 //different sequence of animation states depending on attack type
                 switch (ani)
@@ -550,7 +548,7 @@ namespace KazgarsRevenge
                     //just started running
                     if (currentAniName != "k_run")
                     {
-                        PlayAnimation("k_run");
+                        PlayAnimation("k_run", MixType.None);
                     }
                 }
             }
@@ -561,7 +559,7 @@ namespace KazgarsRevenge
                 //just stopped moving
                 if (currentAniName == "k_run")
                 {
-                    PlayAnimation("k_fighting_stance");
+                    PlayAnimation("k_fighting_stance", MixType.None);
                 }
             }
             else
@@ -571,11 +569,10 @@ namespace KazgarsRevenge
                 //just started running
                 if (currentAniName != "k_run")
                 {
-                    PlayAnimation("k_run");
+                    PlayAnimation("k_run", MixType.None);
                 }
             }
         }
-
 
         #region Helpers
         private void ResetTargettedEntity()
@@ -605,7 +602,7 @@ namespace KazgarsRevenge
         #endregion
 
 
-        
+
         SpriteFont font;
         Texture2D texWhitePixel;
         Rectangle RectEnemyHealthBar;
@@ -638,7 +635,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             //Nate Here
             guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average)));
-           
+
 
             guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
             guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
@@ -672,7 +669,7 @@ namespace KazgarsRevenge
             {
                 s.DrawString(font, mouseHoveredEntity.Name, vecName, Color.Red, 0, Vector2.Zero, average, SpriteEffects.None, 0);
             }
-            if(mouseHoveredHealth != null)
+            if (mouseHoveredHealth != null)
             {
                 s.Draw(texWhitePixel, RectEnemyHealthBar, Color.Red);
                 s.Draw(texWhitePixel, new Rectangle(RectEnemyHealthBar.X, RectEnemyHealthBar.Y, (int)(RectEnemyHealthBar.Width * mouseHoveredHealth.HealthPercent), RectEnemyHealthBar.Height), Color.Green);
@@ -680,7 +677,7 @@ namespace KazgarsRevenge
 
             #region UIBase
             //Chat Pane
-            s.Draw(texWhitePixel, guiOutsideRects["chat"], Color.Black*0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["chat"], Color.Black * 0.5f);
 
             #region Ability Bar
             //Ability Bar
@@ -705,7 +702,7 @@ namespace KazgarsRevenge
                     s.Draw(texRange, guiInsideRects["primary"], Color.White);
                     break;
             }
-                
+
             //RM
             s.Draw(texPlaceHolder, guiInsideRects["rightmouse"], Color.White);
 
@@ -719,7 +716,7 @@ namespace KazgarsRevenge
             s.Draw(healthPot, guiInsideRects["item4"], Color.White);
 
             #endregion
-            
+
             #region Ability Bar Mods
             #region Cooldown Mod
             //TODO make into for loop for all bound abilities / items
@@ -733,7 +730,7 @@ namespace KazgarsRevenge
                 }
                 if (boundAbilities[i + 4].Value.onCooldown)
                 {
-                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (10  + 64 * (boundAbilities[i + 4].Value.timeRemaining / boundAbilities[i + 4].Value.cooldownSeconds)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i + 4].Value.timeRemaining / boundAbilities[i + 4].Value.cooldownSeconds) * average) + 1), Color.Black * 0.5f);
+                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (10 + 64 * (boundAbilities[i + 4].Value.timeRemaining / boundAbilities[i + 4].Value.cooldownSeconds)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i + 4].Value.timeRemaining / boundAbilities[i + 4].Value.cooldownSeconds) * average) + 1), Color.Black * 0.5f);
                 }
             }
             #endregion
@@ -776,7 +773,7 @@ namespace KazgarsRevenge
                 s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             }
             #endregion
-            
+
             #endregion
 
             //XP Area
@@ -785,7 +782,7 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, guiOutsideRects["damage"], Color.Green * 0.5f);
             //Mini Map (square for now)
             s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Orange * 0.5f);
-            
+
             #region main player frame
             //Main Player Frame Pic
             s.Draw(texWhitePixel, new Rectangle(0, 0, (int)(160 * average), (int)(160 * average)), Color.Blue * 0.5f);
@@ -829,11 +826,11 @@ namespace KazgarsRevenge
                 s.Draw(texWhitePixel, guiOutsideRects["inventory"], Color.Black * .5f);
                 //Gold display
                 s.Draw(goldIcon, new Rectangle((int)(maxX - 340 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
-                s.DrawString(font, gold.ToString() , new Vector2(maxX - 300 * average, 380 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                s.DrawString(font, gold.ToString(), new Vector2(maxX - 300 * average, 380 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 for (int i = 0; i < inventory.Count; ++i)
                 {
                     //Nate working here
-                    s.Draw(inventory[i].Icon, guiInsideRects["inventory"+i], Color.White);
+                    s.Draw(inventory[i].Icon, guiInsideRects["inventory" + i], Color.White);
                     //s.DrawString(font, inventory[i].Name, new Vector2(maxX - 400 * average, (420 + i * 40 )* average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 }
             }
@@ -845,11 +842,11 @@ namespace KazgarsRevenge
                 List<Item> loot = lootingSoul.Loot;
                 for (int i = 0; i < loot.Count && i < NUM_LOOT_SHOWN; ++i)
                 {
-                    s.Draw(loot[i].Icon, guiInsideRects["loot"+i], Color.White);
+                    s.Draw(loot[i].Icon, guiInsideRects["loot" + i], Color.White);
                 }
             }
             #endregion
-            
+
             #endregion
 
         }

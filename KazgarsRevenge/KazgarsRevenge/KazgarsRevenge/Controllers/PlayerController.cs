@@ -286,10 +286,10 @@ namespace KazgarsRevenge
                     length *= 2;
                 }
 
-                aniDurations.Add(key, length - 10);
+                aniDurations.Add(key, length - 20);
             }
 
-            PlayAnimation("k_idle1");
+            PlayAnimation("k_idle1", MixType.None);
             #endregion
         }
 
@@ -348,6 +348,8 @@ namespace KazgarsRevenge
             CastingSpell,
         }
 
+
+
         Dictionary<string, double> aniDurations;
 
         protected double millisAniCounter;
@@ -361,16 +363,16 @@ namespace KazgarsRevenge
         protected double millisMelleCounter;
 
         protected string currentAniName;
-        protected void PlayAnimation(string animationName)
+        protected void PlayAnimation(string animationName, MixType t)
         {
-            animations.StartClip(animationName);
+            animations.StartClip(animationName, t);
             if (animationName == "k_idle1")
             {
                 millisAniDuration = rand.Next(2000, 4000);
             }
             else
             {
-                millisAniDuration = aniDurations[animationName] - 20;
+                millisAniDuration = aniDurations[animationName];
             }
 
             currentAniName = animationName;
@@ -380,12 +382,8 @@ namespace KazgarsRevenge
             //TODO: send network signal
 
         }
-        #endregion
 
         AttachableModel attachedArrow;
-        /// <summary>
-        /// handles animation transitions
-        /// </summary>
         protected void CheckAnimations()
         {
             //if the animation has played through its duration, do stuff
@@ -395,7 +393,7 @@ namespace KazgarsRevenge
                 switch (currentAniName)
                 {
                     case "k_loot":
-                        PlayAnimation("k_loot_spin");
+                        PlayAnimation("k_loot_spin", MixType.None);
                         break;
                     case "k_loot_spin":
                         break;
@@ -406,44 +404,44 @@ namespace KazgarsRevenge
                         {
                             attached[GearSlot.Righthand.ToString()].Draw = true;
                         }
-                        PlayAnimation("k_fighting_stance");
+                        PlayAnimation("k_fighting_stance", MixType.None);
                         break;
                     case "k_idle1":
                         int aniRand = rand.Next(1, 7);
                         if (aniRand < 4)
                         {
-                            PlayAnimation("k_idle2");
+                            PlayAnimation("k_idle2", MixType.None);
                         }
                         else
                         {
                             switch (aniRand)
                             {
                                 case 4:
-                                    PlayAnimation("k_idle3");
+                                    PlayAnimation("k_idle3", MixType.None);
                                     break;
                                 case 5:
-                                    PlayAnimation("k_idle4");
+                                    PlayAnimation("k_idle4", MixType.None);
                                     break;
                                 case 6:
-                                    PlayAnimation("k_idle5");
+                                    PlayAnimation("k_idle5", MixType.None);
                                     soundEffects.playScratch();
                                     break;
                             }
                         }
                         break;
                     default:
-                        PlayAnimation("k_fighting_stance");
+                        PlayAnimation("k_fighting_stance", MixType.None);
                         attState = AttackState.None;
                         break;
                     case "k_fighting_stance":
-                        PlayAnimation("k_from_fighting_stance");
+                        PlayAnimation("k_from_fighting_stance", MixType.None);
                         break;
                     case "k_from_fighting_stance":
                     case "k_idle2":
                     case "k_idle3":
                     case "k_idle4":
                     case "k_idle5":
-                        PlayAnimation("k_idle1");
+                        PlayAnimation("k_idle1", MixType.None);
                         break;
                     case "k_run":
                         break;
@@ -454,7 +452,7 @@ namespace KazgarsRevenge
             //shooting animation / arrow attachment / projectile creation
             if (currentAniName == "k_fire_arrow")
             {
-                if(attState == AttackState.GrabbingArrow 
+                if (attState == AttackState.GrabbingArrow
                     && millisShotArrowAttachCounter >= millisShotArrowAttachLength)
                 {
                     if (attachedArrow == null)
@@ -495,6 +493,8 @@ namespace KazgarsRevenge
                 }
             }
         }
+        #endregion
+
 
         #region Damage
         //TODO: damage tracker and "in combat" status
@@ -514,7 +514,7 @@ namespace KazgarsRevenge
         protected void CloseLoot()
         {
 
-            PlayAnimation("k_loot_smash");
+            PlayAnimation("k_loot_smash", MixType.MixInto);
             if (lootingSoul != null)
             {
                 lootingSoul.CloseLoot();
@@ -525,7 +525,7 @@ namespace KazgarsRevenge
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
             if (possLoot != null)
             {
-                PlayAnimation("k_loot");
+                PlayAnimation("k_loot", MixType.None);
                 if (attached[GearSlot.Righthand.ToString()] != null)
                 {
                     attached[GearSlot.Righthand.ToString()].Draw = false;
