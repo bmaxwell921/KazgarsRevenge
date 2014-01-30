@@ -21,6 +21,12 @@ FOR USERS OF THE SYSTEM
 			===NOTE=== The easiest way to remove is by having the same selected item as the item you with
 				to remove, then rotating that selection to match the item you wish to remove's location
 		- Press R to rotate your current selection
+		- Press the M key to start/end multi-block drop
+			- Pressing M for the first time will allow you to highlight an area to drop all of the same block. 
+				Highlight a certain area by using the arrow keys after pressing M. The highlighted area is the 
+				area drawn in gray.
+			- Press M a second time after highlighting, with a block selected to place that block in all highlighted areas.
+			- To cancel the Multi-Drop, press M with nothing selected.	
 	- CREATING BLOCKS
 		- Blocks are the most basic object found inside of chunks. Default blocks
 		 include FLOORS, DOORS, MOB SPAWNS, PLAYER SPAWNS, BOSS SPAWNS, KEYS, and CHESTS.
