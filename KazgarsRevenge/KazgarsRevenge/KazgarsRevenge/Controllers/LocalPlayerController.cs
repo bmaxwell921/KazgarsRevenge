@@ -630,7 +630,6 @@ namespace KazgarsRevenge
         #endregion
 
 
-
         SpriteFont font;
         Texture2D texWhitePixel;
         Rectangle RectEnemyHealthBar;

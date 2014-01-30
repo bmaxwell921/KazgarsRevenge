@@ -290,6 +290,29 @@ namespace KazgarsRevenge
             }
 
             PlayAnimation("k_idle1", MixType.None);
+
+            animationActions = new Dictionary<string, List<Action>>();
+            List<Action> fireArrowSequence = new List<Action>();
+            
+            fireArrowSequence.Add(() =>
+            {
+                //start drawing; basically do nothing until next action
+
+            });
+            fireArrowSequence.Add(() =>
+            {
+                //attach arrow model to hand
+
+            });
+            fireArrowSequence.Add(() =>
+            {
+                //draw arrow back
+            });
+            fireArrowSequence.Add(() =>
+            {
+                //remove attached arrow, create arrow projectile, and finish animation
+            });
+
             #endregion
         }
 
@@ -324,19 +347,7 @@ namespace KazgarsRevenge
         }
 
         #region animations
-        /* animations:
-        "k_idle1" - standing still
-        "k_idle2" - looking around
-        "k_idle3" - flex squat
-        "k_idle4" - fancy flex
-        "k_idle5" - butt scratch
-        "k_onehanded_swing"
-        "k_run"
-        "k_fighting_stance"
-        "k_flip"
-        "k_from_fighting_stance" - transition from fighting to idle
-         */
-
+        Dictionary<string, List<Action>> animationActions;
         protected enum AttackState
         {
             None,
@@ -347,8 +358,6 @@ namespace KazgarsRevenge
             FinishSwing,
             CastingSpell,
         }
-
-
 
         Dictionary<string, double> aniDurations;
 
