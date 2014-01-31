@@ -654,10 +654,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             //Nate Here
             guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average)));
-
             guiOutsideRects.Add("equipment", new Rectangle((int)(maxX - 700 * average), (int)(380 * average), (int)(300 * average), (int)(440 * average)));
-
-
 
             guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
             guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
@@ -675,6 +672,8 @@ namespace KazgarsRevenge
                 }
             }
 
+            //Gui elements
+            guiInsideRects.Add("equipArrow", new Rectangle((int)(maxX - 380 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)));
             guiInsideRects.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
             guiInsideRects.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
             guiInsideRects.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
@@ -855,14 +854,14 @@ namespace KazgarsRevenge
                 {
                     s.Draw(texWhitePixel, guiOutsideRects["equipment"], Color.Black * .5f);
                     //Collapse arrow
-                    s.Draw(rightArrow, new Rectangle((int)(maxX - 380 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
+                    s.Draw(rightArrow, guiInsideRects["equipArrow"], Color.White);
                     s.Draw(helmetIcon, guiInsideRects["equipHead"], Color.White);
                     s.Draw(texPlaceHolder, guiInsideRects["equipShoulder"], Color.White);
                 }
                 else
                 {
                     //Open arrow
-                    s.Draw(leftArrow, new Rectangle((int)(maxX - 380 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
+                    s.Draw(leftArrow, guiInsideRects["equipArrow"], Color.White);
                 }
 
                 s.Draw(texWhitePixel, guiOutsideRects["inventory"], Color.Black * .5f);

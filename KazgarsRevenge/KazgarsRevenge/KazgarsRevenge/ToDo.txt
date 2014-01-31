@@ -27,7 +27,7 @@ get json.net working and parse chunk files
 
 Loot Souls
 ============
-make escape close loot
+
 
 
 
