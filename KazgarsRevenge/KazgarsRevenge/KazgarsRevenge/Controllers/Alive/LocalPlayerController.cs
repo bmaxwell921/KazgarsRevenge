@@ -118,8 +118,8 @@ namespace KazgarsRevenge
             millisRunningCounter += elapsed;
             stateResetCounter += elapsed;
 
-            
-            if (attState == AttackState.Attacking && stateResetCounter >= stateResetLength && canInterrupt)
+
+            if (attState == AttackState.Attacking && canInterrupt && stateResetCounter >= stateResetLength)
             {
                 attState = AttackState.None;
             }

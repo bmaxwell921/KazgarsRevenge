@@ -62,7 +62,7 @@ namespace KazgarsRevenge
                 new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                     new Vector3(10), Vector3.Zero, arrowGraphicRot);
 
-            AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            ArrowController arrowAI = new ArrowController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -94,7 +94,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
 
-            AttackController attackAI = new AttackController(mainGame, newAttack, attackData, damage, 300, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             genComponentManager.AddComponent(attackPhysics);
@@ -156,7 +156,7 @@ namespace KazgarsRevenge
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y += 20;
-            Entity arrowData = new Box(position, 10, 17, 10, .001f);
+            Entity arrowData = new Box(position, 10, 17, 40, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = dir * arrowSpeed;
@@ -166,9 +166,9 @@ namespace KazgarsRevenge
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics =
                 new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
-                    new Vector3(30), Vector3.Zero, arrowGraphicRot);
+                    new Vector3(30), Vector3.Forward * 20, arrowGraphicRot);
 
-            AttackController arrowAI = new AttackController(mainGame, arrow, arrowData, damage, 3000, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            ArrowController arrowAI = new ArrowController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);

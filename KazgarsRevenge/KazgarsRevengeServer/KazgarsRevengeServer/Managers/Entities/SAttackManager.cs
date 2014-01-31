@@ -36,7 +36,7 @@ namespace KazgarsRevengeServer
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(game, arrow);
 
-            AttackController arrowAI = new AttackController(game, arrow, arrowData, damage, 3000, faction == FactionType.Players? FactionType.Enemies : FactionType.Players, creator);
+            AttackController arrowAI = new AttackController(game, arrow, damage, faction == FactionType.Players? FactionType.Enemies : FactionType.Players, creator);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             gcm.AddComponent(arrowPhysics);
@@ -58,7 +58,7 @@ namespace KazgarsRevengeServer
 
             PhysicsComponent attackPhysics = new PhysicsComponent(game, newAttack);
 
-            AttackController attackAI = new AttackController(game, newAttack, attackData, damage, 300, faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            AttackController attackAI = new AttackController(game, newAttack, damage, faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             gcm.AddComponent(attackPhysics);

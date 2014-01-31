@@ -89,9 +89,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
-    <Compile Include="Controllers\LocalPlayerController.cs" />
+    <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
-    <Compile Include="Controllers\NetworkPlayerController.cs" />
+    <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Drawing\BlobShadowDecal.cs" />
     <Compile Include="Drawing\DrawableComponentBillboard.cs" />
     <Compile Include="Logging\ALogger.cs" />
@@ -101,6 +101,7 @@
     <Compile Include="Logging\LoggerManager.cs" />
     <Compile Include="Managers\Components\BillBoardManager.cs" />
     <Compile Include="Managers\Components\LevelModelManager.cs" />
+    <Compile Include="Controllers\Attacks\ArrowController.cs" />
     <Compile Include="Networking\Handlers\DisconnectedPlayerHandler.cs" />
     <Compile Include="Networking\Handlers\HostUpdateHandler.cs" />
     <Compile Include="Networking\Handlers\MeleeAttackHandler.cs" />
@@ -116,7 +117,7 @@
     <Compile Include="Common\Networking\BaseNetworkMessageManager.cs" />
     <Compile Include="Common\Networking\Handlers\BaseHandler.cs" />
     <Compile Include="Controllers\AIComponent.cs" />
-    <Compile Include="Controllers\EnemyController.cs" />
+    <Compile Include="Controllers\Alive\EnemyController.cs" />
     <Compile Include="Controllers\CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedModelComponent.cs" />
@@ -135,13 +136,13 @@
     <Compile Include="Non-Component\Item.cs" />
     <Compile Include="Libraries\SoundEffectLibrary.cs" />
     <Compile Include="Managers\Entities\EnemyManager.cs" />
-    <Compile Include="Controllers\AliveComponent.cs" />
+    <Compile Include="Controllers\Alive\AliveComponent.cs" />
     <Compile Include="Managers\Entities\LevelManager.cs" />
     <Compile Include="Managers\Components\GeneralComponentManager.cs" />
     <Compile Include="Managers\NetworkMessageManager.cs" />
     <Compile Include="Misc Components\PhysicsComponent.cs" />
-    <Compile Include="Controllers\PlayerController.cs" />
-    <Compile Include="Controllers\AttackController.cs" />
+    <Compile Include="Controllers\Alive\PlayerController.cs" />
+    <Compile Include="Controllers\Attacks\AttackController.cs" />
     <Compile Include="Managers\Entities\PlayerManager.cs" />
     <Compile Include="Managers\Entities\AttackManager.cs" />
     <Compile Include="Non-Component\PlayerSave.cs" />
