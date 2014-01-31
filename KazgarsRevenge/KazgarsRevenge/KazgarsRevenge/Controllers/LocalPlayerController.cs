@@ -187,7 +187,7 @@ namespace KazgarsRevenge
                         case "loot":
                             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
                             {
-                                if (RectContains(guiInsideRects["loot" + i], curMouse.X, curMouse.Y))
+                                if (RectContains(guiInsideRects["loot"]["loot" + i], curMouse.X, curMouse.Y))
                                 {
                                     if (inventory.Count < maxInventorySlots)
                                     {
@@ -634,7 +634,16 @@ namespace KazgarsRevenge
         int maxY;
         float average = 1;
         Dictionary<string, Rectangle> guiOutsideRects;
-        Dictionary<string, Rectangle> guiInsideRects;
+        Dictionary<string, Dictionary<string,Rectangle>> guiInsideRects;
+
+        //Inside Rect Dictionaries
+        Dictionary<string, Rectangle> damageDict;
+        Dictionary<string, Rectangle> mapDict;
+        Dictionary<string, Rectangle> inventoryDict;
+        Dictionary<string, Rectangle> equipmentDict;
+        Dictionary<string, Rectangle> abilityDict;
+        Dictionary<string, Rectangle> lootDict;
+
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
@@ -659,30 +668,42 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
             guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
-            guiInsideRects = new Dictionary<string, Rectangle>();
-            //Equipment Icons
-            guiInsideRects.Add("equipHead", new Rectangle((int)(maxX - 690 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
-            guiInsideRects.Add("equipShoulder", new Rectangle((int)(maxX - 500 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
-            //Inventory icons
+            guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
+            equipmentDict = new Dictionary<string, Rectangle>();
+            inventoryDict = new Dictionary<string, Rectangle>();
+            abilityDict = new Dictionary<string, Rectangle>();
+            lootDict = new Dictionary<string, Rectangle>();
+            //Add frame dictionaries
+            guiInsideRects.Add("inventory", inventoryDict);
+            guiInsideRects.Add("equipment", equipmentDict);
+            guiInsideRects.Add("abilities", abilityDict);
+            guiInsideRects.Add("loot", lootDict);
+
+            //Equipment inner
+            equipmentDict.Add("equipHead", new Rectangle((int)(maxX - 690 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equipShoulder", new Rectangle((int)(maxX - 500 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
+            //Inventory inner
             for (int i = 0; i < 4; ++i)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    guiInsideRects.Add("inventory" + (i + j * 4), new Rectangle((int)(maxX - 390 * average + i * 98 * average), (int)(430 * average + j * 98 * average), (int)(88 * average), (int)(88 * average)));
+                    inventoryDict.Add("inventory" + (i + j * 4), new Rectangle((int)(maxX - 390 * average + i * 98 * average), (int)(430 * average + j * 98 * average), (int)(88 * average), (int)(88 * average)));
                 }
             }
+            inventoryDict.Add("equipArrow", new Rectangle((int)(maxX - 380 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)));
 
-            //Gui elements
-            guiInsideRects.Add("equipArrow", new Rectangle((int)(maxX - 380 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)));
-            guiInsideRects.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
-            guiInsideRects.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
-            guiInsideRects.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-            guiInsideRects.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-            guiInsideRects.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
-            guiInsideRects.Add("item4", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+            //ability
+            abilityDict.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("item4", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+
+            //Loot
             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
             {
-                guiInsideRects.Add("loot" + i, new Rectangle((int)(165 * average), (int)(165 * average + i * 65), 50, 50));
+                lootDict.Add("loot" + i, new Rectangle((int)(165 * average), (int)(165 * average + i * 65), 50, 50));
             }
 
 
@@ -708,7 +729,7 @@ namespace KazgarsRevenge
             //Ability Bar
             s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Red * 0.5f);
             for (int i = 0; i < 4; ++i)
-            {
+            {//Convert below to inside Rects
                 s.Draw(boundAbilities[i].Value.icon, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
                 s.Draw(boundAbilities[i + 4].Value.icon, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             }
@@ -718,27 +739,27 @@ namespace KazgarsRevenge
             {
                 case AttackType.None:
                 case AttackType.Melle:
-                    s.Draw(texMelee, guiInsideRects["primary"], Color.White);
+                    s.Draw(texMelee, guiInsideRects["abilities"]["primary"], Color.White);
                     break;
                 case AttackType.Magic:
-                    s.Draw(texMagic, guiInsideRects["primary"], Color.White);
+                    s.Draw(texMagic, guiInsideRects["abilities"]["primary"], Color.White);
                     break;
                 case AttackType.Ranged:
-                    s.Draw(texRange, guiInsideRects["primary"], Color.White);
+                    s.Draw(texRange, guiInsideRects["abilities"]["primary"], Color.White);
                     break;
             }
 
             //RM
-            s.Draw(texPlaceHolder, guiInsideRects["rightmouse"], Color.White);
+            s.Draw(texPlaceHolder, guiInsideRects["abilities"]["rightmouse"], Color.White);
 
             //Item 1
-            s.Draw(healthPot, guiInsideRects["item1"], Color.White);
+            s.Draw(healthPot, guiInsideRects["abilities"]["item1"], Color.White);
             //Item 2
-            s.Draw(healthPot, guiInsideRects["item2"], Color.White);
+            s.Draw(healthPot, guiInsideRects["abilities"]["item2"], Color.White);
             //Item 3
-            s.Draw(healthPot, guiInsideRects["item3"], Color.White);
+            s.Draw(healthPot, guiInsideRects["abilities"]["item3"], Color.White);
             //Item 4
-            s.Draw(healthPot, guiInsideRects["item4"], Color.White);
+            s.Draw(healthPot, guiInsideRects["abilities"]["item4"], Color.White);
 
             #endregion
 
@@ -854,14 +875,14 @@ namespace KazgarsRevenge
                 {
                     s.Draw(texWhitePixel, guiOutsideRects["equipment"], Color.Black * .5f);
                     //Collapse arrow
-                    s.Draw(rightArrow, guiInsideRects["equipArrow"], Color.White);
-                    s.Draw(helmetIcon, guiInsideRects["equipHead"], Color.White);
-                    s.Draw(texPlaceHolder, guiInsideRects["equipShoulder"], Color.White);
+                    s.Draw(rightArrow, guiInsideRects["inventory"]["equipArrow"], Color.White);
+                    s.Draw(helmetIcon, guiInsideRects["equipment"]["equipHead"], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipShoulder"], Color.White);
                 }
                 else
                 {
                     //Open arrow
-                    s.Draw(leftArrow, guiInsideRects["equipArrow"], Color.White);
+                    s.Draw(leftArrow, guiInsideRects["inventory"]["equipArrow"], Color.White);
                 }
 
                 s.Draw(texWhitePixel, guiOutsideRects["inventory"], Color.Black * .5f);
@@ -873,7 +894,7 @@ namespace KazgarsRevenge
                 for (int i = 0; i < inventory.Count; ++i)
                 {
                     //Nate working here
-                    s.Draw(inventory[i].Icon, guiInsideRects["inventory" + i], Color.White);
+                    s.Draw(inventory[i].Icon, guiInsideRects["inventory"]["inventory" + i], Color.White);
                     //s.DrawString(font, inventory[i].Name, new Vector2(maxX - 400 * average, (420 + i * 40 )* average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 }
             }
@@ -885,7 +906,7 @@ namespace KazgarsRevenge
                 List<Item> loot = lootingSoul.Loot;
                 for (int i = 0; i < loot.Count && i < NUM_LOOT_SHOWN; ++i)
                 {
-                    s.Draw(loot[i].Icon, guiInsideRects["loot" + i], Color.White);
+                    s.Draw(loot[i].Icon, guiInsideRects["loot"]["loot" + i], Color.White);
                 }
             }
             #endregion
