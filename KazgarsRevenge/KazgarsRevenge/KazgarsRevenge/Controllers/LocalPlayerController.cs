@@ -307,31 +307,33 @@ namespace KazgarsRevenge
             if (newTarget)
             {
                 ResetTargettedEntity();
-            }
-            foreach (RayCastResult result in results)
-            {
-                if (result.HitObject != null)
+
+                foreach (RayCastResult result in results)
                 {
-                    mouseHoveredEntity = result.HitObject.Tag as GameEntity;
-                    if (mouseHoveredEntity != null)
+                    if (result.HitObject != null)
                     {
-                        if (mouseHoveredEntity.Type == EntityType.Misc)
+                        mouseHoveredEntity = result.HitObject.Tag as GameEntity;
+                        if (mouseHoveredEntity != null)
                         {
-                            ResetTargettedEntity();
-                        }
-                        //if the left mouse button was either just clicked or not pressed down at all, or if any other ability input was just clicked
-                        else if (newTarget)
-                        {
-                            mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
-                            if (mouseHoveredHealth == null)
+                            if (mouseHoveredEntity.Type == EntityType.Misc)
                             {
                                 ResetTargettedEntity();
                             }
-                            else if (!guiclick && curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                            //if the left mouse button was either just clicked or not pressed down at all,
+                            //or if any other ability input was just clicked
+                            else// if (newTarget)
                             {
-                                targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
+                                mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+                                if (mouseHoveredHealth == null)
+                                {
+                                    ResetTargettedEntity();
+                                }
+                                else if (!guiclick && curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                                {
+                                    targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
