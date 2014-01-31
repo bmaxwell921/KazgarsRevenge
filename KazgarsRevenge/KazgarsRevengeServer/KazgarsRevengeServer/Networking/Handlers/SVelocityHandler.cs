@@ -27,10 +27,6 @@ namespace KazgarsRevengeServer
          */
         public override void Handle(NetIncomingMessage nim)
         {
-            SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
-
-            SPlayerManager playerManager = (SPlayerManager)game.Services.GetService(typeof(SPlayerManager));
-
             // Just queue up the message to be applied later
             Identification pId = new Identification(nim.ReadInt32());
             Vector3 vel = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());

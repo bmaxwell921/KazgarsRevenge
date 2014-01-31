@@ -103,6 +103,7 @@
     <Compile Include="Managers\Components\LevelModelManager.cs" />
     <Compile Include="Networking\Handlers\DisconnectedPlayerHandler.cs" />
     <Compile Include="Networking\Handlers\HostUpdateHandler.cs" />
+    <Compile Include="Networking\Handlers\MeleeAttackHandler.cs" />
     <Compile Include="Networking\MessageSender.cs" />
     <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Managers\Components\SpriteManager.cs" />
     <Compile Include="Drawing\UnanimatedModelComponent.cs" />
     <Compile Include="Misc Components\StaticMeshComponent.cs" />
+    <Compile Include="Util\IdentificationFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

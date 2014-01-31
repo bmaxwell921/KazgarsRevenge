@@ -173,7 +173,6 @@ namespace KazgarsRevenge
 
         public void DeletePlayer(Identification id)
         {
-            // TODO Remove all components associated with the given player id
             if(playerMap.ContainsKey(id))
                 playerMap[id].Kill();
             // This line implemented so other clients don't read too much data from snapshots

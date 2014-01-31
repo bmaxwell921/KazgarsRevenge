@@ -61,7 +61,7 @@ namespace KazgarsRevengeServer
          * 
          * Message looks like:
          *      byte - MessageType
-         *      byte - id
+         *      int - id
          *      bool - isHost
          */ 
         public void SendConnectedMessage(NetConnection connection, Identification id, bool isHost)
@@ -129,7 +129,7 @@ namespace KazgarsRevengeServer
          * 
          * Game Snapshot looks like:
          *      MessageType - GameSnapshot
-         *      byte - playerId1
+         *      int - playerId1
          *      int - player1.x
          *      int - player1.y
          *      int - player1.z
@@ -149,6 +149,33 @@ namespace KazgarsRevengeServer
             }
 
             this.SendMessageToAll(nom, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        /*
+         * Sends a message to all clients to create a new attack
+         * Message looks like:
+         *      byte - Messagetype ( already read)
+         *      int - creatorId
+         *      int - attackId
+         *      byte - belongingFaction
+         *      int - position.X
+         *      int - position.Y
+         *      int - position.Z
+         *      int - damage
+         *      
+         */
+        public void SendAttackMessage(MeleeAttackMessage mam)
+        {
+            NetOutgoingMessage nom = server.CreateMessage();
+            nom.Write((byte)MessageType.InGame_Melee);
+            nom.Write(mam.creatorId);
+            nom.Write(mam.attackId);
+            nom.Write((byte)mam.assocFact);
+            nom.Write((int)mam.position.X);
+            nom.Write((int)mam.position.Y);
+            nom.Write((int)mam.position.Z);
+            nom.Write(mam.damage);
+            SendMessageToAll(nom, NetDeliveryMethod.ReliableOrdered);
         }
 
         /*

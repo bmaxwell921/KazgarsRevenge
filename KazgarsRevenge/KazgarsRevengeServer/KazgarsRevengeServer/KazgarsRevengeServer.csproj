@@ -95,6 +95,8 @@
     <Compile Include="Managers\SNetworkingMessageManager.cs" />
     <Compile Include="Misc\SGameStateMonitor.cs" />
     <Compile Include="Misc\IdentificationFactory.cs" />
+    <Compile Include="Networking\Handlers\MeleeAttackHandler.cs" />
+    <Compile Include="Networking\Messages\MeleeAttackMessage.cs" />
     <Compile Include="Networking\SMessageSender.cs" />
     <Compile Include="Networking\Handlers\SStatusChangeHandler.cs" />
     <Compile Include="Networking\Handlers\SDataMessageHandler.cs" />

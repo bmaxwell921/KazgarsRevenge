@@ -77,6 +77,12 @@ namespace KazgarsRevenge
 
         public MainGame()
         {
+            for (int i = 0; i < 5; ++i)
+            {
+                Console.WriteLine(IdentificationFactory.getId(EntityType.Player));
+            }
+
+
             gameState = GameState.StartMenu;
             Window.Title = "Kazgar's Revenge";
 

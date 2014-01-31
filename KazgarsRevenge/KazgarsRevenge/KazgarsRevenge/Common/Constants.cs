@@ -27,6 +27,9 @@ namespace KazgarsRevenge
         GameStateChange,
         InGame_Kinetic,
         InGame_Ability,
+        InGame_Melee,
+        InGame_Range,
+        InGame_Magic,
         InGame_Status,
 
         // Server -> Client Only

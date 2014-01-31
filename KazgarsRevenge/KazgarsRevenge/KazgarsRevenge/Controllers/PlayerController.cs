@@ -526,7 +526,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, true, this);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, true, this);
                 millisActionLength = animations.GetAniMillis("k_onehanded_swing") - millisActionLength;
                 needInterruptAction = false;
             });
@@ -540,7 +540,7 @@ namespace KazgarsRevenge
             interruptActions.Add("swing", () =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMelleAttack(physicalData.Position + forward * 35, 25, true, this);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, true, this);
             });
 
             return sequence;
@@ -610,13 +610,13 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMelleAttack(physicalData.Position + forward * 35, 50, true, this);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, true, this);
                 millisActionLength = 500;
             });
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMelleAttack(physicalData.Position + forward * 35, 50, true, this);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, true, this);
                 millisActionLength = animations.GetAniMillis("k_flip") - 900;
             });
             sequence.Add(() =>
