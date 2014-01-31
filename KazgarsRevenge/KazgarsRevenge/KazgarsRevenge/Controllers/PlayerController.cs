@@ -322,15 +322,14 @@ namespace KazgarsRevenge
 
         protected void StartSequence(string name)
         {
-            if (needInterruptAction)
-            {
-                InterruptCurrentSequence();
-            }
+            InterruptCurrentSequence();
+            
             needInterruptAction = true;
             canInterrupt = false;
             currentSequence = actionSequences[name];
             actionIndex = 0;
             currentActionName = name;
+            stateResetCounter = double.MaxValue;
 
             currentSequence[0]();
             millisActionCounter = 0;
@@ -338,7 +337,7 @@ namespace KazgarsRevenge
         }
         private void InterruptCurrentSequence()
         {
-            if (currentSequence != null && actionIndex < currentSequence.Count)
+            if (needInterruptAction && currentSequence != null && actionIndex < currentSequence.Count)
             {
                 interruptActions[currentActionName]();
                 actionIndex = int.MaxValue;
@@ -461,6 +460,7 @@ namespace KazgarsRevenge
                 attState = AttackState.Attacking;
                 stateResetCounter = 0;
                 millisActionLength = 200;
+                stateResetCounter = 0;
             });
             sequence.Add(() =>
             {
@@ -518,6 +518,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
+                stateResetCounter = 0;
                 canInterrupt = true;
                 PlayAnimation("k_onehanded_swing" + aniSuffix, MixType.None);
                 attState = AttackState.Attacking;
@@ -633,15 +634,13 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
-                //start playing shooting animation
-                canInterrupt = false;
+                canInterrupt = true;
                 PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
                 attState = AttackState.Attacking;
                 millisActionLength = 200;
             });
             sequence.Add(() =>
             {
-                //attach arrow model to hand
                 if (attachedArrow == null)
                 {
                     attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0);
@@ -655,7 +654,6 @@ namespace KazgarsRevenge
             });
             sequence.Add(() =>
             {
-                //remove attached arrow, create arrow projectile, and finish animation
                 if (attached.ContainsKey("handarrow"))
                 {
                     attached.Remove("handarrow");
@@ -670,10 +668,20 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-                //done, go back to fighting stance
                 StartSequence("fightingstance");
                 attState = AttackState.None;
             });
+
+            interruptActions.Add("snipe", () =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 100, this);
+            });
+
             return sequence;
         }
 

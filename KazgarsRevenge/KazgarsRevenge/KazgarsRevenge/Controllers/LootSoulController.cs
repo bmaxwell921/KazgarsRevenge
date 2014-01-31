@@ -66,7 +66,7 @@ namespace KazgarsRevenge
         double timerCounter = 0;
         double timerLength = 0;
         double timer2Counter = 0;
-        double timer2Length = 1000;
+        double timer2Length = 750;
         float normalSpeed = 25.0f;
         float scaredSpeed = 75.0f;
         public override void Update(GameTime gameTime)

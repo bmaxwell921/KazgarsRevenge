@@ -169,7 +169,7 @@ namespace KazgarsRevenge
             if (Game.IsActive)
             {
                 bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
-                newTarget = CheckGUIButtons() || newTarget;
+                newTarget = CheckGUIButtons() || newTarget || mouseHoveredHealth == null;
 
                 string collides = CollidingGuiFrame();
                 bool mouseOnGui = collides != null;
@@ -251,7 +251,7 @@ namespace KazgarsRevenge
             }
 
             bool closeEnough = (physicalData.Position - groundTargetLocation).Length() <= stopRadius;
-            if (attState == AttackState.None && !looting)
+            if (attState == AttackState.None && !looting && (!guiClick || Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) > .01f))
             {
                 MoveCharacter(groundMove, closeEnough);
             }
@@ -552,14 +552,15 @@ namespace KazgarsRevenge
             {
                 if (!closeEnough)
                 {
-                    ChangeVelocity(moveVec);
-
-                    UpdateRotation(move);
                     //just started running
                     if (currentAniName != "k_run")
                     {
                         PlayAnimationInterrupt("k_run", MixType.None);
                     }
+
+                    ChangeVelocity(moveVec);
+
+                    UpdateRotation(move);
                 }
             }
             else if (closeEnough || millisRunningCounter >= millisRunTime)
@@ -574,13 +575,13 @@ namespace KazgarsRevenge
             }
             else
             {
-                ChangeVelocity(moveVec);
-                UpdateRotation(move);
                 //just started running
                 if (currentAniName != "k_run")
                 {
                     PlayAnimationInterrupt("k_run", MixType.None);
                 }
+                ChangeVelocity(moveVec);
+                UpdateRotation(move);
             }
         }
 

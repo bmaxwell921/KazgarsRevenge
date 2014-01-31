@@ -239,7 +239,7 @@ namespace KazgarsRevenge
 
         public Ability GetSnipe()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 6, AttackType.Ranged, "snipe", 1000);
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 1, AttackType.Ranged, "snipe", 1000);
         }
 
         public Ability GetHeartStrike()
