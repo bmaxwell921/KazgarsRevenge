@@ -40,10 +40,11 @@ namespace KazgarsRevenge
                 {
                     effect.CurrentTechnique = effect.Techniques[edgeDetection? "NormalDepth" : "Toon"];
                     Matrix world = transforms[mesh.ParentBone.Index]
+                        * Matrix.CreateScale(drawScale)
+                        * Matrix.CreateTranslation(localOffset)
                         * rotOffset
                         * rot
-                        * Matrix.CreateScale(drawScale)
-                        * Matrix.CreateTranslation(physicalData.Position + localOffset);
+                        * Matrix.CreateTranslation(physicalData.Position);
                     effect.Parameters["World"].SetValue(world);
                     effect.Parameters["ViewProj"].SetValue(view * projection);
                     effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));

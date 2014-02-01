@@ -106,17 +106,16 @@ namespace KazgarsRevenge
             //this is probably faster? not sure how CreateFromQuaternion works
             rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
             rot *= yawOffset;
-            animationPlayer.Update(gameTime.ElapsedGameTime, true,
-                rot * Matrix.CreateScale(new Vector3(modelParams.size)) * Matrix.CreateTranslation(physicalData.Position + localOffset));
+            Matrix conglomeration = Matrix.CreateScale(new Vector3(modelParams.size));
+            conglomeration *= Matrix.CreateTranslation(localOffset);
+            conglomeration *= rot;
+            conglomeration *= Matrix.CreateTranslation(physicalData.Position);
+            animationPlayer.Update(gameTime.ElapsedGameTime, true, conglomeration);
         }
         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
 
-            Matrix worldWithoutBone = rot
-                //* Matrix.CreateFromQuaternion(physicalData.Orientation)
-                        * Matrix.CreateScale(new Vector3(modelParams.size))
-                        * Matrix.CreateTranslation(physicalData.Position + localOffset);
             //drawing with toon shader
             foreach (ModelMesh mesh in model.Meshes)
             {
