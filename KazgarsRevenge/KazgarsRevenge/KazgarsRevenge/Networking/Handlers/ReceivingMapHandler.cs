@@ -42,7 +42,7 @@ namespace KazgarsRevenge
                 int id = nim.ReadInt32();
                 Vector3 position = new Vector3(nim.ReadFloat(), nim.ReadFloat(), nim.ReadFloat());
 
-                pm.SetPlayerLocation(position, new Identification(id));
+                pm.SetPlayerLocation(position, new Identification(id, id));
             }
 
             // Time to play!

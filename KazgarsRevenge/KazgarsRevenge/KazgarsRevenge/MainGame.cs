@@ -77,12 +77,6 @@ namespace KazgarsRevenge
 
         public MainGame()
         {
-            for (int i = 0; i < 5; ++i)
-            {
-                Console.WriteLine(IdentificationFactory.getId(EntityType.Player));
-            }
-
-
             gameState = GameState.StartMenu;
             Window.Title = "Kazgar's Revenge";
 
@@ -318,7 +312,7 @@ namespace KazgarsRevenge
         }
 
         // TODO ISSUE #7
-        private static readonly Identification DUMMY_ID = new Identification(0);
+        private static readonly Identification DUMMY_ID = new Identification(0, Identification.NO_CLIENT);
         public void DemoLevel()
         {
             levels.DemoLevel();
@@ -327,7 +321,7 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < 5; ++j)
                 {
-                    enemies.CreateBrute(new Vector3(130 + i * 200, 5, -100 - j * 200), 1);
+                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 200, 5, -100 - j * 200), 1);
                 }
             }
 
@@ -537,8 +531,10 @@ namespace KazgarsRevenge
         protected override void OnExiting(object sender, EventArgs args)
         {
             base.OnExiting(sender, args);
-
-            ((MessageSender)Services.GetService(typeof(MessageSender))).CloseConnection(players.myId.id);
+            if (players.myId != null)
+            {
+                ((MessageSender)Services.GetService(typeof(MessageSender))).CloseConnection(players.myId.id);
+            }
         }
     }
 }

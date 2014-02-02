@@ -29,8 +29,8 @@ namespace KazgarsRevenge
             LootManager gearGenerator = Game.Services.GetService(typeof(LootManager)) as LootManager;
             gear[GearSlot.Righthand] = null;
             gear[GearSlot.Lefthand] = null;
-            EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
-            EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
+            //EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
+            //EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
 
             stopRadius = 2;
         }

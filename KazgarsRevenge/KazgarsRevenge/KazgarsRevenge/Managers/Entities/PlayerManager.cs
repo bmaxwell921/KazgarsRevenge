@@ -43,7 +43,7 @@ namespace KazgarsRevenge
             PlayerSave saveFile = new PlayerSave();
 
             GameEntity player = new GameEntity("localplayer", FactionType.Players, EntityType.Player);
-
+            player.id = id;
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController)
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
             //assigns a collision group to the physics
@@ -100,7 +100,7 @@ namespace KazgarsRevenge
 
             // TODO ISSUE #9
             GameEntity player = new GameEntity("netplayer", FactionType.Players, EntityType.Player);
-
+            player.id = id;
             Entity playerPhysicalData = new Box(position, 37, 6, 2);
 
             playerPhysicalData.IsAffectedByGravity = false;
@@ -177,6 +177,20 @@ namespace KazgarsRevenge
                 playerMap[id].Kill();
             // This line implemented so other clients don't read too much data from snapshots
             playerMap.Remove(id);
+        }
+
+        /// <summary>
+        /// Gets a player from this manager with the associated id, or null if none exists
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public GameEntity getEntity(Identification id)
+        {
+            if (!playerMap.ContainsKey(id))
+            {
+                return null;
+            }
+            return playerMap[id];
         }
     }
 }

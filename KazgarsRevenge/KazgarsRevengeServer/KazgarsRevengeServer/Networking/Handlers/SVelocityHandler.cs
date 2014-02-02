@@ -27,8 +27,9 @@ namespace KazgarsRevengeServer
          */
         public override void Handle(NetIncomingMessage nim)
         {
+            int playerId = nim.ReadInt32();
             // Just queue up the message to be applied later
-            Identification pId = new Identification(nim.ReadInt32());
+            Identification pId = new Identification(playerId, playerId);
             Vector3 vel = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
             MessageQueue mq = game.Services.GetService(typeof(MessageQueue)) as MessageQueue;
             mq.AddMessage(new VelocityMessage(MessageType.InGame_Kinetic, pId, vel));

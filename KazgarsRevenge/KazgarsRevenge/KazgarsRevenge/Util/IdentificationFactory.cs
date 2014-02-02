@@ -16,13 +16,13 @@ namespace KazgarsRevenge
         private static readonly int START_ID = 0;
 
         // Used to get a new unique Id for an EntityType
-        public static Identification getId(EntityType type)
+        public static Identification getId(EntityType type, int clientId)
         {
             if (!ids.ContainsKey(type))
             {
                 ids.Add(type, START_ID);
             }
-            return new Identification(ids[type]++);
+            return new Identification(ids[type]++, clientId);
         }
 
         // Gets the value of the id to be returned by the next call to getId
@@ -39,6 +39,14 @@ namespace KazgarsRevenge
         public static void updateId(EntityType type, int nextVal)
         {
             ids[type] = nextVal;
+        }
+
+        /// <summary>
+        /// Resets all ids
+        /// </summary>
+        public static void Reset()
+        {
+            ids.Clear();
         }
     }
 }

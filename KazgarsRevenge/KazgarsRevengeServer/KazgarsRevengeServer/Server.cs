@@ -142,7 +142,7 @@ namespace KazgarsRevengeServer
             IdentificationFactory.Reset();
 
             // Reset the hostId to the default
-            nmm.hostId = new Identification(0);
+            nmm.hostId = new Identification(0, 0);
 
             // Reset all the managers....
             players.Reset();

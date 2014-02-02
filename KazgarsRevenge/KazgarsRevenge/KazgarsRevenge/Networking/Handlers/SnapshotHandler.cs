@@ -34,7 +34,8 @@ namespace KazgarsRevenge
             PlayerManager pm = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
             for (int i = 0; i < pm.numPlayers; ++i)
             {
-                Identification id = new Identification(nim.ReadInt32());
+                int playerId = nim.ReadInt32();
+                Identification id = new Identification(playerId, playerId);
                 Vector3 loc = new Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32());
                 if (!pm.myId.Equals(id))
                 {

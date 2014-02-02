@@ -41,7 +41,7 @@ namespace KazgarsRevengeServer
         {
             SetUpNetServer();
 
-            hostId = new Identification(0);
+            hostId = new Identification(0, 0);
 
             nextUpdateTime = NetTime.Now;
         }
@@ -78,7 +78,7 @@ namespace KazgarsRevengeServer
 
         public void DisconnectPlayer(int id)
         {
-            if (hostId.Equals(new Identification(id)))
+            if (hostId.Equals(new Identification(id, id)))
             {
                 // Choose a new host
                 SPlayerManager pm = (SPlayerManager)Game.Services.GetService(typeof(SPlayerManager));

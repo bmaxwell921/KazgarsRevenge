@@ -39,7 +39,8 @@ namespace KazgarsRevengeServer
         /// <returns></returns>
         public Identification GetId()
         {
-            Identification newId = IdentificationFactory.GenerateNextId();
+            Identification newId = IdentificationFactory.getId(EntityType.Player, 0);
+            newId.client = newId.id;
             players[newId] = null;
             return newId;
         }
@@ -133,7 +134,7 @@ namespace KazgarsRevengeServer
 
         public void DisconnectPlayer(int id)
         {
-            players.Remove(new Identification(id));            
+            players.Remove(new Identification(id, id));            
         }
 
         // Used for getting the new host lol

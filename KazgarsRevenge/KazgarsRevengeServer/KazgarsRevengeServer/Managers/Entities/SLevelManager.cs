@@ -88,7 +88,7 @@ namespace KazgarsRevengeServer
             gcm.AddComponent(roomPhysics);
 
             // Add the Id to be received later
-            room.AddSharedData(typeof(Identification), new Identification(DUMMY_ID));
+            room.AddSharedData(typeof(Identification), new Identification(DUMMY_ID, DUMMY_ID));
 
             rooms.Add(room);
         }
@@ -154,10 +154,10 @@ namespace KazgarsRevengeServer
 
                     // Actual place to put him
                     Vector3 playerLoc = dummyStartingPos + new Vector3(i * translate, 0, j * translate);
-                    ret[new Identification((byte)numPlaced)] = playerLoc;
+                    ret[new Identification(numPlaced, numPlaced)] = playerLoc;
 
                     // Let the player manager know
-                    pm.SetUpPlayer(playerLoc, new Identification((byte)numPlaced));
+                    pm.SetUpPlayer(playerLoc, new Identification(numPlaced, numPlaced));
                     ++numPlaced;
                 }
             }

@@ -79,10 +79,10 @@ namespace KazgarsRevenge
 
         public void CreateMeleeAttack(Vector3 position, int damage, bool sparks, AliveComponent creator)
         {
-            GameEntity newAttack = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
-            //TODO give the newAttack an Id
+            GameEntity newAttack = new GameEntity("melee", creator.Entity.Faction, EntityType.Misc);
+            newAttack.id = IdentificationFactory.getId(EntityType.Misc, players.myId.id);
 
-            // Send it off to the server!
+            // Send it off to the server! TODO
             //((MessageSender)Game.Services.GetService(typeof(MessageSender))).SendMeleeAttackMessage(creator.Entity.id.id, newAttack.id.id, creator.Entity.Faction, position, damage);
             
             Entity attackData = new Box(position, 35, 47, 35, .01f);
@@ -115,32 +115,33 @@ namespace KazgarsRevenge
         /// </summary>
         public void CreateMeleeAttack(int creatorId, int attackId, FactionType assocFact, Vector3 position, int damage)
         {
-            //GameEntity newAttack = new GameEntity("arrow", assocFact, EntityType.Misc);
-            //newAttack.id = new Identification(attackId);
+            GameEntity newAttack = new GameEntity("melee", assocFact, EntityType.Misc);
+            newAttack.id = new Identification(attackId, players.myId.id);
 
-            //Entity attackData = new Box(position, 35, 47, 35, .01f);
-            ////GameEntity entity = ;
+            EnemyManager em = (EnemyManager) Game.Services.GetService(typeof(EnemyManager));
+            GameEntity creator = (assocFact == FactionType.Players) ? players.getEntity(new Identification(creatorId, players.myId.id)) : em.getEntity(new Identification(creatorId, players.myId.id));
 
+            Entity attackData = new Box(position, 35, 47, 35, .01f);
+            attackData.CollisionInformation.CollisionRules.Group = (assocFact == FactionType.Players) ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+            newAttack.AddSharedData(typeof(Entity), attackData);
 
-            //attackData.CollisionInformation.CollisionRules.Group = assocFact == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
-            //attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            //attackData.LinearVelocity = Vector3.Zero;
-            //newAttack.AddSharedData(typeof(Entity), attackData);
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
 
-            //PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, assocFact == FactionType.Players ? FactionType.Enemies : FactionType.Players, 
+                (AliveComponent)creator.GetComponent(typeof(AliveComponent)));
 
-            //AttackController attackAI = new AttackController(mainGame, newAttack, attackData, damage, 300, assocFact == FactionType.Players ? FactionType.Enemies : FactionType.Players, (AliveComponent) entity.GetComponent(typeof(AliveComponent)));
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
 
-            //newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
-            //genComponentManager.AddComponent(attackPhysics);
+            newAttack.AddComponent(typeof(AttackController), attackAI);
+            genComponentManager.AddComponent(attackAI);
 
-            //newAttack.AddComponent(typeof(AttackController), attackAI);
-            //genComponentManager.AddComponent(attackAI);
+            attacks.Add(newAttack);
+            soundEffects.playMeleeSound();
 
-            //attacks.Add(newAttack);
-            //soundEffects.playMeleeSound();
-
-            // SpawnWeaponSparks(position + Vector3.Down * 18);
+            SpawnWeaponSparks(position + Vector3.Down * 18);
         }
 
         public void CreateMagicAttack()

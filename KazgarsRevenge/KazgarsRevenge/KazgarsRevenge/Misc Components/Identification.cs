@@ -13,30 +13,48 @@ namespace KazgarsRevenge
     /// </summary>
     public class Identification
     {
+        public static readonly int SERVER_ID = 42;
+        public static readonly int NO_CLIENT = -1;
         public int id
         {
             get;
             protected set;
         }
 
-        public Identification(int id)
+        /*
+         * Field used to differentiate ids over the network. Since clients are responsible for
+         * creating attacks and stuff it's possible for two client ids to collide.
+         */ 
+        public int client
+        {
+            get;
+            set;
+        }
+
+        public Identification(int id, int client)
         {
             this.id = id;
+            this.client = client;
         }
 
         public override string ToString()
         {
-            return id.ToString();
+            return String.Format("Id: {0}, Client: {1}", id, client);
         }
 
         public override bool Equals(object obj)
         {
-            return obj != null && (obj as Identification).id == this.id;
+            return obj != null && (obj as Identification).id == this.id && (obj as Identification).client == this.client;
         }
 
         public override int GetHashCode()
         {
-            return id.GetHashCode();
+            int PRIME = 31;
+            int hash = 1;
+
+            hash = hash * PRIME + id;
+            hash = hash * PRIME + client;
+            return hash;
         }
     }
 }
