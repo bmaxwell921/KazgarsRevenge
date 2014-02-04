@@ -292,8 +292,8 @@ namespace KazgarsRevenge
                     if (nmm.isHost && keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter))
                     {
                         lm.Log(Level.DEBUG, "Starting game");
-                        ((MessageSender)Services.GetService(typeof(MessageSender))).SendStartGame(players.myId.id);
-                        gameState = GameState.ReceivingMap;
+                        //((MessageSender)Services.GetService(typeof(MessageSender))).SendStartGame(players.myId.id);
+                        //gameState = GameState.ReceivingMap;
                     }
                     break;
                 case GameState.Paused:
@@ -533,7 +533,7 @@ namespace KazgarsRevenge
             base.OnExiting(sender, args);
             if (players.myId != null)
             {
-                ((MessageSender)Services.GetService(typeof(MessageSender))).CloseConnection(players.myId.id);
+                //((MessageSender)Services.GetService(typeof(MessageSender))).CloseConnection(players.myId.id);
             }
         }
     }
