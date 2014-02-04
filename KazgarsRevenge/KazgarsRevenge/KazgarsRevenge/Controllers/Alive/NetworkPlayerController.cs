@@ -66,7 +66,7 @@ namespace KazgarsRevenge
             gear[slot] = equipMe;
             RecalculateStats();
 
-            attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot));
+            attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot, 0));
         }
 
         public void SetPosition(Vector3 pos)

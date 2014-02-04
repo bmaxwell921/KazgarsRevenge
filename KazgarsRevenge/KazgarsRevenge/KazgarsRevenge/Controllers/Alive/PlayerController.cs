@@ -115,7 +115,7 @@ namespace KazgarsRevenge
                 gear[slot] = equipMe;
                 RecalculateStats();
 
-                attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot));
+                attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot, 0));
             }
         }
         /// <summary>
@@ -460,14 +460,13 @@ namespace KazgarsRevenge
                 attState = AttackState.Attacking;
                 stateResetCounter = 0;
                 millisActionLength = 200;
-                stateResetCounter = 0;
             });
             sequence.Add(() =>
             {
                 //attach arrow model to hand
                 if (attachedArrow == null)
                 {
-                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0);
+                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0, -MathHelper.PiOver2);
                 }
                 if (!attached.ContainsKey("handarrow"))
                 {
@@ -600,6 +599,55 @@ namespace KazgarsRevenge
             });
             return sequence;
         }
+
+        /*
+         * Ranged abilities
+         */
+        private List<Action> SnipeActions()
+        {
+            //some of these actions are identical to "shoot", so just copying those Actions
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                canInterrupt = true;
+                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                attState = AttackState.Attacking;
+                millisActionLength = 200;
+            });
+            sequence.Add(actionSequences["shoot"][1]);
+
+            sequence.Add(() =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 100, this);
+
+                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
+
+                needInterruptAction = false;
+            });
+
+            sequence.Add(actionSequences["shoot"][3]);
+
+            interruptActions.Add("snipe", () =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 100, this);
+            });
+
+            return sequence;
+        }
+
+        /*
+         * Melee abilities
+         */
         private List<Action> FlipActions()
         {
             List<Action> sequence = new List<Action>();
@@ -629,61 +677,11 @@ namespace KazgarsRevenge
 
             return sequence;
         }
-        private List<Action> SnipeActions()
-        {
-            List<Action> sequence = new List<Action>();
-            sequence.Add(() =>
-            {
-                canInterrupt = true;
-                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
-                attState = AttackState.Attacking;
-                millisActionLength = 200;
-            });
-            sequence.Add(() =>
-            {
-                if (attachedArrow == null)
-                {
-                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0);
-                }
-                if (!attached.ContainsKey("handarrow"))
-                {
-                    attached.Add("handarrow", attachedArrow);
-                }
 
-                millisActionLength = animations.GetAniMillis("k_fire_arrow") / 2 - 200;
-            });
-            sequence.Add(() =>
-            {
-                if (attached.ContainsKey("handarrow"))
-                {
-                    attached.Remove("handarrow");
-                }
-                Vector3 forward = GetForward();
-                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 100, this);
 
-                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
-
-                needInterruptAction = false;
-            });
-
-            sequence.Add(() =>
-            {
-                StartSequence("fightingstance");
-                attState = AttackState.None;
-            });
-
-            interruptActions.Add("snipe", () =>
-            {
-                if (attached.ContainsKey("handarrow"))
-                {
-                    attached.Remove("handarrow");
-                }
-                Vector3 forward = GetForward();
-                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 100, this);
-            });
-
-            return sequence;
-        }
+        /*
+         * Magic Abilities
+         */
 
         AttachableModel attachedArrow;
         protected void UpdateActionSequences()
@@ -787,12 +785,12 @@ namespace KazgarsRevenge
 
             if (r != null)
             {
-                attached.Add(GearSlot.Lefthand.ToString(), new AttachableModel(r.GearModel, GearSlotToBoneName(GearSlot.Lefthand), 0));
+                attached.Add(GearSlot.Lefthand.ToString(), new AttachableModel(r.GearModel, GearSlotToBoneName(GearSlot.Lefthand)));
             }
 
             if(l != null)
             {
-                attached.Add(GearSlot.Righthand.ToString(), new AttachableModel(l.GearModel, GearSlotToBoneName(GearSlot.Righthand), MathHelper.Pi));
+                attached.Add(GearSlot.Righthand.ToString(), new AttachableModel(l.GearModel, GearSlotToBoneName(GearSlot.Righthand), MathHelper.Pi, 0));
             }
 
 

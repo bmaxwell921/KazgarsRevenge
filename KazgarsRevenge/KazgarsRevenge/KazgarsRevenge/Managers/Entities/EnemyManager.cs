@@ -48,7 +48,7 @@ namespace KazgarsRevenge
             brute.AddSharedData(typeof(AnimationPlayer), bruteAnimations);
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
-            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R", 0));
+            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R"));
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brute);
