@@ -46,6 +46,11 @@ namespace KazgarsRevenge
         NORTH, SOUTH, EAST, WEST
     }
 
+    public enum Rotation
+    {
+        ZERO, NINETY, ONE_EIGHTY, TWO_SEVENTY
+    }
+
     public class Constants
     {
         public static readonly string CONNECTION_KEY = "Revengeance";
