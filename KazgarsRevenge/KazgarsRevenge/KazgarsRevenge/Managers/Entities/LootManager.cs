@@ -16,9 +16,8 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class LootManager : EntityManager
+    public class LootManager : EntityManager
     {
-        const float SOULS_PER_INCREASE = 1.0f;
 
         List<GameEntity> lootSouls = new List<GameEntity>();
 
@@ -49,7 +48,7 @@ namespace KazgarsRevenge
         {
             position.Y = 10;
             GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral, EntityType.Misc);
-            float size = 10;// 3 + (float)Math.Floor((float)totalSouls / SOULS_PER_INCREASE);
+            float size = 3 + totalSouls;
 
             Entity lootPhysicalData = new Box(position, size, size, size, 1);
             lootPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.LootCollisionGroup;
@@ -65,11 +64,11 @@ namespace KazgarsRevenge
             lootSoul.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
             PhysicsComponent lootPhysics = new PhysicsComponent(mainGame, lootSoul);
-            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, new Vector3(size), Vector3.Zero);
+            AnimatedModelComponent lootGraphics = new AnimatedModelComponent(mainGame, lootSoul, lootModel, size, Vector3.Zero);
             LootSoulController lootController = new LootSoulController(mainGame, lootSoul, 10, containedLoot, totalSouls);
             BlobShadowDecal lootShadow = new BlobShadowDecal(mainGame, lootSoul, size);
 
-            lootGraphics.AddEmitter(typeof(SoulTrailParticleSystem), 8, Math.Max(1, (int)size / 2), Vector3.Up * 5);
+            lootGraphics.AddEmitter(typeof(SoulTrailParticleSystem), 16, Math.Max(1, (int)size / 2), Vector3.Up * 5, 6);
 
             lootSoul.AddComponent(typeof(PhysicsComponent), lootPhysics);
             genComponentManager.AddComponent(lootPhysics);
@@ -347,15 +346,15 @@ namespace KazgarsRevenge
             Texture2D goldIcon;
             if (quantity <= 10)
             {
-                goldIcon = Game.Content.Load<Texture2D>("Textures\\gold1");
+                goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold1");
             }
             else if (quantity <= 30)
             {
-                goldIcon = Game.Content.Load<Texture2D>("Textures\\gold2");
+                goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold2");
             }
             else
             {
-                goldIcon = Game.Content.Load<Texture2D>("Textures\\gold3");
+                goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold3");
             }
             return goldIcon;
         }

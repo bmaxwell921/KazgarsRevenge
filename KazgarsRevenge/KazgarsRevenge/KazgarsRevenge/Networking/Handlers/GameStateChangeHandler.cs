@@ -14,7 +14,7 @@ namespace KazgarsRevenge
 
         public override void Handle(Lidgren.Network.NetIncomingMessage nim)
         {
-            game.gameState = EnumParser.GetGameState(nim.ReadByte());
+            game.gameState = (GameState) Enum.ToObject(typeof(GameState), nim.ReadByte());
         }
     }
 }

@@ -15,7 +15,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    class LootSoulController : AIComponent
+    public class LootSoulController : AIComponent
     {
         public enum LootSoulState
         {
@@ -48,7 +48,15 @@ namespace KazgarsRevenge
             rand = new Random();
             physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleSoulCollision;
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
-            animations.StartClip("soul_wander");
+            animations.StartClip("soul_wander", MixType.None);
+
+            normalSpeed = 25 + totalSouls * 1.5f;
+            scaredSpeed = 75 + totalSouls * 6;
+
+        }
+        public override void Start()
+        {
+            modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
         }
 
         const float soulSensorSize = 400;
@@ -57,11 +65,17 @@ namespace KazgarsRevenge
         Random rand;
         double timerCounter = 0;
         double timerLength = 0;
-        float groundSpeed = 25.0f;
-        float scaredSpeed = 50.0f;
+        double timer2Counter = 0;
+        double timer2Length = 750;
+        float normalSpeed = 25.0f;
+        float scaredSpeed = 75.0f;
         public override void Update(GameTime gameTime)
         {
             timerCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (soulState != LootSoulState.BeingLooted)
+            {
+                AdjustSizeTo(3 + totalSouls);
+            }
             switch (soulState)
             {
                 case LootSoulState.Wandering:
@@ -105,7 +119,7 @@ namespace KazgarsRevenge
                         }
                     }
 
-                    AdjustDir(groundSpeed, .045f);
+                    AdjustDir(normalSpeed, .045f);
 
                     break;
                 case LootSoulState.Following:
@@ -127,30 +141,37 @@ namespace KazgarsRevenge
                             Vector3 move = targetData.Position - physicalData.Position;
                             move.Y = 0;
                             newDir = GetPhysicsYaw(move);
-                            AdjustDir(groundSpeed, .045f);
+                            AdjustDir(normalSpeed, .075f);
                         }
                     }
                     break;
                 case LootSoulState.Scared:
-                    newDir += (float)rand.Next(-3, 3) / 10.0f;
+                    timer2Counter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if (timer2Counter > timer2Length)
+                    {
+                        newDir = (float)rand.Next(1, 627) / 100.0f;
+                        timer2Counter = 0;
+                    }
                     AdjustDir(scaredSpeed, .09f);
 
                     if (timerCounter >= timerLength)
                     {
                         soulState = LootSoulState.Wandering;
                         timerCounter = 0;
+                        timerLength = 3000;
 
                         newDir = curDir;
-                        physicalData.LinearVelocity = Vector3.Zero;
                     }
                     break;
                 case LootSoulState.BeingLooted:
+                    AdjustSizeTo(10);
+
                     if (timerCounter >= timerLength)
                     {
                         if (currentAni == "soul_loot")
                         {
                             currentAni = "soul_loot_spin";
-                            animations.StartClip(currentAni);
+                            animations.StartClip(currentAni, MixType.None);
                             timerLength = 10000;
                         }
                         else if (currentAni == "soul_loot_smash")
@@ -161,11 +182,13 @@ namespace KazgarsRevenge
                             }
                             else
                             {
+                                Vector3 smashedPos = GetBoneTranslation(6);
                                 currentAni = "soul_wander";
-                                animations.StartClip(currentAni);
+                                animations.StartClip(currentAni, MixType.None);
                                 soulState = LootSoulState.Scared;
                                 timerLength = 5000;
-                                physicalData.Position = new Vector3(physicalData.Position.X, 10, physicalData.Position.Z);
+                                physicalData.Position = new Vector3(smashedPos.X, 10, smashedPos.Z);
+                                timer2Counter = 10000;
                             }
                         }
                         timerCounter = 0;
@@ -174,15 +197,37 @@ namespace KazgarsRevenge
             }
         }
 
+        private void AdjustSizeTo(float size)
+        {
+            float rate = .05f + Math.Abs(modelParams.size - size) / 10.0f;
+            if (modelParams.size < size)
+            {
+                modelParams.size += rate;
+                if (modelParams.size > size)
+                {
+                    modelParams.size = size;
+                }
+            }
+            else if (modelParams.size > size)
+            {
+                modelParams.size -= rate;
+                if (modelParams.size < size)
+                {
+                    modelParams.size = size;
+                }
+            }
+        }
 
         string currentAni = "";
+        SharedGraphicsParams modelParams = null;
         public void OpenLoot(Vector3 position, Quaternion q)
         {
+
             physicalData.Position = position;
             physicalData.Orientation = q;
             soulState = LootSoulState.BeingLooted;
             currentAni = "soul_loot";
-            animations.StartClip(currentAni);
+            animations.StartClip(currentAni, MixType.None);
             timerCounter = 0;
             timerLength = animations.GetAniMillis(currentAni);
             physicalData.LinearVelocity = Vector3.Zero;
@@ -191,7 +236,7 @@ namespace KazgarsRevenge
         public void CloseLoot()
         {
             currentAni = "soul_loot_smash";
-            animations.StartClip(currentAni);
+            animations.StartClip(currentAni, MixType.MixInto);
             timerCounter = 0;
             timerLength = animations.GetAniMillis(currentAni);
         }
@@ -235,9 +280,11 @@ namespace KazgarsRevenge
 
         public override void End()
         {
-            (Game.Services.GetService(typeof(LootManager)) as LootManager).SpawnSoulPoof(physicalData.Position);
+            (Game.Services.GetService(typeof(LootManager)) as LootManager).SpawnSoulPoof(GetBoneTranslation(6));
             base.End();
         }
+
+
 
         protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
@@ -265,11 +312,6 @@ namespace KazgarsRevenge
                     }
                 }
             }
-        }
-
-        protected override void TakeDamage(int damage, GameEntity from)
-        {
-            //this can't take damage... hmm. design problems.
         }
     }
 }

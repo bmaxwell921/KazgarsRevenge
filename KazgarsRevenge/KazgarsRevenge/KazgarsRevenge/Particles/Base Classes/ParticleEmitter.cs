@@ -27,6 +27,7 @@ namespace KazgarsRevenge
     public class ParticleEmitter
     {
         #region Fields
+        public int BoneIndex { get; private set; }
 
         ParticleSystem particleSystem;
         float timeBetweenParticles;
@@ -54,8 +55,25 @@ namespace KazgarsRevenge
             rand = new Random();
             this.maxOffset = maxOffset;
             this.offset = offset;
+
+            this.BoneIndex = -1;
         }
 
+        public ParticleEmitter(ParticleSystem particleSystem,
+                       float particlesPerSecond, Vector3 initialPosition, int maxOffset, Vector3 offset, int attachIndex)
+        {
+            this.particleSystem = particleSystem;
+
+            timeBetweenParticles = 1.0f / particlesPerSecond;
+
+            previousPosition = initialPosition;
+
+            rand = new Random();
+            this.maxOffset = maxOffset;
+            this.offset = offset;
+
+            this.BoneIndex = attachIndex;
+        }
 
         /// <summary>
         /// Updates the emitter, creating the appropriate number of particles

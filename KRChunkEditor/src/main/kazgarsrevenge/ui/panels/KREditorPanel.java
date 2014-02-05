@@ -113,17 +113,18 @@ public abstract class KREditorPanel extends JPanel {
 	}
 	
 	private void setUpKeyBindings() {
-		registerMovementBinding("LEFT", KeyEvent.VK_LEFT);
-		registerMovementBinding("RIGHT", KeyEvent.VK_RIGHT);
-		registerMovementBinding("UP", KeyEvent.VK_UP);
-		registerMovementBinding("DOWN", KeyEvent.VK_DOWN);
+		registerKeyAction("LEFT", KeyEvent.VK_LEFT);
+		registerKeyAction("RIGHT", KeyEvent.VK_RIGHT);
+		registerKeyAction("UP", KeyEvent.VK_UP);
+		registerKeyAction("DOWN", KeyEvent.VK_DOWN);
 		
-		registerMovementBinding("ENTER", KeyEvent.VK_ENTER);
-		registerMovementBinding("R", KeyEvent.VK_R);
-		registerMovementBinding("BACK_SPACE", KeyEvent.VK_BACK_SPACE);
+		registerKeyAction("ENTER", KeyEvent.VK_ENTER);
+		registerKeyAction("R", KeyEvent.VK_R);
+		registerKeyAction("BACK_SPACE", KeyEvent.VK_BACK_SPACE);
+		registerKeyAction("M", KeyEvent.VK_M);
 	}
 	
-	private void registerMovementBinding(String name, int keyCode) {
+	private void registerKeyAction(String name, int keyCode) {
 		KeyAction pressed = new KeyAction(keyCode, true);
 		KeyAction released = new KeyAction(keyCode, false);
 		

@@ -9,7 +9,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    public class NetworkPlayerController : AIComponent
+    public class NetworkPlayerController : PlayerController
     {
         enum NetPlayerState
         {
@@ -20,13 +20,53 @@ namespace KazgarsRevenge
         private NetPlayerState state;
 
         Vector3 targetPos = Vector3.Zero;
-        const float stopRadius = 2;
-        AnimationPlayer animations;
-        public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity)
+        public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity, PlayerSave savefile)
+            : base(game, entity, savefile)
         {
             this.targetPos = physicalData.Position;
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
+            this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
+            LootManager gearGenerator = Game.Services.GetService(typeof(LootManager)) as LootManager;
+            gear[GearSlot.Righthand] = null;
+            gear[GearSlot.Lefthand] = null;
+            //EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
+            //EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
+
+            stopRadius = 2;
+        }
+
+        /// <summary>
+        /// Copied from PlayerController, pull up hierarchy
+        /// </summary>
+        /// <param name="equipMe"></param>
+        /// <param name="slot"></param>
+        protected override void EquipGear(Equippable equipMe, GearSlot slot)
+        {
+            float xRot = 0;
+            //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand
+            Weapon possWep = equipMe as Weapon;
+            if (possWep != null)
+            {
+                if (possWep.TwoHanded)
+                {
+                    if (slot == GearSlot.Lefthand)
+                    {
+                        EquipGear(equipMe, GearSlot.Righthand);
+                        return;
+                    }
+                }
+
+                if (slot == GearSlot.Righthand)
+                {
+                    xRot = MathHelper.Pi;
+                }
+            }
+
+            //otherwise, carry on
+            gear[slot] = equipMe;
+            RecalculateStats();
+
+            attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot, 0));
         }
 
         public void SetPosition(Vector3 pos)
@@ -65,7 +105,7 @@ namespace KazgarsRevenge
                     {
                         physicalData.LinearVelocity = Vector3.Zero;
                         state = NetPlayerState.Standing;
-                        animations.StartClip("k_fighting_stance");
+                        animations.StartClip("k_fighting_stance", MixType.None);
                     }
                     else
                     {
@@ -77,7 +117,7 @@ namespace KazgarsRevenge
                     {
                         curDir = GetGraphicsYaw(diff);
                         physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(curDir, 0, 0);
-                        animations.StartClip("k_run");
+                        animations.StartClip("k_run", MixType.None);
                         state = NetPlayerState.Running;
                     }
                     break;

@@ -42,10 +42,10 @@ namespace KazgarsRevenge
         public override void Log(Level level, string message)
         {
             string output = String.Format(ALogger.OUTPUT_FORMAT, level, message);
-            using (StreamWriter sw = File.AppendText(filePath))
-            {
-                sw.WriteLine(output);
-            }
+            //using (StreamWriter sw = File.AppendText(filePath))
+            //{
+            //    sw.WriteLine(output);
+            //}
         }
 
         private void CreateLoggingFile(string fileName)

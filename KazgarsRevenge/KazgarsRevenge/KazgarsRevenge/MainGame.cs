@@ -142,6 +142,9 @@ namespace KazgarsRevenge
             Components.Add(nmm);
             Services.AddService(typeof(NetworkMessageManager), nmm);
 
+            MessageSender ms = new MessageSender(nmm.Client, (LoggerManager)Services.GetService(typeof(LoggerManager)));
+            Services.AddService(typeof(MessageSender), ms);
+
             soundEffectLibrary = new SoundEffectLibrary(this);
             Services.AddService(typeof(SoundEffectLibrary), soundEffectLibrary);
 
@@ -289,8 +292,8 @@ namespace KazgarsRevenge
                     if (nmm.isHost && keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter))
                     {
                         lm.Log(Level.DEBUG, "Starting game");
-                        nmm.StartGame();
-                        gameState = GameState.ReceivingMap;
+                        //((MessageSender)Services.GetService(typeof(MessageSender))).SendStartGame(players.myId.id);
+                        //gameState = GameState.ReceivingMap;
                     }
                     break;
                 case GameState.Paused:
@@ -309,16 +312,16 @@ namespace KazgarsRevenge
         }
 
         // TODO ISSUE #7
-        private static readonly Identification DUMMY_ID = new Identification(0);
+        private static readonly Identification DUMMY_ID = new Identification(0, Identification.NO_CLIENT);
         public void DemoLevel()
         {
             levels.DemoLevel();
             players.CreateMainPlayer(new Vector3(200, 0, -200), DUMMY_ID);
-            for (int i = 0; i < 10; ++i)
+            for (int i = 0; i < 5; ++i)
             {
-                for (int j = 0; j < 10; ++j)
+                for (int j = 0; j < 5; ++j)
                 {
-                    enemies.CreateBrute(new Vector3(130 + i * 200, 5, -100 - j * 200), 1);
+                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 200, 5, -100 - j * 200), 1);
                 }
             }
 
@@ -443,14 +446,14 @@ namespace KazgarsRevenge
 
 
                     //debugging physics
-                    /*
+                    
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
                     modelDrawer.Draw(effectModelDrawer, physics);
-                    */
+                    
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);
@@ -528,8 +531,10 @@ namespace KazgarsRevenge
         protected override void OnExiting(object sender, EventArgs args)
         {
             base.OnExiting(sender, args);
-
-            nmm.CloseConnection();
+            if (players.myId != null)
+            {
+                //((MessageSender)Services.GetService(typeof(MessageSender))).CloseConnection(players.myId.id);
+            }
         }
     }
 }

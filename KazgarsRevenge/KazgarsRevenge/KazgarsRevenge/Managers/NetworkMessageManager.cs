@@ -7,14 +7,14 @@ using Lidgren.Network;
 
 namespace KazgarsRevenge
 {
-    class NetworkMessageManager : BaseNetworkMessageManager
+    public class NetworkMessageManager : BaseNetworkMessageManager
     {
         AttackManager attacks;
         PlayerManager players;
         LevelManager levels;
         EnemyManager enemies;
 
-        NetClient Client;
+        public NetClient Client;
 
         public IList<ServerInfo> connections;
         public bool isHost;
@@ -64,16 +64,6 @@ namespace KazgarsRevenge
             return Client.ReadMessage();
         }
 
-        public void StartGame()
-        {
-            // TODO make sure we're connected to something???
-            NetOutgoingMessage nom = Client.CreateMessage();
-            nom.Write((byte)MessageType.GameStateChange);
-            nom.Write(players.myId.id);
-            nom.Write((byte)GameState.GenerateMap);
-            Client.SendMessage(nom, NetDeliveryMethod.ReliableOrdered);
-        }
-
         #endregion
         
         public override void HandleMessages()
@@ -81,41 +71,16 @@ namespace KazgarsRevenge
             base.HandleMessages();
         }
 
-        #region In Game Messaging
-        
-        /// <summary>
-        /// Sends a message to the server about this client's velocity
-        /// Messages are of the form:
-        ///     byte - MessageType
-        ///     byte - PlayerId
-        ///     int32 - xVel
-        ///     int32 - yVel
-        ///     int32 - zVel
-        /// </summary>
-        /// <param name="vel"></param>
-        public void SendVelocityMessage(Vector3 vel)
-        {
-            NetOutgoingMessage nom = Client.CreateMessage();
-            nom.Write((byte)MessageType.InGame_Kinetic);
-            nom.Write((byte)this.players.myId.id);
-
-            nom.Write((int)vel.X);
-            nom.Write((int)vel.Y);
-            nom.Write((int)vel.Z);
-
-            // If it gets there that's good, if not meh
-            Client.SendMessage(nom, NetDeliveryMethod.Unreliable);
-        }
-        #endregion
-
         public void CloseConnection()
         {
             // Send this client id so the server knows who to disconnect
+            String form = String.Format("{0}", players.myId.id);
+            Console.WriteLine(form);
             Client.Shutdown(String.Format("{0}", players.myId.id));
         }
 
         // For now this is just so the current client can know if it's host or not
-        public void UpdateHost(byte newHost)
+        public void UpdateHost(int newHost)
         {
             if (players.myId.id == newHost)
             {

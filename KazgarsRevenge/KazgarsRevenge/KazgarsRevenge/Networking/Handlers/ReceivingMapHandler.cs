@@ -8,8 +8,6 @@ namespace KazgarsRevenge
 {
     public class ReceivingMapHandler : BaseHandler
     {
-        LevelManager lm;
-        PlayerManager pm;
         public ReceivingMapHandler(KazgarsRevengeGame game)
             : base(game)
         {
@@ -24,29 +22,27 @@ namespace KazgarsRevenge
         public override void Handle(Lidgren.Network.NetIncomingMessage nim)
         {
             ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, "Receiving map data from server");
-            if (lm == null)
-            {
-                lm = game.Services.GetService(typeof(LevelManager)) as LevelManager;
-            }
-            if (pm == null)
-            {
-                pm = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
-            }
+            LevelManager lvm = game.Services.GetService(typeof(LevelManager)) as LevelManager;
+            PlayerManager pm = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
             
             // game width and height are the width and height of each level
-            byte[] mapData = nim.ReadBytes(game.levelWidth * game.levelHeight);
+            int[] mapData = new int[Constants.LEVEL_WIDTH * Constants.LEVEL_HEIGHT];
+            for (int i = 0; i < mapData.Count(); ++i)
+            {
+                mapData[i] = nim.ReadInt32();
+            }
 
-            lm.CreateMapFrom(mapData);
+            lvm.CreateMapFrom(mapData);
 
             int numPlayers = nim.ReadByte();
 
             // Get the actual player location data
             for (int i = 0; i < numPlayers; ++i)
             {
-                byte id = nim.ReadByte();
+                int id = nim.ReadInt32();
                 Vector3 position = new Vector3(nim.ReadFloat(), nim.ReadFloat(), nim.ReadFloat());
 
-                pm.SetPlayerLocation(position, new Identification(id));
+                pm.SetPlayerLocation(position, new Identification(id, id));
             }
 
             // Time to play!

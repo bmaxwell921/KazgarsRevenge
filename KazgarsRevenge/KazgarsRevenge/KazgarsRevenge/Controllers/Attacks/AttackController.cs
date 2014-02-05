@@ -23,16 +23,13 @@ namespace KazgarsRevenge
         SoundEffectLibrary sounds;
         Entity physicalData;
         int damage;
-        double lifeCounter = 0;
-        double lifeLength;
         //either "good" or "bad", for now
         FactionType factionToHit;
-        public AttackController(KazgarsRevengeGame game, GameEntity entity, Entity physicalData, int damage, double millisDuration, FactionType factionToHit, AliveComponent creator)
+        public AttackController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
             : base(game, entity)
         {
-            this.physicalData = physicalData;
+            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.damage = damage;
-            this.lifeLength = millisDuration;
             this.factionToHit = factionToHit;
             this.creator = creator;
             physicalData.IsAffectedByGravity = false;
@@ -40,6 +37,8 @@ namespace KazgarsRevenge
             sounds = game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
         }
 
+        double lifeCounter = 0;
+        protected double lifeLength = 500;
         public override void Update(GameTime gameTime)
         {
             lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -55,20 +54,20 @@ namespace KazgarsRevenge
             GameEntity hitEntity = other.Tag as GameEntity;
             if (hitEntity != null)
             {
-                if (hitEntity.Name == "room")
+                HandleEntityCollision(hitEntity);
+            }
+        }
+
+        protected virtual void HandleEntityCollision(GameEntity hitEntity)
+        {
+            if (hitEntity.Faction == factionToHit)
+            {
+                AliveComponent healthData = hitEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+                if (healthData != null)
                 {
-                    //makes arrows stick in walls
-                    (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
+                    damageDealt += healthData.Damage(DeBuff.None, damage, creator.Entity);
                 }
-                if (hitEntity.Faction == factionToHit)
-                {
-                    AliveComponent healthData = hitEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
-                    if (healthData != null)
-                    {
-                        damageDealt += healthData.Damage(DeBuff.None, damage, creator.Entity);
-                    }
-                    Entity.Kill();
-                }
+                Entity.Kill();
             }
         }
 

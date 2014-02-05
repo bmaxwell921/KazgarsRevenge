@@ -24,16 +24,16 @@ namespace KazgarsRevengeServer
         {
             SNetworkingMessageManager nmm = (SNetworkingMessageManager)game.Services.GetService(typeof(SNetworkingMessageManager));
             
-            byte pId = nim.ReadByte();
+            int pId = nim.ReadInt32();
 
-            if (!nmm.isHost(new Identification(pId)))
+            if (!nmm.isHost(new Identification(pId, pId)))
             {
                 // Lol you wish, not host
                 ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, String.Format("Not host tried to send a gamestate change. HostId: {0}, SenderId: {1}", nmm.hostId, pId));
                 return;
             }
 
-            game.gameState = EnumParser.GetGameState(nim.ReadByte());
+            game.gameState = (GameState) Enum.ToObject(typeof(GameState), nim.ReadByte());
 
             ((LoggerManager)game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, String.Format("Changing to gameState: {0}", game.gameState));
 

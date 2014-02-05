@@ -16,7 +16,6 @@ namespace KazgarsRevenge
             handlers[MessageType.Connected] = new ConnectedHandler(game);
             handlers[MessageType.MapData] = new ReceivingMapHandler(game);
             handlers[MessageType.GameStateChange] = new GameStateChangeHandler(game);
-            handlers[MessageType.InGame_Kinetic] = new KineticHandler(game);
             handlers[MessageType.GameSnapshot] = new SnapshotHandler(game);
             handlers[MessageType.HostUpdate] = new HostUpdateHandler(game);
             handlers[MessageType.DisconnectedPlayer] = new DisconnectedPlayerHandler(game);

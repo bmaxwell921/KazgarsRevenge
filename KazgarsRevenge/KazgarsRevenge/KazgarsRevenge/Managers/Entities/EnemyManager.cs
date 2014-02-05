@@ -16,12 +16,13 @@ namespace KazgarsRevenge
 {
     public class EnemyManager : EntityManager
     {
-        List<GameEntity> enemies = new List<GameEntity>();
+        //List<GameEntity> enemies = new List<GameEntity>();
+        IDictionary<Identification, GameEntity> enemies;
 
         public EnemyManager(KazgarsRevengeGame game)
             : base(game)
         {
-
+            enemies = new Dictionary<Identification, GameEntity>();
         }
 
         public override void Update(GameTime gameTime)
@@ -31,9 +32,10 @@ namespace KazgarsRevenge
 
         #region entities
         const float melleRange = 40;
-        public void CreateBrute(Vector3 position, int level)
+        public void CreateBrute(Identification id, Vector3 position, int level)
         {
             GameEntity brute = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
+            brute.id = id;
 
             Entity brutePhysicalData = new Box(position, 20f, 37f, 20f, 100);
             brutePhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
@@ -46,11 +48,11 @@ namespace KazgarsRevenge
             brute.AddSharedData(typeof(AnimationPlayer), bruteAnimations);
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
-            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R", 0));
+            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R"));
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brute);
-            AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, new Vector3(10f), Vector3.Down * 18);
+            AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, 10, Vector3.Down * 18);
             BlobShadowDecal bruteShadow = new BlobShadowDecal(mainGame, brute, 15);
 
             EnemyControllerSettings bruteSettings = new EnemyControllerSettings();
@@ -85,8 +87,22 @@ namespace KazgarsRevenge
             brute.AddComponent(typeof(BlobShadowDecal), bruteShadow);
             decalManager.AddBlobShadow(bruteShadow);
 
-            enemies.Add(brute);
+            enemies.Add(id, brute);
         }
         #endregion
+        
+        /// <summary>
+        /// Gets an enemy from this manager with the associated id, or null if none exists
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public GameEntity getEntity(Identification id)
+        {
+            if (!enemies.ContainsKey(id))
+            {
+                return null;
+            }
+            return enemies[id];
+        }
     }
 }

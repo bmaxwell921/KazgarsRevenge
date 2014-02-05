@@ -88,11 +88,15 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Extenders.cs" />
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
+    <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
-    <Compile Include="Controllers\NetworkPlayerController.cs" />
+    <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Drawing\BlobShadowDecal.cs" />
     <Compile Include="Drawing\DrawableComponentBillboard.cs" />
+    <Compile Include="LevelGeneration\ChunkDefinitionUtil.cs" />
+    <Compile Include="LevelGeneration\ChunkInfo.cs" />
     <Compile Include="Logging\ALogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Impl\ConsoleLogger.cs" />
@@ -100,23 +104,23 @@
     <Compile Include="Logging\LoggerManager.cs" />
     <Compile Include="Managers\Components\BillBoardManager.cs" />
     <Compile Include="Managers\Components\LevelModelManager.cs" />
+    <Compile Include="Controllers\Attacks\ArrowController.cs" />
     <Compile Include="Networking\Handlers\DisconnectedPlayerHandler.cs" />
     <Compile Include="Networking\Handlers\HostUpdateHandler.cs" />
+    <Compile Include="Networking\Handlers\MeleeAttackHandler.cs" />
+    <Compile Include="Networking\MessageSender.cs" />
     <Compile Include="Non-Component\FloatingText.cs" />
-    <Compile Include="Misc Components\NetMovementComponent.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
     <Compile Include="Networking\Handlers\GameStateChangeHandler.cs" />
-    <Compile Include="Networking\Handlers\KineticHandler.cs" />
     <Compile Include="Networking\Handlers\ReceivingMapHandler.cs" />
     <Compile Include="Networking\Handlers\SnapshotHandler.cs" />
     <Compile Include="Non-Component\Ability.cs" />
     <Compile Include="Common\Constants.cs" />
-    <Compile Include="Common\EnumParser.cs" />
     <Compile Include="Common\KazgarsRevengeGame.cs" />
     <Compile Include="Common\Networking\BaseNetworkMessageManager.cs" />
     <Compile Include="Common\Networking\Handlers\BaseHandler.cs" />
     <Compile Include="Controllers\AIComponent.cs" />
-    <Compile Include="Controllers\EnemyController.cs" />
+    <Compile Include="Controllers\Alive\EnemyController.cs" />
     <Compile Include="Controllers\CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedModelComponent.cs" />
@@ -135,13 +139,13 @@
     <Compile Include="Non-Component\Item.cs" />
     <Compile Include="Libraries\SoundEffectLibrary.cs" />
     <Compile Include="Managers\Entities\EnemyManager.cs" />
-    <Compile Include="Controllers\AliveComponent.cs" />
+    <Compile Include="Controllers\Alive\AliveComponent.cs" />
     <Compile Include="Managers\Entities\LevelManager.cs" />
     <Compile Include="Managers\Components\GeneralComponentManager.cs" />
     <Compile Include="Managers\NetworkMessageManager.cs" />
     <Compile Include="Misc Components\PhysicsComponent.cs" />
-    <Compile Include="Controllers\PlayerController.cs" />
-    <Compile Include="Controllers\AttackController.cs" />
+    <Compile Include="Controllers\Alive\PlayerController.cs" />
+    <Compile Include="Controllers\Attacks\AttackController.cs" />
     <Compile Include="Managers\Entities\PlayerManager.cs" />
     <Compile Include="Managers\Entities\AttackManager.cs" />
     <Compile Include="Non-Component\PlayerSave.cs" />
@@ -166,6 +170,7 @@
     <Compile Include="Managers\Components\SpriteManager.cs" />
     <Compile Include="Drawing\UnanimatedModelComponent.cs" />
     <Compile Include="Misc Components\StaticMeshComponent.cs" />
+    <Compile Include="Util\IdentificationFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

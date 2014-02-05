@@ -8,6 +8,7 @@ using BEPUphysics.Entities;
 using BEPUphysics.BroadPhaseEntries;
 using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.ResourceManagement;
+using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
@@ -20,19 +21,14 @@ namespace KazgarsRevenge
             physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
         }
 
-        /// <summary>
-        /// damage on the controller's part. Deals with aggro, animations, and particles
-        /// </summary>
-        /// <param name="damage"></param>
-        /// <param name="from"></param>
-        protected virtual void TakeDamage(int damage, GameEntity from)
-        {
-
-        }
-
         protected Entity physicalData;
         protected float newDir;
         protected float curDir;
+
+        protected Vector3 GetBoneTranslation(int index)
+        {
+            return (Entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer).GetWorldTransforms()[index].Translation;
+        }
 
         /// <summary>
         /// used for turning model smoothly. slowly adjusts orientation towards 

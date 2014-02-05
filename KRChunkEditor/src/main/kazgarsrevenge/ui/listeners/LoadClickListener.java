@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import main.kazgarsrevenge.model.impl.Chunk;
 import main.kazgarsrevenge.ui.panels.KREditorPanel;
@@ -42,6 +43,13 @@ public class LoadClickListener extends MouseAdapter {
 						JOptionPane.showMessageDialog(parent, errors.toString());
 						return;
 					}
+					
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							editorPanel.repaint();
+						}
+					});
 				}
 			}
 		}.start();

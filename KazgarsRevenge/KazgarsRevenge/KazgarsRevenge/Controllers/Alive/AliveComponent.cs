@@ -64,6 +64,14 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
+        /// damage on the controller's part. Deals with aggro, animations, and particles
+        /// </summary>
+        protected virtual void TakeDamage(int damage, GameEntity from)
+        {
+
+        }
+
+        /// <summary>
         /// calculates the actual amount of damage and then returns what was subtracted
         /// </summary>
         protected int Damage(int d)

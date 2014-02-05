@@ -34,6 +34,7 @@
       <Name>arrow</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
+      <ProcessorParameters_RotationY>90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\Attachables\bow01.fbx">
       <Name>bow01</Name>
@@ -149,13 +150,6 @@
       <Name>icon_selected</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Sound\scratching.wav">
-      <Name>scratching</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -404,18 +398,37 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\gold1.png">
+    <Compile Include="Textures\UI\Items\gold1.png">
       <Name>gold1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\gold2.png">
+    <Compile Include="Textures\UI\Items\gold2.png">
       <Name>gold2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\gold3.png">
+    <Compile Include="Textures\UI\Items\gold3.png">
       <Name>gold3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\leftArrow.png">
+      <Name>leftArrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\rightArrow.png">
+      <Name>rightArrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\helmetIcon.png">
+      <Name>helmetIcon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

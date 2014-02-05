@@ -43,7 +43,7 @@ namespace KazgarsRevenge
             PlayerSave saveFile = new PlayerSave();
 
             GameEntity player = new GameEntity("localplayer", FactionType.Players, EntityType.Player);
-
+            player.id = id;
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController)
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
             //assigns a collision group to the physics
@@ -63,7 +63,8 @@ namespace KazgarsRevenge
             (Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).AssignEntity(playerPhysicalData);
 
             Model playerModel = GetAnimatedModel("Models\\Player\\k_idle1");
-            //shared animation data (need this to be in the player controller component as well as the graphics component, so that the controller can determine when to play animations)
+            //shared animation data (need this to be in the player controller component as 
+            // well as the graphics component, so that the controller can determine when to play animations)
             AnimationPlayer playerAnimations = new AnimationPlayer(playerModel.Tag as SkinningData);
             player.AddSharedData(typeof(AnimationPlayer), playerAnimations);
 
@@ -72,9 +73,8 @@ namespace KazgarsRevenge
 
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
-            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
-            PlayerController playerController = new PlayerController(mainGame, player, saveFile);
-            NetMovementComponent nmc = new NetMovementComponent(mainGame, player);
+            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, 10f, Vector3.Down * 18);
+            LocalPlayerController playerController = new LocalPlayerController(mainGame, player, saveFile);
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
             //adding the controllers to their respective managers 
@@ -86,9 +86,6 @@ namespace KazgarsRevenge
 
             player.AddComponent(typeof(AliveComponent), playerController);
             spriteManager.AddComponent(playerController);
-            
-            player.AddComponent(typeof(NetMovementComponent), nmc);
-            nmm.AddComponent(nmc);
 
             player.AddComponent(typeof(BlobShadowDecal), shadow);
             decalManager.AddBlobShadow(shadow);
@@ -99,9 +96,11 @@ namespace KazgarsRevenge
 
         public void CreateNetworkedPlayer(Vector3 position, Identification id)
         {
+            PlayerSave characterInfo = new PlayerSave();
+
             // TODO ISSUE #9
             GameEntity player = new GameEntity("netplayer", FactionType.Players, EntityType.Player);
-
+            player.id = id;
             Entity playerPhysicalData = new Box(position, 37, 6, 2);
 
             playerPhysicalData.IsAffectedByGravity = false;
@@ -119,8 +118,8 @@ namespace KazgarsRevenge
             player.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
-            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, new Vector3(10f), Vector3.Down * 18);
-            NetworkPlayerController controller = new NetworkPlayerController(mainGame, player);
+            AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, 10f, Vector3.Down * 18);
+            NetworkPlayerController controller = new NetworkPlayerController(mainGame, player, new PlayerSave());
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
@@ -174,11 +173,24 @@ namespace KazgarsRevenge
 
         public void DeletePlayer(Identification id)
         {
-            // TODO Remove all components associated with the given player id
             if(playerMap.ContainsKey(id))
                 playerMap[id].Kill();
             // This line implemented so other clients don't read too much data from snapshots
             playerMap.Remove(id);
+        }
+
+        /// <summary>
+        /// Gets a player from this manager with the associated id, or null if none exists
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public GameEntity getEntity(Identification id)
+        {
+            if (!playerMap.ContainsKey(id))
+            {
+                return null;
+            }
+            return playerMap[id];
         }
     }
 }

@@ -1,13 +1,15 @@
 ﻿art needed
 ===========
-soul looting animation
+make soul_loot_smash animation end up in the air again
 GUI textures - behind health, in front of / encasing health,
-Icons - gold (4 different icons to signify greater amounts of gold), potion (red, redder, purple, gold, clear), sword, bow, armor (head, chest, legs, feet)
 levels (ground floor/hub area would be nice)
 armor
 
-new kazgar mesh? (the one with more detailed hands)
+updated kazgar mesh? (the one with more detailed hands)
+1h punch animation
 
+change pigman death animation such that the weapon doesn't stick in the the ground (rotate the attachment point)
+kazgar death animation
 
 gui work needed
 =================
@@ -27,14 +29,14 @@ get json.net working and parse chunk files
 
 Loot Souls
 ============
-implement the new looting animation
-adjust AI so that they run around after being released by kazgar
+
+
 
 
 Enemy AI
 ========
 first boss's AI
-pathfinding (need level generation first)
+pathfinding (need level generation first (which needs more levels first))
 stop enemies from spawning underneath the level
 
 

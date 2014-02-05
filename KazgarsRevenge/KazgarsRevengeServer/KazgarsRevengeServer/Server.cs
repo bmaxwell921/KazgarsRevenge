@@ -36,6 +36,7 @@ namespace KazgarsRevengeServer
         // Milliseconds between each time step
         private readonly int TIME_STEP = 100;
         private int timeToUpdate;
+
      
         public Server() : base()
         {
@@ -86,6 +87,12 @@ namespace KazgarsRevengeServer
             Services.AddService(typeof(MessageQueue), msgQ);
         }
 
+        protected override void LoadContent()
+        {
+            base.LoadContent();
+        }
+
+
         protected void SetUpLoggers()
         {
             lm = new LoggerManager();
@@ -135,7 +142,7 @@ namespace KazgarsRevengeServer
             IdentificationFactory.Reset();
 
             // Reset the hostId to the default
-            nmm.hostId = new Identification(0);
+            nmm.hostId = new Identification(0, 0);
 
             // Reset all the managers....
             players.Reset();
@@ -144,6 +151,11 @@ namespace KazgarsRevengeServer
             enemies.Reset();
             attacks.Reset();
             msgQ.Reset(); ;
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            base.Draw(gameTime);
         }
     }
 }

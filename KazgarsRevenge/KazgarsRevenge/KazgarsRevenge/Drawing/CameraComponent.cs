@@ -9,7 +9,7 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
-    class CameraComponent : GameComponent
+    public class CameraComponent : GameComponent
     {
         #region fields
         private Entity physicalData;

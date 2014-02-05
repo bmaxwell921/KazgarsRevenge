@@ -90,7 +90,8 @@ namespace KazgarsRevenge
         {
             if (state != EnemyState.Dying && state != EnemyState.Decaying)
             {
-                animations.MixClipOnce(settings.hitAniName, armBoneIndices);
+                animations.StartClip(settings.hitAniName, MixType.MixOnce);
+                animations.SetNonMixedBones(armBoneIndices);
                 attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
                 CalculateThreat(d, from);
                 minChaseCounter = 0;
@@ -150,7 +151,7 @@ namespace KazgarsRevenge
         string currentAniName;
         public void PlayAnimation(string animationName)
         {
-            animations.StartClip(animationName);
+            animations.StartClip(animationName, MixType.None);
             currentAniName = animationName;
         }
 
@@ -214,7 +215,7 @@ namespace KazgarsRevenge
                 {
                     targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
                     currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
-                    animations.StartClip(settings.runAniName);
+                    animations.StartClip(settings.runAniName, MixType.MixInto);
                     return;
                 }
             }
@@ -275,7 +276,7 @@ namespace KazgarsRevenge
                 attackCounter += millis;
                 if (swingCounter >= settings.attackLength / 2)
                 {
-                    attacks.CreateMelleAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, FactionType.Enemies, false, this);
+                    attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, false, this);
                     swingCounter = 0;
                     swinging = false;
                 }
@@ -366,13 +367,13 @@ namespace KazgarsRevenge
                 timerLength = 3000;
                 state = EnemyState.Decaying;
                 animations.PauseAnimation();
-                modelParams = Entity.GetSharedData(typeof(SharedEffectParams)) as SharedEffectParams;
+                modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
 
                 lewts.CreateLootSoul(physicalData.Position, Entity.Type);
             }
         }
 
-        SharedEffectParams modelParams;
+        SharedGraphicsParams modelParams;
         protected void AIDecaying(double millis)
         {
             //fade out model until completely transparent, then kill the entity

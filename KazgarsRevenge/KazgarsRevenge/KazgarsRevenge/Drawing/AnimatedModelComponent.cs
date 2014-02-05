@@ -12,14 +12,16 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KazgarsRevenge
 {
-    public class SharedEffectParams
+    public class SharedGraphicsParams
     {
         public float alpha;
         public float lineIntensity;
-        public SharedEffectParams()
+        public float size;
+        public SharedGraphicsParams()
         {
             alpha = 1f;
             lineIntensity = 1f;
+            size = 1;
         }
     }
 
@@ -31,27 +33,27 @@ namespace KazgarsRevenge
 
         //fields
         protected Model model;
-        protected Vector3 drawScale = new Vector3(1);
         protected Vector3 localOffset = Vector3.Zero;
         protected Dictionary<string, AttachableModel> attachedModels;
         protected Matrix yawOffset = Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0);
 
-        protected SharedEffectParams modelParams;
+        protected SharedGraphicsParams modelParams;
 
-        public AnimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 drawOffset)
+        public AnimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, float drawScale, Vector3 drawOffset)
             : base(game, entity)
         {
             this.model = model;
-            this.drawScale = drawScale;
             this.localOffset = drawOffset;
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.attachedModels = entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
             this.animationPlayer = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
 
-            animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips.Keys.First());
+            animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips.Keys.First(), MixType.None);
 
-            modelParams = new SharedEffectParams();
-            entity.AddSharedData(typeof(SharedEffectParams), modelParams);
+            modelParams = new SharedGraphicsParams();
+            modelParams.size = drawScale;
+            entity.AddSharedData(typeof(SharedGraphicsParams), modelParams);
+
         }
 
 
@@ -63,7 +65,15 @@ namespace KazgarsRevenge
                 emitters.Add(particleType, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
                     particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter));
             }
+        }
 
+        public void AddEmitter(Type particleType, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
+        {
+            if (!emitters.ContainsKey(particleType))
+            {
+                emitters.Add(particleType, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
+                    particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter, attachIndex));
+            }
         }
 
         public void RemoveEmitter(Type particleType)
@@ -78,7 +88,15 @@ namespace KazgarsRevenge
         {
             foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
             {
-                k.Value.Update(gameTime, physicalData.Position);
+                if (k.Value.BoneIndex < 0)
+                {
+                    k.Value.Update(gameTime, physicalData.Position);
+                }
+                else
+                {
+                    Vector3 bonePos = animationPlayer.GetWorldTransforms()[k.Value.BoneIndex].Translation;
+                    k.Value.Update(gameTime, bonePos);
+                }
             }
 
 
@@ -88,17 +106,16 @@ namespace KazgarsRevenge
             //this is probably faster? not sure how CreateFromQuaternion works
             rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
             rot *= yawOffset;
-            animationPlayer.Update(gameTime.ElapsedGameTime, true,
-                rot * Matrix.CreateScale(drawScale) * Matrix.CreateTranslation(physicalData.Position + localOffset));
+            Matrix conglomeration = Matrix.CreateScale(new Vector3(modelParams.size));
+            conglomeration *= Matrix.CreateTranslation(localOffset);
+            conglomeration *= rot;
+            conglomeration *= Matrix.CreateTranslation(physicalData.Position);
+            animationPlayer.Update(gameTime.ElapsedGameTime, true, conglomeration);
         }
         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
 
-            Matrix worldWithoutBone = rot
-                //* Matrix.CreateFromQuaternion(physicalData.Orientation)
-                        * Matrix.CreateScale(drawScale)
-                        * Matrix.CreateTranslation(physicalData.Position + localOffset);
             //drawing with toon shader
             foreach (ModelMesh mesh in model.Meshes)
             {
