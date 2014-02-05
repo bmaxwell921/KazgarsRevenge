@@ -298,14 +298,14 @@ namespace KazgarsRevenge
             #region ability initialization
             //create initial abilities
 
-            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, attacks.GetAbility(AbilityName.HeartStrike));
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, attacks.GetAbility(AbilityName.Snipe));
-            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, attacks.GetAbility(AbilityName.HeartStrike));
-            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, attacks.GetAbility(AbilityName.HeartStrike));
-            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, attacks.GetAbility(AbilityName.HeartStrike));
-            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, attacks.GetAbility(AbilityName.HeartStrike));
-            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, attacks.GetAbility(AbilityName.HeartStrike));
-            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, attacks.GetAbility(AbilityName.HeartStrike));
+            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.Snipe));
+            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Omnishot));
+            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.HeartStrike));
             #endregion
         }
 
@@ -344,6 +344,7 @@ namespace KazgarsRevenge
                 currentSequence = null;
             }
         }
+
         private void SetUpActionSequences()
         {
             interruptActions = new Dictionary<string, Action>();
@@ -363,7 +364,7 @@ namespace KazgarsRevenge
             //abilities
             actionSequences.Add("flip", FlipActions());
             actionSequences.Add("snipe", SnipeActions());
-
+            actionSequences.Add("omnishot", OmnishotActions());
 
 
 
@@ -644,6 +645,46 @@ namespace KazgarsRevenge
 
             return sequence;
         }
+        private List<Action> OmnishotActions()
+        {//some of these actions are identical to "shoot", so just copying those Actions
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                canInterrupt = true;
+                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                attState = AttackState.Attacking;
+                millisActionLength = 200;
+            });
+            sequence.Add(actionSequences["shoot"][1]);
+
+            sequence.Add(() =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 100, this, true, true, true, true);
+
+                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
+
+                needInterruptAction = false;
+            });
+
+            sequence.Add(actionSequences["shoot"][3]);
+
+            interruptActions.Add("omnishot", () =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 100, this, true, true, true, true);
+            });
+
+            return sequence;
+        }
 
         /*
          * Melee abilities
@@ -872,6 +913,54 @@ namespace KazgarsRevenge
             return false;
         }
 
+        #endregion
+
+        #region Ability Definitions
+        public enum AbilityName
+        {
+            Snipe,
+            Omnishot,
+
+            HeartStrike,
+
+            IceClawPrison,
+        }
+        protected Ability GetAbility(AbilityName ability)
+        {
+            switch (ability)
+            {
+                case AbilityName.Snipe:
+                    return GetSnipe();
+                case AbilityName.HeartStrike:
+                    return GetHeartStrike();
+                case AbilityName.IceClawPrison:
+                    return GetIceClawPrison();
+                case AbilityName.Omnishot:
+                    return GetOmniShot();
+                default:
+                    return null;
+            }
+        }
+
+        protected Ability GetSnipe()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 1, AttackType.Ranged, "snipe");
+        }
+
+        protected Ability GetHeartStrike()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6, AttackType.Ranged, "flip");
+        }
+
+        protected Ability GetIceClawPrison()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "shoot");
+        }
+
+        protected Ability GetOmniShot()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6, AttackType.Ranged, "omnishot");
+        }
         #endregion
 
 

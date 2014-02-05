@@ -13,7 +13,6 @@ namespace KazgarsRevenge
         public string ActionName { get; private set; }
         public Texture2D icon { get; private set; }
         public AttackType Type { get; private set; }
-        public float Range { get; private set; }
 
         int abilityLevel;
         public float cooldownSeconds;
@@ -22,7 +21,7 @@ namespace KazgarsRevenge
         public float timeRemaining;
         String tooltip = "N/A";
 
-        public Ability(int abilityLevelIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn, string actionName, float range)
+        public Ability(int abilityLevelIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn, string actionName)
         {   
             abilityLevel = abilityLevelIn;
             icon = iconIn;
@@ -30,7 +29,6 @@ namespace KazgarsRevenge
             Type = typeIn;
             timeRemaining = cooldownSeconds;
             this.ActionName = actionName;
-            this.Range = range;
         }
 
         public void setToolTip(String toolTipString)

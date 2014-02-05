@@ -303,6 +303,12 @@ namespace KazgarsRevenge
             {
                 targetedPhysicalData = null;
             }
+            if (curKeys.IsKeyDown(Keys.LeftShift))
+            {
+                targetedPhysicalData = null;
+                ResetTargettedEntity();
+                newTarget = true;
+            }
 
             if (newTarget)
             {

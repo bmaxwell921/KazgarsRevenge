@@ -19,9 +19,8 @@ namespace KazgarsRevenge
     public class AttackController : AIComponent
     {
         //the entity that created this attack
-        AliveComponent creator;
-        SoundEffectLibrary sounds;
-        int damage;
+        protected AliveComponent creator;
+        protected int damage;
         //either "good" or "bad", for now
         protected FactionType factionToHit;
         protected DeBuff debuff = DeBuff.None;
@@ -34,7 +33,6 @@ namespace KazgarsRevenge
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             physicalData.IsAffectedByGravity = false;
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
-            sounds = game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
         }
 
         double lifeCounter = 0;
@@ -82,7 +80,10 @@ namespace KazgarsRevenge
                 AliveComponent healthData = hitEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
                 if (healthData != null)
                 {
-                    hitData.Add(healthData);
+                    lock (hitData)
+                    {
+                        hitData.Add(healthData);
+                    }
                 }
             }
         }
