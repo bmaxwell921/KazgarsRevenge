@@ -44,7 +44,7 @@ namespace KazgarsRevenge
         }
 
         #region Primaries
-        public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
+        public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool homing, bool penetrating, bool leeching, bool bleeding)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y += 20;
@@ -60,7 +60,9 @@ namespace KazgarsRevenge
                 new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                     new Vector3(10), Vector3.Backward * 6, Matrix.Identity);
 
-            ArrowController arrowAI = new ArrowController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            ArrowController arrowAI = new ArrowController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, 450);
+            arrowAI.Penetrate();
+            arrowAI.Home();
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -91,7 +93,6 @@ namespace KazgarsRevenge
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-
             AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
@@ -166,7 +167,38 @@ namespace KazgarsRevenge
             UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                                                                                 new Vector3(20), Vector3.Backward * 20, Matrix.Identity);
 
-            ArrowController arrowAI = new ArrowController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            ArrowController arrowAI = new ArrowController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, 600);
+
+            arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
+            genComponentManager.AddComponent(arrowPhysics);
+
+            arrow.AddComponent(typeof(UnanimatedModelComponent), arrowGraphics);
+            modelManager.AddComponent(arrowGraphics);
+
+            arrow.AddComponent(typeof(AttackController), arrowAI);
+            genComponentManager.AddComponent(arrowAI);
+
+            attacks.Add(arrow);
+
+            soundEffects.playRangedSound();
+        }
+
+        public void CreateOmnishot(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
+        {
+            GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
+            position.Y += 20;
+            Entity arrowData = new Box(position, 10, 17, 32, .001f);
+            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            arrowData.LinearVelocity = dir * 600.0f;
+            arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
+            arrow.AddSharedData(typeof(Entity), arrowData);
+
+            PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
+                                                                                new Vector3(20), Vector3.Backward * 20, Matrix.Identity);
+
+            ArrowController arrowAI = new ArrowController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, 600);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);

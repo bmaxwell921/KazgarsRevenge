@@ -15,6 +15,7 @@ namespace KazgarsRevenge
     }
     public enum EntityType
     {
+        None,
         NormalEnemy,
         EliteEnemy,
         Boss,

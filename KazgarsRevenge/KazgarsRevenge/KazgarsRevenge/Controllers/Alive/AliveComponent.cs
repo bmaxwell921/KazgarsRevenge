@@ -20,6 +20,7 @@ namespace KazgarsRevenge
     public enum DeBuff
     {
         None,
+        Bleeding,
     }
     public enum Buff
     {
@@ -49,7 +50,7 @@ namespace KazgarsRevenge
         #region stats
         //array with one position per type of stat
         //                                          move    attspeed   str  agi  intel  cd   crit   hp
-        protected float[] baseStats = new float[] { 120,    .05f,      1,   1,   1,     0,   0,     100 };
+        protected float[] baseStats = new float[] { 120,    .95f,      1,   1,   1,     0,   0,     100 };
 
         protected Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
         #endregion

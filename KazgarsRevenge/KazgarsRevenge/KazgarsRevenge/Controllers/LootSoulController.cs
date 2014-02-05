@@ -93,7 +93,7 @@ namespace KazgarsRevenge
 
 
                         //looking for nearby souls to unite with
-                        GameEntity possOtherSoul = QueryNearEntity("loot", physicalData.Position, 2, soulSensorSize);
+                        GameEntity possOtherSoul = QueryNearEntityName("loot", physicalData.Position, 2, soulSensorSize);
                         if (possOtherSoul != null)
                         {
                             targetedSoul = possOtherSoul;
@@ -104,7 +104,7 @@ namespace KazgarsRevenge
 
 
                         //wander towards player
-                        GameEntity possPlayer = QueryNearEntity("localplayer", physicalData.Position, 0, 10000);
+                        GameEntity possPlayer = QueryNearEntityName("localplayer", physicalData.Position, 0, 10000);
                         if (possPlayer != null)
                         {
                             Vector3 dir = (possPlayer.GetSharedData(typeof(Entity)) as Entity).Position;

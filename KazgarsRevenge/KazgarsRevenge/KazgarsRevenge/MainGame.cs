@@ -317,11 +317,11 @@ namespace KazgarsRevenge
         {
             levels.DemoLevel();
             players.CreateMainPlayer(new Vector3(200, 0, -200), DUMMY_ID);
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < 10; ++i)
             {
-                for (int j = 0; j < 5; ++j)
+                for (int j = 0; j < 10; ++j)
                 {
-                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 200, 5, -100 - j * 200), 1);
+                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 100, 5, -100 - j * 100), 1);
                 }
             }
 
@@ -446,14 +446,14 @@ namespace KazgarsRevenge
 
 
                     //debugging physics
-                    
+                    /*
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
                     modelDrawer.Draw(effectModelDrawer, physics);
-                    
+                    */
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);

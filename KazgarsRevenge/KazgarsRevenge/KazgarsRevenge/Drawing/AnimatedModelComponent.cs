@@ -150,7 +150,7 @@ namespace KazgarsRevenge
                                 effect.Parameters["alpha"].SetValue(modelParams.alpha);
                                 effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                                 effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                                Matrix world = Matrix.CreateFromYawPitchRoll(a.xRotation, 0, 0) * transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
+                                Matrix world = Matrix.CreateFromYawPitchRoll(a.xRotation, a.yRotation, 0) * transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
                                 effect.Parameters["World"].SetValue(world);
                                 effect.Parameters["ViewProj"].SetValue(view * projection);
                                 effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));

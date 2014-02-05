@@ -466,7 +466,7 @@ namespace KazgarsRevenge
                 //attach arrow model to hand
                 if (attachedArrow == null)
                 {
-                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_R_004", 0, -MathHelper.PiOver2);
+                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_L_004", 0, -MathHelper.PiOver2);
                 }
                 if (!attached.ContainsKey("handarrow"))
                 {
@@ -483,7 +483,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this);
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this, false, false, false, false);
                 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -506,7 +506,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this);
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this, false, false, false, false);
             });
 
             return sequence;

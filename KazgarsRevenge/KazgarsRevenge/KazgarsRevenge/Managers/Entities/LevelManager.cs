@@ -136,7 +136,7 @@ namespace KazgarsRevenge
             position.Y -= 18.5f;
             float roomScale = 10;
 
-            GameEntity room = new GameEntity("room", FactionType.Players, EntityType.Misc);
+            GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 
 
             Model roomModel = GetUnanimatedModel(modelPath);

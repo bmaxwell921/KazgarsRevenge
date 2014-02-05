@@ -207,7 +207,7 @@ namespace KazgarsRevenge
         {
             threatLevels.Clear();
 
-            GameEntity possTargetPlayer = QueryNearEntity("localplayer", physicalData.Position, 0, 100);
+            GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, 100, false);
             if (possTargetPlayer != null)
             {
                 targetHealth = possTargetPlayer.GetComponent(typeof(AliveComponent)) as AliveComponent;
