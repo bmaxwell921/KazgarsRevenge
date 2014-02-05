@@ -664,7 +664,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 100, this, true, true, true, true);
+                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this, true, true, true, true);
 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -680,7 +680,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 100, this, true, true, true, true);
+                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this, true, true, true, true);
             });
 
             return sequence;

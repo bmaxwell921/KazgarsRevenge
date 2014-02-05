@@ -28,7 +28,6 @@ namespace KazgarsRevenge
     public class AnimatedModelComponent : DrawableComponent3D
     {
         //components
-        protected Entity physicalData;
         protected AnimationPlayer animationPlayer;
 
         //fields
@@ -44,7 +43,6 @@ namespace KazgarsRevenge
         {
             this.model = model;
             this.localOffset = drawOffset;
-            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.attachedModels = entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
             this.animationPlayer = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
 
@@ -57,16 +55,6 @@ namespace KazgarsRevenge
         }
 
 
-        Dictionary<Type, ParticleEmitter> emitters = new Dictionary<Type, ParticleEmitter>();
-        public void AddEmitter(Type particleType, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter)
-        {
-            if (!emitters.ContainsKey(particleType))
-            {
-                emitters.Add(particleType, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
-                    particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter));
-            }
-        }
-
         public void AddEmitter(Type particleType, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
         {
             if (!emitters.ContainsKey(particleType))
@@ -76,16 +64,11 @@ namespace KazgarsRevenge
             }
         }
 
-        public void RemoveEmitter(Type particleType)
-        {
-            emitters.Remove(particleType);
-        }
-
-
         protected Vector3 vLightDirection = new Vector3(-1.0f, -.5f, 1.0f);
         Matrix rot = Matrix.Identity;
         public override void Update(GameTime gameTime)
         {
+
             foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
             {
                 if (k.Value.BoneIndex < 0)
@@ -112,6 +95,7 @@ namespace KazgarsRevenge
             conglomeration *= Matrix.CreateTranslation(physicalData.Position);
             animationPlayer.Update(gameTime.ElapsedGameTime, true, conglomeration);
         }
+
         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();

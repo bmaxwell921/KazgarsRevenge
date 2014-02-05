@@ -13,18 +13,24 @@ namespace KazgarsRevenge
     class UnanimatedModelComponent : DrawableComponent3D
     {
         private Model model;
-        private Entity physicalData;
         private Vector3 drawScale;
         private Vector3 localOffset;
         private Matrix rotOffset;
         public UnanimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 localOffset, Matrix rotOffset)
             : base(game, entity)
         {
-            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             this.model = model;
             this.drawScale = drawScale;
             this.localOffset = localOffset;
             this.rotOffset = rotOffset;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
+            {
+                k.Value.Update(gameTime, physicalData.Position);
+            }
         }
 
         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)

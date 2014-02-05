@@ -278,7 +278,7 @@ namespace KazgarsRevenge
         /// for gui purposes
         /// </summary>
         /// <returns></returns>
-        private void CheckMouseRay(bool newTarget, bool guiclick)
+        private void CheckMouseRay(bool newTarget, bool mouseOnGui)
         {
             //creating ray from mouse location
             Vector3 castOrigin = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 0), camera.Projection, camera.View, Matrix.Identity);
@@ -310,7 +310,7 @@ namespace KazgarsRevenge
                 newTarget = true;
             }
 
-            if (newTarget)
+            if (newTarget && !mouseOnGui)
             {
                 ResetTargettedEntity();
 
@@ -334,7 +334,7 @@ namespace KazgarsRevenge
                                 {
                                     ResetTargettedEntity();
                                 }
-                                else if (!guiclick && curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                                else if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
                                 {
                                     targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
                                 }
