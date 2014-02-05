@@ -22,20 +22,24 @@ namespace KazgarsRevenge
         // ie a chunk with doors at N and E with Rotation.Zero would have doorDirections of W and N after at Rotation.NINETY
         private ISet<Direction> doorDirections;
 
+        // The id of the represented chunk
+        private int id;
+        
         // The rotation of this chunk
         private Rotation rotation;
 
-        // The id of the represented chunk
-        private int id;
+        // The type for this chunk
+        private ChunkType chunkType;
 
         /// <summary>
         /// Constructs a new ChunkInfo object with doors at the given directions
         /// </summary>
         /// <param name="directions"></param>
-        public ChunkInfo(int id, Rotation rotation, params Direction[] doorDirections)
+        public ChunkInfo(int id, Rotation rotation, ChunkType chunkType, ISet<Direction> doorDirections)
         {
             this.id = id;
             this.rotation = rotation;
+            this.chunkType = chunkType;
             this.doorDirections = new HashSet<Direction>();
             foreach (Direction dir in doorDirections)
             {

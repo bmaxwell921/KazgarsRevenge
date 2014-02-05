@@ -32,7 +32,7 @@ namespace KazgarsRevenge
             foreach (string chunkName in chunkNames)
             {
                 string message;
-                ChunkInfo[] infos = parseName(chunkName, out message);
+                IList<ChunkInfo> infos = parseName(chunkName, out message);
                 if (infos == null)
                 {
                     Console.WriteLine(message);
@@ -46,7 +46,7 @@ namespace KazgarsRevenge
 
         private void AddChunkInfo(ChunkInfo info)
         {
-            // Class map add with datastructure values
+            // Classic map add with datastructure values
             if (!chunkDefs.ContainsKey(info.numDoors()))
             {
                 IList<ChunkInfo> infos = new List<ChunkInfo>();
@@ -65,9 +65,10 @@ namespace KazgarsRevenge
          *      0:H:NSEW
          */ 
             
-        private ChunkInfo[] parseName(string chunkName, out string message)
+        private IList<ChunkInfo> parseName(string chunkName, out string message)
         {
             int VALID_COUNT = 3;
+            // parse it into its 3 parts
             string[] parts = chunkName.Split(CHUNK_NAME_DELIMIT);
 
             if (parts.Count() != VALID_COUNT)
@@ -79,12 +80,13 @@ namespace KazgarsRevenge
             try
             {
                 int id = Convert.ToInt32(parts[0]);
-                if (parts[2].Count() > 1)
+                if (parts[1].Count() > 1)
                 {
                     message = "Invalid count for chunkName type";
                     return null;
                 }
-                ChunkType chunkType = Extenders.ChunkTypeFromChar(parts[2].ToCharArray()[0]);
+
+                ChunkType chunkType = Extenders.ChunkTypeFromChar(parts[1].ToCharArray()[0]);
 
                 message = "";
                 ISet<Direction> dirs = new HashSet<Direction>();
@@ -102,10 +104,20 @@ namespace KazgarsRevenge
             }
         }
 
-        private ChunkInfo[] GetRotations(int id, ChunkType chunkType, ISet<Direction> dirs)
+        // Gets all of the possible rotations for a given chunk
+        private IList<ChunkInfo> GetRotations(int id, ChunkType chunkType, ISet<Direction> dirs)
         {
-            //TODO create all the possible rotations for this chunk
-            return null;
+            IList<ChunkInfo> chunks = new List<ChunkInfo>();
+            foreach (Rotation rotation in Enum.GetValues(typeof(Rotation)))
+            {
+                ISet<Direction> directions = new HashSet<Direction>();
+                foreach (Direction dir in dirs)
+                {
+                    directions.Add(Extenders.RotateTo(dir, rotation));
+                }
+                chunks.Add(new ChunkInfo(id, rotation, chunkType, directions));
+            }
+            return chunks;
         }
     }
 }

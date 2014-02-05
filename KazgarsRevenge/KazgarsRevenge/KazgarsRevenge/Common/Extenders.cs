@@ -100,6 +100,28 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
+        /// Returns a new Direction that represents the given direction rotated 
+        /// counterclockwise by the given rotation
+        /// Ie RotateTo(Direction.NORTH, Rotation.ONE_EIGHTY) results in Direction.SOUTH
+        /// </summary>
+        /// <param name="orig"></param>
+        /// <param name="newRot"></param>
+        /// <returns></returns>
+        public static Direction RotateTo(Direction orig, Rotation newRot)
+        {
+            int ROTATION_DEGREES = 90;
+            int rotationCount = (int) newRot.ToDegrees() / ROTATION_DEGREES;
+            Direction result = orig;
+            // Just do the proper number of 90 degree rotations
+            for (int i = 0; i < rotationCount; ++i)
+            {
+                result = RotateCounter(result);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Converts the given string to its enum equivalent, or throws an exception 
         /// if the string isn't recognized
         /// </summary>
