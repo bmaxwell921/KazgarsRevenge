@@ -282,6 +282,8 @@ namespace KazgarsRevenge
 
             prevMouse = curMouse;
             prevKeys = curKeys;
+
+            base.Update(gameTime);
         }
 
         Func<BroadPhaseEntry, bool> rayCastFilter;
@@ -629,12 +631,6 @@ namespace KazgarsRevenge
         }
 
         #region Helpers
-        protected override void RecalculateStats()
-        {
-            base.RecalculateStats();
-
-            stateResetLength = 3000 * (1 - Math.Min(.95f, stats[StatType.AttackSpeed]));
-        }
         private void ResetTargettedEntity()
         {
             mouseHoveredEntity = null;

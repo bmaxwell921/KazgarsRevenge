@@ -73,6 +73,7 @@ namespace KazgarsRevenge
         protected const float bowRange = 1000;
         protected Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
         protected KeyValuePair<Keys, Ability>[] boundAbilities = new KeyValuePair<Keys, Ability>[8];
+        protected Dictionary<AbilityName, bool> abilityLearnedFlags = new Dictionary<AbilityName, bool>();
         #endregion
 
         #region inventory and gear
@@ -166,13 +167,9 @@ namespace KazgarsRevenge
             inventory.Add(toAdd);
             return true;
         }
-        protected virtual void RecalculateStats()
+        protected override void RecalculateStats()
         {
-            //add base stats, accounting for level
-            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
-            {
-                stats[(StatType)i] = baseStats[i];
-            }
+            base.RecalculateStats();
 
             //add stats for each piece of gear
             foreach (KeyValuePair<GearSlot, Equippable> k in gear)
@@ -182,6 +179,8 @@ namespace KazgarsRevenge
                     AddStats(k.Value.StatEffects);
                 }
             }
+
+            stateResetLength = 3000 * (1 - Math.Min(.95f, stats[StatType.AttackSpeed]));
         }
         protected void AddStats(Dictionary<StatType, float> statsToAdd)
         {
@@ -301,11 +300,19 @@ namespace KazgarsRevenge
             boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.HeartStrike));
             boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.Snipe));
             boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Omnishot));
-            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.AdrenalineRush));
             boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.HeartStrike));
             boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.HeartStrike));
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.HeartStrike));
             boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.HeartStrike));
+
+
+            for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
+            {
+                abilityLearnedFlags[(AbilityName)i] = true;
+            }
+
+
             #endregion
         }
 
@@ -362,10 +369,15 @@ namespace KazgarsRevenge
             actionSequences.Add("loot_spin", LootSpinActions());
             actionSequences.Add("loot_smash", LootSmashActions());
             //abilities
-            actionSequences.Add("flip", FlipActions());
+            //ranged
             actionSequences.Add("snipe", SnipeActions());
             actionSequences.Add("omnishot", OmnishotActions());
+            actionSequences.Add("buff1", Buff1Actions());
 
+            //melee
+            actionSequences.Add("flip", FlipActions());
+
+            //magic
 
 
             //adding placeholder actions so that an exception is not thrown if this
@@ -484,7 +496,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this, false, false, false, false);
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
                 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -614,6 +626,7 @@ namespace KazgarsRevenge
                 PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
                 attState = AttackState.Attacking;
                 millisActionLength = 200;
+                stateResetCounter = 0;
             });
             sequence.Add(actionSequences["shoot"][1]);
 
@@ -654,6 +667,7 @@ namespace KazgarsRevenge
                 PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
                 attState = AttackState.Attacking;
                 millisActionLength = 200;
+                stateResetCounter = 0;
             });
             sequence.Add(actionSequences["shoot"][1]);
 
@@ -664,7 +678,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this, true, true, true, true);
+                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -681,6 +695,26 @@ namespace KazgarsRevenge
                 }
                 Vector3 forward = GetForward();
                 attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this, true, true, true, true);
+            });
+
+            return sequence;
+        }
+        private List<Action> Buff1Actions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                attacks.SpawnBuffParticles(physicalData.Position);
+                AddBuff(Buff.AdrenalineRush, Entity);
+                if (abilityLearnedFlags[AbilityName.Homing])
+                {
+                    AddBuff(Buff.Homing, Entity);
+                }
+                if (abilityLearnedFlags[AbilityName.Penetrating])
+                {
+                    AddBuff(Buff.Penetrating, Entity);
+                }
             });
 
             return sequence;
@@ -723,6 +757,8 @@ namespace KazgarsRevenge
         /*
          * Magic Abilities
          */
+
+
 
         AttachableModel attachedArrow;
         protected void UpdateActionSequences()
@@ -771,7 +807,6 @@ namespace KazgarsRevenge
         }
 
         #endregion
-
 
         #region Damage
         //TODO: damage tracker and "in combat" status
@@ -920,6 +955,9 @@ namespace KazgarsRevenge
         {
             Snipe,
             Omnishot,
+            AdrenalineRush,
+            Penetrating,
+            Homing,
 
             HeartStrike,
 
@@ -937,6 +975,8 @@ namespace KazgarsRevenge
                     return GetIceClawPrison();
                 case AbilityName.Omnishot:
                     return GetOmniShot();
+                case AbilityName.AdrenalineRush:
+                    return GetAdrenalineRush();
                 default:
                     return null;
             }
@@ -960,6 +1000,11 @@ namespace KazgarsRevenge
         protected Ability GetOmniShot()
         {
             return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6, AttackType.Ranged, "omnishot");
+        }
+
+        protected Ability GetAdrenalineRush()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6, AttackType.Ranged, "buff1");
         }
         #endregion
 
