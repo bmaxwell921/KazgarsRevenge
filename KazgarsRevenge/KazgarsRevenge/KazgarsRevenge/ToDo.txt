@@ -11,6 +11,12 @@ updated kazgar mesh? (the one with more detailed hands)
 change pigman death animation such that the weapon doesn't stick in the the ground (rotate the attachment point)
 kazgar death animation
 
+
+
+
+
+
+
 gui work needed
 =================
 inventory

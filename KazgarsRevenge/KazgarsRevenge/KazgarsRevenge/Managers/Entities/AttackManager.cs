@@ -284,6 +284,15 @@ namespace KazgarsRevenge
                 blood.AddParticle(position, forward);
             }
         }
+
+        public void SpawnBuffParticles(Vector3 position)
+        {
+            ParticleSystem poof = particles.GetSystem(typeof(Buff1ParticleSystem));
+            for (int i = 0; i < 20; ++i)
+            {
+                poof.AddParticle(position, Vector3.Zero);
+            }
+        }
         #endregion
     }
 }

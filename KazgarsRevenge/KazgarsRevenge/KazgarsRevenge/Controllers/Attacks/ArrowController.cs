@@ -50,7 +50,7 @@ namespace KazgarsRevenge
         public void Bleed()
         {
             bleeding = true;
-            debuff = DeBuff.Bleeding;
+            debuff = DeBuff.SerratedBleeding;
         }
 
         protected override void HandleEntityCollision(GameEntity hitEntity)

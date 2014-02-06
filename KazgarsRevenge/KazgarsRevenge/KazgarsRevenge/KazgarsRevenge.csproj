@@ -164,7 +164,7 @@
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
     <Compile Include="Particles\Systems\WeaponSparksSystem.cs" />
     <Compile Include="Particles\Systems\SoulCreationParticleSystem.cs" />
-    <Compile Include="Particles\Systems\ShadowParticleSystem.cs" />
+    <Compile Include="Particles\Systems\Buff1ParticleSystem.cs" />
     <Compile Include="Particles\Systems\SoulTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\BloodParticleSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

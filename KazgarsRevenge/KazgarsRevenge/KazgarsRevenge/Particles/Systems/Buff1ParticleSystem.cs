@@ -19,28 +19,28 @@ namespace KazgarsRevenge
     /// <summary>
     /// Custom particle system for creating a flame effect.
     /// </summary>
-    class ShadowParticleSystem : ParticleSystem
+    class Buff1ParticleSystem : ParticleSystem
     {
-        public ShadowParticleSystem(Game game, ContentManager content)
+        public Buff1ParticleSystem(Game game, ContentManager content)
             : base(game, content)
         { }
 
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "blob";
+            settings.TextureName = "spark";
 
-            settings.MaxParticles = 2400;
+            settings.MaxParticles = 500;
 
-            settings.Duration = TimeSpan.FromSeconds(2);
+            settings.Duration = TimeSpan.FromSeconds(1);
 
             settings.DurationRandomness = 1;
 
-            settings.MinHorizontalVelocity = -5;
-            settings.MaxHorizontalVelocity = 5;
+            settings.MinHorizontalVelocity = -20;
+            settings.MaxHorizontalVelocity = 20;
 
-            settings.MinVerticalVelocity = 0;
-            settings.MaxVerticalVelocity = 0;
+            settings.MinVerticalVelocity = -20;
+            settings.MaxVerticalVelocity = 20;
 
             settings.Gravity = new Vector3(0, 0, 0);
 
@@ -50,8 +50,8 @@ namespace KazgarsRevenge
             settings.MinStartSize = 5;
             settings.MaxStartSize = 5;
 
-            settings.MinEndSize = 5;
-            settings.MaxEndSize = 5;
+            settings.MinEndSize = 0;
+            settings.MaxEndSize = 0;
         }
     }
 }
