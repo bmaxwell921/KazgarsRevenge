@@ -7,26 +7,26 @@ using Microsoft.Xna.Framework;
 namespace KazgarsRevenge
 {
     /// <summary>
-    /// Component used to 
+    /// Component used to Spawn entities. 
     /// </summary>
     public abstract class Spawner : AIComponent
     {
         // Where to spawn stuff
-        protected Vector3 spawnLocation;
+        protected ISet<Vector3> spawnLocations;
 
         // The type to spawn
         protected EntityType type;
 
-        public Spawner(KazgarsRevengeGame game, GameEntity entity, EntityType type, Vector3 spawnLocation)
+        public Spawner(KazgarsRevengeGame game, GameEntity entity, EntityType type, ISet<Vector3> spawnLocations)
             : base(game, entity)
         {
             this.type = type;
-            this.spawnLocation = spawnLocation;
+            this.spawnLocations = spawnLocations;
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (NeedsSpawn(gameTime))
+            if (NeedsSpawn())
             {
                 Spawn();
             }
@@ -37,7 +37,7 @@ namespace KazgarsRevenge
         /// spawn something this update cycle
         /// </summary>
         /// <returns></returns>
-        public abstract bool NeedsSpawn(GameTime time);
+        public abstract bool NeedsSpawn();
 
         /// <summary>
         /// Spawns an Entity

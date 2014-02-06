@@ -7,7 +7,8 @@ using Microsoft.Xna.Framework;
 namespace KazgarsRevenge
 {
     /// <summary>
-    /// Spawner that spawns stuff when other stuff gets within a certain proximity
+    /// Spawner that spawns stuff when other stuff gets within a certain proximity.
+    /// When spawn is called, enemies will be spawned at every location
     /// </summary>
     public class EnemyProximitySpawner : Spawner
     {
@@ -29,8 +30,8 @@ namespace KazgarsRevenge
         /// <param name="spawnLocation"></param>
         /// <param name="proximity">If the distance from the spawnLocation to the closest enemy is less than proximity, this spawns enemies</param>
         /// <param name="delay">The delay between each spawn</param>
-        public EnemyProximitySpawner(KazgarsRevengeGame game, GameEntity entity, EntityType spawnType, Vector3 spawnLocation, float proximity, float delay)
-            : base(game, entity, spawnType, spawnLocation)
+        public EnemyProximitySpawner(KazgarsRevengeGame game, GameEntity entity, EntityType spawnType, ISet<Vector3> spawnLocations, float proximity, float delay)
+            : base(game, entity, spawnType, spawnLocations)
         {
             this.proximity = proximity;
             this.delay = delay;
@@ -51,7 +52,12 @@ namespace KazgarsRevenge
         public override bool NeedsSpawn()
         {
             // check if anything is close by
-            return QueryNearEntityFaction(FactionType.Players, spawnLocation, 0, proximity, true) != null;          
+            if (spawnLocations.Count() != 0)
+            {
+                // Just check one of them
+                return QueryNearEntityFaction(FactionType.Players, spawnLocations.GetEnumerator().Current, 0, proximity, true) != null;
+            }
+            return false;
         }
 
         /// <summary>
@@ -61,8 +67,11 @@ namespace KazgarsRevenge
         {
             if (passedTime >= delay)
             {
-                // TODO actual level
-                ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(type, Identification.NO_CLIENT), spawnLocation, 1);
+                foreach (Vector3 loc in spawnLocations)
+                {
+                    // TODO actual level
+                    ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
+                }
                 passedTime = 0;
             }
         }
