@@ -96,8 +96,13 @@
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Drawing\BlobShadowDecal.cs" />
     <Compile Include="Drawing\DrawableComponentBillboard.cs" />
-    <Compile Include="LevelGeneration\ChunkDefinitionUtil.cs" />
+    <Compile Include="LevelGeneration\JsonHierarchy\Chunk.cs" />
+    <Compile Include="LevelGeneration\ChunkUtil.cs" />
     <Compile Include="LevelGeneration\ChunkInfo.cs" />
+    <Compile Include="LevelGeneration\JsonHierarchy\ChunkComponent.cs" />
+    <Compile Include="LevelGeneration\JsonHierarchy\Location.cs" />
+    <Compile Include="LevelGeneration\JsonHierarchy\Room.cs" />
+    <Compile Include="LevelGeneration\JsonHierarchy\RoomBlock.cs" />
     <Compile Include="Logging\ALogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Impl\ConsoleLogger.cs" />
@@ -172,6 +177,7 @@
     <Compile Include="Drawing\UnanimatedModelComponent.cs" />
     <Compile Include="Misc Components\StaticMeshComponent.cs" />
     <Compile Include="Util\IdentificationFactory.cs" />
+    <Compile Include="Util\RandSingleton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

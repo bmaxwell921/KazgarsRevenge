@@ -42,14 +42,17 @@ namespace KazgarsRevenge
 
     public class LevelManager : EntityManager
     {
+        #region LevelGeneration Stuff
+        #endregion
+
         public FloorName CurrentFloor { get; private set; }
 
         List<GameEntity> rooms = new List<GameEntity>();
         public LevelManager(KazgarsRevengeGame game)
             : base(game)
         {
-            //ReadFile("Dungeon");
             CurrentFloor = FloorName.Dungeon;
+            new LevelBuilder().BuildLevel(CurrentFloor);
         }
 
         public void DemoLevel()
@@ -180,6 +183,151 @@ namespace KazgarsRevenge
         {
             yaw = 0;
             return "Models\\Levels\\tempChunk";
+        }
+
+        /// <summary>
+        /// Class responsible for actually building the chunk
+        /// </summary>
+        private class LevelBuilder
+        {
+            private int levelWidth;
+            private int levelHeight;
+
+            // Default uses the level width and height as defined in the Constants file
+            public LevelBuilder()
+                : this(Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT)
+            {
+                
+            }
+
+            // Specific constructor for more cool stuff
+            public LevelBuilder(int levelWidth, int levelHeight)
+            {
+                this.SetLevelBounds(levelWidth, levelHeight);
+            }
+
+            // Sets the level bounds for level generation
+            public void SetLevelBounds(int levelWidth, int levelHeight)
+            {
+                this.levelWidth = levelWidth;
+                this.levelHeight = levelHeight;
+            }
+
+            /// <summary>
+            /// Builds a Level based on the given floorName and returns a list of all the rooms 
+            /// in the level
+            /// </summary>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            public IList<GameEntity> BuildLevel(FloorName name)
+            {
+                ChunkInfo[,] chunks = new ChunkInfo[levelWidth, levelHeight];
+                // First we gotta figure out what chunks to place
+                ChooseChunks(name, chunks);
+
+                Chunk chunk = ChunkUtil.Instance.ReadChunk(chunks[0, 0]);
+                // Then, we gotta actually make the rooms that make up each chunk
+                return null;
+            }
+
+            #region Choosing Chunks
+            private void ChooseChunks(FloorName name, ChunkInfo[,] chunks)
+            {
+                PlaceSoulevator(name, chunks);
+                Vector2 bossLoc = PlaceBoss(name, chunks);
+                PlaceKey(name, chunks, bossLoc);
+                PlaceTheRest(name, chunks);
+            }
+
+            // Places a home chunk in the middle of the level
+            private void PlaceSoulevator(FloorName name, ChunkInfo[,] chunks)
+            {
+                int midX = levelWidth / 2;
+                int midY = levelHeight / 2;
+
+                chunks[midX, midY] = ChunkUtil.Instance.GetSoulevatorChunk(name);
+            }
+
+            // Places the boss in a random location
+            private Vector2 PlaceBoss(FloorName name, ChunkInfo[,] chunks)
+            {
+                // Do nothing for now
+                // TODO choose random spot for the boss to go, return the location
+                return Vector2.Zero;
+            }
+
+            private void PlaceKey(FloorName name, ChunkInfo[,] chunks, Vector2 bossLoc)
+            {
+                // Do nothing for now
+                // TODO Place the key 'far enough' away from the boss
+            }
+
+            private void PlaceTheRest(FloorName name, ChunkInfo[,] chunks)
+            {
+                // Goes one by one thru the chunks array and chooses a random chunk to place there
+                for (int i = 0; i < levelWidth; ++i)
+                {
+                    for (int j = 0; j < levelHeight; ++j)
+                    {
+                        // If there's nothing there, place something
+                        if (chunks[i, j] == null)
+                        {
+                            ISet<Direction> reqDirs = GetRequiredDirections(name, chunks, i, j);
+                            chunks[i, j] = ChunkUtil.Instance.GetSatisfyingChunk(name, ChunkType.NORMAL, reqDirs);
+                        }
+                        // Otherwise it's the boss/soulevator/key
+                    }
+                }
+            }
+
+            // Gets where we need doors at
+            private ISet<Direction> GetRequiredDirections(FloorName name, ChunkInfo[,] chunks, int i, int j)
+            {
+                // Just gotta check what's to the left, what's to the right, what's up, and what's (goin) down
+                ISet<Direction> reqDirs = new HashSet<Direction>();
+
+                // Left chunk. It it has a door, then we need a door to the east
+                if (HasDoorAt(chunks, i - 1, j, Direction.EAST))
+                {
+                    reqDirs.Add(Direction.WEST);
+                }
+                // Right chunk. It it has a door, then we need a door to the west
+                if (HasDoorAt(chunks, i + 1, j, Direction.WEST))
+                {
+                    reqDirs.Add(Direction.EAST);
+                }
+                // Top chunk. It it has a door, then we need a door to the north
+                if (HasDoorAt(chunks, i, j - 1, Direction.SOUTH))
+                {
+                    reqDirs.Add(Direction.NORTH);
+                }
+                // Bottom chunk. It it has a door, then we need a door to the south
+                if (HasDoorAt(chunks, i, j + 1, Direction.NORTH))
+                {
+                    reqDirs.Add(Direction.SOUTH);
+                }
+
+                return reqDirs;
+            }
+
+            // Checks whether the chunk at chunks[i,j] has a chunk and if it needs a door at reqDir
+            private bool HasDoorAt(ChunkInfo[,] chunks, int i, int j, Direction reqDir)
+            {
+                if (i < 0 || i >= levelWidth || j < 0 || j >= levelHeight)
+                {
+                    return false;
+                }
+                if (chunks[i, j] == null)
+                {
+                    // TODO here is where we can change it to make less doors. Right now by returning true on an unplaced chunk we are 
+                    // forcing the maximum amount of doors
+                    return true;
+                }
+
+                return chunks[i, j].hasDoorAt(reqDir);
+            }
+
+            #endregion
         }
     }
 }

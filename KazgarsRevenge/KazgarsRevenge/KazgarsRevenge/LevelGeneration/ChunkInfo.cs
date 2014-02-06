@@ -18,25 +18,44 @@ namespace KazgarsRevenge
     /// </summary>
     public class ChunkInfo
     {
+        // Figured this was the best place for these?
+        public static readonly string CHUNK_EXT = "json";
+        public static readonly char CHUNK_NAME_DELIMIT = '-';
+
+        // The file name of this chunk
+        private string chunkName;
         // Which 'directions' of this chunk have doors. Directions are post rotation directions
         // ie a chunk with doors at N and E with Rotation.Zero would have doorDirections of W and N after at Rotation.NINETY
         private ISet<Direction> doorDirections;
 
         // The id of the represented chunk
-        private int id;
+        public int id
+        {
+            get;
+            protected set;
+        }
         
         // The rotation of this chunk
-        private Rotation rotation;
+        public Rotation rotation
+        {
+            get;
+            protected set;
+        }
 
         // The type for this chunk
-        private ChunkType chunkType;
+        public ChunkType chunkType
+        {
+            get;
+            protected set;
+        }
 
         /// <summary>
         /// Constructs a new ChunkInfo object with doors at the given directions
         /// </summary>
         /// <param name="directions"></param>
-        public ChunkInfo(int id, Rotation rotation, ChunkType chunkType, ISet<Direction> doorDirections)
+        public ChunkInfo(string chunkName, int id, Rotation rotation, ChunkType chunkType, ISet<Direction> doorDirections)
         {
+            this.chunkName = chunkName;
             this.id = id;
             this.rotation = rotation;
             this.chunkType = chunkType;
@@ -76,7 +95,18 @@ namespace KazgarsRevenge
 
         public override string ToString()
         {
-            return String.Format("ChunkInfo:" + doorDirections.ToString());
+            StringBuilder sb = new StringBuilder();
+            sb.Append("ChunkInfo:");
+            foreach (Direction dir in doorDirections)
+            {
+                sb.Append(dir.ToChar());
+            }
+            return sb.ToString();
+        }
+
+        public string GetFileName()
+        {
+            return chunkName + "." + CHUNK_EXT;
         }
 
         public override bool Equals(object obj)
@@ -86,7 +116,15 @@ namespace KazgarsRevenge
 
         public override int GetHashCode()
         {
-            return doorDirections.GetHashCode();
+            int PRIME = 31;
+            int hash = 1;
+
+            hash = hash * PRIME + id.GetHashCode();
+            hash = hash * PRIME + rotation.GetHashCode();
+            hash = hash * PRIME + chunkType.GetHashCode();
+            hash = hash * PRIME + doorDirections.GetHashCode();
+
+            return hash;
         }
     }
 }
