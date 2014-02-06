@@ -112,7 +112,8 @@
     <Compile Include="Managers\Components\BillBoardManager.cs" />
     <Compile Include="Managers\Components\LevelModelManager.cs" />
     <Compile Include="Controllers\Attacks\ArrowController.cs" />
-    <Compile Include="Misc Components\Spawner.cs" />
+    <Compile Include="Misc Components\Spawners\ProximitySpawner.cs" />
+    <Compile Include="Misc Components\Spawners\Spawner.cs" />
     <Compile Include="Misc Components\TimerComponent.cs" />
     <Compile Include="Networking\Handlers\DisconnectedPlayerHandler.cs" />
     <Compile Include="Networking\Handlers\HostUpdateHandler.cs" />

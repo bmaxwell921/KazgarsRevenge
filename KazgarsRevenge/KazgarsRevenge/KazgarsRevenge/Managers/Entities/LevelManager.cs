@@ -91,11 +91,11 @@ namespace KazgarsRevenge
             rooms = new List<GameEntity>();
         }
 
-        //public void DemoLevel()
-        //{
-        //    rooms.Add(CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2));
-        //    //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
-        //}
+        public void DemoLevel()
+        {
+            rooms.Add(CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2));
+            //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
+        }
 
         /// <summary>
         /// Generates a new level to play with the default width and height in chunks (3x3)
