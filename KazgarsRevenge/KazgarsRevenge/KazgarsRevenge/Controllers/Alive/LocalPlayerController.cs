@@ -101,6 +101,7 @@ namespace KazgarsRevenge
         bool[] UISlotUsed = new bool[14];     //0-7 abilities, 8 primary, 9 secondary, 10-13 items
         bool showInventory = false;
         bool showEquipment = false;
+        string abilityToUseString = null;
         #endregion
 
         MouseState curMouse = Mouse.GetState();
@@ -177,12 +178,20 @@ namespace KazgarsRevenge
 
                 //appropriate action for gui element collided with
                 //happens on left mouse released
+                //#Nate
                 if (collides != null && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
+                    string innerClicked = CollidingInnerFrame(collides);
                     switch (collides)
                     {
                         case "inventory":
-
+                            switch (innerClicked)
+                            {
+                                case "equipArrow":
+                                    showEquipment = !showEquipment;
+                                    break;
+                                
+                            }
                             break;
                         case "loot":
                             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
@@ -196,6 +205,10 @@ namespace KazgarsRevenge
                                     }
                                 }
                             }
+                            break;
+
+                        case "abilities":
+                            abilityToUseString = innerClicked;
                             break;
 
                     }
@@ -520,12 +533,29 @@ namespace KazgarsRevenge
             Ability abilityToUse = null;
 
             foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
-            {
+            {//#Nate a
                 if (curKeys.IsKeyDown(k.Key) && k.Value.tryUse(currentTime))
                 {
                     useAbility = true;
                     abilityToUse = k.Value;
                     break;
+                }
+            }
+
+            //mouse click check
+            if (abilityToUseString != null)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    if (abilityToUseString == "ability" + i)
+                    {
+                        if (boundAbilities[i].Value.tryUse(currentTime))
+                        {
+                            useAbility = true;
+                            abilityToUse = boundAbilities[i].Value;
+                            abilityToUseString = null;
+                        }
+                    }
                 }
             }
 
@@ -628,6 +658,24 @@ namespace KazgarsRevenge
             }
             return null;
         }
+
+        /// <summary>
+        /// Checks each inside gui component for given string value for click action and returns name of what was clicked.
+        /// </summary>
+        /// <returns></returns>
+        private string CollidingInnerFrame(string outsideRec)
+        {
+
+            foreach (KeyValuePair<string, Rectangle> k in guiInsideRects[outsideRec])
+            {
+                if (RectContains(k.Value, curMouse.X, curMouse.Y))
+                {
+                    return k.Key;
+                }
+
+            }
+            return null;
+        }
         #endregion
 
 
@@ -704,6 +752,12 @@ namespace KazgarsRevenge
             //ability
             abilityDict.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
             abilityDict.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
+            //abilities 0-7
+            for (int i = 0; i < 4; ++i)
+            {
+                abilityDict.Add("ability" + i, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
+                abilityDict.Add("ability" + (i+4), new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+            }
             abilityDict.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
             abilityDict.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
             abilityDict.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
@@ -739,8 +793,8 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Red * 0.5f);
             for (int i = 0; i < 4; ++i)
             {//Convert below to inside Rects
-                s.Draw(boundAbilities[i].Value.icon, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
-                s.Draw(boundAbilities[i + 4].Value.icon, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                s.Draw(boundAbilities[i].Value.icon, guiInsideRects["abilities"]["ability"+i], Color.White);
+                s.Draw(boundAbilities[i + 4].Value.icon, guiInsideRects["abilities"]["ability" + (i+4)], Color.White);
             }
 
             //LM
@@ -904,7 +958,7 @@ namespace KazgarsRevenge
                 {
                     //Nate working here
                     s.Draw(inventory[i].Icon, guiInsideRects["inventory"]["inventory" + i], Color.White);
-                    //s.DrawString(font, inventory[i].Name, new Vector2(maxX - 400 * average, (420 + i * 40 )* average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                   
                 }
             }
 
