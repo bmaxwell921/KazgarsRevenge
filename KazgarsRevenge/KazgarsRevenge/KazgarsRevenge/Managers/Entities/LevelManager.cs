@@ -103,6 +103,7 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void CreateLevel(FloorName name)
         {
+            // TODO test this
             this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
         }
 

@@ -20,9 +20,6 @@ namespace KazgarsRevenge
         // When we last spawned something
         private float passedTime;
 
-        // Whether or not we're currently spawning stuff
-        private bool spawning;
-
         /// <summary>
         /// Creates a new spawner that spawns based on proximity to players
         /// </summary>
@@ -38,15 +35,12 @@ namespace KazgarsRevenge
             this.proximity = proximity;
             this.delay = delay;
             passedTime = delay;
-            spawning = false;
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (spawning)
-            {
-                passedTime += gameTime.ElapsedGameTime.Milliseconds;
-            }
+            // Even if we aren't spawning still update this so it spawns immediately
+            passedTime += gameTime.ElapsedGameTime.Milliseconds;
             base.Update(gameTime);
         }
 
@@ -56,8 +50,8 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public override bool NeedsSpawn()
         {
-            // TODO check proximity
-            return true;
+            // check if anything is close by
+            return QueryNearEntityFaction(FactionType.Players, spawnLocation, 0, proximity, true) != null;          
         }
 
         /// <summary>

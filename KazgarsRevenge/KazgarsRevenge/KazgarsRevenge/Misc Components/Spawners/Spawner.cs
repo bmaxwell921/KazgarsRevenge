@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     /// <summary>
     /// Component used to 
     /// </summary>
-    public abstract class Spawner : Component
+    public abstract class Spawner : AIComponent
     {
         // Where to spawn stuff
         protected Vector3 spawnLocation;
