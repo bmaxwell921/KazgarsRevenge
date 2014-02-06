@@ -20,7 +20,7 @@ namespace KazgarsRevenge
     {
         //the entity that created this attack
         protected AliveComponent creator;
-        protected int damage;
+        protected float damage;
         //either "good" or "bad", for now
         protected FactionType factionToHit;
         protected DeBuff debuff = DeBuff.None;
@@ -92,7 +92,7 @@ namespace KazgarsRevenge
         {
             if (t != null)
             {
-                damageDealt += t.Damage(debuff, damage, creator.Entity);
+                damageDealt += t.Damage(debuff, (int)damage, creator.Entity);
             }
         }
 

@@ -197,6 +197,7 @@ namespace KazgarsRevenge
                     break;
             }
 
+            base.Update(gameTime);
         }
 
 

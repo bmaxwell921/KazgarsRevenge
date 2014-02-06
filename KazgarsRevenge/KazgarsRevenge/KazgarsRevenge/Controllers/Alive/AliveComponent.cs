@@ -20,7 +20,8 @@ namespace KazgarsRevenge
     public enum DeBuff
     {
         None = 0,
-        SerratedBleeding = 6,
+        SerratedBleeding,
+        MagneticImplant,
     }
     public enum Buff
     {
@@ -168,6 +169,10 @@ namespace KazgarsRevenge
         {
             //TODO: armor and resistance calculations
             int actualDamage = d;
+            if (HasDeBuff(DeBuff.MagneticImplant))
+            {
+                actualDamage *= 2;
+            }
             Health -= actualDamage;
             if (Health <= 0)
             {
@@ -207,8 +212,8 @@ namespace KazgarsRevenge
                 }
                 if (activeDebuffs[i].timeLeft <= 0)
                 {
-                    activeDebuffs.RemoveAt(i);
                     HandleDeBuff(activeDebuffs[i].type, BuffState.Ending);
+                    activeDebuffs.RemoveAt(i);
                 }
             }
 
@@ -277,6 +282,8 @@ namespace KazgarsRevenge
             {
                 case DeBuff.SerratedBleeding:
                     return 6000;
+                case DeBuff.MagneticImplant:
+                    return 2000;
             }
             return 0;
         }
@@ -312,6 +319,18 @@ namespace KazgarsRevenge
             for (int i = 0; i < activeBuffs.Count; ++i)
             {
                 if (activeBuffs[i].type == b)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        protected bool HasDeBuff(DeBuff b)
+        {
+            for (int i = 0; i < activeDebuffs.Count; ++i)
+            {
+                if (activeDebuffs[i].type == b)
                 {
                     return true;
                 }

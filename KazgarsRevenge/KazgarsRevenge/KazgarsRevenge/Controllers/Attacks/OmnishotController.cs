@@ -11,7 +11,7 @@ namespace KazgarsRevenge
         public OmnishotController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
             : base(game, entity, damage, factionToHit, creator)
         {
-            this.lifeLength = 500;
+            this.lifeLength = 250;
         }
 
         bool penetrate = false;
@@ -44,7 +44,7 @@ namespace KazgarsRevenge
                 float yaw = (float)((i / 22.0f) * Math.PI * 2);
                 Vector3 dir = new Vector3((float)Math.Cos(yaw), 0, (float)Math.Sin(yaw));
 
-                attacks.CreateArrow(physicalData.Position, dir, damage, creator, home, penetrate, leech, bleed);
+                attacks.CreateArrow(physicalData.Position, dir, (int)damage, creator, home, penetrate, leech, bleed);
             }
         }
     }
