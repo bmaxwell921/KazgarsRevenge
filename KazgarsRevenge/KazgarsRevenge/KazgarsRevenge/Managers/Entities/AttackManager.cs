@@ -56,6 +56,7 @@ namespace KazgarsRevenge
             if (homing)
             {
                 arrowAI.Home();
+                arrowGraphics.AddEmitter(typeof(HomingTrailParticleSystem), 50, 5, Vector3.Zero);
             }
             if (penetrating)
             {
@@ -166,13 +167,14 @@ namespace KazgarsRevenge
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            arrowData.LinearVelocity = dir * 600.0f;
+            arrowData.LinearVelocity = dir * 700;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             arrow.AddSharedData(typeof(Entity), arrowData);
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                                                                                 new Vector3(20), Vector3.Backward * 20, Matrix.Identity);
+            arrowGraphics.AddEmitter(typeof(SnipeTrailParticleSystem), 50, 10, Vector3.Zero);
 
             SnipeController arrowAI = new SnipeController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, magnet);
             

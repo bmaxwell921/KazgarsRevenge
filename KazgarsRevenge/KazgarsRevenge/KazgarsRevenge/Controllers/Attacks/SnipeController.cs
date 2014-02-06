@@ -37,8 +37,8 @@ namespace KazgarsRevenge
 
         public override void Update(GameTime gameTime)
         {
-            //incrementally adds damage to the attack as it flies longer, ending up at +1000% damage after 1 seconds
-            damage += initialDamage * .1f * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 10;
+            //incrementally adds damage to the attack as it flies longer, ending up at +500% damage after .5 second
+            damage += initialDamage * .05f * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 5;
 
             base.Update(gameTime);
 

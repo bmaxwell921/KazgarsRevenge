@@ -642,7 +642,7 @@ namespace KazgarsRevenge
                 {
                     damage *= 2;
                 }
-                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 1, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -725,6 +725,7 @@ namespace KazgarsRevenge
                 {
                     AddBuff(Buff.Penetrating, Entity);
                 }
+                StartSequence("fightingstance");
             });
 
             return sequence;

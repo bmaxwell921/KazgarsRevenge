@@ -10,7 +10,7 @@ namespace KazgarsRevenge
         public int CharacterLevel { get; private set; }
         public PlayerSave()
         {
-            CharacterLevel = 10;
+            CharacterLevel = 1;
         }
     }
 }
