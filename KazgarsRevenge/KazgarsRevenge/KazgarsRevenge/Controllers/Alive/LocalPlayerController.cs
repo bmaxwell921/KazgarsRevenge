@@ -733,6 +733,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
             guiOutsideRects.Add("damage", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
+            guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
             //Nate Here
             guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average)));
             guiOutsideRects.Add("equipment", new Rectangle((int)(maxX - 700 * average), (int)(380 * average), (int)(300 * average), (int)(440 * average)));
@@ -759,6 +760,7 @@ namespace KazgarsRevenge
             guiInsideRects.Add("damage", damageDict);
             guiInsideRects.Add("map", mapDict);
             guiInsideRects.Add("chat", chatDict);
+            guiInsideRects.Add("player", playerDict);
 
             //Equipment inner
             equipmentDict.Add("equipHead", new Rectangle((int)(maxX - 690 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
