@@ -119,7 +119,6 @@ namespace KazgarsRevenge
             curKeys = Keyboard.GetState();
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
             float currentTime = (float)gameTime.TotalGameTime.TotalSeconds;
-            millisActionCounter += elapsed;
             millisRunningCounter += elapsed;
             stateResetCounter += elapsed;
 
@@ -129,7 +128,7 @@ namespace KazgarsRevenge
                 attState = AttackState.None;
             }
 
-            UpdateActionSequences();
+            UpdateActionSequences(elapsed);
 
             if (inCombat && millisCombatCounter >= millisCombatLength)
             {

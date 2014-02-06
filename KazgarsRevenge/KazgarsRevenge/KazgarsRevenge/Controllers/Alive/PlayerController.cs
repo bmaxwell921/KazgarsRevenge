@@ -329,19 +329,24 @@ namespace KazgarsRevenge
 
         protected void StartSequence(string name)
         {
+            InterruptReset(name);
+
+            currentSequence[0]();
+            millisActionCounter = 0;
+
+        }
+        private void InterruptReset(string name)
+        {
             InterruptCurrentSequence();
-            
+
             needInterruptAction = true;
             canInterrupt = false;
             currentSequence = actionSequences[name];
             actionIndex = 0;
             currentActionName = name;
             stateResetCounter = double.MaxValue;
-
-            currentSequence[0]();
-            millisActionCounter = 0;
-
         }
+
         private void InterruptCurrentSequence()
         {
             if (needInterruptAction && currentSequence != null && actionIndex < currentSequence.Count)
@@ -725,7 +730,12 @@ namespace KazgarsRevenge
                 {
                     AddBuff(Buff.Penetrating, Entity);
                 }
-                StartSequence("fightingstance");
+                if (currentAniName == "k_fighting_stance" || currentAniName == "k_from_fighting_stance")
+                {
+                    InterruptReset("fightingstance");
+                    millisActionCounter = aniCounter;
+                    millisActionLength = aniLength;
+                }
             });
 
             return sequence;
@@ -772,8 +782,9 @@ namespace KazgarsRevenge
 
 
         AttachableModel attachedArrow;
-        protected void UpdateActionSequences()
+        protected void UpdateActionSequences(double elapsed)
         {
+            millisActionCounter += elapsed;
             if (millisActionCounter >= millisActionLength)
             {
                 if (currentSequence != null && actionIndex < currentSequence.Count - 1)
@@ -781,6 +792,15 @@ namespace KazgarsRevenge
                     ++actionIndex;
                     currentSequence[actionIndex]();
                     millisActionCounter = 0;
+                }
+            }
+
+            aniCounter += elapsed;
+            if (aniCounter >= aniLength)
+            {
+                if (currentAniName == "k_from_fighting_stance")
+                {
+                    StartSequence("idle");
                 }
             }
         }
@@ -811,10 +831,14 @@ namespace KazgarsRevenge
             PlayAnimation(animationName, t);
 
         }
+        double aniCounter = 0;
+        double aniLength = 0;
         private void PlayAnimation(string animationName, MixType t)
         {
             animations.StartClip(animationName, t);
             currentAniName = animationName;
+            aniCounter = 0;
+            aniLength = animations.GetAniMillis(animationName);
         }
 
         #endregion
