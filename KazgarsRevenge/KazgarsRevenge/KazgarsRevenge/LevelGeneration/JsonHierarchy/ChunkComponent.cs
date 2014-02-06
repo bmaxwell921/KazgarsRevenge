@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     /// Super type of RoomBlocks, Rooms, and Chunks
     /// Kind of copied from the KRChunkEditor for easy deserialization
     /// </summary>
-    public class ChunkComponent
+    public class ChunkComponent : ICloneable
     {
         // Location of the component in x,y 
         public Location location
@@ -30,6 +30,16 @@ namespace KazgarsRevenge
         {
             get;
             set;
+        }
+
+
+        public object Clone()
+        {
+            ChunkComponent comp = new ChunkComponent();
+            comp.location = (Location)this.location.Clone();
+            comp.name = (string) this.name.Clone();
+            comp.rotation = this.rotation;
+            return comp;
         }
     }
 }

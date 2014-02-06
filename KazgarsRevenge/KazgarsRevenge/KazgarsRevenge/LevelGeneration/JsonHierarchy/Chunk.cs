@@ -18,24 +18,19 @@ namespace KazgarsRevenge
             set;
         }
 
-        //public Location location
-        //{
-        //    get;
-        //    set;
-        //}
+        public override object Clone()
+        {
+            Chunk ret = new Chunk();
+            ret.name = (string) this.name.Clone();
+            ret.location = (Location) this.location.Clone();
+            ret.rotation = this.rotation;
+            ret.rooms = new List<Room>();
 
-        //// Name of the component
-        //public string name
-        //{
-        //    get;
-        //    set;
-        //}
-
-        //// Rotation of the component
-        //public Rotation rotation
-        //{
-        //    get;
-        //    set;
-        //}
+            foreach (Room r in rooms)
+            {
+                ret.rooms.Add((Room)r.Clone());
+            }
+            return ret;
+        }
     }
 }

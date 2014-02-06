@@ -17,5 +17,21 @@ namespace KazgarsRevenge
             get;
             set;
         }
+
+        public override object Clone()
+        {
+            Room clone = new Room();
+            clone.location = (Location)this.location.Clone();
+            clone.name = (string)this.name.Clone();
+            clone.rotation = this.rotation;
+
+            List<RoomBlock> blocks = new List<RoomBlock>();
+            foreach (RoomBlock rb in blocks)
+            {
+                blocks.Add((RoomBlock)rb.Clone());
+            }
+            clone.blocks = blocks;
+            return clone;
+        }
     }
 }

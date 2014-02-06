@@ -219,14 +219,12 @@ namespace KazgarsRevenge
             /// </summary>
             /// <param name="name"></param>
             /// <returns></returns>
-            public IList<GameEntity> BuildLevel(FloorName name)
+            public Chunk[,] BuildLevel(FloorName name)
             {
                 ChunkInfo[,] chunks = new ChunkInfo[levelWidth, levelHeight];
                 // First we gotta figure out what chunks to place
                 ChooseChunks(name, chunks);
-
-                Chunk chunk = ChunkUtil.Instance.ReadChunk(chunks[0, 0]);
-                // Then, we gotta actually make the rooms that make up each chunk
+                //return ReadChunks(name, chunks);
                 return null;
             }
 
@@ -328,6 +326,20 @@ namespace KazgarsRevenge
             }
 
             #endregion
+
+            //private Chunk[,] ReadChunks(FloorName name, ChunkInfo[,])
+            //{
+                // TODO right here
+            //}
+            //#region Creating Rooms
+            //// Creates a list of all the rooms making up this chunk
+            //private IList<GameEntity> CreateRooms(FloorName name, ChunkInfo[,] chunks)
+            //{
+            //    // DON'T FORGET TO ROTATE!
+            //}
+            //#endregion
         }
+
+        
     }
 }

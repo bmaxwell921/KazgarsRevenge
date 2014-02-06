@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     /// Class used to represent the location of rooms/chunks.
     /// Copied from the KRChunkEditor for easy deserialization
     /// </summary>
-    public class Location
+    public class Location : ICloneable
     {
         // X component
         private int x;
@@ -47,6 +47,11 @@ namespace KazgarsRevenge
         public void setY(int y)
         {
             this.y = y;
+        }
+
+        public object Clone()
+        {
+            return new Location(this.getX(), this.getY());
         }
     }
 }

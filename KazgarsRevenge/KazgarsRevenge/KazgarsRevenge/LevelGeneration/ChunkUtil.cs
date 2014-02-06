@@ -35,9 +35,13 @@ namespace KazgarsRevenge
         // Mapping from number of doors to ChunkInfo. Done like this for 'efficient' look ups
         private IDictionary<ChunkType, IDictionary<int, IList<ChunkInfo>>> chunkDefs;
 
+        // A cache of chunks so we don't always have to read chunks
+        private IDictionary<string, Chunk> chunkCache;
+
         private ChunkUtil()
         {
             chunkDefs = new Dictionary<ChunkType, IDictionary<int, IList<ChunkInfo>>>();
+            chunkCache = new Dictionary<string, Chunk>();
             ReadChunkNames();
         }
 
@@ -194,6 +198,10 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public Chunk ReadChunk(ChunkInfo chunk)
         {
+            if (chunkCache.ContainsKey(chunk.GetFileName()))
+            {
+                return (Chunk) chunkCache[chunk.GetFileName()].Clone();
+            }
             try
             {
                 String chunkJson;
@@ -201,7 +209,9 @@ namespace KazgarsRevenge
                 {
                     chunkJson = sr.ReadToEnd();
                 }
-                return JsonConvert.DeserializeObject<Chunk>(chunkJson);
+                Chunk deser = JsonConvert.DeserializeObject<Chunk>(chunkJson);
+                chunkCache[chunk.GetFileName()] = deser;
+                return deser;
             }
             catch (Exception e)
             {
