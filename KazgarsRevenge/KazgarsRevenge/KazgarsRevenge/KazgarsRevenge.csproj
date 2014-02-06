@@ -92,6 +92,7 @@
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
     <Compile Include="Controllers\Attacks\OmnishotController.cs" />
+    <Compile Include="Controllers\Attacks\SnipeController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Drawing\BlobShadowDecal.cs" />

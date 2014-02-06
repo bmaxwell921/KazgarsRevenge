@@ -637,7 +637,12 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 100, this);
+                int damage = GeneratePrimaryDamage(StatType.Agility);
+                if (abilityLearnedFlags[AbilityName.Headshot] && rand.Next(0, 101) < 25)
+                {
+                    damage *= 2;
+                }
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 1, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -653,7 +658,12 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, 100, this);
+                int damage = GeneratePrimaryDamage(StatType.Agility);
+                if (abilityLearnedFlags[AbilityName.Headshot] && rand.Next(0, 101) < 25)
+                {
+                    damage *= 2;
+                }
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
             });
 
             return sequence;
@@ -809,6 +819,17 @@ namespace KazgarsRevenge
         #endregion
 
         #region Damage
+        private int GeneratePrimaryDamage(StatType s)
+        {
+            float ret = stats[s] * 10;
+            if (rand.Next(0, 101) < stats[StatType.CritChance])
+            {
+                ret *= 1.25f;
+            }
+
+            return (int)ret;
+        }
+
         //TODO: damage tracker and "in combat" status
         public override void HandleDamageDealt(int damageDealt)
         {
@@ -954,10 +975,27 @@ namespace KazgarsRevenge
         public enum AbilityName
         {
             Snipe,
-            Omnishot,
             AdrenalineRush,
             Penetrating,
             Homing,
+            Leeching,
+            Serrated,
+            Headshot,
+            MagneticImplant,
+            LooseCannon,
+            MakeItRain,
+            MakeItHail,
+            Caltrops,
+            GrapplingHook,
+            SpeedyGrapple,
+            GrapplingSpear,
+            ForcefulThrow,
+            TarBomb,
+            MoltenBolt,
+            FlashBomb,
+            Omnishot,
+
+
 
             HeartStrike,
 

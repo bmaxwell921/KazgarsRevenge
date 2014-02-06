@@ -11,19 +11,16 @@ namespace KazgarsRevenge
     
     public class ArrowController : AttackController
     {
-        float speed = 0;
-        public ArrowController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator, float speed)
+        public ArrowController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
             : base(game, entity, damage, factionToHit, creator)
         {
-            this.speed = speed;
-            this.lifeLength = 3000;
+            this.lifeLength = 2000;
             this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);
         }
         bool penetrating = false;
         bool homing = false;
         bool leeching = false;
         bool bleeding = false;
-
 
         public void Penetrate()
         {
@@ -97,7 +94,7 @@ namespace KazgarsRevenge
                     Vector3 move = (target.Entity.GetSharedData(typeof(Entity)) as Entity).Position - physicalData.Position;
                     move.Y = 0;
                     newDir = GetPhysicsYaw(move);
-                    AdjustDir(speed, .25f);
+                    AdjustDir(450.0f, .25f);
                 }
             }
 
