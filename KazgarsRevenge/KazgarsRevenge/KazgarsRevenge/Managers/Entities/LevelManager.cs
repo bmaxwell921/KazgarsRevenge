@@ -66,8 +66,16 @@ namespace KazgarsRevenge
             }
         }
 
-        // In 3D coordinates, how far chunks are away from each other
-        public static readonly int CHUNK_SIZE = 240;
+        // In BLOCKS, how far chunks are away from each other
+        public static readonly int CHUNK_SIZE = 24;
+
+        // How large a block is in 3D space
+        public static readonly int BLOCK_SIZE = 10;
+
+        // The y component of the room location
+        public static readonly float LEVEL_Y = -18.5f;
+
+        public static readonly string ROOM_PATH = @"Models\Rooms\";
 
         public FloorName CurrentFloor = FloorName.Dungeon;
 
@@ -83,11 +91,11 @@ namespace KazgarsRevenge
             rooms = new List<GameEntity>();
         }
 
-        public void DemoLevel()
-        {
-            CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2);
-            //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
-        }
+        //public void DemoLevel()
+        //{
+        //    rooms.Add(CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2));
+        //    //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
+        //}
 
         /// <summary>
         /// Generates a new level to play with the default width and height in chunks (3x3)
@@ -123,81 +131,39 @@ namespace KazgarsRevenge
         private IList<GameEntity> CreateChunkRooms(Chunk chunk, ChunkInfo chunkInfo, int i, int j)
         {
             IList<GameEntity> rooms = new List<GameEntity>();
-            // REMEMBER TO TRANSLATE FROM (X, Y) -> (X, 0, Z)
-            Vector2 chunkLocation = new Vector2(i * CHUNK_SIZE, j * CHUNK_SIZE);
+            Vector3 chunkLocation = new Vector3(i * CHUNK_SIZE * BLOCK_SIZE, LEVEL_Y, j * CHUNK_SIZE * BLOCK_SIZE);
             foreach (Room room in chunk.rooms)
             {
-                // TODO here
+                rooms.Add(CreateRoom(room, chunkInfo.rotation, chunkLocation));
             }
 
             return rooms;
         }
 
-        Dictionary<string, List<RoomData>> chunkDefinitions = new Dictionary<string, List<RoomData>>();
-        string levelPath = "Models\\Levels\\";
-        public void ReadFile(FloorName floor)
+        // Creates a gameEntity for the given information
+        private GameEntity CreateRoom(Room room, Rotation chunkRotation, Vector3 chunkLocation)
         {
-            chunkDefinitions.Clear();
+            // Room.location is the room's location relative to the chunk's location, so we add the values to get its proper location
+            Vector3 roomLocation = chunkLocation + new Vector3(room.location.getX() * BLOCK_SIZE, LEVEL_Y, room.location.getY() * BLOCK_SIZE);
 
-            string filetext;
-            try
-            {
-                using (StreamReader sr = new StreamReader(floor.ToString() + ".json"))
-                {
-                    filetext = sr.ReadToEnd();
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Couldn't read the level file.\n" + e.Message);
-            }
-
-
-
-            /*
-            string[] lines = filetext.Split(new char[] { '\n', '\r' });
-            List<RoomData> chunkDef = new List<RoomData>();
-
-            string chunkId = "";
-            for (int i = 0; i < lines.Length; ++i)
-            {
-                string[] tokens = lines[i].Split(new char[] { ' ' });
-                if (tokens[0] == "CHUNK")
-                {
-                    //done with last chunk, defining new chunk
-                    if (chunkDef.Count > 0)
-                    {
-                        chunkDefinitions.Add(floorName + chunkId, chunkDef);
-                    }
-                    chunkId = tokens[1];
-                    chunkDef = new List<RoomData>();
-                }
-
-                else if (tokens.Length == 4)
-                {
-                    chunkDef.Add(new RoomData(levelPath + tokens[0], Convert.ToSingle(tokens[1]) * 10, Convert.ToSingle(tokens[2]) * 10, -MathHelper.ToRadians(Convert.ToSingle(tokens[3]))));
-                }
-            }
-
-            if (chunkDef.Count > 0)
-            {
-                chunkDefinitions.Add(floorName + chunkId, chunkDef);
-            }*/
+            // Rotate it
+            roomLocation = GetRoomRotatedLocation(roomLocation, chunkRotation, chunkLocation);
+            GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, roomLocation, room.rotation.ToRadians());
+            // TODO add a spawner thing here
+            
+            return roomGE;
         }
 
-        #region Level Creation
-        public void CreateChunk(string chunkid, Vector3 chunkTranslation, float chunkRotation)
+        private Vector3 GetRoomRotatedLocation(Vector3 orig, Rotation chunkRotation, Vector3 chunkLocation)
         {
-            List<RoomData> chunkDef = chunkDefinitions[chunkid];
-            foreach(RoomData room in chunkDef)
-            {
-                CreateRoom(room.filename, new Vector3(room.x + chunkTranslation.X, 0, room.z + chunkTranslation.Z), room.yaw);
-            }
+            //return orig;
+            Vector3 chunkCenter = (chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE)) / 2;
+            return Vector3.Transform(chunkCenter, Matrix.CreateRotationY(chunkRotation.ToRadians()));
         }
 
-        private void CreateRoom(string modelPath, Vector3 position, float yaw)
+        private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {
-            position.Y -= 18.5f;
+            position.Y = LEVEL_Y;
             float roomScale = 10;
 
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
@@ -227,9 +193,8 @@ namespace KazgarsRevenge
             room.AddComponent(typeof(UnanimatedModelComponent), roomGraphics);
             levelModelManager.AddComponent(roomGraphics);
 
-            rooms.Add(room);
+            return room;
         }
-        #endregion
 
         /// <summary>
         /// Class responsible for actually building the chunk

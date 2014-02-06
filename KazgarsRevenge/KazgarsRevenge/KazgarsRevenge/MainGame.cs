@@ -313,8 +313,11 @@ namespace KazgarsRevenge
         private static readonly Identification DUMMY_ID = new Identification(0, Identification.NO_CLIENT);
         public void DemoLevel()
         {
-            levels.DemoLevel();
+            levels.CreateLevel(FloorName.Dungeon);
+            // TODO put him somewhere useful
             players.CreateMainPlayer(new Vector3(200, 0, -200), DUMMY_ID);
+
+            // TODO get rid of this for better spawning mechanics
             for (int i = 0; i < 10; ++i)
             {
                 for (int j = 0; j < 10; ++j)
