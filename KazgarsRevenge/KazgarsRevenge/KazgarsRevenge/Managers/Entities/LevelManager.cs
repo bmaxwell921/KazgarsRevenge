@@ -42,17 +42,45 @@ namespace KazgarsRevenge
 
     public class LevelManager : EntityManager
     {
-        #region LevelGeneration Stuff
-        #endregion
+        /// <summary>
+        /// Class used to hold information about the current level
+        /// </summary>
+        private class LevelInfo
+        {
+            // The floor for the level
+            public FloorName currentFloor;
 
-        public FloorName CurrentFloor { get; private set; }
+            // The chunk objects that make up this Level
+            public Chunk[,] chunks;
 
-        List<GameEntity> rooms = new List<GameEntity>();
+            // The information about the chunks in this level TODO might be unneeded
+            public ChunkInfo[,] chunkInfos;
+
+            // TODO add this
+            // public Graph pathGraph;
+
+            public LevelInfo(Chunk[,] chunks, ChunkInfo[,] chunkInfos)
+            {
+                this.chunks = chunks;
+                this.chunkInfos = chunkInfos;
+            }
+        }
+
+        // In 3D coordinates, how far chunks are away from each other
+        public static readonly int CHUNK_SIZE = 240;
+
+        public FloorName CurrentFloor = FloorName.Dungeon;
+
+        // The information about the currentLevel
+        private LevelInfo currentLevel;
+
+        // Rooms making up this level
+        private List<GameEntity> rooms;
+
         public LevelManager(KazgarsRevengeGame game)
             : base(game)
         {
-            CurrentFloor = FloorName.Dungeon;
-            new LevelBuilder().BuildLevel(CurrentFloor);
+            rooms = new List<GameEntity>();
         }
 
         public void DemoLevel()
@@ -61,15 +89,48 @@ namespace KazgarsRevenge
             //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
         }
 
-        public void CreateLevel(FloorName level)
+        /// <summary>
+        /// Generates a new level to play with the default width and height in chunks (3x3)
+        /// </summary>
+        /// <param name="name"></param>
+        public void CreateLevel(FloorName name)
         {
-            switch (level)
-            {
-                default:
-                case FloorName.Dungeon:
+            this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
+        }
 
-                    break;
+        /// <summary>
+        /// Generates a new level to play with the given width and height in chunks
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="levelWidth"></param>
+        /// <param name="levelHeight"></param>
+        public void CreateLevel(FloorName name, int levelWidth, int levelHeight)
+        {
+            this.rooms = new List<GameEntity>();
+            LevelBuilder lBuilder = new LevelBuilder(levelWidth, levelHeight);
+            this.currentLevel = lBuilder.BuildLevel(name);
+
+            for (int i = 0; i < levelWidth; ++i)
+            {
+                for (int j = 0; j < levelHeight; ++j)
+                {
+                    this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j));
+                }
             }
+        }
+
+        // Returns a list of all the rooms that belong to this chunk, in their proper locations
+        private IList<GameEntity> CreateChunkRooms(Chunk chunk, ChunkInfo chunkInfo, int i, int j)
+        {
+            IList<GameEntity> rooms = new List<GameEntity>();
+            // REMEMBER TO TRANSLATE FROM (X, Y) -> (X, 0, Z)
+            Vector2 chunkLocation = new Vector2(i * CHUNK_SIZE, j * CHUNK_SIZE);
+            foreach (Room room in chunk.rooms)
+            {
+                // TODO here
+            }
+
+            return rooms;
         }
 
         Dictionary<string, List<RoomData>> chunkDefinitions = new Dictionary<string, List<RoomData>>();
@@ -170,21 +231,6 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        // Reads the map from the given array of bytes, representing chunk types
-        public void CreateMapFrom(int[] map)
-        {
-            // TODO actually implement                     
-            DemoLevel();
-            mainGame.gameState = GameState.Playing;
-        }
-
-        // Translates the given room id into the path to that respective model and yaw (rotation) for a room
-        private string TranslateIdToPathYaw(int id, out float yaw)
-        {
-            yaw = 0;
-            return "Models\\Levels\\tempChunk";
-        }
-
         /// <summary>
         /// Class responsible for actually building the chunk
         /// </summary>
@@ -219,13 +265,16 @@ namespace KazgarsRevenge
             /// </summary>
             /// <param name="name"></param>
             /// <returns></returns>
-            public Chunk[,] BuildLevel(FloorName name)
+            public LevelInfo BuildLevel(FloorName name)
             {
-                ChunkInfo[,] chunks = new ChunkInfo[levelWidth, levelHeight];
+                ChunkInfo[,] chunkInfos = new ChunkInfo[levelWidth, levelHeight];
                 // First we gotta figure out what chunks to place
-                ChooseChunks(name, chunks);
-                //return ReadChunks(name, chunks);
-                return null;
+                ChooseChunks(name, chunkInfos);
+
+                Chunk[,] chunks = ReadChunks(name, chunkInfos);
+                
+                // Graph mvGraph = CreateMovementGraph(name, chunks);
+                return new LevelInfo(chunks, chunkInfos);
             }
 
             #region Choosing Chunks
@@ -327,10 +376,23 @@ namespace KazgarsRevenge
 
             #endregion
 
-            //private Chunk[,] ReadChunks(FloorName name, ChunkInfo[,])
-            //{
-                // TODO right here
-            //}
+            // Reads each ChunkInfo from JSON into an actual object
+            private Chunk[,] ReadChunks(FloorName name, ChunkInfo[,] chunks)
+            {
+                Chunk[,] ret = new Chunk[levelWidth, levelHeight];
+                for (int i = 0; i < levelWidth; ++i)
+                {
+                    for (int j = 0; j < levelHeight; ++j)
+                    {
+                        Chunk c = ChunkUtil.Instance.ReadChunk(chunks[i, j]);
+                        // Set the rotation properly, all the JSONs have the rotation as ZERO
+                        c.rotation = chunks[i, j].rotation;
+                        ret[i, j] = c;
+                    }
+                }
+                return ret;
+            }
+
             //#region Creating Rooms
             //// Creates a list of all the rooms making up this chunk
             //private IList<GameEntity> CreateRooms(FloorName name, ChunkInfo[,] chunks)
@@ -339,7 +401,5 @@ namespace KazgarsRevenge
             //}
             //#endregion
         }
-
-        
     }
 }

@@ -18,7 +18,7 @@ namespace KazgarsRevenge
             set;
         }
 
-        public override object Clone()
+        public object Clone()
         {
             Room clone = new Room();
             clone.location = (Location)this.location.Clone();

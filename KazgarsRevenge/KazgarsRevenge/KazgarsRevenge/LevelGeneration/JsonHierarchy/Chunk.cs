@@ -18,7 +18,7 @@ namespace KazgarsRevenge
             set;
         }
 
-        public override object Clone()
+        public object Clone()
         {
             Chunk ret = new Chunk();
             ret.name = (string) this.name.Clone();
