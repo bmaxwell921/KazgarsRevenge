@@ -121,16 +121,17 @@ namespace KazgarsRevenge
             return result;
         }
 
+
+        private static char NORTH = 'N'; private static char SOUTH = 'S'; private static char EAST = 'E'; private static char WEST = 'W';
         /// <summary>
         /// Converts the given string to its enum equivalent, or throws an exception 
         /// if the string isn't recognized
         /// </summary>
         /// <param name="direction"></param>
         /// <returns></returns>
-        public static Direction DirectionFromChar(char direction)
+        public static Direction FromChar(char direction)
         {
             direction = Char.ToUpper(direction);
-            char NORTH = 'N'; char SOUTH = 'S'; char EAST = 'E'; char WEST = 'W';
             
             if (direction == NORTH)
             {
@@ -151,10 +152,34 @@ namespace KazgarsRevenge
 
             throw new ArgumentException(String.Format("Unrecognized direction string: {0}", direction));
         }
+
+        public static char ToChar(this Direction direction)
+        {
+            if (direction == Direction.NORTH)
+            {
+                return NORTH;
+            }
+            else if (direction == Direction.SOUTH)
+            {
+                return SOUTH;
+            }
+            else if (direction == Direction.EAST)
+            {
+                return EAST;
+            }
+            else if (direction == Direction.WEST)
+            {
+                return WEST;
+            }
+
+            throw new ArgumentException(String.Format("Unrecognized direction string: {0}", direction));
+
+        }
         #endregion
 
         #region ChunkType Extenders
 
+        private static char HOME = 'H'; private static char SOUL = 'S'; private static char BOSS = 'B'; private static char KEY = 'K'; private static char NORMAL = 'N';
         /// <summary>
         /// Converts the given chunkType character to its enum value
         /// </summary>
@@ -162,7 +187,6 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public static ChunkType ChunkTypeFromChar(char chunkType)
         {
-            char HOME = 'H'; char SOUL = 'S'; char BOSS = 'B'; char KEY = 'K'; char NORMAL = 'N';
             chunkType = Char.ToUpper(chunkType);
             if (chunkType == HOME)
             {
@@ -186,6 +210,32 @@ namespace KazgarsRevenge
             }
 
             throw new ArgumentException(String.Format("Unrecognized chunkType: {0}", chunkType));
+        }
+
+        public static char ToChar(this ChunkType chunkType)
+        {
+            if (chunkType == ChunkType.HOME)
+            {
+                return HOME;
+            }
+            else if (chunkType == ChunkType.SOULEVATOR)
+            {
+                return SOUL;
+            }
+            else if (chunkType == ChunkType.BOSS)
+            {
+                return BOSS;
+            }
+            else if (chunkType == ChunkType.KEY)
+            {
+                return KEY;
+            }
+            else if (chunkType == ChunkType.NORMAL)
+            {
+                return NORMAL;
+            }
+
+            throw new ArgumentException("Unaccounted enum value!");
         }
         #endregion
     }
