@@ -61,7 +61,6 @@ namespace KazgarsRevenge
         KeyboardState previousKeyboardState;
 
         BasicEffect effectModelDrawer;
-        Texture2D texCursor;
         Effect effectOutline;
         Effect effectCellShading;
         RenderTarget2D renderTarget;
@@ -186,7 +185,6 @@ namespace KazgarsRevenge
         {
             normalFont = Content.Load<SpriteFont>("Verdana");
             titleFont = Content.Load<SpriteFont>("Title");
-            texCursor = Content.Load<Texture2D>("Textures\\whiteCursor");
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             effectModelDrawer = new BasicEffect(GraphicsDevice);
@@ -329,7 +327,7 @@ namespace KazgarsRevenge
         }
 
         Vector2 vecLoadingText;
-        Rectangle rectMouse;
+
         Vector2 guiScale = new Vector2(1,1);
         int maxX;
         int maxY;
@@ -343,7 +341,6 @@ namespace KazgarsRevenge
             average = (xRatio + yRatio) / 2;
 
             vecLoadingText = new Vector2(50, 50);
-            rectMouse = new Rectangle(0, 0, 25, 25);
             guiScale = new Vector2(xRatio, yRatio);
             alertStart = new Vector2(maxX, maxY);
         }
@@ -351,8 +348,6 @@ namespace KazgarsRevenge
         protected override void Draw(GameTime gameTime)
         {
             MouseState curMouse = Mouse.GetState();
-            rectMouse.X = curMouse.X;
-            rectMouse.Y = curMouse.Y;
 
             GraphicsDevice.Clear(Color.Black);
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -460,7 +455,6 @@ namespace KazgarsRevenge
                     //debug strings
                     //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
                     //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
-                    spriteBatch.Draw(texCursor, rectMouse, Color.White);
                     foreach (FloatingText f in alertText)
                     {
                         spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);

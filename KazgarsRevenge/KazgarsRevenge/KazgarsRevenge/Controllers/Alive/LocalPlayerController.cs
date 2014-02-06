@@ -33,6 +33,7 @@ namespace KazgarsRevenge
             texWhitePixel = game.Content.Load<Texture2D>("white");
 
             #region UI Frame Load
+            texCursor = Game.Content.Load<Texture2D>("Textures\\whiteCursor");
             icon_selected = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\icon_selected");
             health_bar = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\health_bar");
             rightArrow = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\rightArrow");
@@ -67,6 +68,8 @@ namespace KazgarsRevenge
         AliveComponent mouseHoveredHealth;
 
         #region UI Textures
+        Texture2D texCursor;
+
         #region UI Frames
         Texture2D icon_selected;
         Texture2D health_bar;
@@ -102,6 +105,7 @@ namespace KazgarsRevenge
         bool showInventory = false;
         bool showEquipment = false;
         string abilityToUseString = null;
+        int selectedItemSlot = -1;
         #endregion
 
         MouseState curMouse = Mouse.GetState();
@@ -185,12 +189,15 @@ namespace KazgarsRevenge
                     switch (collides)
                     {
                         case "inventory":
-                            switch (innerClicked)
-                            {
-                                case "equipArrow":
-                                    showEquipment = !showEquipment;
-                                    break;
-                                
+                            if(innerClicked == "equipArrow") showEquipment = !showEquipment;
+                            if(innerClicked != null && innerClicked.Contains("inventory")){
+                                for (int i = 0; i <= maxInventorySlots; i++)
+                                {
+                                    if (innerClicked == "inventory" + i && inventory.Count() > i)
+                                    {
+                                        selectedItemSlot = i;
+                                    }
+                                }
                             }
                             break;
                         case "loot":
@@ -692,10 +699,14 @@ namespace KazgarsRevenge
         float average = 1;
         Dictionary<string, Rectangle> guiOutsideRects;
         Dictionary<string, Dictionary<string,Rectangle>> guiInsideRects;
+        Rectangle rectMouse;
 
         //Inside Rect Dictionaries
         Dictionary<string, Rectangle> damageDict;
+        Dictionary<string, Rectangle> chatDict;
+        Dictionary<string, Rectangle> playerDict;
         Dictionary<string, Rectangle> mapDict;
+        Dictionary<string, Rectangle> xpDict;
         Dictionary<string, Rectangle> inventoryDict;
         Dictionary<string, Rectangle> equipmentDict;
         Dictionary<string, Rectangle> abilityDict;
@@ -713,6 +724,10 @@ namespace KazgarsRevenge
             RectEnemyHealthBar = new Rectangle((int)(mid.X - 75 * average), (int)(53 * average), (int)(200 * average), (int)(40 * average));
             vecName = new Vector2(RectEnemyHealthBar.X, 5);
 
+            //mouse
+            rectMouse = new Rectangle(0, 0, 25, 25);
+
+            //Outside Rectangles
             guiOutsideRects = new Dictionary<string, Rectangle>();
             guiOutsideRects.Add("abilities", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 158 * average)), (int)(622 * average), (int)(158 * average)));
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
@@ -730,11 +745,20 @@ namespace KazgarsRevenge
             inventoryDict = new Dictionary<string, Rectangle>();
             abilityDict = new Dictionary<string, Rectangle>();
             lootDict = new Dictionary<string, Rectangle>();
+            chatDict = new Dictionary<string, Rectangle>();
+            playerDict = new Dictionary<string, Rectangle>();
+            mapDict = new Dictionary<string, Rectangle>();
+            xpDict = new Dictionary<string, Rectangle>();
+            damageDict = new Dictionary<string, Rectangle>();
             //Add frame dictionaries
             guiInsideRects.Add("inventory", inventoryDict);
             guiInsideRects.Add("equipment", equipmentDict);
             guiInsideRects.Add("abilities", abilityDict);
             guiInsideRects.Add("loot", lootDict);
+            guiInsideRects.Add("xp", xpDict);
+            guiInsideRects.Add("damage", damageDict);
+            guiInsideRects.Add("map", mapDict);
+            guiInsideRects.Add("chat", chatDict);
 
             //Equipment inner
             equipmentDict.Add("equipHead", new Rectangle((int)(maxX - 690 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
@@ -774,6 +798,8 @@ namespace KazgarsRevenge
 
         public override void Draw(SpriteBatch s)
         {
+
+
             if (mouseHoveredEntity != null)
             {
                 s.DrawString(font, mouseHoveredEntity.Name, vecName, Color.Red, 0, Vector2.Zero, average, SpriteEffects.None, 0);
@@ -976,6 +1002,11 @@ namespace KazgarsRevenge
 
             #endregion
 
+            //Mouse
+            rectMouse.X = curMouse.X;
+            rectMouse.Y = curMouse.Y;
+            if (selectedItemSlot == -1) s.Draw(texCursor, rectMouse, Color.White);
+            else s.Draw(inventory[selectedItemSlot].Icon, rectMouse, Color.White);
         }
 
     }
