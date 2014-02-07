@@ -70,7 +70,7 @@ namespace KazgarsRevenge
         public static readonly int CHUNK_SIZE = 24;
 
         // How large a block is in 3D space
-        public static readonly int BLOCK_SIZE = 10;
+        public static readonly int BLOCK_SIZE = 100;
 
         // The y component of the room location
         public static readonly float LEVEL_Y = -18.5f;
@@ -104,7 +104,8 @@ namespace KazgarsRevenge
         public void CreateLevel(FloorName name)
         {
             // TODO test this
-            this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
+            //this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
+            this.CreateLevel(name, 1, 1);
         }
 
         /// <summary>
@@ -144,18 +145,22 @@ namespace KazgarsRevenge
         // Creates a gameEntity for the given information
         private GameEntity CreateRoom(Room room, Rotation chunkRotation, Vector3 chunkLocation)
         {
-            // Room.location is the room's location relative to the chunk's location, so we add the values to get its proper location
-            Vector3 roomLocation = chunkLocation + new Vector3(room.location.getX() * BLOCK_SIZE, LEVEL_Y, room.location.getY() * BLOCK_SIZE);
+            // TODO remove - trying to get placement right
+            chunkRotation = Rotation.ZERO;
 
-            Vector3 chunkCenter = (chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE)) / 2;
+            // Room.location is the room's location relative to the chunk's location, so we add the values to get its proper location
+            Vector3 roomLocation = chunkLocation + new Vector3(room.location.x * BLOCK_SIZE, 0, room.location.y * BLOCK_SIZE);
+
+            Vector3 chunkCenter = (chunkLocation + new Vector3(CHUNK_SIZE, 0, CHUNK_SIZE)) / 2;
             // Rotate it
             Vector3 newLocation;
             float newRotation;
             GetRotatedInfo(roomLocation, room.rotation, chunkRotation, chunkCenter, out newLocation, out newRotation);
+
             GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, newLocation, newRotation);
 
             // TODO need to send in the center of the room, not newLocation
-            AddSpawners(roomGE, room, newLocation, room.rotation, chunkCenter, chunkRotation);
+            //AddSpawners(roomGE, room, newLocation, room.rotation, chunkCenter, chunkRotation);
             
             return roomGE;
         }
@@ -187,7 +192,7 @@ namespace KazgarsRevenge
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 
 
-            Model roomModel = GetUnanimatedModel(modelPath);
+            Model roomModel = GetUnanimatedModel(modelPath);  
 
             Model roomCollisionModel = Game.Content.Load<Model>(modelPath);// + "Co");
             Vector3[] verts;
@@ -195,6 +200,7 @@ namespace KazgarsRevenge
             TriangleMesh.GetVerticesAndIndicesFromModel(roomCollisionModel, out verts, out indices);
             StaticMesh roomMesh = new StaticMesh(verts, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
             roomMesh.CollisionRules.Group = mainGame.LevelCollisionGroup;
+
             room.AddSharedData(typeof(StaticMesh), roomMesh);
 
             StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
@@ -229,7 +235,7 @@ namespace KazgarsRevenge
             {
                 // TODO this is probably wrong too. The rotations are hurting my brain
                 // Need to rotate the location by the room rotation, then by the chunk rotation
-                Vector3 blockLoc = new Vector3(spawner.location.getX(), LEVEL_Y, spawner.location.getY());
+                Vector3 blockLoc = new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y);
                 Vector3 rotatedLoc = RotatedLocation(blockLoc, roomCenter, roomRotation);
                 rotatedLoc = RotatedLocation(rotatedLoc, chunkCenter, chunkRotation);
                 spawnLocs.Add(rotatedLoc);

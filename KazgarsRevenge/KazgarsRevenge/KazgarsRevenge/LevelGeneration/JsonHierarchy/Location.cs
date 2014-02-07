@@ -12,10 +12,18 @@ namespace KazgarsRevenge
     public class Location : ICloneable
     {
         // X component
-        private int x;
+        public int x
+        {
+            get;
+            set;
+        }
 
         // Y component
-        private int y;
+        public int y
+        {
+            get;
+            set;
+        }
 
         public Location()
             : this(0, 0)
@@ -29,29 +37,9 @@ namespace KazgarsRevenge
             this.y = y;
         }
 
-        public int getX()
-        {
-            return x;
-        }
-
-        public void setX(int x)
-        {
-            this.x = x;
-        }
-
-        public int getY()
-        {
-            return y;
-        }
-
-        public void setY(int y)
-        {
-            this.y = y;
-        }
-
         public object Clone()
         {
-            return new Location(this.getX(), this.getY());
+            return new Location(x, y);
         }
     }
 }
