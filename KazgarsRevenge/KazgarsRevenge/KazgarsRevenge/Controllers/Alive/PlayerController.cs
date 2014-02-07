@@ -377,7 +377,8 @@ namespace KazgarsRevenge
             //ranged
             actionSequences.Add("snipe", SnipeActions());
             actionSequences.Add("omnishot", OmnishotActions());
-            actionSequences.Add("buff1", Buff1Actions());
+            actionSequences.Add("buffrush", BuffRushActions());
+            actionSequences.Add("buffleech", BuffLeechActions());
 
             //melee
             actionSequences.Add("flip", FlipActions());
@@ -714,7 +715,7 @@ namespace KazgarsRevenge
 
             return sequence;
         }
-        private List<Action> Buff1Actions()
+        private List<Action> BuffRushActions()
         {
             List<Action> sequence = new List<Action>();
 
@@ -736,6 +737,94 @@ namespace KazgarsRevenge
                     millisActionCounter = aniCounter;
                     millisActionLength = aniLength;
                 }
+
+                attState = AttackState.None;
+            });
+
+            return sequence;
+        }
+        private List<Action> BuffLeechActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                attacks.SpawnBuffParticles(physicalData.Position);
+                AddBuff(Buff.Leeching, Entity);
+                if (abilityLearnedFlags[AbilityName.Serrated])
+                {
+                    AddBuff(Buff.SerratedBleeding, Entity);
+                }
+                if (currentAniName == "k_fighting_stance" || currentAniName == "k_from_fighting_stance")
+                {
+                    InterruptReset("fightingstance");
+                    millisActionCounter = aniCounter;
+                    millisActionLength = aniLength;
+                }
+
+                attState = AttackState.None;
+            });
+
+            return sequence;
+        }
+        private List<Action> LooseCannonActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(actionSequences["snipe"][0]);
+
+
+            sequence.Add(() =>
+            {
+                //attach arrow model to hand
+                if (attachedArrow == null)
+                {
+                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_L_004", 0, -MathHelper.PiOver2);
+                }
+                if (!attached.ContainsKey("handarrow"))
+                {
+                    attached.Add("handarrow", attachedArrow);
+                }
+
+                millisActionLength = animations.GetAniMillis("k_fire_arrow") / 2 - 200;
+            });
+
+
+
+            sequence.Add(() =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                int damage = GeneratePrimaryDamage(StatType.Agility);
+                if (abilityLearnedFlags[AbilityName.Headshot] && rand.Next(0, 101) < 25)
+                {
+                    damage *= 2;
+                }
+                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
+
+                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
+
+                needInterruptAction = false;
+            });
+
+            sequence.Add(actionSequences["shoot"][3]);
+
+            interruptActions.Add("snipe", () =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                Vector3 forward = GetForward();
+                int damage = GeneratePrimaryDamage(StatType.Agility);
+                if (abilityLearnedFlags[AbilityName.Headshot] && rand.Next(0, 101) < 25)
+                {
+                    damage *= 2;
+                }
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
             });
 
             return sequence;
@@ -1040,6 +1129,8 @@ namespace KazgarsRevenge
                     return GetOmniShot();
                 case AbilityName.AdrenalineRush:
                     return GetAdrenalineRush();
+                case AbilityName.Leeching:
+                    return GetLeechingArrows();
                 default:
                     return null;
             }
@@ -1067,7 +1158,12 @@ namespace KazgarsRevenge
 
         protected Ability GetAdrenalineRush()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6, AttackType.Ranged, "buff1");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6, AttackType.Ranged, "buffrush");
+        }
+
+        protected Ability GetLeechingArrows()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6, AttackType.Ranged, "buffleech");
         }
         #endregion
 

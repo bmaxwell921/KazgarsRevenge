@@ -191,7 +191,7 @@ namespace KazgarsRevenge
 
             soundEffects.playRangedSound();
         }
-
+        
         public void CreateOmnishot(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool homing, bool penetrating, bool leeching, bool bleeding)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
@@ -211,6 +211,38 @@ namespace KazgarsRevenge
             OmnishotController arrowAI = new OmnishotController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             arrowAI.AddEffects(penetrating, homing, leeching, bleeding);
+
+            arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
+            genComponentManager.AddComponent(arrowPhysics);
+
+            arrow.AddComponent(typeof(UnanimatedModelComponent), arrowGraphics);
+            modelManager.AddComponent(arrowGraphics);
+
+            arrow.AddComponent(typeof(AttackController), arrowAI);
+            genComponentManager.AddComponent(arrowAI);
+
+            attacks.Add(arrow);
+
+            soundEffects.playRangedSound();
+        }
+
+        public void CreateLooseCannon(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool magnet)
+        {
+            GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
+            position.Y = 20;
+            Entity arrowData = new Box(position, 10, 17, 32, .001f);
+            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            arrowData.LinearVelocity = dir * 700;
+            arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
+            arrow.AddSharedData(typeof(Entity), arrowData);
+
+            PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
+                                                                                new Vector3(20), Vector3.Backward * 20, Matrix.Identity);
+            arrowGraphics.AddEmitter(typeof(SnipeTrailParticleSystem), 50, 10, Vector3.Zero);
+
+            SnipeController arrowAI = new SnipeController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, magnet);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);

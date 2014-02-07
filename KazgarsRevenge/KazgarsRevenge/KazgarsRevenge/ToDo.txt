@@ -49,3 +49,13 @@ stop enemies from spawning underneath the level
 Abilities
 ===========
 implement them
+
+
+
+
+Camera
+======
+orbit with arrow keys?
+
+
+
