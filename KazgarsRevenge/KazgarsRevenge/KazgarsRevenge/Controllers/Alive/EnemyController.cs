@@ -61,7 +61,6 @@ namespace KazgarsRevenge
 
         AnimationPlayer animations;
         LootManager lewts;
-        AttackManager attacks;
 
         Random rand;
         EnemyControllerSettings settings;
@@ -72,7 +71,6 @@ namespace KazgarsRevenge
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             this.settings = settings;
             lewts = game.Services.GetService(typeof(LootManager)) as LootManager;
-            attacks = game.Services.GetService(typeof(AttackManager)) as AttackManager;
 
             PlayAnimation(settings.attackAniName);
 

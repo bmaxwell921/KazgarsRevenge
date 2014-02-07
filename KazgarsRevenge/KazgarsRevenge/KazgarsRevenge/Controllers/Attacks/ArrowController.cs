@@ -19,7 +19,6 @@ namespace KazgarsRevenge
         }
         bool penetrating = false;
         bool homing = false;
-        bool bleeding = false;
 
         public void Penetrate()
         {
@@ -40,7 +39,6 @@ namespace KazgarsRevenge
 
         public void Bleed()
         {
-            bleeding = true;
             debuff = DeBuff.SerratedBleeding;
         }
 

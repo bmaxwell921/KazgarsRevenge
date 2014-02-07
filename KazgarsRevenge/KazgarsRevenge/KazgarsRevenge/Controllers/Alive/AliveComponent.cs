@@ -305,6 +305,8 @@ namespace KazgarsRevenge
             {Buff.AdrenalineRush, 6000},
             {Buff.Homing, 6000},
             {Buff.Penetrating, 6000},
+            {Buff.Leeching, 6000},
+            {Buff.SerratedBleeding, 6000},
         };
 
         Dictionary<Buff, double> buffTickLengths = new Dictionary<Buff, double>()
@@ -314,7 +316,7 @@ namespace KazgarsRevenge
 
         protected void AddBuff(Buff b, GameEntity from)
         {
-            double length = double.MaxValue;
+            double length = 0;
             double tickLength = double.MaxValue;
 
             if (buffLengths.ContainsKey(b))
@@ -333,7 +335,7 @@ namespace KazgarsRevenge
 
         protected void AddDebuff(DeBuff b, GameEntity from)
         {
-            double length = double.MaxValue;
+            double length = 0;
             double tickLength = double.MaxValue;
 
             if (debuffLengths.ContainsKey(b))

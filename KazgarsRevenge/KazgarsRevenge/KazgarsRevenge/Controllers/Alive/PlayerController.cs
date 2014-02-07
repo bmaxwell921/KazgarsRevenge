@@ -299,7 +299,7 @@ namespace KazgarsRevenge
             boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.Snipe));
             boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Omnishot));
             boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.AdrenalineRush));
-            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.Leeching));
             boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.HeartStrike));
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.HeartStrike));
             boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.HeartStrike));
@@ -500,7 +500,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 1, this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
                 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -523,7 +523,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this, false, false, false, false);
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
             });
 
             return sequence;

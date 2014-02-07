@@ -49,7 +49,7 @@ namespace KazgarsRevenge
                 Vector3 move = (target.Entity.GetSharedData(typeof(Entity)) as Entity).Position - physicalData.Position;
                 move.Y = 0;
                 newDir = GetPhysicsYaw(move);
-                AdjustDir(450.0f, .6f);
+                AdjustDir(450.0f, 1f);
             }
             
             base.Update(gameTime);

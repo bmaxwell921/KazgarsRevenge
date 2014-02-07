@@ -33,7 +33,7 @@ stop enemies from spawning underneath the level
 
 Abilities
 ===========
-implement them
+implement them aaaalll
 
 
 
@@ -49,3 +49,7 @@ snipe particles
 heal particles
 buff particles
 
+
+Floating Text
+===============
+combat text for heals and damage

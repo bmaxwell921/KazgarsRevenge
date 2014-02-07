@@ -268,14 +268,13 @@ namespace KazgarsRevenge
             Entity healPhysicalData = new Box(position, 1, 1, 1, .001f);
             healPhysicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             healPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            healPhysicalData.LinearVelocity = Vector3.Forward * 250.0f;
+            healPhysicalData.LinearVelocity = Vector3.Forward * 150.0f;
             healPhysicalData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(Vector3.Forward));
             heal.AddSharedData(typeof(Entity), healPhysicalData);
 
             PhysicsComponent healPhysics = new PhysicsComponent(mainGame, heal);
-            UnanimatedModelComponent healGraphics =
-                new UnanimatedModelComponent(mainGame, heal, null, new Vector3(10), Vector3.Backward * 6, Matrix.Identity);
-            healGraphics.AddEmitter(typeof(HealTrailParticleSystem), 50, 5, Vector3.Zero);
+            UnanimatedModelComponent healGraphics = new UnanimatedModelComponent(mainGame, heal, null, Vector3.Zero, Vector3.Zero, Matrix.Identity);
+            healGraphics.AddEmitter(typeof(HealTrailParticleSystem), 75, 5, Vector3.Zero);
 
             HomingHealController healAI = new HomingHealController(mainGame, heal, target, healAmount);
 

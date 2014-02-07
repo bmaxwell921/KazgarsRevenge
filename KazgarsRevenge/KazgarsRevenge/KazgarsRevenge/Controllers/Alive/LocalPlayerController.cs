@@ -46,14 +46,6 @@ namespace KazgarsRevenge
             texRange = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW");
             texMagic = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR");
             texPlaceHolder = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BN");
-            texHeartStrikeIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS");
-            I1 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I1");
-            I2 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I2");
-            I3 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I3");
-            I4 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4");
-            I5 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I5");
-            I6 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I6");
-            I7 = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I7");
             #endregion
 
             #region Item Image Load
@@ -84,14 +76,6 @@ namespace KazgarsRevenge
         Texture2D texRange;
         Texture2D texMagic;
         Texture2D texPlaceHolder;
-        Texture2D texHeartStrikeIcon;
-        Texture2D I1;
-        Texture2D I2;
-        Texture2D I3;
-        Texture2D I4;
-        Texture2D I5;
-        Texture2D I6;
-        Texture2D I7;
         #endregion
 
         #region Item Icons
