@@ -44,7 +44,6 @@ namespace KazgarsRevenge
         protected Space physics;
         protected CameraComponent camera;
         protected SoundEffectLibrary soundEffects;
-        protected AttackManager attacks;
         protected LootManager gearGenerator;
         protected NetworkMessageManager nmm;
 
@@ -265,7 +264,6 @@ namespace KazgarsRevenge
             //services
             physics = Game.Services.GetService(typeof(Space)) as Space;
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
-            attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
             gearGenerator = Game.Services.GetService(typeof(LootManager)) as LootManager;
             nmm = Game.Services.GetService(typeof(NetworkMessageManager)) as NetworkMessageManager;
@@ -502,7 +500,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 25, this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, 1, this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
                 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -1107,6 +1105,7 @@ namespace KazgarsRevenge
             TarBomb,
             MoltenBolt,
             FlashBomb,
+            FlashierBomb,
             Omnishot,
 
 

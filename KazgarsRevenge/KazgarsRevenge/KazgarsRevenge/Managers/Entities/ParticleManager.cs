@@ -29,6 +29,7 @@ namespace KazgarsRevenge
             systems.Add(typeof(BloodParticleSystem), new BloodParticleSystem(Game, Game.Content));
             systems.Add(typeof(SnipeTrailParticleSystem), new SnipeTrailParticleSystem(Game, Game.Content));
             systems.Add(typeof(HomingTrailParticleSystem), new HomingTrailParticleSystem(Game, Game.Content));
+            systems.Add(typeof(HealTrailParticleSystem), new HealTrailParticleSystem(Game, Game.Content));
 
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)

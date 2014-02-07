@@ -64,11 +64,11 @@ namespace KazgarsRevenge
             }
             if (leeching)
             {
-
+                arrowAI.ReturnLife(.1f);
             }
             if (bleeding)
             {
-
+                arrowAI.Bleed();
             }
             
 
@@ -261,6 +261,36 @@ namespace KazgarsRevenge
 
 
         #region Misc
+        public void CreateHomingHeal(Vector3 position, AliveComponent target, int healAmount)
+        {
+            GameEntity heal = new GameEntity("heal", FactionType.Neutral, EntityType.Misc);
+            position.Y = 20;
+            Entity healPhysicalData = new Box(position, 1, 1, 1, .001f);
+            healPhysicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            healPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            healPhysicalData.LinearVelocity = Vector3.Forward * 250.0f;
+            healPhysicalData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(Vector3.Forward));
+            heal.AddSharedData(typeof(Entity), healPhysicalData);
+
+            PhysicsComponent healPhysics = new PhysicsComponent(mainGame, heal);
+            UnanimatedModelComponent healGraphics =
+                new UnanimatedModelComponent(mainGame, heal, null, new Vector3(10), Vector3.Backward * 6, Matrix.Identity);
+            healGraphics.AddEmitter(typeof(HealTrailParticleSystem), 50, 5, Vector3.Zero);
+
+            HomingHealController healAI = new HomingHealController(mainGame, heal, target, healAmount);
+
+            heal.AddComponent(typeof(PhysicsComponent), healPhysics);
+            genComponentManager.AddComponent(healPhysics);
+
+            heal.AddComponent(typeof(UnanimatedModelComponent), healGraphics);
+            modelManager.AddComponent(healGraphics);
+
+            heal.AddComponent(typeof(AttackController), healAI);
+            genComponentManager.AddComponent(healAI);
+
+            attacks.Add(heal);
+        }
+
         public void CreateMouseSpikes(Vector3 position)
         {
             GameEntity spikes = new GameEntity("cursor", FactionType.Neutral, EntityType.Misc);
@@ -316,6 +346,15 @@ namespace KazgarsRevenge
             for (int i = 0; i < 10; ++i)
             {
                 blood.AddParticle(position, forward);
+            }
+        }
+
+        public void SpawnLittleBloodSpurt(Vector3 position)
+        {
+            ParticleSystem blood = particles.GetSystem(typeof(BloodParticleSystem));
+            for (int i = 0; i < 10; ++i)
+            {
+                blood.AddParticle(position, Vector3.Zero);
             }
         }
 

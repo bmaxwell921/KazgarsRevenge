@@ -19,7 +19,6 @@ namespace KazgarsRevenge
         }
         bool penetrating = false;
         bool homing = false;
-        bool leeching = false;
         bool bleeding = false;
 
         public void Penetrate()
@@ -37,11 +36,6 @@ namespace KazgarsRevenge
         {
             homing = true;
             this.target = null;
-        }
-
-        public void Leeching()
-        {
-            leeching = true;
         }
 
         public void Bleed()
@@ -89,7 +83,7 @@ namespace KazgarsRevenge
                         target = possEnt.GetComponent(typeof(AliveComponent)) as AliveComponent;
                     }
                 }
-                if (target != null)
+                else
                 {
                     Vector3 move = (target.Entity.GetSharedData(typeof(Entity)) as Entity).Position - physicalData.Position;
                     move.Y = 0;

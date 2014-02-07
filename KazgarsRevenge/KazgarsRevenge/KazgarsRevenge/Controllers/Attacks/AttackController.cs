@@ -18,6 +18,7 @@ namespace KazgarsRevenge
 {
     public class AttackController : AIComponent
     {
+        AttackManager attacks;
         //the entity that created this attack
         protected AliveComponent creator;
         protected float damage;
@@ -35,6 +36,14 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
         }
 
+        bool lifesteal = false;
+        float amountStolen = 0;
+        public void ReturnLife(float percentReturned)
+        {
+            lifesteal = true;
+            amountStolen = percentReturned;
+            attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
+        }
         double lifeCounter = 0;
         protected double lifeLength = 500;
         public override void Update(GameTime gameTime)
@@ -88,11 +97,16 @@ namespace KazgarsRevenge
             }
         }
 
-        protected virtual void DamageTarget(AliveComponent t)
+        protected void DamageTarget(AliveComponent t)
         {
             if (t != null)
             {
-                damageDealt += t.Damage(debuff, (int)damage, creator.Entity);
+                int d = t.Damage(debuff, (int)damage, creator.Entity);
+                damageDealt += d;
+                if (lifesteal)
+                {
+                    attacks.CreateHomingHeal(physicalData.Position, creator, (int)Math.Ceiling(d * .1f));
+                }
             }
         }
 

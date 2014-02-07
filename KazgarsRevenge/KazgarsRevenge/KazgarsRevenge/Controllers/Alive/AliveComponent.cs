@@ -46,13 +46,15 @@ namespace KazgarsRevenge
             public DeBuff type { get; private set; }
             public double timeLeft;
             public double nextTick;
+            public double tickLength { get; private set; }
             GameEntity from;
-            public NegativeEffect(DeBuff type, double time, GameEntity from)
+            public NegativeEffect(DeBuff type, double time, GameEntity from, double tickLength)
             {
                 this.type = type;
                 this.timeLeft = time;
-                this.nextTick = time - 1000;
+                this.nextTick = time - tickLength;
                 this.from = from;
+                this.tickLength = tickLength;
             }
         }
 
@@ -61,13 +63,15 @@ namespace KazgarsRevenge
             public Buff type { get; private set; }
             public double timeLeft;
             public double nextTick;
+            public double tickLength { get; private set; }
             GameEntity from;
-            public PositiveEffect(Buff type, double time, GameEntity from)
+            public PositiveEffect(Buff type, double time, GameEntity from, double tickLength)
             {
                 this.type = type;
                 this.timeLeft = time;
-                this.from = from;
                 this.nextTick = -10000;
+                this.from = from;
+                this.tickLength = tickLength;
             }
         }
 
@@ -145,6 +149,7 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        protected AttackManager attacks;
         public AliveComponent(KazgarsRevengeGame game, GameEntity entity, int level)
             : base(game, entity)
         {
@@ -152,6 +157,7 @@ namespace KazgarsRevenge
             this.Health = MaxHealth;
             this.level = level;
             this.Dead = false;
+            attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
         }
 
         /// <summary>
@@ -165,7 +171,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// calculates the actual amount of damage and then returns what was subtracted
         /// </summary>
-        protected int Damage(int d)
+        protected int Damage(int d, bool truedamage)
         {
             //TODO: armor and resistance calculations
             int actualDamage = d;
@@ -182,18 +188,27 @@ namespace KazgarsRevenge
             return actualDamage;
         }
 
-        public int Damage(DeBuff n, int d, GameEntity from)
+        public int Damage(DeBuff db, int d, GameEntity from)
         {
-            int actualDamage = Damage(d);
+            int actualDamage = Damage(d, false);
             TakeDamage(actualDamage, from);
 
             //handle negative effect
-            if (n != DeBuff.None)
+            if (db != DeBuff.None)
             {
-                AddDebuff(n, from);
+                AddDebuff(db, from);
             }
 
             return actualDamage;
+        }
+
+        public void Heal(int h)
+        {
+            Health += h;
+            if (Health > MaxHealth)
+            {
+                Health = MaxHealth;
+            }
         }
 
         private List<NegativeEffect> activeDebuffs = new List<NegativeEffect>();
@@ -208,7 +223,7 @@ namespace KazgarsRevenge
                 if (activeDebuffs[i].timeLeft < activeDebuffs[i].nextTick)
                 {
                     HandleDeBuff(activeDebuffs[i].type, BuffState.Ticking);
-                    activeDebuffs[i].nextTick -= 1000;
+                    activeDebuffs[i].nextTick -= activeDebuffs[i].tickLength;
                 }
                 if (activeDebuffs[i].timeLeft <= 0)
                 {
@@ -225,9 +240,8 @@ namespace KazgarsRevenge
                 if (activeBuffs[i].timeLeft < activeBuffs[i].nextTick)
                 {
                     HandleBuff(activeBuffs[i].type, BuffState.Ticking);
-                    activeBuffs[i].nextTick -= 1000;
+                    activeBuffs[i].nextTick -= activeBuffs[i].tickLength;
                 }
-
                 if (activeBuffs[i].timeLeft <= 0)
                 {
                     HandleBuff(activeBuffs[i].type, BuffState.Ending);
@@ -240,7 +254,6 @@ namespace KazgarsRevenge
         {
 
         }
-
 
         private void HandleBuff(Buff b, BuffState state)
         {
@@ -268,49 +281,72 @@ namespace KazgarsRevenge
             switch (d)
             {
                 case DeBuff.SerratedBleeding:
-                    if (state == BuffState.Starting)
+                    if (state == BuffState.Ticking)
                     {
-                        Damage((int)(MaxHealth * .01f));
+                        Damage((int)Math.Ceiling(MaxHealth * .01f), true);
+                        attacks.SpawnLittleBloodSpurt(physicalData.Position);
                     }
                     break;
             }
         }
 
-        private double GetDebuffLength(DeBuff n)
+        Dictionary<DeBuff, double> debuffLengths = new Dictionary<DeBuff, double>()
         {
-            switch (n)
-            {
-                case DeBuff.SerratedBleeding:
-                    return 6000;
-                case DeBuff.MagneticImplant:
-                    return 2000;
-            }
-            return 0;
-        }
+            {DeBuff.SerratedBleeding, 5000},
+            {DeBuff.MagneticImplant, 2000}
+        };
+        Dictionary<DeBuff, double> debuffTickLengths = new Dictionary<DeBuff, double>()
+        {
+            {DeBuff.SerratedBleeding, 1000}
+        };
 
-        private double GetBuffLength(Buff n)
+        Dictionary<Buff, double> buffLengths = new Dictionary<Buff, double>()
         {
-            switch (n)
-            {
-                case Buff.AdrenalineRush:
-                    return 6000;
-                case Buff.Homing:
-                    return 6000;
-                case Buff.Penetrating:
-                    return 6000;
-            }
-            return 0;
-        }
+            {Buff.AdrenalineRush, 6000},
+            {Buff.Homing, 6000},
+            {Buff.Penetrating, 6000},
+        };
+
+        Dictionary<Buff, double> buffTickLengths = new Dictionary<Buff, double>()
+        {
+
+        };
 
         protected void AddBuff(Buff b, GameEntity from)
         {
+            double length = double.MaxValue;
+            double tickLength = double.MaxValue;
+
+            if (buffLengths.ContainsKey(b))
+            {
+                length = buffLengths[b];
+            }
+
+            if (buffTickLengths.ContainsKey(b))
+            {
+                tickLength = buffTickLengths[b];
+            }
+
             HandleBuff(b, BuffState.Starting);
-            activeBuffs.Add(new PositiveEffect(b, GetBuffLength(b), from));
+            activeBuffs.Add(new PositiveEffect(b, length, from, tickLength));
         }
 
         protected void AddDebuff(DeBuff b, GameEntity from)
         {
-            activeDebuffs.Add(new NegativeEffect(b, GetDebuffLength(b), from));
+            double length = double.MaxValue;
+            double tickLength = double.MaxValue;
+
+            if (debuffLengths.ContainsKey(b))
+            {
+                length = debuffLengths[b];
+            }
+
+            if (debuffTickLengths.ContainsKey(b))
+            {
+                tickLength = debuffTickLengths[b];
+            }
+
+            activeDebuffs.Add(new NegativeEffect(b, length, from, tickLength));
             HandleDeBuff(b, BuffState.Starting);
         }
 

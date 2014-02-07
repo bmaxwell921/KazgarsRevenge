@@ -93,6 +93,7 @@
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
     <Compile Include="Controllers\Attacks\OmnishotController.cs" />
     <Compile Include="Controllers\Attacks\SnipeController.cs" />
+    <Compile Include="Controllers\HomingHealController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Drawing\BlobShadowDecal.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Particles\Base Classes\ParticleSettings.cs" />
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
+    <Compile Include="Particles\Systems\HealTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\HomingTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\SnipeTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\WeaponSparksSystem.cs" />

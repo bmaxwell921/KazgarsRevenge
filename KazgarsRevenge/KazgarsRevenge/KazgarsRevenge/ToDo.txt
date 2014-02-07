@@ -1,18 +1,13 @@
 ﻿art needed
 ===========
-make soul_loot_smash animation end up in the air again
-GUI textures - behind health, in front of / encasing health,
-levels (ground floor/hub area would be nice)
-armor
-
-updated kazgar mesh? (the one with more detailed hands)
+make soul_loot_smash animation end up in the air again)
 1h punch animation
 
 change pigman death animation such that the weapon doesn't stick in the the ground (rotate the attachment point)
 kazgar death animation
 
 
-
+Loose Cannon arrow model
 
 
 
@@ -25,16 +20,6 @@ inventory
 	-mouse interaction (hover and mouse down, along with click and drag equipping)
 	-display what character is wearing
 scrollable loot (or clickable arrows to see next/previous items)
-
-
-
-
-Levels
-======
-get json.net working and parse chunk files
-
-Loot Souls
-============
 
 
 
@@ -52,10 +37,15 @@ implement them
 
 
 
-
 Camera
 ======
 orbit with arrow keys?
 
 
+
+Particles
+=========
+snipe particles
+heal particles
+buff particles
 
