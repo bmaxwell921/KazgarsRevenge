@@ -434,7 +434,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\Rooms\" />
+    <Compile Include="Models\Rooms\bottomFloor.fbx">
+      <Name>bottomFloor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
