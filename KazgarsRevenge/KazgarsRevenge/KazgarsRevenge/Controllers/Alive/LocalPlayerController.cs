@@ -521,45 +521,48 @@ namespace KazgarsRevenge
                 }
             }
 
-            bool useAbility = false;
-            Ability abilityToUse = null;
-
-            foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
-            {//#Nate a
-                if (curKeys.IsKeyDown(k.Key) && k.Value.tryUse(currentTime))
-                {
-                    useAbility = true;
-                    abilityToUse = k.Value;
-                    break;
-                }
-            }
-
-            //mouse click check
-            if (abilityToUseString != null)
+            if (attState == AttackState.None)
             {
-                for (int i = 0; i < 8; i++)
-                {
-                    if (abilityToUseString == "ability" + i)
+                bool useAbility = false;
+                Ability abilityToUse = null;
+
+                foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
+                {//#Nate a
+                    if (curKeys.IsKeyDown(k.Key) && k.Value.tryUse(currentTime))
                     {
-                        if (boundAbilities[i].Value.tryUse(currentTime))
+                        useAbility = true;
+                        abilityToUse = k.Value;
+                        break;
+                    }
+                }
+
+                //mouse click check
+                if (abilityToUseString != null)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if (abilityToUseString == "ability" + i)
                         {
-                            useAbility = true;
-                            abilityToUse = boundAbilities[i].Value;
-                            abilityToUseString = null;
+                            if (boundAbilities[i].Value.tryUse(currentTime))
+                            {
+                                useAbility = true;
+                                abilityToUse = boundAbilities[i].Value;
+                                abilityToUseString = null;
+                            }
                         }
                     }
                 }
-            }
 
-            if (useAbility)
-            {
-                UpdateRotation(dir);
-                mouseHoveredLocation = physicalData.Position;
-                groundTargetLocation = physicalData.Position;
-                targetedPhysicalData = null;
+                if (useAbility)
+                {
+                    UpdateRotation(dir);
+                    mouseHoveredLocation = physicalData.Position;
+                    groundTargetLocation = physicalData.Position;
+                    targetedPhysicalData = null;
 
 
-                StartSequence(abilityToUse.ActionName);
+                    StartSequence(abilityToUse.ActionName);
+                }
             }
         }
 

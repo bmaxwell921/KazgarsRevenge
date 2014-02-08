@@ -220,7 +220,7 @@ namespace KazgarsRevenge
                 model = Entity.GetComponent(typeof(AnimatedModelComponent)) as AnimatedModelComponent;
             }
             model.AddEmitter(typeof(LifestealParticleSystem), 10, 15, Vector3.Zero);
-            model.AddParticleTimer(typeof(LifestealParticleSystem), 1);
+            model.AddParticleTimer(typeof(LifestealParticleSystem), 1000);
         }
 
         private List<NegativeEffect> activeDebuffs = new List<NegativeEffect>();
