@@ -226,21 +226,21 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateLooseCannon(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
+        public void CreateLooseCannon(Vector3 position, Vector3 dir, int damage, AliveComponent creator, float percentCharged)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 20;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            arrowData.LinearVelocity = dir * 400;
+            arrowData.LinearVelocity = dir * (400 + 600 * percentCharged);
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             arrow.AddSharedData(typeof(Entity), arrowData);
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                                                                                 new Vector3(10), Vector3.Backward * 6, Matrix.Identity);
-            arrowGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), 500, 0, Vector3.Forward * 13);
+            arrowGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), 200, 0, Vector3.Forward * 13);
 
             LooseCannonController arrowAI = new LooseCannonController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
@@ -394,7 +394,7 @@ namespace KazgarsRevenge
         public void SpawnExplosionParticles(Vector3 position)
         {
             ParticleSystem boom = particles.GetSystem(typeof(ExplosionParticleSystem));
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 10; ++i)
             {
                 boom.AddParticle(position, Vector3.Zero);
             }

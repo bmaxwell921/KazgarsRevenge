@@ -102,14 +102,20 @@ namespace KazgarsRevenge
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
-            float currentTime = (float)gameTime.TotalGameTime.TotalSeconds;
             millisRunningCounter += elapsed;
             stateResetCounter += elapsed;
 
 
-            if (attState == AttackState.Attacking && canInterrupt && stateResetCounter >= stateResetLength)
+            if (attState == AttackState.Locked && canInterrupt && stateResetCounter >= stateResetLength)
             {
                 attState = AttackState.None;
+            }
+
+            if (attState == AttackState.Charging && curKeys.IsKeyDown(Keys.Escape))
+            {
+                attState = AttackState.None;
+                CancelFinishSequence();
+                StartSequence("fightingstance");
             }
 
             UpdateActionSequences(elapsed);
@@ -135,7 +141,7 @@ namespace KazgarsRevenge
             //TODO make into loop for all bound abilities and items
             foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
             {
-                k.Value.update(currentTime);
+                k.Value.update(elapsed);
             }
             #endregion
 
@@ -204,7 +210,6 @@ namespace KazgarsRevenge
                     }
                 }
 
-
                 Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
                 if (targetedPhysicalData != null)
                 {
@@ -219,9 +224,9 @@ namespace KazgarsRevenge
                 {
                     ResetTargettedEntity();
                 }
-                if (attState == AttackState.None && !looting)
+                if (attState != AttackState.Locked && !looting)
                 {
-                    CheckAbilities(move, (float)currentTime);
+                    CheckAbilities(move);
                 }
 
                 if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
@@ -230,7 +235,7 @@ namespace KazgarsRevenge
                 }
 
                 //targets ground location to start running to if holding mouse button
-                if ((!mouseOnGui || Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) > .01f && !guiClick) && curMouse.LeftButton == ButtonState.Pressed && attState == AttackState.None && !looting)
+                if ((!mouseOnGui || Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) > .01f && !guiClick) && curMouse.LeftButton == ButtonState.Pressed && attState != AttackState.Locked && !looting)
                 {
                     groundTargetLocation = mouseHoveredLocation;
                     if (!mouseOnGui && prevMouse.LeftButton == ButtonState.Released && targetedPhysicalData == null)
@@ -254,9 +259,21 @@ namespace KazgarsRevenge
             }
 
             bool closeEnough = (physicalData.Position - groundTargetLocation).Length() <= stopRadius;
-            if (attState == AttackState.None && !looting && (!guiClick || Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) > .01f))
+            if (!looting && (!guiClick || Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) > .01f))
             {
-                MoveCharacter(groundMove, closeEnough);
+                if ((attState == AttackState.Charging || attState == AttackState.CastingSpell)&& !closeEnough)
+                {
+                    CancelFinishSequence();
+                    MoveCharacter(groundMove, closeEnough);
+                }
+                else if (attState == AttackState.None)
+                {
+                    MoveCharacter(groundMove, closeEnough);
+                }
+                else
+                {
+                    ChangeVelocity(Vector3.Zero);
+                }
             }
             else
             {
@@ -437,7 +454,7 @@ namespace KazgarsRevenge
         /// checks player input to see what ability to use
         /// </summary>
         /// <param name="gameTime"></param>
-        private void CheckAbilities(Vector3 move, float currentTime)
+        private void CheckAbilities(Vector3 move)
         {
             Vector3 dir;
             dir.X = move.X;
@@ -454,6 +471,82 @@ namespace KazgarsRevenge
                 dir.Normalize();
             }
 
+
+
+            bool useAbility = false;
+
+            Ability abilityToUse = null;
+
+            foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
+            {//#Nate a
+                if (curKeys.IsKeyDown(k.Key) && prevKeys.IsKeyUp(k.Key) && !k.Value.onCooldown)
+                {
+                    useAbility = true;
+                    abilityToUse = k.Value;
+                    break;
+                }
+            }
+
+            //mouse click check
+            if (!useAbility && abilityToUseString != null)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    if (abilityToUseString == "ability" + i)
+                    {
+                        if (!boundAbilities[i].Value.onCooldown)
+                        {
+                            useAbility = true;
+                            abilityToUse = boundAbilities[i].Value;
+                            abilityToUseString = null;
+                        }
+                    }
+                }
+            }
+
+            if (useAbility)
+            {
+                if (attState == AttackState.Charging && abilityToUse.ActionName == currentActionName)
+                {
+                    abilityToUse.Use();
+                    InterruptCurrentSequence();
+                    CancelFinishSequence();
+                    targetedPhysicalData = null;
+                }
+                else if (attState == AttackState.Charging)
+                {
+                    CancelFinishSequence();
+                    if (abilityToUse.AbilityType == AbilityType.Instant)
+                    {
+                        abilityToUse.Use();
+                    }
+                    UpdateRotation(dir);
+                    StartSequence(abilityToUse.ActionName);
+                    targetedPhysicalData = null;
+                    
+                }
+                else if (abilityToUse.AbilityType == AbilityType.Instant)
+                {
+                    abilityToUse.Use();
+                    UpdateRotation(dir);
+                    StartSequence(abilityToUse.ActionName);
+                    targetedPhysicalData = null;
+                }
+                else
+                {
+                    CancelFinishSequence();
+                    UpdateRotation(dir);
+                    StartSequence(abilityToUse.ActionName);
+                    targetedPhysicalData = null;
+                }
+                return;
+            }
+
+            if (attState == AttackState.Charging)
+            {
+                UpdateRotation(dir);
+                return;
+            }
 
             //primary attack (autos)
             if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targetedPhysicalData != null)
@@ -486,8 +579,6 @@ namespace KazgarsRevenge
                             //need punch animation
                             StartSequence("punch");
                             UpdateRotation(dir);
-                            mouseHoveredLocation = physicalData.Position;
-                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                     case AttackType.Melle:
@@ -495,8 +586,6 @@ namespace KazgarsRevenge
                         {
                             StartSequence("swing");
                             UpdateRotation(dir);
-                            mouseHoveredLocation = physicalData.Position;
-                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                     case AttackType.Ranged:
@@ -504,8 +593,6 @@ namespace KazgarsRevenge
                         {
                             StartSequence("shoot");
                             UpdateRotation(dir);
-                            mouseHoveredLocation = physicalData.Position;
-                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                     case AttackType.Magic:
@@ -514,56 +601,11 @@ namespace KazgarsRevenge
                             //need magic item animation here
                             StartSequence("shoot");
                             UpdateRotation(dir);
-                            mouseHoveredLocation = physicalData.Position;
-                            groundTargetLocation = physicalData.Position;
                         }
                         break;
                 }
             }
 
-            if (attState == AttackState.None)
-            {
-                bool useAbility = false;
-                Ability abilityToUse = null;
-
-                foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
-                {//#Nate a
-                    if (curKeys.IsKeyDown(k.Key) && k.Value.tryUse(currentTime))
-                    {
-                        useAbility = true;
-                        abilityToUse = k.Value;
-                        break;
-                    }
-                }
-
-                //mouse click check
-                if (abilityToUseString != null)
-                {
-                    for (int i = 0; i < 8; i++)
-                    {
-                        if (abilityToUseString == "ability" + i)
-                        {
-                            if (boundAbilities[i].Value.tryUse(currentTime))
-                            {
-                                useAbility = true;
-                                abilityToUse = boundAbilities[i].Value;
-                                abilityToUseString = null;
-                            }
-                        }
-                    }
-                }
-
-                if (useAbility)
-                {
-                    UpdateRotation(dir);
-                    mouseHoveredLocation = physicalData.Position;
-                    groundTargetLocation = physicalData.Position;
-                    targetedPhysicalData = null;
-
-
-                    StartSequence(abilityToUse.ActionName);
-                }
-            }
         }
 
         /// <summary>
@@ -845,11 +887,11 @@ namespace KazgarsRevenge
             {
                 if (boundAbilities[i].Value.onCooldown)
                 {
-                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (84 + 64 * (boundAbilities[i].Value.timeRemaining / boundAbilities[i].Value.cooldownSeconds)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i].Value.timeRemaining / boundAbilities[i].Value.cooldownSeconds) * average) + 1), Color.Black * 0.5f);
+                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (84 + 64 * (boundAbilities[i].Value.cooldownMillisRemaining / boundAbilities[i].Value.cooldownMillisLength)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i].Value.cooldownMillisRemaining / boundAbilities[i].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
                 }
                 if (boundAbilities[i + 4].Value.onCooldown)
                 {
-                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (10 + 64 * (boundAbilities[i + 4].Value.timeRemaining / boundAbilities[i + 4].Value.cooldownSeconds)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i + 4].Value.timeRemaining / boundAbilities[i + 4].Value.cooldownSeconds) * average) + 1), Color.Black * 0.5f);
+                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (10 + 64 * (boundAbilities[i + 4].Value.cooldownMillisRemaining / boundAbilities[i + 4].Value.cooldownMillisLength)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i + 4].Value.cooldownMillisRemaining / boundAbilities[i + 4].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
                 }
             }
             #endregion

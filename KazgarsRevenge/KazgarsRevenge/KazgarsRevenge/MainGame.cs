@@ -72,8 +72,6 @@ namespace KazgarsRevenge
         private Thread loadingThread;
         float screenScale = 1;
 
-        
-
         public MainGame()
         {
             gameState = GameState.StartMenu;
@@ -100,8 +98,8 @@ namespace KazgarsRevenge
             }
             else
             {
-                graphics.PreferredBackBufferWidth = 1920;
-                graphics.PreferredBackBufferHeight = 1080;
+                graphics.PreferredBackBufferWidth = 800;
+                graphics.PreferredBackBufferHeight = 600;
                 graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
                 screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
@@ -444,15 +442,15 @@ namespace KazgarsRevenge
 
 
 
-                    //debugging physics
-                    
+                    //physics debugging
+                    /*
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
                     modelDrawer.Draw(effectModelDrawer, physics);
-                    
+                    */
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);

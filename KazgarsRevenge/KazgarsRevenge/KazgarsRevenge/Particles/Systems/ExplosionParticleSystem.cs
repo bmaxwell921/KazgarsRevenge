@@ -51,8 +51,8 @@ namespace KazgarsRevenge
             settings.MinStartSize = 30;
             settings.MaxStartSize = 30;
 
-            settings.MinEndSize = 200;
-            settings.MaxEndSize = 600;
+            settings.MinEndSize = 100;
+            settings.MaxEndSize = 300;
 
             // Use additive blending.
             settings.BlendState = BlendState.Additive;

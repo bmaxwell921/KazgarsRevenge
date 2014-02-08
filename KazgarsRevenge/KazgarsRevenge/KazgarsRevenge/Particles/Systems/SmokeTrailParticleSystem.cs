@@ -26,7 +26,7 @@ namespace KazgarsRevenge
 
             settings.DurationRandomness = 1.5f;
 
-            settings.EmitterVelocitySensitivity = 0.1f;
+            settings.EmitterVelocitySensitivity = 0.05f;
 
             settings.MinHorizontalVelocity = 1;
             settings.MaxHorizontalVelocity = 10;

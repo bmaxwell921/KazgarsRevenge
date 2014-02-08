@@ -15,6 +15,15 @@ namespace KazgarsRevenge
             dieAfterContact = true;
         }
 
+        protected override void HandleEntityCollision(GameEntity hitEntity)
+        {
+            if (hitEntity.Name == "room")
+            {
+                Entity.Kill();
+            }
+            base.HandleEntityCollision(hitEntity);
+        }
+
         public override void End()
         {
             (Game.Services.GetService(typeof(AttackManager)) as AttackManager).CreateExplosion(physicalData.Position, (int)damage, factionToHit, creator);

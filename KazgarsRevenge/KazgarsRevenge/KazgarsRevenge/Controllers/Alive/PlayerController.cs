@@ -71,6 +71,7 @@ namespace KazgarsRevenge
         protected const float melleRange = 50;
         protected const float bowRange = 1000;
         protected Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
+        //array of key-ability pairs
         protected KeyValuePair<Keys, Ability>[] boundAbilities = new KeyValuePair<Keys, Ability>[8];
         protected Dictionary<AbilityName, bool> abilityLearnedFlags = new Dictionary<AbilityName, bool>();
         #endregion
@@ -316,24 +317,51 @@ namespace KazgarsRevenge
 
         #region Action Sequences
 
-        private string currentActionName = "";
+        protected string currentActionName = "";
         private Dictionary<string, List<Action>> actionSequences;
         protected bool needInterruptAction = true;
         protected bool canInterrupt = false;
         private Dictionary<string, Action> interruptActions;
-        //the first item in the list is called immediately (when you call StartSequence)
+
+        //the first item in the list is called immediately (when StartSequence is called)
         protected List<Action> currentSequence = null;
         protected int actionIndex = 0;
 
+        protected float GetPercentCharged()
+        {
+            if (attState != AttackState.Charging)
+            {
+                return -1;
+            }
+            else
+            {
+                return (float)(millisActionCounter / millisActionLength);
+            }
+        }
+        //to be used for charging/casting abilities; when you
+        //interrupt them, you don't want to use it
+        //and you want to go back to fighting stance
+        protected void CancelFinishSequence()
+        {
+            animations.UnpauseAnimation();
+            currentSequence = null;
+            currentActionName = "";
+            abilityFinishedAction();
+        }
         protected void StartSequence(string name)
         {
+            if (name != "fightingstance" && name != "idle")
+            {
+                groundTargetLocation = physicalData.Position;
+            }
             InterruptReset(name);
 
             currentSequence[0]();
             millisActionCounter = 0;
 
         }
-        private void InterruptReset(string name)
+        //for buffs, so as to not disrupt running / whatever else
+        protected void InterruptReset(string name)
         {
             InterruptCurrentSequence();
 
@@ -344,8 +372,8 @@ namespace KazgarsRevenge
             currentActionName = name;
             stateResetCounter = double.MaxValue;
         }
-
-        private void InterruptCurrentSequence()
+        //calls the interrupt handler for the current sequence
+        protected void InterruptCurrentSequence()
         {
             if (needInterruptAction && currentSequence != null && actionIndex < currentSequence.Count)
             {
@@ -354,9 +382,29 @@ namespace KazgarsRevenge
                 currentSequence = null;
             }
         }
-
+        private void TriggerCooldown()
+        {
+            for (int i = 0; i < boundAbilities.Length; ++i)
+            {
+                if (boundAbilities[i].Value.ActionName == currentActionName)
+                {
+                    boundAbilities[i].Value.Use();
+                }
+            }
+        }
+        private void SetUpHelperActions()
+        {
+            abilityFinishedAction = () =>
+            {
+                //done, go back to fighting stance
+                StartSequence("fightingstance");
+                attState = AttackState.None;
+            };
+        }
         private void SetUpActionSequences()
         {
+            SetUpHelperActions();
+
             interruptActions = new Dictionary<string, Action>();
             actionSequences = new Dictionary<string, List<Action>>();
             //idles
@@ -475,7 +523,7 @@ namespace KazgarsRevenge
                 //start playing shooting animation
                 canInterrupt = true;
                 PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
-                attState = AttackState.Attacking;
+                attState = AttackState.Locked;
                 stateResetCounter = 0;
                 millisActionLength = 200;
             });
@@ -507,13 +555,7 @@ namespace KazgarsRevenge
 
                 needInterruptAction = false;
             });
-
-            sequence.Add(() =>
-            {
-                //done, go back to fighting stance
-                StartSequence("fightingstance");
-                attState = AttackState.None;
-            });
+            sequence.Add(abilityFinishedAction);
 
 
             //if interrupted, this should still fire an arrow
@@ -538,7 +580,7 @@ namespace KazgarsRevenge
                 stateResetCounter = 0;
                 canInterrupt = true;
                 PlayAnimation("k_onehanded_swing" + aniSuffix, MixType.None);
-                attState = AttackState.Attacking;
+                attState = AttackState.Locked;
                 stateResetCounter = 0;
                 millisActionLength = animations.GetAniMillis("k_onehanded_swing") / 2;
             });
@@ -629,7 +671,7 @@ namespace KazgarsRevenge
             {
                 canInterrupt = true;
                 PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
-                attState = AttackState.Attacking;
+                attState = AttackState.Locked;
                 millisActionLength = 200;
                 stateResetCounter = 0;
             });
@@ -654,7 +696,7 @@ namespace KazgarsRevenge
                 needInterruptAction = false;
             });
 
-            sequence.Add(actionSequences["shoot"][3]);
+            sequence.Add(abilityFinishedAction);
 
             interruptActions.Add("snipe", () =>
             {
@@ -680,7 +722,7 @@ namespace KazgarsRevenge
             {
                 canInterrupt = true;
                 PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
-                attState = AttackState.Attacking;
+                attState = AttackState.Locked;
                 millisActionLength = 200;
                 stateResetCounter = 0;
             });
@@ -700,7 +742,7 @@ namespace KazgarsRevenge
                 needInterruptAction = false;
             });
 
-            sequence.Add(actionSequences["shoot"][3]);
+            sequence.Add(abilityFinishedAction);
 
             interruptActions.Add("omnishot", () =>
             {
@@ -722,9 +764,9 @@ namespace KazgarsRevenge
             {
                 attacks.SpawnBuffParticles(physicalData.Position);
                 AddBuff(Buff.AdrenalineRush, Entity);
-                if (abilityLearnedFlags[AbilityName.Homing])
+                if (abilityLearnedFlags[AbilityName.Serrated])
                 {
-                    AddBuff(Buff.Homing, Entity);
+                    AddBuff(Buff.SerratedBleeding, Entity);
                 }
                 if (abilityLearnedFlags[AbilityName.Penetrating])
                 {
@@ -750,9 +792,9 @@ namespace KazgarsRevenge
             {
                 attacks.SpawnBuffParticles(physicalData.Position);
                 AddBuff(Buff.Leeching, Entity);
-                if (abilityLearnedFlags[AbilityName.Serrated])
+                if (abilityLearnedFlags[AbilityName.Homing])
                 {
-                    AddBuff(Buff.SerratedBleeding, Entity);
+                    AddBuff(Buff.Homing, Entity);
                 }
                 if (currentAniName == "k_fighting_stance" || currentAniName == "k_from_fighting_stance")
                 {
@@ -775,6 +817,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
+
                 //attach arrow model to hand
                 if (attachedArrow == null)
                 {
@@ -788,33 +831,44 @@ namespace KazgarsRevenge
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") / 2 - 200;
             });
 
-
+            sequence.Add(() =>
+            {
+                attState = AttackState.Charging;
+                animations.PauseAnimation();
+                millisActionLength = 4000;
+            });
 
             sequence.Add(() =>
             {
+                animations.UnpauseAnimation();
                 if (attached.ContainsKey("handarrow"))
                 {
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this);
+                int damage = GeneratePrimaryDamage(StatType.Agility) * 5;
+                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this, 1);
 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
-
                 needInterruptAction = false;
             });
 
-            sequence.Add(actionSequences["shoot"][3]);
+            sequence.Add(abilityFinishedAction);
 
             interruptActions.Add("loosecannon", () =>
             {
+                animations.UnpauseAnimation();
                 if (attached.ContainsKey("handarrow"))
                 {
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
+                float percentCharged = (float)(millisActionCounter + 200) / 4200;
                 int damage = GeneratePrimaryDamage(StatType.Agility);
-                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this);
+                damage += (int)(4 * percentCharged);
+                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this, percentCharged);
+
+                
             });
 
             return sequence;
@@ -829,7 +883,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 PlayAnimation("k_flip", MixType.None);
-                attState = AttackState.Attacking;
+                attState = AttackState.Locked;
                 millisActionLength = 400;
             });
             sequence.Add(() =>
@@ -883,13 +937,19 @@ namespace KazgarsRevenge
                 }
             }
         }
+
+
+
+        
+        Action abilityFinishedAction;
         #endregion
 
         #region animations
         protected enum AttackState
         {
             None,
-            Attacking,
+            Locked,
+            Charging,
             CastingSpell,
         }
 
@@ -1131,37 +1191,37 @@ namespace KazgarsRevenge
 
         protected Ability GetSnipe()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 1, AttackType.Ranged, "snipe");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 1000, AttackType.Ranged, "snipe", AbilityType.Charge);
         }
 
         protected Ability GetHeartStrike()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6, AttackType.Ranged, "flip");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6000, AttackType.Ranged, "flip", AbilityType.Instant);
         }
 
         protected Ability GetIceClawPrison()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6, AttackType.Ranged, "shoot");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6000, AttackType.Ranged, "shoot", AbilityType.Instant);
         }
 
         protected Ability GetOmniShot()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6, AttackType.Ranged, "omnishot");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6000, AttackType.Ranged, "omnishot", AbilityType.Instant);
         }
 
         protected Ability GetAdrenalineRush()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6, AttackType.Ranged, "buffrush");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6000, AttackType.Ranged, "buffrush", AbilityType.Instant);
         }
 
         protected Ability GetLeechingArrows()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6, AttackType.Ranged, "buffleech");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6000, AttackType.Ranged, "buffleech", AbilityType.Instant);
         }
 
         protected Ability GetLooseCannon()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 1, AttackType.Ranged, "loosecannon");
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 2000, AttackType.Ranged, "loosecannon", AbilityType.Charge);
         }
 
         

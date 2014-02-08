@@ -7,28 +7,35 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    public delegate void AbilityCallback(Vector3 position, Vector3 orientation, AliveComponent creator);
+    public enum AbilityType
+    {
+        Instant,
+        Charge,
+        GroundTarget,
+    }
     public class Ability
     {
         public string ActionName { get; private set; }
         public Texture2D icon { get; private set; }
-        public AttackType Type { get; private set; }
+        public AttackType PrimaryType { get; private set; }
+        public AbilityType AbilityType { get; private set; }
 
         int abilityLevel;
-        public float cooldownSeconds;
-        float lastUsed = -300f; //-5 minutes
-        public bool onCooldown = false;
-        public float timeRemaining;
+        public double cooldownMillisLength;
+        public double cooldownMillisRemaining;
+        public bool onCooldown { get; private set; }
         String tooltip = "N/A";
 
-        public Ability(int abilityLevelIn, Texture2D iconIn, float cooldownSecondsIn, AttackType typeIn, string actionName)
+        public Ability(int abilityLevelIn, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType)
         {   
             abilityLevel = abilityLevelIn;
             icon = iconIn;
-            cooldownSeconds = cooldownSecondsIn;
-            Type = typeIn;
-            timeRemaining = cooldownSeconds;
+            cooldownMillisLength = cooldownMillis;
+            PrimaryType = typeIn;
+            cooldownMillisRemaining = cooldownMillisLength;
             this.ActionName = actionName;
+            onCooldown = true;
+            this.AbilityType = abilityType;
         }
 
         public void setToolTip(String toolTipString)
@@ -36,27 +43,26 @@ namespace KazgarsRevenge
             tooltip = toolTipString;
         }
 
-        public bool tryUse(float currentTime)
+        public void ResetCooldown()
         {
-            if (currentTime >= lastUsed + cooldownSeconds)
-            {
-                lastUsed = currentTime;
-                timeRemaining = cooldownSeconds;
-                onCooldown = true;
-                return true;
-            }
-            return false;
+            onCooldown = false;
         }
 
-        public void update(float currentTime)
+        public void Use()
         {
-            if (currentTime < lastUsed + cooldownSeconds)
+            cooldownMillisRemaining = cooldownMillisLength;
+            onCooldown = true;
+        }
+
+        public void update(double elapsed)
+        {
+            if (onCooldown)
             {
-                timeRemaining = (lastUsed + cooldownSeconds) - currentTime;
-            }
-            else
-            {
-                onCooldown = false;
+                cooldownMillisRemaining -= elapsed;
+                if (cooldownMillisRemaining <= 0)
+                {
+                    onCooldown = false;
+                }
             }
         }
     }
