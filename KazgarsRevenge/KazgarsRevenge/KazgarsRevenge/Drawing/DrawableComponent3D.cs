@@ -29,6 +29,13 @@ namespace KazgarsRevenge
             }
         }
 
+        public void AddParticleTimer(Type t, double length)
+        {
+            if (emitters.ContainsKey(t))
+            {
+                emitters[t].SetDeathTimer(length);
+            }
+        }
 
         public void RemoveEmitter(Type particleType)
         {

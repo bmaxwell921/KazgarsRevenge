@@ -23,6 +23,7 @@ namespace KazgarsRevenge
             this.target = target;
             this.heal = heal;
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
+            physicalData.IsAffectedByGravity = false;
         }
 
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
@@ -31,13 +32,16 @@ namespace KazgarsRevenge
             if (hitEntity != null)
             {
                 AliveComponent a = hitEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
-                if (a != null)
+                if (a != null && a == target)
                 {
-                    a.Heal(heal);
+                    a.LifeSteal(heal);
                     Entity.Kill();
                 }
             }
         }
+
+        double turnCounter = 0;
+        double turnInterval = 50;
         public override void Update(GameTime gameTime)
         {
             if (target == null || target.Dead)
@@ -46,10 +50,21 @@ namespace KazgarsRevenge
             }
             else
             {
-                Vector3 move = (target.Entity.GetSharedData(typeof(Entity)) as Entity).Position - physicalData.Position;
-                move.Y = 0;
-                newDir = GetPhysicsYaw(move);
-                AdjustDir(450.0f, 1f);
+                turnCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (turnCounter >= turnInterval)
+                {
+                    Vector3 move = (target.Entity.GetSharedData(typeof(Entity)) as Entity).Position - physicalData.Position;
+                    move.Y = 0;
+                    if (move != Vector3.Zero)
+                    {
+                        move.Normalize();
+                    }
+
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(move), 0, 0);
+                    physicalData.LinearVelocity = move * 250.0f;
+
+                    turnCounter = 0;
+                }
             }
             
             base.Update(gameTime);

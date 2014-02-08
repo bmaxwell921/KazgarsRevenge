@@ -226,23 +226,23 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateLooseCannon(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool magnet)
+        public void CreateLooseCannon(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 20;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            arrowData.LinearVelocity = dir * 700;
+            arrowData.LinearVelocity = dir * 400;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             arrow.AddSharedData(typeof(Entity), arrowData);
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
-                                                                                new Vector3(20), Vector3.Backward * 20, Matrix.Identity);
-            arrowGraphics.AddEmitter(typeof(SnipeTrailParticleSystem), 50, 10, Vector3.Zero);
+                                                                                new Vector3(10), Vector3.Backward * 6, Matrix.Identity);
+            arrowGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), 500, 0, Vector3.Forward * 13);
 
-            SnipeController arrowAI = new SnipeController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, magnet);
+            LooseCannonController arrowAI = new LooseCannonController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -257,6 +257,31 @@ namespace KazgarsRevenge
 
             soundEffects.playRangedSound();
         }
+
+        public void CreateExplosion(Vector3 position, int damage, FactionType factionToHit, AliveComponent creator)
+        {
+            GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
+
+            Entity attackData = new Box(position, 120, 47, 120, .01f);
+            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+            newAttack.AddSharedData(typeof(Entity), attackData);
+
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            attackAI.HitMultipleTargets();
+
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
+
+            newAttack.AddComponent(typeof(AttackController), attackAI);
+            genComponentManager.AddComponent(attackAI);
+
+            attacks.Add(newAttack);
+
+            SpawnExplosionParticles(position);
+        }
         #endregion
 
 
@@ -265,10 +290,10 @@ namespace KazgarsRevenge
         {
             GameEntity heal = new GameEntity("heal", FactionType.Neutral, EntityType.Misc);
             position.Y = 20;
-            Entity healPhysicalData = new Box(position, 1, 1, 1, .001f);
+            Entity healPhysicalData = new Box(position, 1, 47, 1, .001f);
             healPhysicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             healPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            healPhysicalData.LinearVelocity = Vector3.Forward * 150.0f;
+            healPhysicalData.LinearVelocity = Vector3.Forward * 250.0f;
             healPhysicalData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(Vector3.Forward));
             heal.AddSharedData(typeof(Entity), healPhysicalData);
 
@@ -363,6 +388,15 @@ namespace KazgarsRevenge
             for (int i = 0; i < 20; ++i)
             {
                 poof.AddParticle(position, Vector3.Zero);
+            }
+        }
+
+        public void SpawnExplosionParticles(Vector3 position)
+        {
+            ParticleSystem boom = particles.GetSystem(typeof(ExplosionParticleSystem));
+            for (int i = 0; i < 20; ++i)
+            {
+                boom.AddParticle(position, Vector3.Zero);
             }
         }
         #endregion

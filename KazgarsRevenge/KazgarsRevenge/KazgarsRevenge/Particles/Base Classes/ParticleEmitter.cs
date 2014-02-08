@@ -37,6 +37,9 @@ namespace KazgarsRevenge
         int maxOffset;
         Vector3 offset;
 
+        public bool Timed { get; private set; }
+        public bool Dead{get; private set;}
+        private double timeLeft = 0;
         #endregion
 
 
@@ -57,6 +60,9 @@ namespace KazgarsRevenge
             this.offset = offset;
 
             this.BoneIndex = -1;
+
+            Timed = false;
+            Dead = false;
         }
 
         public ParticleEmitter(ParticleSystem particleSystem,
@@ -73,16 +79,25 @@ namespace KazgarsRevenge
             this.offset = offset;
 
             this.BoneIndex = attachIndex;
+
+            Timed = false;
+            Dead = false;
         }
 
         /// <summary>
         /// Updates the emitter, creating the appropriate number of particles
         /// in the appropriate positions.
         /// </summary>
-        public void Update(GameTime gameTime, Vector3 newPosition)
+        public void Update(GameTime gameTime, Vector3 newPosition, Matrix rotation)
         {
-            if (gameTime == null)
-                throw new ArgumentNullException("gameTime");
+            if (Timed)
+            {
+                timeLeft -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (timeLeft <= 0)
+                {
+                    Dead = true;
+                }
+            }
 
             // Work out how much time has passed since the previous update.
             float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -113,7 +128,9 @@ namespace KazgarsRevenge
                     Vector3 position = Vector3.Lerp(previousPosition, newPosition, mu);
 
                     // Create the particle.
-                    particleSystem.AddParticle(position + offset + new Vector3(rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset), velocity);
+                    Vector3 finalpos = Vector3.Transform(offset, rotation);
+                    finalpos += position;
+                    particleSystem.AddParticle(finalpos + new Vector3(rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset), velocity);
                 }
 
                 // Store any time we didn't use, so it can be part of the next update.
@@ -121,6 +138,12 @@ namespace KazgarsRevenge
             }
 
             previousPosition = newPosition;
+        }
+
+        public void SetDeathTimer(double timerLength)
+        {
+            timeLeft = timerLength;
+            Timed = true;
         }
     }
 }

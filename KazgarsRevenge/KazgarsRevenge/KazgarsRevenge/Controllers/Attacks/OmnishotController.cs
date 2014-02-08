@@ -25,15 +25,8 @@ namespace KazgarsRevenge
             this.home = home;
             this.leech = leech;
             this.bleed = bleed;
-        }
 
-        protected override void CheckHitEntities()
-        {
-            foreach (AliveComponent a in hitData)
-            {
-                DamageTarget(a);
-            }
-            hitData.Clear();
+            dieAfterContact = false;
         }
 
         public override void End()

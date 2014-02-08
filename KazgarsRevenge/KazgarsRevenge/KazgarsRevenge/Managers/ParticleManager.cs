@@ -21,7 +21,6 @@ namespace KazgarsRevenge
         {
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
-
             systems.Add(typeof(WeaponSparksSystem), new WeaponSparksSystem(Game, Game.Content));
             systems.Add(typeof(SoulCreationParticleSystem), new SoulCreationParticleSystem(Game, Game.Content));
             systems.Add(typeof(Buff1ParticleSystem), new Buff1ParticleSystem(Game, Game.Content));
@@ -30,17 +29,16 @@ namespace KazgarsRevenge
             systems.Add(typeof(SnipeTrailParticleSystem), new SnipeTrailParticleSystem(Game, Game.Content));
             systems.Add(typeof(HomingTrailParticleSystem), new HomingTrailParticleSystem(Game, Game.Content));
             systems.Add(typeof(HealTrailParticleSystem), new HealTrailParticleSystem(Game, Game.Content));
+            systems.Add(typeof(FireArrowParticleSystem), new FireArrowParticleSystem(Game, Game.Content));
+            systems.Add(typeof(SmokeTrailParticleSystem), new SmokeTrailParticleSystem(Game, Game.Content));
+            systems.Add(typeof(ExplosionParticleSystem), new ExplosionParticleSystem(Game, Game.Content));
+            systems.Add(typeof(LifestealParticleSystem), new LifestealParticleSystem(Game, Game.Content));
 
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)
             {
                 k.Value.Initialize();
             }
-        }
-
-        public void AddSystem(Type t, ParticleSystem system)
-        {
-            systems.Add(t, system);
         }
 
         public ParticleSystem GetSystem(Type t)

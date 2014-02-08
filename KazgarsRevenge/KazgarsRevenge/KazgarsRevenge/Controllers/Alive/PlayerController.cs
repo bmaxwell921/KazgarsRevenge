@@ -300,7 +300,7 @@ namespace KazgarsRevenge
             boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Omnishot));
             boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.AdrenalineRush));
             boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.Leeching));
-            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.LooseCannon));
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.HeartStrike));
             boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.HeartStrike));
 
@@ -377,6 +377,7 @@ namespace KazgarsRevenge
             actionSequences.Add("omnishot", OmnishotActions());
             actionSequences.Add("buffrush", BuffRushActions());
             actionSequences.Add("buffleech", BuffLeechActions());
+            actionSequences.Add("loosecannon", LooseCannonActions());
 
             //melee
             actionSequences.Add("flip", FlipActions());
@@ -796,12 +797,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                int damage = GeneratePrimaryDamage(StatType.Agility);
-                if (abilityLearnedFlags[AbilityName.Headshot] && rand.Next(0, 101) < 25)
-                {
-                    damage *= 2;
-                }
-                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
+                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this);
 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -810,7 +806,7 @@ namespace KazgarsRevenge
 
             sequence.Add(actionSequences["shoot"][3]);
 
-            interruptActions.Add("snipe", () =>
+            interruptActions.Add("loosecannon", () =>
             {
                 if (attached.ContainsKey("handarrow"))
                 {
@@ -818,11 +814,7 @@ namespace KazgarsRevenge
                 }
                 Vector3 forward = GetForward();
                 int damage = GeneratePrimaryDamage(StatType.Agility);
-                if (abilityLearnedFlags[AbilityName.Headshot] && rand.Next(0, 101) < 25)
-                {
-                    damage *= 2;
-                }
-                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
+                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this);
             });
 
             return sequence;
@@ -1130,6 +1122,8 @@ namespace KazgarsRevenge
                     return GetAdrenalineRush();
                 case AbilityName.Leeching:
                     return GetLeechingArrows();
+                case AbilityName.LooseCannon:
+                    return GetLooseCannon();
                 default:
                     return null;
             }
@@ -1164,6 +1158,13 @@ namespace KazgarsRevenge
         {
             return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6, AttackType.Ranged, "buffleech");
         }
+
+        protected Ability GetLooseCannon()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 1, AttackType.Ranged, "loosecannon");
+        }
+
+        
         #endregion
 
 

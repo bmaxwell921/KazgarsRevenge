@@ -17,12 +17,12 @@ namespace KazgarsRevenge
             this.lifeLength = 2000;
             this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);
         }
-        bool penetrating = false;
         bool homing = false;
 
         public void Penetrate()
         {
-            penetrating = true;
+            aoe = true;
+            dieAfterContact = false;
         }
 
         AliveComponent target;
@@ -50,22 +50,6 @@ namespace KazgarsRevenge
                 (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
             }
             base.HandleEntityCollision(hitEntity);
-        }
-
-        protected override void CheckHitEntities()
-        {
-            if (penetrating)
-            {
-                foreach (AliveComponent a in hitData)
-                {
-                    DamageTarget(a);
-                }
-                hitData.Clear();
-            }
-            else
-            {
-                base.CheckHitEntities();
-            }
         }
 
         public override void Update(GameTime gameTime)

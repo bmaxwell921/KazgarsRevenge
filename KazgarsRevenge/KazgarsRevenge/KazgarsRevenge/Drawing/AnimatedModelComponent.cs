@@ -54,7 +54,6 @@ namespace KazgarsRevenge
 
         }
 
-
         public void AddEmitter(Type particleType, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
         {
             if (!emitters.ContainsKey(particleType))
@@ -68,32 +67,44 @@ namespace KazgarsRevenge
         Matrix rot = Matrix.Identity;
         public override void Update(GameTime gameTime)
         {
-
-            foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
-            {
-                if (k.Value.BoneIndex < 0)
-                {
-                    k.Value.Update(gameTime, physicalData.Position);
-                }
-                else
-                {
-                    Vector3 bonePos = animationPlayer.GetWorldTransforms()[k.Value.BoneIndex].Translation;
-                    k.Value.Update(gameTime, bonePos);
-                }
-            }
-
-
             //need to do this conversion from Matrix3x3 to Matrix; Matrix3x3 is just a bepu thing
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
             //either do this or Matrix.CreateFromQuaternion(physicalData.Orientation);
             //this is probably faster? not sure how CreateFromQuaternion works
             rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
             rot *= yawOffset;
+
             Matrix conglomeration = Matrix.CreateScale(new Vector3(modelParams.size));
             conglomeration *= Matrix.CreateTranslation(localOffset);
             conglomeration *= rot;
             conglomeration *= Matrix.CreateTranslation(physicalData.Position);
+
             animationPlayer.Update(gameTime.ElapsedGameTime, true, conglomeration);
+
+
+            List<Type> toRemove = new List<Type>();
+            foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
+            {
+                if (k.Value.BoneIndex < 0)
+                {
+                    k.Value.Update(gameTime, physicalData.Position, rot);
+                }
+                else
+                {
+                    Vector3 bonePos = animationPlayer.GetWorldTransforms()[k.Value.BoneIndex].Translation;
+                    k.Value.Update(gameTime, bonePos, rot);
+                }
+
+                if (k.Value.Dead)
+                {
+                    toRemove.Add(k.Key);
+                }
+            }
+
+            for (int i = toRemove.Count - 1; i >= 0; --i)
+            {
+                emitters.Remove(toRemove[i]);
+            }
         }
 
         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)

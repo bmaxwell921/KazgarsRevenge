@@ -36,10 +36,11 @@ namespace KazgarsRevenge
         public CollisionGroup LevelCollisionGroup;
         public CollisionGroup NetworkedPlayerCollisionGroup;
 
-        Random rand;
+        public Random rand;
 
         public KazgarsRevengeGame()
         {
+            rand = RandSingleton.Instance;
             InitPhysics();
         }
 
@@ -107,7 +108,6 @@ namespace KazgarsRevenge
 
         protected override void Initialize()
         {
-            rand = new Random();
             genComponentManager = new GeneralComponentManager(this);
             Components.Add(genComponentManager);
             Services.AddService(typeof(GeneralComponentManager), genComponentManager);

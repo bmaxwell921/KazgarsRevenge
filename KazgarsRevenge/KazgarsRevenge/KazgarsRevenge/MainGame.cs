@@ -445,14 +445,14 @@ namespace KazgarsRevenge
 
 
                     //debugging physics
-                    /*
+                    
                     effectModelDrawer.LightingEnabled = false;
                     effectModelDrawer.VertexColorEnabled = true;
                     effectModelDrawer.World = Matrix.Identity;
                     effectModelDrawer.View = camera.View;
                     effectModelDrawer.Projection = camera.Projection;
                     modelDrawer.Draw(effectModelDrawer, physics);
-                    */
+                    
 
                     spriteBatch.Begin();
                     spriteManager.Draw(spriteBatch);

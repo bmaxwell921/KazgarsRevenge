@@ -202,13 +202,25 @@ namespace KazgarsRevenge
             return actualDamage;
         }
 
-        public void Heal(int h)
+        protected void Heal(int h)
         {
             Health += h;
             if (Health > MaxHealth)
             {
                 Health = MaxHealth;
             }
+        }
+
+        AnimatedModelComponent model;
+        public void LifeSteal(int h)
+        {
+            Heal(h);
+            if (model == null)
+            {
+                model = Entity.GetComponent(typeof(AnimatedModelComponent)) as AnimatedModelComponent;
+            }
+            model.AddEmitter(typeof(LifestealParticleSystem), 10, 15, Vector3.Zero);
+            model.AddParticleTimer(typeof(LifestealParticleSystem), 1);
         }
 
         private List<NegativeEffect> activeDebuffs = new List<NegativeEffect>();

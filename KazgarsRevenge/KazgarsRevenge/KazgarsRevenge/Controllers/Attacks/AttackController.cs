@@ -18,7 +18,6 @@ namespace KazgarsRevenge
 {
     public class AttackController : AIComponent
     {
-        AttackManager attacks;
         //the entity that created this attack
         protected AliveComponent creator;
         protected float damage;
@@ -42,7 +41,6 @@ namespace KazgarsRevenge
         {
             lifesteal = true;
             amountStolen = percentReturned;
-            attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
         }
         double lifeCounter = 0;
         protected double lifeLength = 500;
@@ -54,21 +52,44 @@ namespace KazgarsRevenge
                 Entity.Kill();
             }
 
-            if (hitData.Count > 0)
-            {
-                CheckHitEntities();
-            }
+            CheckHitEntities();
+            
         }
 
+        public void HitMultipleTargets()
+        {
+            aoe = true;
+        }
+
+
+        protected bool aoe = false;
+        protected bool dieAfterContact = true;
         /// <summary>
         /// called the first update after a collision is detected.
-        /// default behavior is to hit
+        /// default behavior is to hit the first enemy contacted only
         /// </summary>
-        protected virtual void CheckHitEntities()
+        protected void CheckHitEntities()
         {
-            DamageTarget(hitData[0]);
-            hitData.Clear();
-            Entity.Kill();
+            if (hitData.Count > 0)
+            {
+                if (aoe)
+                {
+                    foreach (AliveComponent a in hitData)
+                    {
+                        DamageTarget(a);
+                    }
+                }
+                else
+                {
+                    DamageTarget(hitData[0]);
+                }
+
+                hitData.Clear();
+                if (dieAfterContact)
+                {
+                    Entity.Kill();
+                }
+            }
         }
 
         int damageDealt = 0;
@@ -105,7 +126,7 @@ namespace KazgarsRevenge
                 damageDealt += d;
                 if (lifesteal)
                 {
-                    attacks.CreateHomingHeal(physicalData.Position, creator, (int)Math.Ceiling(d * .1f));
+                    creator.LifeSteal((int)Math.Ceiling(d * amountStolen));
                 }
             }
         }

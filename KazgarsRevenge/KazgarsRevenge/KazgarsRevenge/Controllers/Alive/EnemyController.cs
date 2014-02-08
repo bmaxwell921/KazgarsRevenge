@@ -74,7 +74,8 @@ namespace KazgarsRevenge
 
             PlayAnimation(settings.attackAniName);
 
-            rand = new Random();
+            rand = game.rand;
+            
 
             idleUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
             currentUpdateFunction = idleUpdateFunction;
