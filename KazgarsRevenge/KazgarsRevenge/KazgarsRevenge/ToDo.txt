@@ -8,6 +8,11 @@ kazgar death animation
 
 
 Loose Cannon arrow model
+change k_fire_arrow so that his wrist bone is oriented straight towards the bow when he releases
+
+snipe particles
+lifesteal/ potion heal particles
+buff particles
 
 
 
@@ -39,14 +44,6 @@ implement them aaaalll
 Camera
 ======
 orbit with arrow keys?
-
-
-
-Particles
-=========
-snipe particles
-lifesteal/ potion heal particles
-buff particles
 
 
 

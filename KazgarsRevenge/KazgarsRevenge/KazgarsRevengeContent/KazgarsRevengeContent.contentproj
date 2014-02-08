@@ -433,7 +433,13 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Textures\UI\ChargeBarFront.png">
+      <Name>ChargeBarFront</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Rooms\bottomFloor.fbx">
       <Name>bottomFloor</Name>

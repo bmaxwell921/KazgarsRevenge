@@ -31,6 +31,7 @@ namespace KazgarsRevenge
             InitDrawingParams();
             font = game.Content.Load<SpriteFont>("Verdana");
             texWhitePixel = game.Content.Load<Texture2D>("white");
+            texChargeBarFront = game.Content.Load<Texture2D>("Textures\\UI\\chargeBarFront");
 
             #region UI Frame Load
             texCursor = Game.Content.Load<Texture2D>("Textures\\whiteCursor");
@@ -712,7 +713,9 @@ namespace KazgarsRevenge
 
         SpriteFont font;
         Texture2D texWhitePixel;
-        Rectangle RectEnemyHealthBar;
+        Texture2D texChargeBarFront;
+        Rectangle rectEnemyHealthBar;
+        Rectangle rectCharged;
         Vector2 vecName;
         Vector2 mid;
         float xRatio;
@@ -745,8 +748,10 @@ namespace KazgarsRevenge
             yRatio = maxY / 1080f;
             average = (xRatio + yRatio) / 2;
             screenRatio = new Vector2(xRatio, yRatio);
-            RectEnemyHealthBar = new Rectangle((int)(mid.X - 75 * average), (int)(53 * average), (int)(200 * average), (int)(40 * average));
-            vecName = new Vector2(RectEnemyHealthBar.X, 5);
+            rectEnemyHealthBar = new Rectangle((int)(mid.X - 75 * average), (int)(53 * average), (int)(200 * average), (int)(40 * average));
+            float chargeBarLength = 400 * average;
+            rectCharged = new Rectangle((int)(mid.X - chargeBarLength / 2), (int)(maxY * 3 / 4), (int)(chargeBarLength), (int)(30 * average));
+            vecName = new Vector2(rectEnemyHealthBar.X, 5);
 
             //mouse
             rectMouse = new Rectangle(0, 0, 25, 25);
@@ -832,8 +837,15 @@ namespace KazgarsRevenge
             }
             if (mouseHoveredHealth != null)
             {
-                s.Draw(texWhitePixel, RectEnemyHealthBar, Color.Red);
-                s.Draw(texWhitePixel, new Rectangle(RectEnemyHealthBar.X, RectEnemyHealthBar.Y, (int)(RectEnemyHealthBar.Width * mouseHoveredHealth.HealthPercent), RectEnemyHealthBar.Height), Color.Green);
+                s.Draw(texWhitePixel, rectEnemyHealthBar, Color.Red);
+                s.Draw(texWhitePixel, new Rectangle(rectEnemyHealthBar.X, rectEnemyHealthBar.Y, (int)(rectEnemyHealthBar.Width * mouseHoveredHealth.HealthPercent), rectEnemyHealthBar.Height), Color.Green);
+            }
+            float chargedPercent = GetPercentCharged();
+            if (chargedPercent > 0)
+            {
+                s.Draw(texWhitePixel, rectCharged, Color.Black * .75f);
+                s.Draw(texWhitePixel, new Rectangle(rectCharged.X, rectCharged.Y, (int)(rectCharged.Width * chargedPercent), rectCharged.Height), Color.Yellow);
+                s.Draw(texChargeBarFront, rectCharged, Color.White);
             }
 
             #region UIBase

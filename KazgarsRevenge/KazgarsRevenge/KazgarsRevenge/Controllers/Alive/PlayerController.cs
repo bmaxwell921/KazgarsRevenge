@@ -514,6 +514,8 @@ namespace KazgarsRevenge
 
             return sequence;
         }
+        private const int arrowDrawMillis = 200;
+        private const int arrowReleaseMillis = 300;
         private List<Action> ShootActions()
         {
             List<Action> sequence = new List<Action>();
@@ -525,7 +527,7 @@ namespace KazgarsRevenge
                 PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
-                millisActionLength = 200;
+                millisActionLength = arrowDrawMillis;
             });
             sequence.Add(() =>
             {
@@ -539,7 +541,7 @@ namespace KazgarsRevenge
                     attached.Add("handarrow", attachedArrow);
                 }
 
-                millisActionLength = animations.GetAniMillis("k_fire_arrow") / 2 - 200;
+                millisActionLength = arrowReleaseMillis;
             });
             sequence.Add(() =>
             {
@@ -551,7 +553,7 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
                 
-                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
+                millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
 
                 needInterruptAction = false;
             });
@@ -672,7 +674,7 @@ namespace KazgarsRevenge
                 canInterrupt = true;
                 PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
-                millisActionLength = 200;
+                millisActionLength = arrowDrawMillis;
                 stateResetCounter = 0;
             });
             sequence.Add(actionSequences["shoot"][1]);
@@ -691,7 +693,7 @@ namespace KazgarsRevenge
                 }
                 attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
 
-                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
+                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
 
                 needInterruptAction = false;
             });
@@ -828,7 +830,7 @@ namespace KazgarsRevenge
                     attached.Add("handarrow", attachedArrow);
                 }
 
-                millisActionLength = animations.GetAniMillis("k_fire_arrow") / 2 - 200;
+                millisActionLength = arrowReleaseMillis;
             });
 
             sequence.Add(() =>
@@ -849,8 +851,9 @@ namespace KazgarsRevenge
                 int damage = GeneratePrimaryDamage(StatType.Agility) * 5;
                 attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this, 1);
 
-                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
+                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
                 needInterruptAction = false;
+                attState = AttackState.None;
             });
 
             sequence.Add(abilityFinishedAction);
