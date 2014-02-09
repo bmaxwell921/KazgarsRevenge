@@ -18,12 +18,12 @@ namespace KazgarsRevenge
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).GroundTargetEffect;
         }
 
-        public void UpdateMouseLocation(Vector3 position, bool draw, float size)
+        public void UpdateMouseLocation(Vector3 position, bool draw, float radius)
         {
             origin = new Vector3(position.X, .1f, position.Z);
             Visible = draw;
-            this.size.X = size;
-            this.size.Y = size;
+            this.size.X = radius * 2;
+            this.size.Y = radius * 2;
         }
     }
 }

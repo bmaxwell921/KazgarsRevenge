@@ -19,11 +19,12 @@ namespace KazgarsRevenge
     {
         List<GameEntity> attacks = new List<GameEntity>();
         SoundEffectLibrary soundEffects;
+        Random rand;
 
         public AttackManager(KazgarsRevengeGame game)
             : base(game)
         {
-
+            rand = mainGame.rand;
         }
 
         public override void Initialize()
@@ -285,12 +286,70 @@ namespace KazgarsRevenge
 
         public void CreateMakeItRain(Vector3 position, int damage, float radius, AliveComponent creator)
         {
-            CreateExplosion(position, damage, creator);
+            GameEntity newAttack = new GameEntity("aoe", creator.Entity.Faction, EntityType.Misc);
+
+            Entity attackData = new Cylinder(position, 47, radius);//new Box(position, radius * 2, 47, radius * 2, .01f);
+            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+            newAttack.AddSharedData(typeof(Entity), attackData);
+
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            attackAI.HitMultipleTargets();
+
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
+
+            newAttack.AddComponent(typeof(AttackController), attackAI);
+            genComponentManager.AddComponent(attackAI);
+
+            attacks.Add(newAttack);
+
+
+            for (int i = 0; i < 50; ++i)
+            {
+                Vector3 randPos = new Vector3();
+                randPos.X = rand.Next((int)(position.X - radius), (int)(position.X + radius));
+                randPos.Z = rand.Next((int)(position.Z - radius), (int)(position.Z + radius));
+                randPos.Y = rand.Next(80, 300);
+                CreateFallingArrow(randPos);
+            }
         }
+
         #endregion
 
 
         #region Misc
+        public void CreateFallingArrow(Vector3 position)
+        {
+            GameEntity arrow = new GameEntity("arrow", FactionType.Neutral, EntityType.Misc);
+
+            Entity arrowData = new Box(position, 15, 50, 15, 1);
+            arrowData.IsAffectedByGravity = true;
+            arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            arrowData.LinearVelocity = Vector3.Down * 500;
+            arrowData.Orientation = Quaternion.CreateFromYawPitchRoll(0, MathHelper.PiOver2, 0);
+            arrow.AddSharedData(typeof(Entity), arrowData);
+            
+            PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, Matrix.Identity);
+            FallingArrowController arrowController = new FallingArrowController(mainGame, arrow);
+            arrowGraphics.AddEmitter(typeof(HomingTrailParticleSystem), 10, 2, Vector3.Zero);
+
+            arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
+            genComponentManager.AddComponent(arrowPhysics);
+
+            arrow.AddComponent(typeof(UnanimatedModelComponent), arrowGraphics);
+            modelManager.AddComponent(arrowGraphics);
+
+            arrow.AddComponent(typeof(FallingArrowController), arrowController);
+            genComponentManager.AddComponent(arrowController);
+
+            attacks.Add(arrow);
+        }
+
         public void CreateHomingHeal(Vector3 position, AliveComponent target, int healAmount)
         {
             GameEntity heal = new GameEntity("heal", FactionType.Neutral, EntityType.Misc);
@@ -319,7 +378,7 @@ namespace KazgarsRevenge
 
             attacks.Add(heal);
         }
-
+        
         public void CreateMouseSpikes(Vector3 position)
         {
             GameEntity spikes = new GameEntity("cursor", FactionType.Neutral, EntityType.Misc);
@@ -344,6 +403,7 @@ namespace KazgarsRevenge
 
             attacks.Add(spikes);
         }
+        
         private Matrix CreateRotationFromForward(Vector3 forward)
         {
             Matrix rotation = Matrix.Identity;

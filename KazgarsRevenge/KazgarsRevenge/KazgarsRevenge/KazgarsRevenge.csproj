@@ -95,6 +95,7 @@
     <Compile Include="Controllers\Attacks\OmnishotController.cs" />
     <Compile Include="Controllers\Attacks\SnipeController.cs" />
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
+    <Compile Include="Controllers\FallingArrowController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
