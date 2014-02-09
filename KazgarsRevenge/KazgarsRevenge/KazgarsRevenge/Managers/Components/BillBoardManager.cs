@@ -32,7 +32,7 @@ namespace KazgarsRevenge
             GroundTargetEffect.EnableDefaultLighting();
             GroundTargetEffect.World = Matrix.Identity;
             GroundTargetEffect.TextureEnabled = true;
-            GroundTargetEffect.Texture = Game.Content.Load<Texture2D>("Textures\\blob");
+            GroundTargetEffect.Texture = Game.Content.Load<Texture2D>("Textures\\groundIndicator");
         }
 
         public override void Update(GameTime gameTime)
