@@ -296,7 +296,7 @@ namespace KazgarsRevenge
             #region ability initialization
             //create initial abilities
 
-            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.MakeItRain));
             boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.Snipe));
             boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Omnishot));
             boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.AdrenalineRush));
@@ -316,6 +316,11 @@ namespace KazgarsRevenge
         }
 
         #region Action Sequences
+
+        protected bool targetingGroundLocation = false;
+        protected Vector3 groundAbilityTarget = Vector3.Zero;
+        protected float targetedGroundSize = 0;
+        protected Ability lastUsedAbility = null;
 
         protected string currentActionName = "";
         private Dictionary<string, List<Action>> actionSequences;
@@ -348,18 +353,47 @@ namespace KazgarsRevenge
             currentActionName = "";
             abilityFinishedAction();
         }
+        protected void StartAbilitySequence(Ability ability)
+        {
+            if (ability == null)
+            {
+                lastUsedAbility = null;
+                targetingGroundLocation = false;
+            }
+            if (ability.AbilityType == AbilityType.GroundTarget)
+            {
+                StartGroundTargetSequence(ability.ActionName);
+            }
+            else
+            {
+                StartSequence(ability.ActionName);
+            }
+            lastUsedAbility = ability;
+        }
+
         protected void StartSequence(string name)
         {
-            if (name != "fightingstance" && name != "idle")
-            {
-                groundTargetLocation = physicalData.Position;
-            }
             InterruptReset(name);
 
             currentSequence[0]();
             millisActionCounter = 0;
 
+            if (name != "fightingstance" && name != "idle")
+            {
+                groundTargetLocation = physicalData.Position;
+                targetingGroundLocation = false;
+                lastUsedAbility = null;
+            }
         }
+
+        private void StartGroundTargetSequence(string name)
+        {
+            InterruptReset(name);
+
+            currentSequence[0]();
+            millisActionCounter = 0;
+        }
+
         //for buffs, so as to not disrupt running / whatever else
         protected void InterruptReset(string name)
         {
@@ -426,6 +460,7 @@ namespace KazgarsRevenge
             actionSequences.Add("buffrush", BuffRushActions());
             actionSequences.Add("buffleech", BuffLeechActions());
             actionSequences.Add("loosecannon", LooseCannonActions());
+            actionSequences.Add("makeitrain", MakeItRainActions());
 
             //melee
             actionSequences.Add("flip", FlipActions());
@@ -534,7 +569,7 @@ namespace KazgarsRevenge
                 //attach arrow model to hand
                 if (attachedArrow == null)
                 {
-                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_L_004", 0, -MathHelper.PiOver2);
+                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_L_005", 0, -MathHelper.PiOver2);
                 }
                 if (!attached.ContainsKey("handarrow"))
                 {
@@ -854,6 +889,8 @@ namespace KazgarsRevenge
                 millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
                 needInterruptAction = false;
                 attState = AttackState.None;
+
+                lastUsedAbility.Use();
             });
 
             sequence.Add(abilityFinishedAction);
@@ -873,6 +910,73 @@ namespace KazgarsRevenge
 
                 
             });
+
+            return sequence;
+        }
+        private const float makeItRainSize = 50;
+        private List<Action> MakeItRainActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                if (!targetingGroundLocation)
+                {
+                    //set targeting to true, set target size, go back to no attack state and fighting stance
+                    targetingGroundLocation = true;
+                    targetedGroundSize = makeItRainSize;
+                    if (abilityLearnedFlags[AbilityName.SplittingRain])
+                    {
+                        targetedGroundSize *= 5;
+                    }
+                    //skip other actions
+                    actionIndex = 10;
+
+                    if (currentAniName == "k_fighting_stance" || currentAniName == "k_from_fighting_stance")
+                    {
+                        InterruptReset("fightingstance");
+                        millisActionCounter = aniCounter;
+                        millisActionLength = aniLength;
+                    }
+
+                    attState = AttackState.None;
+                }
+                else
+                {
+                    targetingGroundLocation = false;
+                    //if button has been pushed once and we're targeting already, use ability at mouse location
+                    actionSequences["snipe"][0]();
+                    groundAbilityTarget = mouseHoveredLocation;
+                    groundTargetLocation = physicalData.Position;
+                }
+            });
+
+            sequence.Add(actionSequences["shoot"][1]);
+
+            sequence.Add(() =>
+            {
+                //looks like kazgar releases arrow
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+
+                int damage = GeneratePrimaryDamage(StatType.Agility);
+                if(abilityLearnedFlags[AbilityName.LeadRain])
+                {
+                    damage = (int)(damage * 1.5f);
+                }
+
+                float radius = makeItRainSize;
+                if(abilityLearnedFlags[AbilityName.SplittingRain])
+                {
+                    radius *= 5;
+                }
+                attacks.CreateMakeItRain(groundAbilityTarget, damage, radius, this);
+
+                millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
+            });
+            sequence.Add(abilityFinishedAction);
 
             return sequence;
         }
@@ -1151,8 +1255,8 @@ namespace KazgarsRevenge
             MagneticImplant,
             LooseCannon,
             MakeItRain,
-            MakeItHail,
-            Caltrops,
+            LeadRain,
+            SplittingRain,
             GrapplingHook,
             SpeedyGrapple,
             GrapplingSpear,
@@ -1187,14 +1291,16 @@ namespace KazgarsRevenge
                     return GetLeechingArrows();
                 case AbilityName.LooseCannon:
                     return GetLooseCannon();
+                case AbilityName.MakeItRain:
+                    return GetMakeItRain();
                 default:
-                    return null;
+                    throw new Exception("That ability hasn't been implemented.");
             }
         }
 
         protected Ability GetSnipe()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 1000, AttackType.Ranged, "snipe", AbilityType.Charge);
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 1000, AttackType.Ranged, "snipe", AbilityType.Instant);
         }
 
         protected Ability GetHeartStrike()
@@ -1225,6 +1331,11 @@ namespace KazgarsRevenge
         protected Ability GetLooseCannon()
         {
             return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 2000, AttackType.Ranged, "loosecannon", AbilityType.Charge);
+        }
+
+        protected Ability GetMakeItRain()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 2000, AttackType.Ranged, "makeitrain", AbilityType.GroundTarget);
         }
 
         

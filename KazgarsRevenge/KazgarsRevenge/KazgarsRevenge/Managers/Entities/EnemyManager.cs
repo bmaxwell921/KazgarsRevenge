@@ -85,7 +85,7 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(bruteController);
 
             brute.AddComponent(typeof(BlobShadowDecal), bruteShadow);
-            decalManager.AddBlobShadow(bruteShadow);
+            decalManager.AddComponent(bruteShadow);
 
             enemies.Add(id, brute);
         }

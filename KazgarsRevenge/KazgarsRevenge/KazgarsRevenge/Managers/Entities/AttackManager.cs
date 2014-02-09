@@ -233,7 +233,7 @@ namespace KazgarsRevenge
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            arrowData.LinearVelocity = dir * (400 + 600 * percentCharged);
+            arrowData.LinearVelocity = dir * (150 + 1000 * percentCharged);
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             arrow.AddSharedData(typeof(Entity), arrowData);
 
@@ -258,7 +258,7 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateExplosion(Vector3 position, int damage, FactionType factionToHit, AliveComponent creator)
+        public void CreateExplosion(Vector3 position, int damage, AliveComponent creator)
         {
             GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
 
@@ -281,6 +281,11 @@ namespace KazgarsRevenge
             attacks.Add(newAttack);
 
             SpawnExplosionParticles(position);
+        }
+
+        public void CreateMakeItRain(Vector3 position, int damage, float radius, AliveComponent creator)
+        {
+            CreateExplosion(position, damage, creator);
         }
         #endregion
 
@@ -328,7 +333,7 @@ namespace KazgarsRevenge
 
             spikes.AddSharedData(typeof(Dictionary<string, AttachableModel>), new Dictionary<string, AttachableModel>());
 
-            AnimatedModelComponent spikesGraphics = new AnimatedModelComponent(mainGame, spikes, spikeModel, 7, Vector3.Down * 20);
+            AnimatedModelComponent spikesGraphics = new AnimatedModelComponent(mainGame, spikes, spikeModel, 7, Vector3.Zero);
             CursorSpikeController spikesController = new CursorSpikeController(mainGame, spikes);
 
             spikes.AddComponent(typeof(AnimatedModelComponent), spikesGraphics);

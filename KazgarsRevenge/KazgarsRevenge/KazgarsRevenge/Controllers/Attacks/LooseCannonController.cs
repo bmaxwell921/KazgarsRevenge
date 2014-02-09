@@ -26,7 +26,7 @@ namespace KazgarsRevenge
 
         public override void End()
         {
-            (Game.Services.GetService(typeof(AttackManager)) as AttackManager).CreateExplosion(physicalData.Position, (int)damage, factionToHit, creator);
+            (Game.Services.GetService(typeof(AttackManager)) as AttackManager).CreateExplosion(physicalData.Position, (int)damage, creator);
         }
     }
 }

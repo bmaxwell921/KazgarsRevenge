@@ -80,7 +80,7 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(lootController);
 
             lootSoul.AddComponent(typeof(BlobShadowDecal), lootShadow);
-            decalManager.AddBlobShadow(lootShadow);
+            decalManager.AddComponent(lootShadow);
 
             SpawnSoulPoof(position);
         }

@@ -204,10 +204,13 @@ namespace KazgarsRevenge
 
         protected void Heal(int h)
         {
-            Health += h;
-            if (Health > MaxHealth)
+            if (!Dead)
             {
-                Health = MaxHealth;
+                Health += h;
+                if (Health > MaxHealth)
+                {
+                    Health = MaxHealth;
+                }
             }
         }
 

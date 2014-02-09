@@ -55,6 +55,12 @@ namespace KazgarsRevenge
             #endregion
         }
 
+        AbilityTargetDecal groundIndicator;
+        public override void Start()
+        {
+            groundIndicator = Entity.GetComponent(typeof(AbilityTargetDecal)) as AbilityTargetDecal;
+        }
+
         //variables for target
         Entity targetedPhysicalData;
         GameEntity mouseHoveredEntity;
@@ -110,13 +116,6 @@ namespace KazgarsRevenge
             if (attState == AttackState.Locked && canInterrupt && stateResetCounter >= stateResetLength)
             {
                 attState = AttackState.None;
-            }
-
-            if (attState == AttackState.Charging && curKeys.IsKeyDown(Keys.Escape))
-            {
-                attState = AttackState.None;
-                CancelFinishSequence();
-                StartSequence("fightingstance");
             }
 
             UpdateActionSequences(elapsed);
@@ -259,7 +258,9 @@ namespace KazgarsRevenge
                 groundMove.Normalize();
             }
 
-            bool closeEnough = (physicalData.Position - groundTargetLocation).Length() <= stopRadius;
+            Vector3 distToTarget = physicalData.Position - groundTargetLocation;
+            distToTarget.Y = 0;
+            bool closeEnough = distToTarget.Length() <= stopRadius;
             if (!looting && (!guiClick || Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) > .01f))
             {
                 if ((attState == AttackState.Charging || attState == AttackState.CastingSpell)&& !closeEnough)
@@ -283,6 +284,8 @@ namespace KazgarsRevenge
 
             prevMouse = curMouse;
             prevKeys = curKeys;
+
+            groundIndicator.UpdateMouseLocation(mouseHoveredLocation, targetingGroundLocation, targetedGroundSize);
 
             base.Update(gameTime);
         }
@@ -457,6 +460,24 @@ namespace KazgarsRevenge
         /// <param name="gameTime"></param>
         private void CheckAbilities(Vector3 move)
         {
+            if (curKeys.IsKeyDown(Keys.Escape))
+            {
+                targetingGroundLocation = false;
+                if (attState == AttackState.Charging)
+                {
+                    attState = AttackState.None;
+                    CancelFinishSequence();
+                    StartSequence("fightingstance");
+                }
+            }
+
+            //check for click when aiming ground target ability
+            if (targetingGroundLocation && curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+            {
+                StartAbilitySequence(lastUsedAbility);
+                return;
+            }
+
             Vector3 dir;
             dir.X = move.X;
             dir.Y = move.Y;
@@ -522,7 +543,7 @@ namespace KazgarsRevenge
                         abilityToUse.Use();
                     }
                     UpdateRotation(dir);
-                    StartSequence(abilityToUse.ActionName);
+                    StartAbilitySequence(abilityToUse);
                     targetedPhysicalData = null;
                     
                 }
@@ -530,14 +551,16 @@ namespace KazgarsRevenge
                 {
                     abilityToUse.Use();
                     UpdateRotation(dir);
-                    StartSequence(abilityToUse.ActionName);
+                    StartAbilitySequence(abilityToUse);
                     targetedPhysicalData = null;
                 }
                 else
                 {
-                    CancelFinishSequence();
-                    UpdateRotation(dir);
-                    StartSequence(abilityToUse.ActionName);
+                    if (targetingGroundLocation && lastUsedAbility == abilityToUse)
+                    {
+                        abilityToUse.Use();
+                    }
+                    StartAbilitySequence(abilityToUse);
                     targetedPhysicalData = null;
                 }
                 return;
@@ -709,7 +732,6 @@ namespace KazgarsRevenge
             return null;
         }
         #endregion
-
 
         SpriteFont font;
         Texture2D texWhitePixel;

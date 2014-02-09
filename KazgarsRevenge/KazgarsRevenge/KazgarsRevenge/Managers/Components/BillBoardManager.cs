@@ -9,82 +9,61 @@ namespace KazgarsRevenge
 {
     public class BillBoardManager : GameComponent
     {
-        Dictionary<Type, List<DrawableComponentBillboard>> components = new Dictionary<Type, List<DrawableComponentBillboard>>();
+        List<DrawableComponentBillboard> components = new List<DrawableComponentBillboard>();
         public BillBoardManager(KazgarsRevengeGame game)
             : base(game)
         {
 
         }
 
-        Dictionary<Type, BasicEffect> effects = new Dictionary<Type, BasicEffect>();
+        public BasicEffect ShadowEffect { get; private set; }
+        public BasicEffect GroundTargetEffect { get; private set; }
         public override void Initialize()
         {
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
-            BasicEffect shadowEffect = new BasicEffect(Game.GraphicsDevice);
-            shadowEffect.EnableDefaultLighting();
-            shadowEffect.World = Matrix.Identity;
-            shadowEffect.TextureEnabled = true;
-            shadowEffect.Texture = Game.Content.Load<Texture2D>("Textures\\blob");
-            effects.Add(typeof(BlobShadowDecal), shadowEffect);
+            ShadowEffect = new BasicEffect(Game.GraphicsDevice);
+            ShadowEffect.EnableDefaultLighting();
+            ShadowEffect.World = Matrix.Identity;
+            ShadowEffect.TextureEnabled = true;
+            ShadowEffect.Texture = Game.Content.Load<Texture2D>("Textures\\blob");
+
+            GroundTargetEffect = new BasicEffect(Game.GraphicsDevice);
+            GroundTargetEffect.EnableDefaultLighting();
+            GroundTargetEffect.World = Matrix.Identity;
+            GroundTargetEffect.TextureEnabled = true;
+            GroundTargetEffect.Texture = Game.Content.Load<Texture2D>("Textures\\blob");
         }
 
         public override void Update(GameTime gameTime)
         {
-            foreach (KeyValuePair<Type, List<DrawableComponentBillboard>> k in components)
+            for (int i = components.Count - 1; i >= 0; --i)
             {
-                List<DrawableComponentBillboard> componentList = k.Value;
-                for (int i = componentList.Count - 1; i >= 0; --i)
+                components[i].Update(gameTime);
+                if (components[i].Remove)
                 {
-                    componentList[i].Update(gameTime);
-                    if (componentList[i].Remove)
-                    {
-                        componentList[i].End();
-                        componentList.RemoveAt(i);
-                    }
+                    components[i].End();
+                    components.RemoveAt(i);
                 }
             }
         }
 
-        public void AddBlobShadow(BlobShadowDecal b)
+        public void AddComponent(DrawableComponentBillboard d)
         {
-            AddComponent(typeof(BlobShadowDecal), b);
-        }
-
-        public void AddComponent(Type t, DrawableComponentBillboard c)
-        {
-            c.Start();
-            if (!components.ContainsKey(t))
-            {
-                components.Add(t, new List<DrawableComponentBillboard>());
-            }
-            components[t].Add(c);
+            d.Start();
+            components.Add(d);
         }
 
         CameraComponent camera;
         public void Draw()
         {
-
             Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             Game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            foreach (KeyValuePair<Type, List<DrawableComponentBillboard>> k in components)
-            {
-                List<DrawableComponentBillboard> componentList = k.Value;
-
-                //apply corresponding effect before rendering
-                effects[k.Key].View = camera.View;
-                effects[k.Key].Projection = camera.Projection;
-                effects[k.Key].CurrentTechnique.Passes[0].Apply();
-
-                for (int i = componentList.Count - 1; i >= 0; --i)
+                for (int i = 0; i < components.Count; ++i)
                 {
-                    componentList[i].Draw(camera.View, camera.Projection);
+                    components[i].Draw(camera.View, camera.Projection);
                 }
-            }
-
-
-
         }
     }
 }

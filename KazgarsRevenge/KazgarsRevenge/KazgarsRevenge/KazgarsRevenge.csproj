@@ -97,8 +97,9 @@
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
-    <Compile Include="Drawing\BlobShadowDecal.cs" />
-    <Compile Include="Drawing\DrawableComponentBillboard.cs" />
+    <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
+    <Compile Include="Drawing\Billboards\AbilityTargetDecal.cs" />
+    <Compile Include="Drawing\Billboards\DrawableComponentBillboard.cs" />
     <Compile Include="LevelGeneration\JsonHierarchy\Chunk.cs" />
     <Compile Include="LevelGeneration\ChunkUtil.cs" />
     <Compile Include="LevelGeneration\ChunkInfo.cs" />

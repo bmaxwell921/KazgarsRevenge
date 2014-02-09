@@ -314,14 +314,14 @@ namespace KazgarsRevenge
             //levels.CreateLevel(FloorName.Dungeon);
             levels.DemoLevel();
             // TODO put him somewhere useful
-            players.CreateMainPlayer(new Vector3(200, 0, -200), DUMMY_ID);
+            players.CreateMainPlayer(new Vector3(200, 20, -200), DUMMY_ID);
 
             // TODO get rid of this for better spawning mechanics
             for (int i = 0; i < 10; ++i)
             {
                 for (int j = 0; j < 10; ++j)
                 {
-                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 100, 5, -100 - j * 100), 1);
+                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 100, 20, -100 - j * 100), 1);
                 }
             }
 

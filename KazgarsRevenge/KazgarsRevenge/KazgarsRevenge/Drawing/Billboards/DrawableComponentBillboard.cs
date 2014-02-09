@@ -5,43 +5,50 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using BEPUphysics;
-using BEPUphysics.Entities;
-
 namespace KazgarsRevenge
 {
-
-    public class BlobShadowDecal : DrawableComponentBillboard
+    public abstract class DrawableComponentBillboard: Component
     {
+        public bool Visible { get; protected set; }
+
+
+        protected BasicEffect effect;
+
         VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[4];
         short[] indices = new short[6];
+        Vector3 up;
+        Vector3 normal;
+        Vector3 left;
 
-        float width;
-        public BlobShadowDecal(KazgarsRevengeGame game, GameEntity entity, float width)
+        protected Vector2 size;
+        public DrawableComponentBillboard(KazgarsRevengeGame game, GameEntity entity, Vector3 normal, Vector3 up, Vector2 size)
             : base(game, entity)
         {
-            this.width = width;
+            this.Visible = true;
+            this.normal = normal;
+            this.up = up;
+            this.left = Vector3.Cross(normal, up);
 
-            this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
+            this.size = size;
 
             FillVertices();
         }
 
-        Entity physicalData;
+        protected Vector3 origin = Vector3.Zero;
         public override void Update(GameTime gameTime)
         {
-            UpdateVerts(new Vector3(physicalData.Position.X, -18.4f, physicalData.Position.Z));
+            UpdateVerts();
         }
 
-        private void UpdateVerts(Vector3 origin)
+        private void UpdateVerts()
         {
-            Vector3 uppercenter =  origin + (Vector3.Forward * width / 2);
+            Vector3 uppercenter = origin + (up * size.Y / 2);
 
-            // Calculate the quad corners (flat, horizontal quad)
-            Vector3 UpperLeft = uppercenter + (Vector3.Left * width / 2);
-            Vector3 UpperRight = uppercenter - (Vector3.Left * width / 2);
-            Vector3 LowerLeft = UpperLeft - (Vector3.Forward * width);
-            Vector3 LowerRight = UpperRight - (Vector3.Forward * width);
+
+            Vector3 UpperLeft = uppercenter + (left * size.X / 2);
+            Vector3 UpperRight = uppercenter - (left * size.X / 2);
+            Vector3 LowerLeft = UpperLeft - (up * size.Y);
+            Vector3 LowerRight = UpperRight - (up * size.Y);
 
             // position
             vertices[0].Position = LowerLeft;
@@ -59,7 +66,7 @@ namespace KazgarsRevenge
             // normal
             for (int i = 0; i < vertices.Length; i++)
             {
-                vertices[i].Normal = Vector3.Up;
+                vertices[i].Normal = normal;
             }
 
             // texture coords
@@ -81,15 +88,26 @@ namespace KazgarsRevenge
             indices[4] = 1;
             indices[5] = 3;
 
-            UpdateVerts(Vector3.Zero);
+            UpdateVerts();
         }
 
-        public override void Draw(Matrix view, Matrix projection)
+        public void Draw(Matrix view, Matrix projection)
         {
-            Game.GraphicsDevice.DrawUserIndexedPrimitives(
-                PrimitiveType.TriangleList,
-                vertices, 0, 4,
-                indices, 0, 2);
+            if (Visible)
+            {
+                if (effect == null)
+                {
+                    throw new Exception("the BasicEffect was not set for this billboard component.");
+                }
+                effect.View = view;
+                effect.Projection = projection;
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                Game.GraphicsDevice.DrawUserIndexedPrimitives(
+                    PrimitiveType.TriangleList,
+                    vertices, 0, 4,
+                    indices, 0, 2);
+            }
         }
     }
 }
