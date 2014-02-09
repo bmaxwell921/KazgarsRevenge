@@ -20,7 +20,7 @@ namespace KazgarsRevenge
 
         public void UpdateMouseLocation(Vector3 position, bool draw, float size)
         {
-            origin = new Vector3(position.X, -18.4f, position.Z);
+            origin = new Vector3(position.X, .1f, position.Z);
             Visible = draw;
             this.size.X = size;
             this.size.Y = size;

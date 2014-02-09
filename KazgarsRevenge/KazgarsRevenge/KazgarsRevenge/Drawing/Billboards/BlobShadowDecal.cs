@@ -23,7 +23,7 @@ namespace KazgarsRevenge
         Entity physicalData;
         public override void Update(GameTime gameTime)
         {
-            origin = new Vector3(physicalData.Position.X, -18.4f, physicalData.Position.Z);
+            origin = new Vector3(physicalData.Position.X, .1f, physicalData.Position.Z);
             base.Update(gameTime);
         }
     }

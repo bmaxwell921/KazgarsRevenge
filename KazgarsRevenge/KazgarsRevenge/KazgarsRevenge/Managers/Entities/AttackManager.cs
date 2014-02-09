@@ -39,7 +39,7 @@ namespace KazgarsRevenge
         public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool homing, bool penetrating, bool leeching, bool bleeding)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
-            position.Y = 20;
+            position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 15, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
@@ -163,7 +163,7 @@ namespace KazgarsRevenge
         public void CreateSnipe(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool magnet)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
-            position.Y = 20;
+            position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
@@ -195,7 +195,7 @@ namespace KazgarsRevenge
         public void CreateOmnishot(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool homing, bool penetrating, bool leeching, bool bleeding)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
-            position.Y = 20;
+            position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
@@ -229,7 +229,7 @@ namespace KazgarsRevenge
         public void CreateLooseCannon(Vector3 position, Vector3 dir, int damage, AliveComponent creator, float percentCharged)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
-            position.Y = 20;
+            position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
             arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();

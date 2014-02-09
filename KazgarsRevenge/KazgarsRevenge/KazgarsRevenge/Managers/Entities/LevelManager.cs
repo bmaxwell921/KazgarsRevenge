@@ -73,7 +73,7 @@ namespace KazgarsRevenge
         public static readonly int BLOCK_SIZE = 100;
 
         // The y component of the room location
-        public static readonly float LEVEL_Y = -18.5f;
+        public static readonly float LEVEL_Y = 0;
 
         public static readonly string ROOM_PATH = @"Models\Rooms\";
 
