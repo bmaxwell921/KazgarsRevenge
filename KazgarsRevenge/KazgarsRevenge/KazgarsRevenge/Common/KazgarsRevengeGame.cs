@@ -56,7 +56,7 @@ namespace KazgarsRevenge
                     physics.ThreadManager.AddThread();
                 }
             }
-            physics.ForceUpdater.Gravity = new Vector3(0, -80f, 0);
+            physics.ForceUpdater.Gravity = new Vector3(0, -1600, 0);
             physics.TimeStepSettings.MaximumTimeStepsPerFrame = 10;
             Services.AddService(typeof(Space), physics);
 

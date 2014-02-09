@@ -91,6 +91,7 @@
     <Compile Include="Common\Extenders.cs" />
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
+    <Compile Include="Controllers\Attacks\BombController.cs" />
     <Compile Include="Controllers\Attacks\LooseCannonController.cs" />
     <Compile Include="Controllers\Attacks\OmnishotController.cs" />
     <Compile Include="Controllers\Attacks\SnipeController.cs" />
@@ -172,11 +173,15 @@
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
     <Compile Include="Particles\Systems\ExplosionParticleSystem.cs" />
     <Compile Include="Particles\Systems\FireArrowParticleSystem.cs" />
+    <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeBig.cs" />
+    <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeSmall.cs" />
+    <Compile Include="Particles\Systems\Flashbang\FlashExplosionSparksParticleSystem.cs" />
     <Compile Include="Particles\Systems\HealTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\HomingTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\LifestealParticleSystem.cs" />
     <Compile Include="Particles\Systems\SmokeTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\SnipeTrailParticleSystem.cs" />
+    <Compile Include="Particles\Systems\TarExplosionParticleSystem.cs" />
     <Compile Include="Particles\Systems\WeaponSparksSystem.cs" />
     <Compile Include="Particles\Systems\SoulCreationParticleSystem.cs" />
     <Compile Include="Particles\Systems\Buff1ParticleSystem.cs" />

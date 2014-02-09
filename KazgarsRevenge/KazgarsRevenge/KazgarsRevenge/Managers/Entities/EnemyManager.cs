@@ -69,8 +69,6 @@ namespace KazgarsRevenge
             bruteSettings.attackRange = 30;
             bruteSettings.noticePlayerRange = 200;
             bruteSettings.stopChasingRange = 650;
-            bruteSettings.runSpeed = 80;
-            bruteSettings.walkSpeed = 40;
             #endregion
 
             EnemyController bruteController = new EnemyController(mainGame, brute, bruteSettings);

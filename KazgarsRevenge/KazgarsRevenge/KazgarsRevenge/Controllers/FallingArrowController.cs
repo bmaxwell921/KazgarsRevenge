@@ -16,7 +16,6 @@ namespace KazgarsRevenge
     {
         double lifeCounter = 0;
         double lifeLength = 5000;
-        bool dying = false;
         public FallingArrowController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {

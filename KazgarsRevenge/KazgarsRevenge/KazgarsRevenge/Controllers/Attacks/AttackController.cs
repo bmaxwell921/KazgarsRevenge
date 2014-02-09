@@ -61,6 +61,15 @@ namespace KazgarsRevenge
             aoe = true;
         }
 
+        public void AddFlashStun()
+        {
+            debuff = DeBuff.FlashBomb;
+        }
+
+        public void AddTarExplosion()
+        {
+            debuff = DeBuff.TarBomb;
+        }
 
         protected bool aoe = false;
         protected bool dieAfterContact = true;

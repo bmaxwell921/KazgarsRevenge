@@ -19,9 +19,12 @@ namespace KazgarsRevenge
     }
     public enum DeBuff
     {
-        None = 0,
+        None,
         SerratedBleeding,
         MagneticImplant,
+        FlashBomb,
+        TarBomb,
+        Stunned,
     }
     public enum Buff
     {
@@ -136,9 +139,20 @@ namespace KazgarsRevenge
 
         protected virtual void RecalculateStats()
         {
+            if (stats.Count == 0)
+            {
+                for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
+                {
+                    stats.Add((StatType)i, 0);
+                }
+            }
             //add base stats, accounting for level
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
             {
+                if (baseStats[(StatType)i] < 0)
+                {
+                    baseStats[(StatType)i] = 0;
+                }
                 stats[(StatType)i] = baseStats[(StatType)i];
             }
 
@@ -158,6 +172,7 @@ namespace KazgarsRevenge
             this.level = level;
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
+            RecalculateStats();
         }
 
         /// <summary>
@@ -270,6 +285,11 @@ namespace KazgarsRevenge
 
         }
 
+        public virtual void HandleStun()
+        {
+
+        }
+
         private void HandleBuff(Buff b, BuffState state)
         {
             switch (b)
@@ -302,12 +322,32 @@ namespace KazgarsRevenge
                         attacks.SpawnLittleBloodSpurt(physicalData.Position);
                     }
                     break;
+                case DeBuff.FlashBomb:
+                    if (state == BuffState.Starting)
+                    {
+                        AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.FlashBomb], null);
+                    }
+                    break;
+                case DeBuff.TarBomb:
+                    if (state == BuffState.Starting)
+                    {
+                        baseStats[StatType.RunSpeed] -= 80;
+                        RecalculateStats();
+                    }
+                    if (state == BuffState.Ending)
+                    {
+                        baseStats[StatType.RunSpeed] = originalBaseStats[StatType.RunSpeed];
+                        RecalculateStats();
+                    }
+                    break;
             }
         }
 
         Dictionary<DeBuff, double> debuffLengths = new Dictionary<DeBuff, double>()
         {
             {DeBuff.SerratedBleeding, 5000},
+            {DeBuff.FlashBomb, 3000},
+            {DeBuff.TarBomb, 6000},
             {DeBuff.MagneticImplant, 2000}
         };
         Dictionary<DeBuff, double> debuffTickLengths = new Dictionary<DeBuff, double>()
@@ -350,13 +390,23 @@ namespace KazgarsRevenge
 
         protected void AddDebuff(DeBuff b, GameEntity from)
         {
-            double length = 0;
-            double tickLength = double.MaxValue;
 
+            double length = 0;
             if (debuffLengths.ContainsKey(b))
             {
                 length = debuffLengths[b];
             }
+            AddDebuff(b, length, from);
+        }
+
+        private void AddDebuff(DeBuff b, double length, GameEntity from)
+        {
+            if (b == DeBuff.Stunned)
+            {
+                HandleStun();
+            }
+
+            double tickLength = double.MaxValue;
 
             if (debuffTickLengths.ContainsKey(b))
             {

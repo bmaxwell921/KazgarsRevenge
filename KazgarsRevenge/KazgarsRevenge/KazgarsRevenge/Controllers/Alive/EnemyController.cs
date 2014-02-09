@@ -37,9 +37,6 @@ namespace KazgarsRevenge
         public string hitAniName;
         public string deathAniName;
 
-        public float walkSpeed;
-        public float runSpeed;
-
         public float attackRange;
         public float noticePlayerRange;
         public float stopChasingRange;
@@ -91,7 +88,10 @@ namespace KazgarsRevenge
             {
                 animations.StartClip(settings.hitAniName, MixType.MixOnce);
                 animations.SetNonMixedBones(armBoneIndices);
-                attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
+                if (d > 0)
+                {
+                    attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
+                }
                 CalculateThreat(d, from);
                 minChaseCounter = 0;
             }
@@ -186,7 +186,10 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case EnemyState.Normal:
-                    currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
+                    if (!HasDeBuff(DeBuff.Stunned))
+                    {
+                        currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
+                    }
                     break;
                 case EnemyState.Dying:
                     AIDying(gameTime.ElapsedGameTime.TotalMilliseconds);
@@ -235,7 +238,7 @@ namespace KazgarsRevenge
                     float newDir = rand.Next(1, 627) / 10.0f;
                     Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
-                    newVel *= settings.walkSpeed;
+                    newVel *= stats[StatType.RunSpeed] / 2;
                     curVel = newVel;
                     physicalData.LinearVelocity = curVel;
 
@@ -342,7 +345,7 @@ namespace KazgarsRevenge
                     {
                         diff.Normalize();
                     }
-                    physicalData.LinearVelocity = diff * settings.runSpeed;
+                    physicalData.LinearVelocity = diff * stats[StatType.RunSpeed];
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                     if (currentAniName != settings.runAniName)
                     {
@@ -394,6 +397,16 @@ namespace KazgarsRevenge
         protected virtual void AIDeath()
         {
 
+        }
+
+        public override void HandleStun()
+        {
+            PlayAnimation(settings.idleAniName);
+            swingCounter = 0;
+            attackCounter = double.MaxValue;
+            swinging = false;
+            minChaseCounter = 0;
+            physicalData.LinearVelocity = Vector3.Zero;
         }
     }
 }

@@ -317,8 +317,123 @@ namespace KazgarsRevenge
             }
         }
 
-        #endregion
+        public void CreateFlashBomb(Vector3 startPos, Vector3 targetPos, float radius, AliveComponent creator)
+        {
+            GameEntity bomb = new GameEntity("arrow", FactionType.Neutral, EntityType.Misc);
 
+            Entity bombData = new Box(startPos, 15, 50, 15, 1);
+            bombData.IsAffectedByGravity = true;
+            bombData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            bombData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            bombData.Orientation = Quaternion.CreateFromYawPitchRoll(0, 0, 0);
+
+            Vector3 vel = targetPos - startPos;
+            vel.Y = 0;
+            bombData.LinearVelocity = Vector3.Up * 400 + vel * 2;
+
+            bomb.AddSharedData(typeof(Entity), bombData);
+
+            PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
+            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, Matrix.Identity);
+            BombController bombController = new BombController(mainGame, bomb, AbilityName.FlashBomb, targetPos, creator, radius);
+            bombGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), 100, 2, Vector3.Zero);
+
+            bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
+            genComponentManager.AddComponent(bombPhysics);
+
+            bomb.AddComponent(typeof(UnanimatedModelComponent), bombGraphics);
+            modelManager.AddComponent(bombGraphics);
+
+            bomb.AddComponent(typeof(FallingArrowController), bombController);
+            genComponentManager.AddComponent(bombController);
+
+            attacks.Add(bomb);
+        }
+
+        public void CreateTarBomb(Vector3 startPos, Vector3 targetPos, float radius, AliveComponent creator)
+        {
+            GameEntity bomb = new GameEntity("arrow", FactionType.Neutral, EntityType.Misc);
+
+            Entity bombData = new Box(startPos, 15, 50, 15, 1);
+            bombData.IsAffectedByGravity = true;
+            bombData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            bombData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            bombData.Orientation = Quaternion.CreateFromYawPitchRoll(0, 0, 0);
+
+            Vector3 vel = targetPos - startPos;
+            vel.Y = 0;
+            bombData.LinearVelocity = Vector3.Up * 400 + vel * 2;
+
+            bomb.AddSharedData(typeof(Entity), bombData);
+
+            PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
+            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, Matrix.Identity);
+            BombController bombController = new BombController(mainGame, bomb, AbilityName.TarBomb, targetPos, creator, radius);
+
+            bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
+            genComponentManager.AddComponent(bombPhysics);
+
+            bomb.AddComponent(typeof(UnanimatedModelComponent), bombGraphics);
+            modelManager.AddComponent(bombGraphics);
+
+            bomb.AddComponent(typeof(FallingArrowController), bombController);
+            genComponentManager.AddComponent(bombController);
+
+            attacks.Add(bomb);
+        }
+
+        public void CreateFlashExplosion(Vector3 position, float radius, AliveComponent creator)
+        {
+            GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
+
+            Entity attackData = new Cylinder(position, 47, radius);
+            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+            newAttack.AddSharedData(typeof(Entity), attackData);
+
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
+            AttackController attackAI = new AttackController(mainGame, newAttack, 0, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            attackAI.HitMultipleTargets();
+            attackAI.AddFlashStun();
+
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
+
+            newAttack.AddComponent(typeof(AttackController), attackAI);
+            genComponentManager.AddComponent(attackAI);
+
+            attacks.Add(newAttack);
+
+            SpawnFlashParticles(position);
+        }
+
+        public void CreateTarExplosion(Vector3 position, float radius, AliveComponent creator)
+        {
+            GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
+
+            Entity attackData = new Cylinder(position, 47, radius);
+            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+            newAttack.AddSharedData(typeof(Entity), attackData);
+
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
+            AttackController attackAI = new AttackController(mainGame, newAttack, 0, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            attackAI.HitMultipleTargets();
+            attackAI.AddTarExplosion();
+
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
+
+            newAttack.AddComponent(typeof(AttackController), attackAI);
+            genComponentManager.AddComponent(attackAI);
+
+            attacks.Add(newAttack);
+
+            SpawnTarParticles(position);
+        }
+        #endregion
 
         #region Misc
         public void CreateFallingArrow(Vector3 position)
@@ -329,7 +444,7 @@ namespace KazgarsRevenge
             arrowData.IsAffectedByGravity = true;
             arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            arrowData.LinearVelocity = Vector3.Down * 500;
+            arrowData.LinearVelocity = Vector3.Down * 50;
             arrowData.Orientation = Quaternion.CreateFromYawPitchRoll(0, MathHelper.PiOver2, 0);
             arrow.AddSharedData(typeof(Entity), arrowData);
             
@@ -414,9 +529,6 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        #region Ability Definitions
-        #endregion
-
         #region Particles
         ParticleManager particles;
         public void SpawnWeaponSparks(Vector3 position)
@@ -460,6 +572,42 @@ namespace KazgarsRevenge
         {
             ParticleSystem boom = particles.GetSystem(typeof(ExplosionParticleSystem));
             for (int i = 0; i < 10; ++i)
+            {
+                boom.AddParticle(position, Vector3.Zero);
+            }
+        }
+
+        public void SpawnFlashParticles(Vector3 position)
+        {
+            ParticleSystem boom = particles.GetSystem(typeof(FlashExplosionSmokeBig));
+            for (int i = 0; i < 5; ++i)
+            {
+                boom.AddParticle(position, Vector3.Zero);
+            }
+
+            boom = particles.GetSystem(typeof(FlashExplosionSmokeSmall));
+            for (int i = 0; i < 15; ++i)
+            {
+                boom.AddParticle(position, Vector3.Zero);
+            }
+
+            boom = particles.GetSystem(typeof(FlashExplosionSparksParticleSystem));
+            for (int i = 0; i < 10; ++i)
+            {
+                boom.AddParticle(position, Vector3.Zero);
+            }
+
+            boom = particles.GetSystem(typeof(ExplosionParticleSystem));
+            for (int i = 0; i < 10; ++i)
+            {
+                //boom.AddParticle(position, Vector3.Zero);
+            }
+        }
+
+        public void SpawnTarParticles(Vector3 position)
+        {
+            ParticleSystem boom = particles.GetSystem(typeof(TarExplosionParticleSystem));
+            for (int i = 0; i < 30; ++i)
             {
                 boom.AddParticle(position, Vector3.Zero);
             }

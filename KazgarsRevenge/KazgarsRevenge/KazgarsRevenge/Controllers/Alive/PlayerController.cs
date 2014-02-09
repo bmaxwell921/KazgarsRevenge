@@ -280,11 +280,6 @@ namespace KazgarsRevenge
         private void InitNewPlayer()
         {
             #region stats and inventory
-            for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
-            {
-                stats.Add((StatType)i, 0);
-            }
-
             RecalculateStats();
 
             for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
@@ -302,8 +297,8 @@ namespace KazgarsRevenge
             boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.AdrenalineRush));
             boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.Leeching));
             boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.LooseCannon));
-            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.HeartStrike));
-            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.HeartStrike));
+            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.FlashBomb));
+            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.TarBomb));
 
 
             for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
@@ -461,6 +456,8 @@ namespace KazgarsRevenge
             actionSequences.Add("buffleech", BuffLeechActions());
             actionSequences.Add("loosecannon", LooseCannonActions());
             actionSequences.Add("makeitrain", MakeItRainActions());
+            actionSequences.Add("flashbomb", FlashBombActions());
+            actionSequences.Add("tarbomb", TarBombActions());
 
             //melee
             actionSequences.Add("flip", FlipActions());
@@ -586,7 +583,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this as AliveComponent, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
                 
                 millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
 
@@ -603,7 +600,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this as AliveComponent, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
             });
 
             return sequence;
@@ -624,7 +621,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, true, this);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, true, this as AliveComponent);
                 millisActionLength = animations.GetAniMillis("k_onehanded_swing") - millisActionLength;
                 needInterruptAction = false;
             });
@@ -638,7 +635,7 @@ namespace KazgarsRevenge
             interruptActions.Add("swing", () =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, true, this);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, true, this as AliveComponent);
             });
 
             return sequence;
@@ -726,7 +723,7 @@ namespace KazgarsRevenge
                 {
                     damage *= 2;
                 }
-                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this as AliveComponent, abilityLearnedFlags[AbilityName.MagneticImplant]);
 
                 millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
 
@@ -747,7 +744,7 @@ namespace KazgarsRevenge
                 {
                     damage *= 2;
                 }
-                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this, abilityLearnedFlags[AbilityName.MagneticImplant]);
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this as AliveComponent, abilityLearnedFlags[AbilityName.MagneticImplant]);
             });
 
             return sequence;
@@ -772,7 +769,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
+                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this as AliveComponent, HasBuff(Buff.Homing), HasBuff(Buff.Penetrating), HasBuff(Buff.Leeching), HasBuff(Buff.SerratedBleeding));
 
                 millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
 
@@ -788,7 +785,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this, true, true, true, true);
+                attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this as AliveComponent, true, true, true, true);
             });
 
             return sequence;
@@ -884,7 +881,7 @@ namespace KazgarsRevenge
                 }
                 Vector3 forward = GetForward();
                 int damage = GeneratePrimaryDamage(StatType.Agility) * 5;
-                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this, 1);
+                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this as AliveComponent, 1);
 
                 millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
                 needInterruptAction = false;
@@ -906,7 +903,7 @@ namespace KazgarsRevenge
                 float percentCharged = (float)(millisActionCounter + 200) / 4200;
                 int damage = GeneratePrimaryDamage(StatType.Agility);
                 damage += (int)(4 * percentCharged);
-                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this, percentCharged);
+                attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this as AliveComponent, percentCharged);
 
                 
             });
@@ -962,17 +959,132 @@ namespace KazgarsRevenge
                 }
 
                 int damage = GeneratePrimaryDamage(StatType.Agility);
-                if(abilityLearnedFlags[AbilityName.LeadRain])
+                if (abilityLearnedFlags[AbilityName.LeadRain])
                 {
                     damage = (int)(damage * 1.5f);
                 }
 
                 float radius = makeItRainSize;
-                if(abilityLearnedFlags[AbilityName.SplittingRain])
+                if (abilityLearnedFlags[AbilityName.SplittingRain])
                 {
                     radius *= 5;
                 }
-                attacks.CreateMakeItRain(groundAbilityTarget, damage, radius, this);
+                attacks.CreateMakeItRain(groundAbilityTarget, damage, radius, this as AliveComponent);
+
+                millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
+            });
+            sequence.Add(abilityFinishedAction);
+
+            return sequence;
+        }
+        private const float bombSize = 50;
+        private List<Action> FlashBombActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                if (!targetingGroundLocation)
+                {
+                    targetingGroundLocation = true;
+                    targetedGroundSize = bombSize;
+                    if (abilityLearnedFlags[AbilityName.BiggerBombs])
+                    {
+                        targetedGroundSize *= 2;
+                    }
+                    actionIndex = 10;
+
+                    if (currentAniName == "k_fighting_stance" || currentAniName == "k_from_fighting_stance")
+                    {
+                        InterruptReset("fightingstance");
+                        millisActionCounter = aniCounter;
+                        millisActionLength = aniLength;
+                    }
+
+                    attState = AttackState.None;
+                }
+                else
+                {
+                    targetingGroundLocation = false;
+                    actionSequences["snipe"][0]();
+                    groundAbilityTarget = mouseHoveredLocation;
+                    groundTargetLocation = physicalData.Position;
+                }
+            });
+
+            sequence.Add(actionSequences["shoot"][1]);
+
+            sequence.Add(() =>
+            {
+                //looks like kazgar releases arrow
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+
+                float radius = bombSize;
+                if (abilityLearnedFlags[AbilityName.BiggerBombs])
+                {
+                    radius *= 2;
+                }
+                attacks.CreateFlashBomb(physicalData.Position, groundAbilityTarget, radius, this as AliveComponent);
+
+                millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
+            });
+            sequence.Add(abilityFinishedAction);
+
+            return sequence;
+        }
+        private List<Action> TarBombActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                if (!targetingGroundLocation)
+                {
+                    targetingGroundLocation = true;
+                    targetedGroundSize = bombSize;
+                    if (abilityLearnedFlags[AbilityName.BiggerBombs])
+                    {
+                        targetedGroundSize *= 2;
+                    }
+                    actionIndex = 10;
+
+                    if (currentAniName == "k_fighting_stance" || currentAniName == "k_from_fighting_stance")
+                    {
+                        InterruptReset("fightingstance");
+                        millisActionCounter = aniCounter;
+                        millisActionLength = aniLength;
+                    }
+
+                    attState = AttackState.None;
+                }
+                else
+                {
+                    targetingGroundLocation = false;
+                    actionSequences["snipe"][0]();
+                    groundAbilityTarget = mouseHoveredLocation;
+                    groundTargetLocation = physicalData.Position;
+                }
+            });
+
+            sequence.Add(actionSequences["shoot"][1]);
+
+            sequence.Add(() =>
+            {
+                //looks like kazgar releases arrow
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+
+                float radius = bombSize;
+                if (abilityLearnedFlags[AbilityName.BiggerBombs])
+                {
+                    radius *= 2;
+                }
+                attacks.CreateTarBomb(physicalData.Position, groundAbilityTarget, radius, this as AliveComponent);
 
                 millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
             });
@@ -996,13 +1108,13 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, true, this);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, true, this as AliveComponent);
                 millisActionLength = 500;
             });
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, true, this);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, true, this as AliveComponent);
                 millisActionLength = animations.GetAniMillis("k_flip") - 900;
             });
             sequence.Add(() =>
@@ -1243,36 +1355,6 @@ namespace KazgarsRevenge
         #endregion
 
         #region Ability Definitions
-        public enum AbilityName
-        {
-            Snipe,
-            AdrenalineRush,
-            Penetrating,
-            Homing,
-            Leeching,
-            Serrated,
-            Headshot,
-            MagneticImplant,
-            LooseCannon,
-            MakeItRain,
-            LeadRain,
-            SplittingRain,
-            GrapplingHook,
-            SpeedyGrapple,
-            GrapplingSpear,
-            ForcefulThrow,
-            TarBomb,
-            MoltenBolt,
-            FlashBomb,
-            FlashierBomb,
-            Omnishot,
-
-
-
-            HeartStrike,
-
-            IceClawPrison,
-        }
         protected Ability GetAbility(AbilityName ability)
         {
             switch (ability)
@@ -1293,6 +1375,10 @@ namespace KazgarsRevenge
                     return GetLooseCannon();
                 case AbilityName.MakeItRain:
                     return GetMakeItRain();
+                case AbilityName.FlashBomb:
+                    return GetFlashBomb();
+                case AbilityName.TarBomb:
+                    return GetTarBomb();
                 default:
                     throw new Exception("That ability hasn't been implemented.");
             }
@@ -1338,9 +1424,49 @@ namespace KazgarsRevenge
             return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 2000, AttackType.Ranged, "makeitrain", AbilityType.GroundTarget);
         }
 
-        
+        protected Ability GetFlashBomb()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR"), 2000, AttackType.Ranged, "flashbomb", AbilityType.GroundTarget);
+        }
+
+        protected Ability GetTarBomb()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR"), 2000, AttackType.Ranged, "tarbomb", AbilityType.GroundTarget);
+        }
+
+
         #endregion
 
 
+    }
+    public enum AbilityName
+    {
+        Snipe,
+        AdrenalineRush,
+        Penetrating,
+        Homing,
+        Leeching,
+        Serrated,
+        Headshot,
+        MagneticImplant,
+        LooseCannon,
+        MakeItRain,
+        LeadRain,
+        SplittingRain,
+        GrapplingHook,
+        SpeedyGrapple,
+        GrapplingSpear,
+        ForcefulThrow,
+        TarBomb,
+        MoltenBolt,
+        FlashBomb,
+        BiggerBombs,
+        Omnishot,
+
+
+
+        HeartStrike,
+
+        IceClawPrison,
     }
 }
