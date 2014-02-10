@@ -16,11 +16,12 @@ namespace KazgarsRevenge
 
         VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[4];
         short[] indices = new short[6];
-        Vector3 up;
-        Vector3 normal;
+        protected Vector3 up;
+        protected Vector3 normal;
         Vector3 left;
 
         protected Vector2 size;
+        protected Vector2 source = new Vector2(1, 1);
         public DrawableComponentBillboard(KazgarsRevengeGame game, GameEntity entity, Vector3 normal, Vector3 up, Vector2 size)
             : base(game, entity)
         {
@@ -31,35 +32,6 @@ namespace KazgarsRevenge
 
             this.size = size;
 
-            FillVertices();
-        }
-
-        protected Vector3 origin = Vector3.Zero;
-        public override void Update(GameTime gameTime)
-        {
-            UpdateVerts();
-        }
-
-        private void UpdateVerts()
-        {
-            Vector3 uppercenter = origin + (up * size.Y / 2);
-
-
-            Vector3 UpperLeft = uppercenter + (left * size.X / 2);
-            Vector3 UpperRight = uppercenter - (left * size.X / 2);
-            Vector3 LowerLeft = UpperLeft - (up * size.Y);
-            Vector3 LowerRight = UpperRight - (up * size.Y);
-
-            // position
-            vertices[0].Position = LowerLeft;
-            vertices[1].Position = UpperLeft;
-            vertices[2].Position = LowerRight;
-            vertices[3].Position = UpperRight;
-        }
-
-        private void FillVertices()
-        {
-
             vertices = new VertexPositionNormalTexture[4];
             indices = new short[6];
 
@@ -69,18 +41,6 @@ namespace KazgarsRevenge
                 vertices[i].Normal = normal;
             }
 
-            // texture coords
-            Vector2 textureUpperLeft = new Vector2(0.0f, 0.0f);
-            Vector2 textureUpperRight = new Vector2(1.0f, 0.0f);
-            Vector2 textureLowerLeft = new Vector2(0.0f, 1.0f);
-            Vector2 textureLowerRight = new Vector2(1.0f, 1.0f);
-            vertices[0].TextureCoordinate = textureLowerLeft;
-            vertices[1].TextureCoordinate = textureUpperLeft;
-            vertices[2].TextureCoordinate = textureLowerRight;
-            vertices[3].TextureCoordinate = textureUpperRight;
-
-            // Set the index buffer for each vertex, using
-            // clockwise winding
             indices[0] = 0;
             indices[1] = 1;
             indices[2] = 2;
@@ -91,7 +51,41 @@ namespace KazgarsRevenge
             UpdateVerts();
         }
 
-        public void Draw(Matrix view, Matrix projection)
+        protected Vector3 origin = Vector3.Zero;
+        public override void Update(GameTime gameTime)
+        {
+            UpdateVerts();
+        }
+
+        private void UpdateVerts()
+        {
+            this.left = Vector3.Cross(normal, up);
+
+            Vector3 uppercenter = origin + (up * size.Y / 2);
+            
+            Vector3 UpperLeft = uppercenter + (left * size.X / 2);
+            Vector3 UpperRight = uppercenter - (left * size.X / 2);
+            Vector3 LowerLeft = UpperLeft - (up * size.Y);
+            Vector3 LowerRight = UpperRight - (up * size.Y);
+
+            // position
+            vertices[0].Position = LowerLeft;
+            vertices[1].Position = UpperLeft;
+            vertices[2].Position = LowerRight;
+            vertices[3].Position = UpperRight;
+
+            // texture coords
+            Vector2 textureUpperLeft = new Vector2(0.0f, 0.0f);
+            Vector2 textureUpperRight = new Vector2(source.X, 0.0f);
+            Vector2 textureLowerLeft = new Vector2(0.0f, source.Y);
+            Vector2 textureLowerRight = new Vector2(source.X, source.Y);
+            vertices[0].TextureCoordinate = textureLowerLeft;
+            vertices[1].TextureCoordinate = textureUpperLeft;
+            vertices[2].TextureCoordinate = textureLowerRight;
+            vertices[3].TextureCoordinate = textureUpperRight;
+        }
+
+        public virtual void Draw(Matrix view, Matrix projection, Vector3 cameraPos)
         {
             if (Visible)
             {

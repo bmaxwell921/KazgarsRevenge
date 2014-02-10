@@ -13,7 +13,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>HiDef</XnaProfile>
+    <XnaProfile>Reach</XnaProfile>
     <XnaCrossPlatformGroupID>36ffac55-8a86-4aff-9add-67126d319a58</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
@@ -92,6 +92,7 @@
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
     <Compile Include="Controllers\Attacks\BombController.cs" />
+    <Compile Include="Controllers\Attacks\GrapplingHookController.cs" />
     <Compile Include="Controllers\Attacks\LooseCannonController.cs" />
     <Compile Include="Controllers\Attacks\OmnishotController.cs" />
     <Compile Include="Controllers\Attacks\SnipeController.cs" />
@@ -101,7 +102,9 @@
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
     <Compile Include="Drawing\Billboards\AbilityTargetDecal.cs" />
+    <Compile Include="Drawing\Billboards\ChainBillboard.cs" />
     <Compile Include="Drawing\Billboards\DrawableComponentBillboard.cs" />
+    <Compile Include="Drawing\Billboards\CameraOrientedBillboard.cs" />
     <Compile Include="LevelGeneration\JsonHierarchy\Chunk.cs" />
     <Compile Include="LevelGeneration\ChunkUtil.cs" />
     <Compile Include="LevelGeneration\ChunkInfo.cs" />

@@ -433,6 +433,34 @@ namespace KazgarsRevenge
 
             SpawnTarParticles(position);
         }
+
+        public void CreateGrapplingHook(Vector3 position, Vector3 dir, AliveComponent creator, float speed)
+        {
+            GameEntity hook = new GameEntity("hook", FactionType.Neutral, EntityType.Misc);
+
+            Entity hookData = new Box(position, 25, 25, 25);
+            hookData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            hookData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            hookData.LinearVelocity = dir * speed;
+            hook.AddSharedData(typeof(Entity), hookData);
+
+            PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
+            //UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(
+            ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator);
+            GrapplingHookController hookController = new GrapplingHookController(mainGame, hook, creator);
+
+
+            hook.AddComponent(typeof(PhysicsComponent), hookPhysics);
+            genComponentManager.AddComponent(hookPhysics);
+
+            hook.AddComponent(typeof(ChainBillboard), chainComponent);
+            billboardManager.AddComponent(chainComponent);
+
+            hook.AddComponent(typeof(GrapplingHookController), hookController);
+            genComponentManager.AddComponent(hookController);
+
+            attacks.Add(hook);
+        }
         #endregion
 
         #region Misc

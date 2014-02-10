@@ -18,6 +18,7 @@ namespace KazgarsRevenge
 
         public BasicEffect ShadowEffect { get; private set; }
         public BasicEffect GroundTargetEffect { get; private set; }
+        public BasicEffect ChainEffect { get; private set; }
         public override void Initialize()
         {
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
@@ -33,6 +34,12 @@ namespace KazgarsRevenge
             GroundTargetEffect.World = Matrix.Identity;
             GroundTargetEffect.TextureEnabled = true;
             GroundTargetEffect.Texture = Game.Content.Load<Texture2D>("Textures\\groundIndicator");
+
+            ChainEffect = new BasicEffect(Game.GraphicsDevice);
+            ChainEffect.EnableDefaultLighting();
+            ChainEffect.World = Matrix.Identity;
+            ChainEffect.TextureEnabled = true;
+            ChainEffect.Texture = Game.Content.Load<Texture2D>("Textures\\groundIndicator");
         }
 
         public override void Update(GameTime gameTime)
@@ -62,7 +69,7 @@ namespace KazgarsRevenge
 
                 for (int i = 0; i < components.Count; ++i)
                 {
-                    components[i].Draw(camera.View, camera.Projection);
+                    components[i].Draw(camera.View, camera.Projection, camera.Position);
                 }
         }
     }

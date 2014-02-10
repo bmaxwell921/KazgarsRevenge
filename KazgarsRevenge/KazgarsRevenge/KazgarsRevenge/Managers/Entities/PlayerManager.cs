@@ -79,7 +79,7 @@ namespace KazgarsRevenge
             AbilityTargetDecal groundIndicator = new AbilityTargetDecal(mainGame, player, 0);
 
             player.AddComponent(typeof(AbilityTargetDecal), groundIndicator);
-            decalManager.AddComponent(groundIndicator);
+            billboardManager.AddComponent(groundIndicator);
 
             //adding the controllers to their respective managers 
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
@@ -92,7 +92,7 @@ namespace KazgarsRevenge
             spriteManager.AddComponent(playerController);
 
             player.AddComponent(typeof(BlobShadowDecal), shadow);
-            decalManager.AddComponent(shadow);
+            billboardManager.AddComponent(shadow);
 
             playerMap[id] = player;
             myId = id;
@@ -127,7 +127,7 @@ namespace KazgarsRevenge
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
             player.AddComponent(typeof(BlobShadowDecal), shadow);
-            decalManager.AddComponent(shadow);
+            billboardManager.AddComponent(shadow);
 
             player.AddComponent(typeof(PhysicsComponent), playerPhysics);
             genComponentManager.AddComponent(playerPhysics);

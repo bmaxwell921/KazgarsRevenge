@@ -292,7 +292,7 @@ namespace KazgarsRevenge
             //create initial abilities
 
             boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.MakeItRain));
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.Snipe));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.GrapplingHook));
             boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Omnishot));
             boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.AdrenalineRush));
             boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.Leeching));
@@ -458,6 +458,7 @@ namespace KazgarsRevenge
             actionSequences.Add("makeitrain", MakeItRainActions());
             actionSequences.Add("flashbomb", FlashBombActions());
             actionSequences.Add("tarbomb", TarBombActions());
+            actionSequences.Add("grapplinghook", GrapplingHookActions());
 
             //melee
             actionSequences.Add("flip", FlipActions());
@@ -1092,6 +1093,42 @@ namespace KazgarsRevenge
 
             return sequence;
         }
+        private const float grapplingHookSpeed = 400;
+        private List<Action> GrapplingHookActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                canInterrupt = false;
+                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                attState = AttackState.Locked;
+                millisActionLength = arrowDrawMillis;
+                stateResetCounter = 0;
+            });
+            sequence.Add(actionSequences["shoot"][1]);
+
+            sequence.Add(() =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                float speed = grapplingHookSpeed;
+                if(abilityLearnedFlags[AbilityName.SpeedyGrapple])
+                {
+                    speed *= 2;
+                }
+                attacks.CreateGrapplingHook(physicalData.Position, GetForward(), this as AliveComponent, speed);
+
+                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
+
+            });
+
+            sequence.Add(abilityFinishedAction);
+
+            return sequence;
+        }
 
         /*
          * Melee abilities
@@ -1307,13 +1344,11 @@ namespace KazgarsRevenge
         }
         protected void ChangeVelocity(Vector3 newVel)
         {
-            physicalData.LinearVelocity = newVel;
+            if (!pulling)
+            {
+                physicalData.LinearVelocity = newVel;
+            }
 
-            // Here
-            PlayerManager players = (PlayerManager)Game.Services.GetService(typeof(PlayerManager));
-
-            //((MessageSender)Game.Services.GetService(typeof(MessageSender))).SendVelocityMessage(players.myId.id, newVel);
-            
         }
         protected Matrix GetRotation()
         {
@@ -1351,7 +1386,11 @@ namespace KazgarsRevenge
             }
             return false;
         }
-
+        public override void StopPull()
+        {
+            groundTargetLocation = physicalData.Position;
+            base.StopPull();
+        }
         #endregion
 
         #region Ability Definitions
@@ -1379,6 +1418,8 @@ namespace KazgarsRevenge
                     return GetFlashBomb();
                 case AbilityName.TarBomb:
                     return GetTarBomb();
+                case AbilityName.GrapplingHook:
+                    return GetGrapplingHook();
                 default:
                     throw new Exception("That ability hasn't been implemented.");
             }
@@ -1434,6 +1475,10 @@ namespace KazgarsRevenge
             return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR"), 2000, AttackType.Ranged, "tarbomb", AbilityType.GroundTarget);
         }
 
+        protected Ability GetGrapplingHook()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 2000, AttackType.Ranged, "grapplinghook", AbilityType.Instant);
+        }
 
         #endregion
 

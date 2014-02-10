@@ -99,6 +99,7 @@ namespace KazgarsRevenge
 
         #region stats
         protected int level = 0;
+        protected bool pulling = false;
         
         private Dictionary<StatType, float> statsPerLevel = new Dictionary<StatType, float>()
         {
@@ -201,6 +202,20 @@ namespace KazgarsRevenge
                 Dead = true;
             }
             return actualDamage;
+        }
+
+        public void Pull()
+        {
+            pulling = true;
+            baseStats[StatType.RunSpeed] = 0;
+            RecalculateStats();
+        }
+
+        public virtual void StopPull()
+        {
+            pulling = false;
+            baseStats[StatType.RunSpeed] = originalBaseStats[StatType.RunSpeed];
+            RecalculateStats();
         }
 
         public int Damage(DeBuff db, int d, GameEntity from)
