@@ -64,11 +64,6 @@ namespace KazgarsRevenge
                                 targetData.IsAffectedByGravity = false;
                                 prevRule = creatorData.CollisionInformation.CollisionRules.Personal;
                                 targetData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
-                                Vector3 dir = creatorData.Position - physicalData.Position;
-                                dir.Y = 0;
-                                dir.Normalize();
-                                targetData.LinearVelocity = dir * 800;
-                                physicalData.LinearVelocity = dir * 800;
                                 lifeLength = 8000;
                             }
                         }

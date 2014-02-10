@@ -311,19 +311,19 @@ namespace KazgarsRevenge
         private static readonly Identification DUMMY_ID = new Identification(0, Identification.NO_CLIENT);
         public void DemoLevel()
         {
-            levels.CreateLevel(FloorName.Dungeon);
-            //levels.DemoLevel();
+            //levels.CreateLevel(FloorName.Dungeon);
+            levels.DemoLevel();
             // TODO put him somewhere useful
             players.CreateMainPlayer(new Vector3(120, 20, 120), DUMMY_ID);
 
             // TODO get rid of this for better spawning mechanics
-            //for (int i = 0; i < 10; ++i)
-            //{
-            //    for (int j = 0; j < 10; ++j)
-            //    {
-            //        enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 100, 20, -100 - j * 100), 1);
-            //    }
-            //}
+            for (int i = 0; i < 10; ++i)
+            {
+                for (int j = 0; j < 10; ++j)
+                {
+                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 100, 20, -100 - j * 100), 1);
+                }
+            }
 
             gameState = GameState.Playing;
         }
