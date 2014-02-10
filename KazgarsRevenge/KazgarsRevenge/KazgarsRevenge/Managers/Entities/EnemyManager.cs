@@ -57,14 +57,8 @@ namespace KazgarsRevenge
 
             EnemyControllerSettings bruteSettings = new EnemyControllerSettings();
             #region settings init
-            bruteSettings.attackAniName = "pig_attack";
-            bruteSettings.idleAniName = "pig_idle";
-            bruteSettings.runAniName = "pig_walk";
-            bruteSettings.walkAniName = "pig_walk";
-            bruteSettings.hitAniName = "pig_hit";
-            bruteSettings.deathAniName = "pig_death";
+            bruteSettings.aniPrefix = "pig_";
             bruteSettings.attackDamage = 5;
-            bruteSettings.attackLength = bruteAnimations.GetAniMillis("pig_attack");
             bruteSettings.level = level;
             bruteSettings.attackRange = 30;
             bruteSettings.noticePlayerRange = 200;

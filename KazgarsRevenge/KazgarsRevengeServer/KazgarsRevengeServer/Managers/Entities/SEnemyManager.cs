@@ -50,7 +50,6 @@ namespace KazgarsRevengeServer
             bruteSettings.attackDamage = 5;
             bruteSettings.level = level;
             bruteSettings.attackRange = 25;
-            bruteSettings.attackLength = 100;
             bruteSettings.noticePlayerRange = 200;
             bruteSettings.stopChasingRange = 600;
             #endregion

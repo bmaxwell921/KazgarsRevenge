@@ -207,15 +207,11 @@ namespace KazgarsRevenge
         public void Pull()
         {
             pulling = true;
-            baseStats[StatType.RunSpeed] = 0;
-            RecalculateStats();
         }
 
         public virtual void StopPull()
         {
             pulling = false;
-            baseStats[StatType.RunSpeed] = originalBaseStats[StatType.RunSpeed];
-            RecalculateStats();
         }
 
         public int Damage(DeBuff db, int d, GameEntity from)
