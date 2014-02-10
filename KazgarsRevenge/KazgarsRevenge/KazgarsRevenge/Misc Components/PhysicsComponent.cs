@@ -29,11 +29,6 @@ namespace KazgarsRevenge
             collidable.CollisionInformation.Tag = Entity;
         }
 
-        public override void Update(GameTime gametime)
-        {
-            
-        }
-
         public override void End()
         {
             (Game.Services.GetService(typeof(Space)) as Space).Remove(collidable);

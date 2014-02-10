@@ -45,6 +45,7 @@ namespace KazgarsRevenge
                     {
                         creator.Pull();
                         physicalData.LinearVelocity = Vector3.Zero;
+                        (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
                         pulling = true;
                         prevGrav = creatorData.IsAffectedByGravity;
                         creatorData.IsAffectedByGravity = false;
@@ -55,13 +56,6 @@ namespace KazgarsRevenge
                         dir.Normalize();
                         creatorData.LinearVelocity = dir * 800;
                         lifeLength = 8000;
-                    }
-                }
-                else
-                {
-                    if (hitEntity == creator.Entity)
-                    {
-                        EndPull();
                     }
                 }
             }
@@ -77,8 +71,27 @@ namespace KazgarsRevenge
         }
 
         bool pulling = false;
+        float lastDist = float.MaxValue;
         public override void Update(GameTime gameTime)
         {
+            if (pulling)
+            {
+                Vector3 dir = physicalData.Position - creatorData.Position;
+                dir.Y = 0;
+                dir.Normalize();
+                creatorData.LinearVelocity = dir * 800;
+
+
+                Vector3 diff = creatorData.Position - physicalData.Position;
+                diff.Y = 0;
+                float len = diff.Length();
+                if (len <= 35 || len > lastDist)
+                {
+                    EndPull();
+                }
+                lastDist = len;
+            }
+
             lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (lifeCounter >= lifeLength)
             {

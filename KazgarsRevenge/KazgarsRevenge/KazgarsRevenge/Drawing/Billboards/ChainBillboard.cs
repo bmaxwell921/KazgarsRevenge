@@ -14,7 +14,7 @@ namespace KazgarsRevenge
         Entity followData;
         AliveComponent creator;
         public ChainBillboard(KazgarsRevengeGame game, GameEntity entity, AliveComponent creator)
-            : base(game, entity, Vector3.Up, Vector3.Forward, new Vector2(0, 0))
+            : base(game, entity, Vector3.Up, Vector3.Forward, new Vector2(0, 8))
         {
             followData = entity.GetSharedData(typeof(Entity)) as Entity;
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).ChainEffect;
