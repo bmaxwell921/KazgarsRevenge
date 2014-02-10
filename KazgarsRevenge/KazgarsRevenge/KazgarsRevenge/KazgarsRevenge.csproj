@@ -92,6 +92,7 @@
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
     <Compile Include="Controllers\Attacks\BombController.cs" />
+    <Compile Include="Controllers\Attacks\ChainSpearController.cs" />
     <Compile Include="Controllers\Attacks\GrapplingHookController.cs" />
     <Compile Include="Controllers\Attacks\LooseCannonController.cs" />
     <Compile Include="Controllers\Attacks\OmnishotController.cs" />

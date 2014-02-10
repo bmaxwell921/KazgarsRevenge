@@ -298,7 +298,7 @@ namespace KazgarsRevenge
             boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.Leeching));
             boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.LooseCannon));
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.FlashBomb));
-            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.TarBomb));
+            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.ChainSpear));
 
 
             for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
@@ -459,6 +459,7 @@ namespace KazgarsRevenge
             actionSequences.Add("flashbomb", FlashBombActions());
             actionSequences.Add("tarbomb", TarBombActions());
             actionSequences.Add("grapplinghook", GrapplingHookActions());
+            actionSequences.Add("chainspear", ChainSpearActions());
 
             //melee
             actionSequences.Add("flip", FlipActions());
@@ -1115,13 +1116,50 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 float speed = grapplingHookSpeed;
-                if(abilityLearnedFlags[AbilityName.SpeedyGrapple])
+                if (abilityLearnedFlags[AbilityName.SpeedyGrapple])
                 {
-                    speed *= 2;
+                    speed *= 2.5f;
                 }
 
                 Vector3 forward = GetForward();
                 attacks.CreateGrapplingHook(physicalData.Position + forward * 10, forward, this as AliveComponent, speed);
+
+                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
+
+            });
+
+            sequence.Add(abilityFinishedAction);
+
+            return sequence;
+        }
+        private List<Action> ChainSpearActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                canInterrupt = false;
+                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                attState = AttackState.Locked;
+                millisActionLength = arrowDrawMillis;
+                stateResetCounter = 0;
+            });
+            sequence.Add(actionSequences["shoot"][1]);
+
+            sequence.Add(() =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                float speed = grapplingHookSpeed;
+                if (abilityLearnedFlags[AbilityName.SpeedyGrapple])
+                {
+                    speed *= 2.5f;
+                }
+
+                Vector3 forward = GetForward();
+                attacks.CreateChainSpear(physicalData.Position + forward * 10, forward, this as AliveComponent, speed);
 
                 millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
 
@@ -1422,6 +1460,8 @@ namespace KazgarsRevenge
                     return GetTarBomb();
                 case AbilityName.GrapplingHook:
                     return GetGrapplingHook();
+                case AbilityName.ChainSpear:
+                    return GetChainSpear();
                 default:
                     throw new Exception("That ability hasn't been implemented.");
             }
@@ -1481,6 +1521,10 @@ namespace KazgarsRevenge
         {
             return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 2000, AttackType.Ranged, "grapplinghook", AbilityType.Instant);
         }
+        protected Ability GetChainSpear()
+        {
+            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 2000, AttackType.Ranged, "chainspear", AbilityType.Instant);
+        }
 
         #endregion
 
@@ -1502,7 +1546,7 @@ namespace KazgarsRevenge
         SplittingRain,
         GrapplingHook,
         SpeedyGrapple,
-        GrapplingSpear,
+        ChainSpear,
         ForcefulThrow,
         TarBomb,
         MoltenBolt,

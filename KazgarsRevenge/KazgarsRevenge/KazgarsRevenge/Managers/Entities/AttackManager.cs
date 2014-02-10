@@ -446,7 +446,7 @@ namespace KazgarsRevenge
             hook.AddSharedData(typeof(Entity), hookData);
 
             PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
-            UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook, 
+            UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook,
                 GetUnanimatedModel("Models\\Attachables\\arrow"), new Vector3(20), Vector3.Zero, Matrix.Identity);
             ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator);
             GrapplingHookController hookController = new GrapplingHookController(mainGame, hook, creator);
@@ -462,6 +462,39 @@ namespace KazgarsRevenge
             billboardManager.AddComponent(chainComponent);
 
             hook.AddComponent(typeof(GrapplingHookController), hookController);
+            genComponentManager.AddComponent(hookController);
+
+            attacks.Add(hook);
+        }
+
+        public void CreateChainSpear(Vector3 position, Vector3 dir, AliveComponent creator, float speed)
+        {
+            GameEntity hook = new GameEntity("hook", FactionType.Neutral, EntityType.Misc);
+
+            Entity hookData = new Box(position, 25, 25, 25);
+            hookData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            hookData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            hookData.LinearVelocity = dir * speed;
+            hookData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
+            hook.AddSharedData(typeof(Entity), hookData);
+
+            PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
+            UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook,
+                GetUnanimatedModel("Models\\Attachables\\arrow"), new Vector3(50), Vector3.Zero, Matrix.Identity);
+            ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator);
+            ChainSpearController hookController = new ChainSpearController(mainGame, hook, creator);
+
+
+            hook.AddComponent(typeof(PhysicsComponent), hookPhysics);
+            genComponentManager.AddComponent(hookPhysics);
+
+            hook.AddComponent(typeof(UnanimatedModelComponent), hookGraphics);
+            modelManager.AddComponent(hookGraphics);
+
+            hook.AddComponent(typeof(ChainBillboard), chainComponent);
+            billboardManager.AddComponent(chainComponent);
+
+            hook.AddComponent(typeof(ChainSpearController), hookController);
             genComponentManager.AddComponent(hookController);
 
             attacks.Add(hook);

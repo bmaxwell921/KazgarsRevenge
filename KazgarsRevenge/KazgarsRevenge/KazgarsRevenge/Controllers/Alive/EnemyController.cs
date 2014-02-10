@@ -186,7 +186,7 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case EnemyState.Normal:
-                    if (!HasDeBuff(DeBuff.Stunned))
+                    if (!HasDeBuff(DeBuff.Stunned) && !pulling)
                     {
                         currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
                     }
@@ -240,7 +240,7 @@ namespace KazgarsRevenge
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
                     newVel *= stats[StatType.RunSpeed] / 2;
                     curVel = newVel;
-                    physicalData.LinearVelocity = curVel;
+                    ChangeVelocity(curVel);
 
                     PlayAnimation(settings.walkAniName);
                     chillin = false;
@@ -253,14 +253,14 @@ namespace KazgarsRevenge
                     PlayAnimation(settings.idleAniName);
                     chillin = true;
                 }
-                physicalData.LinearVelocity = curVel;
+                ChangeVelocity(curVel);
                 //wandering
                 if (timerCounter >= timerLength)
                 {
                     //once it's wandered a little ways, sit still for a bit
                     timerCounter = 0;
                     timerLength = rand.Next(1000, 5000);
-                    physicalData.LinearVelocity = Vector3.Zero;
+                    ChangeVelocity(Vector3.Zero);
 
                     PlayAnimation(settings.idleAniName);
                     chillin = true;
@@ -329,7 +329,7 @@ namespace KazgarsRevenge
                 if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                 {
                     currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
-                    physicalData.LinearVelocity = Vector3.Zero;
+                    ChangeVelocity(Vector3.Zero);
                 }
                 else if (minChaseCounter > minChaseLength && (Math.Abs(diff.X) > settings.stopChasingRange || Math.Abs(diff.Z) > settings.stopChasingRange))
                 {
@@ -345,7 +345,7 @@ namespace KazgarsRevenge
                     {
                         diff.Normalize();
                     }
-                    physicalData.LinearVelocity = diff * stats[StatType.RunSpeed];
+                    ChangeVelocity(diff * stats[StatType.RunSpeed]);
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                     if (currentAniName != settings.runAniName)
                     {
@@ -391,6 +391,13 @@ namespace KazgarsRevenge
             modelParams.lineIntensity = percent;
         }
 
+        private void ChangeVelocity(Vector3 vel)
+        {
+            if (!pulling)
+            {
+                physicalData.LinearVelocity = vel;
+            }
+        }
         #endregion
 
 
