@@ -39,7 +39,7 @@ namespace KazgarsRevenge
             ChainEffect.EnableDefaultLighting();
             ChainEffect.World = Matrix.Identity;
             ChainEffect.TextureEnabled = true;
-            ChainEffect.Texture = Game.Content.Load<Texture2D>("Textures\\groundIndicator");
+            ChainEffect.Texture = Game.Content.Load<Texture2D>("Textures\\rope");
         }
 
         public override void Update(GameTime gameTime)

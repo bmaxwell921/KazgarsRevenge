@@ -442,16 +442,21 @@ namespace KazgarsRevenge
             hookData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             hookData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             hookData.LinearVelocity = dir * speed;
+            hookData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             hook.AddSharedData(typeof(Entity), hookData);
 
             PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
-            //UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(
+            UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook, 
+                GetUnanimatedModel("Models\\Attachables\\arrow"), new Vector3(20), Vector3.Zero, Matrix.Identity);
             ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator);
             GrapplingHookController hookController = new GrapplingHookController(mainGame, hook, creator);
 
 
             hook.AddComponent(typeof(PhysicsComponent), hookPhysics);
             genComponentManager.AddComponent(hookPhysics);
+
+            hook.AddComponent(typeof(UnanimatedModelComponent), hookGraphics);
+            modelManager.AddComponent(hookGraphics);
 
             hook.AddComponent(typeof(ChainBillboard), chainComponent);
             billboardManager.AddComponent(chainComponent);

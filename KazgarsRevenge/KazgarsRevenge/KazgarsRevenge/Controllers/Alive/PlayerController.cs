@@ -1119,7 +1119,9 @@ namespace KazgarsRevenge
                 {
                     speed *= 2;
                 }
-                attacks.CreateGrapplingHook(physicalData.Position, GetForward(), this as AliveComponent, speed);
+
+                Vector3 forward = GetForward();
+                attacks.CreateGrapplingHook(physicalData.Position + forward * 10, forward, this as AliveComponent, speed);
 
                 millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
 
