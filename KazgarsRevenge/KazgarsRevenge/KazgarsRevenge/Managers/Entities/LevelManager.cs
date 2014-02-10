@@ -151,7 +151,7 @@ namespace KazgarsRevenge
             // Room.location is the room's location relative to the chunk's location, so we add the values to get its proper location
             Vector3 roomLocation = chunkLocation + new Vector3(room.location.x * BLOCK_SIZE, 0, room.location.y * BLOCK_SIZE);
 
-            Vector3 chunkCenter = (chunkLocation + new Vector3(CHUNK_SIZE, 0, CHUNK_SIZE)) / 2;
+            Vector3 chunkCenter = (chunkLocation + new Vector3(CHUNK_SIZE * BLOCK_SIZE, 0, CHUNK_SIZE * BLOCK_SIZE)) / 2;
             // Rotate it
             Vector3 newLocation;
             float newRotation;

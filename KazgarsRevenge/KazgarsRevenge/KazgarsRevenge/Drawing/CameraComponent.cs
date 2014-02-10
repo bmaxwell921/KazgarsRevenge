@@ -87,6 +87,8 @@ namespace KazgarsRevenge
                 {
                     zoom = 8;
                 }
+
+
             }
 
             distanceFromTarget = 50 * zoom;
