@@ -87,10 +87,6 @@ namespace SkinnedModelLib
             switch (t)
             {
                 case MixType.None:
-                    if (clipName == "pig_attack")
-                    {
-                        int foo = 5;
-                    }
                     currentClipValue = skinningDataValue.AnimationClips[clipName];
                     currentTimeValue = TimeSpan.Zero;
                     currentKeyframe = 0;
