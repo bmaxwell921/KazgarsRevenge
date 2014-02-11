@@ -27,8 +27,8 @@ namespace KazgarsRevenge
     public class MainGame : KazgarsRevengeGame
     {
         #region components
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;        
+        public GraphicsDeviceManager graphics;
+        public SpriteBatch spriteBatch;        
         BoundingBoxDrawer modelDrawer;
         CameraComponent camera;
         ModelManager renderManager;
@@ -328,7 +328,7 @@ namespace KazgarsRevenge
 
         Vector2 vecLoadingText;
 
-        Vector2 guiScale = new Vector2(1,1);
+        public Vector2 guiScale = new Vector2(1,1);
         int maxX;
         int maxY;
         float average;

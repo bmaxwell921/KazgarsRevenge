@@ -145,9 +145,6 @@ namespace KazgarsRevenge
         // Creates a gameEntity for the given information
         private GameEntity CreateRoom(Room room, Rotation chunkRotation, Vector3 chunkLocation)
         {
-            // TODO remove - trying to get placement right
-            chunkRotation = Rotation.ZERO;
-
             // Room.location is the room's location relative to the chunk's location, so we add the values to get its proper location
             Vector3 roomLocation = chunkLocation + new Vector3(room.location.x * BLOCK_SIZE, 0, room.location.y * BLOCK_SIZE);
 

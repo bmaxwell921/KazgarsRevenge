@@ -33,7 +33,7 @@ namespace KazgarsRevenge
         }
 
 
-        public object Clone()
+        public virtual object Clone()
         {
             ChunkComponent comp = new ChunkComponent();
             comp.location = (Location)this.location.Clone();
