@@ -18,13 +18,17 @@ namespace KazgarsRevenge
 {
     public class ChainSpearController : AIComponent
     {
+        AliveComponent creator;
         Entity creatorData;
         double lifeCounter = 0;
         double lifeLength = 1000;
         FactionType factionToSpear = FactionType.Enemies;
-        public ChainSpearController(KazgarsRevengeGame game, GameEntity entity, AliveComponent creator)
+        bool stun = false;
+        public ChainSpearController(KazgarsRevengeGame game, GameEntity entity, AliveComponent creator, bool stun)
             : base(game, entity)
         {
+            this.creator = creator;
+            this.stun = stun;
             this.factionToSpear = creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players;
             this.creatorData = creator.Entity.GetSharedData(typeof(Entity)) as Entity;
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
@@ -65,6 +69,7 @@ namespace KazgarsRevenge
                                 prevRule = creatorData.CollisionInformation.CollisionRules.Personal;
                                 targetData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
                                 lifeLength = 8000;
+                                target.Damage(DeBuff.ForcefulThrow, 0, creator.Entity);
                             }
                         }
                     }

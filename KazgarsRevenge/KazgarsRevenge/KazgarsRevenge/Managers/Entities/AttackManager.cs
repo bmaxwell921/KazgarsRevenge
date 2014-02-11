@@ -467,7 +467,7 @@ namespace KazgarsRevenge
             attacks.Add(hook);
         }
 
-        public void CreateChainSpear(Vector3 position, Vector3 dir, AliveComponent creator, float speed)
+        public void CreateChainSpear(Vector3 position, Vector3 dir, AliveComponent creator, float speed, bool forceful)
         {
             GameEntity hook = new GameEntity("hook", FactionType.Neutral, EntityType.Misc);
 
@@ -482,7 +482,7 @@ namespace KazgarsRevenge
             UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook,
                 GetUnanimatedModel("Models\\Attachables\\arrow"), new Vector3(50), Vector3.Zero, Matrix.Identity);
             ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator);
-            ChainSpearController hookController = new ChainSpearController(mainGame, hook, creator);
+            ChainSpearController hookController = new ChainSpearController(mainGame, hook, creator, forceful);
 
 
             hook.AddComponent(typeof(PhysicsComponent), hookPhysics);
@@ -499,6 +499,41 @@ namespace KazgarsRevenge
 
             attacks.Add(hook);
         }
+
+        public void CreateMoltenBolt(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
+        {
+            GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
+            position.Y = 40;
+            Entity arrowData = new Box(position, 10, 17, 32, .001f);
+            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            arrowData.LinearVelocity = dir * 450;
+            arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
+            arrow.AddSharedData(typeof(Entity), arrowData);
+
+            PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
+                                                                                new Vector3(20), Vector3.Backward * 20, Matrix.Identity);
+            arrowGraphics.AddEmitter(typeof(FireArrowParticleSystem), 50, 10, Vector3.Zero);
+
+            ArrowController arrowAI = new ArrowController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            arrowAI.Penetrate();
+            arrowAI.Ignite();
+
+            arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
+            genComponentManager.AddComponent(arrowPhysics);
+
+            arrow.AddComponent(typeof(UnanimatedModelComponent), arrowGraphics);
+            modelManager.AddComponent(arrowGraphics);
+
+            arrow.AddComponent(typeof(AttackController), arrowAI);
+            genComponentManager.AddComponent(arrowAI);
+
+            attacks.Add(arrow);
+
+            soundEffects.playRangedSound();
+        }
+        
         #endregion
 
         #region Misc

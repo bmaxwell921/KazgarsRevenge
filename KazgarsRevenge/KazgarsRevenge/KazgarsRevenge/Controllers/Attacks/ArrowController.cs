@@ -25,6 +25,7 @@ namespace KazgarsRevenge
             dieAfterContact = false;
         }
 
+
         AliveComponent target;
         public void Home(AliveComponent target)
         {

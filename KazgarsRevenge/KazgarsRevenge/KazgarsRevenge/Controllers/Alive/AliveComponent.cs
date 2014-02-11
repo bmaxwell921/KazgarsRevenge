@@ -23,16 +23,16 @@ namespace KazgarsRevenge
         SerratedBleeding,
         MagneticImplant,
         FlashBomb,
-        TarBomb,
-        Stunned,
+        Tar,
+        Stunned,//hide this from gui (just show description for flashbomb or forceful throw or w/e)
+        ForcefulThrow,
+        Igniting,
     }
     public enum Buff
     {
         None,
         AdrenalineRush,
         Homing,
-        Penetrating,
-        Leeching,
         SerratedBleeding,
     }
     public enum BuffState
@@ -216,8 +216,16 @@ namespace KazgarsRevenge
 
         public int Damage(DeBuff db, int d, GameEntity from)
         {
-            int actualDamage = Damage(d, false);
+            int toDeal = d;
+            if (db == DeBuff.Igniting && HasDeBuff(DeBuff.Tar))
+            {
+                d *= 4;
+            }
+
+            int actualDamage = Damage(toDeal, false);
             TakeDamage(actualDamage, from);
+
+
 
             //handle negative effect
             if (db != DeBuff.None)
@@ -226,6 +234,14 @@ namespace KazgarsRevenge
             }
 
             return actualDamage;
+        }
+
+        private void TryIgnite(int d)
+        {
+            if (HasDeBuff(DeBuff.Tar))
+            {
+
+            }
         }
 
         protected void Heal(int h)
@@ -339,7 +355,7 @@ namespace KazgarsRevenge
                         AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.FlashBomb], null);
                     }
                     break;
-                case DeBuff.TarBomb:
+                case DeBuff.Tar:
                     if (state == BuffState.Starting)
                     {
                         baseStats[StatType.RunSpeed] -= 80;
@@ -351,6 +367,12 @@ namespace KazgarsRevenge
                         RecalculateStats();
                     }
                     break;
+                case DeBuff.ForcefulThrow:
+                    if (state == BuffState.Starting)
+                    {
+                        AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.ForcefulThrow], null);
+                    }
+                    break;
             }
         }
 
@@ -358,8 +380,10 @@ namespace KazgarsRevenge
         {
             {DeBuff.SerratedBleeding, 5000},
             {DeBuff.FlashBomb, 3000},
-            {DeBuff.TarBomb, 6000},
-            {DeBuff.MagneticImplant, 2000}
+            {DeBuff.Tar, 6000},
+            {DeBuff.MagneticImplant, 2000},
+            {DeBuff.ForcefulThrow, 3000},
+            {DeBuff.Igniting, 0}
         };
         Dictionary<DeBuff, double> debuffTickLengths = new Dictionary<DeBuff, double>()
         {
@@ -370,8 +394,6 @@ namespace KazgarsRevenge
         {
             {Buff.AdrenalineRush, 6000},
             {Buff.Homing, 6000},
-            {Buff.Penetrating, 6000},
-            {Buff.Leeching, 6000},
             {Buff.SerratedBleeding, 6000},
         };
 
@@ -428,7 +450,7 @@ namespace KazgarsRevenge
             HandleDeBuff(b, BuffState.Starting);
         }
 
-        protected bool HasBuff(Buff b)
+        public bool HasBuff(Buff b)
         {
             for (int i = 0; i < activeBuffs.Count; ++i)
             {
@@ -440,7 +462,7 @@ namespace KazgarsRevenge
             return false;
         }
 
-        protected bool HasDeBuff(DeBuff b)
+        public bool HasDeBuff(DeBuff b)
         {
             for (int i = 0; i < activeDebuffs.Count; ++i)
             {

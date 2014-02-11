@@ -69,7 +69,6 @@ namespace KazgarsRevenge
         #endregion
 
         public RenderTarget2D RenderTarget { get { return renderTarget; } }
-        private Thread loadingThread;
         float screenScale = 1;
 
         public MainGame()
@@ -87,7 +86,6 @@ namespace KazgarsRevenge
             SetUpLoggers();
 
             bool fullscreen = false;
-            loadingThread = new Thread(DemoLevel);
 
             if (fullscreen)
             {
@@ -233,7 +231,7 @@ namespace KazgarsRevenge
                         if (mainMenuState == mainMenu.PLAY)
                         {
                             gameState = GameState.Loading;
-                            loadingThread.Start();
+                            DemoLevel();
                         }
                         else if (mainMenuState == mainMenu.SETTINGS)
                         {
@@ -317,13 +315,13 @@ namespace KazgarsRevenge
             players.CreateMainPlayer(new Vector3(120, 20, 120), DUMMY_ID);
 
             // TODO get rid of this for better spawning mechanics
-            //for (int i = 0; i < 10; ++i)
-            //{
-            //    for (int j = 0; j < 10; ++j)
-            //    {
-            //        enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 100, 20, -100 - j * 100), 1);
-            //    }
-            //}
+            for (int i = 0; i < 10; ++i)
+            {
+                for (int j = 0; j < 10; ++j)
+                {
+                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 100, 20, -100 - j * 100), 1);
+                }
+            }
 
             gameState = GameState.Playing;
         }
