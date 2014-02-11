@@ -13,6 +13,19 @@ namespace KazgarsRevenge
     /// </summary>
     public class MenuManager : DrawableGameComponent
     {
+        /*
+         * To add in MenuManger:
+         *  1) Add MenuManager initialization to MainGame.Initialize();
+         *  2) Change Update code
+         *      a) Delete all of the update code except the initial stuff and the GameState.Playing stuff
+         *      b) Pull base.Update(gameTime) outside of the GameState.Playing case
+         *  3) Change Draw code
+         *      a) Delete all the Draw code except for the initial stuff and the GameState.Playing stuff
+         *      b) In the not GameState.Playing do base.Draw(gameTime)
+         *      
+         * TODO next:
+         *  - Update moving between menus (unless Andy gets me my models....)
+         */ 
         #region Fonts
         private SpriteFont titleFont;
         private SpriteFont normalFont;
@@ -41,26 +54,45 @@ namespace KazgarsRevenge
         private KeyboardState keyboardState;
         private KeyboardState prevKeyboardState;
 
+        // I know it's bad to have two sprite batches, but they're used completely separately so it should be ok
+        private SpriteBatch sb;
+
         public MenuManager(KazgarsRevengeGame game)
             : base(game as Game)
         {
-            menuQ = new Queue<IMenu>();       
+            menuQ = new Queue<IMenu>();
+
+            MainGame mg = Game as MainGame;
+            this.screenWidth = mg.graphics.PreferredBackBufferWidth;
+            this.screenHeight = mg.graphics.PreferredBackBufferHeight;
+
+            normalFont = Game.Content.Load<SpriteFont>("Verdana");
+            titleFont = Game.Content.Load<SpriteFont>("Title");
         }
 
         #region Setup
         private void SetUpMenus()
         {
-            MainGame mg = Game as MainGame;
+            // HACK
+            int maxX = GraphicsDevice.Viewport.Width;
+            int maxY = GraphicsDevice.Viewport.Height;
+            float xRatio = maxX / 1920f;
+            float yRatio = maxY / 1080f;
+            float average = (xRatio + yRatio) / 2;
+            Vector2 guiScale = new Vector2(xRatio, yRatio);
+
+
             // TODO other menus come up here
-            LoadingMenu loading = new LoadingMenu(mg.spriteBatch, LOADING, titleFont, mg.guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));
+            LoadingMenu loading = new LoadingMenu(sb, LOADING, titleFont, guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));
 
-            SelectionMenu title = new SelectionMenu(mg.spriteBatch, GAME_TITLE, titleFont, mg.guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));  
+            SelectionMenu title = new SelectionMenu(sb, GAME_TITLE, titleFont, guiScale, new Vector2(screenWidth / 2, screenHeight * .35f), 
+                new Rectangle(0,0,screenWidth,screenHeight), Game.Content.Load<Texture2D>(@"Textures\Menu\menuBackground"));  
             // TODO Change 2nd arg of MenuTransitionAction to an actual menu
-            title.AddSelection(new TextSelection(mg.spriteBatch, PLAY, normalFont, mg.guiScale, new KeyEvent(Keys.Enter), new MenuTransitionAction(this, null), 
+            title.AddSelection(new TextSelection(sb, PLAY, normalFont, guiScale, new KeyEvent(Keys.Enter), new MenuTransitionAction(this, null), 
                 new Vector2(screenWidth / 2f, screenHeight * 0.47f)));
-            title.AddSelection(new TextSelection(mg.spriteBatch, SETTINGS, normalFont, mg.guiScale, new KeyEvent(Keys.Enter), new MenuTransitionAction(this, null), 
-                new Vector2(screenWidth / 2f, screenHeight * 0.55f))); 
-
+            title.AddSelection(new TextSelection(sb, SETTINGS, normalFont, guiScale, new KeyEvent(Keys.Enter), new MenuTransitionAction(this, null), 
+                new Vector2(screenWidth / 2f, screenHeight * 0.55f)));
+            title.SelectFirst();
             this.currentMenu = title;
         }
         #endregion
@@ -102,20 +134,17 @@ namespace KazgarsRevenge
         protected override void LoadContent()
         {
             base.LoadContent();
-            MainGame mg = Game as MainGame;
-            this.screenWidth = mg.graphics.PreferredBackBufferWidth;
-            this.screenHeight = mg.graphics.PreferredBackBufferHeight;
-
-            normalFont = Game.Content.Load<SpriteFont>("Verdana");
-            titleFont = Game.Content.Load<SpriteFont>("Title");
-
+            sb = new SpriteBatch(Game.GraphicsDevice);
             SetUpMenus();
         }
 
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
+
+            sb.Begin();
             currentMenu.Draw(gameTime);
+            sb.End();
         }
 
         public override void Update(GameTime gameTime)

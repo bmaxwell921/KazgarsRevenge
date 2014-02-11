@@ -32,11 +32,21 @@ namespace KazgarsRevenge
         // Scale used for drawing
         private Vector2 guiScale;
 
-        public AMenu(SpriteBatch sb, string title, SpriteFont sf, Vector2 guiScale, Vector2 titleLoc)
+        // Used for drawing background
+        private Rectangle screenSize;
+
+        // Background to draw, if any
+        private Texture2D background;
+
+        public AMenu(SpriteBatch sb, string title, SpriteFont sf, Vector2 guiScale, Vector2 titleLoc, Rectangle screenSize = new Rectangle(), Texture2D background = null)
         {
+            this.sb = sb;
             this.title = title;
-            this.titleLoc = titleLoc;
+            this.sf = sf;
             this.guiScale = guiScale;
+            this.titleLoc = titleLoc;
+            this.screenSize = screenSize;
+            this.background = background;
             this.handledEvents = new Dictionary<IEvent, IAction>();
 
             drawCenter = sf.MeasureString(title) / 2;
@@ -44,7 +54,7 @@ namespace KazgarsRevenge
 
         public virtual void HandleEvent(IEvent e)
         {
-            if (Handles(e))
+            if (!Handles(e))
             {
                 return;
             }
@@ -70,6 +80,11 @@ namespace KazgarsRevenge
 
         public virtual void Draw(GameTime gameTime)
         {
+            // Only draw if given a background
+            if (background != null)
+            {
+                sb.Draw(background, screenSize, Color.White);
+            }
             sb.DrawString(sf, title, titleLoc, TITLE_COLOR, 0, drawCenter, guiScale, SpriteEffects.None, 0);
         }
     }

@@ -46,7 +46,7 @@ namespace KazgarsRevenge
             this.drawColor = NORMAL_COLOR;
 
             // Middle of both
-            drawLoc = startDrawLoc / 2;
+            drawLoc = startDrawLoc;
             drawCenter = sf.MeasureString(text) / 2;
         }
 

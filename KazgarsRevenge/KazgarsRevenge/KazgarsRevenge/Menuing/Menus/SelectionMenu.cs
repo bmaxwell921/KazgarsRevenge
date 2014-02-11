@@ -18,25 +18,34 @@ namespace KazgarsRevenge
 
         private int currentSelection;
 
-        public SelectionMenu(SpriteBatch sb, string title, SpriteFont sf, Vector2 guiScale, Vector2 titleLoc)
-            : base(sb, title, sf, guiScale, titleLoc)
+        public SelectionMenu(SpriteBatch sb, string title, SpriteFont sf, Vector2 guiScale, Vector2 titleLoc, Rectangle screenSize = new Rectangle(), Texture2D background = null)
+            : base(sb, title, sf, guiScale, titleLoc, screenSize, background)
         {
             selections = new List<Selection>();
-            currentSelection = 0;
+            currentSelection = -1;
             SetUpMovementEvents();
         }
 
-        void SetUpMovementEvents()
+        private void SetUpMovementEvents()
         {
             // Up and Down arrow keys
             this.Register(new KeyEvent(Keys.Up), new UpAction(this));
             this.Register(new KeyEvent(Keys.Down), new DownAction(this));
         }
 
+        public void SelectFirst()
+        {
+            currentSelection = 0;
+            if (selections.Count > 0)
+            {
+                selections[currentSelection].Highlight();
+            }
+        }
+
         /// <summary>
         /// Moves the selection to the next one (ie down)
         /// </summary>
-        void MoveToNextSel()
+        private void MoveToNextSel()
         {
             if (selections.Count > 0)
             {
@@ -46,12 +55,12 @@ namespace KazgarsRevenge
             }
         }
 
-        private void MovetoPrevSel()
+        private void MoveToPrevSel()
         {
             if (selections.Count > 0)
             {
                 // Handle wrapping
-                int nextSel = (currentSelection - 1 < 0) ? selections.Count : currentSelection - 1;
+                int nextSel = (currentSelection - 1 < 0) ? selections.Count - 1 : currentSelection - 1;
                 MoveSelTo(currentSelection, nextSel);
             }
         }
@@ -114,7 +123,7 @@ namespace KazgarsRevenge
             // Move the selection up
             public void Perform()
             {
-                owner.MoveToNextSel();
+                owner.MoveToPrevSel();
             }
         }
 
@@ -131,7 +140,7 @@ namespace KazgarsRevenge
             //Move selection down
             public void Perform()
             {
-                owner.MovetoPrevSel();
+                owner.MoveToNextSel();
             }
         }
     }
