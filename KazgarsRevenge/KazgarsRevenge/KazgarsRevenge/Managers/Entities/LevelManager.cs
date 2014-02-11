@@ -59,8 +59,9 @@ namespace KazgarsRevenge
             // TODO add this
             // public Graph pathGraph;
 
-            public LevelInfo(Chunk[,] chunks, ChunkInfo[,] chunkInfos)
+            public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos)
             {
+                this.currentFloor = currentFloor;
                 this.chunks = chunks;
                 this.chunkInfos = chunkInfos;
             }
@@ -284,7 +285,7 @@ namespace KazgarsRevenge
                 Chunk[,] chunks = ReadChunks(name, chunkInfos);
                 
                 // Graph mvGraph = CreateMovementGraph(name, chunks);
-                return new LevelInfo(chunks, chunkInfos);
+                return new LevelInfo(name, chunks, chunkInfos);
             }
 
             #region Choosing Chunks

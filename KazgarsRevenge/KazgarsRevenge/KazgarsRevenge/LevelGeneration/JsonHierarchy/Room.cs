@@ -37,7 +37,7 @@ namespace KazgarsRevenge
             return spawnerLocs;
         }
 
-        public object Clone()
+        public override object Clone()
         {
             Room clone = new Room();
             clone.location = (Location)this.location.Clone();

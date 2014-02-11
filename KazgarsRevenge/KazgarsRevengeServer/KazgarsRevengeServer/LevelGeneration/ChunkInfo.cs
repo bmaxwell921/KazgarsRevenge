@@ -21,7 +21,7 @@ namespace KazgarsRevengeServer
         // Which 'directions' of this chunk have doors
         private ISet<Direction> doorDirections;
 
-        private Rotation rotation;
+        public Rotation rotation;
 
 
         /// <summary>

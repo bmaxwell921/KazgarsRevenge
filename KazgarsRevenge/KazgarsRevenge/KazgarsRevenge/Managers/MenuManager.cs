@@ -48,15 +48,22 @@ namespace KazgarsRevenge
         }
 
         #region Setup
-        private IMenu SetUpMenus()
+        private void SetUpMenus()
         {
             MainGame mg = Game as MainGame;
-            SelectionMenu title = new SelectionMenu(mg.spriteBatch, GAME_TITLE, titleFont, mg.guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));
-            // TODO continue here. Set up events and actions for title, incorporate this into actual game
-            return title;
+            // TODO other menus come up here
+            LoadingMenu loading = new LoadingMenu(mg.spriteBatch, LOADING, titleFont, mg.guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));
+
+            SelectionMenu title = new SelectionMenu(mg.spriteBatch, GAME_TITLE, titleFont, mg.guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));  
+            // TODO Change 2nd arg of MenuTransitionAction to an actual menu
+            title.AddSelection(new TextSelection(mg.spriteBatch, PLAY, normalFont, mg.guiScale, new KeyEvent(Keys.Enter), new MenuTransitionAction(this, null), 
+                new Vector2(screenWidth / 2f, screenHeight * 0.47f)));
+            title.AddSelection(new TextSelection(mg.spriteBatch, SETTINGS, normalFont, mg.guiScale, new KeyEvent(Keys.Enter), new MenuTransitionAction(this, null), 
+                new Vector2(screenWidth / 2f, screenHeight * 0.55f))); 
+
+            this.currentMenu = title;
         }
         #endregion
-
 
         #region Action methods
         /// <summary>
@@ -65,6 +72,10 @@ namespace KazgarsRevenge
         /// <param name="next"></param>
         public void TransitionTo(IMenu next)
         {
+            if (next == null)
+            {
+                return;
+            }
             // Get rid of old
             currentMenu.Unload();
             menuQ.Enqueue(currentMenu);
@@ -98,7 +109,7 @@ namespace KazgarsRevenge
             normalFont = Game.Content.Load<SpriteFont>("Verdana");
             titleFont = Game.Content.Load<SpriteFont>("Title");
 
-            currentMenu = SetUpMenus();
+            SetUpMenus();
         }
 
         public override void Draw(GameTime gameTime)
