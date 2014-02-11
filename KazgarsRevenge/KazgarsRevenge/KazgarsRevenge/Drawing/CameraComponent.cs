@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using BEPUphysics;
 using BEPUphysics.Entities;
@@ -12,7 +13,14 @@ namespace KazgarsRevenge
     public class CameraComponent : GameComponent
     {
         #region fields
+        private float fov = MathHelper.PiOver4;
+        private float nearPlane = .1f;
+        private float farPlane = 1000;
+
         private Entity physicalData;
+
+        private Matrix inverseViewProj = Matrix.Identity;
+        public Matrix InverseViewProj { get { return inverseViewProj; } }
 
         private Matrix proj;
         public Matrix Projection { get { return proj; } }
@@ -37,6 +45,9 @@ namespace KazgarsRevenge
         float yaw = 0;
         float pitch = -MathHelper.PiOver4;
         public float zoom = 4.0f;
+
+        public GBufferTarget RenderTargets { get; private set; }
+        public RenderTarget2D OutputTarget { get; private set; }
         #endregion
 
         public void AssignEntity(Entity followMe)
@@ -47,18 +58,32 @@ namespace KazgarsRevenge
         public CameraComponent(MainGame game)
             : base(game)
         {
+
         }
 
         public override void  Initialize()
         {
-            proj = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, Game.GraphicsDevice.Viewport.AspectRatio, .3f, 1000.0f);
+            proj = Matrix.CreatePerspectiveFieldOfView(fov, Game.GraphicsDevice.Viewport.AspectRatio, nearPlane, farPlane);
 
             rot = Matrix.CreateRotationX(pitch) * Matrix.CreateRotationY(yaw);
             rotatedTarget = Vector3.Transform(new Vector3(0, 0, -1), rot);
             rotatedUpVector = Vector3.Transform(new Vector3(0, 1, 0), rot);
 
+            Game.GraphicsDevice.DeviceReset += new EventHandler<EventArgs>(resetOutputTarget);
+
             int sheight = Game.GraphicsDevice.Viewport.Height;
             int swidth = Game.GraphicsDevice.Viewport.Width;
+
+            RenderTargets = new GBufferTarget(Game.GraphicsDevice, Game.GraphicsDevice.Viewport);
+            OutputTarget = new RenderTarget2D(Game.GraphicsDevice, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.None);
+        }
+
+        void resetOutputTarget(object sender, EventArgs e)
+        {
+            if (!OutputTarget.IsDisposed)
+            {
+                OutputTarget.Dispose();
+            }
         }
 
         MouseState curMouse = Mouse.GetState();
@@ -105,6 +130,8 @@ namespace KazgarsRevenge
             position = target + rot.Backward * distanceFromTarget;
             view = Matrix.CreateLookAt(position, target, rotatedUpVector);
             prevMouse = curMouse;
+
+            inverseViewProj = Matrix.Invert(view * proj);
         }
     }
 }

@@ -43,7 +43,6 @@ namespace KazgarsRevenge
             amountStolen = percentReturned;
         }
 
-        bool igniting = false;
         public void Ignite()
         {
             debuff = DeBuff.Igniting;
