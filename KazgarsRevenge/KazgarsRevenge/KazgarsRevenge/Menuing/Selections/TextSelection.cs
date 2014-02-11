@@ -36,16 +36,17 @@ namespace KazgarsRevenge
         // Duh
         private Vector2 guiScale;
 
-        public TextSelection(SpriteBatch sb, String text, SpriteFont sf, Vector2 guiScale, IEvent e, IAction action, Rectangle drawArea)
-            : base(e, action, drawArea)
+        public TextSelection(SpriteBatch sb, String text, SpriteFont sf, Vector2 guiScale, IEvent e, IAction action, Vector2 startDrawLoc)
+            : base(e, action, startDrawLoc)
         {
             this.sb = sb;
             this.text = text;
             this.sf = sf;
+            this.guiScale = guiScale;
             this.drawColor = NORMAL_COLOR;
 
             // Middle of both
-            drawLoc = new Vector2(drawArea.X, drawArea.Y) / 2;
+            drawLoc = startDrawLoc / 2;
             drawCenter = sf.MeasureString(text) / 2;
         }
 
@@ -55,7 +56,9 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public Rectangle SelectableArea()
         {
-            return base.drawArea;
+            // TODO
+            Rectangle bounds = new Rectangle();
+            return bounds;
         }
 
         /// <summary>

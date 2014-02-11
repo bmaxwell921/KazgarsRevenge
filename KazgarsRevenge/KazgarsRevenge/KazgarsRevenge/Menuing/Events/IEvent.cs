@@ -16,5 +16,16 @@ namespace KazgarsRevenge
         /// <param name="other"></param>
         /// <returns></returns>
         bool Equals(IEvent other);
+
+        /// <summary>
+        /// Whether this Event has been consumed or not.
+        /// Consumed events can no longer be processed
+        /// </summary>
+        bool isConsumed();
+
+        /// <summary>
+        /// Consume this event, so it can't be processed further
+        /// </summary>
+        void Consume();
     }
 }

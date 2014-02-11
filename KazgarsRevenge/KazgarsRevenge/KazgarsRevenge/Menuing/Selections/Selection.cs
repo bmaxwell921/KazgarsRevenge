@@ -18,17 +18,17 @@ namespace KazgarsRevenge
         public IAction action;
 
         // Where this Selection can be drawn
-        public Rectangle drawArea;
+        public Vector2 startDrawLoc;
 
         /// <summary>
         /// Constructs a new Selection with the given event and action
         /// </summary>
         /// <param name="e"></param>
         /// <param name="action"></param>
-        public Selection(IEvent e, IAction action, Rectangle drawArea)
+        public Selection(IEvent e, IAction action, Vector2 startDrawLoc)
         {
             this.Register(e, action);
-            this.drawArea = drawArea;
+            this.startDrawLoc = startDrawLoc;
         }
 
         /// <summary>
@@ -42,6 +42,7 @@ namespace KazgarsRevenge
                 return;
             }
             action.Perform();
+            e.Consume();
         }
 
         /// <summary>

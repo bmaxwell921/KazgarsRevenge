@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     /// <summary>
     /// Class used to represent a mouse click
     /// </summary>
-    public class MouseEvent : IEvent
+    public class MouseEvent : AEvent
     {
         // The location that was clicked
         public Vector2 clickLoc;
@@ -30,7 +30,7 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(IEvent other)
+        public override bool Equals(IEvent other)
         {
             MouseEvent otherME = other as MouseEvent;
             if (otherME == null)
@@ -39,6 +39,8 @@ namespace KazgarsRevenge
             }
             return this.clickLoc.Equals(otherME.clickLoc);
         }
+
+        // TODO add a clickedInArea method??
 
         public override bool Equals(object obj)
         {

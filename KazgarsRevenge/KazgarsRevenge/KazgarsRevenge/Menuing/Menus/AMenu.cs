@@ -21,13 +21,13 @@ namespace KazgarsRevenge
         public Vector2 titleLoc;
 
         // SpriteBatch used for drawing
-        private SpriteBatch sb;
+        protected SpriteBatch sb;
 
         // SpriteFont used for drawing
-        private SpriteFont sf;
+        protected SpriteFont sf;
 
         // Center of the string, used to center text
-        private Vector2 drawCenter;
+        protected Vector2 drawCenter;
 
         // Scale used for drawing
         private Vector2 guiScale;
@@ -42,13 +42,16 @@ namespace KazgarsRevenge
             drawCenter = sf.MeasureString(title) / 2;
         }
 
-        public void HandleEvent(IEvent e)
+        public virtual void HandleEvent(IEvent e)
         {
             if (Handles(e))
             {
                 return;
             }
             handledEvents[e].Perform();
+
+            // Don't let anyone else use it
+            e.Consume();
         }
 
         public bool Handles(IEvent e)

@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     /// <summary>
     /// A class used to represent a key press
     /// </summary>
-    public class KeyEvent : IEvent
+    public class KeyEvent : AEvent
     {
         // The key associated with this event
         public Keys key;
@@ -25,7 +25,7 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(IEvent other)
+        public override bool Equals(IEvent other)
         {
             KeyEvent otherKE = other as KeyEvent;
             if (otherKE == null)
