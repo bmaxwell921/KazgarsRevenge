@@ -336,7 +336,6 @@ namespace KazgarsRevenge
             PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
             UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, Matrix.Identity);
             BombController bombController = new BombController(mainGame, bomb, AbilityName.FlashBomb, targetPos, creator, radius);
-            bombGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), 100, 2, Vector3.Zero);
 
             bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
             genComponentManager.AddComponent(bombPhysics);

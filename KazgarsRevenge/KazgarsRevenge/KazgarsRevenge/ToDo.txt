@@ -37,8 +37,8 @@ pathfinding (need level generation first (which needs more levels first))
 
 Abilities
 ===========
-implement them aaaalll
-
+grappling shot / chain spear: attach quad rope/chain to hand
+tar bomb: get new particles / finish particle system
 
 
 Camera
@@ -50,3 +50,5 @@ orbit with arrow keys?
 Floating Text
 ===============
 combat text for heals and damage
+
+

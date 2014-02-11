@@ -106,6 +106,7 @@
     <Compile Include="Drawing\Billboards\ChainBillboard.cs" />
     <Compile Include="Drawing\Billboards\DrawableComponentBillboard.cs" />
     <Compile Include="Drawing\Billboards\CameraOrientedBillboard.cs" />
+    <Compile Include="GBufferTarget.cs" />
     <Compile Include="LevelGeneration\JsonHierarchy\Chunk.cs" />
     <Compile Include="LevelGeneration\ChunkUtil.cs" />
     <Compile Include="LevelGeneration\ChunkInfo.cs" />
@@ -158,9 +159,9 @@
     <Compile Include="Drawing\AnimatedModelComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
     <Compile Include="Base Classes\Component.cs" />
-    <Compile Include="Drawing\CustomSkinnedEffect.cs" />
+    <Compile Include="Z Effects\CustomSkinnedEffect.cs" />
     <Compile Include="Drawing\DrawableComponent3D.cs" />
-    <Compile Include="Drawing\EffectHelpers.cs" />
+    <Compile Include="Z Effects\EffectHelpers.cs" />
     <Compile Include="Base Classes\GameEntity.cs" />
     <Compile Include="Managers\Entities\LootManager.cs" />
     <Compile Include="Misc Components\Identification.cs" />
@@ -215,6 +216,8 @@
     <Compile Include="Misc Components\StaticMeshComponent.cs" />
     <Compile Include="Util\IdentificationFactory.cs" />
     <Compile Include="Util\RandSingleton.cs" />
+    <Compile Include="Z Effects\LightEffect.cs" />
+    <Compile Include="Z Effects\PointLightEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
