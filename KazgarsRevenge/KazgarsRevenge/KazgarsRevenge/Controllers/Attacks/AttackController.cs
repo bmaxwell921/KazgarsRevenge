@@ -42,6 +42,12 @@ namespace KazgarsRevenge
             lifesteal = true;
             amountStolen = percentReturned;
         }
+
+        bool igniting = false;
+        public void Ignite()
+        {
+            debuff = DeBuff.Igniting;
+        }
         double lifeCounter = 0;
         protected double lifeLength = 500;
         public override void Update(GameTime gameTime)
@@ -68,7 +74,7 @@ namespace KazgarsRevenge
 
         public void AddTarExplosion()
         {
-            debuff = DeBuff.TarBomb;
+            debuff = DeBuff.Tar;
         }
 
         protected bool aoe = false;
