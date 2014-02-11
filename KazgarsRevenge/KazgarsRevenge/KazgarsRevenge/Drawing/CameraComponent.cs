@@ -83,10 +83,10 @@ namespace KazgarsRevenge
                 {
                     zoom = 1f;
                 }
-                if (zoom > 8)
-                {
-                    zoom = 8;
-                }
+                //if (zoom > 8)
+                //{
+                //    zoom = 8;
+                //}
 
 
             }
