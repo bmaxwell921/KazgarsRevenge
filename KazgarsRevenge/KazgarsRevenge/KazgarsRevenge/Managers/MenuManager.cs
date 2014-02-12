@@ -235,10 +235,11 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void LoadLevel(FloorName name)
         {
-            //// TODO what do we do here?
+            //// TODO how does this manager act when we go to playing?
             //this.menuQ.Clear();
             //currentMenu = menus[GAME_TITLE];
 
+            // TODO Fire this up in a new thread
             (Game as MainGame).TransitionToPlaying(name);
         }
 
