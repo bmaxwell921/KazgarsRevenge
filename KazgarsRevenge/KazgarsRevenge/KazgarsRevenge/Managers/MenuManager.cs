@@ -27,41 +27,45 @@ namespace KazgarsRevenge
          *  - Update moving between menus (unless Andy gets me my models....)
          */ 
         #region Fonts
-        private SpriteFont titleFont;
-        private SpriteFont normalFont;
+        public SpriteFont titleFont;
+        public SpriteFont normalFont;
         #endregion
 
         #region Strings
-        private static readonly string GAME_TITLE = "KAZGAR'S REVENGE";
-        private static readonly string PLAY = "PLAY";
-        private static readonly string SETTINGS = "SETTINGS";
-        private static readonly string ACCOUNTS = "ACCOUNTS";
-        private static readonly string LEVELS = "LEVELS";
-        private static readonly string LOADING = "LOADING";
+        public static readonly string GAME_TITLE = "KAZGAR'S REVENGE";
+        public static readonly string PLAY = "PLAY";
+        public static readonly string SETTINGS = "SETTINGS";
+        public static readonly string ACCOUNTS = "ACCOUNTS";
+        public static readonly string LEVELS = "LEVELS";
+        public static readonly string LOADING = "LOADING";
         #endregion
 
-        private int screenWidth;
-
-        private int screenHeight;
+        // Screen info
+        public Vector2 guiScale;
+        public int screenWidth;
+        public int screenHeight;
 
         // The current Menu we're on
         private IMenu currentMenu;
 
         // All of the previous menus we've been thru
-        private Queue<IMenu> menuQ;
+        private Queue<IMenuInfoBox> menuQ;
+
+        // Dictionary so Menus can set up links as needed
+        public IDictionary<string, IMenu> menus;
 
         // I don't like that these are here
         private KeyboardState keyboardState;
         private KeyboardState prevKeyboardState;
 
         // I know it's bad to have two sprite batches, but they're used completely separately so it should be ok
-        private SpriteBatch sb;
+        public SpriteBatch sb;
 
         public MenuManager(KazgarsRevengeGame game)
             : base(game as Game)
         {
-            menuQ = new Queue<IMenu>();
-
+            menuQ = new Queue<IMenuInfoBox>();
+            menus = new Dictionary<string, IMenu>();
             MainGame mg = Game as MainGame;
             this.screenWidth = mg.graphics.PreferredBackBufferWidth;
             this.screenHeight = mg.graphics.PreferredBackBufferHeight;
@@ -72,28 +76,27 @@ namespace KazgarsRevenge
 
         #region Setup
         private void SetUpMenus()
-        {
-            // HACK
-            int maxX = GraphicsDevice.Viewport.Width;
-            int maxY = GraphicsDevice.Viewport.Height;
-            float xRatio = maxX / 1920f;
-            float yRatio = maxY / 1080f;
-            float average = (xRatio + yRatio) / 2;
-            Vector2 guiScale = new Vector2(xRatio, yRatio);
-
-
+        {   
             // TODO other menus come up here
-            LoadingMenu loading = new LoadingMenu(sb, LOADING, titleFont, guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));
+            Vector2 titleLoc = new Vector2(screenWidth / 2, screenHeight * .35f);
+            Texture2D background = Game.Content.Load<Texture2D>(@"Textures\Menu\menuBackground");
+            Rectangle backgroundBox = new Rectangle(0, 0, screenWidth, screenHeight);
 
-            SelectionMenu title = new SelectionMenu(sb, GAME_TITLE, titleFont, guiScale, new Vector2(screenWidth / 2, screenHeight * .35f), 
-                new Rectangle(0,0,screenWidth,screenHeight), Game.Content.Load<Texture2D>(@"Textures\Menu\menuBackground"));  
-            // TODO Change 2nd arg of MenuTransitionAction to an actual menu
-            title.AddSelection(new TextSelection(sb, PLAY, normalFont, guiScale, new KeyEvent(Keys.Enter), new MenuTransitionAction(this, null), 
-                new Vector2(screenWidth / 2f, screenHeight * 0.47f)));
-            title.AddSelection(new TextSelection(sb, SETTINGS, normalFont, guiScale, new KeyEvent(Keys.Enter), new MenuTransitionAction(this, null), 
-                new Vector2(screenWidth / 2f, screenHeight * 0.55f)));
-            title.SelectFirst();
+            AccountMenu accountMenu = new AccountMenu(this, ACCOUNTS, titleLoc, background, backgroundBox, new Vector2(screenWidth / 2f, screenHeight * 0.47f));
+
+            LinkedMenu title = new LinkedMenu(this, GAME_TITLE, new Vector2(screenWidth / 2, screenHeight * .35f), background, backgroundBox);
+            title.AddSelection(new SelectionV2(this, PLAY, new Vector2(screenWidth / 2f, screenHeight * 0.47f)), accountMenu);
+            title.AddSelection(new SelectionV2(this, SETTINGS, new Vector2(screenWidth / 2f, screenHeight * 0.55f)), null);
             this.currentMenu = title;
+
+            //LoadingMenu loading = new LoadingMenu(sb, LOADING, titleFont, guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));
+
+            menus[GAME_TITLE] = title;
+            menus[PLAY] = null;
+            menus[SETTINGS] = null;
+            menus[ACCOUNTS] = accountMenu;
+            menus[LEVELS] = null;
+            menus[LOADING] = null;
         }
         #endregion
 
@@ -109,11 +112,11 @@ namespace KazgarsRevenge
                 return;
             }
             // Get rid of old
-            currentMenu.Unload();
-            menuQ.Enqueue(currentMenu);
+            object info = currentMenu.Unload();
+            menuQ.Enqueue(new IMenuInfoBox(currentMenu, info));
 
             // Bring in new
-            next.Load();
+            next.Load(info);
             currentMenu = next;
         }
 
@@ -128,13 +131,29 @@ namespace KazgarsRevenge
                 return;
             }
 
-            this.TransitionTo(menuQ.Dequeue());
+            // Should just be able to toss the return away...
+            currentMenu.Unload();
+
+            IMenuInfoBox next = menuQ.Dequeue();
+
+            // Load the old info that was passed in
+            next.menu.Load(next.info);
+            currentMenu = next.menu;
         }
 
         protected override void LoadContent()
         {
             base.LoadContent();
             sb = new SpriteBatch(Game.GraphicsDevice);
+
+            // Set up guiScale
+            int maxX = GraphicsDevice.Viewport.Width;
+            int maxY = GraphicsDevice.Viewport.Height;
+            float xRatio = maxX / 1920f;
+            float yRatio = maxY / 1080f;
+            float average = (xRatio + yRatio) / 2;
+            guiScale = new Vector2(xRatio, yRatio);
+
             SetUpMenus();
         }
 
@@ -146,6 +165,8 @@ namespace KazgarsRevenge
             currentMenu.Draw(gameTime);
             sb.End();
         }
+
+        private static readonly KeyEvent enterKey = new KeyEvent(Keys.Enter);
 
         public override void Update(GameTime gameTime)
         {
@@ -161,6 +182,22 @@ namespace KazgarsRevenge
             // Send em
             foreach (IEvent e in events)
             {
+                if (enterKey.Equals(e))
+                {
+                    // Bit of a hack here
+                    LinkedMenu sel = currentMenu as LinkedMenu;
+                    if (sel == null)
+                    {
+                        continue;
+                    }
+                    /*
+                     * TODO remove this part for the actual stuff
+                     */
+                    (Game as MainGame).DemoLevel();
+                    //TransitionTo(sel.GetSelection());
+                    return;
+
+                }
                 currentMenu.HandleEvent(e);
             }
 
@@ -189,5 +226,23 @@ namespace KazgarsRevenge
         }
 
         #endregion
+
+        /// <summary>
+        /// Class to box up Menus and info passed to their load method
+        /// </summary>
+        private class IMenuInfoBox
+        {
+            // The associated menu
+            public IMenu menu;
+
+            // Info to pass to the load method
+            public object info;
+
+            public IMenuInfoBox(IMenu menu, object info)
+            {
+                this.menu = menu;
+                this.info = info;
+            }
+        }
     }
 }

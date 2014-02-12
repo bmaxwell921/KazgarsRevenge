@@ -163,6 +163,10 @@ namespace KazgarsRevenge
             Components.Add(levelModelManager);
             Services.AddService(typeof(LevelModelManager), levelModelManager);
 
+            MenuManager mm = new MenuManager(this);
+            Components.Add(mm);
+            Services.AddService(typeof(MenuManager), mm);
+
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
             base.Initialize();
@@ -244,86 +248,94 @@ namespace KazgarsRevenge
             nmm.Update(gameTime);
             previousKeyboardState = keyboardState;
             keyboardState = Keyboard.GetState();
-
-            switch (gameState)
+            if (gameState == GameState.Playing)
             {
-                case GameState.StartMenu:
-                    if ((keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter)))
-                    {
-                        if (mainMenuState == mainMenu.PLAY)
-                        {
-                            gameState = GameState.Loading;
-                            DemoLevel();
-                        }
-                        else if (mainMenuState == mainMenu.SETTINGS)
-                        {
-                            gameState = GameState.Settings;
-                        }
-                        else if (mainMenuState == mainMenu.NETWORKED)
-                        {
-                            lm.Log(Level.DEBUG, "Transitioning to ConnectionScreen");
-                            gameState = GameState.ConnectionScreen;
-                        }
-                    }
-
-                    if (keyboardState.IsKeyDown(Keys.Escape))
-                    {
-                        Exit();
-                    }
-                                        
-                    if ((keyboardState.IsKeyDown(Keys.Down) && previousKeyboardState.IsKeyUp(Keys.Down)))
-                    {
-                        if ((int) mainMenuState < numMenuStates - 1)
-                        {
-                            mainMenuState++;
-                        }
-                    }
-
-                    if ((keyboardState.IsKeyDown(Keys.Up) && previousKeyboardState.IsKeyUp(Keys.Up)))
-                    {
-                        if ((int) mainMenuState > 0)
-                        {
-                            mainMenuState--;
-                        }
-                    }
-                    break;
-                case GameState.Loading:
-                    break;
-                case GameState.Settings:
-                    gameState = GameState.StartMenu;
-                    break;
-                case GameState.ConnectionScreen:
-                    if (keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter) && nmm.connections.Count != 0)
-                    {
-                        lm.Log(Level.DEBUG, "Connecting to Server 0");
-                        // TODO change this to proper connection number based on input
-                        nmm.ConnectTo(0);
-                        gameState = GameState.Lobby;
-                    }
-                    break;
-                case GameState.Lobby:
-                    // Since isHost starts as false, we'll only be able to play
-                    // once the server gets back to us with whether we're host
-                    // this is desired since that message comes with our id as well
-                    if (nmm.isHost && keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter))
-                    {
-                        lm.Log(Level.DEBUG, "Starting game");
-                        //((MessageSender)Services.GetService(typeof(MessageSender))).SendStartGame(players.myId.id);
-                        //gameState = GameState.ReceivingMap;
-                    }
-                    break;
-                case GameState.Paused:
-
-                    break;
-                case GameState.Playing:
-                    for (int i = alertText.Count - 1; i >= 0; ++i)
-                    {
-                        alertText[i].alpha -= .01f;
-                        alertText[i].position.Y -= 1;
-                    }
-                    base.Update(gameTime);
-                    break;
+                for (int i = alertText.Count - 1; i >= 0; ++i)
+                {
+                    alertText[i].alpha -= .01f;
+                    alertText[i].position.Y -= 1;
+                }
             }
+            base.Update(gameTime);
+            //switch (gameState)
+            //{
+            //    case GameState.StartMenu:
+            //        if ((keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter)))
+            //        {
+            //            if (mainMenuState == mainMenu.PLAY)
+            //            {
+            //                gameState = GameState.Loading;
+            //                DemoLevel();
+            //            }
+            //            else if (mainMenuState == mainMenu.SETTINGS)
+            //            {
+            //                gameState = GameState.Settings;
+            //            }
+            //            else if (mainMenuState == mainMenu.NETWORKED)
+            //            {
+            //                lm.Log(Level.DEBUG, "Transitioning to ConnectionScreen");
+            //                gameState = GameState.ConnectionScreen;
+            //            }
+            //        }
+
+            //        if (keyboardState.IsKeyDown(Keys.Escape))
+            //        {
+            //            Exit();
+            //        }
+                                        
+            //        if ((keyboardState.IsKeyDown(Keys.Down) && previousKeyboardState.IsKeyUp(Keys.Down)))
+            //        {
+            //            if ((int) mainMenuState < numMenuStates - 1)
+            //            {
+            //                mainMenuState++;
+            //            }
+            //        }
+
+            //        if ((keyboardState.IsKeyDown(Keys.Up) && previousKeyboardState.IsKeyUp(Keys.Up)))
+            //        {
+            //            if ((int) mainMenuState > 0)
+            //            {
+            //                mainMenuState--;
+            //            }
+            //        }
+            //        break;
+            //    case GameState.Loading:
+            //        break;
+            //    case GameState.Settings:
+            //        gameState = GameState.StartMenu;
+            //        break;
+            //    case GameState.ConnectionScreen:
+            //        if (keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter) && nmm.connections.Count != 0)
+            //        {
+            //            lm.Log(Level.DEBUG, "Connecting to Server 0");
+            //            // TODO change this to proper connection number based on input
+            //            nmm.ConnectTo(0);
+            //            gameState = GameState.Lobby;
+            //        }
+            //        break;
+            //    case GameState.Lobby:
+            //        // Since isHost starts as false, we'll only be able to play
+            //        // once the server gets back to us with whether we're host
+            //        // this is desired since that message comes with our id as well
+            //        if (nmm.isHost && keyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter))
+            //        {
+            //            lm.Log(Level.DEBUG, "Starting game");
+            //            //((MessageSender)Services.GetService(typeof(MessageSender))).SendStartGame(players.myId.id);
+            //            //gameState = GameState.ReceivingMap;
+            //        }
+            //        break;
+            //    case GameState.Paused:
+
+            //        break;
+            //    case GameState.Playing:
+            //        for (int i = alertText.Count - 1; i >= 0; ++i)
+            //        {
+            //            alertText[i].alpha -= .01f;
+            //            alertText[i].position.Y -= 1;
+            //        }
+            //        base.Update(gameTime);
+            //        break;
+            //}
 
         }
 
@@ -378,163 +390,242 @@ namespace KazgarsRevenge
             rs.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rs;
 
-            //need to move
-            Texture2D backgroundTexture;
-            int screenWidth = graphics.PreferredBackBufferWidth;//GraphicsDevice.Viewport.Width;
-            int screenHeight = graphics.PreferredBackBufferHeight;//GraphicsDevice.Viewport.Height;
-            backgroundTexture = Content.Load<Texture2D>("Textures\\Menu\\menuBackground");
-            Rectangle screenRectangle = new Rectangle(0, 0, screenWidth, screenHeight);
-
-            String titleString = "Kazgar's Revenge";
-            String startString = "Start";
-            String settingsString = "Settings";
-            String loadingString = "Loading";
-            String networkingString = "Multiplayer";
-
-            Vector2 titleSize = titleFont.MeasureString(titleString);
-            Vector2 startSize = normalFont.MeasureString(startString);
-            Vector2 settingsSize = normalFont.MeasureString(settingsString);
-            Vector2 loadingSize = normalFont.MeasureString(loadingString);
-            Vector2 networkingSize = normalFont.MeasureString(networkingString);
-
-            Vector2 titlePosition = new Vector2(screenWidth / 2, screenHeight * .35f);
-            Vector2 startGamePosition = new Vector2(screenWidth / 2, screenHeight * .47f);
-            Vector2 loadGamePosition = new Vector2(screenWidth / 2, screenHeight * .47f);
-            Vector2 settingsPosition = new Vector2(screenWidth / 2, screenHeight * .55f);
-            Vector2 networkingPosition = new Vector2(screenWidth / 2, screenHeight * .61f);
-
-            Vector2 titleOrigin = new Vector2(titleSize.X / 2, titleSize.Y / 2);
-            Vector2 startOrigin = new Vector2(startSize.X / 2, startSize.Y / 2);
-            Vector2 settingsOrigin = new Vector2(settingsSize.X / 2, settingsSize.Y / 2);
-            Vector2 loadingOrigin = new Vector2(loadingSize.X / 2, loadingSize.Y / 2);
-            Vector2 networkingOrigin = new Vector2(networkingSize.X / 2, networkingSize.Y / 2);
-
-            Color titleColor = Color.White;
-            Color startColor = Color.White;
-            Color settingsColor = Color.White;
-            Color loadingColor = Color.White;
-            Color networkingColor = Color.White;
-
-            switch (gameState)
+            if (gameState == GameState.Playing)
             {
-                case GameState.Playing:
-                    bool deferred = false;
-                    if (deferred)
+                bool deferred = false;
+                if (deferred)
+                {
+                    DrawDeferred(gameTime);
+                }
+                else
+                {
+                    if (renderTarget.IsContentLost || normalDepthRenderTarget.IsContentLost)
                     {
-                        DrawDeferred(gameTime);
+                        SetUpRenderTargets();
                     }
-                    else
+
+                    //draw depth render target
+                    GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
+                    GraphicsDevice.Clear(Color.Black);
+                    GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+                    renderManager.Draw(gameTime, true);
+
+                    //draw scene render target
+                    GraphicsDevice.SetRenderTarget(renderTarget);
+                    GraphicsDevice.Clear(Color.Black);
+                    levelModelManager.Draw(gameTime, false);
+                    renderManager.Draw(gameTime, false);
+
+                    //draw particles
+                    particleManager.Draw(gameTime);
+
+                    GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+                    //draw billboarded stuff
+                    billboard.Draw();
+
+
+                    //reset graphics device
+                    GraphicsDevice.SetRenderTarget(null);
+
+                    //pass in depth render target to the edge detection shader
+                    Texture2D normalDepthTexture = normalDepthRenderTarget;
+                    effectOutline.Parameters["ScreenResolution"].SetValue(new Vector2(renderTarget.Width, renderTarget.Height));
+                    effectOutline.Parameters["NormalDepthTexture"].SetValue(normalDepthTexture);
+                    effectOutline.CurrentTechnique = effectOutline.Techniques["EdgeDetect"];
+                    //draw scene
+                    spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effectOutline);
+                    spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+                    spriteBatch.End();
+
+
+
+
+                    //physics debugging
+                    /*
+                    effectModelDrawer.LightingEnabled = false;
+                    effectModelDrawer.VertexColorEnabled = true;
+                    effectModelDrawer.World = Matrix.Identity;
+                    effectModelDrawer.View = camera.View;
+                    effectModelDrawer.Projection = camera.Projection;
+                    modelDrawer.Draw(effectModelDrawer, physics);
+                    */
+
+                    spriteBatch.Begin();
+                    spriteManager.Draw(spriteBatch);
+                    //debug strings
+                    //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
+                    //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
+                    foreach (FloatingText f in alertText)
                     {
-                        if (renderTarget.IsContentLost || normalDepthRenderTarget.IsContentLost)
-                        {
-                            SetUpRenderTargets();
-                        }
-
-                        //draw depth render target
-                        GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
-                        GraphicsDevice.Clear(Color.Black);
-                        GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-                        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                        GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-                        renderManager.Draw(gameTime, true);
-
-                        //draw scene render target
-                        GraphicsDevice.SetRenderTarget(renderTarget);
-                        GraphicsDevice.Clear(Color.Black);
-                        levelModelManager.Draw(gameTime, false);
-                        renderManager.Draw(gameTime, false);
-
-                        //draw particles
-                        particleManager.Draw(gameTime);
-
-                        GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-                        //draw billboarded stuff
-                        billboard.Draw();
-
-
-                        //reset graphics device
-                        GraphicsDevice.SetRenderTarget(null);
-
-                        //pass in depth render target to the edge detection shader
-                        Texture2D normalDepthTexture = normalDepthRenderTarget;
-                        effectOutline.Parameters["ScreenResolution"].SetValue(new Vector2(renderTarget.Width, renderTarget.Height));
-                        effectOutline.Parameters["NormalDepthTexture"].SetValue(normalDepthTexture);
-                        effectOutline.CurrentTechnique = effectOutline.Techniques["EdgeDetect"];
-                        //draw scene
-                        spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effectOutline);
-                        spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
-                        spriteBatch.End();
-
-
-
-
-                        //physics debugging
-                        /*
-                        effectModelDrawer.LightingEnabled = false;
-                        effectModelDrawer.VertexColorEnabled = true;
-                        effectModelDrawer.World = Matrix.Identity;
-                        effectModelDrawer.View = camera.View;
-                        effectModelDrawer.Projection = camera.Projection;
-                        modelDrawer.Draw(effectModelDrawer, physics);
-                        */
-
-                        spriteBatch.Begin();
-                        spriteManager.Draw(spriteBatch);
-                        //debug strings
-                        //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
-                        //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
-                        foreach (FloatingText f in alertText)
-                        {
-                            spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
-                        }
-                        spriteBatch.End();
+                        spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
                     }
-                    break;
-                case GameState.StartMenu:
-                    if ((int) mainMenuState == 0)
-                    {
-                        startColor = Color.Red;
-                    }
-                    else if ((int) mainMenuState == 1)
-                    {
-                        settingsColor = Color.Red;
-                    }
-                    else if ((int)mainMenuState == 2)
-                    {
-                        networkingColor = Color.Red;
-                    }
+                    spriteBatch.End();
+                }
+            }
+            else
+            {
+                base.Draw(gameTime);
+            }
+
+            //need to move
+            //Texture2D backgroundTexture;
+            //int screenWidth = graphics.PreferredBackBufferWidth;//GraphicsDevice.Viewport.Width;
+            //int screenHeight = graphics.PreferredBackBufferHeight;//GraphicsDevice.Viewport.Height;
+            //backgroundTexture = Content.Load<Texture2D>("Textures\\Menu\\menuBackground");
+            //Rectangle screenRectangle = new Rectangle(0, 0, screenWidth, screenHeight);
+
+            //String titleString = "Kazgar's Revenge";
+            //String startString = "Start";
+            //String settingsString = "Settings";
+            //String loadingString = "Loading";
+            //String networkingString = "Multiplayer";
+
+            //Vector2 titleSize = titleFont.MeasureString(titleString);
+            //Vector2 startSize = normalFont.MeasureString(startString);
+            //Vector2 settingsSize = normalFont.MeasureString(settingsString);
+            //Vector2 loadingSize = normalFont.MeasureString(loadingString);
+            //Vector2 networkingSize = normalFont.MeasureString(networkingString);
+
+            //Vector2 titlePosition = new Vector2(screenWidth / 2, screenHeight * .35f);
+            //Vector2 startGamePosition = new Vector2(screenWidth / 2, screenHeight * .47f);
+            //Vector2 loadGamePosition = new Vector2(screenWidth / 2, screenHeight * .47f);
+            //Vector2 settingsPosition = new Vector2(screenWidth / 2, screenHeight * .55f);
+            //Vector2 networkingPosition = new Vector2(screenWidth / 2, screenHeight * .61f);
+
+            //Vector2 titleOrigin = new Vector2(titleSize.X / 2, titleSize.Y / 2);
+            //Vector2 startOrigin = new Vector2(startSize.X / 2, startSize.Y / 2);
+            //Vector2 settingsOrigin = new Vector2(settingsSize.X / 2, settingsSize.Y / 2);
+            //Vector2 loadingOrigin = new Vector2(loadingSize.X / 2, loadingSize.Y / 2);
+            //Vector2 networkingOrigin = new Vector2(networkingSize.X / 2, networkingSize.Y / 2);
+
+            //Color titleColor = Color.White;
+            //Color startColor = Color.White;
+            //Color settingsColor = Color.White;
+            //Color loadingColor = Color.White;
+            //Color networkingColor = Color.White;
+
+            //switch (gameState)
+            //{
+            //    case GameState.Playing:
+            //        bool deferred = false;
+            //        if (deferred)
+            //        {
+            //            DrawDeferred(gameTime);
+            //        }
+            //        else
+            //        {
+            //            if (renderTarget.IsContentLost || normalDepthRenderTarget.IsContentLost)
+            //            {
+            //                SetUpRenderTargets();
+            //            }
+
+            //            //draw depth render target
+            //            GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
+            //            GraphicsDevice.Clear(Color.Black);
+            //            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            //            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            //            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+            //            renderManager.Draw(gameTime, true);
+
+            //            //draw scene render target
+            //            GraphicsDevice.SetRenderTarget(renderTarget);
+            //            GraphicsDevice.Clear(Color.Black);
+            //            levelModelManager.Draw(gameTime, false);
+            //            renderManager.Draw(gameTime, false);
+
+            //            //draw particles
+            //            particleManager.Draw(gameTime);
+
+            //            GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+            //            //draw billboarded stuff
+            //            billboard.Draw();
+
+
+            //            //reset graphics device
+            //            GraphicsDevice.SetRenderTarget(null);
+
+            //            //pass in depth render target to the edge detection shader
+            //            Texture2D normalDepthTexture = normalDepthRenderTarget;
+            //            effectOutline.Parameters["ScreenResolution"].SetValue(new Vector2(renderTarget.Width, renderTarget.Height));
+            //            effectOutline.Parameters["NormalDepthTexture"].SetValue(normalDepthTexture);
+            //            effectOutline.CurrentTechnique = effectOutline.Techniques["EdgeDetect"];
+            //            //draw scene
+            //            spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effectOutline);
+            //            spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+            //            spriteBatch.End();
+
+
+
+
+            //            //physics debugging
+            //            /*
+            //            effectModelDrawer.LightingEnabled = false;
+            //            effectModelDrawer.VertexColorEnabled = true;
+            //            effectModelDrawer.World = Matrix.Identity;
+            //            effectModelDrawer.View = camera.View;
+            //            effectModelDrawer.Projection = camera.Projection;
+            //            modelDrawer.Draw(effectModelDrawer, physics);
+            //            */
+
+            //            spriteBatch.Begin();
+            //            spriteManager.Draw(spriteBatch);
+            //            //debug strings
+            //            //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
+            //            //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
+            //            foreach (FloatingText f in alertText)
+            //            {
+            //                spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
+            //            }
+            //            spriteBatch.End();
+            //        }
+            //        break;
+            //    case GameState.StartMenu:
+            //        if ((int) mainMenuState == 0)
+            //        {
+            //            startColor = Color.Red;
+            //        }
+            //        else if ((int) mainMenuState == 1)
+            //        {
+            //            settingsColor = Color.Red;
+            //        }
+            //        else if ((int)mainMenuState == 2)
+            //        {
+            //            networkingColor = Color.Red;
+            //        }
                     
 
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(backgroundTexture, screenRectangle, Color.White);
-                    spriteBatch.DrawString(titleFont, titleString, titlePosition, titleColor, 0, titleOrigin, guiScale, SpriteEffects.None, 0);
-                    spriteBatch.DrawString(normalFont, startString, startGamePosition, startColor, 0, startOrigin, guiScale, SpriteEffects.None, 0);
-                    spriteBatch.DrawString(normalFont, settingsString, settingsPosition, settingsColor, 0, settingsOrigin, guiScale, SpriteEffects.None, 0);
-                    spriteBatch.DrawString(normalFont, networkingString, networkingPosition, networkingColor, 0, networkingOrigin, guiScale, SpriteEffects.None, 0);
-                    spriteBatch.End();
-                    break;
-                case GameState.Loading:
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(backgroundTexture, screenRectangle, Color.White);
-                    spriteBatch.DrawString(titleFont, titleString, titlePosition, titleColor, 0, titleOrigin, guiScale, SpriteEffects.None, 0);
-                    spriteBatch.DrawString(normalFont, loadingString, loadGamePosition, loadingColor, 0, loadingOrigin, guiScale, SpriteEffects.None, 0);
-                    spriteBatch.End();
-                    break;
-                case GameState.ConnectionScreen:
-                    DrawConnectScreen();
-                    break;
-                case GameState.Lobby:
-                    spriteBatch.Begin();
-                    string message = (nmm.isHost) ? "Press enter to begin!" : "Waiting for host to start";
-                    spriteBatch.DrawString(normalFont, message, vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
-                    spriteBatch.End();
-                    break;
-                case GameState.ReceivingMap:
-                    spriteBatch.Begin();
-                    spriteBatch.DrawString(normalFont, "Receiving Map", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
-                    spriteBatch.End();
-                    break;
-            }
+            //        spriteBatch.Begin();
+            //        spriteBatch.Draw(backgroundTexture, screenRectangle, Color.White);
+            //        spriteBatch.DrawString(titleFont, titleString, titlePosition, titleColor, 0, titleOrigin, guiScale, SpriteEffects.None, 0);
+            //        spriteBatch.DrawString(normalFont, startString, startGamePosition, startColor, 0, startOrigin, guiScale, SpriteEffects.None, 0);
+            //        spriteBatch.DrawString(normalFont, settingsString, settingsPosition, settingsColor, 0, settingsOrigin, guiScale, SpriteEffects.None, 0);
+            //        spriteBatch.DrawString(normalFont, networkingString, networkingPosition, networkingColor, 0, networkingOrigin, guiScale, SpriteEffects.None, 0);
+            //        spriteBatch.End();
+            //        break;
+            //    case GameState.Loading:
+            //        spriteBatch.Begin();
+            //        spriteBatch.Draw(backgroundTexture, screenRectangle, Color.White);
+            //        spriteBatch.DrawString(titleFont, titleString, titlePosition, titleColor, 0, titleOrigin, guiScale, SpriteEffects.None, 0);
+            //        spriteBatch.DrawString(normalFont, loadingString, loadGamePosition, loadingColor, 0, loadingOrigin, guiScale, SpriteEffects.None, 0);
+            //        spriteBatch.End();
+            //        break;
+            //    case GameState.ConnectionScreen:
+            //        DrawConnectScreen();
+            //        break;
+            //    case GameState.Lobby:
+            //        spriteBatch.Begin();
+            //        string message = (nmm.isHost) ? "Press enter to begin!" : "Waiting for host to start";
+            //        spriteBatch.DrawString(normalFont, message, vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+            //        spriteBatch.End();
+            //        break;
+            //    case GameState.ReceivingMap:
+            //        spriteBatch.Begin();
+            //        spriteBatch.DrawString(normalFont, "Receiving Map", vecLoadingText, Color.Yellow, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+            //        spriteBatch.End();
+            //        break;
+            //}
         }
 
         #region deferred variables

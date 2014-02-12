@@ -88,6 +88,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\Account.cs" />
     <Compile Include="Common\Extenders.cs" />
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
@@ -124,18 +125,19 @@
     <Compile Include="Controllers\Attacks\ArrowController.cs" />
     <Compile Include="Managers\MenuManager.cs" />
     <Compile Include="Menuing\Actions\IAction.cs" />
-    <Compile Include="Menuing\Actions\MenuTransitionAction.cs" />
     <Compile Include="Menuing\Clickable.cs" />
     <Compile Include="Menuing\Events\AEvent.cs" />
     <Compile Include="Menuing\Events\IEvent.cs" />
     <Compile Include="Menuing\EventHandler.cs" />
     <Compile Include="Menuing\Events\KeyEvent.cs" />
     <Compile Include="Menuing\Events\MouseEvent.cs" />
-    <Compile Include="Menuing\Menus\AMenu.cs" />
+    <Compile Include="Menuing\Menus\AccountMenu.cs" />
     <Compile Include="Menuing\Menus\IMenu.cs" />
+    <Compile Include="Menuing\Menus\LinkedMenu.cs" />
     <Compile Include="Menuing\Menus\LoadingMenu.cs" />
-    <Compile Include="Menuing\Menus\SelectionMenu.cs" />
+    <Compile Include="Menuing\Menus\SimpleMenu.cs" />
     <Compile Include="Menuing\Selections\Selection.cs" />
+    <Compile Include="Menuing\Selections\SelectionV2.cs" />
     <Compile Include="Menuing\Selections\TextSelection.cs" />
     <Compile Include="Misc Components\Spawners\EnemyProximitySpawner.cs" />
     <Compile Include="Misc Components\Spawners\Spawner.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="Networking\Handlers\HostUpdateHandler.cs" />
     <Compile Include="Networking\Handlers\MeleeAttackHandler.cs" />
     <Compile Include="Networking\MessageSender.cs" />
+    <Compile Include="Account\AccountUtil.cs" />
     <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
     <Compile Include="Networking\Handlers\GameStateChangeHandler.cs" />
