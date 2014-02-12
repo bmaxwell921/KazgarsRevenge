@@ -238,5 +238,45 @@ namespace KazgarsRevenge
             throw new ArgumentException("Unaccounted enum value!");
         }
         #endregion
+
+        #region FloorName Extenders
+        /// <summary>
+        /// Converts an integer to the corresponding number.
+        /// 
+        /// NOTE: This is not done by Ordinal!!! - The numbers are as stated in the 
+        /// Design doc:
+        ///     1 = Dungeon
+        ///     2 = Torture Chamber
+        ///     3 = Lab
+        ///     4 = Library
+        ///     5 = Grand Hall
+        /// </summary>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        public static FloorName GetFloorName(int level)
+        {
+            if (level == 1)
+            {
+                return FloorName.Dungeon;
+            }
+            else if (level == 2)
+            {
+                return FloorName.TortureChamber;
+            }
+            else if (level == 3)
+            {
+                return FloorName.Lab;
+            }
+            else if (level == 4)
+            {
+                return FloorName.Library;
+            }
+            else if (level == 5)
+            {
+                return FloorName.GrandHall;
+            }
+            throw new ArgumentException(String.Format("Unknown floor type: {0}", level));
+        }
+        #endregion
     }
 }

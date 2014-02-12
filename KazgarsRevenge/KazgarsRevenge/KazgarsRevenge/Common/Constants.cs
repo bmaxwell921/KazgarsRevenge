@@ -64,5 +64,8 @@ namespace KazgarsRevenge
 
         // The height, in chunks, of one level of KR
         public static readonly int LEVEL_HEIGHT = 3;
+
+        // The number of story mode levels
+        public static readonly int MAX_LEVELS = 5;
     }
 }
