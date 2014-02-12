@@ -14,6 +14,7 @@ namespace KazgarsRevenge
     {
         protected static readonly Color SELECT_COLOR = Color.Yellow;
         protected static readonly Color NORMAL_COLOR = Color.White;
+        protected static readonly Color UNSELECTABLE_COLOR = Color.HotPink;
 
         // Owner
         protected MenuManager mm;
@@ -30,12 +31,42 @@ namespace KazgarsRevenge
         // Color to draw with
         protected Color drawColor;
 
+        // The color to use when not drawing it
+        protected Color standardColor;
+
+        public bool selectable
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Creates a selectable selection with the given information
+        /// </summary>
+        /// <param name="mm"></param>
+        /// <param name="name"></param>
+        /// <param name="drawLocation"></param>
         public SelectionV2(MenuManager mm, string name, Vector2 drawLocation)
+            : this(mm, name, drawLocation, true)
+        {
+            
+        }
+
+        /// <summary>
+        /// Creates a selection with the given information
+        /// </summary>
+        /// <param name="mm"></param>
+        /// <param name="name"></param>
+        /// <param name="drawLocation"></param>
+        /// <param name="selectable"></param>
+        public SelectionV2(MenuManager mm, string name, Vector2 drawLocation, bool selectable)
         {
             this.mm = mm;
             this.name = name;
             this.drawLocation = drawLocation;
-            drawColor = NORMAL_COLOR;
+            this.selectable = selectable;
+            drawColor = (selectable) ? NORMAL_COLOR : UNSELECTABLE_COLOR;
+            standardColor = drawColor;
 
             this.drawCenter = mm.normalFont.MeasureString(name) / 2;
         }
@@ -61,7 +92,7 @@ namespace KazgarsRevenge
         /// </summary>
         public virtual void DeHighlight()
         {
-            drawColor = NORMAL_COLOR;
+            drawColor = standardColor;
         }
 
         /// <summary>

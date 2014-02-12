@@ -31,12 +31,12 @@ namespace KazgarsRevenge
             accounts = AccountUtil.Instance.GetAccounts();
             if (accounts.Count > 0)
             {
-                float yOffset = mm.normalFont.MeasureString(accounts[0].name).Y;
+                float yOffset = mm.normalFont.MeasureString(accounts[0].Name).Y;
                 // Create a selection for each
                 for (int i = 0; i < accounts.Count; ++i)
                 {
                     Account account = accounts[i];
-                    base.AddSelection(new SelectionV2(base.mm, account.name, acctsDrawLoc + new Vector2(0, yOffset * i)), (LinkedMenu)mm.menus[MenuManager.LEVELS]);
+                    base.AddSelection(new SelectionV2(base.mm, account.Name, acctsDrawLoc + new Vector2(0, yOffset * i)), (LinkedMenu)mm.menus[MenuManager.LEVELS]);
                 }
             }
         }

@@ -53,7 +53,7 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="sel"></param>
         /// <param name="link"></param>
-        public void AddSelection(SelectionV2 sel, LinkedMenu link)
+        public void AddSelection(SelectionV2 sel, IMenu link)
         {
             selections.Add(new SelectionBox(sel, link));
             if (selections.Count == 1)
@@ -67,13 +67,15 @@ namespace KazgarsRevenge
         /// Gets the Menu that is currently selected
         /// </summary>
         /// <returns></returns>
-        public LinkedMenu GetSelection()
+        public IMenu GetSelection()
         {
-            if (selections.Count > 0)
+            // If we have stuff, and the thing that is selected can be selected
+            if (selections.Count > 0 && selections[currentSel].sel.selectable)
             {
                 return selections[currentSel].link;
             }
 
+            // Returning null will keep us in the same location
             return null;
         }
 
@@ -160,9 +162,9 @@ namespace KazgarsRevenge
         protected class SelectionBox
         {
             public SelectionV2 sel;
-            public LinkedMenu link;
+            public IMenu link;
 
-            public SelectionBox(SelectionV2 sel, LinkedMenu link)
+            public SelectionBox(SelectionV2 sel, IMenu link)
             {
                 this.sel = sel;
                 this.link = link;

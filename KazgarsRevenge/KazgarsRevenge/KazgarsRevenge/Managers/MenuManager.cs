@@ -38,6 +38,7 @@ namespace KazgarsRevenge
         public static readonly string ACCOUNTS = "ACCOUNTS";
         public static readonly string LEVELS = "LEVELS";
         public static readonly string LOADING = "LOADING";
+        public static readonly string NEW_ACCOUNT = "New Account";
         #endregion
 
         // Screen info
@@ -82,6 +83,10 @@ namespace KazgarsRevenge
             Texture2D background = Game.Content.Load<Texture2D>(@"Textures\Menu\menuBackground");
             Rectangle backgroundBox = new Rectangle(0, 0, screenWidth, screenHeight);
 
+            LoadingMenu loading = new LoadingMenu(this, LOADING, titleLoc, background, backgroundBox);
+
+            LevelSelectMenu levelsMenu = new LevelSelectMenu(this, LEVELS, titleLoc, background, backgroundBox, new Vector2(screenWidth / 2f, screenHeight * 0.47f));
+
             AccountMenu accountMenu = new AccountMenu(this, ACCOUNTS, titleLoc, background, backgroundBox, new Vector2(screenWidth / 2f, screenHeight * 0.47f));
 
             LinkedMenu title = new LinkedMenu(this, GAME_TITLE, new Vector2(screenWidth / 2, screenHeight * .35f), background, backgroundBox);
@@ -92,11 +97,10 @@ namespace KazgarsRevenge
             //LoadingMenu loading = new LoadingMenu(sb, LOADING, titleFont, guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));
 
             menus[GAME_TITLE] = title;
-            menus[PLAY] = null;
             menus[SETTINGS] = null;
             menus[ACCOUNTS] = accountMenu;
-            menus[LEVELS] = null;
-            menus[LOADING] = null;
+            menus[LEVELS] = levelsMenu;
+            menus[LOADING] = loading;
         }
         #endregion
 
@@ -193,8 +197,8 @@ namespace KazgarsRevenge
                     /*
                      * TODO remove this part for the actual stuff
                      */
-                    (Game as MainGame).DemoLevel();
-                    //TransitionTo(sel.GetSelection());
+                    //(Game as MainGame).DemoLevel();
+                    TransitionTo(sel.GetSelection());
                     return;
 
                 }
@@ -223,6 +227,19 @@ namespace KazgarsRevenge
             {
                 events.Add(new MouseEvent(new Vector2(state.X, state.Y)));
             }
+        }
+
+        /// <summary>
+        /// Method called to transition us into the Playing GameState
+        /// </summary>
+        /// <param name="name"></param>
+        public void LoadLevel(FloorName name)
+        {
+            //// TODO what do we do here?
+            //this.menuQ.Clear();
+            //currentMenu = menus[GAME_TITLE];
+
+            (Game as MainGame).TransitionToPlaying(name);
         }
 
         #endregion

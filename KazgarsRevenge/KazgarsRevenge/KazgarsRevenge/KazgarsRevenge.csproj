@@ -133,8 +133,10 @@
     <Compile Include="Menuing\Events\MouseEvent.cs" />
     <Compile Include="Menuing\Menus\AccountMenu.cs" />
     <Compile Include="Menuing\Menus\IMenu.cs" />
+    <Compile Include="Menuing\Menus\LevelSelectMenu.cs" />
     <Compile Include="Menuing\Menus\LinkedMenu.cs" />
     <Compile Include="Menuing\Menus\LoadingMenu.cs" />
+    <Compile Include="Menuing\Menus\LoadingMenuOld.cs" />
     <Compile Include="Menuing\Menus\SimpleMenu.cs" />
     <Compile Include="Menuing\Selections\Selection.cs" />
     <Compile Include="Menuing\Selections\SelectionV2.cs" />
