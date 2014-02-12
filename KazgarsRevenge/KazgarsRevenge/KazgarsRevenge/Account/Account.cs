@@ -20,7 +20,7 @@ namespace KazgarsRevenge
         private static readonly int START_TALENT_POINTS = 0;
 
         // The name associated with the account
-        public string name
+        public string Name
         {
             get;
             private set;
@@ -47,7 +47,7 @@ namespace KazgarsRevenge
         }
 
         // All the abilities the Character has unlocked
-        public IList<Ability> unlockedAbilities
+        public IList<Ability> UnlockedAbilities
         {
             get;
             private set;
@@ -59,12 +59,12 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public Account(string name)
         {
-            this.name = name;
+            this.Name = name;
             this.CharacterLevel = START_CHAR_LEVEL;
             this.UnlockedFloors = START_UNLOCKED_FLOORS;
             this.AvailTalentPoints = START_TALENT_POINTS;
 
-            this.unlockedAbilities = new List<Ability>();
+            this.UnlockedAbilities = new List<Ability>();
             // TODO are there any unlocked at the start? - Prob not, just give them some points to assign?
         }
 
@@ -76,11 +76,11 @@ namespace KazgarsRevenge
         /// <param name="UnlockedFloors"></param>
         public Account(string name, int CharacterLevel, int UnlockedFloors, int AvailTalentPoints)
         {
-            this.name = name;
+            this.Name = name;
             this.CharacterLevel = CharacterLevel;
             this.UnlockedFloors = UnlockedFloors;
             this.AvailTalentPoints = AvailTalentPoints;
-            this.unlockedAbilities = new List<Ability>();
+            this.UnlockedAbilities = new List<Ability>();
         }
     }
 }
