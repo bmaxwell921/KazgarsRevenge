@@ -12,14 +12,16 @@ namespace KazgarsRevenge
     public interface IMenu : EventHandler
     {
         /// <summary>
-        /// Loads the menu
+        /// Loads the Menu
         /// </summary>
-        void Load();
+        /// <param name="info">Any necessary information from the previous screen</param>
+        void Load(object info);
 
         /// <summary>
-        /// Unloads the menu, saving information as necessary
+        /// Unloads the menu
         /// </summary>
-        void Unload();
+        /// <returns>any information needed by the next menu, or null</returns>
+        object Unload();
 
         /// <summary>
         /// Draws the menu
