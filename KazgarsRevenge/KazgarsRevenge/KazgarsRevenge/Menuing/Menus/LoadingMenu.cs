@@ -2,52 +2,94 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    public class LoadingMenu //: AMenu
+    /// <summary>
+    /// The loading menu...kind breaks the hierarchy a bit but whatever
+    /// </summary>
+    public class LoadingMenu : SimpleMenu
     {
-        // Add a '.' every 1 second
-        //private static readonly int ADD_PERIOD_MS = 1000;
+        // After 1 second passes, add a "."
+        private static readonly int ADD_PERIOD_MS = 1000;
 
-        //private static readonly string[] PERIOD_STRS = { "", ".", "..", "..."};
+        private static readonly string[] PERIOD_STRS = { "", ".", "..", "..." };
 
-        //// Current number of periods to draw
-        //private int curPeriods;
+        // Current location in the PERIOD_STRS array
+        private int curPeriods;
 
-        //private int timeLeft;
+        // How much time until we add another period
+        private int timeLeft;
 
-        //public LoadingMenu(SpriteBatch sb, string title, SpriteFont sf, Vector2 guiScale, Vector2 titleLoc)
-        //    : base(sb, title, sf, guiScale, titleLoc)
-        //{
-        //    curPeriods = 0;
-        //    timeLeft = ADD_PERIOD_MS;
-        //}
+        // The starting title
+        private string unModifiedTitle;
 
-        //public override void Load()
-        //{
-        //    // TODO call loading stuff
-        //    throw new NotImplementedException();
-        //}
+        public LoadingMenu(MenuManager mm, string title, Vector2 drawLocation, Texture2D background, Rectangle backgroundBounds)
+            : base(mm, title, drawLocation, background, backgroundBounds)
+        {
+            curPeriods = 0;
+            timeLeft = ADD_PERIOD_MS;
+            unModifiedTitle = title;
+        }
 
-        //public override void Unload()
-        //{
-        //    // Do nothing
-        //}
+        /// <summary>
+        /// Starts to load the actual level
+        /// </summary>
+        /// <param name="info"></param>
+        public override void Load(object info)
+        {
+            FloorName level = Extenders.GetFloorName((int)info);
+            mm.LoadLevel(level);
+        }
 
-        //public override void Draw(GameTime gameTime)
-        //{
-        //    timeLeft -= gameTime.ElapsedGameTime.Milliseconds;
-        //    if (timeLeft <= 0)
-        //    {
-        //        curPeriods = (++curPeriods) % PERIOD_STRS.Length;
-        //        base.title = base.title + PERIOD_STRS[curPeriods];
-        //        base.drawCenter = base.sf.MeasureString(title) / 2;
-        //        timeLeft = ADD_PERIOD_MS;
-        //    }
-        //    base.Draw(gameTime);
-        //}
+        public override object Unload()
+        {
+            // Do nothing?
+            return null;
+        }
+
+        public override void Draw(GameTime gameTime)
+        {
+            timeLeft -= gameTime.ElapsedGameTime.Milliseconds;
+            if (timeLeft <= 0)
+            {
+                curPeriods = (++curPeriods) % PERIOD_STRS.Length;
+                base.title = this.unModifiedTitle + PERIOD_STRS[curPeriods];
+                timeLeft = ADD_PERIOD_MS;
+            }
+            base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Do nothing
+        /// </summary>
+        /// <param name="e"></param>
+        public override void HandleEvent(IEvent e)
+        {
+            // Do nothing, this should handle no events
+        }
+
+        /// <summary>
+        /// Always returns false
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public override bool Handles(IEvent e)
+        {
+            // Doesn't handle any
+            return false;
+        }
+
+        /// <summary>
+        /// Do nothing
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="action"></param>
+        public override void Register(IEvent e, IAction action)
+        {
+            // Do nothing
+        }
     }
 }
