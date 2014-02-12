@@ -659,7 +659,8 @@ namespace KazgarsRevenge
         #endregion
         private void DrawDeferred(GameTime gameTime)
         {
-
+            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.SetRenderTarget(null);
             /*
              * Begin 
              */
@@ -745,36 +746,12 @@ namespace KazgarsRevenge
             GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
                 (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
 
-            /*
-            Vector2 bL, tR;
-            ConvertViewportToNormalizedVectors(GraphicsDevice.Viewport, out bL, out tR);
 
-            _quadRenderer.Render(bL, tR);
-             * */
-        }
+            GraphicsDevice.SetRenderTarget(null);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+            spriteBatch.Draw(camera.OutputTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
 
-        private void ConvertViewportToNormalizedVectors(Viewport viewport, out Vector2 bottomLeft, out Vector2 topRight)
-        {
-            Vector2 viewportBottomLeft = new Vector2(viewport.X, viewport.Y + viewport.Height);
-            Vector2 viewportTopRight = new Vector2(viewport.X + viewport.Width, viewport.Y);
-
-            Vector2 graphicsDeviceDimensions = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-
-            // now between 0 and 1
-            viewportBottomLeft /= graphicsDeviceDimensions;
-            viewportTopRight /= graphicsDeviceDimensions;
-
-            viewportBottomLeft *= 2;
-            viewportBottomLeft -= Vector2.One;
-
-            viewportBottomLeft.Y *= -1;
-
-            viewportTopRight *= 2;
-            viewportTopRight -= Vector2.One;
-            viewportTopRight.Y *= -1;
-
-            bottomLeft = viewportBottomLeft;
-            topRight = viewportTopRight;
         }
 
         public void DrawConnectScreen()

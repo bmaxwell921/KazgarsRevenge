@@ -1,5 +1,5 @@
-#include "../../Common/Structures.fxh"
-#include "../../Common/NormalEncoding.fxh"
+#include "../Common/Structures.fxh"
+#include "../Common/NormalEncoding.fxh"
 
 float4x4 World : WORLD;
 float4x4 View : VIEW;
