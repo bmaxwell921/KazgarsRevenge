@@ -196,7 +196,7 @@ namespace KazgarsRevenge
 
 
             //deferred stuff
-            effectClearBuffer = Content.Load<Effect>("Shaders\\Deferred\\clearGBufferShader");
+            effectClearBuffer = Content.Load<Effect>("Shaders\\Deferred\\ClearGBufferShader");
             effectClearBuffer.Parameters["ClearColor"].SetValue(Color.Black.ToVector3());
 
 
@@ -215,6 +215,9 @@ namespace KazgarsRevenge
             PointLightEffect newLight = new PointLightEffect(effectLight);
             newLight.LightPosition = new Vector3(120, 20, 120);
             lights.Add(newLight);
+
+
+            effectFinalCombine = new FinalCombineEffect(Content.Load<Effect>("Shaders\\Deferred\\FinalCombineShader"));
 
             base.LoadContent();
         }
@@ -559,7 +562,9 @@ namespace KazgarsRevenge
         BlendState lightBlendState;
 
         Effect effectLight;
-        List<PointLightEffect> lights = new List<PointLightEffect>(); 
+        List<PointLightEffect> lights = new List<PointLightEffect>();
+
+        FinalCombineEffect effectFinalCombine;
         #endregion
         private void DrawDeferred(GameTime gameTime)
         {
@@ -637,18 +642,48 @@ namespace KazgarsRevenge
             GraphicsDevice.SetRenderTarget(camera.OutputTarget);
 
             GraphicsDevice.BlendState = BlendState.Opaque;
+            
+            effectFinalCombine.ColorMap = gbuffer.Albedo;
+            effectFinalCombine.HighlightMap = gbuffer.Highlights;
+            effectFinalCombine.LightMap = gbuffer.Lighting;
+            effectFinalCombine.HalfPixel = gbuffer.HalfPixel;
+
+            effectFinalCombine.Apply();
+
+
+            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
+                (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
+
             /*
-            _finalCombineEffect.ColorMap = gbuffer.Albedo;
-            _finalCombineEffect.HighlightMap = gbuffer.Highlights;
-            _finalCombineEffect.LightMap = gbuffer.Lighting;
-            _finalCombineEffect.HalfPixel = gbuffer.HalfPixel;
-
-            _finalCombineEffect.Apply();
-
             Vector2 bL, tR;
-            ConvertViewportToNormalizedVectors(_activeCamera.Viewport, out bL, out tR);
+            ConvertViewportToNormalizedVectors(GraphicsDevice.Viewport, out bL, out tR);
 
-            _quadRenderer.Render(bL, tR);*/
+            _quadRenderer.Render(bL, tR);
+             * */
+        }
+
+        private void ConvertViewportToNormalizedVectors(Viewport viewport, out Vector2 bottomLeft, out Vector2 topRight)
+        {
+            Vector2 viewportBottomLeft = new Vector2(viewport.X, viewport.Y + viewport.Height);
+            Vector2 viewportTopRight = new Vector2(viewport.X + viewport.Width, viewport.Y);
+
+            Vector2 graphicsDeviceDimensions = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
+            // now between 0 and 1
+            viewportBottomLeft /= graphicsDeviceDimensions;
+            viewportTopRight /= graphicsDeviceDimensions;
+
+            viewportBottomLeft *= 2;
+            viewportBottomLeft -= Vector2.One;
+
+            viewportBottomLeft.Y *= -1;
+
+            viewportTopRight *= 2;
+            viewportTopRight -= Vector2.One;
+            viewportTopRight.Y *= -1;
+
+            bottomLeft = viewportBottomLeft;
+            topRight = viewportTopRight;
         }
 
         public void DrawConnectScreen()

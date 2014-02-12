@@ -72,6 +72,8 @@ namespace SkinnedModelLib
             boneTransforms = new Matrix[skinningData.BindPose.Count];
             worldTransforms = new Matrix[skinningData.BindPose.Count];
             skinTransforms = new Matrix[skinningData.BindPose.Count];
+
+            PlaybackRate = 1f;
         }
 
         public void StopMixing()
@@ -131,12 +133,14 @@ namespace SkinnedModelLib
             this.bonesToIgnore = boneIndicesToIgnore;
         }
 
+        public float PlaybackRate { get; private set; }
         /// <summary>
         /// Advances the current animation position.
         /// </summary>
         public void Update(TimeSpan time, bool relativeToCurrentTime,
                            Matrix rootTransform)
         {
+            time = TimeSpan.FromMilliseconds(time.TotalMilliseconds * PlaybackRate);
             UpdateBoneTransforms(time, relativeToCurrentTime);
             UpdateWorldTransforms(rootTransform);
             UpdateSkinTransforms();

@@ -161,9 +161,9 @@
     <Compile Include="Drawing\AnimatedModelComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
     <Compile Include="Base Classes\Component.cs" />
-    <Compile Include="Z Effects\CustomSkinnedEffect.cs" />
+    <Compile Include="Drawing\Effects\CustomSkinnedEffect.cs" />
     <Compile Include="Drawing\DrawableComponent3D.cs" />
-    <Compile Include="Z Effects\EffectHelpers.cs" />
+    <Compile Include="Drawing\Effects\EffectHelpers.cs" />
     <Compile Include="Base Classes\GameEntity.cs" />
     <Compile Include="Managers\Entities\LootManager.cs" />
     <Compile Include="Misc Components\Identification.cs" />
@@ -218,8 +218,9 @@
     <Compile Include="Misc Components\StaticMeshComponent.cs" />
     <Compile Include="Util\IdentificationFactory.cs" />
     <Compile Include="Util\RandSingleton.cs" />
-    <Compile Include="Z Effects\LightEffect.cs" />
-    <Compile Include="Z Effects\PointLightEffect.cs" />
+    <Compile Include="Drawing\Effects\FinalCombineEffect.cs" />
+    <Compile Include="Drawing\Effects\LightEffect.cs" />
+    <Compile Include="Drawing\Effects\PointLightEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
