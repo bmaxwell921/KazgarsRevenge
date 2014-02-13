@@ -14,7 +14,7 @@ namespace KazgarsRevenge
     public class BlobShadowDecal : DrawableComponentBillboard
     {
         public BlobShadowDecal(KazgarsRevengeGame game, GameEntity entity, float size)
-            : base(game, entity, Vector3.Forward, Vector3.Up, new Vector2(size, size))
+            : base(game, entity, Vector3.Up, Vector3.Forward, new Vector2(size, size))
         {
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).ShadowEffect;

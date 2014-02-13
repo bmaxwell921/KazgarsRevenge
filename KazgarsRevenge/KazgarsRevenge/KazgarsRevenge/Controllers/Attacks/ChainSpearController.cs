@@ -69,7 +69,10 @@ namespace KazgarsRevenge
                                 prevRule = creatorData.CollisionInformation.CollisionRules.Personal;
                                 targetData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
                                 lifeLength = 8000;
-                                target.Damage(DeBuff.ForcefulThrow, 0, creator.Entity);
+                                if (target != null)
+                                {
+                                    target.Damage(DeBuff.ForcefulThrow, 0, creator.Entity);
+                                }
                             }
                         }
                     }

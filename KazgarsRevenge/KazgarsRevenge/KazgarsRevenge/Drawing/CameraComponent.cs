@@ -15,7 +15,7 @@ namespace KazgarsRevenge
         #region fields
         private float fov = MathHelper.PiOver4;
         private float nearPlane = .1f;
-        private float farPlane = 1000;
+        private float farPlane = 10000;
 
         private Entity physicalData;
 
@@ -42,6 +42,7 @@ namespace KazgarsRevenge
 
         float distanceFromTarget = 200.0f;
 
+        float nextYaw = 0;
         float yaw = 0;
         float pitch = -MathHelper.PiOver4;
         public float zoom = 4.0f;
@@ -88,9 +89,13 @@ namespace KazgarsRevenge
 
         MouseState curMouse = Mouse.GetState();
         MouseState prevMouse = Mouse.GetState();
+
+        KeyboardState curKeys = Keyboard.GetState();
+        KeyboardState prevKeys = Keyboard.GetState();
         public override void Update(GameTime gameTime)
         {
             curMouse = Mouse.GetState();
+            curKeys = Keyboard.GetState();
             if (Game.IsActive)
             {
                 double elapsedMillis = gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -110,10 +115,59 @@ namespace KazgarsRevenge
                 }
                 if (zoom > 8)
                 {
-                    zoom = 8;
+                    //zoom = 8;
+                }
+
+                if (curKeys.IsKeyDown(Keys.Right) && prevKeys.IsKeyUp(Keys.Right))
+                {
+                    nextYaw += MathHelper.PiOver2;
+                    if (nextYaw > MathHelper.Pi * 2)
+                    {
+                        nextYaw -= MathHelper.Pi * 2;
+                    }
+                }
+                else if (curKeys.IsKeyDown(Keys.Left) && prevKeys.IsKeyUp(Keys.Left))
+                {
+
+
+                    nextYaw -= MathHelper.PiOver2;
+                    if (nextYaw < 0)
+                    {
+                        nextYaw += MathHelper.Pi * 2;
+                    }
+                }
+
+            }
+
+            if (yaw != nextYaw)
+            {
+                float add = .05f;
+                float diff = yaw - nextYaw;
+                if (Math.Abs(diff) < .051f)
+                {
+                    yaw = nextYaw;
+                }
+                else
+                {
+                    if (diff > 0 && diff < MathHelper.Pi || diff < 0 && -diff > MathHelper.Pi)
+                    {
+                        add *= -1;
+                    }
+                    yaw += add;
+                    if (yaw > MathHelper.TwoPi)
+                    {
+                        yaw -= MathHelper.TwoPi;
+                    }
+                    else if (yaw < 0)
+                    {
+                        yaw += MathHelper.TwoPi;
+                    }
                 }
 
 
+                rot = Matrix.CreateRotationX(pitch) * Matrix.CreateRotationY(yaw);
+                rotatedTarget = Vector3.Transform(new Vector3(0, 0, -1), rot);
+                rotatedUpVector = Vector3.Transform(new Vector3(0, 1, 0), rot);
             }
 
             distanceFromTarget = 50 * zoom;
@@ -130,6 +184,7 @@ namespace KazgarsRevenge
             position = target + rot.Backward * distanceFromTarget;
             view = Matrix.CreateLookAt(position, target, rotatedUpVector);
             prevMouse = curMouse;
+            prevKeys = curKeys;
 
             inverseViewProj = Matrix.Invert(view * proj);
         }
