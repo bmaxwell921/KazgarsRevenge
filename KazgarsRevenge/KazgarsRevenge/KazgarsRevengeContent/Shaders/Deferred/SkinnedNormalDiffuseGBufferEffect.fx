@@ -5,9 +5,8 @@ float4x4 World : WORLD;
 float4x4 View : VIEW;
 float4x4 Projection : PROJECTION;
 
-float3 DiffuseColor = float3(1,1,1);
 float3 EmissiveColor = float3(0,0,0);
-float SpecularIntensity = .5f;
+float SpecularIntensity = .25f;
 float SpecularPower = 0.1f;
 
 float4x3 Bones[72] : BONES;
@@ -60,7 +59,7 @@ GBufferPSOutput PixelShaderFunction(GBufferVSOutput_Common input)
 {
 	GBufferPSOutput output;
 
-	output.Albedo.rgb = DiffuseColor * tex2D(diffuseSampler, input.TexCoord);
+	output.Albedo.rgb = tex2D(diffuseSampler, input.TexCoord);
 	output.Albedo.a = SpecularIntensity;
 
 	float3 normalValue = input.NormalWS;

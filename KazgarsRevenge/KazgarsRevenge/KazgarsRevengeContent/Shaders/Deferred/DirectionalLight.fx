@@ -2,6 +2,9 @@
 
 float3 LightDirection = float3(1,1,1);
 
+float ToonThresholds[2] = { 0.8, 0.4 };
+float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
+
 float4 PixelShaderFunction(LightVertexShaderOutput input) : COLOR0
 {
 	//Retrieve Normal Value
@@ -11,28 +14,29 @@ float4 PixelShaderFunction(LightVertexShaderOutput input) : COLOR0
 	if (!invalid)
 		return float4(1,1,1,0);
 
-	//Retrieve Color and Specular Intensity, Power
-	float4 colorData = tex2D(colorSampler,input.TexCoord);
-	float specularIntensity = colorData.a;
-	float specularPower = tex2D(highlightSampler,input.TexCoord).a * 255;
-
-	//Calculate world position
-	float4 position = GetFragmentWorldPosition(input.TexCoord);
-
 	//Calculate Diffuse light
 	float3 lightVector = -LightDirection;
 	float NdL = saturate(dot(normal,lightVector));
 
 	float3 diffuseColor = NdL * Color;
 
-	//Calculate Specular Light
-	float3 directionToCamera = normalize(CameraPosition - position);
-	float3 halfVector = normalize(lightVector + directionToCamera);
 
-	float NdH = saturate(dot(normal,halfVector));
-	float specularLight = specularIntensity * pow(NdH, specularPower);
+	//return float4(diffuseColor,specularLight);
+	//return float4(diffuseColor, 0);
 
-	return float4(diffuseColor,specularLight);
+	
+    float light;
+
+    if (NdL> ToonThresholds[0])
+        light = ToonBrightnessLevels[0];
+    else if (NdL > ToonThresholds[1])
+        light = ToonBrightnessLevels[1];
+    else
+        light = ToonBrightnessLevels[2];
+                
+
+	float3 finalColor = light * Color;
+	return float4(finalColor, 0);
 }
 
 technique Technique1

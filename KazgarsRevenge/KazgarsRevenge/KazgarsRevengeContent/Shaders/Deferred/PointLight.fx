@@ -1,6 +1,8 @@
 #include "../Common/CommonLight.fxh"
 
 float3 LightPosition;
+float ToonThresholds[2] = { 0.8, 0.4 };
+float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
 
 float4 PixelShaderFunction(LightVertexShaderOutput input) : COLOR0
 {
@@ -23,16 +25,33 @@ float4 PixelShaderFunction(LightVertexShaderOutput input) : COLOR0
 	float3 lightVector = normalize(LightPosition - position);
 	float NdL = saturate(dot(normal,lightVector));
 
-	float3 diffuseColor = NdL * Color;
+	
+    float light;
+
+    if (NdL> ToonThresholds[0])
+        light = ToonBrightnessLevels[0];
+    else if (NdL > ToonThresholds[1])
+        light = ToonBrightnessLevels[1];
+    else
+        light = ToonBrightnessLevels[2];
+                
+	float3 finalColor = light * Color;
+	return float4(finalColor, 0);
+
+
+
+
+
+	//float3 diffuseColor = NdL * Color;
 
 	//Calculate Specular Light
-	float3 directionToCamera = normalize(CameraPosition - position);
-	float3 halfVector = normalize(lightVector + directionToCamera);
+	//float3 directionToCamera = normalize(CameraPosition - position);
+	//float3 halfVector = normalize(lightVector + directionToCamera);
 
-	float NdH = saturate(dot(normal,halfVector));
-	float specularLight = specularIntensity * pow(NdH, specularPower);
+	//float NdH = saturate(dot(normal,halfVector));
+	//float specularLight = specularIntensity * pow(NdH, specularPower);
 
-	return float4(diffuseColor,specularLight);
+	//return float4(diffuseColor,specularLight);
 }
 
 technique Technique1

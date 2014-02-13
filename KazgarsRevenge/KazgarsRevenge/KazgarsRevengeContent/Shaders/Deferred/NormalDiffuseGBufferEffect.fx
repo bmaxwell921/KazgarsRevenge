@@ -6,8 +6,8 @@ float4x4 View : VIEW;
 float4x4 Projection : PROJECTION;
 
 float3 EmissiveColor = float3(0,0,0);
-float SpecularIntensity = 1.0f;
-float SpecularPower = 0.5f;
+float SpecularIntensity = .5f;
+float SpecularPower = 0.1f;
 
 texture Tex;
 

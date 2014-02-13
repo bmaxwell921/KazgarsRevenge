@@ -196,7 +196,7 @@ namespace KazgarsRevenge
 
             initDrawingParams();
 
-            Texture2D empty=Content.Load<Texture2D>("Textures\\whitePixel");
+            Texture2D empty = Content.Load<Texture2D>("Textures\\whitePixel");
 
 
             //deferred stuff
@@ -216,18 +216,18 @@ namespace KazgarsRevenge
             effectPointLight = Content.Load<Effect>("Shaders\\Deferred\\PointLight");
             effectDirectionalLight = Content.Load<Effect>("Shaders\\Deferred\\DirectionalLight");
 
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < 1; ++i)
             {
-                for (int j = 0; j < 5; ++j)
+                for (int j = 0; j < 1; ++j)
                 {
                     PointLightEffect newLight = new PointLightEffect(effectPointLight);
                     newLight.LightPosition = new Vector3(-25 + i * 10, 50, -25 + j * 10);
-                    lights.Add(newLight);
+                    //lights.Add(newLight);
                 }
             }
 
             DirectionalLightEffect dirLight = new DirectionalLightEffect(effectDirectionalLight);
-            lights.Add(dirLight);
+            //lights.Add(dirLight);
 
 
             effectFinalCombine = new FinalCombineEffect(Content.Load<Effect>("Shaders\\Deferred\\FinalCombineShader"));
@@ -706,9 +706,9 @@ namespace KazgarsRevenge
 
             //rendery stuff
             GBufferTarget gbuffer = camera.RenderTargets;
-            RenderBegin(gbuffer);
-            RenderDraw(gameTime);
-            RenderEnd(gbuffer);
+            DeferredBegin(gbuffer);
+            DeferredDraw(gameTime);
+            DeferredEnd(gbuffer);
 
             //draw the final image
             GraphicsDevice.SetRenderTarget(null);
@@ -757,7 +757,7 @@ namespace KazgarsRevenge
 
         }
 
-        private void RenderBegin(GBufferTarget gbuffer)
+        private void DeferredBegin(GBufferTarget gbuffer)
         {
             /*
              * Begin 
@@ -780,7 +780,7 @@ namespace KazgarsRevenge
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
 
-        private void RenderDraw(GameTime gameTime)
+        private void DeferredDraw(GameTime gameTime)
         {
             /*
              * Draw
@@ -819,7 +819,7 @@ namespace KazgarsRevenge
             }
         }
 
-        private void RenderEnd(GBufferTarget gbuffer)
+        private void DeferredEnd(GBufferTarget gbuffer)
         {
 
             /*

@@ -1,6 +1,6 @@
 #include "../Common/NormalEncoding.fxh"
 
-float3 Color;
+float3 Color = float3(1,1,1);
 float3 CameraPosition;
 
 texture ColorMap;
