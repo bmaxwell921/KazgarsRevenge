@@ -5,43 +5,24 @@ float4x4 World : WORLD;
 float4x4 View : VIEW;
 float4x4 Projection : PROJECTION;
 
-float3 DiffuseColor = float3(1,1,1);
 float3 EmissiveColor = float3(0,0,0);
-float SpecularIntensity = .5f;
-float SpecularPower = 0.1f;
-
-float4x3 Bones[72] : BONES;
-
+float SpecularIntensity = 1.0f;
+float SpecularPower = 0.5f;
 
 texture Tex;
+
 sampler diffuseSampler
 {
-	Texture = <Tex>;
-	AddressU = CLAMP;
-	AddressV = CLAMP;
+	Texture=<Tex>;
 	MagFilter = LINEAR;
 	MinFilter = LINEAR;
 	MipFilter = LINEAR;
+	AddressU = wrap;
+	AddressV = wrap;
 };
 
-
-void Skin(inout GBufferVSInput_Bi_Ta_Blend vin, uniform int boneCount)
+GBufferVSOutput_Common GBufferVS_DEFAULT(GBufferVSInput_Bi_Ta input)
 {
-    float4x3 skinning = 0;
-
-    [unroll]
-    for (int i = 0; i < boneCount; i++)
-    {
-        skinning += Bones[vin.BlendIndices[i]] * vin.BlendWeights[i];
-    }
-
-    vin.Position.xyz = mul(vin.Position, skinning);
-    vin.Normal = mul(vin.Normal, (float3x3)skinning);
-}
-
-GBufferVSOutput_Common VertexShaderFunction(GBufferVSInput_Bi_Ta_Blend input)
-{
-	Skin(input, 4);
     GBufferVSOutput_Common output;
 
     float4 worldPosition = mul(input.Position, World);
@@ -56,11 +37,11 @@ GBufferVSOutput_Common VertexShaderFunction(GBufferVSInput_Bi_Ta_Blend input)
     return output;
 }
 
-GBufferPSOutput PixelShaderFunction(GBufferVSOutput_Common input)
+GBufferPSOutput GBufferPS_DEFAULT(GBufferVSOutput_Common input)
 {
 	GBufferPSOutput output;
 
-	output.Albedo.rgb = DiffuseColor * tex2D(diffuseSampler, input.TexCoord);
+	output.Albedo.rgb = tex2D(diffuseSampler, input.TexCoord);
 	output.Albedo.a = SpecularIntensity;
 
 	float3 normalValue = input.NormalWS;
@@ -81,9 +62,7 @@ technique Technique1
 {
     pass Pass1
     {
-        // TODO: set renderstates here.
-
-        VertexShader = compile vs_2_0 VertexShaderFunction();
-        PixelShader = compile ps_2_0 PixelShaderFunction();
+        VertexShader = compile vs_2_0 GBufferVS_DEFAULT();
+        PixelShader = compile ps_2_0 GBufferPS_DEFAULT();
     }
 }

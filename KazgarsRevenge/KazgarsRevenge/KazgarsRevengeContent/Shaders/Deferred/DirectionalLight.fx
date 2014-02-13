@@ -1,6 +1,6 @@
 #include "../Common/CommonLight.fxh"
 
-float3 LightDirection;
+float3 LightDirection = float3(1,1,1);
 
 float4 PixelShaderFunction(LightVertexShaderOutput input) : COLOR0
 {

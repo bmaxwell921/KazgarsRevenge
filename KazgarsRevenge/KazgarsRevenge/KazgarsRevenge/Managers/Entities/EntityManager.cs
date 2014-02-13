@@ -48,11 +48,15 @@ namespace KazgarsRevenge
             toonAnimatedEffect = Game.Content.Load<Effect>("Shaders\\ToonSkinnedEffect");
             effectCellShading = Game.Content.Load<Effect>("Shaders\\CellShader");
 
-            defferredSkinnedEffect = Game.Content.Load<Effect>("Shaders\\Deferred\\SkinnedNormalDiffuseGBufferEffect");
+            deferredSkinnedEffect = Game.Content.Load<Effect>("Shaders\\Deferred\\SkinnedNormalDiffuseGBufferEffect");
+            deferredUnanimatedEffect = Game.Content.Load<Effect>("Shaders\\Deferred\\NormalDiffuseGBufferEffect");
+
         }
 
 
-        protected Effect defferredSkinnedEffect;
+        protected Effect deferredSkinnedEffect;
+        protected Effect deferredUnanimatedEffect;
+
         protected Effect toonAnimatedEffect;
         protected Effect effectCellShading;
         protected Dictionary<string, Model> animatedModels = new Dictionary<string, Model>();
@@ -99,10 +103,8 @@ namespace KazgarsRevenge
                     SkinnedEffect skinnedEffect = part.Effect as SkinnedEffect;
                     if (skinnedEffect != null)
                     {
-                        // Create new custom skinned effect from our base effect
-                        CustomSkinnedEffect custom = new CustomSkinnedEffect(toonAnimatedEffect);
-                        custom.CopyFromSkinnedEffect(skinnedEffect);
-                        part.Effect = custom;
+                        part.Effect = deferredSkinnedEffect.Clone();
+                        part.Effect.Parameters["Tex"].SetValue(skinnedEffect.Texture);
                     }
                 }
             }
@@ -115,26 +117,14 @@ namespace KazgarsRevenge
             //if this model has already been loaded, don't process its textures again
             if (model.Meshes[0].Effects[0] is BasicEffect)
             {
-                List<Texture2D> modelTextures = new List<Texture2D>();
-                foreach (ModelMesh mesh in model.Meshes)
-                {
-                    foreach (BasicEffect eff in mesh.Effects)
-                    {
-                        modelTextures.Add(eff.Texture);
-                    }
-                }
-
-                int i = 0;
                 foreach (ModelMesh mesh in model.Meshes)
                 {
                     foreach (ModelMeshPart part in mesh.MeshParts)
                     {
-                        part.Effect = effectCellShading.Clone();
-                        part.Effect.Parameters["ColorMap"].SetValue(modelTextures[i++]);
-                        if (i >= modelTextures.Count)
-                        {
-                            i = modelTextures.Count - 1;
-                        }
+                        BasicEffect oldEffect = part.Effect as BasicEffect;
+                        Effect newEffect = deferredUnanimatedEffect.Clone();
+                        newEffect.Parameters["Tex"].SetValue(oldEffect.Texture);
+                        part.Effect = newEffect;
                     }
                 }
             }

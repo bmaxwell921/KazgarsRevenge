@@ -114,9 +114,9 @@ namespace KazgarsRevenge
             //drawing with toon shader
             foreach (ModelMesh mesh in model.Meshes)
             {
-                foreach (CustomSkinnedEffect effect in mesh.Effects)
+                foreach (Effect effect in mesh.Effects)
                 {
-                    
+                    /*
                     effect.Parameters["alpha"].SetValue(modelParams.alpha);
                     effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                     effect.CurrentTechnique = effect.Techniques[edgeDetection? "NormalDepth" : "Toon"];
@@ -124,8 +124,11 @@ namespace KazgarsRevenge
 
                     effect.View = view;
                     effect.Projection = projection;
-
-                    //effect.Parameters["Bones"].SetValue(bones);
+                    */
+                    effect.Parameters["Bones"].SetValue(bones);
+                    effect.Parameters["World"].SetValue(Matrix.Identity);
+                    effect.Parameters["View"].SetValue(view);
+                    effect.Parameters["Projection"].SetValue(projection);
                 }
 
                 mesh.Draw();
@@ -145,13 +148,17 @@ namespace KazgarsRevenge
                         {
                             foreach (Effect effect in mesh.Effects)
                             {
-                                effect.Parameters["alpha"].SetValue(modelParams.alpha);
-                                effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                                effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                                Matrix world = Matrix.CreateFromYawPitchRoll(a.xRotation, a.yRotation, 0) * transforms[mesh.ParentBone.Index] * worldbones[model.Bones[a.otherBoneName].Index - 2];
+                                //effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                                //effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                                //effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                                Matrix world = 
+                                    Matrix.CreateFromYawPitchRoll(a.xRotation, a.yRotation, 0) 
+                                    * transforms[mesh.ParentBone.Index] 
+                                    * worldbones[model.Bones[a.otherBoneName].Index - 2];
+
                                 effect.Parameters["World"].SetValue(world);
-                                effect.Parameters["ViewProj"].SetValue(view * projection);
-                                effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
+                                effect.Parameters["View"].SetValue(view);
+                                effect.Parameters["Projection"].SetValue(projection);
                             }
                             mesh.Draw();
                         }

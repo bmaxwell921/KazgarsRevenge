@@ -33,7 +33,7 @@ namespace KazgarsRevenge
         CameraComponent camera;
         ModelManager renderManager;
         SpriteManager spriteManager;
-        BillBoardManager billboard;
+        BillBoardManager billboards;
         LootManager lootManager;
         LevelModelManager levelModelManager;
 
@@ -121,9 +121,9 @@ namespace KazgarsRevenge
             Components.Add(spriteManager);
             Services.AddService(typeof(SpriteManager), spriteManager);
 
-            billboard = new BillBoardManager(this);
-            Components.Add(billboard);
-            Services.AddService(typeof(BillBoardManager), billboard);
+            billboards = new BillBoardManager(this);
+            Components.Add(billboards);
+            Services.AddService(typeof(BillBoardManager), billboards);
 
             players = new PlayerManager(this);
             Components.Add(players);
@@ -216,14 +216,18 @@ namespace KazgarsRevenge
             effectPointLight = Content.Load<Effect>("Shaders\\Deferred\\PointLight");
             effectDirectionalLight = Content.Load<Effect>("Shaders\\Deferred\\DirectionalLight");
 
-            //for(int i=0; i<20; ++i){
-            PointLightEffect newLight = new PointLightEffect(effectPointLight);
-            newLight.LightPosition = new Vector3(120, 20, 120);
-            lights.Add(newLight);
+            for (int i = 0; i < 5; ++i)
+            {
+                for (int j = 0; j < 5; ++j)
+                {
+                    PointLightEffect newLight = new PointLightEffect(effectPointLight);
+                    newLight.LightPosition = new Vector3(-25 + i * 10, 50, -25 + j * 10);
+                    lights.Add(newLight);
+                }
+            }
 
             DirectionalLightEffect dirLight = new DirectionalLightEffect(effectDirectionalLight);
-            dirLight.Direction = new Vector3(1, 1, 1);
-            lights.Add(newLight);
+            lights.Add(dirLight);
 
 
             effectFinalCombine = new FinalCombineEffect(Content.Load<Effect>("Shaders\\Deferred\\FinalCombineShader"));
@@ -431,7 +435,7 @@ namespace KazgarsRevenge
 
             if (gameState == GameState.Playing)
             {
-                bool deferred = false;
+                bool deferred = true;
                 if (deferred)
                 {
                     DrawDeferred(gameTime);
@@ -462,7 +466,7 @@ namespace KazgarsRevenge
 
                     GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
                     //draw billboarded stuff
-                    billboard.Draw();
+                    billboards.Draw();
 
 
                     //reset graphics device
@@ -723,13 +727,8 @@ namespace KazgarsRevenge
              * Draw
              */
 
-            /*List<MeshRendererComponent> meshes = sceneAnalyzer.MeshRendererComponents[RenderingStage.Deferred];
-            foreach (var meshRenderer in meshes)
-            {
-                MeshRenderer.RenderMesh(_graphicsDevice, meshRenderer, _activeCamera);
-            }*/
             renderManager.Draw(gameTime, false);
-
+            levelModelManager.Draw(gameTime, false);
 
             //Resolve GBuffer
             GraphicsDevice.SetRenderTarget(null);
@@ -767,9 +766,9 @@ namespace KazgarsRevenge
             /*
              * End
              */
-
+            
             GraphicsDevice.SetRenderTarget(camera.OutputTarget);
-
+            
             GraphicsDevice.BlendState = BlendState.Opaque;
             
             effectFinalCombine.ColorMap = gbuffer.Albedo;
@@ -782,11 +781,48 @@ namespace KazgarsRevenge
 
             GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
                 (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
+            
 
 
             GraphicsDevice.SetRenderTarget(null);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
             spriteBatch.Draw(camera.OutputTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+            /*
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.BlendState = BlendState.Opaque;
+
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone);
+            spriteBatch.Draw(camera.RenderTargets.Normals, Vector2.Zero, Color.White);
+            spriteBatch.End();
+            */
+
+
+
+            //physics debugging
+            /*
+            effectModelDrawer.LightingEnabled = false;
+            effectModelDrawer.VertexColorEnabled = true;
+            effectModelDrawer.World = Matrix.Identity;
+            effectModelDrawer.View = camera.View;
+            effectModelDrawer.Projection = camera.Projection;
+            modelDrawer.Draw(effectModelDrawer, physics);
+            */
+
+            //draw particles
+            particleManager.Draw(gameTime);
+
+            GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+            //draw billboarded stuff
+            billboards.Draw();
+
+
+            spriteBatch.Begin();
+            spriteManager.Draw(spriteBatch);
+            foreach (FloatingText f in alertText)
+            {
+                spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
+            }
             spriteBatch.End();
 
         }
