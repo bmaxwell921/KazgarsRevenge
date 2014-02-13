@@ -20,6 +20,7 @@ namespace SkinnedModelLib
         None,
         MixOnce,
         MixInto,
+        PauseAtEnd,
     }
     /// <summary>
     /// The animation player is in charge of decoding bone position
@@ -86,6 +87,8 @@ namespace SkinnedModelLib
         /// </summary>
         public void StartClip(string clipName, MixType t)
         {
+            pauseAtEnd = false;
+            paused = false;
             switch (t)
             {
                 case MixType.None:
@@ -114,9 +117,20 @@ namespace SkinnedModelLib
                     secondKeyframe = 0;
                     bonesToIgnore = null;
                     break;
+                case MixType.PauseAtEnd:
+                    currentClipValue = skinningDataValue.AnimationClips[clipName];
+                    currentTimeValue = TimeSpan.Zero;
+                    currentKeyframe = 0;
+
+                    // Initialize bone transforms to the bind pose.
+                    skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
+
+                    pauseAtEnd = true;
+                    break;
             }
         }
 
+        bool pauseAtEnd = false;
         bool paused = false;
         public void PauseAnimation()
         {
@@ -156,10 +170,21 @@ namespace SkinnedModelLib
 
                 // If we reached the end, loop back to the start.
                 while (time >= currentClipValue.Duration)
-                    time -= currentClipValue.Duration;
+                {
+                    if (pauseAtEnd)
+                    {
+                        time = currentClipValue.Duration;
+                        paused = true;
+                        break;
+                    }
+                    else
+                    {
+                        time -= currentClipValue.Duration;
+                    }
+                }
             }
 
-            if ((time < TimeSpan.Zero) || (time >= currentClipValue.Duration))
+            if ((time < TimeSpan.Zero) || (time >= currentClipValue.Duration && !paused))
                 throw new ArgumentOutOfRangeException("time");
 
             // If the position moved backwards, reset the keyframe index.

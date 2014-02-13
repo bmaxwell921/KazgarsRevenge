@@ -116,6 +116,7 @@ namespace KazgarsRevenge
             {
                 foreach (CustomSkinnedEffect effect in mesh.Effects)
                 {
+                    
                     effect.Parameters["alpha"].SetValue(modelParams.alpha);
                     effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                     effect.CurrentTechnique = effect.Techniques[edgeDetection? "NormalDepth" : "Toon"];
@@ -123,6 +124,8 @@ namespace KazgarsRevenge
 
                     effect.View = view;
                     effect.Projection = projection;
+
+                    //effect.Parameters["Bones"].SetValue(bones);
                 }
 
                 mesh.Draw();

@@ -49,37 +49,31 @@ void Skin(inout GBufferVSInput_Bi_Ta_Blend vin, uniform int boneCount)
     vin.Normal = mul(vin.Normal, (float3x3)skinning);
 }
 
-GBufferVSOutput_Normal VertexShaderFunction(GBufferVSInput_Bi_Ta_Blend input)
+GBufferVSOutput_Common VertexShaderFunction(GBufferVSInput_Bi_Ta_Blend input)
 {
-	Skin(input,4);
-    GBufferVSOutput_Normal output;
+	Skin(input, 4);
+    GBufferVSOutput_Common output;
 
     float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(worldPosition, View);
     output.Position = mul(viewPosition, Projection);
 
-	//output.NormalWS = 0;//mul(input.Normal,World);
+	output.NormalWS = mul(input.Normal,World);
 	output.TexCoord = input.TexCoord;
 
 	output.Depth.xy = output.Position.zw;
 
-	output.TangentToWorld[0] = mul(input.Tangent,World);
-	output.TangentToWorld[1] = mul(input.Binormal,World);
-	output.TangentToWorld[2] = mul(input.Normal,World);
-
     return output;
 }
 
-GBufferPSOutput PixelShaderFunction(GBufferVSOutput_Normal input)
+GBufferPSOutput PixelShaderFunction(GBufferVSOutput_Common input)
 {
 	GBufferPSOutput output;
 
 	output.Albedo.rgb = DiffuseColor * tex2D(diffuseSampler, input.TexCoord);
 	output.Albedo.a = SpecularIntensity;
 
-	float3 normalValue = normalize(2 * tex2D(normalSampler, input.TexCoord).xyz - 1);
-	normalValue = mul(normalValue, input.TangentToWorld);
-	normalValue = normalize(normalValue);
+	float3 normalValue = input.NormalWS;
 
 	output.Normal = 0;
 	output.Normal.xy = encodeNormals(normalValue);

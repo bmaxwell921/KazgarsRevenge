@@ -150,7 +150,7 @@ namespace KazgarsRevenge
 
         public void PlayAnimation(string animationName, MixType mix)
         {
-            animations.StartClip(animationName, MixType.None);
+            animations.StartClip(animationName, mix);
             currentAniName = animationName;
         }
 
@@ -298,6 +298,7 @@ namespace KazgarsRevenge
                     {
                         attackCounter = 0;
                         PlayAnimation(settings.aniPrefix + "attack");
+                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                         swinging = true;
                         swingCounter = 0;
                     }

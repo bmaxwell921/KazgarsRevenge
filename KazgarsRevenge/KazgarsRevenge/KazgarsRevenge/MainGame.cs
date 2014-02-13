@@ -213,11 +213,16 @@ namespace KazgarsRevenge
             lightBlendState.ColorDestinationBlend = Blend.One;
 
 
-            effectLight = Content.Load<Effect>("Shaders\\Deferred\\PointLight");
+            effectPointLight = Content.Load<Effect>("Shaders\\Deferred\\PointLight");
+            effectDirectionalLight = Content.Load<Effect>("Shaders\\Deferred\\DirectionalLight");
 
             //for(int i=0; i<20; ++i){
-            PointLightEffect newLight = new PointLightEffect(effectLight);
+            PointLightEffect newLight = new PointLightEffect(effectPointLight);
             newLight.LightPosition = new Vector3(120, 20, 120);
+            lights.Add(newLight);
+
+            DirectionalLightEffect dirLight = new DirectionalLightEffect(effectDirectionalLight);
+            dirLight.Direction = new Vector3(1, 1, 1);
             lights.Add(newLight);
 
 
@@ -385,11 +390,11 @@ namespace KazgarsRevenge
             players.CreateMainPlayer(new Vector3(120, 20, 120), DUMMY_ID);
 
             // TODO get rid of this for better spawning mechanics
-            for (int i = 0; i < 10; ++i)
+            for (int i = 0; i < 3; ++i)
             {
-                for (int j = 0; j < 10; ++j)
+                for (int j = 0; j < 3; ++j)
                 {
-                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 100, 20, -100 - j * 100), 1);
+                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 300, 20, -100 - j * 300), 1);
                 }
             }
         }
@@ -683,8 +688,9 @@ namespace KazgarsRevenge
 
         BlendState lightBlendState;
 
-        Effect effectLight;
-        List<PointLightEffect> lights = new List<PointLightEffect>();
+        Effect effectPointLight;
+        Effect effectDirectionalLight;
+        List<LightEffect> lights = new List<LightEffect>();
 
         FinalCombineEffect effectFinalCombine;
         #endregion
@@ -736,7 +742,7 @@ namespace KazgarsRevenge
             GraphicsDevice.Clear(Color.Transparent);
 
             //Draw lights
-            foreach (PointLightEffect light in lights)
+            foreach (LightEffect light in lights)
             {
                 light.ColorMap = camera.RenderTargets.Albedo;
                 light.NormalMap = camera.RenderTargets.Normals;

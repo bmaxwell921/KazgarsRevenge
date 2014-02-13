@@ -168,13 +168,7 @@ namespace KazgarsRevenge
 
                     if (timerCounter >= timerLength)
                     {
-                        if (currentAni == "soul_loot")
-                        {
-                            currentAni = "soul_loot_spin";
-                            animations.StartClip(currentAni, MixType.None);
-                            timerLength = 10000;
-                        }
-                        else if (currentAni == "soul_loot_smash")
+                        if (currentAni == "soul_loot_smash")
                         {
                             if (loot.Count == 0)
                             {
@@ -183,11 +177,11 @@ namespace KazgarsRevenge
                             else
                             {
                                 Vector3 smashedPos = GetBoneTranslation(6);
+                                physicalData.Position = new Vector3(smashedPos.X, 10, smashedPos.Z);
                                 currentAni = "soul_wander";
                                 animations.StartClip(currentAni, MixType.None);
                                 soulState = LootSoulState.Scared;
                                 timerLength = 5000;
-                                physicalData.Position = new Vector3(smashedPos.X, 10, smashedPos.Z);
                                 timer2Counter = 10000;
                             }
                         }
@@ -227,10 +221,15 @@ namespace KazgarsRevenge
             physicalData.Orientation = q;
             soulState = LootSoulState.BeingLooted;
             currentAni = "soul_loot";
-            animations.StartClip(currentAni, MixType.None);
+            animations.StartClip(currentAni, MixType.PauseAtEnd);
             timerCounter = 0;
             timerLength = animations.GetAniMillis(currentAni);
             physicalData.LinearVelocity = Vector3.Zero;
+        }
+
+        public void StartSpin()
+        {
+            animations.StartClip("soul_loot_spin", MixType.PauseAtEnd);
         }
 
         public void CloseLoot()

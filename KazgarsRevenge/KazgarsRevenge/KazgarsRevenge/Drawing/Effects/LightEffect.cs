@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    class LightEffect : Effect
+    public class LightEffect : Effect
     {
         private EffectParameter _color;
         private EffectParameter _camPosition;

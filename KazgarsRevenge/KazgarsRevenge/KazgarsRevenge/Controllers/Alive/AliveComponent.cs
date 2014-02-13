@@ -216,13 +216,12 @@ namespace KazgarsRevenge
 
         public int Damage(DeBuff db, int d, GameEntity from)
         {
-            int toDeal = d;
             if (db == DeBuff.Igniting && HasDeBuff(DeBuff.Tar))
             {
                 d *= 4;
             }
 
-            int actualDamage = Damage(toDeal, false);
+            int actualDamage = Damage(d, false);
             TakeDamage(actualDamage, from);
 
 

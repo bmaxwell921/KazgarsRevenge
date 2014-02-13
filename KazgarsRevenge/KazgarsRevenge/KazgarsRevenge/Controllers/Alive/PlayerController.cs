@@ -534,11 +534,11 @@ namespace KazgarsRevenge
                 if (!inCombat)
                 {
                     PlayAnimation("k_from_fighting_stance", MixType.None);
-                    millisActionLength = animations.GetAniMillis("k_from_fighting_stance") - 20;
+                    millisActionLength = animations.GetAniMillis("k_from_fighting_stance") - 40;
                 }
                 else
                 {
-                    StartSequence("k_fighting_stance");
+                    StartSequence("fightingstance");
                 }
             });
             sequence.Add(() =>
@@ -647,8 +647,8 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
-                PlayAnimation("k_loot", MixType.None);
-                millisActionLength = animations.GetAniMillis("k_loot") - 20;
+                PlayAnimation("k_loot", MixType.PauseAtEnd);
+                millisActionLength = animations.GetAniMillis("k_loot");
 
                 if (attached[GearSlot.Righthand.ToString()] != null)
                 {
@@ -666,8 +666,12 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
-                PlayAnimation("k_loot_spin", MixType.None);
+                PlayAnimation("k_loot_spin", MixType.PauseAtEnd);
                 millisActionLength = animations.GetAniMillis("k_loot_spin");
+                if (lootingSoul != null)
+                {
+                    lootingSoul.StartSpin();
+                }
             });
             sequence.Add(() =>
             {
@@ -1228,6 +1232,7 @@ namespace KazgarsRevenge
 
 
 
+        int fightingStanceLoops = 0;
         AttachableModel attachedArrow;
         protected void UpdateActionSequences(double elapsed)
         {
@@ -1245,6 +1250,19 @@ namespace KazgarsRevenge
             aniCounter += elapsed;
             if (aniCounter >= aniLength)
             {
+                if (currentAniName == "k_fighting_stance")
+                {
+                    ++fightingStanceLoops;
+                    if (fightingStanceLoops > 3)
+                    {
+                        StartSequence("fightingstance");
+                        fightingStanceLoops = 0;
+                    }
+                }
+                else
+                {
+                    fightingStanceLoops = 0;
+                }
                 if (currentAniName == "k_from_fighting_stance")
                 {
                     StartSequence("idle");
@@ -1311,7 +1329,7 @@ namespace KazgarsRevenge
         //TODO: damage tracker and "in combat" status
         public override void HandleDamageDealt(int damageDealt)
         {
-
+            inCombat = true;
             millisCombatCounter = 0;
         }
 

@@ -41,8 +41,6 @@ struct GBufferVSInput_Bi_Ta_Blend
 	float4 Position : POSITION0;
 	float3 Normal : NORMAL0;
 	float2 TexCoord : TEXCOORD0;
-	float3 Binormal : BINORMAL0;
-	float3 Tangent : TANGENT0;
 	int4 BlendIndices : BLENDINDICES0;
 	float4 BlendWeights : BLENDWEIGHT0;
 };

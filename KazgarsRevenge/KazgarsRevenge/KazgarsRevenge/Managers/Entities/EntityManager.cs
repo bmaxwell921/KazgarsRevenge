@@ -47,9 +47,12 @@ namespace KazgarsRevenge
             levelManager = Game.Services.GetService(typeof(LevelManager)) as LevelManager;
             toonAnimatedEffect = Game.Content.Load<Effect>("Shaders\\ToonSkinnedEffect");
             effectCellShading = Game.Content.Load<Effect>("Shaders\\CellShader");
+
+            defferredSkinnedEffect = Game.Content.Load<Effect>("Shaders\\Deferred\\SkinnedNormalDiffuseGBufferEffect");
         }
 
 
+        protected Effect defferredSkinnedEffect;
         protected Effect toonAnimatedEffect;
         protected Effect effectCellShading;
         protected Dictionary<string, Model> animatedModels = new Dictionary<string, Model>();
