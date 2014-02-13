@@ -700,94 +700,24 @@ namespace KazgarsRevenge
         #endregion
         private void DrawDeferred(GameTime gameTime)
         {
+            //clear
             GraphicsDevice.Clear(Color.Black);
             GraphicsDevice.SetRenderTarget(null);
-            /*
-             * Begin 
-             */
-            GBufferTarget gbuffer =  camera.RenderTargets;
-            RenderTarget2D[] renderTargets = gbuffer.GetRenderTargets();
-            GraphicsDevice.SetRenderTargets(renderTargets[0], renderTargets[1], renderTargets[2], renderTargets[3]);
 
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            
-            //clear all buffers of data
-            effectClearBuffer.CurrentTechnique.Passes[0].Apply();
+            //rendery stuff
+            GBufferTarget gbuffer = camera.RenderTargets;
+            RenderBegin(gbuffer);
+            RenderDraw(gameTime);
+            RenderEnd(gbuffer);
 
-            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
-                (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
-
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-            /*
-             * Draw
-             */
-
-            renderManager.Draw(gameTime, false);
-            levelModelManager.Draw(gameTime, false);
-
-            //Resolve GBuffer
-            GraphicsDevice.SetRenderTarget(null);
-
-            //begin light pass
-            GraphicsDevice.SetRenderTarget(camera.RenderTargets.Lighting);
-            GraphicsDevice.BlendState = lightBlendState;
-            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            GraphicsDevice.Clear(Color.Transparent);
-
-            //Draw lights
-            foreach (LightEffect light in lights)
-            {
-                light.ColorMap = camera.RenderTargets.Albedo;
-                light.NormalMap = camera.RenderTargets.Normals;
-                light.HighlightsMap = camera.RenderTargets.Highlights;
-                light.DepthMap = camera.RenderTargets.Depth;
-                light.CameraPosition = camera.Position;
-                light.HalfPixel = camera.RenderTargets.HalfPixel;
-                light.InverseViewProjection = camera.InverseViewProj;
-
-                foreach (EffectPass pass in light.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                }
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
-                    (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
-            }
-
-
-
-
-
-            /*
-             * End
-             */
-            
-            GraphicsDevice.SetRenderTarget(camera.OutputTarget);
-            
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            
-            effectFinalCombine.ColorMap = gbuffer.Albedo;
-            effectFinalCombine.HighlightMap = gbuffer.Highlights;
-            effectFinalCombine.LightMap = gbuffer.Lighting;
-            effectFinalCombine.HalfPixel = gbuffer.HalfPixel;
-
-            effectFinalCombine.Apply();
-
-
-            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
-                (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
-            
-
-
+            //draw the final image
             GraphicsDevice.SetRenderTarget(null);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
             spriteBatch.Draw(camera.OutputTarget, Vector2.Zero, Color.White);
             spriteBatch.End();
+
+            
+            //rendertarget debugging
             /*
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.BlendState = BlendState.Opaque;
@@ -825,6 +755,90 @@ namespace KazgarsRevenge
             }
             spriteBatch.End();
 
+        }
+
+        private void RenderBegin(GBufferTarget gbuffer)
+        {
+            /*
+             * Begin 
+             */
+            RenderTarget2D[] renderTargets = gbuffer.GetRenderTargets();
+            GraphicsDevice.SetRenderTargets(renderTargets[0], renderTargets[1], renderTargets[2], renderTargets[3]);
+
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            GraphicsDevice.DepthStencilState = DepthStencilState.None;
+
+            //clear all buffers of data
+            effectClearBuffer.CurrentTechnique.Passes[0].Apply();
+
+            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
+                (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
+
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+        }
+
+        private void RenderDraw(GameTime gameTime)
+        {
+            /*
+             * Draw
+             */
+
+            renderManager.Draw(gameTime, false);
+            levelModelManager.Draw(gameTime, false);
+
+            //Resolve GBuffer
+            GraphicsDevice.SetRenderTarget(null);
+
+            //begin light pass
+            GraphicsDevice.SetRenderTarget(camera.RenderTargets.Lighting);
+            GraphicsDevice.BlendState = lightBlendState;
+            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.DepthStencilState = DepthStencilState.None;
+            GraphicsDevice.Clear(Color.Transparent);
+
+            //Draw lights
+            foreach (LightEffect light in lights)
+            {
+                light.ColorMap = camera.RenderTargets.Albedo;
+                light.NormalMap = camera.RenderTargets.Normals;
+                light.HighlightsMap = camera.RenderTargets.Highlights;
+                light.DepthMap = camera.RenderTargets.Depth;
+                light.CameraPosition = camera.Position;
+                light.HalfPixel = camera.RenderTargets.HalfPixel;
+                light.InverseViewProjection = camera.InverseViewProj;
+
+                foreach (EffectPass pass in light.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                }
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
+                    (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
+            }
+        }
+
+        private void RenderEnd(GBufferTarget gbuffer)
+        {
+
+            /*
+             * End
+             */
+            GraphicsDevice.SetRenderTarget(camera.OutputTarget);
+
+            GraphicsDevice.BlendState = BlendState.Opaque;
+
+            effectFinalCombine.ColorMap = gbuffer.Albedo;
+            effectFinalCombine.HighlightMap = gbuffer.Highlights;
+            effectFinalCombine.LightMap = gbuffer.Lighting;
+            effectFinalCombine.HalfPixel = gbuffer.HalfPixel;
+
+            effectFinalCombine.Apply();
+
+
+            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
+                (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
         }
 
         public void DrawConnectScreen()
