@@ -18,7 +18,7 @@ namespace KazgarsRevenge
         short[] indices = new short[6];
         protected Vector3 up;
         protected Vector3 normal;
-        Vector3 left;
+        protected Vector3 left;
 
         protected Vector2 size;
         protected Vector2 source = new Vector2(1, 1);

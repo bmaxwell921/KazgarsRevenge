@@ -87,6 +87,12 @@ namespace SkinnedModelLib
         /// </summary>
         public void StartClip(string clipName, MixType t)
         {
+            StartClip(clipName, t, 1);
+        }
+
+        public void StartClip(string clipName, MixType t, float playbackRate)
+        {
+            this.PlaybackRate = playbackRate;
             pauseAtEnd = false;
             paused = false;
             switch (t)

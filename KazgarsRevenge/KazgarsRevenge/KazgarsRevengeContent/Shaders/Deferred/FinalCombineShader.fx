@@ -72,6 +72,7 @@ float4 FinalCombinePS(FinalCombineVSOutput input) : COLOR0
 	float3 diffuse = diffuseData;
 
 	return float4(ambientContribution + light * diffuse + light * spec + highlights,1);
+	//return float4(ambientContribution + light * diffuse + highlights,1);
 }
 
 technique FinalCombine

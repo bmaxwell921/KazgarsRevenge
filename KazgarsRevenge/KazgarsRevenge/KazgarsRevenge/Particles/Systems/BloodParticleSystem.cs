@@ -32,7 +32,7 @@ namespace KazgarsRevenge
 
             settings.MaxParticles = 600;
 
-            settings.Duration = TimeSpan.FromSeconds(2);
+            settings.Duration = TimeSpan.FromSeconds(1);
 
             settings.MinHorizontalVelocity = -15;
             settings.MaxHorizontalVelocity = 15;

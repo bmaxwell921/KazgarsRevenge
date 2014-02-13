@@ -15,8 +15,8 @@ float4 PixelShaderFunction(LightVertexShaderOutput input) : COLOR0
 
 	//Retrieve Color and Specular Intensity, Power
 	float4 colorData = tex2D(colorSampler,input.TexCoord);
-	float specularIntensity = colorData.a;
-	float specularPower = tex2D(highlightSampler,input.TexCoord).a * 255;
+	//float specularIntensity = colorData.a;
+	//float specularPower = tex2D(highlightSampler,input.TexCoord).a * 255;
 
 	//Calculate world position of point to be lit.
 	float4 position = GetFragmentWorldPosition(input.TexCoord);

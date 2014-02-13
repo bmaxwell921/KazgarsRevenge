@@ -60,7 +60,8 @@ GBufferPSOutput PixelShaderFunction(GBufferVSOutput_Common input)
 	GBufferPSOutput output;
 
 	output.Albedo.rgb = tex2D(diffuseSampler, input.TexCoord);
-	output.Albedo.a = SpecularIntensity;
+	output.Albedo.a = .25;
+	//output.Albedo.a = SpecularIntensity;
 
 	float3 normalValue = input.NormalWS;
 
@@ -68,8 +69,9 @@ GBufferPSOutput PixelShaderFunction(GBufferVSOutput_Common input)
 	output.Normal.xy = encodeNormals(normalValue);
 
 	//Sample emissive color
-	output.Highlights.rgb = EmissiveColor;
-	output.Highlights.a = SpecularPower;
+	//output.Highlights.rgb = EmissiveColor;
+	//output.Highlights.a = SpecularPower;
+	output.Highlights = float4(0,0,0,0);
 
 	output.Depth = input.Depth.x / input.Depth.y;
 
