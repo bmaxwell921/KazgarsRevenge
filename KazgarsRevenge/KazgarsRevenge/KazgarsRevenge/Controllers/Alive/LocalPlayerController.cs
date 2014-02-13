@@ -104,13 +104,9 @@ namespace KazgarsRevenge
         KeyboardState curKeys = Keyboard.GetState();
         KeyboardState prevKeys = Keyboard.GetState();
         bool guiClick = false;
-        int iblah = 0;
         public override void Update(GameTime gameTime)
         {
             Entity sharedData = Entity.GetSharedData(typeof(Entity)) as Entity;
-
-            if (iblah++ % 30 == 0)
-                Console.WriteLine("Player position: {0}", sharedData.Position);
 
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
