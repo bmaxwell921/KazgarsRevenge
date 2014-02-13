@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using System.Threading;
 
 namespace KazgarsRevenge
 {
@@ -62,12 +63,20 @@ namespace KazgarsRevenge
         // I know it's bad to have two sprite batches, but they're used completely separately so it should be ok
         public SpriteBatch sb;
 
+        #region Synchornous Loading
+        private LoadingState loadingState;
+        // Used to lock the loadingState
+        private object lockObj = new Object();
+        #endregion
+
         public MenuManager(KazgarsRevengeGame game)
             : base(game as Game)
         {
             menuQ = new Queue<IMenuInfoBox>();
             menus = new Dictionary<string, IMenu>();
             MainGame mg = Game as MainGame;
+            loadingState = LoadingState.NOT_STARTED;
+
             this.screenWidth = mg.graphics.PreferredBackBufferWidth;
             this.screenHeight = mg.graphics.PreferredBackBufferHeight;
 
@@ -175,9 +184,36 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            lock (lockObj)
+            {
+                if (loadingState == LoadingState.NOT_STARTED)
+                {
+                    NormalUpdate(gameTime);
+                    return;
+                }
+            }
+            LoadingUpdate(gameTime);
+        }
+
+        // Checks to see if we're done loading, if so move on
+        private void LoadingUpdate(GameTime gameTime)
+        {
+            // Don't let people mess with me!
+            lock (lockObj)
+            {
+                if (loadingState == LoadingState.COMPLETE)
+                {
+                    (Game as MainGame).TransitionToPlaying();
+                }
+            }
+        }
+
+        // Normal, non-loading update method
+        private void NormalUpdate(GameTime gameTime)
+        {
             prevKeyboardState = keyboardState;
             keyboardState = Keyboard.GetState();
-            
+
             // Get all the events to send
             IList<IEvent> events = new List<IEvent>();
             GetKeyEvents(events);
@@ -197,14 +233,12 @@ namespace KazgarsRevenge
                     /*
                      * TODO remove this part for the actual stuff
                      */
-                    //(Game as MainGame).DemoLevel();
                     TransitionTo(sel.GetSelection());
                     return;
 
                 }
                 currentMenu.HandleEvent(e);
             }
-
         }
 
         // Adds any keyEvents
@@ -230,17 +264,34 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
-        /// Method called to transition us into the Playing GameState
+        /// Method called by LoadingMenu to being the loading process
         /// </summary>
         /// <param name="name"></param>
         public void LoadLevel(FloorName name)
         {
+            // Fire up a new thread for loading
+            new Thread(this.ActualLoad).Start(name);
+        }
+
+        // Does the loading, then sets the loadingStae as Complete
+        private void ActualLoad(object name)
+        {
+            (Game as MainGame).LoadLevel((FloorName)name);
+            lock (lockObj)
+            {
+                loadingState = LoadingState.COMPLETE;
+            }
+        }
+
+        /// <summary>
+        /// Called after Level loading is completed to begin the game
+        /// </summary>
+        public void AfterLoading()
+        {
             //// TODO how does this manager act when we go to playing?
             //this.menuQ.Clear();
             //currentMenu = menus[GAME_TITLE];
-
-            // TODO Fire this up in a new thread
-            (Game as MainGame).TransitionToPlaying(name);
+            (Game as MainGame).TransitionToPlaying();
         }
 
         #endregion

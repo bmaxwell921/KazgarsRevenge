@@ -62,6 +62,7 @@ namespace KazgarsRevenge
             base.Draw(gameTime);
         }
 
+        #region Do Nothings
         /// <summary>
         /// Do nothing
         /// </summary>
@@ -91,5 +92,6 @@ namespace KazgarsRevenge
         {
             // Do nothing
         }
+        #endregion
     }
 }

@@ -367,7 +367,16 @@ namespace KazgarsRevenge
         /// Tells the game to transition to the playing state
         /// </summary>
         /// <param name="name"></param>
-        public void TransitionToPlaying(FloorName name)
+        public void TransitionToPlaying()
+        {
+            gameState = GameState.Playing;
+        }
+
+        /// <summary>
+        /// Starts the loading of a level with the given FloorName
+        /// </summary>
+        /// <param name="name"></param>
+        public void LoadLevel(FloorName name)
         {
             //levels.CreateLevel(name);
             levels.DemoLevel();
@@ -383,8 +392,6 @@ namespace KazgarsRevenge
                     enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 100, 20, -100 - j * 100), 1);
                 }
             }
-
-            gameState = GameState.Playing;
         }
 
         Vector2 vecLoadingText;

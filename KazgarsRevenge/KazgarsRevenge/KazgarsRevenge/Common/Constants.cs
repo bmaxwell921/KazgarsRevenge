@@ -40,6 +40,12 @@ namespace KazgarsRevenge
         DisconnectedPlayer,
     }
 
+    // State used for loading stuff
+    public enum LoadingState
+    {
+        NOT_STARTED, IN_PROGRESS, COMPLETE,
+    }
+
     // Used for locations of doors on chunks. North faces the top of the page, East faces to the right
     public enum Direction
     {      
