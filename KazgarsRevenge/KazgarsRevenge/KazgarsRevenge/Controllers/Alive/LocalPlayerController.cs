@@ -175,6 +175,14 @@ namespace KazgarsRevenge
                 bool mouseOnGui = collides != null;
                 CheckMouseRay(newTarget, mouseOnGui);
 
+                //#jared I would like to move this to an area where clicking wont move the character.  We will talk about this next time I see you.  Also how to approach weapon equips.
+                //if item is removed from the inventory area
+                if (collides == null && selectedItemSlot != -1 && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
+                {
+                    //Trash item here?
+                    selectedItemSlot = -1;
+                }
+
                 //appropriate action for gui element collided with
                 //happens on left mouse released
                 //#Nate
@@ -184,13 +192,24 @@ namespace KazgarsRevenge
                     switch (collides)
                     {
                         case "inventory":
-                            if(innerClicked == "equipArrow") showEquipment = !showEquipment;
-                            if(innerClicked != null && innerClicked.Contains("inventory")){
+                            if (innerClicked == "equipArrow") showEquipment = !showEquipment;
+                            if (innerClicked != null && innerClicked.Contains("inventory"))
+                            {
                                 for (int i = 0; i <= maxInventorySlots; i++)
                                 {
                                     if (innerClicked == "inventory" + i && inventory.Count() > i)
                                     {
-                                        selectedItemSlot = i;
+                                        if (selectedItemSlot == -1)
+                                        {
+                                            selectedItemSlot = i;
+                                        }
+                                        else
+                                        {
+                                            Item temp = inventory[i];
+                                            inventory[i] = inventory[selectedItemSlot];
+                                            inventory[selectedItemSlot] = temp;
+                                            selectedItemSlot = -1;
+                                        }                      
                                     }
                                 }
                             }
@@ -269,7 +288,7 @@ namespace KazgarsRevenge
             bool closeEnough = distToTarget.Length() <= stopRadius;
             if (!looting && (!guiClick || Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) > .01f))
             {
-                if ((attState == AttackState.Charging || attState == AttackState.CastingSpell)&& !closeEnough)
+                if ((attState == AttackState.Charging || attState == AttackState.CastingSpell) && !closeEnough)
                 {
                     CancelFinishSequence();
                     MoveCharacter(groundMove, closeEnough);
@@ -417,7 +436,7 @@ namespace KazgarsRevenge
                 CloseLoot();
             }
 
-            
+
             //Inventory
             if (curKeys.IsKeyDown(Keys.I) && prevKeys.IsKeyUp(Keys.I))
             {
@@ -551,7 +570,7 @@ namespace KazgarsRevenge
                     UpdateRotation(dir);
                     StartAbilitySequence(abilityToUse);
                     targetedPhysicalData = null;
-                    
+
                 }
                 else if (abilityToUse.AbilityType == AbilityType.Instant)
                 {
@@ -694,7 +713,7 @@ namespace KazgarsRevenge
             mouseHoveredEntity = null;
             mouseHoveredHealth = null;
         }
-        
+
         /// <summary>
         /// Checks what frame of the gui that the mouse is colliding with and returns its name.
         /// If the mouse is not colliding with the gui, returns null.
@@ -753,7 +772,7 @@ namespace KazgarsRevenge
         int maxY;
         float average = 1;
         Dictionary<string, Rectangle> guiOutsideRects;
-        Dictionary<string, Dictionary<string,Rectangle>> guiInsideRects;
+        Dictionary<string, Dictionary<string, Rectangle>> guiInsideRects;
         Rectangle rectMouse;
 
         //Inside Rect Dictionaries
@@ -839,7 +858,7 @@ namespace KazgarsRevenge
             for (int i = 0; i < 4; ++i)
             {
                 abilityDict.Add("ability" + i, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-                abilityDict.Add("ability" + (i+4), new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+                abilityDict.Add("ability" + (i + 4), new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
             }
             abilityDict.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
             abilityDict.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
@@ -885,8 +904,8 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Red * 0.5f);
             for (int i = 0; i < 4; ++i)
             {//Convert below to inside Rects
-                s.Draw(boundAbilities[i].Value.icon, guiInsideRects["abilities"]["ability"+i], Color.White);
-                s.Draw(boundAbilities[i + 4].Value.icon, guiInsideRects["abilities"]["ability" + (i+4)], Color.White);
+                s.Draw(boundAbilities[i].Value.icon, guiInsideRects["abilities"]["ability" + i], Color.White);
+                s.Draw(boundAbilities[i + 4].Value.icon, guiInsideRects["abilities"]["ability" + (i + 4)], Color.White);
             }
 
             //LM
@@ -1024,7 +1043,7 @@ namespace KazgarsRevenge
             #region inventory
             if (showInventory)
             {
-                
+
                 //Equipment pane
                 if (showEquipment)
                 {
@@ -1042,15 +1061,15 @@ namespace KazgarsRevenge
 
                 s.Draw(texWhitePixel, guiOutsideRects["inventory"], Color.Black * .5f);
                 //Gold display
-               
+
                 s.Draw(goldIcon, new Rectangle((int)(maxX - 320 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
-                s.DrawString(font, gold.ToString() , new Vector2(maxX - 280 * average, 380 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                s.DrawString(font, gold.ToString(), new Vector2(maxX - 280 * average, 380 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 //Draw inventory items
                 for (int i = 0; i < inventory.Count; ++i)
                 {
                     //Nate working here
                     s.Draw(inventory[i].Icon, guiInsideRects["inventory"]["inventory" + i], Color.White);
-                   
+
                 }
             }
 
@@ -1071,8 +1090,18 @@ namespace KazgarsRevenge
             //Mouse
             rectMouse.X = curMouse.X;
             rectMouse.Y = curMouse.Y;
-            if (selectedItemSlot == -1) s.Draw(texCursor, rectMouse, Color.White);
-            else s.Draw(inventory[selectedItemSlot].Icon, rectMouse, Color.White);
+            if (selectedItemSlot == -1)
+            {
+                rectMouse.Width = 25;
+                rectMouse.Height = 25;
+                s.Draw(texCursor, rectMouse, Color.White);
+            }
+            else
+            {
+                rectMouse.Width = (int)(60 * average);
+                rectMouse.Height = (int)(60 * average);
+                s.Draw(inventory[selectedItemSlot].Icon, rectMouse, Color.White);
+            }
         }
 
     }
