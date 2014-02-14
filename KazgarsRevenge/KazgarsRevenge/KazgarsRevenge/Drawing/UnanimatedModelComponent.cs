@@ -30,8 +30,8 @@ namespace KazgarsRevenge
         {
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
             rotation = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
-            
-            
+
+
             List<Type> toRemove = new List<Type>();
             foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
             {
@@ -58,7 +58,6 @@ namespace KazgarsRevenge
                 {
                     foreach (Effect effect in mesh.Effects)
                     {
-                        /*
                         effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                         Matrix world = transforms[mesh.ParentBone.Index]
                             * Matrix.CreateScale(drawScale)
@@ -69,9 +68,10 @@ namespace KazgarsRevenge
                         effect.Parameters["World"].SetValue(world);
                         effect.Parameters["ViewProj"].SetValue(view * projection);
                         effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
-                         */
 
 
+
+                        /*
                         Matrix world = transforms[mesh.ParentBone.Index]
                             * Matrix.CreateScale(drawScale)
                             * Matrix.CreateTranslation(localOffset)
@@ -82,7 +82,7 @@ namespace KazgarsRevenge
                         effect.Parameters["World"].SetValue(world);
                         effect.Parameters["View"].SetValue(view);
                         effect.Parameters["Projection"].SetValue(projection);
-
+                        */
                     }
                     mesh.Draw();
                 }

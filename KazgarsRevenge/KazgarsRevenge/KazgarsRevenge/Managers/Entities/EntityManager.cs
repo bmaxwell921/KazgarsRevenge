@@ -21,7 +21,6 @@ namespace KazgarsRevenge
         protected BillBoardManager billboardManager;
         protected GeneralComponentManager genComponentManager;
         protected PlayerManager players;
-        protected BaseNetworkMessageManager nmm;
         protected LevelModelManager levelModelManager;
         protected LevelManager levelManager;
 
@@ -33,7 +32,7 @@ namespace KazgarsRevenge
             this.mainGame = game;
         }
 
-        
+
         public override void Initialize()
         {
             base.Initialize();
@@ -42,7 +41,6 @@ namespace KazgarsRevenge
             spriteManager = Game.Services.GetService(typeof(SpriteManager)) as SpriteManager;
             billboardManager = Game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager;
             players = Game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
-            nmm = Game.Services.GetService(typeof(NetworkMessageManager)) as NetworkMessageManager;
             levelModelManager = Game.Services.GetService(typeof(LevelModelManager)) as LevelModelManager;
             levelManager = Game.Services.GetService(typeof(LevelManager)) as LevelManager;
             toonAnimatedEffect = Game.Content.Load<Effect>("Shaders\\ToonSkinnedEffect");
@@ -103,8 +101,12 @@ namespace KazgarsRevenge
                     SkinnedEffect skinnedEffect = part.Effect as SkinnedEffect;
                     if (skinnedEffect != null)
                     {
-                        part.Effect = deferredSkinnedEffect.Clone();
-                        part.Effect.Parameters["Tex"].SetValue(skinnedEffect.Texture);
+                        //deffered version
+                        //part.Effect = deferredSkinnedEffect.Clone();
+                        //part.Effect.Parameters["Tex"].SetValue(skinnedEffect.Texture);
+                        CustomSkinnedEffect newEffect = new CustomSkinnedEffect(toonAnimatedEffect);
+                        newEffect.CopyFromSkinnedEffect(skinnedEffect);
+                        part.Effect = newEffect;
                     }
                 }
             }
@@ -121,9 +123,17 @@ namespace KazgarsRevenge
                 {
                     foreach (ModelMeshPart part in mesh.MeshParts)
                     {
+                        //deferred version
+                        /*
                         BasicEffect oldEffect = part.Effect as BasicEffect;
                         Effect newEffect = deferredUnanimatedEffect.Clone();
                         newEffect.Parameters["Tex"].SetValue(oldEffect.Texture);
+                        part.Effect = newEffect;
+                        */
+
+                        BasicEffect oldEffect = part.Effect as BasicEffect;
+                        Effect newEffect = effectCellShading.Clone();
+                        newEffect.Parameters["ColorMap"].SetValue(oldEffect.Texture);
                         part.Effect = newEffect;
                     }
                 }

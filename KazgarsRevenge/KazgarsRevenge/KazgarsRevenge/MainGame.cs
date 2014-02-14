@@ -337,7 +337,7 @@ namespace KazgarsRevenge
 
             if (gameState == GameState.Playing)
             {
-                bool deferred = true;
+                bool deferred = false;
                 if (deferred)
                 {
                     DrawDeferred(gameTime);

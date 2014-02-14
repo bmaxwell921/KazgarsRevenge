@@ -114,17 +114,67 @@ namespace KazgarsRevenge
             //drawing with toon shader
             foreach (ModelMesh mesh in model.Meshes)
             {
-                foreach (Effect effect in mesh.Effects)
+                foreach (CustomSkinnedEffect effect in mesh.Effects)
                 {
-                    /*
+
                     effect.Parameters["alpha"].SetValue(modelParams.alpha);
                     effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                    effect.CurrentTechnique = effect.Techniques[edgeDetection? "NormalDepth" : "Toon"];
+                    effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                     effect.SetBoneTransforms(bones);
 
                     effect.View = view;
                     effect.Projection = projection;
-                    */
+                }
+
+                mesh.Draw();
+            }
+
+            if (attachedModels.Count > 0)
+            {
+                Matrix[] worldbones = animationPlayer.GetWorldTransforms();
+                Matrix[] transforms;
+                foreach (AttachableModel a in attachedModels.Values)
+                {
+                    if (a.Draw)
+                    {
+                        transforms = new Matrix[a.model.Bones.Count];
+                        a.model.CopyAbsoluteBoneTransformsTo(transforms);
+                        foreach (ModelMesh mesh in a.model.Meshes)
+                        {
+                            foreach (Effect effect in mesh.Effects)
+                            {
+                                effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                                effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                                effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                                Matrix world =
+                                    Matrix.CreateFromYawPitchRoll(a.xRotation, a.yRotation, 0)
+                                    * transforms[mesh.ParentBone.Index]
+                                    * worldbones[model.Bones[a.otherBoneName].Index - 2];
+
+                                effect.Parameters["World"].SetValue(world);
+                                effect.Parameters["ViewProj"].SetValue(view * projection);
+                                effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
+
+                            }
+                            mesh.Draw();
+                        }
+                    }
+                }
+            }
+        }
+
+
+        //deferred version
+        /*
+         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
+        {
+            Matrix[] bones = animationPlayer.GetSkinTransforms();
+
+            //drawing with toon shader
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
                     effect.Parameters["Bones"].SetValue(bones);
                     effect.Parameters["World"].SetValue(Matrix.Identity);
                     effect.Parameters["View"].SetValue(view);
@@ -148,9 +198,6 @@ namespace KazgarsRevenge
                         {
                             foreach (Effect effect in mesh.Effects)
                             {
-                                //effect.Parameters["alpha"].SetValue(modelParams.alpha);
-                                //effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                                //effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                                 Matrix world = 
                                     Matrix.CreateFromYawPitchRoll(a.xRotation, a.yRotation, 0) 
                                     * transforms[mesh.ParentBone.Index] 
@@ -166,6 +213,8 @@ namespace KazgarsRevenge
                 }
             }
         }
+         */
+
 
         public AnimationClip GetAnimationClip(string clipName)
         {
