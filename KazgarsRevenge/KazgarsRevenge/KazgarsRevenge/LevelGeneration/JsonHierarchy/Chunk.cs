@@ -18,6 +18,14 @@ namespace KazgarsRevenge
             set;
         }
 
+        public void CalcRoomWidthHeight()
+        {
+            foreach (Room r in rooms)
+            {
+                r.CalcWidthHeight();
+            }
+        }
+
         public override object Clone()
         {
             Chunk ret = new Chunk();
