@@ -18,6 +18,8 @@ namespace KazgarsRevenge
         {
             normal = cameraPos - origin;
             normal.Normalize();
+            this.left = Vector3.Cross(normal, up);
+
             base.Draw(view, projection, cameraPos);
         }
     }

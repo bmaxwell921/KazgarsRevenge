@@ -222,7 +222,7 @@ namespace KazgarsRevenge
                 {
                     PointLightEffect newLight = new PointLightEffect(effectPointLight);
                     newLight.LightPosition = new Vector3(-25 + i * 10, 50, -25 + j * 10);
-                    //lights.Add(newLight);
+                    lights.Add(newLight);
                 }
             }
 
