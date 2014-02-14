@@ -168,10 +168,10 @@ namespace KazgarsRevenge
                 newTarget = CheckGUIButtons() || newTarget || mouseHoveredHealth == null;
 
                 string collides = CollidingGuiFrame();
-                bool mouseOnGui = collides != null;
+                bool mouseOnGui = collides != null || selectedItemSlot != -1;
                 CheckMouseRay(newTarget, mouseOnGui);
 
-                //#jared I would like to move this to an area where clicking wont move the character.  We will talk about this next time I see you.  Also how to approach weapon equips.
+                //#jared Equip gear needs to 1. not take in a slot, 2. output floating text if equiop fails
                 //if item is removed from the inventory area
                 if (collides == null && selectedItemSlot != -1 && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
@@ -224,6 +224,27 @@ namespace KazgarsRevenge
                             }
                             break;
 
+                        case "equipment":
+                            if (innerClicked == "equipHead")
+                            {
+                                if (selectedItemSlot == -1) //Not equipping anything
+                                {
+                                    
+                                }
+                                else    //Bringing item in
+                                {
+                                    
+                                }         
+                            }
+                            else if (innerClicked == "equipShoulder")
+                            {
+
+                            }
+                            //Equippable e = inventory[selectedItemSlot] as Equippable;
+                            //if( e != null)
+                            //equip;
+                            break;
+                            
                         case "abilities":
                             abilityToUseString = innerClicked;
                             break;
