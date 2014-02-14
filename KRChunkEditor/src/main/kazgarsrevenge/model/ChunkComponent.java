@@ -85,7 +85,7 @@ public abstract class ChunkComponent implements Locatable, Nameable, Rotatable, 
 	 * @return
 	 */
 	public int getRotatedWidth() {
-		if (this.rotation == Rotation.NINETY || this.rotation == Rotation.ONE_EIGHTY) {
+		if (this.rotation == Rotation.NINETY || this.rotation == Rotation.TWO_SEVENTY) {
 			return this.getHeight();
 		}
 		return this.getWidth();
@@ -96,7 +96,7 @@ public abstract class ChunkComponent implements Locatable, Nameable, Rotatable, 
 	 * @return
 	 */
 	public int getRotatedHeight() {
-		if (this.rotation == Rotation.NINETY || this.rotation == Rotation.ONE_EIGHTY) {
+		if (this.rotation == Rotation.NINETY || this.rotation == Rotation.TWO_SEVENTY) {
 			return this.getWidth();
 		}
 		return this.getHeight();
@@ -161,7 +161,7 @@ public abstract class ChunkComponent implements Locatable, Nameable, Rotatable, 
 	}
 	
 	public String getJsonRep() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = new GsonBuilder().create();
 		return gson.toJson(this);
 	}
 }
