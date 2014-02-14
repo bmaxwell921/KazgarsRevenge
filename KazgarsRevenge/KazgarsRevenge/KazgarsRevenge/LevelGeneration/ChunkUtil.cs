@@ -189,8 +189,8 @@ namespace KazgarsRevenge
             allDirs.Add(Direction.SOUTH);
             allDirs.Add(Direction.EAST);
             allDirs.Add(Direction.WEST);
-            return GetSatisfyingChunk(name, ChunkType.SOULEVATOR, allDirs);
-            //return new ChunkInfo("test2", 4, Rotation.ZERO, ChunkType.SOULEVATOR, allDirs);
+            //return GetSatisfyingChunk(name, ChunkType.SOULEVATOR, allDirs);
+            return new ChunkInfo("test2", 4, Rotation.ZERO, ChunkType.SOULEVATOR, allDirs);
         }
 
         /// <summary>
@@ -212,6 +212,8 @@ namespace KazgarsRevenge
                     chunkJson = sr.ReadToEnd();
                 }
                 Chunk deser = JsonConvert.DeserializeObject<Chunk>(chunkJson);
+                // So we can place things properly
+                deser.CalcRoomWidthHeight();
                 chunkCache[chunk.GetFileName()] = deser;
                 return deser;
             }
