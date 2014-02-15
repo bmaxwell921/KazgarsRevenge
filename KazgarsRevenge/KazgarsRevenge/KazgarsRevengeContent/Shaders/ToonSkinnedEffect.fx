@@ -5,7 +5,6 @@ float lineIntensity = 1;
 
 float3 ambient = float3(.05f, .05f, .05f);
 float3 lightPos = float3(120, 70, 120);
-float3 vLightDirection = normalize(float3(-1,-1,0));
 float LightAttenuation = 500;
 float LightFalloff = 2;
 float3 LightColor = float3(1,1,1);
@@ -32,10 +31,9 @@ float ToonThresholds[2] = { 0.8, 0.4 };
 float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
 
 // Vertex shader: vertex lighting, four bones.
-ToonVSOutput VSSkinnedVertexLightingFourBones(VSInputNmTxWeights vin)
+ToonVSOutput VSToon(VSInputNmTxWeights vin)
 {
-    
-    Skin(vin, 4);
+	Skin(vin, 4);
 
     ToonVSOutput output;
     
@@ -49,7 +47,7 @@ ToonVSOutput VSSkinnedVertexLightingFourBones(VSInputNmTxWeights vin)
 }
 
 // Pixel shader: vertex lighting.
-float4 PSSkinnedVertexLighting(ToonVSOutput pin) : SV_Target0
+float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
 {
 	float4 Color = SAMPLE_TEXTURE(Texture, pin.TexCoord);
 	
@@ -108,39 +106,8 @@ struct NormalDepthVSOutput
 
 // Alternative vertex shader outputs normal and depth values, which are then
 // used as an input for the edge detection filter in PostprocessEffect.fx.
-NormalDepthVSOutput VSDepthOneBone(VSInputNmTxWeights vin)
-{
-	Skin(vin, 1);
 
-    NormalDepthVSOutput output;
-	
-    output.Position = mul(vin.Position, WorldViewProj);
-    float3 worldNormal = mul(vin.Normal, World);
-
-    // The output color holds the normal, scaled to fit into a 0 to 1 range.
-    output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
-
-    // The output alpha holds the depth, scaled to fit into a 0 to 1 range.
-    output.Color.a = output.Position.z / output.Position.w;
-    
-    return output;    
-}
-
-NormalDepthVSOutput VSDepthTwoBone(VSInputNmTxWeights vin)
-{
-	Skin(vin, 2);
-
-    NormalDepthVSOutput output;
-	
-    output.Position = mul(vin.Position, WorldViewProj);
-    float3 worldNormal = mul(vin.Normal, World);
-    output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
-    output.Color.a = output.Position.z / output.Position.w;
-    
-    return output;
-}
-
-NormalDepthVSOutput VSDepthFourBone(VSInputNmTxWeights vin)
+NormalDepthVSOutput VSDepth(VSInputNmTxWeights vin)
 {
 	Skin(vin, 4);
 
@@ -163,36 +130,14 @@ float4 PSDepth(float4 color : COLOR0) : COLOR0
 
 
 
-/*
-VertexShader VSArray[3] =
-{
-    compile vs_2_0 VSSkinnedVertexLightingOneBone(),
-    compile vs_2_0 VSSkinnedVertexLightingTwoBones(),
-    compile vs_2_0 VSSkinnedVertexLightingFourBones(),
-};
-
-VertexShader VSArrayDepth[3] =
-{
-    compile vs_2_0 VSDepthOneBone(),
-    compile vs_2_0 VSDepthTwoBone(),
-    compile vs_2_0 VSDepthFourBone(),
-};
-
-int VSIndices[3] =
-{
-	0,      //vertex lighting, one bone
-    1,      // vertex lighting, two bones
-    2,      // vertex lighting, four bones
-};
-*/
 int ShaderIndex = 0;
 
 Technique Toon
 {
     Pass
     {
-        VertexShader = compile vs_2_0 VSSkinnedVertexLightingFourBones();
-        PixelShader  = compile ps_2_0 PSSkinnedVertexLighting();
+        VertexShader = compile vs_2_0 VSToon();
+        PixelShader  = compile ps_2_0 PSToonPointLight();
     }
 }
 
@@ -202,7 +147,7 @@ technique NormalDepth
 {
     pass P0
     {
-        VertexShader = compile vs_2_0 VSDepthFourBone();
+        VertexShader = compile vs_2_0 VSDepth();
         PixelShader = compile ps_2_0 PSDepth();
     }
 }

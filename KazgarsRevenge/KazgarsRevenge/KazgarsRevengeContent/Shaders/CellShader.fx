@@ -1,6 +1,11 @@
 float alpha = 1;
 float lineIntensity = 1;
 
+float3 ambient = float3(.05f, .05f, .05f);
+float3 lightPos = float3(120, 70, 120);
+float LightAttenuation = 500;
+float LightFalloff = 2;
+float3 LightColor = float3(1,1,1);
 
 float ToonThresholds[2] = { 0.8, 0.4 };
 float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
@@ -22,46 +27,62 @@ sampler ColorMapSampler = sampler_state
    AddressV  = Wrap;
 };
 
-struct ToonVSOut
+struct ToonVSOutput
 {
-	float4 Pos	: POSITION;
-	float2 Tex	: TEXCOORD0;
-	float L	: TEXCOORD1;
+    float2 TexCoord   : TEXCOORD0;
+    float4 PositionPS : SV_Position;
+	float3 normal     : TEXCOORD1;
+	float3 worldPos   : TEXCOORD2;
 };
 
 
 
 
 
-
 // Vertex shader: vertex lighting, four bones.
-ToonVSOut ToonVS( float4 Pos: POSITION, float2 Tex : TEXCOORD, float3 N: NORMAL)
+ToonVSOutput ToonVS( float4 Pos: POSITION, float2 Tex : TEXCOORD, float3 N: NORMAL)
 {
 
-    ToonVSOut output;
+    ToonVSOutput output;
     
-    output.Tex = Tex;
-    output.Pos = mul(mul(Pos, World), ViewProj);
+    output.TexCoord = Tex;
+    output.PositionPS = mul(Pos, mul(World, ViewProj));
 
-	float3 worldNormal = mul(N, World);
-	output.L = dot(worldNormal, vLightDirection);
+	output.worldPos = mul(Pos, World);
+	output.normal = mul(N, World);
     
     return output;
 }
 
 // Pixel shader: vertex lighting.
-float4 ToonPS(ToonVSOut pin) : COLOR
+float4 ToonPS(ToonVSOutput pin) : COLOR
 {
-	float4 Color = tex2D(ColorMapSampler, pin.Tex);
+	float4 Color = tex2D(ColorMapSampler, pin.TexCoord);
 	
-    float light;
+	
 
-    //if (pin.L> ToonThresholds[0])
+	//get direction of light
+	float3 lightDir = normalize(lightPos - pin.worldPos);
+
+	//get amount of light on this vertex
+	float light = saturate(dot(pin.normal, lightDir));
+
+	//get attenuation
+	float dist = distance(lightPos, pin.worldPos);
+	float attenuation = 1 - pow(saturate(dist / LightAttenuation), LightFalloff);
+
+	//send resulting light to pixel shader
+	light = light * attenuation * LightColor;
+
+
+
+
+    if (light> ToonThresholds[0])
         light = ToonBrightnessLevels[0];
-    //else if (pin.L > ToonThresholds[1])
-    //    light = ToonBrightnessLevels[1];
-    //else
-    //    light = ToonBrightnessLevels[2];
+    else if (light > ToonThresholds[1])
+        light = ToonBrightnessLevels[1];
+    else
+        light = ToonBrightnessLevels[2];
                 
     Color.rgb *= light;
     Color.a = alpha;
