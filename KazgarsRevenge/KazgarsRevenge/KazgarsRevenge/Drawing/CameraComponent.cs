@@ -60,6 +60,7 @@ namespace KazgarsRevenge
             : base(game)
         {
 
+            this.UpdateOrder = 2;
         }
 
         public override void  Initialize()

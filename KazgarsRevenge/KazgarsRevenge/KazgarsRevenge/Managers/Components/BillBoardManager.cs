@@ -14,6 +14,7 @@ namespace KazgarsRevenge
             : base(game)
         {
 
+            this.UpdateOrder = 3;
         }
 
         public BasicEffect ShadowEffect { get; private set; }

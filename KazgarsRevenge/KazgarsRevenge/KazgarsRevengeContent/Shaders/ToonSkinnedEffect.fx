@@ -3,7 +3,12 @@
 float alpha = 1;
 float lineIntensity = 1;
 
-float3 vLightDirection = normalize(float3(1,1,1));
+float3 ambient = float3(.05f, .05f, .05f);
+float3 lightPos = float3(120, 70, 120);
+float3 vLightDirection = normalize(float3(-1,-1,0));
+float LightAttenuation = 500;
+float LightFalloff = 2;
+float3 LightColor = float3(1,1,1);
 
 // The texture that contains the celmap
 texture CelMap;
@@ -19,47 +24,12 @@ struct ToonVSOutput
 {
     float2 TexCoord   : TEXCOORD0;
     float4 PositionPS : SV_Position;
-	float L          : TEXCOORD1;
+	float3 normal     : TEXCOORD1;
+	float3 worldPos   : TEXCOORD2;
 };
 
 float ToonThresholds[2] = { 0.8, 0.4 };
 float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
-
-
-// Vertex shader: vertex lighting, one bone.
-ToonVSOutput VSSkinnedVertexLightingOneBone(VSInputNmTxWeights vin)
-{
-    Skin(vin, 1);
-	
-    ToonVSOutput output;
-    
-    output.TexCoord = vin.TexCoord;
-    output.PositionPS = mul(vin.Position, WorldViewProj);
-
-	float3 worldNormal = mul(vin.Normal, World);
-	output.L = dot(worldNormal, vLightDirection);
-    
-    return output;
-}
-
-
-// Vertex shader: vertex lighting, two bones.
-ToonVSOutput VSSkinnedVertexLightingTwoBones(VSInputNmTxWeights vin)
-{
-    
-    Skin(vin, 2);
-	
-    ToonVSOutput output;
-    
-    output.TexCoord = vin.TexCoord;
-    output.PositionPS = mul(vin.Position, WorldViewProj);
-
-	float3 worldNormal = mul(vin.Normal, World);
-	output.L = dot(worldNormal, vLightDirection);
-    
-    return output;
-}
-
 
 // Vertex shader: vertex lighting, four bones.
 ToonVSOutput VSSkinnedVertexLightingFourBones(VSInputNmTxWeights vin)
@@ -72,8 +42,8 @@ ToonVSOutput VSSkinnedVertexLightingFourBones(VSInputNmTxWeights vin)
     output.TexCoord = vin.TexCoord;
     output.PositionPS = mul(vin.Position, WorldViewProj);
 
-	float3 worldNormal = mul(vin.Normal, World);
-	output.L = dot(worldNormal, vLightDirection);
+	output.worldPos = mul(vin.Position, World);
+	output.normal = mul(vin.Normal, World);
     
     return output;
 }
@@ -83,11 +53,27 @@ float4 PSSkinnedVertexLighting(ToonVSOutput pin) : SV_Target0
 {
 	float4 Color = SAMPLE_TEXTURE(Texture, pin.TexCoord);
 	
-    float light;
+	
 
-    if (pin.L> ToonThresholds[0])
+	//get direction of light
+	float3 lightDir = normalize(lightPos - pin.worldPos);
+
+	//get amount of light on this vertex
+	float light = saturate(dot(pin.normal, lightDir));
+
+	//get attenuation
+	float dist = distance(lightPos, pin.worldPos);
+	float attenuation = 1 - pow(saturate(dist / LightAttenuation), LightFalloff);
+
+	//send resulting light to pixel shader
+	light = light * attenuation * LightColor;
+
+
+
+
+    if (light> ToonThresholds[0])
         light = ToonBrightnessLevels[0];
-    else if (pin.L > ToonThresholds[1])
+    else if (light > ToonThresholds[1])
         light = ToonBrightnessLevels[1];
     else
         light = ToonBrightnessLevels[2];
@@ -177,7 +163,7 @@ float4 PSDepth(float4 color : COLOR0) : COLOR0
 
 
 
-
+/*
 VertexShader VSArray[3] =
 {
     compile vs_2_0 VSSkinnedVertexLightingOneBone(),
@@ -198,14 +184,14 @@ int VSIndices[3] =
     1,      // vertex lighting, two bones
     2,      // vertex lighting, four bones
 };
-
+*/
 int ShaderIndex = 0;
 
 Technique Toon
 {
     Pass
     {
-        VertexShader = (VSArray[VSIndices[ShaderIndex]]);
+        VertexShader = compile vs_2_0 VSSkinnedVertexLightingFourBones();
         PixelShader  = compile ps_2_0 PSSkinnedVertexLighting();
     }
 }
@@ -216,7 +202,7 @@ technique NormalDepth
 {
     pass P0
     {
-        VertexShader = (VSArrayDepth[VSIndices[ShaderIndex]]);
+        VertexShader = compile vs_2_0 VSDepthFourBone();
         PixelShader = compile ps_2_0 PSDepth();
     }
 }

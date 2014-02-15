@@ -130,8 +130,9 @@ namespace KazgarsRevenge
                         newEffect.Parameters["Tex"].SetValue(oldEffect.Texture);
                         part.Effect = newEffect;
                         */
-
+                        
                         BasicEffect oldEffect = part.Effect as BasicEffect;
+
                         Effect newEffect = effectCellShading.Clone();
                         newEffect.Parameters["ColorMap"].SetValue(oldEffect.Texture);
                         part.Effect = newEffect;

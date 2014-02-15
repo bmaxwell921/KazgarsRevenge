@@ -16,6 +16,7 @@ namespace KazgarsRevenge
             : base(game)
         {
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
+            this.UpdateOrder = 3;
         }
 
 
