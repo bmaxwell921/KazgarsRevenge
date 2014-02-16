@@ -7,12 +7,16 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using BEPUphysics;
 using BEPUphysics.Entities;
+using BEPUphysics.BroadPhaseEntries;
+using BEPUphysics.NarrowPhaseSystems.Pairs;
+using BEPUphysics.ResourceManagement;
 
 namespace KazgarsRevenge
 {
     public class CameraComponent : GameComponent
     {
-        #region fields
+        public const int MAX_ACTIVE_LIGHTS = 30;
+        #region camera-ish fields
         private float fov = MathHelper.PiOver4;
         private float nearPlane = .1f;
         private float farPlane = 10000;
@@ -46,9 +50,16 @@ namespace KazgarsRevenge
         float yaw = 0;
         float pitch = -MathHelper.PiOver4;
         public float zoom = 4.0f;
+        #endregion
 
+        #region rendertarget stuff
         public GBufferTarget RenderTargets { get; private set; }
         public RenderTarget2D OutputTarget { get; private set; }
+        #endregion
+
+        #region lights
+        public Vector3[] lightPositions{get; private set;}
+        private Vector3 inactiveLightPos = new Vector3(-10000, 0, 0);
         #endregion
 
         public void AssignEntity(Entity followMe)
@@ -59,12 +70,19 @@ namespace KazgarsRevenge
         public CameraComponent(MainGame game)
             : base(game)
         {
-
             this.UpdateOrder = 2;
+
+            lightPositions = new Vector3[MAX_ACTIVE_LIGHTS];
+            for (int i = 0; i < MAX_ACTIVE_LIGHTS; ++i)
+            {
+                lightPositions[i] = inactiveLightPos;
+            }
         }
 
-        public override void  Initialize()
+        public override void Initialize()
         {
+            physics = Game.Services.GetService(typeof(Space)) as Space;
+
             proj = Matrix.CreatePerspectiveFieldOfView(fov, Game.GraphicsDevice.Viewport.AspectRatio, nearPlane, farPlane);
 
             rot = Matrix.CreateRotationX(pitch) * Matrix.CreateRotationY(yaw);
@@ -184,10 +202,55 @@ namespace KazgarsRevenge
             }
             position = target + rot.Backward * distanceFromTarget;
             view = Matrix.CreateLookAt(position, target, rotatedUpVector);
+
+            inverseViewProj = Matrix.Invert(view * proj);
+
+
+            UpdateLights();
+            
             prevMouse = curMouse;
             prevKeys = curKeys;
 
-            inverseViewProj = Matrix.Invert(view * proj);
+
+
+
+        }
+
+        float playerSightRadius = 700;
+        Space physics;
+        private void UpdateLights()
+        {
+            //check which lights are in camera cube, add to lights
+            int i = 0;
+
+            Vector3 min = new Vector3(position.X - playerSightRadius, 0, position.Z - playerSightRadius);
+            Vector3 max = new Vector3(position.X + playerSightRadius, 20, position.Z + playerSightRadius);
+            BoundingBox b = new BoundingBox(min, max);
+
+            var entries = Resources.GetBroadPhaseEntryList();
+            physics.BroadPhase.QueryAccelerator.GetEntries(b, entries);
+            foreach (BroadPhaseEntry entry in entries)
+            {
+                GameEntity other = entry.Tag as GameEntity;
+                if (other != null && other.Name == "light")
+                {
+                    Vector3 pos = (other.GetSharedData(typeof(Entity)) as Entity).Position;
+                    lightPositions[i++] = pos;
+                    if (i >= MAX_ACTIVE_LIGHTS)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            //add inactive lights to fill rest of array up, if it's not full
+            while (i < MAX_ACTIVE_LIGHTS)
+            {
+                lightPositions[i++] = inactiveLightPos;
+            }
+
+            //update effects?
+
         }
     }
 }

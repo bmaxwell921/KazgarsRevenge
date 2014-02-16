@@ -24,12 +24,16 @@ namespace KazgarsRevenge
         protected LevelModelManager levelModelManager;
         protected LevelManager levelManager;
 
+
+        protected CameraComponent camera;
+
         protected KazgarsRevengeGame mainGame;
 
         public EntityManager(KazgarsRevengeGame game)
             : base(game)
         {
             this.mainGame = game;
+            camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
         }
 
 
@@ -104,8 +108,10 @@ namespace KazgarsRevenge
                         //deffered version
                         //part.Effect = deferredSkinnedEffect.Clone();
                         //part.Effect.Parameters["Tex"].SetValue(skinnedEffect.Texture);
+                        
                         CustomSkinnedEffect newEffect = new CustomSkinnedEffect(toonAnimatedEffect);
                         newEffect.CopyFromSkinnedEffect(skinnedEffect);
+                        newEffect.LightPositions = camera.lightPositions;
                         part.Effect = newEffect;
                     }
                 }
@@ -135,6 +141,7 @@ namespace KazgarsRevenge
 
                         Effect newEffect = effectCellShading.Clone();
                         newEffect.Parameters["ColorMap"].SetValue(oldEffect.Texture);
+                        newEffect.Parameters["lightPositions"].SetValue(camera.lightPositions);
                         part.Effect = newEffect;
                     }
                 }

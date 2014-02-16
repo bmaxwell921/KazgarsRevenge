@@ -1,11 +1,12 @@
 #include "Skinning.fxh"
 
+
+
 float alpha = 1;
 float lineIntensity = 1;
 
-float3 ambient = float3(.05f, .05f, .05f);
-float3 lightPos = float3(120, 70, 120);
-float LightAttenuation = 500;
+float3 lightPositions[30];
+float LightAttenuation = 200;
 float LightFalloff = 2;
 float3 LightColor = float3(1,1,1);
 
@@ -27,7 +28,7 @@ struct ToonVSOutput
 	float3 worldPos   : TEXCOORD2;
 };
 
-float ToonThresholds[2] = { 0.8, 0.4 };
+float ToonThresholds[2] = { 0.8, 0.6 };
 float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
 
 // Vertex shader: vertex lighting, four bones.
@@ -51,33 +52,44 @@ float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
 {
 	float4 Color = SAMPLE_TEXTURE(Texture, pin.TexCoord);
 	
-	
+	float light = 0;
 
-	//get direction of light
-	float3 lightDir = normalize(lightPos - pin.worldPos);
+	float3 lightDir;
+	float amt;
+	float att;
+	for(int i=0; i<30; ++i)
+	{
+		//get direction of light
+		lightDir = normalize(lightPositions[i] - pin.worldPos);
 
-	//get amount of light on this vertex
-	float light = saturate(dot(pin.normal, lightDir));
+		//get amount of light on this vertex
+		float amt = saturate(dot(pin.normal, lightDir));
 
-	//get attenuation
-	float dist = distance(lightPos, pin.worldPos);
-	float attenuation = 1 - pow(saturate(dist / LightAttenuation), LightFalloff);
+		//get attenuation
+		float att = 1 - pow(saturate(distance(lightPositions[i], pin.worldPos) / LightAttenuation), LightFalloff);
 
-	//send resulting light to pixel shader
-	light = light * attenuation * LightColor;
+		//send resulting light to pixel shader
+		light += amt * att * LightColor;
+	}
 
 
 
 
     if (light> ToonThresholds[0])
+	{
         light = ToonBrightnessLevels[0];
+	}
     else if (light > ToonThresholds[1])
+	{
         light = ToonBrightnessLevels[1];
+	}
     else
+	{
         light = ToonBrightnessLevels[2];
-                
+    }
+
     Color.rgb *= light;
-    Color.a = alpha;
+    Color.a = min(alpha, Color.a);
 
     return Color;
 }
@@ -136,8 +148,8 @@ Technique Toon
 {
     Pass
     {
-        VertexShader = compile vs_2_0 VSToon();
-        PixelShader  = compile ps_2_0 PSToonPointLight();
+        VertexShader = compile vs_3_0 VSToon();
+        PixelShader  = compile ps_3_0 PSToonPointLight();
     }
 }
 
@@ -147,8 +159,8 @@ technique NormalDepth
 {
     pass P0
     {
-        VertexShader = compile vs_2_0 VSDepth();
-        PixelShader = compile ps_2_0 PSDepth();
+        VertexShader = compile vs_3_0 VSDepth();
+        PixelShader = compile ps_3_0 PSDepth();
     }
 }
 

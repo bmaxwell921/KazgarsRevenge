@@ -18,7 +18,7 @@ namespace KazgarsRevenge
     /// <summary>
     /// Built-in effect for rendering skinned character models.
     /// </summary>
-    public class CustomSkinnedEffect : Effect, IEffectMatrices, IEffectLights, IEffectFog
+    public class CustomSkinnedEffect : Effect, IEffectMatrices
     {
         public const int MaxBones = 72;
 
@@ -38,12 +38,13 @@ namespace KazgarsRevenge
         EffectParameter bonesParam;
         EffectParameter shaderIndexParam;
 
+        EffectParameter lightPositionParam;
+
         #endregion
 
         #region Fields
 
         bool preferPerPixelLighting;
-        bool oneLight;
         bool fogEnabled;
 
         Matrix world = Matrix.Identity;
@@ -58,10 +59,6 @@ namespace KazgarsRevenge
 
         float alpha = 1;
 
-        DirectionalLight light0;
-        DirectionalLight light1;
-        DirectionalLight light2;
-
         float fogStart = 0;
         float fogEnd = 1;
 
@@ -73,6 +70,13 @@ namespace KazgarsRevenge
 
         #region Public Properties
 
+        public Vector3[] LightPositions 
+        { 
+            set 
+            {
+                this.lightPositionParam.SetValue(value);
+            } 
+        }
 
         /// <summary>
         /// Gets or sets the world matrix.
@@ -218,82 +222,6 @@ namespace KazgarsRevenge
 
 
         /// <summary>
-        /// Gets the first directional light.
-        /// </summary>
-        public DirectionalLight DirectionalLight0 { get { return light0; } }
-
-
-        /// <summary>
-        /// Gets the second directional light.
-        /// </summary>
-        public DirectionalLight DirectionalLight1 { get { return light1; } }
-
-
-        /// <summary>
-        /// Gets the third directional light.
-        /// </summary>
-        public DirectionalLight DirectionalLight2 { get { return light2; } }
-
-
-        /// <summary>
-        /// Gets or sets the fog enable flag.
-        /// </summary>
-        public bool FogEnabled
-        {
-            get { return fogEnabled; }
-
-            set
-            {
-                if (fogEnabled != value)
-                {
-                    fogEnabled = value;
-                    dirtyFlags |= EffectDirtyFlags.ShaderIndex | EffectDirtyFlags.FogEnable;
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// Gets or sets the fog start distance.
-        /// </summary>
-        public float FogStart
-        {
-            get { return fogStart; }
-
-            set
-            {
-                fogStart = value;
-                dirtyFlags |= EffectDirtyFlags.Fog;
-            }
-        }
-
-
-        /// <summary>
-        /// Gets or sets the fog end distance.
-        /// </summary>
-        public float FogEnd
-        {
-            get { return fogEnd; }
-
-            set
-            {
-                fogEnd = value;
-                dirtyFlags |= EffectDirtyFlags.Fog;
-            }
-        }
-
-
-        /// <summary>
-        /// Gets or sets the fog color.
-        /// </summary>
-        public Vector3 FogColor
-        {
-            get { return fogColorParam.GetValueVector3(); }
-            set { fogColorParam.SetValue(value); }
-        }
-
-
-        /// <summary>
         /// Gets or sets the current texture.
         /// </summary>
         public Texture2D Texture
@@ -302,27 +230,6 @@ namespace KazgarsRevenge
             set { textureParam.SetValue(value); }
         }
 
-
-        /// <summary>
-        /// Gets or sets the number of skinning weights to evaluate for each vertex (1, 2, or 4).
-        /// </summary>
-        public int WeightsPerVertex
-        {
-            get { return weightsPerVertex; }
-
-            set
-            {
-                if ((value != 1) &&
-                    (value != 2) &&
-                    (value != 4))
-                {
-                    throw new ArgumentOutOfRangeException("value");
-                }
-
-                weightsPerVertex = value;
-                dirtyFlags |= EffectDirtyFlags.ShaderIndex;
-            }
-        }
 
 
         /// <summary>
@@ -360,16 +267,6 @@ namespace KazgarsRevenge
         }
 
 
-        /// <summary>
-        /// This effect requires lighting, so we explicitly implement
-        /// IEffectLights.LightingEnabled, and do not allow turning it off.
-        /// </summary>
-        bool IEffectLights.LightingEnabled
-        {
-            get { return true; }
-            set { if (!value) throw new NotSupportedException("SkinnedEffect does not support setting LightingEnabled to false."); }
-        }
-
 
         #endregion
 
@@ -383,8 +280,6 @@ namespace KazgarsRevenge
             : base(effect)
         {
             CacheEffectParameters(null);
-
-            DirectionalLight0.Enabled = true;
 
             SpecularColor = Vector3.One;
             SpecularPower = 16;
@@ -452,7 +347,6 @@ namespace KazgarsRevenge
             Texture = cloneSource.Texture;
             SpecularColor = cloneSource.SpecularColor;
             SpecularPower = cloneSource.SpecularPower;
-            FogColor = cloneSource.FogColor;
 
             eyePositionParam.SetValue(cloneSource.Parameters["EyePosition"].GetValueVector3());
             fogVectorParam.SetValue(cloneSource.Parameters["FogVector"].GetValueVector4());
@@ -469,14 +363,6 @@ namespace KazgarsRevenge
             return new CustomSkinnedEffect(this);
         }
 
-
-        /// <summary>
-        /// Sets up the standard key/fill/back lighting rig.
-        /// </summary>
-        public void EnableDefaultLighting()
-        {
-            AmbientLightColor = EffectHelpers.EnableDefaultLighting(light0, light1, light2);
-        }
 
 
         /// <summary>
@@ -497,21 +383,9 @@ namespace KazgarsRevenge
             worldViewProjParam = Parameters["WorldViewProj"];
             bonesParam = Parameters["Bones"];
             shaderIndexParam = Parameters["ShaderIndex"];
+            lightPositionParam = Parameters["lightPositions"];
 
-            light0 = new DirectionalLight(Parameters["DirLight0Direction"],
-                                          Parameters["DirLight0DiffuseColor"],
-                                          Parameters["DirLight0SpecularColor"],
-                                          (cloneSource != null) ? cloneSource.DirectionalLight0: null);
 
-            light1 = new DirectionalLight(Parameters["DirLight1Direction"],
-                                          Parameters["DirLight1DiffuseColor"],
-                                          Parameters["DirLight1SpecularColor"],
-                                          (cloneSource != null) ? cloneSource.DirectionalLight1: null);
-
-            light2 = new DirectionalLight(Parameters["DirLight2Direction"],
-                                          Parameters["DirLight2DiffuseColor"],
-                                          Parameters["DirLight2SpecularColor"],
-                                          (cloneSource != null) ? cloneSource.DirectionalLight2: null);
         }
 
 
@@ -525,39 +399,6 @@ namespace KazgarsRevenge
 
             // Recompute the world inverse transpose and eye position?
             dirtyFlags = EffectHelpers.SetLightingMatrices(dirtyFlags, ref world, ref view, worldParam, worldInverseTransposeParam, eyePositionParam);
-
-            // Recompute the diffuse/emissive/alpha material color parameters?
-            if ((dirtyFlags & EffectDirtyFlags.MaterialColor) != 0)
-            {
-                EffectHelpers.SetMaterialColor(true, alpha, ref diffuseColor, ref emissiveColor, ref ambientLightColor, diffuseColorParam, emissiveColorParam);
-
-                dirtyFlags &= ~EffectDirtyFlags.MaterialColor;
-            }
-
-            // Check if we can use the only-bother-with-the-first-light shader optimization.
-            bool newOneLight = !light1.Enabled && !light2.Enabled;
-
-            if (oneLight != newOneLight)
-            {
-                oneLight = newOneLight;
-                dirtyFlags |= EffectDirtyFlags.ShaderIndex;
-            }
-
-            // Recompute the shader index?
-            if ((dirtyFlags & EffectDirtyFlags.ShaderIndex) != 0)
-            {
-                int shaderIndex = 0;
-
-                //EDIT: cut out fog and pixel lighting stuff
-                if (weightsPerVertex == 2)
-                    shaderIndex = 1;
-                else if (weightsPerVertex == 4)
-                    shaderIndex = 2;
-
-                shaderIndexParam.SetValue(shaderIndex);
-
-                dirtyFlags &= ~EffectDirtyFlags.ShaderIndex;
-            }
         }
 
 
