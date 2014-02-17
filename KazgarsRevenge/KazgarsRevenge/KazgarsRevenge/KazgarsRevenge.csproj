@@ -106,7 +106,6 @@
     <Compile Include="Drawing\Billboards\AbilityTargetDecal.cs" />
     <Compile Include="Drawing\Billboards\ChainBillboard.cs" />
     <Compile Include="Drawing\Billboards\DrawableComponentBillboard.cs" />
-    <Compile Include="Drawing\Billboards\CameraOrientedBillboard.cs" />
     <Compile Include="Drawing\Billboards\HealthBarBillboard.cs" />
     <Compile Include="Drawing\Effects\DirectionalLightEffect.cs" />
     <Compile Include="GBufferTarget.cs" />

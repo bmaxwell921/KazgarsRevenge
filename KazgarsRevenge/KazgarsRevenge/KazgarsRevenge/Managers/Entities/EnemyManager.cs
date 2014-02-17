@@ -66,6 +66,7 @@ namespace KazgarsRevenge
             #endregion
 
             EnemyController bruteController = new EnemyController(mainGame, brute, bruteSettings);
+            HealthBarBillboard hp = new HealthBarBillboard(mainGame, brute, 5, 40, bruteController as AliveComponent);
 
             brute.AddComponent(typeof(PhysicsComponent), brutePhysics);
             genComponentManager.AddComponent(brutePhysics);
@@ -73,11 +74,14 @@ namespace KazgarsRevenge
             brute.AddComponent(typeof(AnimatedModelComponent), bruteGraphics);
             modelManager.AddComponent(bruteGraphics);
 
+            brute.AddComponent(typeof(BlobShadowDecal), bruteShadow);
+            billboardManager.AddComponent(bruteShadow);
+
             brute.AddComponent(typeof(AliveComponent), bruteController);
             genComponentManager.AddComponent(bruteController);
 
-            brute.AddComponent(typeof(BlobShadowDecal), bruteShadow);
-            billboardManager.AddComponent(bruteShadow);
+            brute.AddComponent(typeof(HealthBarBillboard), hp);
+            billboardManager.AddComponent(hp);
 
             enemies.Add(id, brute);
         }

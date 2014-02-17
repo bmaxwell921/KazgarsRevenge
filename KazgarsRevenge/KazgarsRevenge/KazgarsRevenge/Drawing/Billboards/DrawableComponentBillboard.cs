@@ -20,6 +20,7 @@ namespace KazgarsRevenge
         protected Vector3 normal;
         protected Vector3 left;
 
+        protected Vector2 originalSize { get; private set; }
         protected Vector2 size;
         protected Vector2 source = new Vector2(1, 1);
         public DrawableComponentBillboard(KazgarsRevengeGame game, GameEntity entity, Vector3 normal, Vector3 up, Vector2 size)
@@ -31,37 +32,48 @@ namespace KazgarsRevenge
             this.left = Vector3.Cross(normal, up);
 
             this.size = size;
+            this.originalSize = size;
 
             vertices = new VertexPositionNormalTexture[4];
             indices = new short[6];
 
-            // normal
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                vertices[i].Normal = normal;
-            }
+            InitVertsIndices(vertices, indices);
 
-            indices[0] = 0;
-            indices[1] = 1;
-            indices[2] = 2;
-            indices[3] = 2;
-            indices[4] = 1;
-            indices[5] = 3;
-
-            UpdateVerts();
+            UpdateVerts(vertices, origin);
         }
 
         protected Vector3 origin = Vector3.Zero;
         public override void Update(GameTime gameTime)
         {
-            UpdateVerts();
+            UpdateVerts(vertices, origin);
         }
 
-        private void UpdateVerts()
+        protected void InitVertsIndices(VertexPositionNormalTexture[] verts, short[] ind)
+        {
+            // normal
+            for (int i = 0; i < verts.Length; i++)
+            {
+                verts[i].Normal = normal;
+            }
+
+            ind[0] = 0;
+            ind[1] = 1;
+            ind[2] = 2;
+            ind[3] = 2;
+            ind[4] = 1;
+            ind[5] = 3;
+        }
+
+        protected void UpdateVerts(VertexPositionNormalTexture[] verts, Vector3 vertorigin)
         {
             this.left = Vector3.Cross(normal, up);
 
-            Vector3 uppercenter = origin + (up * size.Y / 2);
+            for (int i = 0; i < verts.Length; i++)
+            {
+                verts[i].Normal = normal;
+            }
+
+            Vector3 uppercenter = vertorigin + (up * size.Y / 2);
             
             Vector3 UpperLeft = uppercenter + (left * size.X / 2);
             Vector3 UpperRight = uppercenter - (left * size.X / 2);
@@ -69,23 +81,23 @@ namespace KazgarsRevenge
             Vector3 LowerRight = UpperRight - (up * size.Y);
 
             // position
-            vertices[0].Position = LowerLeft;
-            vertices[1].Position = UpperLeft;
-            vertices[2].Position = LowerRight;
-            vertices[3].Position = UpperRight;
+            verts[0].Position = LowerLeft;
+            verts[1].Position = UpperLeft;
+            verts[2].Position = LowerRight;
+            verts[3].Position = UpperRight;
 
             // texture coords
             Vector2 textureUpperLeft = new Vector2(0.0f, 0.0f);
             Vector2 textureUpperRight = new Vector2(source.X, 0.0f);
             Vector2 textureLowerLeft = new Vector2(0.0f, source.Y);
             Vector2 textureLowerRight = new Vector2(source.X, source.Y);
-            vertices[0].TextureCoordinate = textureLowerLeft;
-            vertices[1].TextureCoordinate = textureUpperLeft;
-            vertices[2].TextureCoordinate = textureLowerRight;
-            vertices[3].TextureCoordinate = textureUpperRight;
+            verts[0].TextureCoordinate = textureLowerLeft;
+            verts[1].TextureCoordinate = textureUpperLeft;
+            verts[2].TextureCoordinate = textureLowerRight;
+            verts[3].TextureCoordinate = textureUpperRight;
         }
 
-        public virtual void Draw(Matrix view, Matrix projection, Vector3 cameraPos)
+        public virtual void Draw(CameraComponent camera)
         {
             if (Visible)
             {
@@ -93,15 +105,20 @@ namespace KazgarsRevenge
                 {
                     throw new Exception("the BasicEffect was not set for this billboard component.");
                 }
-                effect.View = view;
-                effect.Projection = projection;
-                effect.CurrentTechnique.Passes[0].Apply();
-
-                Game.GraphicsDevice.DrawUserIndexedPrimitives(
-                    PrimitiveType.TriangleList,
-                    vertices, 0, 4,
-                    indices, 0, 2);
+                Draw(camera.View, camera.Projection, vertices, indices, effect);
             }
+        }
+
+        protected void Draw(Matrix view, Matrix projection, VertexPositionNormalTexture[] verts, short[] ind, BasicEffect effect)
+        {
+            effect.View = view;
+            effect.Projection = projection;
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            Game.GraphicsDevice.DrawUserIndexedPrimitives(
+                PrimitiveType.TriangleList,
+                verts, 0, 4,
+                ind, 0, 2);
         }
     }
 }

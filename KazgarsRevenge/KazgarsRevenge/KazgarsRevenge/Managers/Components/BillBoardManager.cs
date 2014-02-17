@@ -47,7 +47,7 @@ namespace KazgarsRevenge
             HealthBarEffect.EnableDefaultLighting();
             HealthBarEffect.World = Matrix.Identity;
             HealthBarEffect.TextureEnabled = true;
-            HealthBarEffect.Texture = Game.Content.Load<Texture2D>("white");
+            HealthBarEffect.Texture = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\health_bar");
         }
 
         public override void Update(GameTime gameTime)
@@ -77,7 +77,7 @@ namespace KazgarsRevenge
 
                 for (int i = 0; i < components.Count; ++i)
                 {
-                    components[i].Draw(camera.View, camera.Projection, camera.Position);
+                    components[i].Draw(camera);
                 }
         }
     }
