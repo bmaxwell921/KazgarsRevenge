@@ -1,5 +1,5 @@
 // Settings controlling the edge detection filter.
-float EdgeWidth = 1;
+float EdgeWidth = 1.3;
 float EdgeIntensity = 1;
 
 // How sensitive should the edge detection be to tiny variations in the input data?
@@ -9,8 +9,8 @@ float NormalThreshold = 1.5;
 float DepthThreshold = 0.1;
 
 // How dark should the edges get in response to changes in the input data?
-float NormalSensitivity = 1;
-float DepthSensitivity = 10;
+float NormalSensitivity = .6;
+float DepthSensitivity = 50;
 
 // Pass in the current screen resolution.
 float2 ScreenResolution;

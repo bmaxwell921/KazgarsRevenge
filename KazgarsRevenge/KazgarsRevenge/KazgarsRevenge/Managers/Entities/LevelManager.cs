@@ -99,7 +99,7 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < 10; ++j)
                 {
-                    CreatePointLight(new Vector3(-200 + i * 500, 0, -200 + j * 500));
+                    CreatePointLight(new Vector3(-700 + i * 700, 0, -700 + j * 700));
                 }
             }
             rooms.Add(CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2));

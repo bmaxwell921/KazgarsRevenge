@@ -92,7 +92,7 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 	}
 	
 	totalColor /= curActiveLights;
-
+	
     if (light> ToonThresholds[0])
 	{
         light = ToonBrightnessLevels[0];
@@ -106,6 +106,8 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
         light = ToonBrightnessLevels[2];
     }
 	
+	light += float3(.15f, .15f, .15f);
+
     Color.rgb *= light * totalColor;
     Color.a = min(alpha, Color.a);
 

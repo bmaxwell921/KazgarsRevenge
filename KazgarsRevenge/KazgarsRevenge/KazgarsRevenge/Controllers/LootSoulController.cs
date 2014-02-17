@@ -237,7 +237,7 @@ namespace KazgarsRevenge
             currentAni = "soul_loot_smash";
             animations.StartClip(currentAni, MixType.MixInto);
             timerCounter = 0;
-            timerLength = animations.GetAniMillis(currentAni);
+            timerLength = animations.GetAniMillis(currentAni) - 30;
         }
 
         public Item GetLoot(int lootIndex)
