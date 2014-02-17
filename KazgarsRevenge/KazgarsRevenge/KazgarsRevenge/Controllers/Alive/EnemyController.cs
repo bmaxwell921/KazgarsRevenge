@@ -55,6 +55,8 @@ namespace KazgarsRevenge
         Random rand;
         EnemyControllerSettings settings;
 
+        CameraComponent camera;
+
         public EnemyController(KazgarsRevengeGame game, GameEntity entity, EnemyControllerSettings settings)
             : base(game, entity, settings.level)
         {
@@ -72,6 +74,8 @@ namespace KazgarsRevenge
             currentUpdateFunction = idleUpdateFunction;
 
             attackingUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
+
+            camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
         }
 
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
@@ -186,7 +190,7 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case EnemyState.Normal:
-                    if (!HasDeBuff(DeBuff.Stunned))
+                    if (!HasDeBuff(DeBuff.Stunned) && InsideCameraBox(camera.CameraBox))
                     {
                         currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
                     }
@@ -422,6 +426,15 @@ namespace KazgarsRevenge
         {
             attackCounter = attackLength;
             base.StopPull();
+        }
+
+        protected bool InsideCameraBox(BoundingBox cameraBox)
+        {
+            Vector3 pos = physicalData.Position;
+            return !(pos.X < cameraBox.Min.X
+                || pos.X > cameraBox.Max.X
+                || pos.Z < cameraBox.Min.Z
+                || pos.Z > cameraBox.Max.Z);
         }
     }
 }

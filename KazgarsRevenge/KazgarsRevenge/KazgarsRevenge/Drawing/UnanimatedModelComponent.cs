@@ -49,15 +49,6 @@ namespace KazgarsRevenge
         }
 
         private int lastLightUpdate = 0;
-
-        EffectParameter paramWorld;
-        EffectParameter paramViewProj;
-        EffectParameter paramInverseWorld;
-        EffectParameter paramLightPositions;
-        EffectParameter paramLightColors;
-
-        
-
         public override void Draw(GameTime gameTime, CameraComponent camera, bool edgeDetection)
         {
             if (model != null && InsideCameraBox(camera.CameraBox))

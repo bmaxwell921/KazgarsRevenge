@@ -29,7 +29,7 @@ struct ToonVSOutput
 };
 
 float ToonThresholds[2] = { 0.8, 0.4 };
-float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
+float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.16 };
 
 // Vertex shader: vertex lighting, four bones.
 ToonVSOutput VSToon(VSInputNmTxWeights vin)
@@ -128,7 +128,6 @@ struct NormalDepthVSOutput
 
 // Alternative vertex shader outputs normal and depth values, which are then
 // used as an input for the edge detection filter in PostprocessEffect.fx.
-
 NormalDepthVSOutput VSDepth(VSInputNmTxWeights vin)
 {
 	Skin(vin, 4);

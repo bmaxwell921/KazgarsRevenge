@@ -230,6 +230,7 @@ namespace KazgarsRevenge
             StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
 
             //holds the position so the model is drawn correctly (not added to physics)
+            //size is related to how far away this will start being rendered
             Entity roomLocation = new Box(position, 1100, 1100, 1100);
             room.AddSharedData(typeof(Entity), roomLocation);
 

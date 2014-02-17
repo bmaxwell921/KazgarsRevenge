@@ -296,11 +296,11 @@ namespace KazgarsRevenge
             players.CreateMainPlayer(new Vector3(120, 20, 120), DUMMY_ID);
 
             // TODO get rid of this for better spawning mechanics
-            for (int i = 0; i < 3; ++i)
+            for (int i = 0; i < 20; ++i)
             {
-                for (int j = 0; j < 3; ++j)
+                for (int j = 0; j < 15; ++j)
                 {
-                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 300, 20, -100 - j * 300), 1);
+                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
                 }
             }
         }

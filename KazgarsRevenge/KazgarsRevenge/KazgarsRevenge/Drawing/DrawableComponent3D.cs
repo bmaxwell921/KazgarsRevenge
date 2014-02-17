@@ -50,10 +50,11 @@ namespace KazgarsRevenge
             {
                 return true;
             }
-            float minx = boxData.Position.X - boxData.HalfWidth;
-            float minz = boxData.Position.Z - boxData.HalfWidth;
-            float maxx = boxData.Position.X + boxData.HalfWidth;
-            float maxz = boxData.Position.Z + boxData.HalfWidth;
+            Vector3 pos = boxData.Position;
+            float minx = pos.X - boxData.HalfWidth;
+            float minz = pos.Z - boxData.HalfWidth;
+            float maxx = pos.X + boxData.HalfWidth;
+            float maxz = pos.Z + boxData.HalfWidth;
             return !(minx > cameraBox.Max.X
                     || minz > cameraBox.Max.Z
                     || maxx < cameraBox.Min.X
