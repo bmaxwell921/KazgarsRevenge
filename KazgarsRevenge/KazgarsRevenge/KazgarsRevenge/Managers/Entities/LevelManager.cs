@@ -216,7 +216,6 @@ namespace KazgarsRevenge
 
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 
-
             Model roomModel = GetUnanimatedModel(modelPath);  
 
             Model roomCollisionModel = Game.Content.Load<Model>(modelPath);// + "Co");
@@ -230,8 +229,8 @@ namespace KazgarsRevenge
 
             StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
 
-            //holds the position so the model is drawn correctly
-            Entity roomLocation = new Box(position, 1, 1, 1);
+            //holds the position so the model is drawn correctly (not added to physics)
+            Entity roomLocation = new Box(position, 1100, 1100, 1100);
             room.AddSharedData(typeof(Entity), roomLocation);
 
             UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, new Vector3(roomScale), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));

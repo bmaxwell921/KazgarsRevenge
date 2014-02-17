@@ -110,76 +110,79 @@ namespace KazgarsRevenge
         private int lastLightUpdate = 0;
         public override void Draw(GameTime gameTime, CameraComponent camera, bool edgeDetection)
         {
-            Matrix[] bones = animationPlayer.GetSkinTransforms();
-
-            Matrix view = camera.View;
-            Matrix projection = camera.Projection;
-            int currentLightUpdate = camera.LastLightUpdate;
-
-
-            //drawing with toon shader
-            foreach (ModelMesh mesh in model.Meshes)
+            if (InsideCameraBox(camera.CameraBox))
             {
-                foreach (CustomSkinnedEffect effect in mesh.Effects)
-                {
+                Matrix[] bones = animationPlayer.GetSkinTransforms();
 
-                    effect.Parameters["alpha"].SetValue(modelParams.alpha);
-                    effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                    effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                    effect.SetBoneTransforms(bones);
-                    if (lastLightUpdate != currentLightUpdate)
+                Matrix view = camera.View;
+                Matrix projection = camera.Projection;
+                int currentLightUpdate = camera.LastLightUpdate;
+
+
+                //drawing with toon shader
+                foreach (ModelMesh mesh in model.Meshes)
+                {
+                    foreach (CustomSkinnedEffect effect in mesh.Effects)
                     {
-                        effect.LightPositions = camera.lightPositions;
-                        effect.LightColors = camera.lightColors;
+
+                        effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                        effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                        effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                        effect.SetBoneTransforms(bones);
+                        if (lastLightUpdate != currentLightUpdate)
+                        {
+                            effect.LightPositions = camera.lightPositions;
+                            effect.LightColors = camera.lightColors;
+                        }
+
+                        effect.View = view;
+                        effect.Projection = projection;
                     }
 
-                    effect.View = view;
-                    effect.Projection = projection;
+                    mesh.Draw();
                 }
 
-                mesh.Draw();
-            }
-
-            if (attachedModels.Count > 0)
-            {
-                Matrix[] worldbones = animationPlayer.GetWorldTransforms();
-                Matrix[] transforms;
-                foreach (AttachableModel a in attachedModels.Values)
+                if (attachedModels.Count > 0)
                 {
-                    if (a.Draw)
+                    Matrix[] worldbones = animationPlayer.GetWorldTransforms();
+                    Matrix[] transforms;
+                    foreach (AttachableModel a in attachedModels.Values)
                     {
-                        transforms = new Matrix[a.model.Bones.Count];
-                        a.model.CopyAbsoluteBoneTransformsTo(transforms);
-                        foreach (ModelMesh mesh in a.model.Meshes)
+                        if (a.Draw)
                         {
-                            foreach (Effect effect in mesh.Effects)
+                            transforms = new Matrix[a.model.Bones.Count];
+                            a.model.CopyAbsoluteBoneTransformsTo(transforms);
+                            foreach (ModelMesh mesh in a.model.Meshes)
                             {
-                                effect.Parameters["alpha"].SetValue(modelParams.alpha);
-                                effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                                effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                                Matrix world =
-                                    Matrix.CreateFromYawPitchRoll(a.xRotation, a.yRotation, 0)
-                                    * transforms[mesh.ParentBone.Index]
-                                    * worldbones[model.Bones[a.otherBoneName].Index - 2];
-
-                                effect.Parameters["World"].SetValue(world);
-                                effect.Parameters["ViewProj"].SetValue(view * projection);
-                                effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
-
-                                if (lastLightUpdate != currentLightUpdate)
+                                foreach (Effect effect in mesh.Effects)
                                 {
-                                    effect.Parameters["lightPositions"].SetValue(camera.lightPositions);
-                                    effect.Parameters["lightColors"].SetValue(camera.lightColors);
-                                }
+                                    effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                                    effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                                    effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                                    Matrix world =
+                                        Matrix.CreateFromYawPitchRoll(a.xRotation, a.yRotation, 0)
+                                        * transforms[mesh.ParentBone.Index]
+                                        * worldbones[model.Bones[a.otherBoneName].Index - 2];
 
+                                    effect.Parameters["World"].SetValue(world);
+                                    effect.Parameters["ViewProj"].SetValue(view * projection);
+                                    effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
+
+                                    if (lastLightUpdate != currentLightUpdate)
+                                    {
+                                        effect.Parameters["lightPositions"].SetValue(camera.lightPositions);
+                                        effect.Parameters["lightColors"].SetValue(camera.lightColors);
+                                    }
+
+                                }
+                                mesh.Draw();
                             }
-                            mesh.Draw();
                         }
                     }
                 }
-            }
 
-            lastLightUpdate = currentLightUpdate;
+                lastLightUpdate = currentLightUpdate;
+            }
         }
 
 

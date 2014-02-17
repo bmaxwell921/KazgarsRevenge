@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BEPUphysics;
 using BEPUphysics.Entities;
+using BEPUphysics.Entities.Prefabs;
 
 namespace KazgarsRevenge
 {
@@ -40,6 +41,23 @@ namespace KazgarsRevenge
         public void RemoveEmitter(Type particleType)
         {
             emitters.Remove(particleType);
+        }
+
+        protected bool InsideCameraBox(BoundingBox cameraBox)
+        {
+            Box boxData = physicalData as Box;
+            if (boxData == null)
+            {
+                return true;
+            }
+            float minx = boxData.Position.X - boxData.HalfWidth;
+            float minz = boxData.Position.Z - boxData.HalfWidth;
+            float maxx = boxData.Position.X + boxData.HalfWidth;
+            float maxz = boxData.Position.Z + boxData.HalfWidth;
+            return !(minx > cameraBox.Max.X
+                    || minz > cameraBox.Max.Z
+                    || maxx < cameraBox.Min.X
+                    || maxz < cameraBox.Min.Z);
         }
 
         abstract public void Draw(GameTime gameTime, CameraComponent camera, bool edgeDetection);

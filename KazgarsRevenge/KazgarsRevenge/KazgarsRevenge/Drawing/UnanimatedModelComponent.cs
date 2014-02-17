@@ -56,9 +56,11 @@ namespace KazgarsRevenge
         EffectParameter paramLightPositions;
         EffectParameter paramLightColors;
 
+        
+
         public override void Draw(GameTime gameTime, CameraComponent camera, bool edgeDetection)
         {
-            if (model != null)
+            if (model != null && InsideCameraBox(camera.CameraBox))
             {
                 Matrix view = camera.View;
                 Matrix projection = camera.Projection;
