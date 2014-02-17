@@ -48,10 +48,22 @@ namespace KazgarsRevenge
             }
         }
 
-        public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
+        private int lastLightUpdate = 0;
+
+        EffectParameter paramWorld;
+        EffectParameter paramViewProj;
+        EffectParameter paramInverseWorld;
+        EffectParameter paramLightPositions;
+        EffectParameter paramLightColors;
+
+        public override void Draw(GameTime gameTime, CameraComponent camera, bool edgeDetection)
         {
             if (model != null)
             {
+                Matrix view = camera.View;
+                Matrix projection = camera.Projection;
+                int currentLightUpdate = camera.LastLightUpdate;
+
                 Matrix[] transforms = new Matrix[model.Bones.Count];
                 model.CopyAbsoluteBoneTransformsTo(transforms);
                 foreach (ModelMesh mesh in model.Meshes)
@@ -68,7 +80,11 @@ namespace KazgarsRevenge
                         effect.Parameters["World"].SetValue(world);
                         effect.Parameters["ViewProj"].SetValue(view * projection);
                         effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
-
+                        if (lastLightUpdate != currentLightUpdate)
+                        {
+                            effect.Parameters["lightPositions"].SetValue(camera.lightPositions);
+                            effect.Parameters["lightColors"].SetValue(camera.lightColors);
+                        }
 
 
                         /*
@@ -86,6 +102,8 @@ namespace KazgarsRevenge
                     }
                     mesh.Draw();
                 }
+
+                lastLightUpdate = currentLightUpdate;
             }
         }
     }

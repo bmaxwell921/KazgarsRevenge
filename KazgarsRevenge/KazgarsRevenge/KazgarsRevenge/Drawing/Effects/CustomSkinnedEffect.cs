@@ -38,7 +38,8 @@ namespace KazgarsRevenge
         EffectParameter bonesParam;
         EffectParameter shaderIndexParam;
 
-        EffectParameter lightPositionParam;
+        EffectParameter lightPositionsParam;
+        EffectParameter lightColorsParam;
 
         #endregion
 
@@ -70,13 +71,22 @@ namespace KazgarsRevenge
 
         #region Public Properties
 
-        public Vector3[] LightPositions 
-        { 
-            set 
+        public Vector3[] LightPositions
+        {
+            set
             {
-                this.lightPositionParam.SetValue(value);
-            } 
+                this.lightPositionsParam.SetValue(value);
+            }
         }
+        public Vector3[] LightColors
+        {
+            set
+            {
+                this.lightColorsParam.SetValue(value);
+            }
+        }
+
+        
 
         /// <summary>
         /// Gets or sets the world matrix.
@@ -383,8 +393,8 @@ namespace KazgarsRevenge
             worldViewProjParam = Parameters["WorldViewProj"];
             bonesParam = Parameters["Bones"];
             shaderIndexParam = Parameters["ShaderIndex"];
-            lightPositionParam = Parameters["lightPositions"];
-
+            lightPositionsParam = Parameters["lightPositions"];
+            lightColorsParam = Parameters["lightColors"];
 
         }
 

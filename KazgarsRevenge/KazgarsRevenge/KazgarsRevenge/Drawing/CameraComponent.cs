@@ -15,8 +15,7 @@ namespace KazgarsRevenge
 {
     public class CameraComponent : GameComponent
     {
-        public const int MAX_ACTIVE_LIGHTS = 30;
-        #region camera-ish fields
+        #region Camera Fields
         private float fov = MathHelper.PiOver4;
         private float nearPlane = .1f;
         private float farPlane = 10000;
@@ -52,15 +51,18 @@ namespace KazgarsRevenge
         public float zoom = 4.0f;
         #endregion
 
-        #region rendertarget stuff
+        #region Rendertarget Stuff
         public GBufferTarget RenderTargets { get; private set; }
         public RenderTarget2D OutputTarget { get; private set; }
+        void resetOutputTarget(object sender, EventArgs e)
+        {
+            if (!OutputTarget.IsDisposed)
+            {
+                OutputTarget.Dispose();
+            }
+        }
         #endregion
 
-        #region lights
-        public Vector3[] lightPositions{get; private set;}
-        private Vector3 inactiveLightPos = new Vector3(-10000, 0, 0);
-        #endregion
 
         public void AssignEntity(Entity followMe)
         {
@@ -73,9 +75,11 @@ namespace KazgarsRevenge
             this.UpdateOrder = 2;
 
             lightPositions = new Vector3[MAX_ACTIVE_LIGHTS];
+            lightColors = new Vector3[MAX_ACTIVE_LIGHTS];
             for (int i = 0; i < MAX_ACTIVE_LIGHTS; ++i)
             {
                 lightPositions[i] = inactiveLightPos;
+                lightColors[i] = Color.White.ToVector3();
             }
         }
 
@@ -96,15 +100,9 @@ namespace KazgarsRevenge
 
             RenderTargets = new GBufferTarget(Game.GraphicsDevice, Game.GraphicsDevice.Viewport);
             OutputTarget = new RenderTarget2D(Game.GraphicsDevice, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.None);
+            LastLightUpdate = int.MinValue;
         }
 
-        void resetOutputTarget(object sender, EventArgs e)
-        {
-            if (!OutputTarget.IsDisposed)
-            {
-                OutputTarget.Dispose();
-            }
-        }
 
         MouseState curMouse = Mouse.GetState();
         MouseState prevMouse = Mouse.GetState();
@@ -113,10 +111,22 @@ namespace KazgarsRevenge
         KeyboardState prevKeys = Keyboard.GetState();
         public override void Update(GameTime gameTime)
         {
+            Vector3 characterPos = Vector3.Zero;
+            if (physicalData != null)
+            {
+                characterPos = physicalData.Position;
+            }
+
+            Vector3 min = new Vector3(characterPos.X - playerSightRadius, 0, characterPos.Z - playerSightRadius);
+            Vector3 max = new Vector3(characterPos.X + playerSightRadius, 100, characterPos.Z + playerSightRadius);
+            this.CameraBox = new BoundingBox(min, max);
+            
+
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
             if (Game.IsActive)
             {
+
                 double elapsedMillis = gameTime.ElapsedGameTime.TotalMilliseconds;
                 float amount = (float)elapsedMillis / 1000.0f;
 
@@ -216,25 +226,29 @@ namespace KazgarsRevenge
 
         }
 
+        #region Lights
+        public const int MAX_ACTIVE_LIGHTS = 30;
+        public int LastLightUpdate { get; private set; }
+        public BoundingBox CameraBox { get; private set; }
+        public Vector3[] lightPositions { get; private set; }
+        public Vector3[] lightColors { get; private set; }
         float playerSightRadius = 700;
         Space physics;
+        private Vector3 inactiveLightPos = new Vector3(-10000, 0, 0);
         private void UpdateLights()
         {
             //check which lights are in camera cube, add to lights
             int i = 0;
-
-            Vector3 min = new Vector3(position.X - playerSightRadius, 0, position.Z - playerSightRadius);
-            Vector3 max = new Vector3(position.X + playerSightRadius, 20, position.Z + playerSightRadius);
-            BoundingBox b = new BoundingBox(min, max);
-
+            
             var entries = Resources.GetBroadPhaseEntryList();
-            physics.BroadPhase.QueryAccelerator.GetEntries(b, entries);
+            physics.BroadPhase.QueryAccelerator.GetEntries(CameraBox, entries);
             foreach (BroadPhaseEntry entry in entries)
             {
                 GameEntity other = entry.Tag as GameEntity;
                 if (other != null && other.Name == "light")
                 {
                     Vector3 pos = (other.GetSharedData(typeof(Entity)) as Entity).Position;
+                    lightColors[i] = ((Color)other.GetSharedData(typeof(Color))).ToVector3();
                     lightPositions[i++] = pos;
                     if (i >= MAX_ACTIVE_LIGHTS)
                     {
@@ -250,7 +264,9 @@ namespace KazgarsRevenge
             }
 
             //update effects?
-
+            ++LastLightUpdate;
         }
+
+        #endregion
     }
 }

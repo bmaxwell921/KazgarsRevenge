@@ -107,9 +107,15 @@ namespace KazgarsRevenge
             }
         }
 
-        public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
+        private int lastLightUpdate = 0;
+        public override void Draw(GameTime gameTime, CameraComponent camera, bool edgeDetection)
         {
             Matrix[] bones = animationPlayer.GetSkinTransforms();
+
+            Matrix view = camera.View;
+            Matrix projection = camera.Projection;
+            int currentLightUpdate = camera.LastLightUpdate;
+
 
             //drawing with toon shader
             foreach (ModelMesh mesh in model.Meshes)
@@ -121,6 +127,11 @@ namespace KazgarsRevenge
                     effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                     effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                     effect.SetBoneTransforms(bones);
+                    if (lastLightUpdate != currentLightUpdate)
+                    {
+                        effect.LightPositions = camera.lightPositions;
+                        effect.LightColors = camera.lightColors;
+                    }
 
                     effect.View = view;
                     effect.Projection = projection;
@@ -155,12 +166,20 @@ namespace KazgarsRevenge
                                 effect.Parameters["ViewProj"].SetValue(view * projection);
                                 effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(world));
 
+                                if (lastLightUpdate != currentLightUpdate)
+                                {
+                                    effect.Parameters["lightPositions"].SetValue(camera.lightPositions);
+                                    effect.Parameters["lightColors"].SetValue(camera.lightColors);
+                                }
+
                             }
                             mesh.Draw();
                         }
                     }
                 }
             }
+
+            lastLightUpdate = currentLightUpdate;
         }
 
 

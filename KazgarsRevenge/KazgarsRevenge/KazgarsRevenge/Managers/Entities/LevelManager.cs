@@ -85,6 +85,7 @@ namespace KazgarsRevenge
 
         // Rooms making up this level
         private List<GameEntity> rooms;
+        private List<GameEntity> lights = new List<GameEntity>();
 
         public LevelManager(KazgarsRevengeGame game)
             : base(game)
@@ -94,6 +95,13 @@ namespace KazgarsRevenge
 
         public void DemoLevel()
         {
+            for (int i = 0; i < 10; ++i)
+            {
+                for (int j = 0; j < 10; ++j)
+                {
+                    CreatePointLight(new Vector3(-200 + i * 500, 0, -200 + j * 500));
+                }
+            }
             rooms.Add(CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2));
             //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
         }
@@ -200,6 +208,9 @@ namespace KazgarsRevenge
 
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {
+
+            //CreatePointLight(position);
+
             position.Y = LEVEL_Y;
             float roomScale = 10;
 
@@ -231,7 +242,29 @@ namespace KazgarsRevenge
             room.AddComponent(typeof(UnanimatedModelComponent), roomGraphics);
             levelModelManager.AddComponent(roomGraphics);
 
+
             return room;
+        }
+
+        private void CreatePointLight(Vector3 position)
+        {
+            GameEntity light = new GameEntity("light", FactionType.Neutral, EntityType.None);
+
+            position.Y = 40;
+            Entity physicalData = new Box(position, .1f, .1f, .1f);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.LocalInertiaTensorInverse = new Matrix3X3();
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoBroadPhase;
+            light.AddSharedData(typeof(Entity), physicalData);
+
+            light.AddSharedData(typeof(Color), Color.White);
+
+            PhysicsComponent lightPhysics = new PhysicsComponent(mainGame, light);
+
+            light.AddSharedData(typeof(PhysicsComponent), lightPhysics);
+            genComponentManager.AddComponent(lightPhysics);
+
+            lights.Add(light);
         }
 
         // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240
@@ -427,5 +460,6 @@ namespace KazgarsRevenge
             //}
             //#endregion
         }
+
     }
 }

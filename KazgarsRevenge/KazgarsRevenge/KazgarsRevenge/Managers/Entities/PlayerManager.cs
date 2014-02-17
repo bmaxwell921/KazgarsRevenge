@@ -197,5 +197,11 @@ namespace KazgarsRevenge
             }
             return playerMap[id];
         }
+        
+        public string GetDebugString()
+        {
+            Vector3 ppos = (playerMap.Values.ToList()[0].GetSharedData(typeof(Entity)) as Entity).Position;
+            return "X: " + ppos.X + "\nZ: " + ppos.Z;
+        }
     }
 }

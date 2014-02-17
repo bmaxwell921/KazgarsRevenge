@@ -2,11 +2,11 @@ float alpha = 1;
 float lineIntensity = 1;
 
 float3 lightPositions[30];
-float LightAttenuation = 200;
+float LightAttenuation = 300;
 float LightFalloff = 2;
-float3 LightColor = float3(1,1,1);
+float3 lightColors[30];
 
-float ToonThresholds[2] = { 0.8, 0.6 };
+float ToonThresholds[2] = { 0.8, 0.4 };
 float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
 
 // Global variables
@@ -61,10 +61,13 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 	
 	
 	float light = 0;
+	float3 totalColor = float3(1,1,1);
+	float curActiveLights = 1;
 
 	float3 lightDir;
 	float amt;
 	float att;
+	float tmp;
 	for(int i=0; i<30; ++i)
 	{
 		if(lightPositions[i].x != -10000)
@@ -73,17 +76,23 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 			lightDir = normalize(lightPositions[i] - pin.worldPos);
 
 			//get amount of light on this vertex
-			float amt = saturate(dot(pin.normal, lightDir));
+			amt = saturate(dot(pin.normal, lightDir));
 
 			//get attenuation
-			float att = 1 - pow(saturate(distance(lightPositions[i], pin.worldPos) / LightAttenuation), LightFalloff);
-
+			att = 1 - pow(saturate(distance(lightPositions[i], pin.worldPos) / LightAttenuation), LightFalloff);
+		
 			//send resulting light to pixel shader
-			light += amt * att * LightColor;
+			tmp = amt * att;
+			light += tmp;
+
+			totalColor += lightColors[i];
+
+			++curActiveLights;
 		}
 	}
-
 	
+	totalColor /= curActiveLights;
+
     if (light> ToonThresholds[0])
 	{
         light = ToonBrightnessLevels[0];
@@ -95,9 +104,9 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
     else
 	{
         light = ToonBrightnessLevels[2];
-	}
+    }
 	
-    Color.rgb *= light;
+    Color.rgb *= light * totalColor;
     Color.a = min(alpha, Color.a);
 
     return Color;

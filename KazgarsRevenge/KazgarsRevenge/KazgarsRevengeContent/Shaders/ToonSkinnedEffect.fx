@@ -6,9 +6,9 @@ float alpha = 1;
 float lineIntensity = 1;
 
 float3 lightPositions[30];
-float LightAttenuation = 200;
+float LightAttenuation = 300;
 float LightFalloff = 2;
-float3 LightColor = float3(1,1,1);
+float3 lightColors[30];
 
 // The texture that contains the celmap
 texture CelMap;
@@ -28,7 +28,7 @@ struct ToonVSOutput
 	float3 worldPos   : TEXCOORD2;
 };
 
-float ToonThresholds[2] = { 0.8, 0.6 };
+float ToonThresholds[2] = { 0.8, 0.4 };
 float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.5 };
 
 // Vertex shader: vertex lighting, four bones.
@@ -53,27 +53,37 @@ float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
 	float4 Color = SAMPLE_TEXTURE(Texture, pin.TexCoord);
 	
 	float light = 0;
+	float3 totalColor = float3(1,1,1);
+	float curActiveLights = 1;
 
 	float3 lightDir;
 	float amt;
 	float att;
+	float tmp;
 	for(int i=0; i<30; ++i)
 	{
-		//get direction of light
-		lightDir = normalize(lightPositions[i] - pin.worldPos);
+		if(lightPositions[i].x != -10000)
+		{
+			//get direction of light
+			lightDir = normalize(lightPositions[i] - pin.worldPos);
 
-		//get amount of light on this vertex
-		float amt = saturate(dot(pin.normal, lightDir));
+			//get amount of light on this vertex
+			amt = saturate(dot(pin.normal, lightDir));
 
-		//get attenuation
-		float att = 1 - pow(saturate(distance(lightPositions[i], pin.worldPos) / LightAttenuation), LightFalloff);
+			//get attenuation
+			att = 1 - pow(saturate(distance(lightPositions[i], pin.worldPos) / LightAttenuation), LightFalloff);
+		
+			//send resulting light to pixel shader
+			tmp = amt * att;
+			light += tmp;
 
-		//send resulting light to pixel shader
-		light += amt * att * LightColor;
+			totalColor += lightColors[i];
+
+			++curActiveLights;
+		}
 	}
-
-
-
+	
+	totalColor /= curActiveLights;
 
     if (light> ToonThresholds[0])
 	{
@@ -87,8 +97,8 @@ float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
 	{
         light = ToonBrightnessLevels[2];
     }
-
-    Color.rgb *= light;
+	
+    Color.rgb *= light * totalColor;
     Color.a = min(alpha, Color.a);
 
     return Color;

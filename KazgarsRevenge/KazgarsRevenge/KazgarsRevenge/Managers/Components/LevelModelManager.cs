@@ -42,7 +42,7 @@ namespace KazgarsRevenge
         {
             foreach (DrawableComponent3D d in components)
             {
-                d.Draw(gameTime, camera.View, camera.Projection, edgeDetection);
+                d.Draw(gameTime, camera, edgeDetection);
             }
         }
     }

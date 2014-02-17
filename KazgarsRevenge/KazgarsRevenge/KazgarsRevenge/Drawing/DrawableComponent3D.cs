@@ -42,6 +42,6 @@ namespace KazgarsRevenge
             emitters.Remove(particleType);
         }
 
-        abstract public void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection);
+        abstract public void Draw(GameTime gameTime, CameraComponent camera, bool edgeDetection);
     }
 }

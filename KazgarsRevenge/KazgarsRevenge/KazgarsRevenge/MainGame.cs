@@ -592,5 +592,6 @@ namespace KazgarsRevenge
                 //((MessageSender)Services.GetService(typeof(MessageSender))).CloseConnection(players.myId.id);
             }
         }
+
     }
 }
