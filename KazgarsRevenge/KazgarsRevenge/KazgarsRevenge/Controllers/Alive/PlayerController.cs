@@ -286,10 +286,10 @@ namespace KazgarsRevenge
             EquipGear(lewtz.GenerateBow(), GearSlot.Lefthand);
 
             EquipGear(lewtz.GetBoots(), GearSlot.Feet);
-            EquipGear(lewtz.GetChest(), GearSlot.Chest);
+            //EquipGear(lewtz.GetChest(), GearSlot.Chest);
             EquipGear(lewtz.GetHelm(), GearSlot.Head);
-            EquipGear(lewtz.GetLegs(), GearSlot.Legs);
-            EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
+            //EquipGear(lewtz.GetLegs(), GearSlot.Legs);
+            //EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
             EquipGear(lewtz.GetWrist(), GearSlot.Wrist);
         }
 
@@ -1375,7 +1375,12 @@ namespace KazgarsRevenge
         //TODO: particles for being hit / sound?
         protected override void TakeDamage(int damage, GameEntity from)
         {
-
+            inCombat = true;
+            millisCombatCounter = 0;
+            if (currentActionName == "idle")
+            {
+                StartSequence("fightingstance");
+            }
         }
         #endregion
 

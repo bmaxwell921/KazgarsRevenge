@@ -281,7 +281,7 @@ namespace KazgarsRevenge
                     HandleDeBuff(activeDebuffs[i].type, BuffState.Ticking);
                     activeDebuffs[i].nextTick -= activeDebuffs[i].tickLength;
                 }
-                if (activeDebuffs[i].timeLeft <= 0)
+                if (activeDebuffs[i].timeLeft <= 0 || Dead)
                 {
                     HandleDeBuff(activeDebuffs[i].type, BuffState.Ending);
                     activeDebuffs.RemoveAt(i);
@@ -298,7 +298,7 @@ namespace KazgarsRevenge
                     HandleBuff(activeBuffs[i].type, BuffState.Ticking);
                     activeBuffs[i].nextTick -= activeBuffs[i].tickLength;
                 }
-                if (activeBuffs[i].timeLeft <= 0)
+                if (activeBuffs[i].timeLeft <= 0 || Dead)
                 {
                     HandleBuff(activeBuffs[i].type, BuffState.Ending);
                     activeBuffs.RemoveAt(i);
