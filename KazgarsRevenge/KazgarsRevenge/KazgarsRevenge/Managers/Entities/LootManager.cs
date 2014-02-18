@@ -312,6 +312,33 @@ namespace KazgarsRevenge
         {
             return new Weapon(GetIcon("bow"), "bow", GetStats("bow"), GetUnanimatedModel(attachDir + "bow01"), AttackType.Ranged, false);
         }
+
+        public Equippable GetHelm()
+        {
+            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_head_rino"), GearSlot.Chest, GearSlot.None);
+        }
+        public Equippable GetShoulders()
+        {
+            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_shoulders_rino"), GearSlot.Chest, GearSlot.None);
+        }
+        public Equippable GetWrist()
+        {
+            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_wrist_rino"), GearSlot.Chest, GearSlot.None);
+        }
+        public Equippable GetLegs()
+        {
+            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_legs_rino"), GearSlot.Chest, GearSlot.None);
+        }
+        public Equippable GetBoots()
+        {
+            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_boots_rino"), GearSlot.Chest, GearSlot.None);
+        }
+        public Equippable GetChest()
+        {
+            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_chest_rino"), GearSlot.Chest, GearSlot.None);
+        }
+
+
         #endregion
 
         #region Icons

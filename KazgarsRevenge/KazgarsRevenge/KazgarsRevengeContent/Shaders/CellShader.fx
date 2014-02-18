@@ -7,7 +7,7 @@ float LightFalloff = 2;
 float3 lightColors[30];
 
 float ToonThresholds[2] = { 0.8, 0.4 };
-float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.3 };
+float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.65 };
 
 // Global variables
 float4x4 World;
@@ -106,7 +106,7 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
         light = ToonBrightnessLevels[2];
     }
 	
-	light += float3(.15f, .15f, .15f);
+	light += float3(.15f, .15f, .15f);//float3(.3, .3, .3);
 
     Color.rgb *= light * totalColor;
     Color.a = min(alpha, Color.a);

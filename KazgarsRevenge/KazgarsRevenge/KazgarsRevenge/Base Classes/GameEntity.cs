@@ -51,10 +51,6 @@ namespace KazgarsRevenge
         {
             Object retData = null;
             sharedData.TryGetValue(t, out retData);
-            if (retData == null)
-            {
-                throw new KeyNotFoundException("You must add shared data of type '" + t.ToString() + "' to '" + Name + "'.");
-            }
             return retData;
         }
 

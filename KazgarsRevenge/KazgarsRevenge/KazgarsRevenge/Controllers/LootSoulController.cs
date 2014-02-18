@@ -247,21 +247,15 @@ namespace KazgarsRevenge
                 //that loot doesn't exist
                 return null;
             }
-            else
+
+            return loot[lootIndex];
+        }
+
+        public void RemoveLoot(int lootIndex)
+        {
+            if (loot.Count - 1 >= lootIndex)
             {
-                //TODO: ask server to remove this item from this soul's loot?
-                if (RequestLootFromServer(lootIndex))
-                {
-                    Item retLoot = loot[lootIndex];
-                    loot.RemoveAt(lootIndex);
-                    return retLoot;
-                }
-                else
-                {
-                    //TODO: display "already looted" message?
-                    (Game as MainGame).AddAlert("that has already been looted");
-                    return null;
-                }
+                loot.RemoveAt(lootIndex);
             }
         }
 

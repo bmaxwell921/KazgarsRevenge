@@ -34,6 +34,7 @@ namespace KazgarsRevenge
         protected Model model;
         protected Vector3 localOffset = Vector3.Zero;
         protected Dictionary<string, AttachableModel> attachedModels;
+        protected Dictionary<string, Model> syncedModels;
         protected Matrix yawOffset = Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0);
 
         protected SharedGraphicsParams modelParams;
@@ -44,6 +45,7 @@ namespace KazgarsRevenge
             this.model = model;
             this.localOffset = drawOffset;
             this.attachedModels = entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
+            this.syncedModels = entity.GetSharedData(typeof(Dictionary<string, Model>)) as Dictionary<string, Model>;
             this.animationPlayer = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
 
             animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips.Keys.First(), MixType.None);
@@ -124,7 +126,6 @@ namespace KazgarsRevenge
                 {
                     foreach (CustomSkinnedEffect effect in mesh.Effects)
                     {
-
                         effect.Parameters["alpha"].SetValue(modelParams.alpha);
                         effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                         effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
@@ -142,6 +143,35 @@ namespace KazgarsRevenge
                     mesh.Draw();
                 }
 
+                //drawing armor (weighted to the same bones as kazgar's animation
+                if (syncedModels != null)
+                {
+                    foreach (Model m in syncedModels.Values)
+                    {
+                        foreach (ModelMesh mesh in m.Meshes)
+                        {
+                            foreach (CustomSkinnedEffect effect in mesh.Effects)
+                            {
+                                effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                                effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                                effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                                effect.SetBoneTransforms(bones);
+                                if (lastLightUpdate != currentLightUpdate)
+                                {
+                                    effect.LightPositions = camera.lightPositions;
+                                    effect.LightColors = camera.lightColors;
+                                }
+
+                                effect.View = view;
+                                effect.Projection = projection;
+                            }
+
+                            mesh.Draw();
+                        }
+                    }
+                }
+
+                //drawing attachables
                 if (attachedModels.Count > 0)
                 {
                     Matrix[] worldbones = animationPlayer.GetWorldTransforms();

@@ -78,6 +78,7 @@ namespace KazgarsRevenge
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
         }
 
+
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
         List<EntityIntPair> threatLevels = new List<EntityIntPair>();
         protected override void TakeDamage(int d, GameEntity from)
@@ -436,5 +437,6 @@ namespace KazgarsRevenge
                 || pos.Z < cameraBox.Min.Z
                 || pos.Z > cameraBox.Max.Z);
         }
+
     }
 }

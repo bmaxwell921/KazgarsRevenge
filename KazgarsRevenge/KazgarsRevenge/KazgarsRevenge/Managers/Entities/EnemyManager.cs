@@ -79,7 +79,7 @@ namespace KazgarsRevenge
 
             brute.AddComponent(typeof(AliveComponent), bruteController);
             genComponentManager.AddComponent(bruteController);
-
+            
             brute.AddComponent(typeof(HealthBarBillboard), hp);
             billboardManager.AddComponent(hp);
 
