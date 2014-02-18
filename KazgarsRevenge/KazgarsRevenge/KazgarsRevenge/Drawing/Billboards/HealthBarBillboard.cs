@@ -42,7 +42,7 @@ namespace KazgarsRevenge
             if (percent < 1 && InsideCameraBox(camera.CameraBox))
             {
                 normal = camera.Position - ownerData.Position;
-                normal.Y = 0;
+                //normal.Y = 0;
                 normal.Normalize();
                 this.left = Vector3.Cross(normal, up);
                 base.Draw(camera);

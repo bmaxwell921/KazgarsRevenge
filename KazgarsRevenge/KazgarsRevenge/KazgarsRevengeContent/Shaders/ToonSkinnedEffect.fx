@@ -29,7 +29,7 @@ struct ToonVSOutput
 };
 
 float ToonThresholds[2] = { 0.8, 0.4 };
-float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.16 };
+float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.4 };
 
 // Vertex shader: vertex lighting, four bones.
 ToonVSOutput VSToon(VSInputNmTxWeights vin)
@@ -84,7 +84,7 @@ float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
 	}
 	
 	totalColor /= curActiveLights;
-
+	
     if (light> ToonThresholds[0])
 	{
         light = ToonBrightnessLevels[0];

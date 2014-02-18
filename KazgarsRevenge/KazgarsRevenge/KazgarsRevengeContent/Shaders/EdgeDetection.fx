@@ -1,5 +1,5 @@
 // Settings controlling the edge detection filter.
-float EdgeWidth = 1.4;
+float EdgeWidth = 1.8;
 float EdgeIntensity = 1;
 
 // How sensitive should the edge detection be to tiny variations in the input data?

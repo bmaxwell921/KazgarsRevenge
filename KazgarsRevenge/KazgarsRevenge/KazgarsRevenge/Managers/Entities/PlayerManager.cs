@@ -71,6 +71,9 @@ namespace KazgarsRevenge
             Dictionary<string, AttachableModel> attachables = new Dictionary<string, AttachableModel>();
             player.AddSharedData(typeof(Dictionary<string, AttachableModel>), attachables);
 
+            Dictionary<string, Model> syncedAnimations = new Dictionary<string, Model>();
+            player.AddSharedData(typeof(Dictionary<string, Model>), syncedAnimations);
+
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, 10f, Vector3.Down * 18);

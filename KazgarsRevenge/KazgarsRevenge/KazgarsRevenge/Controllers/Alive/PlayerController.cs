@@ -30,8 +30,11 @@ namespace KazgarsRevenge
         None,
         Head,
         Chest,
+        Codpiece,
         Legs,
         Feet,
+        Shoulders,
+        Wrist,
         Righthand,
         Lefthand,
     }
@@ -44,12 +47,13 @@ namespace KazgarsRevenge
         protected Space physics;
         protected CameraComponent camera;
         protected SoundEffectLibrary soundEffects;
-        protected LootManager gearGenerator;
+        protected LootManager lewtz;
         protected NetworkMessageManager nmm;
 
         //data
         protected AnimationPlayer animations;
         protected Dictionary<string, AttachableModel> attached;
+        protected Dictionary<string, Model> syncedModels;
         protected Random rand = new Random();
 
 
@@ -87,10 +91,12 @@ namespace KazgarsRevenge
         protected virtual void EquipGear(Equippable equipMe, GearSlot slot)
         {
             float xRot = 0;
+            bool weapon = false;
             //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand
             Weapon possWep = equipMe as Weapon;
             if (possWep != null)
             {
+                weapon = true;
                 if (possWep.TwoHanded)
                 {
                     if (slot == GearSlot.Lefthand)
@@ -116,7 +122,14 @@ namespace KazgarsRevenge
                 gear[slot] = equipMe;
                 RecalculateStats();
 
-                attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot, 0));
+                if (weapon)
+                {
+                    attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot, 0));
+                }
+                else
+                {
+                    syncedModels.Add(slot.ToString(), equipMe.GearModel);
+                }
             }
         }
         /// <summary>
@@ -244,14 +257,22 @@ namespace KazgarsRevenge
             //shared data
             this.animations = Entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
+            this.syncedModels = Entity.GetSharedData(typeof(Dictionary<string, Model>)) as Dictionary<string, Model>;
 
             InitGeneralFields();
 
             InitNewPlayer();
 
             //adding sword and bow for demo
-            EquipGear(gearGenerator.GenerateSword(), GearSlot.Righthand);
-            EquipGear(gearGenerator.GenerateBow(), GearSlot.Lefthand);
+            EquipGear(lewtz.GenerateSword(), GearSlot.Righthand);
+            EquipGear(lewtz.GenerateBow(), GearSlot.Lefthand);
+
+            EquipGear(lewtz.GetBoots(), GearSlot.Feet);
+            EquipGear(lewtz.GetChest(), GearSlot.Chest);
+            EquipGear(lewtz.GetHelm(), GearSlot.Head);
+            EquipGear(lewtz.GetLegs(), GearSlot.Legs);
+            EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
+            EquipGear(lewtz.GetWrist(), GearSlot.Wrist);
         }
 
         private void InitPlayerFromFile()
@@ -266,7 +287,7 @@ namespace KazgarsRevenge
             physics = Game.Services.GetService(typeof(Space)) as Space;
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
-            gearGenerator = Game.Services.GetService(typeof(LootManager)) as LootManager;
+            lewtz = Game.Services.GetService(typeof(LootManager)) as LootManager;
             nmm = Game.Services.GetService(typeof(NetworkMessageManager)) as NetworkMessageManager;
             #endregion
 
@@ -1399,7 +1420,7 @@ namespace KazgarsRevenge
                 case GearSlot.Righthand:
                     return "Hand_R";
                 default:
-                    return "RootNode";
+                    return "Armature";
             }
         }
         /// <summary>
