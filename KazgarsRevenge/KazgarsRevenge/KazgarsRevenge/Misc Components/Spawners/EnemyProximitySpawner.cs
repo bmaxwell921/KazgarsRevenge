@@ -12,6 +12,7 @@ namespace KazgarsRevenge
     /// </summary>
     public class EnemyProximitySpawner : Spawner
     {
+        public const int NO_LIMIT = -1;
         // Distance used to start spawning
         private float proximity;
 
@@ -20,6 +21,12 @@ namespace KazgarsRevenge
 
         // When we last spawned something
         private float passedTime;
+
+        // The max number of enemies to spawn
+        private int limit;
+
+        // Number of enemies actually spawned
+        private int numSpawned;
 
         /// <summary>
         /// Creates a new spawner that spawns based on proximity to players
@@ -30,12 +37,14 @@ namespace KazgarsRevenge
         /// <param name="spawnLocation"></param>
         /// <param name="proximity">If the distance from the spawnLocation to the closest enemy is less than proximity, this spawns enemies</param>
         /// <param name="delay">The delay between each spawn</param>
-        public EnemyProximitySpawner(KazgarsRevengeGame game, GameEntity entity, EntityType spawnType, ISet<Vector3> spawnLocations, float proximity, float delay)
+        /// <param name="limit">Set this parameter if you wish to limit the number of enemies a spawner can spawn</param>
+        public EnemyProximitySpawner(KazgarsRevengeGame game, GameEntity entity, EntityType spawnType, ISet<Vector3> spawnLocations, float proximity, float delay, int limit = NO_LIMIT)
             : base(game, entity, spawnType, spawnLocations)
         {
             this.proximity = proximity;
             this.delay = delay;
             passedTime = delay;
+            this.limit = limit;
         }
 
         public override void Update(GameTime gameTime)
@@ -51,11 +60,16 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public override bool NeedsSpawn()
         {
+            if (limit != NO_LIMIT && numSpawned > limit)
+            {
+                return false;
+            }
             // check if anything is close by
             if (spawnLocations.Count() != 0)
             {
                 // Just check one of them
-                return QueryNearEntityFaction(FactionType.Players, spawnLocations.GetEnumerator().Current, 0, proximity, true) != null;
+                //return QueryNearEntityFaction(FactionType.Players, spawnLocations.GetEnumerator().Current, 0, proximity, true) != null;
+                return true;
             }
             return false;
         }
@@ -71,6 +85,9 @@ namespace KazgarsRevenge
                 {
                     // TODO actual level
                     ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
+
+                    // Make sure to limit as necessary
+                    ++numSpawned;
                 }
                 passedTime = 0;
             }

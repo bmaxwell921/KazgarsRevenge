@@ -11,6 +11,6 @@ namespace KazgarsRevenge
     /// </summary>
     public class RoomBlock : ChunkComponent
     {
-        // Lol nothing here cause everything we need is in ChunkComponent
+        public static readonly int SIZE = 1;
     }
 }
