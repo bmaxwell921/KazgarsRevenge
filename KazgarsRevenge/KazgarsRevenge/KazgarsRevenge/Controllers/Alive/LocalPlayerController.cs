@@ -197,19 +197,25 @@ namespace KazgarsRevenge
                             {
                                 for (int i = 0; i <= maxInventorySlots; i++)
                                 {
-                                    if (innerClicked == "inventory" + i && inventory.Count() > i)
+                                    if (innerClicked == "inventory" + i && (inventory.Count() > i || selectedItemSlot != -1))
                                     {
                                         if (selectedItemSlot == -1)
                                         {
                                             selectedItemSlot = i;
                                         }
-                                        else
+                                        else if (selectedItemSlot == -1)
                                         {
                                             Item temp = inventory[i];
                                             inventory[i] = inventory[selectedItemSlot];
                                             inventory[selectedItemSlot] = temp;
                                             selectedItemSlot = -1;
-                                        }                      
+                                        }
+                                        else
+                                        {//#Nate
+                                            inventory[i] = inventory[selectedItemSlot];
+                                            inventory[selectedItemSlot] = null;
+                                            selectedItemSlot = -1;
+                                        }
                                     }
                                 }
                             }
