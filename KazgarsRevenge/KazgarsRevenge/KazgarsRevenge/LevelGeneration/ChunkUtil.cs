@@ -190,7 +190,7 @@ namespace KazgarsRevenge
             allDirs.Add(Direction.EAST);
             allDirs.Add(Direction.WEST);
             //return GetSatisfyingChunk(name, ChunkType.SOULEVATOR, allDirs);
-            return new ChunkInfo("test2", 4, Rotation.ZERO, ChunkType.SOULEVATOR, allDirs);
+            return new ChunkInfo("2-N-E", 4, Rotation.NINETY, ChunkType.SOULEVATOR, allDirs);
         }
 
         /// <summary>

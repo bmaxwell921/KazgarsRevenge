@@ -140,7 +140,7 @@ namespace KazgarsRevenge
         // Returns a list of all the rooms that belong to this chunk, in their proper locations
         private IList<GameEntity> CreateChunkRooms(Chunk chunk, ChunkInfo chunkInfo, int i, int j)
         {
-            // We only scale things properly after we're done placing
+            // We only scale things properly after we're done placing them
             IList<GameEntity> rooms = new List<GameEntity>();
             Vector3 chunkLocation = new Vector3(i, 0, j);
 
@@ -155,55 +155,22 @@ namespace KazgarsRevenge
         // Creates a gameEntity for the given information
         private GameEntity CreateRoom(Room room, Rotation chunkRotation, Vector3 chunkLocation)
         {
-            // Room.location is the room's location relative to the chunk's location, so we add the values to get its proper location
-            Vector3 roomLocation = chunkLocation + new Vector3(room.location.x, LEVEL_Y, room.location.y);
+            // Room.location is the top left so we move it to the center by adding half the width and height, then we move it by the chunklocation
+            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2 + chunkLocation;
+            Vector3 rotatedCenter;
+            float yaw = room.rotation.ToRadians() + chunkRotation.ToRadians();
+            Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
+            GetRotatedInfo(roomCenter, chunkCenter, chunkRotation, out rotatedCenter);
+            Console.WriteLine(String.Format("Room {0} located at {1}", room.name, rotatedCenter));
+            GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, rotatedCenter * BLOCK_SIZE, yaw);
 
-            Vector3 chunkCenter = (chunkLocation + new Vector3(CHUNK_SIZE, 0, CHUNK_SIZE)) / 2;
-            Vector3 roomCenter = (new Vector3(room.Width, 0, room.Height)) / 2;
-            // Rotate it
-            Vector3 newLocation;
-            float newRotation;
-            GetRotatedInfo(roomLocation, room.rotation, chunkRotation, roomCenter, chunkCenter, out newLocation, out newRotation);
-
-            // Scale up the stuff
-            GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, newLocation * BLOCK_SIZE, newRotation);
-
-            // New location is the center of the room, so we can rotate around that
-            //AddSpawners(roomGE, room, newLocation, room.rotation, chunkCenter, chunkRotation);
-            
             return roomGE;
         }
 
-        // Initializes newLocation and newRotation by applying the chunk's rotation to the room's location and rotation
-        private void GetRotatedInfo(Vector3 roomLoc, Rotation roomRotation, Rotation chunkRotation, Vector3 roomCenter, Vector3 chunkCenter, out Vector3 newLocation, out float newRotation)
+        private void GetRotatedInfo(Vector3 location, Vector3 rotationPoint, Rotation rotationAmt, out Vector3 rotatedLocation)
         {
-            // Rotate around the chunk's center
-            newLocation = RotatedLocation(roomLoc, chunkCenter, roomCenter, chunkRotation);
-            newRotation = roomRotation.ToRadians() + chunkRotation.ToRadians();
-            //newRotation = 0;
-        }
-
-        // Gets the location rotated around point by the given amount
-        private Vector3 RotatedLocation(Vector3 location, Vector3 chunkCenter, Vector3 roomCenter, Rotation chunkRotation)
-        {
-            /*
-             * We need to rotate around the center of the chunk. First we have to translate to (0,0,0) since that's where
-             * the point rotate rotates around, then we do the rotate, then we translate back.
-             */ 
-            
-            /*
-             *  How to Rotate:
-             *      1) Translate top-left to chunkCenter
-             *      2) Translate roomCenter to chunkCenter
-             *      3) Rotate
-             *      4) Rotate roomCenter back
-             *      5) Rotate top-left back
-             */
-            Matrix rotater = Matrix.CreateTranslation(chunkCenter) * Matrix.CreateTranslation(roomCenter) * Matrix.CreateRotationY(chunkRotation.ToRadians()) 
-                * Matrix.CreateTranslation(-roomCenter) * Matrix.CreateTranslation(-chunkCenter);
-            return Vector3.Transform(location, rotater);
-            //Matrix rotater = Matrix.CreateTranslation(point) * Matrix.CreateRotationY(chunkRotation.ToRadians()) * Matrix.CreateTranslation(-point);
-            //return Vector3.Transform(location, rotater);
+            // I can't believe this code from the internet worked!
+            rotatedLocation = Vector3.Transform(location - rotationPoint, Matrix.CreateRotationY(rotationAmt.ToRadians())) + rotationPoint;
         }
 
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
@@ -274,21 +241,22 @@ namespace KazgarsRevenge
         private static readonly float DELAY = 3000;
 
         // Adds the necessary spawning components to the roomGE
-        private void AddSpawners(GameEntity roomGE, Room room, Vector3 roomCenter, Rotation roomRotation, Vector3 chunkCenter, Rotation chunkRotation)
-        {
-            IList<RoomBlock> enemySpawners = room.GetEnemySpawners();
-            ISet<Vector3> spawnLocs = new HashSet<Vector3>();
-            foreach (RoomBlock spawner in enemySpawners)
-            {
-                // Need to rotate the location by the room rotation, then by the chunk rotation
-                Vector3 blockLoc = new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y);
-                Vector3 rotatedLoc = RotatedLocation(blockLoc, roomCenter, Vector3.Zero, roomRotation);
-                rotatedLoc = RotatedLocation(rotatedLoc, Vector3.Zero, chunkCenter, chunkRotation);
-                spawnLocs.Add(rotatedLoc);
-            }
+        // TODO add this back in
+        //private void AddSpawners(GameEntity roomGE, Room room, Vector3 roomCenter, Rotation roomRotation, Vector3 chunkCenter, Rotation chunkRotation)
+        //{
+        //    IList<RoomBlock> enemySpawners = room.GetEnemySpawners();
+        //    ISet<Vector3> spawnLocs = new HashSet<Vector3>();
+        //    foreach (RoomBlock spawner in enemySpawners)
+        //    {
+        //        // Need to rotate the location by the room rotation, then by the chunk rotation
+        //        Vector3 blockLoc = new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y);
+        //        Vector3 rotatedLoc = RotatedLocation(blockLoc, roomCenter, Vector3.Zero, roomRotation);
+        //        rotatedLoc = RotatedLocation(rotatedLoc, Vector3.Zero, chunkCenter, chunkRotation);
+        //        spawnLocs.Add(rotatedLoc);
+        //    }
 
-            roomGE.AddComponent(typeof(EnemyProximitySpawner), new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY));
-        }
+        //    roomGE.AddComponent(typeof(EnemyProximitySpawner), new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY));
+        //}
 
         /// <summary>
         /// Class responsible for actually building the chunk
@@ -340,8 +308,8 @@ namespace KazgarsRevenge
             private void ChooseChunks(FloorName name, ChunkInfo[,] chunks)
             {
                 PlaceSoulevator(name, chunks);
-                Vector2 bossLoc = PlaceBoss(name, chunks);
-                PlaceKey(name, chunks, bossLoc);
+                //Vector2 bossLoc = PlaceBoss(name, chunks);
+                //PlaceKey(name, chunks, bossLoc);
                 PlaceTheRest(name, chunks);
             }
 

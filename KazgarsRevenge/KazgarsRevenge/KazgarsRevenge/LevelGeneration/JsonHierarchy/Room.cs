@@ -13,18 +13,21 @@ namespace KazgarsRevenge
     {
         private static readonly string ENEMY_SPAWNER_NAME = "mobSpawn";
 
+        private int _width;
+
         public int Width
         {
             get;
             private set;
         }
 
+        private int _height;
+
         public int Height
         {
             get;
             private set;
         }
-
         // All the blocks that make up this room
         public List<RoomBlock> blocks
         {
