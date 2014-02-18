@@ -197,23 +197,17 @@ namespace KazgarsRevenge
                             {
                                 for (int i = 0; i <= maxInventorySlots; i++)
                                 {
-                                    if (innerClicked == "inventory" + i && (inventory.Count() > i || selectedItemSlot != -1))
+                                    if (innerClicked == "inventory" + i && inventory[i] != null)
                                     {
                                         if (selectedItemSlot == -1)
                                         {
                                             selectedItemSlot = i;
                                         }
-                                        else if (selectedItemSlot == -1)
+                                        else
                                         {
                                             Item temp = inventory[i];
                                             inventory[i] = inventory[selectedItemSlot];
                                             inventory[selectedItemSlot] = temp;
-                                            selectedItemSlot = -1;
-                                        }
-                                        else
-                                        {//#Nate
-                                            inventory[i] = inventory[selectedItemSlot];
-                                            inventory[selectedItemSlot] = null;
                                             selectedItemSlot = -1;
                                         }
                                     }
@@ -225,11 +219,12 @@ namespace KazgarsRevenge
                             {
                                 if (RectContains(guiInsideRects["loot"]["loot" + i], curMouse.X, curMouse.Y))
                                 {
-                                    if (inventory.Count < maxInventorySlots)
+                                    //clicked on item, add to inventory
+                                    if (AddToInventory(lootingSoul.GetLoot(i)))
                                     {
-                                        //clicked on item, add to inventory
-                                        AddToInventory(lootingSoul.GetLoot(i));
+                                        lootingSoul.RemoveLoot(i);
                                     }
+                                    
                                 }
                             }
                             break;
@@ -1092,10 +1087,13 @@ namespace KazgarsRevenge
                 s.Draw(goldIcon, new Rectangle((int)(maxX - 320 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
                 s.DrawString(font, gold.ToString(), new Vector2(maxX - 280 * average, 380 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 //Draw inventory items
-                for (int i = 0; i < inventory.Count; ++i)
+                for (int i = 0; i < inventory.Length; ++i)
                 {
                     //Nate working here
-                    s.Draw(inventory[i].Icon, guiInsideRects["inventory"]["inventory" + i], Color.White);
+                    if (inventory[i] != null)
+                    {
+                        s.Draw(inventory[i].Icon, guiInsideRects["inventory"]["inventory" + i], Color.White);
+                    }
 
                 }
             }

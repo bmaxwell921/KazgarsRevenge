@@ -87,7 +87,7 @@ namespace KazgarsRevenge
         protected LootSoulController lootingSoul = null;
         protected Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
         //inventory
-        protected List<Item> inventory = new List<Item>();
+        protected Item[] inventory = new Item[16];
         protected virtual void EquipGear(Equippable equipMe, GearSlot slot)
         {
             float xRot = 0;
@@ -166,7 +166,17 @@ namespace KazgarsRevenge
                 return true;
             }
 
-            if (inventory.Count >= maxInventorySlots)
+            //check if full
+            bool full = true;
+            for (int i = 0; i < inventory.Length; ++i)
+            {
+                if (inventory[i] == null)
+                {
+                    full = false;
+                    break;
+                }
+            }
+            if (full)
             {
                 return false;
             }
@@ -177,7 +187,15 @@ namespace KazgarsRevenge
                 return true;
             }
 
-            inventory.Add(toAdd);
+            for (int i = 0; i < inventory.Length; ++i)
+            {
+                if (inventory[i] == null)
+                {
+                    inventory[i] = toAdd;
+                    break;
+                }
+            }
+
             return true;
         }
         protected override void RecalculateStats()
