@@ -13,15 +13,11 @@ namespace KazgarsRevenge
     {
         private static readonly string ENEMY_SPAWNER_NAME = "mobSpawn";
 
-        private int _width;
-
         public int Width
         {
             get;
             private set;
         }
-
-        private int _height;
 
         public int Height
         {
@@ -104,7 +100,8 @@ namespace KazgarsRevenge
             clone.location = (Location)this.location.Clone();
             clone.name = (string)this.name.Clone();
             clone.rotation = this.rotation;
-
+            clone.Width = this.Width;
+            clone.Height = this.Height;
             List<RoomBlock> blocks = new List<RoomBlock>();
             foreach (RoomBlock rb in blocks)
             {

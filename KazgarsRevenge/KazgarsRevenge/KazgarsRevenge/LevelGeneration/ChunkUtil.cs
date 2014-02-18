@@ -177,7 +177,6 @@ namespace KazgarsRevenge
                     possibleChunks.Add(ci);
                 }
             }
-
             return possibleChunks[RandSingleton.Instance.Next(possibleChunks.Count)];
         }
 
@@ -189,8 +188,7 @@ namespace KazgarsRevenge
             allDirs.Add(Direction.SOUTH);
             allDirs.Add(Direction.EAST);
             allDirs.Add(Direction.WEST);
-            //return GetSatisfyingChunk(name, ChunkType.SOULEVATOR, allDirs);
-            return new ChunkInfo("2-N-E", 4, Rotation.NINETY, ChunkType.SOULEVATOR, allDirs);
+            return GetSatisfyingChunk(name, ChunkType.SOULEVATOR, allDirs);
         }
 
         /// <summary>
@@ -228,6 +226,4 @@ namespace KazgarsRevenge
 
 
     }
-
-
 }
