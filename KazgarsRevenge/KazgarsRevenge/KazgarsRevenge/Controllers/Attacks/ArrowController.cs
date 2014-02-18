@@ -16,6 +16,8 @@ namespace KazgarsRevenge
         {
             this.lifeLength = 2000;
             this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);
+
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
         }
         bool homing = false;
 

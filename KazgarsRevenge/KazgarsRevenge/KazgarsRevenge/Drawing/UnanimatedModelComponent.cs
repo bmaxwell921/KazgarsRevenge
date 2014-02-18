@@ -78,20 +78,6 @@ namespace KazgarsRevenge
                             effect.Parameters["lightPositions"].SetValue(camera.lightPositions);
                             effect.Parameters["lightColors"].SetValue(camera.lightColors);
                         }
-
-
-                        /*
-                        Matrix world = transforms[mesh.ParentBone.Index]
-                            * Matrix.CreateScale(drawScale)
-                            * Matrix.CreateTranslation(localOffset)
-                            * rotOffset
-                            * rotation
-                            * Matrix.CreateTranslation(physicalData.Position);
-
-                        effect.Parameters["World"].SetValue(world);
-                        effect.Parameters["View"].SetValue(view);
-                        effect.Parameters["Projection"].SetValue(projection);
-                        */
                     }
                     mesh.Draw();
                 }

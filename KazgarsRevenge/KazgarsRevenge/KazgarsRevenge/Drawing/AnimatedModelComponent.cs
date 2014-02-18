@@ -215,59 +215,6 @@ namespace KazgarsRevenge
             }
         }
 
-
-        //deferred version
-        /*
-         public override void Draw(GameTime gameTime, Matrix view, Matrix projection, bool edgeDetection)
-        {
-            Matrix[] bones = animationPlayer.GetSkinTransforms();
-
-            //drawing with toon shader
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (Effect effect in mesh.Effects)
-                {
-                    effect.Parameters["Bones"].SetValue(bones);
-                    effect.Parameters["World"].SetValue(Matrix.Identity);
-                    effect.Parameters["View"].SetValue(view);
-                    effect.Parameters["Projection"].SetValue(projection);
-                }
-
-                mesh.Draw();
-            }
-
-            if (attachedModels.Count > 0)
-            {
-                Matrix[] worldbones = animationPlayer.GetWorldTransforms();
-                Matrix[] transforms;
-                foreach (AttachableModel a in attachedModels.Values)
-                {
-                    if (a.Draw)
-                    {
-                        transforms = new Matrix[a.model.Bones.Count];
-                        a.model.CopyAbsoluteBoneTransformsTo(transforms);
-                        foreach (ModelMesh mesh in a.model.Meshes)
-                        {
-                            foreach (Effect effect in mesh.Effects)
-                            {
-                                Matrix world = 
-                                    Matrix.CreateFromYawPitchRoll(a.xRotation, a.yRotation, 0) 
-                                    * transforms[mesh.ParentBone.Index] 
-                                    * worldbones[model.Bones[a.otherBoneName].Index - 2];
-
-                                effect.Parameters["World"].SetValue(world);
-                                effect.Parameters["View"].SetValue(view);
-                                effect.Parameters["Projection"].SetValue(projection);
-                            }
-                            mesh.Draw();
-                        }
-                    }
-                }
-            }
-        }
-         */
-
-
         public AnimationClip GetAnimationClip(string clipName)
         {
             return animationPlayer.skinningDataValue.AnimationClips[clipName];

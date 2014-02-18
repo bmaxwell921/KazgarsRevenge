@@ -192,39 +192,6 @@ namespace KazgarsRevenge
             Texture2D empty = Content.Load<Texture2D>("Textures\\whitePixel");
 
 
-            //deferred stuff
-            effectClearBuffer = Content.Load<Effect>("Shaders\\Deferred\\ClearGBufferShader");
-            effectClearBuffer.Parameters["ClearColor"].SetValue(Color.Black.ToVector3());
-
-
-            lightBlendState = new BlendState();
-            lightBlendState.AlphaBlendFunction = BlendFunction.Add;
-            lightBlendState.AlphaSourceBlend = Blend.One;
-            lightBlendState.AlphaDestinationBlend = Blend.One;
-            lightBlendState.ColorBlendFunction = BlendFunction.Add;
-            lightBlendState.ColorSourceBlend = Blend.One;
-            lightBlendState.ColorDestinationBlend = Blend.One;
-
-
-            effectPointLight = Content.Load<Effect>("Shaders\\Deferred\\PointLight");
-            effectDirectionalLight = Content.Load<Effect>("Shaders\\Deferred\\DirectionalLight");
-
-            for (int i = 0; i < 1; ++i)
-            {
-                for (int j = 0; j < 1; ++j)
-                {
-                    PointLightEffect newLight = new PointLightEffect(effectPointLight);
-                    newLight.LightPosition = new Vector3(-25 + i * 10, 50, -25 + j * 10);
-                    lights.Add(newLight);
-                }
-            }
-
-            DirectionalLightEffect dirLight = new DirectionalLightEffect(effectDirectionalLight);
-            //lights.Add(dirLight);
-
-
-            effectFinalCombine = new FinalCombineEffect(Content.Load<Effect>("Shaders\\Deferred\\FinalCombineShader"));
-
             base.LoadContent();
         }
 
@@ -331,250 +298,75 @@ namespace KazgarsRevenge
 
             if (gameState == GameState.Playing)
             {
-                bool deferred = false;
-                if (deferred)
+                if (renderTarget.IsContentLost || normalDepthRenderTarget.IsContentLost)
                 {
-                    DrawDeferred(gameTime);
+                    SetUpRenderTargets();
                 }
-                else
+
+                //draw depth render target
+                GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
+                GraphicsDevice.Clear(Color.Black);
+                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+                renderManager.Draw(gameTime, true);
+
+                //draw scene render target
+                GraphicsDevice.SetRenderTarget(renderTarget);
+                GraphicsDevice.Clear(Color.Black);
+                levelModelManager.Draw(gameTime, false);
+                renderManager.Draw(gameTime, false);
+
+                //draw particles
+                particleManager.Draw(gameTime);
+
+                GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+                //draw billboarded stuff
+                billboards.Draw();
+
+
+                //reset graphics device
+                GraphicsDevice.SetRenderTarget(null);
+
+                //pass in depth render target to the edge detection shader
+                Texture2D normalDepthTexture = normalDepthRenderTarget;
+                effectOutline.Parameters["ScreenResolution"].SetValue(new Vector2(renderTarget.Width, renderTarget.Height));
+                effectOutline.Parameters["NormalDepthTexture"].SetValue(normalDepthTexture);
+                effectOutline.CurrentTechnique = effectOutline.Techniques["EdgeDetect"];
+                //draw scene
+                spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effectOutline);
+                spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+                spriteBatch.End();
+
+
+
+
+                //physics debugging
+                /*
+                effectModelDrawer.LightingEnabled = false;
+                effectModelDrawer.VertexColorEnabled = true;
+                effectModelDrawer.World = Matrix.Identity;
+                effectModelDrawer.View = camera.View;
+                effectModelDrawer.Projection = camera.Projection;
+                modelDrawer.Draw(effectModelDrawer, physics);
+                */
+
+                spriteBatch.Begin();
+                spriteManager.Draw(spriteBatch);
+                //debug strings
+                //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
+                //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
+                foreach (FloatingText f in alertText)
                 {
-                    if (renderTarget.IsContentLost || normalDepthRenderTarget.IsContentLost)
-                    {
-                        SetUpRenderTargets();
-                    }
-
-                    //draw depth render target
-                    GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
-                    GraphicsDevice.Clear(Color.Black);
-                    GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                    GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-                    renderManager.Draw(gameTime, true);
-
-                    //draw scene render target
-                    GraphicsDevice.SetRenderTarget(renderTarget);
-                    GraphicsDevice.Clear(Color.Black);
-                    levelModelManager.Draw(gameTime, false);
-                    renderManager.Draw(gameTime, false);
-
-                    //draw particles
-                    particleManager.Draw(gameTime);
-
-                    GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-                    //draw billboarded stuff
-                    billboards.Draw();
-
-
-                    //reset graphics device
-                    GraphicsDevice.SetRenderTarget(null);
-
-                    //pass in depth render target to the edge detection shader
-                    Texture2D normalDepthTexture = normalDepthRenderTarget;
-                    effectOutline.Parameters["ScreenResolution"].SetValue(new Vector2(renderTarget.Width, renderTarget.Height));
-                    effectOutline.Parameters["NormalDepthTexture"].SetValue(normalDepthTexture);
-                    effectOutline.CurrentTechnique = effectOutline.Techniques["EdgeDetect"];
-                    //draw scene
-                    spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effectOutline);
-                    spriteBatch.Draw(renderTarget, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
-                    spriteBatch.End();
-
-
-
-
-                    //physics debugging
-                    /*
-                    effectModelDrawer.LightingEnabled = false;
-                    effectModelDrawer.VertexColorEnabled = true;
-                    effectModelDrawer.World = Matrix.Identity;
-                    effectModelDrawer.View = camera.View;
-                    effectModelDrawer.Projection = camera.Projection;
-                    modelDrawer.Draw(effectModelDrawer, physics);
-                    */
-
-                    spriteBatch.Begin();
-                    spriteManager.Draw(spriteBatch);
-                    //debug strings
-                    //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
-                    //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
-                    foreach (FloatingText f in alertText)
-                    {
-                        spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
-                    }
-                    spriteBatch.End();
+                    spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
                 }
+                spriteBatch.End();
+
             }
             else
             {
                 base.Draw(gameTime);
             }
-        }
-
-        #region deferred variables
-        Effect effectClearBuffer;
-        VertexPositionTexture[] screenVerts = new VertexPositionTexture[]
-            {
-                new VertexPositionTexture(
-                    new Vector3(1,-1,0),
-                    new Vector2(1,1)),
-                new VertexPositionTexture(
-                    new Vector3(-1,-1,0),
-                    new Vector2(0,1)),
-                new VertexPositionTexture(
-                    new Vector3(-1,1,0),
-                    new Vector2(0,0)),
-                new VertexPositionTexture(
-                    new Vector3(1,1,0),
-                    new Vector2(1,0))
-            };
-        short[] screenIndices = new short[] { 0, 1, 2, 2, 3, 0 };
-
-        BlendState lightBlendState;
-
-        Effect effectPointLight;
-        Effect effectDirectionalLight;
-        List<LightEffect> lights = new List<LightEffect>();
-
-        FinalCombineEffect effectFinalCombine;
-        #endregion
-        private void DrawDeferred(GameTime gameTime)
-        {
-            //clear
-            GraphicsDevice.Clear(Color.Black);
-            GraphicsDevice.SetRenderTarget(null);
-
-            //rendery stuff
-            GBufferTarget gbuffer = camera.RenderTargets;
-            DeferredBegin(gbuffer);
-            DeferredDraw(gameTime);
-            DeferredEnd(gbuffer);
-
-            //draw the final image
-            GraphicsDevice.SetRenderTarget(null);
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
-            spriteBatch.Draw(camera.OutputTarget, Vector2.Zero, Color.White);
-            spriteBatch.End();
-
-            
-            //rendertarget debugging
-            /*
-            GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.BlendState = BlendState.Opaque;
-
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone);
-            spriteBatch.Draw(camera.RenderTargets.Normals, Vector2.Zero, Color.White);
-            spriteBatch.End();
-            */
-
-
-
-            //physics debugging
-            /*
-            effectModelDrawer.LightingEnabled = false;
-            effectModelDrawer.VertexColorEnabled = true;
-            effectModelDrawer.World = Matrix.Identity;
-            effectModelDrawer.View = camera.View;
-            effectModelDrawer.Projection = camera.Projection;
-            modelDrawer.Draw(effectModelDrawer, physics);
-            */
-
-            //draw particles
-            particleManager.Draw(gameTime);
-
-            GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-            //draw billboarded stuff
-            billboards.Draw();
-
-
-            spriteBatch.Begin();
-            spriteManager.Draw(spriteBatch);
-            foreach (FloatingText f in alertText)
-            {
-                spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
-            }
-            spriteBatch.End();
-
-        }
-
-        private void DeferredBegin(GBufferTarget gbuffer)
-        {
-            /*
-             * Begin 
-             */
-            RenderTarget2D[] renderTargets = gbuffer.GetRenderTargets();
-            GraphicsDevice.SetRenderTargets(renderTargets[0], renderTargets[1], renderTargets[2], renderTargets[3]);
-
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            GraphicsDevice.DepthStencilState = DepthStencilState.None;
-
-            //clear all buffers of data
-            effectClearBuffer.CurrentTechnique.Passes[0].Apply();
-
-            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
-                (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
-
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-        }
-
-        private void DeferredDraw(GameTime gameTime)
-        {
-            /*
-             * Draw
-             */
-            renderManager.Draw(gameTime, false);
-            levelModelManager.Draw(gameTime, false);
-
-            //Resolve GBuffer
-            GraphicsDevice.SetRenderTarget(null);
-
-            //begin light pass
-            GraphicsDevice.SetRenderTarget(camera.RenderTargets.Lighting);
-            GraphicsDevice.BlendState = lightBlendState;
-            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            GraphicsDevice.Clear(Color.Transparent);
-
-            //Draw lights
-            foreach (LightEffect light in lights)
-            {
-                light.ColorMap = camera.RenderTargets.Albedo;
-                light.NormalMap = camera.RenderTargets.Normals;
-                light.HighlightsMap = camera.RenderTargets.Highlights;
-                light.DepthMap = camera.RenderTargets.Depth;
-                light.CameraPosition = camera.Position;
-                light.HalfPixel = camera.RenderTargets.HalfPixel;
-                light.InverseViewProjection = camera.InverseViewProj;
-
-                foreach (EffectPass pass in light.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                }
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
-                    (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
-            }
-        }
-
-        private void DeferredEnd(GBufferTarget gbuffer)
-        {
-            /*
-             * End
-             */
-            GraphicsDevice.SetRenderTarget(camera.OutputTarget);
-
-            GraphicsDevice.BlendState = BlendState.Opaque;
-
-            effectFinalCombine.ColorMap = gbuffer.Albedo;
-            effectFinalCombine.HighlightMap = gbuffer.Highlights;
-            effectFinalCombine.LightMap = gbuffer.Lighting;
-            effectFinalCombine.HalfPixel = gbuffer.HalfPixel;
-
-            effectFinalCombine.Apply();
-
-
-            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>
-                (PrimitiveType.TriangleList, screenVerts, 0, 4, screenIndices, 0, 2);
         }
 
         // Overridden so we can let the server know we aren't playing anymore

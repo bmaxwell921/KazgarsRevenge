@@ -50,14 +50,8 @@ namespace KazgarsRevenge
             toonAnimatedEffect = Game.Content.Load<Effect>("Shaders\\ToonSkinnedEffect");
             effectCellShading = Game.Content.Load<Effect>("Shaders\\CellShader");
 
-            deferredSkinnedEffect = Game.Content.Load<Effect>("Shaders\\Deferred\\SkinnedNormalDiffuseGBufferEffect");
-            deferredUnanimatedEffect = Game.Content.Load<Effect>("Shaders\\Deferred\\NormalDiffuseGBufferEffect");
-
         }
 
-
-        protected Effect deferredSkinnedEffect;
-        protected Effect deferredUnanimatedEffect;
 
         protected Effect toonAnimatedEffect;
         protected Effect effectCellShading;
@@ -105,9 +99,6 @@ namespace KazgarsRevenge
                     SkinnedEffect skinnedEffect = part.Effect as SkinnedEffect;
                     if (skinnedEffect != null)
                     {
-                        //deffered version
-                        //part.Effect = deferredSkinnedEffect.Clone();
-                        //part.Effect.Parameters["Tex"].SetValue(skinnedEffect.Texture);
                         
                         CustomSkinnedEffect newEffect = new CustomSkinnedEffect(toonAnimatedEffect);
                         newEffect.CopyFromSkinnedEffect(skinnedEffect);
@@ -129,14 +120,6 @@ namespace KazgarsRevenge
                 {
                     foreach (ModelMeshPart part in mesh.MeshParts)
                     {
-                        //deferred version
-                        /*
-                        BasicEffect oldEffect = part.Effect as BasicEffect;
-                        Effect newEffect = deferredUnanimatedEffect.Clone();
-                        newEffect.Parameters["Tex"].SetValue(oldEffect.Texture);
-                        part.Effect = newEffect;
-                        */
-                        
                         BasicEffect oldEffect = part.Effect as BasicEffect;
 
                         Effect newEffect = effectCellShading.Clone();
