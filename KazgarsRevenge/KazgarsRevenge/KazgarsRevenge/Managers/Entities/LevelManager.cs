@@ -14,6 +14,11 @@ using BEPUphysics.DataStructures;
 using SkinnedModelLib;
 using Newtonsoft.Json;
 
+using QuickGraph;
+using QuickGraph.Algorithms;
+using QuickGraph.Algorithms.ShortestPath;
+using QuickGraph.Algorithms.Observers;
+
 namespace KazgarsRevenge
 {
     class RoomData
@@ -56,14 +61,15 @@ namespace KazgarsRevenge
             // The information about the chunks in this level TODO might be unneeded
             public ChunkInfo[,] chunkInfos;
 
-            // TODO add this
-            // public Graph pathGraph;
+            // The graph representing enemy pathing possibilities. this is gonna be connected as fuck
+             public AdjacencyGraph<Vector3, Edge<Vector3>> pathGraph;
 
             public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos)
             {
                 this.currentFloor = currentFloor;
                 this.chunks = chunks;
                 this.chunkInfos = chunkInfos;
+                pathGraph = new AdjacencyGraph<Vector3, Edge<Vector3>>();
             }
         }
 
@@ -116,7 +122,7 @@ namespace KazgarsRevenge
         public void CreateLevel(FloorName name)
         {
             //this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
-            this.CreateLevel(name, 2, 1);
+            this.CreateLevel(name, 1, 1);
         }
 
         /// <summary>
@@ -139,8 +145,19 @@ namespace KazgarsRevenge
                     this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j));
                 }
             }
+
+            // Build the pathGraph - done here so it's decoupled for multithreading.
+            // TODO this could be done with outside of the KR program if it's too slow
+            for (int i = 0; i < levelWidth; ++i)
+            {
+                for (int j = 0; j < levelHeight; ++j)
+                {
+                    buildAndAddPathing(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j);
+                }
+            }
         }
 
+        #region Room Creation
         // Returns a list of all the rooms that belong to this chunk, in their proper locations
         private IList<GameEntity> CreateChunkRooms(Chunk chunk, ChunkInfo chunkInfo, int i, int j)
         {
@@ -263,12 +280,6 @@ namespace KazgarsRevenge
             ISet<Vector3> spawnLocs = new HashSet<Vector3>();
             foreach (RoomBlock spawner in enemySpawners)
             {
-                // Need to rotate the location by the room rotation, then by the chunk rotation
-                //Vector3 blockLoc = new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y);
-                //Vector3 rotatedLoc = RotatedLocation(blockLoc, roomCenter, Vector3.Zero, roomRotation);
-                //rotatedLoc = RotatedLocation(rotatedLoc, Vector3.Zero, chunkCenter, chunkRotation);
-                //spawnLocs.Add(rotatedLoc);
-
                 // The location of a block is relative to the room and chunk's top left corner
                 Vector3 spawnCenter = chunkTopLeft +roomTopLeft + new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y) + new Vector3(RoomBlock.SIZE, LEVEL_Y, RoomBlock.SIZE) / 2;
                 // We need to rotate this location to be correct in the room
@@ -281,11 +292,168 @@ namespace KazgarsRevenge
 
                 spawnLocs.Add(spawnCenter);
             }
-            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY);
+            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 10);
             roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
             genComponentManager.AddComponent(eps);
         }
+        #endregion
 
+        #region Graph Building
+        private void buildAndAddPathing(Chunk chunk, ChunkInfo chunkInfo, int i, int j)
+        {
+            Vector3 chunkLocation = new Vector3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE);
+
+            foreach (Room room in chunk.rooms)
+            {
+                buildRoomGraph(room, chunkLocation, chunk.rotation);
+            }
+        }
+
+        private void buildRoomGraph(Room room, Vector3 chunkLocation, Rotation chunkRotation)
+        {
+            // Holds the center of each block
+            ISet<Vector3> blockCenters = new HashSet<Vector3>();
+            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2 + chunkLocation;
+            Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
+            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y) + chunkLocation;
+
+            foreach (RoomBlock block in room.blocks)
+            {
+                // The location of a block is relative to the room and chunk's top left corner
+                Vector3 blockCenter = chunkLocation + roomTopLeft + new Vector3(block.location.x, LEVEL_Y, block.location.y) + new Vector3(RoomBlock.SIZE, LEVEL_Y, RoomBlock.SIZE) / 2;
+                // We need to rotate this location to be correct in the room
+                blockCenter = GetRotatedLocation(blockCenter, roomCenter, room.rotation);
+                // Then we need to rotate it to the correct location in the chunk
+                blockCenter = GetRotatedLocation(blockCenter, chunkCenter, chunkRotation);
+
+                // Set their location a bit above the ground so they don't fall thru
+                blockCenter = new Vector3(blockCenter.X, LEVEL_Y, blockCenter.Z);
+                
+                // These have not been transformed by BLOCK_SIZE yet
+                blockCenters.Add(blockCenter);
+            }
+
+            /*
+             * Now that we have the center of each block, we can put them in the graph.
+             *  For each block, check if any of it's adjacent neighbors are in the set, if so
+             *  then add an edge
+             */
+            foreach (Vector3 blockCenter in blockCenters)
+            {
+                // Look at all of its adjacent neighbors
+                for (int i = -1; i <= 1; ++i)
+                {
+                    for (int j = -1; j <= 1; ++j)
+                    {
+                        Vector3 testBlock = new Vector3(blockCenter.X + i, LEVEL_Y, blockCenter.Z + j);
+                        // If a neighbor is one of the blocks in the room, the connect them
+                        if (!testBlock.Equals(blockCenter) && blockCenters.Contains(testBlock))
+                        {
+                            // Transform them by the BLOCK_SIZE
+                            Vector3 transBlockCenter = new Vector3(blockCenter.X * BLOCK_SIZE, LEVEL_Y, blockCenter.Z * BLOCK_SIZE);
+                            Vector3 transTestBlock = new Vector3(testBlock.X * BLOCK_SIZE, LEVEL_Y, testBlock.Z * BLOCK_SIZE);
+
+                            /* 
+                            * AddEdge requires that both nodes are in the graph already,
+                             * so add the current block as needed here
+                             */
+                            if (!currentLevel.pathGraph.ContainsVertex(transBlockCenter))
+                            {
+                                currentLevel.pathGraph.AddVertex(transBlockCenter);
+                            }
+                            if (!currentLevel.pathGraph.ContainsVertex(transTestBlock))
+                            {
+                                currentLevel.pathGraph.AddVertex(transTestBlock);
+                            }
+                            Console.WriteLine("Adding edge between: {0} and {1}", transBlockCenter, transTestBlock);
+                            currentLevel.pathGraph.AddEdge(new Edge<Vector3>(transBlockCenter, transTestBlock));
+                        }
+                    }
+                }
+            }
+
+        }
+        #endregion
+
+        /// <summary>
+        /// Returns a Path from the source location to the destination location.
+        /// First element is the given src, last element is the  given dest
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dest"></param>
+        /// <returns>The path from src to dest, or null if no path exists</returns>
+        public IList<Vector3> GetPath(Vector3 src, Vector3 dest)
+        {
+            // First we gotta find the closest node in the graph to src
+            // and the closest node to dest
+            Vector3 srcNode = FindClosestNodeTo(src);
+            Vector3 destNode = FindClosestNodeTo(dest);
+
+            // Let the library do all the hard work
+            // Delegate to calculate the cost from one node to another
+            Func<Edge<Vector3>, double> cost = edge =>
+            {
+                return Vector3.Distance(edge.Source, edge.Target);
+            };
+
+            // Delegate to calculate the heuristic for a node
+            Func<Vector3, double> heuristic = vect =>
+            {
+                return Vector3.Distance(vect, dest);
+            };
+            AStarShortestPathAlgorithm<Vector3, Edge<Vector3>> aStar = new AStarShortestPathAlgorithm<Vector3, Edge<Vector3>>(currentLevel.pathGraph, cost, heuristic);
+
+            // Observer used to get the path
+            VertexPredecessorRecorderObserver<Vector3, Edge<Vector3>> predObs = new VertexPredecessorRecorderObserver<Vector3, Edge<Vector3>>();
+            predObs.Attach(aStar);
+
+            // Actually do the computation
+            /* 
+             * TODO this'll probably be too slow since it calcs the shortest path over everything, so we need to do this crap:
+             * http://stackoverflow.com/questions/8606494/how-to-set-target-vertex-in-quickgraph-dijkstra-or-a
+             */
+            aStar.Compute(srcNode);
+            IEnumerable<Edge<Vector3>> path;
+            bool validPath = predObs.TryGetPath(destNode, out path);
+
+            if (!validPath)
+            {
+                return null;
+            }
+
+            IList<Vector3> pathList = new List<Vector3>();
+            pathList.Add(src);
+            // Fill in the path as a nice, usable list
+            foreach (Edge<Vector3> pathEle in path)
+            {
+                pathList.Add(pathEle.Source);
+            }
+
+            pathList.Add(dest);
+            return pathList;
+            
+        }
+
+        // Returns the Vector3 node in the pathGraph closest to the given location
+        private Vector3 FindClosestNodeTo(Vector3 location)
+        {
+            Vector3 min = Vector3.Zero;
+            // Set this as null for the first time around
+            double? minDist = null;
+
+            foreach (Vector3 node in currentLevel.pathGraph.Vertices)
+            {
+                double thisDist = Vector3.Distance(location, node);
+                if (minDist == null || thisDist < minDist)
+                {
+                    min = node;
+                    minDist = thisDist;
+                }
+            }
+            return min;
+        }
+
+        #region Building Level
         /// <summary>
         /// Class responsible for actually building the chunk
         /// </summary>
@@ -448,15 +616,7 @@ namespace KazgarsRevenge
                 }
                 return ret;
             }
-
-            //#region Creating Rooms
-            //// Creates a list of all the rooms making up this chunk
-            //private IList<GameEntity> CreateRooms(FloorName name, ChunkInfo[,] chunks)
-            //{
-            //    // DON'T FORGET TO ROTATE!
-            //}
-            //#endregion
         }
-
+        #endregion
     }
 }

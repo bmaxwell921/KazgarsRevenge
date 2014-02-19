@@ -249,21 +249,21 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void LoadLevel(FloorName name)
         {
-            //levels.CreateLevel(name);
-            levels.DemoLevel();
+            levels.CreateLevel(name);
+            //levels.DemoLevel();
 
             // TODO put him somewhere useful
-            players.CreateMainPlayer(new Vector3(120, 20, 120), DUMMY_ID);
-            //players.CreateMainPlayer(new Vector3(900, 20, 1400), DUMMY_ID);
+            //players.CreateMainPlayer(new Vector3(120, 20, 120), DUMMY_ID);
+            players.CreateMainPlayer(new Vector3(900, 20, 1400), DUMMY_ID);
 
             // TODO Spawning Mechanics are ready, just need to get more chunks
-            for (int i = 0; i < 20; ++i)
-            {
-                for (int j = 0; j < 15; ++j)
-                {
-                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
-                }
-            }
+            //for (int i = 0; i < 20; ++i)
+            //{
+            //    for (int j = 0; j < 15; ++j)
+            //    {
+            //        enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
+            //    }
+            //}
         }
 
         Vector2 vecLoadingText;

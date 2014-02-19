@@ -78,6 +78,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="QuickGraph">
+      <HintPath>..\..\..\QuickGraph.dll</HintPath>
+    </Reference>
     <Reference Include="SkinnedModelLib">
       <HintPath>..\..\SkinnedModelLib\bin\x86\Debug\SkinnedModelLib.dll</HintPath>
     </Reference>

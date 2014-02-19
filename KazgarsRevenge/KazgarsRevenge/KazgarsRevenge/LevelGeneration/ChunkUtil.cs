@@ -165,7 +165,10 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public ChunkInfo GetSatisfyingChunk(FloorName floor, ChunkType type, ISet<Direction> reqDoors)
         {
-            // TODO incorporate the floor somehow
+            // TODO remove
+            return new ChunkInfo("basic", 5, Rotation.ZERO, ChunkType.NORMAL, new HashSet<Direction>());
+
+            // TODO incorporate the floor somehow - Set the name properly
             IList<ChunkInfo> rightDoorCount = chunkDefs[type][reqDoors.Count()];
             IList<ChunkInfo> possibleChunks = new List<ChunkInfo>();
 
