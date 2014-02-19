@@ -123,6 +123,8 @@ namespace KazgarsRevenge
         {
             //this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
             this.CreateLevel(name, 1, 1);
+
+            this.GetPath(new Vector3(50, LEVEL_Y, 50), new Vector3(350, LEVEL_Y, 350));
         }
 
         /// <summary>
