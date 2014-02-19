@@ -407,12 +407,8 @@ namespace KazgarsRevenge
             VertexPredecessorRecorderObserver<Vector3, Edge<Vector3>> predObs = new VertexPredecessorRecorderObserver<Vector3, Edge<Vector3>>();
             predObs.Attach(aStar);
 
-            // Actually do the computation
-            /* 
-             * TODO this'll probably be too slow since it calcs the shortest path over everything, so we need to do this crap:
-             * http://stackoverflow.com/questions/8606494/how-to-set-target-vertex-in-quickgraph-dijkstra-or-a
-             */
-            aStar.Compute(srcNode);
+            // Actually do the computation - TODO hopefully this return correctly...
+            aStar.ComputeDistanceBetween(srcNode, destNode);
             IEnumerable<Edge<Vector3>> path;
             bool validPath = predObs.TryGetPath(destNode, out path);
 
@@ -428,7 +424,8 @@ namespace KazgarsRevenge
             {
                 pathList.Add(pathEle.Source);
             }
-
+            // The way i'm adding stuff to the path list, we'll miss the final destination, so add it here
+            pathList.Add(destNode);
             pathList.Add(dest);
             return pathList;
             

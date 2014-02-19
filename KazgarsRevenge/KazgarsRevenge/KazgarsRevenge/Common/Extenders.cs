@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using QuickGraph;
+using QuickGraph.Algorithms;
+using QuickGraph.Algorithms.ShortestPath;
+using QuickGraph.Algorithms.Observers;
 
 namespace KazgarsRevenge
 {
@@ -276,6 +280,64 @@ namespace KazgarsRevenge
                 return FloorName.GrandHall;
             }
             throw new ArgumentException(String.Format("Unknown floor type: {0}", level));
+        }
+        #endregion
+
+        #region A* extender
+        /*
+         * Code taken from http://stackoverflow.com/questions/8606494/how-to-set-target-vertex-in-quickgraph-dijkstra-or-a
+         */
+        /// <summary>
+        /// Wrapper class for the AStarAlgorithm so it stops at a vertex
+        /// </summary>
+        /// <typeparam name="TVertex"></typeparam>
+        /// <typeparam name="TEdge"></typeparam>
+        class AStarWrapper<TVertex, TEdge> where TEdge : IEdge<TVertex>
+        {
+            // The vertext to find a path to
+            private TVertex dest;
+
+            // Alg to run
+            private AStarShortestPathAlgorithm<TVertex, TEdge> aStar;
+
+            public AStarWrapper(AStarShortestPathAlgorithm<TVertex, TEdge> aStar, TVertex src, TVertex dest)
+            {
+                this.aStar = aStar;
+                this.aStar.SetRootVertex(src);
+                this.dest = dest;
+                this.aStar.FinishVertex += new VertexAction<TVertex>(innerAlgorithm_FinishVertex);
+            }
+
+            // Function used to check when we're done??
+            void innerAlgorithm_FinishVertex(TVertex vertex)
+            {
+                if (object.Equals(vertex, dest))
+                {
+                    this.aStar.Abort();
+                }
+            }
+
+            public double Compute()
+            {
+                this.aStar.Compute();
+                return this.aStar.Distances[dest];
+            }
+        }
+
+        /// <summary>
+        /// Extender to perform A* which terminates at dest
+        /// </summary>
+        /// <typeparam name="TVertex"></typeparam>
+        /// <typeparam name="TEdge"></typeparam>
+        /// <param name="alg"></param>
+        /// <param name="src"></param>
+        /// <param name="dest"></param>
+        /// <returns></returns>
+        public static double ComputeDistanceBetween<TVertex, TEdge>(this AStarShortestPathAlgorithm<TVertex, TEdge> alg, TVertex src, TVertex dest)
+            where TEdge : IEdge<TVertex>
+        {
+            AStarWrapper<TVertex, TEdge> wrap = new AStarWrapper<TVertex, TEdge>(alg, src, dest);
+            return wrap.Compute();
         }
         #endregion
     }
