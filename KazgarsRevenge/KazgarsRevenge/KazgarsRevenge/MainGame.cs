@@ -98,8 +98,7 @@ namespace KazgarsRevenge
                 graphics.ApplyChanges();
                 screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
             }
-
-            Entity playerCollidable = new Cylinder(Vector3.Zero, 3, 1, 1);
+            
 
             camera = new CameraComponent(this);
             Components.Add(camera);
