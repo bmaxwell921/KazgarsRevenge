@@ -123,8 +123,6 @@ namespace KazgarsRevenge
         {
             //this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
             this.CreateLevel(name, 1, 1);
-
-            this.GetPath(new Vector3(0, LEVEL_Y, 0), new Vector3(375, LEVEL_Y, 350));
         }
 
         /// <summary>
@@ -220,9 +218,7 @@ namespace KazgarsRevenge
 
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {
-
             //CreatePointLight(position);
-
             position.Y = LEVEL_Y;
             float roomScale = 10;
 
@@ -292,7 +288,7 @@ namespace KazgarsRevenge
             foreach (RoomBlock spawner in enemySpawners)
             {
                 // The location of a block is relative to the room and chunk's top left corner
-                Vector3 spawnCenter = chunkTopLeft +roomTopLeft + new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y) + new Vector3(RoomBlock.SIZE, LEVEL_Y, RoomBlock.SIZE) / 2;
+                Vector3 spawnCenter = chunkTopLeft + roomTopLeft + new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y) + new Vector3(RoomBlock.SIZE, LEVEL_Y, RoomBlock.SIZE) / 2;
                 // We need to rotate this location to be correct in the room
                 spawnCenter = GetRotatedLocation(spawnCenter, roomCenter, roomRotation);
                 // Then we need to rotate it to the correct location in the chunk
@@ -382,7 +378,6 @@ namespace KazgarsRevenge
                             {
                                 currentLevel.pathGraph.AddVertex(transTestBlock);
                             }
-                            Console.WriteLine("Adding edge between: {0} and {1}", transBlockCenter, transTestBlock);
                             currentLevel.pathGraph.AddEdge(new Edge<Vector3>(transBlockCenter, transTestBlock));
                         }
                     }
@@ -415,7 +410,12 @@ namespace KazgarsRevenge
                     {
                         Vector3 transDoor = door * BLOCK_SIZE;
                         Vector3 transTestDoor = testDoor * BLOCK_SIZE;
-                        currentLevel.pathGraph.AddEdge(new Edge<Vector3>(transDoor, transTestDoor));
+                        Edge<Vector3> add = new Edge<Vector3>(transDoor, transTestDoor);
+                        // Doors next to each other in a room have already been connected
+                        if (!currentLevel.pathGraph.ContainsEdge(add))
+                        {
+                            currentLevel.pathGraph.AddEdge(add);
+                        }
                     }
                 }
             }
@@ -435,6 +435,16 @@ namespace KazgarsRevenge
             // and the closest node to dest
             Vector3 srcNode = FindClosestNodeTo(src);
             Vector3 destNode = FindClosestNodeTo(dest);
+
+            /* 
+             * If they're too far then that means we couldn't actually find the
+             * locations...not sure if this is actually possible, but it happened
+             * when testing
+             */ 
+            if (TooFar(src, srcNode) || TooFar(dest, destNode))
+            {
+                return null;
+            }
 
             // Let the library do all the hard work
             // Delegate to calculate the cost from one node to another
@@ -476,6 +486,26 @@ namespace KazgarsRevenge
             pathList.Add(dest);
             return pathList;
             
+        }
+
+        /*
+         * Checks whether the given realLocation is too far from the graphNode, ie calculating the path
+         * will just give us silly answers
+         */ 
+
+        private bool TooFar(Vector3 realLoc, Vector3 graphNode)
+        {
+            /*
+             * Trig:
+             * Blocks are 100x100. The farthest anything can be from the middle of the center is
+             * the length of the line from the center to a corner. From Pythagorean Theorem the length
+             * is sqrt((BLOCK_SIZE / 2) ^ 2 + (BLOCK_SIZE / 2) ^ 2) 
+             */
+            // Add a buffer cause why not
+            double buffer = 5;
+            double halfBlockSize = BLOCK_SIZE / 2.0;
+            double maxDist = Math.Sqrt(halfBlockSize * halfBlockSize + halfBlockSize * halfBlockSize) + buffer;
+            return Vector3.Distance(realLoc, graphNode) > maxDist;
         }
 
         // Returns the Vector3 node in the pathGraph closest to the given location
