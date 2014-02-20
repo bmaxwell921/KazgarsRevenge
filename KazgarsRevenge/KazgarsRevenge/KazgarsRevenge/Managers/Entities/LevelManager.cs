@@ -124,7 +124,7 @@ namespace KazgarsRevenge
             //this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
             this.CreateLevel(name, 1, 1);
 
-            this.GetPath(new Vector3(50, LEVEL_Y, 50), new Vector3(350, LEVEL_Y, 350));
+            this.GetPath(new Vector3(0, LEVEL_Y, 0), new Vector3(375, LEVEL_Y, 350));
         }
 
         /// <summary>
@@ -150,13 +150,22 @@ namespace KazgarsRevenge
 
             // Build the pathGraph - done here so it's decoupled for multithreading.
             // TODO this could be done with outside of the KR program if it's too slow
+
+            /*
+             * This is a set of all the locations of doors in the entire map. After we're done connecting
+             * each room's internal blocks together we'll go thru all these door locations and add edges
+             * between doors that are adjacent
+             */ 
+            ISet<Vector3> doors = new HashSet<Vector3>();
             for (int i = 0; i < levelWidth; ++i)
             {
                 for (int j = 0; j < levelHeight; ++j)
                 {
-                    buildAndAddPathing(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j);
+                    BuildAndAddPathing(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j, doors);
                 }
             }
+
+            ConnectDoors(doors);
         }
 
         #region Room Creation
@@ -301,17 +310,17 @@ namespace KazgarsRevenge
         #endregion
 
         #region Graph Building
-        private void buildAndAddPathing(Chunk chunk, ChunkInfo chunkInfo, int i, int j)
+        private void BuildAndAddPathing(Chunk chunk, ChunkInfo chunkInfo, int i, int j, ISet<Vector3> doors)
         {
             Vector3 chunkLocation = new Vector3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE);
-
             foreach (Room room in chunk.rooms)
             {
-                buildRoomGraph(room, chunkLocation, chunk.rotation);
+                BuildRoomGraph(room, chunkLocation, chunk.rotation, doors);
             }
         }
 
-        private void buildRoomGraph(Room room, Vector3 chunkLocation, Rotation chunkRotation)
+        // Builds the graph for a single room, adding any doorBlocks to the doors param
+        private void BuildRoomGraph(Room room, Vector3 chunkLocation, Rotation chunkRotation, ISet<Vector3> doors)
         {
             // Holds the center of each block
             ISet<Vector3> blockCenters = new HashSet<Vector3>();
@@ -333,6 +342,12 @@ namespace KazgarsRevenge
                 
                 // These have not been transformed by BLOCK_SIZE yet
                 blockCenters.Add(blockCenter);
+
+                // If this block is a door we need to hold onto it so we can attach it to the other doors
+                if (block.IsDoor())
+                {
+                    doors.Add(blockCenter);
+                }
             }
 
             /*
@@ -374,6 +389,36 @@ namespace KazgarsRevenge
                 }
             }
 
+        }
+
+        // Connects all adjacent doors to each other
+        private void ConnectDoors(ISet<Vector3> doors)
+        {
+            /*
+             * If the door we're looking at is x, then possible doors to connect to are the z locations
+             *  [ ][z][ ]
+             *  [z][x][z]
+             *  [ ][z][ ]
+             */ 
+            Vector3[] adjs = {new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1)};
+            /*
+             * Same idea as connecting all roomBlocks, iterate over all the doors and then iterate over the
+             * 4 non-diagonal adjacent blocks. If a block is in the doors set, then add an edge
+             */ 
+            foreach (Vector3 door in doors)
+            {
+                foreach (Vector3 adj in adjs)
+                {
+                    Vector3 testDoor = door + adj;
+                    // If the adjacent is one of the doors, add the edge
+                    if (doors.Contains(testDoor))
+                    {
+                        Vector3 transDoor = door * BLOCK_SIZE;
+                        Vector3 transTestDoor = testDoor * BLOCK_SIZE;
+                        currentLevel.pathGraph.AddEdge(new Edge<Vector3>(transDoor, transTestDoor));
+                    }
+                }
+            }
         }
         #endregion
 
