@@ -192,15 +192,21 @@ namespace KazgarsRevenge
 
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {
-
-            //CreatePointLight(position);
-
             position.Y = LEVEL_Y;
             float roomScale = 10;
 
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 
-            Model roomModel = GetUnanimatedModel(modelPath);  
+            Model roomModel = GetUnanimatedModel(modelPath);
+
+            List<Vector3> lightPositions = roomModel.Tag as List<Vector3>;
+            if (lightPositions != null)
+            {
+                foreach (Vector3 v in lightPositions)
+                {
+                    CreatePointLight(v);
+                }
+            }
 
             Model roomCollisionModel = Game.Content.Load<Model>(modelPath);// + "Co");
             Vector3[] verts;

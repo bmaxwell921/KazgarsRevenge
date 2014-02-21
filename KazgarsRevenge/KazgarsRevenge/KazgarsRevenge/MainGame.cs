@@ -38,7 +38,7 @@ namespace KazgarsRevenge
         LevelModelManager levelModelManager;
 
         PlayerManager players;
-        NetworkMessageManager nmm;
+        //NetworkMessageManager nmm;
         SoundEffectLibrary soundEffectLibrary;
 
         protected LevelManager levels;
@@ -53,8 +53,6 @@ namespace KazgarsRevenge
         #region Content
         SpriteFont normalFont;
         SpriteFont titleFont;
-        KeyboardState keyboardState;
-        KeyboardState previousKeyboardState;
 
         BasicEffect effectModelDrawer;
         Effect effectOutline;
@@ -125,12 +123,12 @@ namespace KazgarsRevenge
             Components.Add(lootManager);
             Services.AddService(typeof(LootManager), lootManager);
 
-            nmm = new NetworkMessageManager(this);
-            Components.Add(nmm);
-            Services.AddService(typeof(NetworkMessageManager), nmm);
+            //nmm = new NetworkMessageManager(this);
+            //Components.Add(nmm);
+            //Services.AddService(typeof(NetworkMessageManager), nmm);
 
-            MessageSender ms = new MessageSender(nmm.Client, (LoggerManager)Services.GetService(typeof(LoggerManager)));
-            Services.AddService(typeof(MessageSender), ms);
+            //MessageSender ms = new MessageSender(nmm.Client, (LoggerManager)Services.GetService(typeof(LoggerManager)));
+            //Services.AddService(typeof(MessageSender), ms);
 
             soundEffectLibrary = new SoundEffectLibrary(this);
             Services.AddService(typeof(SoundEffectLibrary), soundEffectLibrary);
@@ -215,9 +213,7 @@ namespace KazgarsRevenge
         protected override void Update(GameTime gameTime)
         {
 
-            nmm.Update(gameTime);
-            previousKeyboardState = keyboardState;
-            keyboardState = Keyboard.GetState();
+            //nmm.Update(gameTime);
             if (gameState == GameState.Playing)
             {
                 physics.Update();

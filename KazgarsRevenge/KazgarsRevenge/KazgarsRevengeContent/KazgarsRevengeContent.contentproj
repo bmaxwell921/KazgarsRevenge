@@ -204,13 +204,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Levels\tempChunk.fbx">
-      <Name>tempChunk</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Sound\bowshoot0.mp3">
       <Name>bowshoot0</Name>
       <Importer>Mp3Importer</Importer>
