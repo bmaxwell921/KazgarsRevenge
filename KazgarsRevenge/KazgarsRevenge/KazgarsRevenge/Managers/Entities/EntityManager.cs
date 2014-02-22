@@ -97,8 +97,7 @@ namespace KazgarsRevenge
                 {
                     SkinnedEffect skinnedEffect = part.Effect as SkinnedEffect;
                     if (skinnedEffect != null)
-                    {
-                        
+                    {   
                         CustomSkinnedEffect newEffect = new CustomSkinnedEffect(toonAnimatedEffect);
                         newEffect.CopyFromSkinnedEffect(skinnedEffect);
                         newEffect.LightPositions = camera.lightPositions;

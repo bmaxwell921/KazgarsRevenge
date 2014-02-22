@@ -107,8 +107,6 @@
     <Compile Include="Drawing\Billboards\ChainBillboard.cs" />
     <Compile Include="Drawing\Billboards\DrawableComponentBillboard.cs" />
     <Compile Include="Drawing\Billboards\HealthBarBillboard.cs" />
-    <Compile Include="Drawing\Effects\DirectionalLightEffect.cs" />
-    <Compile Include="GBufferTarget.cs" />
     <Compile Include="LevelGeneration\JsonHierarchy\Chunk.cs" />
     <Compile Include="LevelGeneration\ChunkUtil.cs" />
     <Compile Include="LevelGeneration\ChunkInfo.cs" />
@@ -221,9 +219,6 @@
     <Compile Include="Misc Components\StaticMeshComponent.cs" />
     <Compile Include="Util\IdentificationFactory.cs" />
     <Compile Include="Util\RandSingleton.cs" />
-    <Compile Include="Drawing\Effects\FinalCombineEffect.cs" />
-    <Compile Include="Drawing\Effects\LightEffect.cs" />
-    <Compile Include="Drawing\Effects\PointLightEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

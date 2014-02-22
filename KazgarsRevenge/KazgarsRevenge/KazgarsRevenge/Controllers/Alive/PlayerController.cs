@@ -137,23 +137,27 @@ namespace KazgarsRevenge
         /// </summary>
         protected bool UnequipGear(GearSlot slot)
         {
-            Equippable oldEquipped = gear[slot];
-            if (oldEquipped != null)
-            {
-                if (AddToInventory(oldEquipped))
-                {
-                    attached.Remove(slot.ToString());
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
+            Equippable toRemove = gear[slot];
+            if (toRemove == null)
             {
                 //if there was nothing in there to start with, return true
                 return true;
+            }
+            if (AddToInventory(toRemove))
+            {
+                if (toRemove is Weapon)
+                {
+                    attached.Remove(slot.ToString());
+                }
+                else
+                {
+                    syncedModels.Remove(slot.ToString());
+                }
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
         /// <summary>
@@ -287,9 +291,9 @@ namespace KazgarsRevenge
 
             EquipGear(lewtz.GetBoots(), GearSlot.Feet);
             //EquipGear(lewtz.GetChest(), GearSlot.Chest);
-            EquipGear(lewtz.GetHelm(), GearSlot.Head);
+            //EquipGear(lewtz.GetHelm(), GearSlot.Head);
             //EquipGear(lewtz.GetLegs(), GearSlot.Legs);
-            //EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
+            EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
             EquipGear(lewtz.GetWrist(), GearSlot.Wrist);
         }
 

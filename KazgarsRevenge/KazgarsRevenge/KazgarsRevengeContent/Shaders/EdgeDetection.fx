@@ -1,16 +1,16 @@
 // Settings controlling the edge detection filter.
-float EdgeWidth = 1.8;
+float EdgeWidth = 1.3;
 float EdgeIntensity = 1;
 
 // How sensitive should the edge detection be to tiny variations in the input data?
 // Smaller settings will make it pick up more subtle edges, while larger values get
 // rid of unwanted noise.
-float NormalThreshold = 1.5;
-float DepthThreshold = .1;
+float NormalThreshold = 1;
+float DepthThreshold = .013;
 
 // How dark should the edges get in response to changes in the input data?
-float NormalSensitivity = .38;
-float DepthSensitivity = 10;
+float NormalSensitivity = 0;
+float DepthSensitivity = 100;
 
 // Pass in the current screen resolution.
 float2 ScreenResolution;
@@ -48,10 +48,7 @@ sampler NormalDepthSampler : register(s1) = sampler_state
     AddressV = Clamp;
 };
 
-// Pixel shader applies the edge detection and/or sketch filter postprocessing.
-// It is compiled several times using different settings for the uniform boolean
-// parameters, producing different optimized versions of the shader depending on
-// which combination of processing effects is desired.
+// Pixel shader applies the edge detection postprocessing.
 float4 PixelShaderFunction(float2 texCoord : TEXCOORD0) : COLOR0
 {
     // Look up the original color from the main scene.
@@ -72,14 +69,14 @@ float4 PixelShaderFunction(float2 texCoord : TEXCOORD0) : COLOR0
 
     float normalDelta = dot(diagonalDelta.xyz, 1);
     float depthDelta = diagonalDelta.w;
-        
+    
     // Filter out very small changes, in order to produce nice clean results.
     normalDelta = saturate((normalDelta - NormalThreshold) * NormalSensitivity);
     depthDelta = saturate((depthDelta - DepthThreshold) * DepthSensitivity);
 
     // Does this pixel lie on an edge?
     float edgeAmount = saturate(normalDelta + depthDelta) * EdgeIntensity;
-        
+
     // Apply the edge detection result to the main scene color.
     scene *= (1 - edgeAmount);
     

@@ -73,11 +73,12 @@ namespace KazgarsRevenge
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
-
+        
         protected override void Initialize()
         {
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
             SetUpLoggers();
+
 
             bool fullscreen = false;
 
@@ -180,9 +181,12 @@ namespace KazgarsRevenge
             effectModelDrawer = new BasicEffect(GraphicsDevice);
 
             effectOutline = Content.Load<Effect>("Shaders\\EdgeDetection");
+
             effectCellShading = Content.Load<Effect>("Shaders\\CellShader");
 
             SetUpRenderTargets();
+
+            GraphicsDevice.DeviceReset += new EventHandler<EventArgs>(resetOutputTarget);
 
             initDrawingParams();
 
@@ -190,6 +194,19 @@ namespace KazgarsRevenge
 
 
             base.LoadContent();
+        }
+
+        void resetOutputTarget(object sender, EventArgs e)
+        {
+            if (!renderTarget.IsDisposed)
+            {
+                renderTarget.Dispose();
+            }
+            if (!normalDepthRenderTarget.IsDisposed)
+            {
+                normalDepthRenderTarget.Dispose();
+            }
+            SetUpRenderTargets();
         }
 
         private void SetUpRenderTargets()
@@ -202,6 +219,10 @@ namespace KazgarsRevenge
             normalDepthRenderTarget = new RenderTarget2D(graphics.GraphicsDevice,
                                                          pp.BackBufferWidth, pp.BackBufferHeight, false,
                                                          pp.BackBufferFormat, pp.DepthStencilFormat);
+
+            RasterizerState rs = new RasterizerState();
+            rs.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rs;
         }
 
         List<FloatingText> alertText = new List<FloatingText>();
@@ -212,7 +233,6 @@ namespace KazgarsRevenge
         }
         protected override void Update(GameTime gameTime)
         {
-
             //nmm.Update(gameTime);
             if (gameState == GameState.Playing)
             {
@@ -223,6 +243,7 @@ namespace KazgarsRevenge
                     alertText[i].position.Y -= 1;
                 }
             }
+
             base.Update(gameTime);
         }
 
@@ -282,15 +303,6 @@ namespace KazgarsRevenge
 
         protected override void Draw(GameTime gameTime)
         {
-            MouseState curMouse = Mouse.GetState();
-
-            GraphicsDevice.Clear(Color.Black);
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            
-            RasterizerState rs = new RasterizerState();
-            rs.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rs;
-
             if (gameState == GameState.Playing)
             {
                 if (renderTarget.IsContentLost || normalDepthRenderTarget.IsContentLost)
@@ -301,7 +313,7 @@ namespace KazgarsRevenge
                 //draw depth render target
                 GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
                 GraphicsDevice.Clear(Color.Black);
-                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+                GraphicsDevice.BlendState = BlendState.Opaque;
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
                 renderManager.Draw(gameTime, true);
@@ -349,7 +361,7 @@ namespace KazgarsRevenge
                 spriteBatch.Begin();
                 spriteManager.Draw(spriteBatch);
                 //debug strings
-                //spriteBatch.DrawString(normalFont, "zoom: " + camera.zoom, new Vector2(50, 50), Color.Yellow);
+                //spriteBatch.DrawString(normalFont, ""+camera.zoom, new Vector2(50, 100), Color.Red);
                 //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
                 foreach (FloatingText f in alertText)
                 {

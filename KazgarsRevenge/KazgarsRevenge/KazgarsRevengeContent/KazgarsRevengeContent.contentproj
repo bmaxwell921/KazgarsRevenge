@@ -502,47 +502,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Shaders\Deferred\ClearGBufferShader.fx">
-      <Name>ClearGBufferShader</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Shaders\Deferred\DirectionalLight.fx">
-      <Name>DirectionalLight</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Shaders\Deferred\FinalCombineShader.fx">
-      <Name>FinalCombineShader</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Shaders\Deferred\PointLight.fx">
-      <Name>PointLight</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Shaders\Deferred\Spotlight.fx">
-      <Name>Spotlight</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Shaders\Deferred\SkinnedNormalDiffuseGBufferEffect.fx">
-      <Name>SkinnedNormalDiffuseGBufferEffect</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Shaders\Deferred\NormalDiffuseGBufferEffect.fx">
-      <Name>NormalDiffuseGBufferEffect</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Models\Armor\armor_boots_rino.fbx">
       <Name>armor_boots_rino</Name>
       <Importer>FbxImporter</Importer>

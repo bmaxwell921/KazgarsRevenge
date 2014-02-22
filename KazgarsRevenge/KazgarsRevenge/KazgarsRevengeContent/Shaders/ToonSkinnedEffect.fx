@@ -127,7 +127,7 @@ struct NormalDepthVSOutput
 
 
 // Alternative vertex shader outputs normal and depth values, which are then
-// used as an input for the edge detection filter in PostprocessEffect.fx.
+// used as an input for the edge detection shader
 NormalDepthVSOutput VSDepth(VSInputNmTxWeights vin)
 {
 	Skin(vin, 4);
@@ -142,7 +142,6 @@ NormalDepthVSOutput VSDepth(VSInputNmTxWeights vin)
     return output;
 }
 
-// Simple pixel shader for rendering the normal and depth information.
 float4 PSDepth(float4 color : COLOR0) : COLOR0
 {
     return color;
