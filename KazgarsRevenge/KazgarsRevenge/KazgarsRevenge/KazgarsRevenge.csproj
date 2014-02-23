@@ -216,7 +216,7 @@
     <Compile Include="Drawing\DrawableComponent2D.cs" />
     <Compile Include="Managers\Components\SpriteManager.cs" />
     <Compile Include="Drawing\UnanimatedModelComponent.cs" />
-    <Compile Include="Misc Components\StaticMeshComponent.cs" />
+    <Compile Include="Misc Components\StaticMeshesComponent.cs" />
     <Compile Include="Util\IdentificationFactory.cs" />
     <Compile Include="Util\RandSingleton.cs" />
   </ItemGroup>

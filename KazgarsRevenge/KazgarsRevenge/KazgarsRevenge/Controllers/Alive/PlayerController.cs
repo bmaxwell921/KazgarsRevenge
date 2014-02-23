@@ -291,7 +291,7 @@ namespace KazgarsRevenge
 
             EquipGear(lewtz.GetBoots(), GearSlot.Feet);
             //EquipGear(lewtz.GetChest(), GearSlot.Chest);
-            //EquipGear(lewtz.GetHelm(), GearSlot.Head);
+            EquipGear(lewtz.GetHelm(), GearSlot.Head);
             //EquipGear(lewtz.GetLegs(), GearSlot.Legs);
             EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
             EquipGear(lewtz.GetWrist(), GearSlot.Wrist);

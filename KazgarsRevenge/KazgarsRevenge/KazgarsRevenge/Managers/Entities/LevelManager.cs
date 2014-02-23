@@ -199,25 +199,60 @@ namespace KazgarsRevenge
 
             Model roomModel = GetUnanimatedModel(modelPath);
 
-            List<Vector3> lightPositions = roomModel.Tag as List<Vector3>;
-            if (lightPositions != null)
+            List<StaticMesh> levelCollidables = new List<StaticMesh>();
+            LevelTagData levelInfo = roomModel.Tag as LevelTagData;
+            if (levelInfo != null)
             {
-                foreach (Vector3 v in lightPositions)
+                List<Vector3> lightPositions = levelInfo.lightLocations;
+                if (lightPositions != null)
                 {
-                    CreatePointLight(v);
+                    foreach (Vector3 v in lightPositions)
+                    {
+                        CreatePointLight(v);
+                    }
+                }
+                
+                List<Vector3[]> allVertices = levelInfo.physicsVertices;
+                List<int[]> allIndices = levelInfo.physicsIndices;
+                List<Matrix> allTransforms = levelInfo.physicsTransforms;
+
+                if (allVertices.Count > 0)
+                {
+                    for (int i = 0; i < allVertices.Count; ++i)
+                    {
+                        Matrix m = allTransforms[i] * Matrix.CreateScale(roomScale) * Matrix.CreateFromYawPitchRoll(yaw, 0, 0);
+                        Vector3 scale;
+                        Quaternion rot;
+                        Vector3 trans;
+                        m.Decompose(out scale, out rot, out trans);
+                        AffineTransform a = new AffineTransform(scale, rot, trans + position);
+                        StaticMesh roomMesh = new StaticMesh(allVertices[i], allIndices[i], a);
+                        roomMesh.CollisionRules.Group = mainGame.LevelCollisionGroup;
+                        levelCollidables.Add(roomMesh);
+                    }
+                }
+                else
+                {
+                    Vector3[] vertices;
+                    int[] indices;
+                    TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
+                    StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
+                    levelCollidables.Add(roomMesh);
                 }
             }
+            else
+            {
+                Vector3[] vertices;
+                int[] indices;
+                TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
+                StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
+                levelCollidables.Add(roomMesh);
+            }
+            
 
-            Model roomCollisionModel = Game.Content.Load<Model>(modelPath);// + "Co");
-            Vector3[] verts;
-            int[] indices;
-            TriangleMesh.GetVerticesAndIndicesFromModel(roomCollisionModel, out verts, out indices);
-            StaticMesh roomMesh = new StaticMesh(verts, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
-            roomMesh.CollisionRules.Group = mainGame.LevelCollisionGroup;
+            room.AddSharedData(typeof(List<StaticMesh>), levelCollidables);
 
-            room.AddSharedData(typeof(StaticMesh), roomMesh);
-
-            StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
+            StaticMeshesComponent roomPhysics = new StaticMeshesComponent(mainGame, room);
 
             //holds the position so the model is drawn correctly (not added to physics)
             //size is related to how far away this will start being rendered
@@ -226,7 +261,7 @@ namespace KazgarsRevenge
 
             UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, new Vector3(roomScale), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
 
-            room.AddComponent(typeof(StaticMeshComponent), roomPhysics);
+            room.AddComponent(typeof(StaticMeshesComponent), roomPhysics);
             genComponentManager.AddComponent(roomPhysics);
 
             room.AddComponent(typeof(UnanimatedModelComponent), roomGraphics);

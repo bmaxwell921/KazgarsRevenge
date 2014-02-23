@@ -321,6 +321,7 @@ namespace KazgarsRevenge
                 //draw scene render target
                 GraphicsDevice.SetRenderTarget(renderTarget);
                 GraphicsDevice.Clear(Color.Black);
+                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
                 levelModelManager.Draw(gameTime, false);
                 renderManager.Draw(gameTime, false);
 
