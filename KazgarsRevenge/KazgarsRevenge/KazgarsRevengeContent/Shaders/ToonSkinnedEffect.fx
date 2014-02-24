@@ -137,7 +137,7 @@ NormalDepthVSOutput VSDepth(VSInputNmTxWeights vin)
     output.Position = mul(vin.Position, WorldViewProj);
     float3 worldNormal = mul(vin.Normal, World);
     output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
-    output.Color.a = output.Position.z / output.Position.w;
+    output.Color.a = lerp(1, output.Position.z / output.Position.w, lineIntensity);
     
     return output;
 }

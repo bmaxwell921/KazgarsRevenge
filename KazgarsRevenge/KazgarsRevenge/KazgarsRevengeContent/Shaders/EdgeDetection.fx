@@ -10,7 +10,7 @@ float DepthThreshold = .013;
 
 // How dark should the edges get in response to changes in the input data?
 float NormalSensitivity = 0;
-float DepthSensitivity = 100;
+float DepthSensitivity = 50;
 
 // Pass in the current screen resolution.
 float2 ScreenResolution;
@@ -67,11 +67,11 @@ float4 PixelShaderFunction(float2 texCoord : TEXCOORD0) : COLOR0
     // Work out how much the normal and depth values are changing.
     float4 diagonalDelta = abs(n1 - n2) + abs(n3 - n4);
 
-    float normalDelta = dot(diagonalDelta.xyz, 1);
+    float normalDelta = 0;//dot(diagonalDelta.xyz, 1);
     float depthDelta = diagonalDelta.w;
     
     // Filter out very small changes, in order to produce nice clean results.
-    normalDelta = saturate((normalDelta - NormalThreshold) * NormalSensitivity);
+    //normalDelta = saturate((normalDelta - NormalThreshold) * NormalSensitivity);
     depthDelta = saturate((depthDelta - DepthThreshold) * DepthSensitivity);
 
     // Does this pixel lie on an edge?

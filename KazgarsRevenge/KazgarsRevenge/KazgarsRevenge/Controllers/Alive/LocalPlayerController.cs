@@ -172,7 +172,7 @@ namespace KazgarsRevenge
                 bool mouseOnGui = collides != null || selectedItemSlot != -1;
                 CheckMouseRay(newTarget, mouseOnGui);
 
-                //#jared Equip gear needs to 1. not take in a slot, 2. output floating text if equiop fails
+                //#jared Equip gear needs to 1. not take in a slot, 2. output floating text if equip fails
                 //if item is removed from the inventory area
                 if (collides == null && selectedItemSlot != -1 && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
@@ -221,7 +221,7 @@ namespace KazgarsRevenge
                                     {
                                         lootingSoul.RemoveLoot(i);
                                     }
-                                    
+
                                 }
                             }
                             break;
@@ -231,12 +231,12 @@ namespace KazgarsRevenge
                             {
                                 if (selectedItemSlot == -1) //Not equipping anything
                                 {
-                                    
+
                                 }
                                 else    //Bringing item in
                                 {
-                                    
-                                }         
+
+                                }
                             }
                             else if (innerClicked == "equipShoulder")
                             {
@@ -246,7 +246,7 @@ namespace KazgarsRevenge
                             //if( e != null)
                             //equip;
                             break;
-                            
+
                         case "abilities":
                             abilityToUseString = innerClicked;
                             break;
@@ -290,6 +290,10 @@ namespace KazgarsRevenge
 
                 groundMove = move;
 
+            }
+            else
+            {
+                mouseHoveredLocation = physicalData.Position;
             }
 
             if (targetedPhysicalData == null)

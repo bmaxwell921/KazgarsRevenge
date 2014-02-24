@@ -91,7 +91,9 @@
     <Compile Include="Account\Account.cs" />
     <Compile Include="Common\Extenders.cs" />
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
+    <Compile Include="Controllers\Alive\DragonController.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
+    <Compile Include="Controllers\Alive\SkeletonController.cs" />
     <Compile Include="Controllers\Attacks\BombController.cs" />
     <Compile Include="Controllers\Attacks\ChainSpearController.cs" />
     <Compile Include="Controllers\Attacks\GrapplingHookController.cs" />
@@ -121,7 +123,7 @@
     <Compile Include="Logging\LoggerManager.cs" />
     <Compile Include="Managers\Components\BillBoardManager.cs" />
     <Compile Include="Managers\Components\LevelModelManager.cs" />
-    <Compile Include="Controllers\Attacks\ArrowController.cs" />
+    <Compile Include="Controllers\Attacks\ProjectileController.cs" />
     <Compile Include="Managers\MenuManager.cs" />
     <Compile Include="Menuing\Actions\IAction.cs" />
     <Compile Include="Menuing\Clickable.cs" />
@@ -197,6 +199,12 @@
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeSmall.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSparksParticleSystem.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostCharge1System.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostCharge2System.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostCharge3System.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostMistParticleSystem.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostCharge4System.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostboltTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\HealTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\HomingTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\LifestealParticleSystem.cs" />

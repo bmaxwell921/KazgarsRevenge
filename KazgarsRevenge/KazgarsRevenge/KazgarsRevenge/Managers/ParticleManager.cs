@@ -37,6 +37,12 @@ namespace KazgarsRevenge
             systems.Add(typeof(FlashExplosionSmokeSmall), new FlashExplosionSmokeSmall(Game, Game.Content));
             systems.Add(typeof(FlashExplosionSparksParticleSystem), new FlashExplosionSparksParticleSystem(Game, Game.Content));
             systems.Add(typeof(TarExplosionParticleSystem), new TarExplosionParticleSystem(Game, Game.Content));
+            systems.Add(typeof(FrostboltTrailParticleSystem), new FrostboltTrailParticleSystem(Game, Game.Content));
+            systems.Add(typeof(FrostMistParticleSystem), new FrostMistParticleSystem(Game, Game.Content));
+            systems.Add(typeof(FrostCharge4System), new FrostCharge4System(Game, Game.Content));
+            systems.Add(typeof(FrostCharge3System), new FrostCharge3System(Game, Game.Content));
+            systems.Add(typeof(FrostCharge2System), new FrostCharge2System(Game, Game.Content));
+            systems.Add(typeof(FrostCharge1System), new FrostCharge1System(Game, Game.Content));
 
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)
@@ -65,8 +71,6 @@ namespace KazgarsRevenge
             {
                 k.Value.Draw(gameTime);
             }
-            Game.GraphicsDevice.BlendState = BlendState.Opaque;
-            Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
     }
 }

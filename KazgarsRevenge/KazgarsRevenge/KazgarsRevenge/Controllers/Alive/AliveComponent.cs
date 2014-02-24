@@ -20,6 +20,7 @@ namespace KazgarsRevenge
     public enum DeBuff
     {
         None,
+        Frost,
         SerratedBleeding,
         MagneticImplant,
         FlashBomb,
@@ -263,8 +264,8 @@ namespace KazgarsRevenge
             {
                 model = Entity.GetComponent(typeof(AnimatedModelComponent)) as AnimatedModelComponent;
             }
-            model.AddEmitter(typeof(LifestealParticleSystem), 10, 15, Vector3.Zero);
-            model.AddParticleTimer(typeof(LifestealParticleSystem), 1000);
+            model.AddEmitter(typeof(LifestealParticleSystem), "lifesteal", 10, 15, Vector3.Zero);
+            model.AddParticleTimer("lifesteal", 1000);
         }
 
         private List<NegativeEffect> activeDebuffs = new List<NegativeEffect>();
@@ -341,6 +342,18 @@ namespace KazgarsRevenge
         {
             switch (d)
             {
+                case DeBuff.Frost:
+                    if (state == BuffState.Starting)
+                    {
+                        baseStats[StatType.RunSpeed] -= baseStats[StatType.RunSpeed] * .5f;
+                        RecalculateStats();
+                    }
+                    else if (state == BuffState.Ending)
+                    {
+                        baseStats[StatType.RunSpeed] = originalBaseStats[StatType.RunSpeed];
+                        RecalculateStats();
+                    }
+                    break;
                 case DeBuff.SerratedBleeding:
                     if (state == BuffState.Ticking)
                     {
@@ -378,6 +391,7 @@ namespace KazgarsRevenge
         Dictionary<DeBuff, double> debuffLengths = new Dictionary<DeBuff, double>()
         {
             {DeBuff.SerratedBleeding, 5000},
+            {DeBuff.Frost, 1000},
             {DeBuff.FlashBomb, 3000},
             {DeBuff.Tar, 6000},
             {DeBuff.MagneticImplant, 2000},

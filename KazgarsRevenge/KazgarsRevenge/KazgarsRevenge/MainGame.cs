@@ -277,9 +277,18 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < 15; ++j)
                 {
-                    enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
+                    if (rand.Next(3) == 0)
+                    {
+                        enemies.CreateMagicSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
+                    }
+                    else
+                    {
+                        enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
+                    }
                 }
             }
+
+            //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(120, 20, 400));
         }
 
         Vector2 vecLoadingText;
@@ -303,12 +312,9 @@ namespace KazgarsRevenge
 
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.Clear(Color.Black);
             if (gameState == GameState.Playing)
             {
-                if (renderTarget.IsContentLost || normalDepthRenderTarget.IsContentLost)
-                {
-                    SetUpRenderTargets();
-                }
 
                 //draw depth render target
                 GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);

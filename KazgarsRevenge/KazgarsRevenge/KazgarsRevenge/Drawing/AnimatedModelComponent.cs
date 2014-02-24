@@ -56,11 +56,16 @@ namespace KazgarsRevenge
 
         }
 
-        public void AddEmitter(Type particleType, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
+        public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachBoneName)
         {
-            if (!emitters.ContainsKey(particleType))
+            AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);
+        }
+
+        public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
+        {
+            if (!emitters.ContainsKey(systemName))
             {
-                emitters.Add(particleType, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
+                emitters.Add(systemName, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
                     particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter, attachIndex));
             }
         }
@@ -84,8 +89,8 @@ namespace KazgarsRevenge
             animationPlayer.Update(gameTime.ElapsedGameTime, true, conglomeration);
 
 
-            List<Type> toRemove = new List<Type>();
-            foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
+            List<string> toRemove = new List<string>();
+            foreach (KeyValuePair<string, ParticleEmitter> k in emitters)
             {
                 if (k.Value.BoneIndex < 0)
                 {
@@ -172,7 +177,7 @@ namespace KazgarsRevenge
                 }
 
                 //drawing attachables
-                if (attachedModels.Count > 0)
+                if (attachedModels != null)
                 {
                     Matrix[] worldbones = animationPlayer.GetWorldTransforms();
                     Matrix[] transforms;

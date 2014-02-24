@@ -259,7 +259,7 @@ namespace KazgarsRevenge
             Entity roomLocation = new Box(position, 1100, 1100, 1100);
             room.AddSharedData(typeof(Entity), roomLocation);
 
-            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, new Vector3(roomScale), Vector3.Zero, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
+            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, new Vector3(roomScale), Vector3.Zero, yaw, 0, 0);
 
             room.AddComponent(typeof(StaticMeshesComponent), roomPhysics);
             genComponentManager.AddComponent(roomPhysics);

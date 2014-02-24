@@ -30,6 +30,7 @@ namespace KazgarsRevenge
     public struct EnemyControllerSettings
     {
         public string aniPrefix;
+        public string attackAniName;
 
         public float attackRange;
         public float noticePlayerRange;
@@ -53,7 +54,7 @@ namespace KazgarsRevenge
         LootManager lewts;
 
         Random rand;
-        EnemyControllerSettings settings;
+        protected EnemyControllerSettings settings;
 
         CameraComponent camera;
 
@@ -68,7 +69,7 @@ namespace KazgarsRevenge
 
             rand = game.rand;
 
-            attackLength = animations.GetAniMillis(settings.aniPrefix + "attack");
+            attackLength = animations.GetAniMillis(settings.aniPrefix + settings.attackAniName);
 
             idleUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
             currentUpdateFunction = idleUpdateFunction;
@@ -89,11 +90,16 @@ namespace KazgarsRevenge
                 animations.SetNonMixedBones(armBoneIndices);
                 if (d > 0)
                 {
-                    attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
+                    SpawnHitParticles();
                 }
                 CalculateThreat(d, from);
                 minChaseCounter = 0;
             }
+        }
+
+        protected virtual void SpawnHitParticles()
+        {
+            attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
         }
 
         /// <summary>
@@ -215,7 +221,7 @@ namespace KazgarsRevenge
         {
             threatLevels.Clear();
 
-            GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, 100, false);
+            GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, settings.noticePlayerRange, false);
             if (possTargetPlayer != null)
             {
                 targetHealth = possTargetPlayer.GetComponent(typeof(AliveComponent)) as AliveComponent;
@@ -223,7 +229,7 @@ namespace KazgarsRevenge
                 {
                     targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
                     currentUpdateFunction = attackingUpdateFunction;
-                    PlayAnimation(settings.aniPrefix + "walk", MixType.MixInto);
+                    PlayAnimation(settings.aniPrefix + "walk");
                     return;
                 }
             }
@@ -273,21 +279,23 @@ namespace KazgarsRevenge
             }
         }
 
-        double swingCounter;
-        double attackCounter = double.MaxValue;
-        double attackLength = 1000;
-        bool swinging = false;
+        protected double attackCreateCounter;
+        protected double attackCounter = double.MaxValue;
+        protected double attackLength = 1000;
+        bool startingAttack = false;
         protected virtual void AIAutoAttackingTarget(double millis)
         {
-            if (swinging)
+            Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
+            if (startingAttack)
             {
-                swingCounter += millis;
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                attackCreateCounter += millis;
                 attackCounter += millis;
-                if (swingCounter >= attackLength / 2)
+                if (attackCreateCounter >= attackLength / 2)
                 {
-                    attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, false, this);
-                    swingCounter = 0;
-                    swinging = false;
+                    CreateAttack();
+                    attackCreateCounter = 0;
+                    startingAttack = false;
                 }
             }
             else if (targetHealth != null && targetData != null && !targetHealth.Dead)
@@ -295,17 +303,16 @@ namespace KazgarsRevenge
                 attackCounter += millis;
                 if (attackCounter >= attackLength)
                 {
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                     attackCounter = 0;
                     //if the player is within attack radius, swing
-                    Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
-
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
+                        StartNormalAttack();
+                        startingAttack = true;
                         attackCounter = 0;
-                        PlayAnimation(settings.aniPrefix + "attack");
-                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
-                        swinging = true;
-                        swingCounter = 0;
+                        attackCreateCounter = 0;
+                        PlayAnimation(settings.aniPrefix + settings.attackAniName);
                     }
                     else
                     {
@@ -407,6 +414,15 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        protected virtual void CreateAttack()
+        {
+            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, false, this);
+        }
+
+        protected virtual void StartNormalAttack()
+        {
+
+        }
 
         protected virtual void AIDeath()
         {
@@ -416,8 +432,8 @@ namespace KazgarsRevenge
         public override void HandleStun()
         {
             PlayAnimation(settings.aniPrefix + "idle");
-            swingCounter = 0;
-            swinging = false;
+            attackCreateCounter = 0;
+            startingAttack = false;
             attackCounter = attackLength;
             minChaseCounter = 0;
             physicalData.LinearVelocity = Vector3.Zero;

@@ -384,13 +384,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\Particles\blob.png">
-      <Name>blob</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\UI\Items\gold1.png">
       <Name>gold1</Name>
       <Importer>TextureImporter</Importer>
@@ -544,7 +537,45 @@
       <Name>s_idle</Name>
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Skeleton\\s_hit.fbx%3bModels\\Enemies\\Skeleton\\s_death.fbx%3bModels\\Enemies\\Skeleton\\s_magic.fbx%3bModels\\Enemies\\Skeleton\\s_run.fbx%3bModels\\Enemies\\Skeleton\\s_shoot.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Skeleton\\s_hit.fbx%3bModels\\Enemies\\Skeleton\\s_death.fbx%3bModels\\Enemies\\Skeleton\\s_magic.fbx%3bModels\\Enemies\\Skeleton\\s_walk.fbx%3bModels\\Enemies\\Skeleton\\s_shoot.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Particles\cast_charge.png">
+      <Name>cast_charge</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Projectiles\frost_bolt.fbx">
+      <Name>frost_bolt</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <ProcessorParameters_RotationY>90</ProcessorParameters_RotationY>
+      <ProcessorParameters_Scale>0.75</ProcessorParameters_Scale>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Particles\frost_trail.png">
+      <Name>frost_trail</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Particles\mist.png">
+      <Name>mist</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Particles\mist_white.png">
+      <Name>mist_white</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
