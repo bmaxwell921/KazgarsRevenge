@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KazgarsRevengeContent", "Ka
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkinnedAnimationPipeline", "AnimationPipeline\SkinnedAnimationPipeline.csproj", "{27955A06-0284-419A-A6C9-FF256182C5CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KazgarsRevengeServer", "KazgarsRevengeServer\KazgarsRevengeServer\KazgarsRevengeServer.csproj", "{A85437D5-3CD3-4170-8651-DB27217B058A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KazgarsRevengeServerContent", "KazgarsRevengeServerContent\KazgarsRevengeServerContent.contentproj", "{62701FD4-A68B-4412-95C8-DEC15E508B95}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkinnedModelLib", "SkinnedModelLib\SkinnedModelLib.csproj", "{75303409-E0B0-43B2-A1F4-F2A506CBBDDC}"
 EndProject
 Global
@@ -39,17 +35,6 @@ Global
 		{27955A06-0284-419A-A6C9-FF256182C5CB}.Release|Any CPU.ActiveCfg = Debug|x86
 		{27955A06-0284-419A-A6C9-FF256182C5CB}.Release|x86.ActiveCfg = Debug|x86
 		{27955A06-0284-419A-A6C9-FF256182C5CB}.Release|x86.Build.0 = Debug|x86
-		{A85437D5-3CD3-4170-8651-DB27217B058A}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{A85437D5-3CD3-4170-8651-DB27217B058A}.Debug|Any CPU.Build.0 = Debug|x86
-		{A85437D5-3CD3-4170-8651-DB27217B058A}.Debug|x86.ActiveCfg = Debug|x86
-		{A85437D5-3CD3-4170-8651-DB27217B058A}.Debug|x86.Build.0 = Debug|x86
-		{A85437D5-3CD3-4170-8651-DB27217B058A}.Release|Any CPU.ActiveCfg = Release|x86
-		{A85437D5-3CD3-4170-8651-DB27217B058A}.Release|x86.ActiveCfg = Release|x86
-		{A85437D5-3CD3-4170-8651-DB27217B058A}.Release|x86.Build.0 = Release|x86
-		{62701FD4-A68B-4412-95C8-DEC15E508B95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{62701FD4-A68B-4412-95C8-DEC15E508B95}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{62701FD4-A68B-4412-95C8-DEC15E508B95}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{62701FD4-A68B-4412-95C8-DEC15E508B95}.Release|x86.ActiveCfg = Debug|Any CPU
 		{75303409-E0B0-43B2-A1F4-F2A506CBBDDC}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{75303409-E0B0-43B2-A1F4-F2A506CBBDDC}.Debug|Any CPU.Build.0 = Debug|x86
 		{75303409-E0B0-43B2-A1F4-F2A506CBBDDC}.Debug|x86.ActiveCfg = Debug|x86
