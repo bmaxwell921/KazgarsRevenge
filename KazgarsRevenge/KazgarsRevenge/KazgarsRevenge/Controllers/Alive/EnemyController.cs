@@ -70,6 +70,7 @@ namespace KazgarsRevenge
             rand = game.rand;
 
             attackLength = animations.GetAniMillis(settings.aniPrefix + settings.attackAniName);
+            attackCheckLength = attackLength / 10;
 
             idleUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
             currentUpdateFunction = idleUpdateFunction;
@@ -279,6 +280,10 @@ namespace KazgarsRevenge
             }
         }
 
+        protected double attackCheckCounter;
+        protected double attackCheckLength;
+        protected int numChecks = 0;
+
         protected double attackCreateCounter;
         protected double attackCounter = double.MaxValue;
         protected double attackLength = 1000;
@@ -291,6 +296,13 @@ namespace KazgarsRevenge
                 physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                 attackCreateCounter += millis;
                 attackCounter += millis;
+                attackCheckCounter += millis;
+                if (attackCheckCounter >= attackCheckLength)
+                {
+                    DuringAttack(numChecks);
+                    ++numChecks;
+                    attackCheckCounter = 0;
+                }
                 if (attackCreateCounter >= attackLength / 2)
                 {
                     CreateAttack();
@@ -308,10 +320,11 @@ namespace KazgarsRevenge
                     //if the player is within attack radius, swing
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
-                        StartNormalAttack();
                         startingAttack = true;
                         attackCounter = 0;
                         attackCreateCounter = 0;
+                        numChecks = 0;
+                        attackCheckCounter = double.MaxValue;
                         PlayAnimation(settings.aniPrefix + settings.attackAniName);
                     }
                     else
@@ -419,7 +432,7 @@ namespace KazgarsRevenge
             attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, false, this);
         }
 
-        protected virtual void StartNormalAttack()
+        protected virtual void DuringAttack(int i)
         {
 
         }

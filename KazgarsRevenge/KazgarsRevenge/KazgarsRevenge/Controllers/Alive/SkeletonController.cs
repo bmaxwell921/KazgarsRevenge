@@ -28,15 +28,41 @@ namespace KazgarsRevenge
             model.RemoveEmitter("frostchargeright");
         }
 
-        protected override void StartNormalAttack()
+        protected override void DuringAttack(int i)
         {
-            model.AddEmitter(typeof(FrostCharge4System), "frostchargeleft", 10, 0, Vector3.Zero, "s_hand_L");
-            model.AddEmitter(typeof(FrostCharge4System), "frostchargeright", 10, 0, Vector3.Zero, "s_hand_R");
+            if (i == 0)
+            {
+                model.AddEmitter(typeof(FrostCharge1System), "frostchargeleft", 20, 0, Vector3.Zero, "s_hand_L");
+                model.AddEmitter(typeof(FrostCharge1System), "frostchargeright", 20, 0, Vector3.Zero, "s_hand_R");
+            }
+            if (i == 1)
+            {
+                model.AddEmitter(typeof(FrostCharge2System), "frostchargeleft", 20, 0, Vector3.Zero, "s_hand_L");
+                model.AddEmitter(typeof(FrostCharge2System), "frostchargeright", 20, 0, Vector3.Zero, "s_hand_R");
+            }
+            else if (i == 2)
+            {
+                model.AddEmitter(typeof(FrostCharge3System), "frostchargeleft", 20, 0, Vector3.Zero, "s_hand_L");
+                model.AddEmitter(typeof(FrostCharge3System), "frostchargeright", 20, 0, Vector3.Zero, "s_hand_R");
+            }
+            else if (i == 3)
+            {
+                model.AddEmitter(typeof(FrostCharge4System), "frostchargeleft", 20, 0, Vector3.Zero, "s_hand_L");
+                model.AddEmitter(typeof(FrostCharge4System), "frostchargeright", 20, 0, Vector3.Zero, "s_hand_R");
+            }
         }
 
         protected override void SpawnHitParticles()
         {
 
+        }
+
+        protected override void AIDeath()
+        {
+
+            model.RemoveEmitter("frostchargeleft");
+            model.RemoveEmitter("frostchargeright");
+            base.AIDeath();
         }
     }
 }

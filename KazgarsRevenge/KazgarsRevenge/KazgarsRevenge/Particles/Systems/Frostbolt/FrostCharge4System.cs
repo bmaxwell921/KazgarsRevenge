@@ -40,11 +40,11 @@ namespace KazgarsRevenge
             settings.MinRotateSpeed = 4;
             settings.MaxRotateSpeed = 4;
 
-            settings.MinStartSize = 50;
-            settings.MaxStartSize = 50;
+            settings.MinStartSize = 65;
+            settings.MaxStartSize = 65;
 
-            settings.MinEndSize = 30;
-            settings.MaxEndSize = 30;
+            settings.MinEndSize = 40;
+            settings.MaxEndSize = 40;
         }
     }
 }

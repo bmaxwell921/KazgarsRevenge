@@ -22,7 +22,7 @@ namespace KazgarsRevenge
 
             settings.MaxParticles = 500;
 
-            settings.Duration = TimeSpan.FromSeconds(.5f);
+            settings.Duration = TimeSpan.FromSeconds(.75f);
 
             settings.DurationRandomness = 1.5f;
 
@@ -40,11 +40,11 @@ namespace KazgarsRevenge
             settings.MinRotateSpeed = 4;
             settings.MaxRotateSpeed = 4;
 
-            settings.MinStartSize = 10;
-            settings.MaxStartSize = 10;
+            settings.MinStartSize = 15;
+            settings.MaxStartSize = 15;
 
-            settings.MinEndSize = 0;
-            settings.MaxEndSize = 0;
+            settings.MinEndSize = 8;
+            settings.MaxEndSize = 8;
         }
     }
 }

@@ -63,10 +63,14 @@ namespace KazgarsRevenge
 
         public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
         {
+            ParticleEmitter toAdd = new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType), particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter, attachIndex);
             if (!emitters.ContainsKey(systemName))
             {
-                emitters.Add(systemName, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
-                    particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter, attachIndex));
+                emitters.Add(systemName, toAdd);
+            }
+            else
+            {
+                emitters[systemName] = toAdd;
             }
         }
 
