@@ -277,13 +277,18 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < 15; ++j)
                 {
-                    if (rand.Next(3) == 0)
+                    int r = rand.Next(3);
+                    if (r == 0)
                     {
                         enemies.CreateMagicSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
                     }
-                    else
+                    else if (r == 1)
                     {
                         enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
+                    }
+                    else
+                    {
+                        enemies.CreateArmorEnemy(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
                     }
                 }
             }

@@ -54,7 +54,6 @@ namespace KazgarsRevenge
         protected AnimationPlayer animations;
         protected Dictionary<string, AttachableModel> attached;
         protected Dictionary<string, Model> syncedModels;
-        protected Random rand = new Random();
 
 
         //variables for movement
@@ -1358,16 +1357,6 @@ namespace KazgarsRevenge
         #endregion
 
         #region Damage
-        private int GeneratePrimaryDamage(StatType s)
-        {
-            float ret = stats[s] * 10;
-            if (rand.Next(0, 101) < stats[StatType.CritChance])
-            {
-                ret *= 1.25f;
-            }
-
-            return (int)ret;
-        }
 
         //TODO: damage tracker and "in combat" status
         public override void HandleDamageDealt(int damageDealt)

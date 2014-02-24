@@ -7,8 +7,8 @@ namespace KazgarsRevenge
 {
     public class DragonController : EnemyController
     {
-        public DragonController(KazgarsRevengeGame game, GameEntity entity, EnemyControllerSettings settings)
-            : base(game, entity, settings)
+        public DragonController(KazgarsRevengeGame game, GameEntity entity)
+            : base(game, entity, 10)
         {
 
         }

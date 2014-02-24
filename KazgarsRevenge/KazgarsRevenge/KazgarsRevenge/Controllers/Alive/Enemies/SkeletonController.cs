@@ -9,15 +9,20 @@ namespace KazgarsRevenge
     public class SkeletonController : EnemyController
     {
         AnimatedModelComponent model;
-        public SkeletonController(KazgarsRevengeGame game, GameEntity entity, EnemyControllerSettings settings)
-            : base(game, entity, settings)
+        public SkeletonController(KazgarsRevengeGame game, GameEntity entity, int level)
+            : base(game, entity, level)
         {
-
+            settings.aniPrefix = "s_";
+            settings.attackAniName = "magic";
+            settings.attackRange = 300;
+            settings.noticePlayerRange = 400;
+            settings.stopChasingRange = 350;
         }
 
         public override void Start()
         {
             this.model = Entity.GetComponent(typeof(AnimatedModelComponent)) as AnimatedModelComponent;
+            base.Start();
         }
 
         protected override void CreateAttack()

@@ -166,9 +166,12 @@ namespace KazgarsRevenge
         #endregion
 
         protected AttackManager attacks;
+        protected Random rand;
         public AliveComponent(KazgarsRevengeGame game, GameEntity entity, int level)
             : base(game, entity)
         {
+            rand = game.rand;
+
             this.MaxHealth = 100 * level;
             this.Health = MaxHealth;
             this.level = level;
@@ -183,6 +186,17 @@ namespace KazgarsRevenge
         protected virtual void TakeDamage(int damage, GameEntity from)
         {
 
+        }
+
+        protected int GeneratePrimaryDamage(StatType s)
+        {
+            float ret = stats[s] * 10;
+            if (rand.Next(0, 101) < stats[StatType.CritChance])
+            {
+                ret *= 1.25f;
+            }
+
+            return (int)ret;
         }
 
         /// <summary>

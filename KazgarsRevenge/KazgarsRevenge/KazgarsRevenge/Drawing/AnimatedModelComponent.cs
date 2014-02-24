@@ -56,6 +56,12 @@ namespace KazgarsRevenge
 
         }
 
+        bool drawMainModel = true;
+        public void TurnOffMainModel()
+        {
+            drawMainModel = false;
+        }
+
         public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachBoneName)
         {
             AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);
@@ -129,27 +135,29 @@ namespace KazgarsRevenge
                 Matrix projection = camera.Projection;
                 int currentLightUpdate = camera.LastLightUpdate;
 
-
-                //drawing with toon shader
-                foreach (ModelMesh mesh in model.Meshes)
+                if (model != null && drawMainModel)
                 {
-                    foreach (CustomSkinnedEffect effect in mesh.Effects)
+                    //drawing with toon shader
+                    foreach (ModelMesh mesh in model.Meshes)
                     {
-                        effect.Parameters["alpha"].SetValue(modelParams.alpha);
-                        effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                        effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                        effect.SetBoneTransforms(bones);
-                        if (lastLightUpdate != currentLightUpdate)
+                        foreach (CustomSkinnedEffect effect in mesh.Effects)
                         {
-                            effect.LightPositions = camera.lightPositions;
-                            effect.LightColors = camera.lightColors;
+                            effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                            effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                            effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                            effect.SetBoneTransforms(bones);
+                            if (lastLightUpdate != currentLightUpdate)
+                            {
+                                effect.LightPositions = camera.lightPositions;
+                                effect.LightColors = camera.lightColors;
+                            }
+
+                            effect.View = view;
+                            effect.Projection = projection;
                         }
 
-                        effect.View = view;
-                        effect.Projection = projection;
+                        mesh.Draw();
                     }
-
-                    mesh.Draw();
                 }
 
                 //drawing armor (weighted to the same bones as kazgar's animation

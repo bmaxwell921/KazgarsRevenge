@@ -91,9 +91,10 @@
     <Compile Include="Account\Account.cs" />
     <Compile Include="Common\Extenders.cs" />
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
-    <Compile Include="Controllers\Alive\DragonController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\ArmorEnemyController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\DragonController.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
-    <Compile Include="Controllers\Alive\SkeletonController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\SkeletonController.cs" />
     <Compile Include="Controllers\Attacks\BombController.cs" />
     <Compile Include="Controllers\Attacks\ChainSpearController.cs" />
     <Compile Include="Controllers\Attacks\GrapplingHookController.cs" />
@@ -158,7 +159,7 @@
     <Compile Include="Common\Networking\BaseNetworkMessageManager.cs" />
     <Compile Include="Common\Networking\Handlers\BaseHandler.cs" />
     <Compile Include="Controllers\AIComponent.cs" />
-    <Compile Include="Controllers\Alive\EnemyController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\EnemyController.cs" />
     <Compile Include="Controllers\CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedModelComponent.cs" />

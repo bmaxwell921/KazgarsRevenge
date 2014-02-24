@@ -37,99 +37,69 @@ namespace KazgarsRevenge
             GameEntity brute = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
             brute.id = id;
 
-            Entity brutePhysicalData = new Box(position, 20f, 37f, 20f, 100);
-            brutePhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
-            brutePhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            brutePhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
-            brute.AddSharedData(typeof(Entity), brutePhysicalData);
-
-            Model bruteModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
-            AnimationPlayer bruteAnimations = new AnimationPlayer(bruteModel.Tag as SkinningData);
-            brute.AddSharedData(typeof(AnimationPlayer), bruteAnimations);
+            SetupEnemyEntity(brute, position, new Vector3(20f, 37f, 20f), 100, "Models\\Enemies\\Pigman\\pig_idle");
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
             attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R"));
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
-            PhysicsComponent brutePhysics = new PhysicsComponent(mainGame, brute);
-            AnimatedModelComponent bruteGraphics = new AnimatedModelComponent(mainGame, brute, bruteModel, 10, Vector3.Down * 18);
-            BlobShadowDecal bruteShadow = new BlobShadowDecal(mainGame, brute, 15);
-
-            EnemyControllerSettings bruteSettings = new EnemyControllerSettings();
-            bruteSettings.aniPrefix = "pig_";
-            bruteSettings.attackAniName = "attack";
-            bruteSettings.attackDamage = 5;
-            bruteSettings.level = level;
-            bruteSettings.attackRange = 30;
-            bruteSettings.noticePlayerRange = 150;
-            bruteSettings.stopChasingRange = 400;
-
-            EnemyController bruteController = new EnemyController(mainGame, brute, bruteSettings);
-            HealthBarBillboard hp = new HealthBarBillboard(mainGame, brute, 5, 40, bruteController as AliveComponent);
-
-            brute.AddComponent(typeof(PhysicsComponent), brutePhysics);
-            genComponentManager.AddComponent(brutePhysics);
-
-            brute.AddComponent(typeof(AnimatedModelComponent), bruteGraphics);
-            modelManager.AddComponent(bruteGraphics);
-
-            brute.AddComponent(typeof(BlobShadowDecal), bruteShadow);
-            billboardManager.AddComponent(bruteShadow);
-
+            EnemyController bruteController = new EnemyController(mainGame, brute, level);
             brute.AddComponent(typeof(AliveComponent), bruteController);
             genComponentManager.AddComponent(bruteController);
-            
-            brute.AddComponent(typeof(HealthBarBillboard), hp);
-            billboardManager.AddComponent(hp);
+
+            AddHealthBarComponent(brute, 40);
 
             enemies.Add(id, brute);
         }
 
         public void CreateMagicSkeleton(Identification id, Vector3 position, int level)
         {
-            GameEntity enemy = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
+            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, EntityType.NormalEnemy);
             enemy.id = id;
 
-            Entity enemyPhysicalData = new Box(position, 20f, 37f, 20f, 100);
-            enemyPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
-            enemyPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            enemyPhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
-            enemy.AddSharedData(typeof(Entity), enemyPhysicalData);
+            SetupEnemyEntity(enemy, position, new Vector3(20f, 37f, 20f), 100, "Models\\Enemies\\Skeleton\\s_idle");
 
-            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Skeleton\\s_idle");
-            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
-            enemy.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
-
-            PhysicsComponent enemyPhysics = new PhysicsComponent(mainGame, enemy);
-            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, enemy, enemyModel, 10, Vector3.Down * 18);
-            BlobShadowDecal enemyShadow = new BlobShadowDecal(mainGame, enemy, 15);
-
-            EnemyControllerSettings enemySettings = new EnemyControllerSettings();
-            enemySettings.aniPrefix = "s_";
-            enemySettings.attackAniName = "magic";
-            enemySettings.attackDamage = 5;
-            enemySettings.level = level;
-            enemySettings.attackRange = 1000;
-            enemySettings.noticePlayerRange = 300;
-            enemySettings.stopChasingRange = 450;
-
-            SkeletonController enemyController = new SkeletonController(mainGame, enemy, enemySettings);
-            HealthBarBillboard hp = new HealthBarBillboard(mainGame, enemy, 5, 40, enemyController as AliveComponent);
-
-            enemy.AddComponent(typeof(PhysicsComponent), enemyPhysics);
-            genComponentManager.AddComponent(enemyPhysics);
-
-            enemy.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
-            modelManager.AddComponent(enemyGraphics);
-
-            enemy.AddComponent(typeof(BlobShadowDecal), enemyShadow);
-            billboardManager.AddComponent(enemyShadow);
-
+            SkeletonController enemyController = new SkeletonController(mainGame, enemy, level);
             enemy.AddComponent(typeof(AliveComponent), enemyController);
             genComponentManager.AddComponent(enemyController);
 
-            enemy.AddComponent(typeof(HealthBarBillboard), hp);
-            billboardManager.AddComponent(hp);
+            AddHealthBarComponent(enemy, 40);
+
+            enemies.Add(id, enemy);
+        }
+
+        public void CreateArmorEnemy(Identification id, Vector3 position, int level)
+        {
+            GameEntity enemy = new GameEntity("Animated Armor", FactionType.Enemies, EntityType.NormalEnemy);
+            enemy.id = id;
+
+            Dictionary<string, Model> syncedModels = new Dictionary<string, Model>();
+            syncedModels.Add("feet", GetAnimatedModel("Models\\Armor\\armor_boots_rino"));
+            syncedModels.Add("wrists", GetAnimatedModel("Models\\Armor\\armor_wrist_rino"));
+            syncedModels.Add("head", GetAnimatedModel("Models\\Armor\\armor_head_rino"));
+            enemy.AddSharedData(typeof(Dictionary<string, Model>), syncedModels);
+
+            Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
+            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\sword01"), "Hand_R", MathHelper.Pi, 0));
+            enemy.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
+
+            SetupEntityNoGraphics(enemy, position, new Vector3(20, 37, 20), 100);
+
+            //get kazgar's animations, but don't add his model
+            Model enemyModel = GetAnimatedModel("Models\\Player\\k_idle1");
+            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
+            enemy.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, enemy, enemyModel, 10, Vector3.Down * 18);
+            enemyGraphics.TurnOffMainModel();
+            enemy.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
+            modelManager.AddComponent(enemyGraphics);
+
+
+            ArmorEnemyController controller = new ArmorEnemyController(mainGame, enemy, level);
+            enemy.AddComponent(typeof(AliveComponent), controller);
+            genComponentManager.AddComponent(controller);
+
+            AddHealthBarComponent(enemy, 40);
 
             enemies.Add(id, enemy);
         }
@@ -139,48 +109,56 @@ namespace KazgarsRevenge
             GameEntity dragon = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
             dragon.id = id;
 
-            Entity dragonPhysicalData = new Box(position, 100f, 37f, 100f, 100);
-            dragonPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
-            dragonPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            dragonPhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
-            dragon.AddSharedData(typeof(Entity), dragonPhysicalData);
+            SetupEnemyEntity(dragon, position, new Vector3(100, 37, 100), 250, "Models\\Enemies\\Pigman\\pig_idle");
 
-            Model dragonModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
-            AnimationPlayer dragonAnimations = new AnimationPlayer(dragonModel.Tag as SkinningData);
-            dragon.AddSharedData(typeof(AnimationPlayer), dragonAnimations);
-
-            PhysicsComponent dragonPhysics = new PhysicsComponent(mainGame, dragon);
-            AnimatedModelComponent dragonGraphics = new AnimatedModelComponent(mainGame, dragon, dragonModel, 50, Vector3.Down * 18);
-            BlobShadowDecal dragonShadow = new BlobShadowDecal(mainGame, dragon, 15);
-
-            EnemyControllerSettings dragonSettings = new EnemyControllerSettings();
-            dragonSettings.aniPrefix = "pig_";
-            dragonSettings.attackAniName = "attack";
-            dragonSettings.attackDamage = 5;
-            dragonSettings.level = 15;
-            dragonSettings.attackRange = 100;
-            dragonSettings.noticePlayerRange = 200;
-            dragonSettings.stopChasingRange = 650;
-
-            DragonController dragonController = new DragonController(mainGame, dragon, dragonSettings);
-            HealthBarBillboard hp = new HealthBarBillboard(mainGame, dragon, 5, 40, dragonController as AliveComponent);
-
-            dragon.AddComponent(typeof(PhysicsComponent), dragonPhysics);
-            genComponentManager.AddComponent(dragonPhysics);
-
-            dragon.AddComponent(typeof(AnimatedModelComponent), dragonGraphics);
-            modelManager.AddComponent(dragonGraphics);
-
-            dragon.AddComponent(typeof(BlobShadowDecal), dragonShadow);
-            billboardManager.AddComponent(dragonShadow);
+            DragonController dragonController = new DragonController(mainGame, dragon);
 
             dragon.AddComponent(typeof(AliveComponent), dragonController);
             genComponentManager.AddComponent(dragonController);
 
-            dragon.AddComponent(typeof(HealthBarBillboard), hp);
-            billboardManager.AddComponent(hp);
-
             enemies.Add(id, dragon);
+        }
+
+        /// <summary>
+        /// Creates an enemy with typical physics and animated graphics around the given entity.
+        /// You still need to give it an AIController and add the entity to the entity list after calling this.
+        /// </summary>
+        private void SetupEnemyEntity(GameEntity entity, Vector3 position, Vector3 dimensions, float mass, string model)
+        {
+            SetupEntityNoGraphics(entity, position, dimensions, mass);
+
+            Model enemyModel = GetAnimatedModel(model);
+            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
+            entity.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, entity, enemyModel, 10, Vector3.Down * 18);
+
+            entity.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
+            modelManager.AddComponent(enemyGraphics);
+        }
+
+        private void SetupEntityNoGraphics(GameEntity entity, Vector3 position, Vector3 dimensions, float mass)
+        {
+            Entity enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z, mass);
+            enemyPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
+            enemyPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            enemyPhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
+            entity.AddSharedData(typeof(Entity), enemyPhysicalData);
+
+            PhysicsComponent enemyPhysics = new PhysicsComponent(mainGame, entity);
+            BlobShadowDecal enemyShadow = new BlobShadowDecal(mainGame, entity, dimensions.X);
+
+            entity.AddComponent(typeof(PhysicsComponent), enemyPhysics);
+            genComponentManager.AddComponent(enemyPhysics);
+
+            entity.AddComponent(typeof(BlobShadowDecal), enemyShadow);
+            billboardManager.AddComponent(enemyShadow);
+        }
+
+        private void AddHealthBarComponent(GameEntity entity, float barHeight)
+        {
+            HealthBarBillboard hp = new HealthBarBillboard(mainGame, entity, 5, barHeight);
+            entity.AddComponent(typeof(HealthBarBillboard), hp);
+            billboardManager.AddComponent(hp);
         }
         #endregion
         
