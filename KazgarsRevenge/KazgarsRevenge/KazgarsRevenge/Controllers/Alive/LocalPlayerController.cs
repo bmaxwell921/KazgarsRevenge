@@ -194,11 +194,17 @@ namespace KazgarsRevenge
                             {
                                 for (int i = 0; i <= maxInventorySlots; i++)
                                 {
-                                    if (innerClicked == "inventory" + i && inventory[i] != null)
+                                    if (innerClicked == "inventory" + i && (inventory[i] != null || inventory[i] == null && selectedItemSlot != -1))
                                     {
                                         if (selectedItemSlot == -1)
                                         {
                                             selectedItemSlot = i;
+                                        }
+                                        else if (inventory[i] == null)
+                                        {
+                                            inventory[i] = inventory[selectedItemSlot];
+                                            inventory[selectedItemSlot] = null;
+                                            selectedItemSlot = -1;
                                         }
                                         else
                                         {
