@@ -29,6 +29,8 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        private LoggerManager lm;
+
         // Where all the ChunkDefinitions should be
         public static readonly string CHUNK_DEF_PATH = "./Chunks";
 
@@ -45,6 +47,11 @@ namespace KazgarsRevenge
             ReadChunkNames();
         }
 
+        public void SetLoggerManager(LoggerManager lm)
+        {
+            this.lm = lm;
+        }
+
         #region ChunkName Reading
         // Reads and parses all the known chunks
         public void ReadChunkNames()
@@ -57,7 +64,7 @@ namespace KazgarsRevenge
                 IList<ChunkInfo> infos = parseName(extensionLessName, out message);
                 if (infos == null)
                 {
-                    Console.WriteLine(message);
+                    lm.Log(Level.DEBUG, String.Format("Unable to get ChunkInfos for: {0}. Message: {1}", chunkName, message));
                     continue;
                 }
                 foreach (ChunkInfo ci in infos)
@@ -220,7 +227,7 @@ namespace KazgarsRevenge
             }
             catch (Exception e)
             {
-                Console.WriteLine("Can't read file: {0}", e.Message);
+                lm.Log(Level.DEBUG, String.Format("Can't read file: {0}", e.Message));
                 return null;
             }
         }
