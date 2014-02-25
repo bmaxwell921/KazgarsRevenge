@@ -122,7 +122,7 @@ namespace KazgarsRevenge
         public void CreateLevel(FloorName name)
         {
             //this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
-            this.CreateLevel(name, 1, 1);
+            this.CreateLevel(name, 3, 3);
         }
 
         /// <summary>
@@ -682,7 +682,7 @@ namespace KazgarsRevenge
                 {
                     for (int j = 0; j < levelHeight; ++j)
                     {
-                        Chunk c = ChunkUtil.Instance.ReadChunk(chunks[i, j]);
+                        Chunk c = ChunkUtil.Instance.ReadChunk(chunks[i, j], name);
                         // Set the rotation properly, all the JSONs have the rotation as ZERO
                         c.rotation = chunks[i, j].rotation;
                         ret[i, j] = c;

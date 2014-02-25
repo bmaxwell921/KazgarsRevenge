@@ -36,12 +36,12 @@ namespace KazgarsRevenge
         private IDictionary<ChunkType, IDictionary<int, IList<ChunkInfo>>> chunkDefs;
 
         // A cache of chunks so we don't always have to read chunks
-        private IDictionary<string, Chunk> chunkCache;
+        private IDictionary<long, Chunk> chunkCache;
 
         private ChunkUtil()
         {
             chunkDefs = new Dictionary<ChunkType, IDictionary<int, IList<ChunkInfo>>>();
-            chunkCache = new Dictionary<string, Chunk>();
+            chunkCache = new Dictionary<long, Chunk>();
             ReadChunkNames();
         }
 
@@ -101,7 +101,7 @@ namespace KazgarsRevenge
             
         private IList<ChunkInfo> parseName(string chunkName, out string message)
         {
-            int VALID_COUNT = 3;
+            int VALID_COUNT = 4;
             // parse it into its 3 parts
             string[] parts = chunkName.Split(ChunkInfo.CHUNK_NAME_DELIMIT);
 
@@ -114,22 +114,25 @@ namespace KazgarsRevenge
             try
             {
                 int id = Convert.ToInt32(parts[0]);
-                if (parts[1].Count() > 1)
+
+                // Ignore parts[1] because that's just the floor number
+
+                if (parts[2].Count() > 1)
                 {
                     message = "Invalid count for chunkName type";
                     return null;
                 }
 
-                ChunkType chunkType = Extenders.ChunkTypeFromChar(parts[1].ToCharArray()[0]);
+                ChunkType chunkType = Extenders.ChunkTypeFromChar(parts[2].ToCharArray()[0]);
 
                 message = "";
                 ISet<Direction> dirs = new HashSet<Direction>();
-                foreach (char c in parts[2])
+                foreach (char c in parts[3])
                 {
                     dirs.Add(Extenders.FromChar(c));
                 }
 
-                return GetRotations(chunkName, id, chunkType, dirs);
+                return GetRotations(chunkName, parts[0], chunkType, dirs);
             }
             catch (Exception e)
             {
@@ -139,7 +142,7 @@ namespace KazgarsRevenge
         }
 
         // Gets all of the possible rotations for a given chunk
-        private IList<ChunkInfo> GetRotations(string chunkName, int id, ChunkType chunkType, ISet<Direction> dirs)
+        private IList<ChunkInfo> GetRotations(string chunkName, string id, ChunkType chunkType, ISet<Direction> dirs)
         {
             IList<ChunkInfo> chunks = new List<ChunkInfo>();
             foreach (Rotation rotation in Enum.GetValues(typeof(Rotation)))
@@ -149,7 +152,7 @@ namespace KazgarsRevenge
                 {
                     directions.Add(Extenders.RotateTo(dir, rotation));
                 }
-                chunks.Add(new ChunkInfo(chunkName, id, rotation, chunkType, directions));
+                chunks.Add(new ChunkInfo(id, rotation, chunkType, directions));
             }
             return chunks;
         }
@@ -165,9 +168,6 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public ChunkInfo GetSatisfyingChunk(FloorName floor, ChunkType type, ISet<Direction> reqDoors)
         {
-            // TODO remove
-            return new ChunkInfo("basic2", 5, Rotation.ZERO, ChunkType.NORMAL, new HashSet<Direction>());
-
             // TODO incorporate the floor somehow - Set the name properly
             IList<ChunkInfo> rightDoorCount = chunkDefs[type][reqDoors.Count()];
             IList<ChunkInfo> possibleChunks = new List<ChunkInfo>();
@@ -199,23 +199,23 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="chunk"></param>
         /// <returns></returns>
-        public Chunk ReadChunk(ChunkInfo chunk)
+        public Chunk ReadChunk(ChunkInfo chunk, FloorName name)
         {
-            if (chunkCache.ContainsKey(chunk.GetFileName()))
+            if (chunkCache.ContainsKey(chunk.id))
             {
-                return (Chunk) chunkCache[chunk.GetFileName()].Clone();
+                return (Chunk) chunkCache[chunk.id].Clone();
             }
             try
             {
                 String chunkJson;
-                using (StreamReader sr = new StreamReader(Path.Combine(CHUNK_DEF_PATH, chunk.GetFileName())))
+                using (StreamReader sr = new StreamReader(Path.Combine(CHUNK_DEF_PATH, chunk.GetFileName(name))))
                 {
                     chunkJson = sr.ReadToEnd();
                 }
                 Chunk deser = JsonConvert.DeserializeObject<Chunk>(chunkJson);
                 // So we can place things properly
                 deser.CalcRoomWidthHeight();
-                chunkCache[chunk.GetFileName()] = deser;
+                chunkCache[chunk.id] = deser;
                 return deser;
             }
             catch (Exception e)

@@ -281,6 +281,27 @@ namespace KazgarsRevenge
             }
             throw new ArgumentException(String.Format("Unknown floor type: {0}", level));
         }
+
+        public static int ToInt(this FloorName name)
+        {
+            if (name == FloorName.Dungeon)
+            {
+                return 1;
+            }
+            else if (name == FloorName.TortureChamber)
+            {
+                return 2;
+            }
+            else if (name == FloorName.Lab)
+            {
+                return 3;
+            }
+            else if (name == FloorName.Library)
+            {
+                return 4;
+            }
+            return 5;
+        }
         #endregion
 
         #region A* extender
