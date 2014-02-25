@@ -16,7 +16,8 @@ namespace KazgarsRevenge
             {
                 if (instance == null)
                 {
-                    instance = new Random();
+                    // TODO make it so the seed can be set elsewhere? Or just remove it so they're not always the same
+                    instance = new Random(42);
                 }
 
                 return instance;

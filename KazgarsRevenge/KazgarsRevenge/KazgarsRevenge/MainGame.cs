@@ -269,7 +269,8 @@ namespace KazgarsRevenge
             //levels.DemoLevel();
 
             // TODO put him somewhere useful
-            players.CreateMainPlayer(new Vector3(900, 20, 1400), DUMMY_ID);
+            //players.CreateMainPlayer(new Vector3(900, 20, 1400), DUMMY_ID);
+            players.CreateMainPlayerInLevel(DUMMY_ID);
             //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(120, 20, 400));
         }
 

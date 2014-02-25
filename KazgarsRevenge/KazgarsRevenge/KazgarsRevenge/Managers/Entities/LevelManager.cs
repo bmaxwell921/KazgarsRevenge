@@ -61,6 +61,8 @@ namespace KazgarsRevenge
             // The information about the chunks in this level TODO might be unneeded
             public ChunkInfo[,] chunkInfos;
 
+            public IList<Vector3> spawnLocs;
+
             // The graph representing enemy pathing possibilities. this is gonna be connected as fuck
              public AdjacencyGraph<Vector3, Edge<Vector3>> pathGraph;
 
@@ -69,6 +71,7 @@ namespace KazgarsRevenge
                 this.currentFloor = currentFloor;
                 this.chunks = chunks;
                 this.chunkInfos = chunkInfos;
+                this.spawnLocs = new List<Vector3>();
                 pathGraph = new AdjacencyGraph<Vector3, Edge<Vector3>>();
             }
         }
@@ -147,7 +150,7 @@ namespace KazgarsRevenge
             }
 
             // Build the pathGraph - done here so it's decoupled for multithreading.
-            // TODO this could be done with outside of the KR program if it's too slow
+            // TODO this could be done with outside of the KR program if it's too slow - It actually looks ok
 
             /*
              * This is a set of all the locations of doors in the entire map. After we're done connecting
@@ -164,6 +167,17 @@ namespace KazgarsRevenge
             }
 
             ConnectDoors(doors);
+        }
+
+        /// <summary>
+        /// Returns a location to spawn the player at
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 GetPlayerSpawnLocation()
+        {
+            // The spawnLocs are in their 'untransformed' form so we multiply by BLOCK*SIZE so it's in the right spot
+            Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.Instance.Next(currentLevel.spawnLocs.Count)];
+            return spawnLoc * BLOCK_SIZE + new Vector3(0, MOB_SPAWN_Y, 0);
         }
 
         #region Room Creation
@@ -387,6 +401,12 @@ namespace KazgarsRevenge
                 {
                     doors.Add(blockCenter);
                 }
+
+                // If it's a player spawn, we need to know that we can spawn players here
+                if (block.IsPlayerSpawn())
+                {
+                    currentLevel.spawnLocs.Add(blockCenter);
+                }
             }
 
             /*
@@ -408,20 +428,7 @@ namespace KazgarsRevenge
                             // Transform them by the BLOCK_SIZE
                             Vector3 transBlockCenter = new Vector3(blockCenter.X * BLOCK_SIZE, LEVEL_Y, blockCenter.Z * BLOCK_SIZE);
                             Vector3 transTestBlock = new Vector3(testBlock.X * BLOCK_SIZE, LEVEL_Y, testBlock.Z * BLOCK_SIZE);
-
-                            /* 
-                            * AddEdge requires that both nodes are in the graph already,
-                             * so add the current block as needed here
-                             */
-                            if (!currentLevel.pathGraph.ContainsVertex(transBlockCenter))
-                            {
-                                currentLevel.pathGraph.AddVertex(transBlockCenter);
-                            }
-                            if (!currentLevel.pathGraph.ContainsVertex(transTestBlock))
-                            {
-                                currentLevel.pathGraph.AddVertex(transTestBlock);
-                            }
-                            currentLevel.pathGraph.AddEdge(new Edge<Vector3>(transBlockCenter, transTestBlock));
+                            this.AddEdge(new Edge<Vector3>(transBlockCenter, transTestBlock));
                         }
                     }
                 }
@@ -455,16 +462,31 @@ namespace KazgarsRevenge
                         Vector3 transTestDoor = testDoor * BLOCK_SIZE;
                         Edge<Vector3> add = new Edge<Vector3>(transDoor, transTestDoor);
                         // Doors next to each other in a room have already been connected
-                        if (!currentLevel.pathGraph.ContainsEdge(add))
-                        {
-                            currentLevel.pathGraph.AddEdge(add);
-                        }
+                        this.AddEdge(add);
                     }
                 }
             }
         }
+
+        // Method used to safely add an edge to the pathGraph
+        private void AddEdge(Edge<Vector3> edge)
+        {
+            if (!currentLevel.pathGraph.ContainsVertex(edge.Source))
+            {
+                currentLevel.pathGraph.AddVertex(edge.Source);
+            }
+            if (!currentLevel.pathGraph.ContainsVertex(edge.Target))
+            {
+                currentLevel.pathGraph.AddVertex(edge.Target);
+            }
+            if (!currentLevel.pathGraph.ContainsEdge(edge))
+            {
+                currentLevel.pathGraph.AddEdge(edge);
+            }
+        }
         #endregion
 
+        #region Path Finding
         /// <summary>
         /// Returns a Path from the source location to the destination location.
         /// First element is the given src, last element is the  given dest
@@ -569,6 +591,7 @@ namespace KazgarsRevenge
             }
             return min;
         }
+        #endregion
 
         #region Building Level
         /// <summary>
@@ -621,7 +644,7 @@ namespace KazgarsRevenge
             private void ChooseChunks(FloorName name, ChunkInfo[,] chunks)
             {
                 // TODO re-add these for full implementation
-                //PlaceSoulevator(name, chunks);
+                PlaceSoulevator(name, chunks);
                 //Vector2 bossLoc = PlaceBoss(name, chunks);
                 //PlaceKey(name, chunks, bossLoc);
                 PlaceTheRest(name, chunks);

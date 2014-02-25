@@ -22,6 +22,20 @@ namespace KazgarsRevenge
         public static readonly string CHUNK_EXT = "json";
         public static readonly char CHUNK_NAME_DELIMIT = '-';
 
+        private string _FileName;
+
+        public string FileName
+        {
+            get
+            {
+                return new StringBuilder().Append(_FileName).Append(".").Append(CHUNK_EXT).ToString();
+            }
+            private set
+            {
+                _FileName = value;
+            }
+        }
+
         // Which 'directions' of this chunk have doors. Directions are post rotation directions
         // ie a chunk with doors at N and E with Rotation.Zero would have doorDirections of W and N after at Rotation.NINETY
         private ISet<Direction> doorDirections;
@@ -54,8 +68,9 @@ namespace KazgarsRevenge
         /// Constructs a new ChunkInfo object with doors at the given directions
         /// </summary>
         /// <param name="directions"></param>
-        public ChunkInfo(string id, Rotation rotation, ChunkType chunkType, ISet<Direction> doorDirections)
+        public ChunkInfo(string fileName, string id, Rotation rotation, ChunkType chunkType, ISet<Direction> doorDirections)
         {
+            this.FileName = fileName;
             this.idStr = id;
             this.id = Convert.ToInt32(id);
             this.rotation = rotation;
@@ -105,17 +120,17 @@ namespace KazgarsRevenge
             return sb.ToString();
         }
 
-        public string GetFileName(FloorName floor)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(idStr).Append(CHUNK_NAME_DELIMIT).Append(floor.ToInt()).Append(CHUNK_NAME_DELIMIT).Append(chunkType.ToChar()).Append(CHUNK_NAME_DELIMIT);
-            foreach (Direction dir in doorDirections)
-            {
-                sb.Append(dir.ToChar());
-            }
-            sb.Append(CHUNK_EXT);
-            return sb.ToString();
-        }
+        //public string GetFileName(FloorName floor)
+        //{
+        //    StringBuilder sb = new StringBuilder();
+        //    sb.Append(idStr).Append(CHUNK_NAME_DELIMIT).Append(floor.ToInt()).Append(CHUNK_NAME_DELIMIT).Append(chunkType.ToChar()).Append(CHUNK_NAME_DELIMIT);
+        //    foreach (Direction dir in doorDirections)
+        //    {
+        //        sb.Append(dir.ToChar());
+        //    }
+        //    sb.Append(".").Append(CHUNK_EXT);
+        //    return sb.ToString();
+        //}
 
         public override bool Equals(object obj)
         {

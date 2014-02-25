@@ -17,6 +17,8 @@ namespace KazgarsRevenge
         // Used to know if this block is a door
         public static readonly string DOOR_NAME = "door";
 
+        public static readonly string PLAYER_SPAWN_NAME = "playerSpawn";
+
         /// <summary>
         /// Returns whether this block is a door or not
         /// </summary>
@@ -24,6 +26,15 @@ namespace KazgarsRevenge
         public bool IsDoor()
         {
             return this.name.Equals(DOOR_NAME);
+        }
+
+        /// <summary>
+        /// Returns whether this block is a player spawn location or not
+        /// </summary>
+        /// <returns></returns>
+        public bool IsPlayerSpawn()
+        {
+            return this.name.Equals(PLAYER_SPAWN_NAME);
         }
     }
 }

@@ -152,7 +152,7 @@ namespace KazgarsRevenge
                 {
                     directions.Add(Extenders.RotateTo(dir, rotation));
                 }
-                chunks.Add(new ChunkInfo(id, rotation, chunkType, directions));
+                chunks.Add(new ChunkInfo(chunkName, id, rotation, chunkType, directions));
             }
             return chunks;
         }
@@ -208,7 +208,7 @@ namespace KazgarsRevenge
             try
             {
                 String chunkJson;
-                using (StreamReader sr = new StreamReader(Path.Combine(CHUNK_DEF_PATH, chunk.GetFileName(name))))
+                using (StreamReader sr = new StreamReader(Path.Combine(CHUNK_DEF_PATH, chunk.FileName)))
                 {
                     chunkJson = sr.ReadToEnd();
                 }
@@ -226,7 +226,5 @@ namespace KazgarsRevenge
         }
 
         #endregion
-
-
     }
 }
