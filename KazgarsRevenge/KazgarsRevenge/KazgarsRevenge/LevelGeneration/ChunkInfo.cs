@@ -112,25 +112,13 @@ namespace KazgarsRevenge
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("ChunkInfo:");
+            sb.Append("Type:").Append(this.chunkType.ToChar()).Append(" ").Append("Directions:");
             foreach (Direction dir in doorDirections)
             {
                 sb.Append(dir.ToChar());
             }
             return sb.ToString();
         }
-
-        //public string GetFileName(FloorName floor)
-        //{
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.Append(idStr).Append(CHUNK_NAME_DELIMIT).Append(floor.ToInt()).Append(CHUNK_NAME_DELIMIT).Append(chunkType.ToChar()).Append(CHUNK_NAME_DELIMIT);
-        //    foreach (Direction dir in doorDirections)
-        //    {
-        //        sb.Append(dir.ToChar());
-        //    }
-        //    sb.Append(".").Append(CHUNK_EXT);
-        //    return sb.ToString();
-        //}
 
         public override bool Equals(object obj)
         {
