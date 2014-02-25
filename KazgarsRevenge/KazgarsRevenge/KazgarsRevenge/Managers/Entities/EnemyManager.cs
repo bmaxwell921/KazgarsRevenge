@@ -37,11 +37,12 @@ namespace KazgarsRevenge
             GameEntity brute = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
             brute.id = id;
 
-            SetupEnemyEntity(brute, position, new Vector3(20f, 37f, 20f), 100, "Models\\Enemies\\Pigman\\pig_idle");
-
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
             attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R"));
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
+
+            SetupEnemyEntity(brute, position, new Vector3(20f, 37f, 20f), 100, "Models\\Enemies\\Pigman\\pig_idle");
+
 
             EnemyController bruteController = new EnemyController(mainGame, brute, level);
             brute.AddComponent(typeof(AliveComponent), bruteController);
