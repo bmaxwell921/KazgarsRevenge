@@ -37,8 +37,8 @@ namespace KazgarsRevenge
             settings.MinRotateSpeed = -4;
             settings.MaxRotateSpeed = 4;
 
-            settings.MinStartSize = 13;
-            settings.MaxStartSize = 27;
+            settings.MinStartSize = 8;
+            settings.MaxStartSize = 16;
 
             settings.MinEndSize = 0;
             settings.MaxEndSize = 3;

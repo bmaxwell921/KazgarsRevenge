@@ -174,8 +174,8 @@ namespace KazgarsRevenge
             currentAniName = animationName;
         }
 
-        AliveComponent targetHealth;
-        Entity targetData;
+        protected AliveComponent targetHealth;
+        protected Entity targetData;
 
         double timerCounter;
         double timerLength;
@@ -184,12 +184,12 @@ namespace KazgarsRevenge
         protected delegate void AIUpdateFunction(double millis);
 
         //change this to adjust what the AI falls back on when there is nothing around to kill
-        AIUpdateFunction idleUpdateFunction;
+        protected AIUpdateFunction idleUpdateFunction;
 
-        AIUpdateFunction attackingUpdateFunction;
+        protected AIUpdateFunction attackingUpdateFunction;
 
         //change this to switch states
-        AIUpdateFunction currentUpdateFunction;
+        protected AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
         {
             if (state != EnemyState.Dying && state != EnemyState.Decaying && Dead)
@@ -345,9 +345,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                targetHealth = null;
-                targetData = null;
-                currentUpdateFunction = idleUpdateFunction;
+                SwitchToWandering();
             }
         }
 
@@ -369,10 +367,7 @@ namespace KazgarsRevenge
                 else if (minChaseCounter > minChaseLength && (Math.Abs(diff.X) > settings.stopChasingRange || Math.Abs(diff.Z) > settings.stopChasingRange))
                 {
                     //target out of range, wander again
-                    currentUpdateFunction = idleUpdateFunction;
-                    chillin = false;
-                    PlayAnimation(settings.aniPrefix + settings.moveAniName);
-                    timerCounter = 0;
+                    SwitchToWandering();
                 }
                 else
                 {//otherwise, run towards it
@@ -390,9 +385,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                targetHealth = null;
-                targetData = null;
-                currentUpdateFunction = idleUpdateFunction;
+                SwitchToWandering();
             }
         }
 
@@ -432,6 +425,17 @@ namespace KazgarsRevenge
             {
                 physicalData.LinearVelocity = vel;
             }
+        }
+
+        protected void SwitchToWandering()
+        {
+            targetHealth = null;
+            targetData = null;
+            chillin = true;
+            physicalData.LinearVelocity = Vector3.Zero;
+            timerCounter = 0;
+            PlayAnimation(settings.aniPrefix + settings.idleAniName);
+            currentUpdateFunction = idleUpdateFunction;
         }
         #endregion
 
