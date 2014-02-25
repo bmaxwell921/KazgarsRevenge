@@ -12,5 +12,15 @@ namespace KazgarsRevenge
         {
 
         }
+
+        private void AIDragonPhase1(double millis)
+        {
+
+        }
+
+        private void AIDragonPhase2(double millis)
+        {
+
+        }
     }
 }

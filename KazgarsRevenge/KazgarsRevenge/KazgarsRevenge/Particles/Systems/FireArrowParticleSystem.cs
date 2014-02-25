@@ -31,21 +31,20 @@ namespace KazgarsRevenge
             settings.MinHorizontalVelocity = 0;
             settings.MaxHorizontalVelocity = 25;
 
-            settings.Gravity = new Vector3(0, 15, 0);
+            settings.MaxRotateSpeed = 4f;
+            settings.MinRotateSpeed = -4f;
 
-            settings.MinColor = new Color(255, 255, 255, 10);
-            settings.MaxColor = new Color(255, 255, 255, 40);
+            settings.Gravity = new Vector3(0, 15, 0);
 
             settings.MinVerticalVelocity = -10;
             settings.MaxVerticalVelocity = 10;
 
-            settings.MinStartSize = 10;
-            settings.MaxStartSize = 20;
+            settings.MinStartSize = 5;
+            settings.MaxStartSize = 10;
 
-            settings.MinEndSize = 35;
-            settings.MaxEndSize = 60;
+            settings.MinEndSize = 15;
+            settings.MaxEndSize = 20;
 
-            settings.BlendState = BlendState.Additive;
         }
     }
 }

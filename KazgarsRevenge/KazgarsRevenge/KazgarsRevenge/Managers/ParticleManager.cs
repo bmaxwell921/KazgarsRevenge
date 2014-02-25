@@ -43,6 +43,7 @@ namespace KazgarsRevenge
             systems.Add(typeof(FrostCharge3System), new FrostCharge3System(Game, Game.Content));
             systems.Add(typeof(FrostCharge2System), new FrostCharge2System(Game, Game.Content));
             systems.Add(typeof(FrostCharge1System), new FrostCharge1System(Game, Game.Content));
+            systems.Add(typeof(ArmorSoulSystem), new ArmorSoulSystem(Game, Game.Content));
 
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)

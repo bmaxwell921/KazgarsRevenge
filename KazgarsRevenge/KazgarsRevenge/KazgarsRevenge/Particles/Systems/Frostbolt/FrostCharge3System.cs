@@ -45,6 +45,7 @@ namespace KazgarsRevenge
 
             settings.MinEndSize = 20;
             settings.MaxEndSize = 20;
+            settings.BlendState = BlendState.Additive;
         }
     }
 }

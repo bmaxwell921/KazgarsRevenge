@@ -62,12 +62,12 @@ namespace KazgarsRevenge
             drawMainModel = false;
         }
 
-        public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachBoneName)
+        public ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachBoneName)
         {
-            AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);
+            return AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);
         }
 
-        public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
+        public ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
         {
             ParticleEmitter toAdd = new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType), particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter, attachIndex);
             if (!emitters.ContainsKey(systemName))
@@ -78,6 +78,8 @@ namespace KazgarsRevenge
             {
                 emitters[systemName] = toAdd;
             }
+
+            return toAdd;
         }
 
         protected Vector3 vLightDirection = new Vector3(-1.0f, -.5f, 1.0f);

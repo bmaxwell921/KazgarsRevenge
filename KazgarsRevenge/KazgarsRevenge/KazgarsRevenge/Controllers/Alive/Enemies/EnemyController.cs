@@ -295,7 +295,7 @@ namespace KazgarsRevenge
         protected double attackCreateCounter;
         protected double attackCounter = double.MaxValue;
         protected double attackLength = 1000;
-        bool startingAttack = false;
+        protected bool startingAttack = false;
         protected virtual void AIAutoAttackingTarget(double millis)
         {
             Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);

@@ -64,7 +64,6 @@ namespace KazgarsRevenge
             Timed = false;
             Dead = false;
         }
-
         public ParticleEmitter(ParticleSystem particleSystem,
                        float particlesPerSecond, Vector3 initialPosition, int maxOffset, Vector3 offset, int attachIndex)
         {

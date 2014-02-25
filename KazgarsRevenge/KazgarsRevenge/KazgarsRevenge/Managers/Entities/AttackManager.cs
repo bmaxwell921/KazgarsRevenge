@@ -552,7 +552,7 @@ namespace KazgarsRevenge
             boltGraphics.TurnOffOutline();
 
             boltGraphics.AddEmitter(typeof(FrostboltTrailParticleSystem), "trail", 20, 10, Vector3.Zero);
-            boltGraphics.AddEmitter(typeof(FrostMistParticleSystem), "misttrail", 40, 10, Vector3.Zero);
+            boltGraphics.AddEmitter(typeof(FrostMistParticleSystem), "misttrail", 80, 10, Vector3.Zero);
 
             ProjectileController boltAI = new ProjectileController(mainGame, bolt, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
             boltAI.KillOnFirstContact();

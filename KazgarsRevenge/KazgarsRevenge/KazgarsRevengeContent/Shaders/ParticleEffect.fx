@@ -32,6 +32,8 @@ float2 RotateSpeed;
 float2 StartSize;
 float2 EndSize;
 
+float sizePercent = 1;
+
 
 // Particle texture and sampler.
 texture Texture;
@@ -109,7 +111,7 @@ float ComputeParticleSize(float randomValue, float normalizedAge)
     float endSize = lerp(EndSize.x, EndSize.y, randomValue);
     
     // Compute the actual size based on the age of the particle.
-    float size = lerp(startSize, endSize, normalizedAge);
+    float size = lerp(startSize, endSize, normalizedAge) * sizePercent;
     
     // Project the size into screen coordinates.
     return size * Projection._m11;

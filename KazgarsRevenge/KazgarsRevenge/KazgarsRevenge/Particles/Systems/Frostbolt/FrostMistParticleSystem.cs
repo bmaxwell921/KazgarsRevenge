@@ -20,9 +20,9 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "mist";
 
-            settings.MaxParticles = 1000;
+            settings.MaxParticles = 3000;
 
-            settings.Duration = TimeSpan.FromSeconds(2);
+            settings.Duration = TimeSpan.FromSeconds(1);
 
             settings.DurationRandomness = 3f;
 
@@ -34,17 +34,17 @@ namespace KazgarsRevenge
             settings.MinVerticalVelocity = -10;
             settings.MaxVerticalVelocity = 10;
 
-            settings.MinColor = Color.LightBlue;
-            settings.MaxColor = Color.LightBlue;
+            settings.MinColor = Color.DodgerBlue;
+            settings.MaxColor = Color.DodgerBlue;
 
             settings.MinRotateSpeed = -4;
             settings.MaxRotateSpeed = 4;
 
-            settings.MinStartSize = 20;
-            settings.MaxStartSize = 40;
+            settings.MinStartSize = 10;
+            settings.MaxStartSize = 20;
 
-            settings.MinEndSize = 80;
-            settings.MaxEndSize = 150;
+            settings.MinEndSize = 40;
+            settings.MaxEndSize = 80;
 
             settings.BlendState = BlendState.Additive;
         }

@@ -33,6 +33,7 @@ namespace KazgarsRevenge
             model.RemoveEmitter("frostchargeright");
         }
 
+
         protected override void DuringAttack(int i)
         {
             if (i == 0)
