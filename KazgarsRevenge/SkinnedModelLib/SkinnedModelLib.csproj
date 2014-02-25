@@ -95,6 +95,7 @@
     <Compile Include="AnimationClip.cs" />
     <Compile Include="AnimationPlayer.cs" />
     <Compile Include="Keyframe.cs" />
+    <Compile Include="LevelTagData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkinningData.cs" />
   </ItemGroup>

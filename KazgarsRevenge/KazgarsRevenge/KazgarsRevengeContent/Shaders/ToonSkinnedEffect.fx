@@ -127,7 +127,7 @@ struct NormalDepthVSOutput
 
 
 // Alternative vertex shader outputs normal and depth values, which are then
-// used as an input for the edge detection filter in PostprocessEffect.fx.
+// used as an input for the edge detection shader
 NormalDepthVSOutput VSDepth(VSInputNmTxWeights vin)
 {
 	Skin(vin, 4);
@@ -137,12 +137,11 @@ NormalDepthVSOutput VSDepth(VSInputNmTxWeights vin)
     output.Position = mul(vin.Position, WorldViewProj);
     float3 worldNormal = mul(vin.Normal, World);
     output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
-    output.Color.a = output.Position.z / output.Position.w;
+    output.Color.a = lerp(1, output.Position.z / output.Position.w, lineIntensity);
     
     return output;
 }
 
-// Simple pixel shader for rendering the normal and depth information.
 float4 PSDepth(float4 color : COLOR0) : COLOR0
 {
     return color;

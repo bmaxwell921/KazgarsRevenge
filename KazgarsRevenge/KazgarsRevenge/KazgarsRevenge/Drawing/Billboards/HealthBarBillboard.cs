@@ -13,13 +13,17 @@ namespace KazgarsRevenge
         AliveComponent owner;
         Entity ownerData;
         float ycoord;
-        public HealthBarBillboard(KazgarsRevengeGame game, GameEntity entity, float size, float ycoord, AliveComponent owner)
+        public HealthBarBillboard(KazgarsRevengeGame game, GameEntity entity, float size, float ycoord)
             : base(game, entity, Vector3.Forward, Vector3.Up, new Vector2(size * 5, size))
         {
-            this.owner = owner;
-            this.ownerData = owner.Entity.GetSharedData(typeof(Entity)) as Entity;
             this.ycoord = ycoord;
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).HealthBarEffect;
+        }
+
+        public override void Start()
+        {
+            this.owner = Entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+            this.ownerData = Entity.GetSharedData(typeof(Entity)) as Entity;
         }
 
         float percent = 1;

@@ -14,6 +14,8 @@ snipe particles
 lifesteal/ potion heal particles
 buff particles
 
+put lines on model textures for cartoon effect (took out normal edge detection)
+
 
 
 
@@ -39,6 +41,7 @@ Abilities
 ===========
 grappling shot / chain spear: attach quad rope/chain to hand
 tar bomb: get new particles / finish particle system
+fix debuff systems
 
 
 Camera

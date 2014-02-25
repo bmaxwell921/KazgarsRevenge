@@ -151,9 +151,9 @@ NormalDepthVSOutput VSDepth(NormalDepthVSInput vin)
     output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
 
     // The output alpha holds the depth, scaled to fit into a 0 to 1 range.
-    output.Color.a = output.Position.z / output.Position.w;
+    output.Color.a = lerp(1, output.Position.z / output.Position.w, lineIntensity);
     
-    return output;    
+    return output;
 }
 
 // Simple pixel shader for rendering the normal and depth information.

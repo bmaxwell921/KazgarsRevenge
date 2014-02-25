@@ -30,14 +30,16 @@ namespace KazgarsRevenge
     public struct EnemyControllerSettings
     {
         public string aniPrefix;
+        public string attackAniName;
+        public string moveAniName;
+        public string idleAniName;
+        public string hitAniName;
+        public string deathAniName;
 
         public float attackRange;
         public float noticePlayerRange;
         public float stopChasingRange;
-        
-        public int attackDamage;
-
-        public int level;
+        public float walkSpeed;
     }
     public class EnemyController : AliveComponent
     {
@@ -52,32 +54,40 @@ namespace KazgarsRevenge
         AnimationPlayer animations;
         LootManager lewts;
 
-        Random rand;
-        EnemyControllerSettings settings;
+        protected EnemyControllerSettings settings;
 
         CameraComponent camera;
 
-        public EnemyController(KazgarsRevengeGame game, GameEntity entity, EnemyControllerSettings settings)
-            : base(game, entity, settings.level)
+        public EnemyController(KazgarsRevengeGame game, GameEntity entity, int level)
+            : base(game, entity, level)
         {
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
-            this.settings = settings;
+            settings.aniPrefix = "pig_";
+            settings.attackAniName = "attack";
+            settings.idleAniName = "idle";
+            settings.moveAniName = "walk";
+            settings.hitAniName = "hit";
+            settings.deathAniName = "death";
+            settings.attackRange = 30;
+            settings.noticePlayerRange = 150;
+            settings.stopChasingRange = 400;
+            settings.walkSpeed = stats[StatType.RunSpeed] / 2;
+
+
             lewts = game.Services.GetService(typeof(LootManager)) as LootManager;
-
-            PlayAnimation(settings.aniPrefix + "idle");
-
-            rand = game.rand;
-
-            attackLength = animations.GetAniMillis(settings.aniPrefix + "attack");
-
             idleUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
             currentUpdateFunction = idleUpdateFunction;
 
             attackingUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
-
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
         }
 
+        public override void Start()
+        {
+            PlayAnimation(settings.aniPrefix + settings.idleAniName);
+            attackLength = animations.GetAniMillis(settings.aniPrefix + settings.attackAniName);
+            attackCheckLength = attackLength / 10;
+        }
 
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
         List<EntityIntPair> threatLevels = new List<EntityIntPair>();
@@ -85,15 +95,20 @@ namespace KazgarsRevenge
         {
             if (state != EnemyState.Dying && state != EnemyState.Decaying)
             {
-                PlayAnimation(settings.aniPrefix + "hit", MixType.MixOnce);
+                PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
                 animations.SetNonMixedBones(armBoneIndices);
                 if (d > 0)
                 {
-                    attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
+                    SpawnHitParticles();
                 }
                 CalculateThreat(d, from);
                 minChaseCounter = 0;
             }
+        }
+
+        protected virtual void SpawnHitParticles()
+        {
+            attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
         }
 
         /// <summary>
@@ -180,9 +195,9 @@ namespace KazgarsRevenge
             if (state != EnemyState.Dying && state != EnemyState.Decaying && Dead)
             {
                 state = EnemyState.Dying;
-                timerLength = animations.GetAniMillis(settings.aniPrefix + "death") - 100;
+                timerLength = animations.GetAniMillis(settings.aniPrefix + settings.deathAniName) - 100;
                 timerCounter = 0;
-                PlayAnimation(settings.aniPrefix + "death");
+                PlayAnimation(settings.aniPrefix + settings.deathAniName);
                 animations.StopMixing();
                 AIDeath();
                 Entity.GetComponent(typeof(PhysicsComponent)).Kill();
@@ -215,7 +230,7 @@ namespace KazgarsRevenge
         {
             threatLevels.Clear();
 
-            GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, 100, false);
+            GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, settings.noticePlayerRange, false);
             if (possTargetPlayer != null)
             {
                 targetHealth = possTargetPlayer.GetComponent(typeof(AliveComponent)) as AliveComponent;
@@ -223,7 +238,7 @@ namespace KazgarsRevenge
                 {
                     targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
                     currentUpdateFunction = attackingUpdateFunction;
-                    PlayAnimation(settings.aniPrefix + "walk", MixType.MixInto);
+                    PlayAnimation(settings.aniPrefix + settings.moveAniName);
                     return;
                 }
             }
@@ -243,11 +258,11 @@ namespace KazgarsRevenge
                     float newDir = rand.Next(1, 627) / 10.0f;
                     Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
-                    newVel *= stats[StatType.RunSpeed] / 2;
+                    newVel *= settings.walkSpeed;
                     curVel = newVel;
                     ChangeVelocity(curVel);
 
-                    PlayAnimation(settings.aniPrefix + "walk");
+                    PlayAnimation(settings.aniPrefix + settings.moveAniName);
                     chillin = false;
                 }
             }
@@ -255,7 +270,7 @@ namespace KazgarsRevenge
             {
                 if (physicalData.LinearVelocity.Length() < .1f)
                 {
-                    PlayAnimation(settings.aniPrefix + "idle");
+                    PlayAnimation(settings.aniPrefix + settings.idleAniName);
                     chillin = true;
                 }
                 ChangeVelocity(curVel);
@@ -267,27 +282,40 @@ namespace KazgarsRevenge
                     timerLength = rand.Next(1000, 5000);
                     ChangeVelocity(Vector3.Zero);
 
-                    PlayAnimation(settings.aniPrefix + "idle");
+                    PlayAnimation(settings.aniPrefix + settings.idleAniName);
                     chillin = true;
                 }
             }
         }
 
-        double swingCounter;
-        double attackCounter = double.MaxValue;
-        double attackLength = 1000;
-        bool swinging = false;
+        protected double attackCheckCounter;
+        protected double attackCheckLength;
+        protected int numChecks = 0;
+
+        protected double attackCreateCounter;
+        protected double attackCounter = double.MaxValue;
+        protected double attackLength = 1000;
+        bool startingAttack = false;
         protected virtual void AIAutoAttackingTarget(double millis)
         {
-            if (swinging)
+            Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
+            if (startingAttack)
             {
-                swingCounter += millis;
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                attackCreateCounter += millis;
                 attackCounter += millis;
-                if (swingCounter >= attackLength / 2)
+                attackCheckCounter += millis;
+                if (attackCheckCounter >= attackCheckLength)
                 {
-                    attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, settings.attackDamage, false, this);
-                    swingCounter = 0;
-                    swinging = false;
+                    DuringAttack(numChecks);
+                    ++numChecks;
+                    attackCheckCounter = 0;
+                }
+                if (attackCreateCounter >= attackLength / 2)
+                {
+                    CreateAttack();
+                    attackCreateCounter = 0;
+                    startingAttack = false;
                 }
             }
             else if (targetHealth != null && targetData != null && !targetHealth.Dead)
@@ -295,17 +323,17 @@ namespace KazgarsRevenge
                 attackCounter += millis;
                 if (attackCounter >= attackLength)
                 {
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                     attackCounter = 0;
                     //if the player is within attack radius, swing
-                    Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
-
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
+                        startingAttack = true;
                         attackCounter = 0;
-                        PlayAnimation(settings.aniPrefix + "attack");
-                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
-                        swinging = true;
-                        swingCounter = 0;
+                        attackCreateCounter = 0;
+                        numChecks = 0;
+                        attackCheckCounter = double.MaxValue;
+                        PlayAnimation(settings.aniPrefix + settings.attackAniName);
                     }
                     else
                     {
@@ -343,7 +371,7 @@ namespace KazgarsRevenge
                     //target out of range, wander again
                     currentUpdateFunction = idleUpdateFunction;
                     chillin = false;
-                    PlayAnimation(settings.aniPrefix + "walk");
+                    PlayAnimation(settings.aniPrefix + settings.moveAniName);
                     timerCounter = 0;
                 }
                 else
@@ -354,9 +382,9 @@ namespace KazgarsRevenge
                     }
                     ChangeVelocity(diff * stats[StatType.RunSpeed]);
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
-                    if (currentAniName != settings.aniPrefix + "walk")
+                    if (currentAniName != settings.aniPrefix + settings.moveAniName)
                     {
-                        PlayAnimation(settings.aniPrefix + "walk");
+                        PlayAnimation(settings.aniPrefix + settings.moveAniName);
                     }
                 }
             }
@@ -407,6 +435,15 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        protected virtual void CreateAttack()
+        {
+            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, GeneratePrimaryDamage(StatType.Strength), false, this);
+        }
+
+        protected virtual void DuringAttack(int i)
+        {
+
+        }
 
         protected virtual void AIDeath()
         {
@@ -415,9 +452,9 @@ namespace KazgarsRevenge
 
         public override void HandleStun()
         {
-            PlayAnimation(settings.aniPrefix + "idle");
-            swingCounter = 0;
-            swinging = false;
+            PlayAnimation(settings.aniPrefix + settings.idleAniName);
+            attackCreateCounter = 0;
+            startingAttack = false;
             attackCounter = attackLength;
             minChaseCounter = 0;
             physicalData.LinearVelocity = Vector3.Zero;

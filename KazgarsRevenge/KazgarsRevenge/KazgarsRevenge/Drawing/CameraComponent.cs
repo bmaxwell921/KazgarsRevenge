@@ -17,7 +17,7 @@ namespace KazgarsRevenge
     {
         #region Camera Fields
         private float fov = MathHelper.PiOver4;
-        private float nearPlane = .1f;
+        private float nearPlane = 10f;
         private float farPlane = 10000;
 
         private Entity physicalData;
@@ -49,20 +49,9 @@ namespace KazgarsRevenge
         float yaw = 0;
         float pitch = -MathHelper.PiOver4;
         public float zoom = 4.0f;
+        private float maxZoom = 8;
+        private float minZoom = 1f;
         #endregion
-
-        #region Rendertarget Stuff
-        public GBufferTarget RenderTargets { get; private set; }
-        public RenderTarget2D OutputTarget { get; private set; }
-        void resetOutputTarget(object sender, EventArgs e)
-        {
-            if (!OutputTarget.IsDisposed)
-            {
-                OutputTarget.Dispose();
-            }
-        }
-        #endregion
-
 
         public void AssignEntity(Entity followMe)
         {
@@ -93,13 +82,9 @@ namespace KazgarsRevenge
             rotatedTarget = Vector3.Transform(new Vector3(0, 0, -1), rot);
             rotatedUpVector = Vector3.Transform(new Vector3(0, 1, 0), rot);
 
-            Game.GraphicsDevice.DeviceReset += new EventHandler<EventArgs>(resetOutputTarget);
-
             int sheight = Game.GraphicsDevice.Viewport.Height;
             int swidth = Game.GraphicsDevice.Viewport.Width;
 
-            RenderTargets = new GBufferTarget(Game.GraphicsDevice, Game.GraphicsDevice.Viewport);
-            OutputTarget = new RenderTarget2D(Game.GraphicsDevice, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.None);
             LastLightUpdate = int.MinValue;
         }
 
@@ -138,13 +123,13 @@ namespace KazgarsRevenge
                 {
                     zoom /= 1.2f;
                 }
-                if (zoom < 1f)
+                if (zoom < minZoom)
                 {
-                    zoom = 1f;
+                    zoom = minZoom;
                 }
-                if (zoom > 8)
+                if (zoom > maxZoom)
                 {
-                    //zoom = 8;
+                    zoom = maxZoom;
                 }
 
                 if (curKeys.IsKeyDown(Keys.Right) && prevKeys.IsKeyUp(Keys.Right))

@@ -57,7 +57,6 @@ namespace KazgarsRevenge
         protected Effect effectCellShading;
         protected Dictionary<string, Model> animatedModels = new Dictionary<string, Model>();
         protected Dictionary<string, Model> unanimatedModels = new Dictionary<string, Model>();
-        protected Dictionary<string, Model> skinnedModels = new Dictionary<string, Model>();
 
         public Model GetAnimatedModel(string filePath)
         {
@@ -98,8 +97,7 @@ namespace KazgarsRevenge
                 {
                     SkinnedEffect skinnedEffect = part.Effect as SkinnedEffect;
                     if (skinnedEffect != null)
-                    {
-                        
+                    {   
                         CustomSkinnedEffect newEffect = new CustomSkinnedEffect(toonAnimatedEffect);
                         newEffect.CopyFromSkinnedEffect(skinnedEffect);
                         newEffect.LightPositions = camera.lightPositions;

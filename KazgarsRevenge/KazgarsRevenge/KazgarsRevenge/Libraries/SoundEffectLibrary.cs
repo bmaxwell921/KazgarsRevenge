@@ -11,7 +11,6 @@ namespace KazgarsRevenge.Libraries
         Dictionary<string, SoundEffect> soundEffects;
         Random rnd;
         const int numRangedSounds = 4;
-        const int numHardSmacks = 3;
 
         public SoundEffectLibrary(MainGame game)
         {
@@ -26,11 +25,6 @@ namespace KazgarsRevenge.Libraries
             {
                 soundEffects.Add("bowshoot" + i, game.Content.Load<SoundEffect>("Sound\\bowshoot" + i));
             }
-
-            for (int i = 0; i < numHardSmacks; i++)
-            {
-                soundEffects.Add("hardsmack" + i, game.Content.Load<SoundEffect>("Sound\\hardsmack" + i));
-            }
         }
 
         public void playRangedSound()
@@ -39,9 +33,9 @@ namespace KazgarsRevenge.Libraries
             soundEffects[("bowshoot" + effectNum)].Play();
         }
 
-        public void playHardSmack()
+        public void FrostboltSound()
         {
-            soundEffects["hardsmack" + rnd.Next(numHardSmacks)].Play();
+
         }
 
         public void playMeleeSound()
@@ -59,9 +53,15 @@ namespace KazgarsRevenge.Libraries
 
         }
 
-        public void playEnemyDying()
+        public void bruteDeath()
         {
 
         }
+
+        public void skeletonDeath()
+        {
+
+        }
+
     }
 }

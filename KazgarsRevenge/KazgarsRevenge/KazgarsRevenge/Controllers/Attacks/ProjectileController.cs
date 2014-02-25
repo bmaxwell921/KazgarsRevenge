@@ -9,9 +9,9 @@ using BEPUphysics.Entities;
 namespace KazgarsRevenge
 {
     
-    public class ArrowController : AttackController
+    public class ProjectileController : AttackController
     {
-        public ArrowController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
+        public ProjectileController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
             : base(game, entity, damage, factionToHit, creator)
         {
             this.lifeLength = 2000;
@@ -20,6 +20,11 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
         }
         bool homing = false;
+
+        public void Frost()
+        {
+            debuff = DeBuff.Frost;
+        }
 
         public void Penetrate()
         {
@@ -45,12 +50,24 @@ namespace KazgarsRevenge
             debuff = DeBuff.SerratedBleeding;
         }
 
+        public void KillOnFirstContact()
+        {
+            stickInWalls = false;
+        }
+
+        private bool stickInWalls = true;
         protected override void HandleEntityCollision(GameEntity hitEntity)
         {
             if (hitEntity.Name == "room")
             {
-                //makes arrows stick in walls
-                (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
+                if (stickInWalls)
+                {
+                    (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
+                }
+                else
+                {
+                    Entity.Kill();
+                }
             }
             base.HandleEntityCollision(hitEntity);
         }

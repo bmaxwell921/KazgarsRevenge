@@ -20,27 +20,30 @@ namespace KazgarsRevenge
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
         }
 
-        protected Dictionary<Type, ParticleEmitter> emitters = new Dictionary<Type, ParticleEmitter>();
-        public void AddEmitter(Type particleType, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter)
+        protected Dictionary<string, ParticleEmitter> emitters = new Dictionary<string, ParticleEmitter>();
+        public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter)
         {
-            if (!emitters.ContainsKey(particleType))
+            if (!emitters.ContainsKey(systemName))
             {
-                emitters.Add(particleType, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
+                emitters.Add(systemName, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
                     particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter));
             }
         }
 
-        public void AddParticleTimer(Type t, double length)
+        public void AddParticleTimer(string systemName, double length)
         {
-            if (emitters.ContainsKey(t))
+            if (emitters.ContainsKey(systemName))
             {
-                emitters[t].SetDeathTimer(length);
+                emitters[systemName].SetDeathTimer(length);
             }
         }
 
-        public void RemoveEmitter(Type particleType)
+        public void RemoveEmitter(string systemName)
         {
-            emitters.Remove(particleType);
+            if (emitters.ContainsKey(systemName))
+            {
+                emitters.Remove(systemName);
+            }
         }
 
         protected bool InsideCameraBox(BoundingBox cameraBox)

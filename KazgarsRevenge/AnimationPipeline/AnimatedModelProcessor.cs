@@ -1,6 +1,4 @@
-﻿
-#region Using Statements
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -11,7 +9,6 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 using SkinnedModelLib;
-#endregion
 
 namespace SkinnedAnimationPipeline
 {

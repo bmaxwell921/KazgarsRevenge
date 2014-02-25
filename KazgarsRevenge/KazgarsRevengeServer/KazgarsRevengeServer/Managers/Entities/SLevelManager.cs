@@ -78,13 +78,13 @@ namespace KazgarsRevengeServer
             roomMesh.CollisionRules.Group = game.LevelCollisionGroup;
             room.AddSharedData(typeof(StaticMesh), roomMesh);
 
-            StaticMeshComponent roomPhysics = new StaticMeshComponent(game, room);
+            StaticMeshesComponent roomPhysics = new StaticMeshesComponent(game, room);
 
             // used for drawing...remove?
             Entity roomLocation = new Box(position, 1, 1, 1);
             room.AddSharedData(typeof(Entity), roomLocation);
 
-            room.AddComponent(typeof(StaticMeshComponent), roomPhysics);
+            room.AddComponent(typeof(StaticMeshesComponent), roomPhysics);
             gcm.AddComponent(roomPhysics);
 
             // Add the Id to be received later

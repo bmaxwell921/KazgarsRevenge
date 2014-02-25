@@ -20,6 +20,7 @@ namespace KazgarsRevenge
     public enum DeBuff
     {
         None,
+        Frost,
         SerratedBleeding,
         MagneticImplant,
         FlashBomb,
@@ -165,9 +166,12 @@ namespace KazgarsRevenge
         #endregion
 
         protected AttackManager attacks;
+        protected Random rand;
         public AliveComponent(KazgarsRevengeGame game, GameEntity entity, int level)
             : base(game, entity)
         {
+            rand = game.rand;
+
             this.MaxHealth = 100 * level;
             this.Health = MaxHealth;
             this.level = level;
@@ -182,6 +186,17 @@ namespace KazgarsRevenge
         protected virtual void TakeDamage(int damage, GameEntity from)
         {
 
+        }
+
+        protected int GeneratePrimaryDamage(StatType s)
+        {
+            float ret = stats[s] * 10;
+            if (rand.Next(0, 101) < stats[StatType.CritChance])
+            {
+                ret *= 1.25f;
+            }
+
+            return (int)ret;
         }
 
         /// <summary>
@@ -263,8 +278,8 @@ namespace KazgarsRevenge
             {
                 model = Entity.GetComponent(typeof(AnimatedModelComponent)) as AnimatedModelComponent;
             }
-            model.AddEmitter(typeof(LifestealParticleSystem), 10, 15, Vector3.Zero);
-            model.AddParticleTimer(typeof(LifestealParticleSystem), 1000);
+            model.AddEmitter(typeof(LifestealParticleSystem), "lifesteal", 10, 15, Vector3.Zero);
+            model.AddParticleTimer("lifesteal", 1000);
         }
 
         private List<NegativeEffect> activeDebuffs = new List<NegativeEffect>();
@@ -341,6 +356,18 @@ namespace KazgarsRevenge
         {
             switch (d)
             {
+                case DeBuff.Frost:
+                    if (state == BuffState.Starting)
+                    {
+                        baseStats[StatType.RunSpeed] -= baseStats[StatType.RunSpeed] * .5f;
+                        RecalculateStats();
+                    }
+                    else if (state == BuffState.Ending)
+                    {
+                        baseStats[StatType.RunSpeed] = originalBaseStats[StatType.RunSpeed];
+                        RecalculateStats();
+                    }
+                    break;
                 case DeBuff.SerratedBleeding:
                     if (state == BuffState.Ticking)
                     {
@@ -378,6 +405,7 @@ namespace KazgarsRevenge
         Dictionary<DeBuff, double> debuffLengths = new Dictionary<DeBuff, double>()
         {
             {DeBuff.SerratedBleeding, 5000},
+            {DeBuff.Frost, 1000},
             {DeBuff.FlashBomb, 3000},
             {DeBuff.Tar, 6000},
             {DeBuff.MagneticImplant, 2000},

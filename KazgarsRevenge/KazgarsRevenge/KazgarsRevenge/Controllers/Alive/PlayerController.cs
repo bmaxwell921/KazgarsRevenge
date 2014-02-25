@@ -54,7 +54,6 @@ namespace KazgarsRevenge
         protected AnimationPlayer animations;
         protected Dictionary<string, AttachableModel> attached;
         protected Dictionary<string, Model> syncedModels;
-        protected Random rand = new Random();
 
 
         //variables for movement
@@ -137,23 +136,27 @@ namespace KazgarsRevenge
         /// </summary>
         protected bool UnequipGear(GearSlot slot)
         {
-            Equippable oldEquipped = gear[slot];
-            if (oldEquipped != null)
-            {
-                if (AddToInventory(oldEquipped))
-                {
-                    attached.Remove(slot.ToString());
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
+            Equippable toRemove = gear[slot];
+            if (toRemove == null)
             {
                 //if there was nothing in there to start with, return true
                 return true;
+            }
+            if (AddToInventory(toRemove))
+            {
+                if (toRemove is Weapon)
+                {
+                    attached.Remove(slot.ToString());
+                }
+                else
+                {
+                    syncedModels.Remove(slot.ToString());
+                }
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
         /// <summary>
@@ -289,7 +292,7 @@ namespace KazgarsRevenge
             //EquipGear(lewtz.GetChest(), GearSlot.Chest);
             EquipGear(lewtz.GetHelm(), GearSlot.Head);
             //EquipGear(lewtz.GetLegs(), GearSlot.Legs);
-            //EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
+            EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
             EquipGear(lewtz.GetWrist(), GearSlot.Wrist);
         }
 
@@ -1354,16 +1357,6 @@ namespace KazgarsRevenge
         #endregion
 
         #region Damage
-        private int GeneratePrimaryDamage(StatType s)
-        {
-            float ret = stats[s] * 10;
-            if (rand.Next(0, 101) < stats[StatType.CritChance])
-            {
-                ret *= 1.25f;
-            }
-
-            return (int)ret;
-        }
 
         //TODO: damage tracker and "in combat" status
         public override void HandleDamageDealt(int damageDealt)

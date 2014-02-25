@@ -56,12 +56,27 @@ namespace KazgarsRevenge
 
         }
 
-        public void AddEmitter(Type particleType, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
+        bool drawMainModel = true;
+        public void TurnOffMainModel()
         {
-            if (!emitters.ContainsKey(particleType))
+            drawMainModel = false;
+        }
+
+        public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachBoneName)
+        {
+            AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);
+        }
+
+        public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
+        {
+            ParticleEmitter toAdd = new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType), particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter, attachIndex);
+            if (!emitters.ContainsKey(systemName))
             {
-                emitters.Add(particleType, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
-                    particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter, attachIndex));
+                emitters.Add(systemName, toAdd);
+            }
+            else
+            {
+                emitters[systemName] = toAdd;
             }
         }
 
@@ -84,8 +99,8 @@ namespace KazgarsRevenge
             animationPlayer.Update(gameTime.ElapsedGameTime, true, conglomeration);
 
 
-            List<Type> toRemove = new List<Type>();
-            foreach (KeyValuePair<Type, ParticleEmitter> k in emitters)
+            List<string> toRemove = new List<string>();
+            foreach (KeyValuePair<string, ParticleEmitter> k in emitters)
             {
                 if (k.Value.BoneIndex < 0)
                 {
@@ -120,27 +135,29 @@ namespace KazgarsRevenge
                 Matrix projection = camera.Projection;
                 int currentLightUpdate = camera.LastLightUpdate;
 
-
-                //drawing with toon shader
-                foreach (ModelMesh mesh in model.Meshes)
+                if (model != null && drawMainModel)
                 {
-                    foreach (CustomSkinnedEffect effect in mesh.Effects)
+                    //drawing with toon shader
+                    foreach (ModelMesh mesh in model.Meshes)
                     {
-                        effect.Parameters["alpha"].SetValue(modelParams.alpha);
-                        effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                        effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                        effect.SetBoneTransforms(bones);
-                        if (lastLightUpdate != currentLightUpdate)
+                        foreach (CustomSkinnedEffect effect in mesh.Effects)
                         {
-                            effect.LightPositions = camera.lightPositions;
-                            effect.LightColors = camera.lightColors;
+                            effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                            effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                            effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                            effect.SetBoneTransforms(bones);
+                            if (lastLightUpdate != currentLightUpdate)
+                            {
+                                effect.LightPositions = camera.lightPositions;
+                                effect.LightColors = camera.lightColors;
+                            }
+
+                            effect.View = view;
+                            effect.Projection = projection;
                         }
 
-                        effect.View = view;
-                        effect.Projection = projection;
+                        mesh.Draw();
                     }
-
-                    mesh.Draw();
                 }
 
                 //drawing armor (weighted to the same bones as kazgar's animation
@@ -172,7 +189,7 @@ namespace KazgarsRevenge
                 }
 
                 //drawing attachables
-                if (attachedModels.Count > 0)
+                if (attachedModels != null)
                 {
                     Matrix[] worldbones = animationPlayer.GetWorldTransforms();
                     Matrix[] transforms;

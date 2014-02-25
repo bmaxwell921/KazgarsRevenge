@@ -94,7 +94,10 @@
     <Compile Include="Account\Account.cs" />
     <Compile Include="Common\Extenders.cs" />
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
+    <Compile Include="Controllers\Alive\Enemies\ArmorEnemyController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\DragonController.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\SkeletonController.cs" />
     <Compile Include="Controllers\Attacks\BombController.cs" />
     <Compile Include="Controllers\Attacks\ChainSpearController.cs" />
     <Compile Include="Controllers\Attacks\GrapplingHookController.cs" />
@@ -110,8 +113,6 @@
     <Compile Include="Drawing\Billboards\ChainBillboard.cs" />
     <Compile Include="Drawing\Billboards\DrawableComponentBillboard.cs" />
     <Compile Include="Drawing\Billboards\HealthBarBillboard.cs" />
-    <Compile Include="Drawing\Effects\DirectionalLightEffect.cs" />
-    <Compile Include="GBufferTarget.cs" />
     <Compile Include="LevelGeneration\JsonHierarchy\Chunk.cs" />
     <Compile Include="LevelGeneration\ChunkUtil.cs" />
     <Compile Include="LevelGeneration\ChunkInfo.cs" />
@@ -126,7 +127,7 @@
     <Compile Include="Logging\LoggerManager.cs" />
     <Compile Include="Managers\Components\BillBoardManager.cs" />
     <Compile Include="Managers\Components\LevelModelManager.cs" />
-    <Compile Include="Controllers\Attacks\ArrowController.cs" />
+    <Compile Include="Controllers\Attacks\ProjectileController.cs" />
     <Compile Include="Managers\MenuManager.cs" />
     <Compile Include="Menuing\Actions\IAction.cs" />
     <Compile Include="Menuing\Clickable.cs" />
@@ -161,7 +162,7 @@
     <Compile Include="Common\Networking\BaseNetworkMessageManager.cs" />
     <Compile Include="Common\Networking\Handlers\BaseHandler.cs" />
     <Compile Include="Controllers\AIComponent.cs" />
-    <Compile Include="Controllers\Alive\EnemyController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\EnemyController.cs" />
     <Compile Include="Controllers\CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedModelComponent.cs" />
@@ -202,6 +203,12 @@
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeSmall.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSparksParticleSystem.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostCharge1System.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostCharge2System.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostCharge3System.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostMistParticleSystem.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostCharge4System.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostboltTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\HealTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\HomingTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\LifestealParticleSystem.cs" />
@@ -221,12 +228,9 @@
     <Compile Include="Drawing\DrawableComponent2D.cs" />
     <Compile Include="Managers\Components\SpriteManager.cs" />
     <Compile Include="Drawing\UnanimatedModelComponent.cs" />
-    <Compile Include="Misc Components\StaticMeshComponent.cs" />
+    <Compile Include="Misc Components\StaticMeshesComponent.cs" />
     <Compile Include="Util\IdentificationFactory.cs" />
     <Compile Include="Util\RandSingleton.cs" />
-    <Compile Include="Drawing\Effects\FinalCombineEffect.cs" />
-    <Compile Include="Drawing\Effects\LightEffect.cs" />
-    <Compile Include="Drawing\Effects\PointLightEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
