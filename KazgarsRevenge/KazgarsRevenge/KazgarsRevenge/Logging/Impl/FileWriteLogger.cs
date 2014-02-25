@@ -23,7 +23,7 @@ namespace KazgarsRevenge
         public readonly string FILE_DIRECTORY;
         
         // Format for file names
-        public static readonly string FILE_NAME_FORMAT = "yyyy-MM-dd-HH-mm";
+        public static readonly string FILE_NAME_FORMAT = "yyyy-MM-dd-HH-mm-ss";
 
         // Each file name will the time when this logger was created to avoid overwriting
         private string filePath;
@@ -42,10 +42,10 @@ namespace KazgarsRevenge
         public override void Log(Level level, string message)
         {
             string output = String.Format(ALogger.OUTPUT_FORMAT, level, message);
-            //using (StreamWriter sw = File.AppendText(filePath))
-            //{
-            //    sw.WriteLine(output);
-            //}
+            using (StreamWriter sw = File.AppendText(filePath))
+            {
+                sw.WriteLine(output);
+            }
         }
 
         private void CreateLoggingFile(string fileName)
