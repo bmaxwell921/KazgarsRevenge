@@ -841,7 +841,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
             //Nate Here
             guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average)));
-            guiOutsideRects.Add("equipment", new Rectangle((int)(maxX - 700 * average), (int)(380 * average), (int)(300 * average), (int)(440 * average)));
+            guiOutsideRects.Add("equipment", new Rectangle((int)(maxX - 704 * average), (int)(380 * average), (int)(304 * average), (int)(440 * average)));
 
             guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
             guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
@@ -868,8 +868,18 @@ namespace KazgarsRevenge
             guiInsideRects.Add("player", playerDict);
 
             //Equipment inner
-            equipmentDict.Add("equipHead", new Rectangle((int)(maxX - 690 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipShoulder", new Rectangle((int)(maxX - 500 * average), (int)(390 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equipWrist", new Rectangle((int)(maxX - 694 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equipBling", new Rectangle((int)(maxX - 694 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equipLWep", new Rectangle((int)(maxX - 694 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
+
+            equipmentDict.Add("equipHead", new Rectangle((int)(maxX - 596 * average), (int)(409 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equipChest", new Rectangle((int)(maxX - 596 * average), (int)(507 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equipLegs", new Rectangle((int)(maxX - 596 * average), (int)(605 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equipFeet", new Rectangle((int)(maxX - 596 * average), (int)(703 * average), (int)(88 * average), (int)(88 * average)));
+
+            equipmentDict.Add("equipShoulder", new Rectangle((int)(maxX - 498 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equipCod", new Rectangle((int)(maxX - 498 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equipRWep", new Rectangle((int)(maxX - 498 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
             //Inventory inner
             for (int i = 0; i < 4; ++i)
             {
@@ -1079,8 +1089,20 @@ namespace KazgarsRevenge
                     s.Draw(texWhitePixel, guiOutsideRects["equipment"], Color.Black * .5f);
                     //Collapse arrow
                     s.Draw(rightArrow, guiInsideRects["inventory"]["equipArrow"], Color.White);
-                    s.Draw(helmetIcon, guiInsideRects["equipment"]["equipHead"], Color.White);
+
+                    //Equip frames
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipWrist"], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipBling"], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipLWep"], Color.White);
+
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipHead"], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipChest"], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipLegs"], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipFeet"], Color.White);
+
                     s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipShoulder"], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipCod"], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipRWep"], Color.White);
                 }
                 else
                 {
