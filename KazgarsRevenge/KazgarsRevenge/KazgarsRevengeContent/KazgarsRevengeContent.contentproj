@@ -524,7 +524,13 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Models\Rooms\1_5wideLRoomCorner.fbx">
+      <Name>1_5wideLRoomCorner</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Rooms\1_1block2doorAdj.fbx">
       <Name>1_1block2doorAdj</Name>
@@ -573,11 +579,6 @@
     </Compile>
     <Compile Include="Models\Rooms\1_5by5KeyMixer.fbx">
       <Name>1_5by5KeyMixer</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_5wideLRoomCorner.fbx">
-      <Name>1_5wideLRoomCorner</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
