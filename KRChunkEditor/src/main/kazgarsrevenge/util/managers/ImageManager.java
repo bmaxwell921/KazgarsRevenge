@@ -79,6 +79,7 @@ public class ImageManager {
 	public BufferedImage getImage(Class<? extends ChunkComponent> clazz, String imageName) {
 		Map<String, BufferedImage> map = images.get(clazz);
 		if (!map.containsKey(imageName)) {
+			System.out.println("Unknown room: " + imageName);
 			return unknownImage;
 		}
 		return map.get(imageName);

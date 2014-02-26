@@ -1,0 +1,18 @@
+{
+  "blocks": [
+    {
+      "location": {
+        "x": 0,
+        "y": 0
+      },
+      "name": "doorAdj",
+      "rotation": "NINETY"
+    }
+  ],
+  "location": {
+    "x": 0,
+    "y": 0
+  },
+  "name": "1_1block2doorAdj",
+  "rotation": "ZERO"
+}

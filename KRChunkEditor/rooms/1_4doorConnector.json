@@ -1,0 +1,106 @@
+{
+  "blocks": [
+    {
+      "location": {
+        "x": 1,
+        "y": 0
+      },
+      "name": "door",
+      "rotation": "ONE_EIGHTY"
+    },
+    {
+      "location": {
+        "x": 2,
+        "y": 1
+      },
+      "name": "door",
+      "rotation": "NINETY"
+    },
+    {
+      "location": {
+        "x": 0,
+        "y": 2
+      },
+      "name": "door",
+      "rotation": "TWO_SEVENTY"
+    },
+    {
+      "location": {
+        "x": 0,
+        "y": 3
+      },
+      "name": "door",
+      "rotation": "ZERO"
+    },
+    {
+      "location": {
+        "x": 2,
+        "y": 3
+      },
+      "name": "wallAdj",
+      "rotation": "NINETY"
+    },
+    {
+      "location": {
+        "x": 2,
+        "y": 0
+      },
+      "name": "wallAdj",
+      "rotation": "ONE_EIGHTY"
+    },
+    {
+      "location": {
+        "x": 0,
+        "y": 0
+      },
+      "name": "wallAdj",
+      "rotation": "TWO_SEVENTY"
+    },
+    {
+      "location": {
+        "x": 0,
+        "y": 1
+      },
+      "name": "wall",
+      "rotation": "TWO_SEVENTY"
+    },
+    {
+      "location": {
+        "x": 1,
+        "y": 3
+      },
+      "name": "wall",
+      "rotation": "ZERO"
+    },
+    {
+      "location": {
+        "x": 2,
+        "y": 2
+      },
+      "name": "wall",
+      "rotation": "NINETY"
+    },
+    {
+      "location": {
+        "x": 1,
+        "y": 2
+      },
+      "name": "mobSpawn",
+      "rotation": "ZERO"
+    },
+    {
+      "location": {
+        "x": 1,
+        "y": 1
+      },
+      "name": "mobSpawn",
+      "rotation": "ZERO"
+    }
+  ],
+  "location": {
+    "x": 0,
+    "y": 0
+  },
+  "name": "1_4doorConnector",
+  "rotation": "ZERO"
+}
