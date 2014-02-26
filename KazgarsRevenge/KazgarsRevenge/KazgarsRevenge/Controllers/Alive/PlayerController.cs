@@ -210,18 +210,11 @@ namespace KazgarsRevenge
             {
                 if (k.Value != null)
                 {
-                    AddStats(k.Value.StatEffects);
+                    AddGearStats(k.Value);
                 }
             }
 
-            stateResetLength = 3000 * (1 - Math.Min(.95f, stats[StatType.AttackSpeed]));
-        }
-        protected void AddStats(Dictionary<StatType, float> statsToAdd)
-        {
-            foreach (KeyValuePair<StatType, float> k in statsToAdd)
-            {
-                stats[k.Key] += k.Value;
-            }
+            stateResetLength = 3000 * (1 - Math.Min(.95f, GetStat(StatType.AttackSpeed)));
         }
         protected AttackType GetMainhandType()
         {

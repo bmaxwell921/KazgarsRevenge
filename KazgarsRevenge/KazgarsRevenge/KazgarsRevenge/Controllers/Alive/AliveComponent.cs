@@ -137,7 +137,50 @@ namespace KazgarsRevenge
             {StatType.Health, 100},
         };
 
-        protected Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
+        private Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
+
+        protected float GetStat(StatType t)
+        {
+            return AccountForDebuffs(t);
+        }
+
+        private float AccountForDebuffs(StatType t)
+        {
+            float retStat = stats[t];
+            //TODO
+            for (int i = 0; i < activeDebuffs.Count; ++i)
+            {
+                switch (activeDebuffs[i].type)
+                {
+                    case DeBuff.Frost:
+
+                        break;
+                    case DeBuff.Tar:
+
+                        break;
+                }
+            }
+
+            for (int i = 0; i < activeBuffs.Count; ++i)
+            {
+                switch (activeBuffs[i].type)
+                {
+                    case Buff.AdrenalineRush:
+
+                        break;
+                }
+            }
+
+            return retStat;
+        }
+
+        protected void AddGearStats(Equippable gear)
+        {
+            foreach (KeyValuePair<StatType, float> k in gear.StatEffects)
+            {
+                stats[k.Key] += k.Value;
+            }
+        }
 
         protected virtual void RecalculateStats()
         {

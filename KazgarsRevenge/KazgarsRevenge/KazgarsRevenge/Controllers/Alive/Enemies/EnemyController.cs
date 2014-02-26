@@ -71,7 +71,7 @@ namespace KazgarsRevenge
             settings.attackRange = 30;
             settings.noticePlayerRange = 150;
             settings.stopChasingRange = 400;
-            settings.walkSpeed = stats[StatType.RunSpeed] / 2;
+            settings.walkSpeed = GetStat(StatType.RunSpeed) / 2;
 
 
             lewts = game.Services.GetService(typeof(LootManager)) as LootManager;
@@ -354,7 +354,7 @@ namespace KazgarsRevenge
                     {
                         diff.Normalize();
                     }
-                    ChangeVelocity(diff * stats[StatType.RunSpeed]);
+                    ChangeVelocity(diff * GetStat(StatType.RunSpeed));
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                     if (currentAniName != settings.aniPrefix + settings.moveAniName)
                     {

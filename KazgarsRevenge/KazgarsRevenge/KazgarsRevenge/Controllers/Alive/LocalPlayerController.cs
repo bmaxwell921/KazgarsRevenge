@@ -696,7 +696,7 @@ namespace KazgarsRevenge
             //held down:  path towards mousehovered location (or targetted entity if its data isn't null and it's not in range) / if in range of targetted entity, auto attack
             //up:         if there is a targetted enemy, run up and attack it once. if not, run towards targetted location if not already at it
 
-            Vector3 moveVec = move * stats[(int)StatType.RunSpeed];
+            Vector3 moveVec = move * GetStat((int)StatType.RunSpeed);
             moveVec.Y = 0;
 
             if (curMouse.LeftButton == ButtonState.Pressed)
