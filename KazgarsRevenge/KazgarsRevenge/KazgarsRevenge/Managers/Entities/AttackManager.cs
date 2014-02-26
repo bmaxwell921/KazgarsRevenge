@@ -675,13 +675,22 @@ namespace KazgarsRevenge
             }
         }
 
-        public void SpawnBloodSpurt(Vector3 position, Vector3 forward)
+        public void SpawnHitBlood(Vector3 position)
         {
             ParticleSystem blood = particles.GetSystem(typeof(BloodParticleSystem));
+            for (int i = 0; i < 10; ++i)
+            {
+                blood.AddParticle(position, Vector3.Zero);
+            }
+        }
+
+        public void SpawnHitSparks(Vector3 position, Vector3 forward)
+        {
+            ParticleSystem sparks = particles.GetSystem(typeof(HitSparksSystem));
             forward *= 25;
             for (int i = 0; i < 10; ++i)
             {
-                blood.AddParticle(position, forward);
+                sparks.AddParticle(position, forward);
             }
         }
 

@@ -21,7 +21,7 @@ namespace KazgarsRevenge
 
         protected override void SpawnHitParticles()
         {
-            
+            attacks.SpawnHitSparks(physicalData.Position, physicalData.OrientationMatrix.Forward);
         }
         
     }

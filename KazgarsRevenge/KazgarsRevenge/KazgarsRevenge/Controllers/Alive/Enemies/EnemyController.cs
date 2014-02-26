@@ -89,27 +89,6 @@ namespace KazgarsRevenge
             attackCheckLength = attackLength / 10;
         }
 
-        List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
-        List<EntityIntPair> threatLevels = new List<EntityIntPair>();
-        protected override void TakeDamage(int d, GameEntity from)
-        {
-            if (state != EnemyState.Dying && state != EnemyState.Decaying)
-            {
-                PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
-                animations.SetNonMixedBones(armBoneIndices);
-                if (d > 0)
-                {
-                    SpawnHitParticles();
-                }
-                CalculateThreat(d, from);
-                minChaseCounter = 0;
-            }
-        }
-
-        protected virtual void SpawnHitParticles()
-        {
-            attacks.SpawnBloodSpurt(physicalData.Position, physicalData.OrientationMatrix.Forward);
-        }
 
         /// <summary>
         /// calculate threat and switch to attacker if it is now the highest
@@ -468,6 +447,28 @@ namespace KazgarsRevenge
         {
             attackCounter = attackLength;
             base.StopPull();
+        }
+
+        List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
+        List<EntityIntPair> threatLevels = new List<EntityIntPair>();
+        protected override void TakeDamage(int d, GameEntity from)
+        {
+            if (state != EnemyState.Dying && state != EnemyState.Decaying)
+            {
+                PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
+                animations.SetNonMixedBones(armBoneIndices);
+                if (d > 0)
+                {
+                    SpawnHitParticles();
+                }
+                CalculateThreat(d, from);
+                minChaseCounter = 0;
+            }
+        }
+
+        protected virtual void SpawnHitParticles()
+        {
+            attacks.SpawnHitBlood(physicalData.Position);
         }
 
         protected bool InsideCameraBox(BoundingBox cameraBox)
