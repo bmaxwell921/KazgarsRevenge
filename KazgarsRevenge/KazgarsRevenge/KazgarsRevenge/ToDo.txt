@@ -1,9 +1,10 @@
 ﻿art needed
 ===========
-make soul_loot_smash animation end up in the air again)
+make soul_loot_smash animation end up in the air again
 1h punch animation
 
 change pigman death animation such that the weapon doesn't stick in the the ground (rotate the attachment point)
+change pigman hand attach point
 kazgar death animation
 
 
@@ -15,6 +16,7 @@ lifesteal/ potion heal particles
 buff particles
 
 put lines on model textures for cartoon effect (took out normal edge detection)
+
 
 
 

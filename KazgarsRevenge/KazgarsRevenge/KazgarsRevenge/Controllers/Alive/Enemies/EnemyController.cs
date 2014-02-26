@@ -185,7 +185,7 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case EnemyState.Normal:
-                    if (!HasDeBuff(DeBuff.Stunned) && InsideCameraBox(camera.CameraBox))
+                    if (!activeDebuffs.ContainsKey(DeBuff.Stunned) && InsideCameraBox(camera.CameraBox))
                     {
                         currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
                     }

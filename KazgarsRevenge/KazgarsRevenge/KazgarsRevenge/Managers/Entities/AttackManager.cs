@@ -556,6 +556,7 @@ namespace KazgarsRevenge
 
             ProjectileController boltAI = new ProjectileController(mainGame, bolt, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
             boltAI.KillOnFirstContact();
+            boltAI.Frost();
 
             bolt.AddComponent(typeof(PhysicsComponent), boltPhysics);
             genComponentManager.AddComponent(boltPhysics);
