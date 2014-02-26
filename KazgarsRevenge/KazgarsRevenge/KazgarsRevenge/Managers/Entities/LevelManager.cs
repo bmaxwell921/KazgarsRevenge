@@ -202,17 +202,13 @@ namespace KazgarsRevenge
         // Creates a gameEntity for the given information
         private GameEntity CreateRoom(Room room, Rotation chunkRotation, Vector3 chunkLocation)
         {
-            if (room.name.Equals("1_playerSpawn"))
-            {
-                Console.WriteLine("Break");
-            }
             // Room.location is the top left so we move it to the center by adding half the width and height, then we move it by the chunklocation
-            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2 + chunkLocation;
+            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2;
             // Center is the location plus half the width and height
             Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
 
             // Rotates the center of the room as needed by the chunk rotation
-            Vector3 rotatedCenter = GetRotatedLocation(roomCenter, chunkCenter, chunkRotation);
+            Vector3 rotatedCenter = GetRotatedLocation(roomCenter + chunkLocation, chunkCenter, chunkRotation);
             // The yaw for a room should just be the room's rotation plus the chunk's rotation
             float yaw = room.rotation.ToRadians() + chunkRotation.ToRadians();
 
@@ -220,7 +216,7 @@ namespace KazgarsRevenge
             GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, rotatedCenter * BLOCK_SIZE, yaw);
             
             // Here for convenience
-            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y) + chunkLocation;
+            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
             // Add all the spawners
             AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, roomCenter, room.rotation, chunkLocation, chunkCenter, chunkRotation);
 
@@ -351,8 +347,12 @@ namespace KazgarsRevenge
             {
                 // The location of a block is relative to the room and chunk's top left corner
                 Vector3 spawnCenter = chunkTopLeft + roomTopLeft + new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y) + new Vector3(RoomBlock.SIZE, LEVEL_Y, RoomBlock.SIZE) / 2;
+                Vector3 oldVal = new Vector3(spawnCenter.X, spawnCenter.Y, spawnCenter.Z);
+                if (oldVal.Equals(new Vector3(5.5f, 0, 11.5f)))
+                {
+                }
                 // We need to rotate this location to be correct in the room
-                spawnCenter = GetRotatedLocation(spawnCenter, roomCenter, roomRotation);
+                spawnCenter = GetRotatedLocation(spawnCenter, chunkTopLeft + roomCenter, roomRotation);
                 // Then we need to rotate it to the correct location in the chunk
                 spawnCenter = GetRotatedLocation(spawnCenter, chunkCenter, chunkRotation);
 
@@ -360,6 +360,10 @@ namespace KazgarsRevenge
                 spawnCenter = new Vector3(spawnCenter.X * BLOCK_SIZE, MOB_SPAWN_Y, spawnCenter.Z * BLOCK_SIZE);
 
                 spawnLocs.Add(spawnCenter);
+
+                if (spawnCenter.X < 400 && spawnCenter.Z < 1300)
+                {
+                }
             }
             EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 10);
             roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
@@ -391,7 +395,7 @@ namespace KazgarsRevenge
                 // The location of a block is relative to the room and chunk's top left corner
                 Vector3 blockCenter = chunkLocation + roomTopLeft + new Vector3(block.location.x, LEVEL_Y, block.location.y) + new Vector3(RoomBlock.SIZE, LEVEL_Y, RoomBlock.SIZE) / 2;
                 // We need to rotate this location to be correct in the room
-                blockCenter = GetRotatedLocation(blockCenter, roomCenter, room.rotation);
+                blockCenter = GetRotatedLocation(blockCenter, chunkLocation + roomCenter, room.rotation);
                 // Then we need to rotate it to the correct location in the chunk
                 blockCenter = GetRotatedLocation(blockCenter, chunkCenter, chunkRotation);
 
