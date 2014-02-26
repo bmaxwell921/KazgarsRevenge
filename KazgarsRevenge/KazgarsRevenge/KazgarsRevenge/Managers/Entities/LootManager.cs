@@ -51,7 +51,7 @@ namespace KazgarsRevenge
             float size = 3 + totalSouls;
 
             Entity lootPhysicalData = new Box(position, size, size, size, 1);
-            lootPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.LootCollisionGroup;
+            lootPhysicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             lootPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             lootPhysicalData.IsAffectedByGravity = false;
             lootSoul.AddSharedData(typeof(Entity), lootPhysicalData);

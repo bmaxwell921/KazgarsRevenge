@@ -27,7 +27,7 @@ namespace KazgarsRevenge
 
         protected override void CreateAttack()
         {
-            attacks.CreateFrostbolt(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, physicalData.OrientationMatrix.Forward, 1, this as AliveComponent);
+            attacks.CreateFrostbolt(physicalData.Position + physicalData.OrientationMatrix.Forward * 16 + physicalData.OrientationMatrix.Right * 8, physicalData.OrientationMatrix.Forward, 1, this as AliveComponent);
 
             model.RemoveEmitter("frostchargeleft");
             model.RemoveEmitter("frostchargeright");

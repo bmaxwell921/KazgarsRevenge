@@ -42,7 +42,7 @@ namespace KazgarsRevenge
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 15, .001f);
-            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = dir * 450.0f;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
@@ -96,7 +96,7 @@ namespace KazgarsRevenge
             //((MessageSender)Game.Services.GetService(typeof(MessageSender))).SendMeleeAttackMessage(creator.Entity.id.id, newAttack.id.id, creator.Entity.Faction, position, damage);
             
             Entity attackData = new Box(position, 35, 47, 35, .01f);
-            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
             newAttack.AddSharedData(typeof(Entity), attackData);
@@ -131,7 +131,7 @@ namespace KazgarsRevenge
             GameEntity creator = (assocFact == FactionType.Players) ? players.getEntity(new Identification(creatorId, players.myId.id)) : em.getEntity(new Identification(creatorId, players.myId.id));
 
             Entity attackData = new Box(position, 35, 47, 35, .01f);
-            attackData.CollisionInformation.CollisionRules.Group = (assocFact == FactionType.Players) ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
             newAttack.AddSharedData(typeof(Entity), attackData);
@@ -166,7 +166,7 @@ namespace KazgarsRevenge
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
-            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = dir * 700;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
@@ -198,7 +198,7 @@ namespace KazgarsRevenge
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
-            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = dir * 400.0f;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
@@ -232,7 +232,7 @@ namespace KazgarsRevenge
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
-            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = dir * (150 + 1000 * percentCharged);
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
@@ -264,7 +264,7 @@ namespace KazgarsRevenge
             GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
 
             Entity attackData = new Box(position, 120, 47, 120, .01f);
-            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
             newAttack.AddSharedData(typeof(Entity), attackData);
@@ -289,7 +289,7 @@ namespace KazgarsRevenge
             GameEntity newAttack = new GameEntity("aoe", creator.Entity.Faction, EntityType.Misc);
 
             Entity attackData = new Cylinder(position, 47, radius);//new Box(position, radius * 2, 47, radius * 2, .01f);
-            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
             newAttack.AddSharedData(typeof(Entity), attackData);
@@ -386,7 +386,7 @@ namespace KazgarsRevenge
             GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
 
             Entity attackData = new Cylinder(position, 47, radius);
-            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
             newAttack.AddSharedData(typeof(Entity), attackData);
@@ -412,7 +412,7 @@ namespace KazgarsRevenge
             GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
 
             Entity attackData = new Cylinder(position, 47, radius);
-            attackData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
             newAttack.AddSharedData(typeof(Entity), attackData);
@@ -504,7 +504,7 @@ namespace KazgarsRevenge
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
-            arrowData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = dir * 450;
             arrowData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
@@ -538,7 +538,7 @@ namespace KazgarsRevenge
             GameEntity bolt = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
             Entity boltData = new Box(position, 10, 17, 32, .001f);
-            boltData.CollisionInformation.CollisionRules.Group = creator.Entity.Faction == FactionType.Players ? mainGame.GoodProjectileCollisionGroup : mainGame.BadProjectileCollisionGroup;
+            boltData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             boltData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             boltData.LinearVelocity = dir * 450;
             boltData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));

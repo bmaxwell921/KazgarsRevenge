@@ -441,7 +441,7 @@ namespace KazgarsRevenge
 
         protected virtual void CreateAttack()
         {
-            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 8, GeneratePrimaryDamage(StatType.Strength), false, this);
+            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 25, GeneratePrimaryDamage(StatType.Strength), false, this);
         }
 
         protected virtual void DuringAttack(int i)

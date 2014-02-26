@@ -34,6 +34,8 @@ namespace KazgarsRevenge
 
             settings.Duration = TimeSpan.FromSeconds(1);
 
+            settings.EmitterVelocitySensitivity = .5f;
+
             settings.DurationRandomness = 1.5f;
 
             settings.MinHorizontalVelocity = 0;
