@@ -45,7 +45,7 @@ namespace KazgarsRevenge
     public class AliveComponent : AIComponent
     {
 
-        class NegativeEffect
+        protected class NegativeEffect
         {
             public DeBuff type { get; private set; }
             public double timeLeft;
@@ -63,7 +63,7 @@ namespace KazgarsRevenge
             }
         }
 
-        class PositiveEffect
+        protected class PositiveEffect
         {
             public Buff type { get; private set; }
             public double timeLeft;
@@ -295,38 +295,50 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
-            //handle health (dots and whatnot)
-            for (int i = activeDebuffs.Count - 1; i >= 0; --i)
+
+            List<DeBuff> toRemoveDebuffs = new List<DeBuff>();
+            foreach (KeyValuePair<DeBuff, NegativeEffect> k in activeDebuffs)
             {
-                activeDebuffs[i].timeLeft -= elapsed;
-                if (activeDebuffs[i].timeLeft < activeDebuffs[i].nextTick)
+                NegativeEffect cur = k.Value;
+                cur.timeLeft -= elapsed;
+                if (cur.timeLeft < cur.nextTick)
                 {
-                    HandleDeBuff(activeDebuffs[i].type, BuffState.Ticking);
-                    activeDebuffs[i].nextTick -= activeDebuffs[i].tickLength;
+                    HandleDeBuff(cur.type, BuffState.Ticking, cur.stacks);
+                    cur.nextTick -= cur.tickLength;
                 }
-                if (activeDebuffs[i].timeLeft <= 0 || Dead)
+                if (cur.timeLeft <= 0 || Dead)
                 {
-                    HandleDeBuff(activeDebuffs[i].type, BuffState.Ending);
-                    activeDebuffs.RemoveAt(i);
+                    HandleDeBuff(cur.type, BuffState.Ending, cur.stacks);
+                    toRemoveDebuffs.Add(cur.type);
                 }
+            }
+            for (int i = toRemoveDebuffs.Count - 1; i >= 0; --i)
+            {
+                activeDebuffs.Remove(toRemoveDebuffs[i]);
+            }
+
+            List<Buff> toRemoveBuffs = new List<Buff>();
+            foreach (KeyValuePair<Buff, PositiveEffect> k in activeBuffs)
+            {
+                PositiveEffect cur = k.Value;
+                cur.timeLeft -= elapsed;
+                if (cur.timeLeft < cur.nextTick)
+                {
+                    HandleBuff(cur.type, BuffState.Ticking, cur.stacks);
+                    cur.nextTick -= cur.tickLength;
+                }
+                if (cur.timeLeft <= 0 || Dead)
+                {
+                    HandleBuff(cur.type, BuffState.Ending, cur.stacks);
+                    toRemoveBuffs.Add(cur.type);
+                }
+            }
+            for (int i = toRemoveBuffs.Count - 1; i >= 0; --i)
+            {
+                activeBuffs.Remove(toRemoveBuffs[i]);
             }
 
 
-
-            for (int i = activeBuffs.Count - 1; i >= 0; --i)
-            {
-                activeBuffs[i].timeLeft -= elapsed;
-                if (activeBuffs[i].timeLeft < activeBuffs[i].nextTick)
-                {
-                    HandleBuff(activeBuffs[i].type, BuffState.Ticking);
-                    activeBuffs[i].nextTick -= activeBuffs[i].tickLength;
-                }
-                if (activeBuffs[i].timeLeft <= 0 || Dead)
-                {
-                    HandleBuff(activeBuffs[i].type, BuffState.Ending);
-                    activeBuffs.RemoveAt(i);
-                }
-            }
         }
 
         public virtual void HandleDamageDealt(int damageDealt)
