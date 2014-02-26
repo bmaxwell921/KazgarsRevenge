@@ -104,7 +104,7 @@ namespace KazgarsRevenge
         KeyboardState curKeys = Keyboard.GetState();
         KeyboardState prevKeys = Keyboard.GetState();
         bool guiClick = false;
-
+        int num = 0;
         public override void Update(GameTime gameTime)
         {
             // TODO Remove
@@ -114,6 +114,11 @@ namespace KazgarsRevenge
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
             millisRunningCounter += elapsed;
             stateResetCounter += elapsed;
+
+            if (num++ % 30 == 0)
+            {
+                Console.WriteLine("Player at: {0}", sharedData.Position);
+            }
 
 
             if (attState == AttackState.Locked && canInterrupt && stateResetCounter >= stateResetLength)

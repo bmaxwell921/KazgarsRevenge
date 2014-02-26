@@ -137,7 +137,7 @@ namespace KazgarsRevenge
         public void CreateLevel(FloorName name, int levelWidth, int levelHeight)
         {
             this.rooms = new List<GameEntity>();
-            LevelBuilder lBuilder = new LevelBuilder(levelWidth, levelHeight);
+            LevelBuilder lBuilder = new LevelBuilder(Game.Services.GetService(typeof(LoggerManager)) as LoggerManager, levelWidth, levelHeight);
             this.currentLevel = lBuilder.BuildLevel(name);
 
             // Go thru each chunkInfo and add the rooms
@@ -176,8 +176,9 @@ namespace KazgarsRevenge
         public Vector3 GetPlayerSpawnLocation()
         {
             // The spawnLocs are in their 'untransformed' form so we multiply by BLOCK*SIZE so it's in the right spot
-            Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.Instance.Next(currentLevel.spawnLocs.Count)];
-            return spawnLoc * BLOCK_SIZE + new Vector3(0, MOB_SPAWN_Y, 0);
+            //Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.Instance.Next(currentLevel.spawnLocs.Count)];
+            Vector3 spawnLoc = currentLevel.spawnLocs[7];
+            return spawnLoc * BLOCK_SIZE + new Vector3(0, 100, 0);
         }
 
         #region Room Creation
@@ -201,6 +202,10 @@ namespace KazgarsRevenge
         // Creates a gameEntity for the given information
         private GameEntity CreateRoom(Room room, Rotation chunkRotation, Vector3 chunkLocation)
         {
+            if (room.name.Equals("1_playerSpawn"))
+            {
+                Console.WriteLine("Break");
+            }
             // Room.location is the top left so we move it to the center by adding half the width and height, then we move it by the chunklocation
             Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2 + chunkLocation;
             // Center is the location plus half the width and height
@@ -377,9 +382,9 @@ namespace KazgarsRevenge
         {
             // Holds the center of each block
             ISet<Vector3> blockCenters = new HashSet<Vector3>();
-            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2 + chunkLocation;
+            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2;
             Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
-            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y) + chunkLocation;
+            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
 
             foreach (RoomBlock block in room.blocks)
             {
@@ -602,16 +607,19 @@ namespace KazgarsRevenge
             private int levelWidth;
             private int levelHeight;
 
+            private LoggerManager lm;
+
             // Default uses the level width and height as defined in the Constants file
-            public LevelBuilder()
-                : this(Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT)
+            public LevelBuilder(LoggerManager lm)
+                : this(lm, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT)
             {
                 
             }
 
             // Specific constructor for more cool stuff
-            public LevelBuilder(int levelWidth, int levelHeight)
+            public LevelBuilder(LoggerManager lm, int levelWidth, int levelHeight)
             {
+                this.lm = lm;
                 this.SetLevelBounds(levelWidth, levelHeight);
             }
 
@@ -650,6 +658,11 @@ namespace KazgarsRevenge
                 PlaceTheRest(name, chunks);
             }
 
+            private void LogChunkChoice(int i, int j, ChunkInfo ci)
+            {
+                lm.Log(Level.DEBUG, String.Format("LevelGeneration chose chunk:\n\t\t\t{0}\n\t\t\tLocation:({1},{2})\n\t\t\tFileName:{3}", ci.ToString(), i, j, ci.FileName));
+            }
+
             // Places a home chunk in the middle of the level
             private void PlaceSoulevator(FloorName name, ChunkInfo[,] chunks)
             {
@@ -657,6 +670,7 @@ namespace KazgarsRevenge
                 int midY = levelHeight / 2;
 
                 chunks[midX, midY] = ChunkUtil.Instance.GetSoulevatorChunk(name);
+                this.LogChunkChoice(midX, midY, chunks[midX, midY]);
             }
 
             // Places the boss in a random location
@@ -685,6 +699,7 @@ namespace KazgarsRevenge
                         {
                             ISet<Direction> reqDirs = GetRequiredDirections(name, chunks, i, j);
                             chunks[i, j] = ChunkUtil.Instance.GetSatisfyingChunk(name, ChunkType.NORMAL, reqDirs);
+                            this.LogChunkChoice(i, j, chunks[i, j]);
                         }
                         // Otherwise it's the boss/soulevator/key
                     }

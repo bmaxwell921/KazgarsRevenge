@@ -168,8 +168,10 @@ namespace KazgarsRevenge
             lm = new LoggerManager();
             // Log to both the console and a file
             lm.AddLogger(new FileWriteLogger(FileWriteLogger.CLIENT_SUB_DIR));
-            lm.AddLogger(new ConsoleLogger());
+            //lm.AddLogger(new ConsoleLogger());
             Services.AddService(typeof(LoggerManager), lm);
+
+            ChunkUtil.Instance.SetLoggerManager(lm);
         }
 
         protected override void LoadContent()
