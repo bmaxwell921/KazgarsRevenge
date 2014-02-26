@@ -28,7 +28,7 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "spark";
+            settings.TextureName = "plus";
 
             settings.MaxParticles = 1000;
 
@@ -43,6 +43,9 @@ namespace KazgarsRevenge
             settings.MaxVerticalVelocity = 0;
 
             settings.Gravity = new Vector3(0, 100, 0);
+
+            settings.MinColor = Color.LightGreen;
+            settings.MaxColor = Color.LightGreen;
 
             settings.MinStartSize = 7;
             settings.MaxStartSize = 9;

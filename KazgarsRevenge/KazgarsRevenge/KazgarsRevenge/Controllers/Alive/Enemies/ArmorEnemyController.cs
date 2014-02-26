@@ -19,6 +19,10 @@ namespace KazgarsRevenge
             settings.walkSpeed = 120;
         }
 
+        protected override void SpawnHitParticles()
+        {
+            
+        }
         
     }
 }

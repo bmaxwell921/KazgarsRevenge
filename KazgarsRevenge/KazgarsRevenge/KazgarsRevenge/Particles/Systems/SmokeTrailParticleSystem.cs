@@ -28,11 +28,11 @@ namespace KazgarsRevenge
 
             settings.EmitterVelocitySensitivity = 0.05f;
 
-            settings.MinHorizontalVelocity = 1;
-            settings.MaxHorizontalVelocity = 10;
+            settings.MinHorizontalVelocity = 0;
+            settings.MaxHorizontalVelocity = 1;
 
-            settings.MinVerticalVelocity = -10;
-            settings.MaxVerticalVelocity = 10;
+            settings.MinVerticalVelocity = 0;
+            settings.MaxVerticalVelocity = 1;
 
             settings.MinColor = new Color(64, 96, 128, 255);
             settings.MaxColor = new Color(255, 255, 255, 128);
@@ -41,10 +41,10 @@ namespace KazgarsRevenge
             settings.MaxRotateSpeed = 4;
 
             settings.MinStartSize = 10;
-            settings.MaxStartSize = 30;
+            settings.MaxStartSize = 20;
 
-            settings.MinEndSize = 40;
-            settings.MaxEndSize = 110;
+            settings.MinEndSize = 1;
+            settings.MaxEndSize = 5;
         }
     }
 }
