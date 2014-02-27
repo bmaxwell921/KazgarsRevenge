@@ -24,6 +24,17 @@ namespace KazgarsRevenge
             get;
             private set;
         }
+
+        public int UnRotWidth
+        {
+            get;
+            private set;
+        }
+        public int UnRotHeight
+        {
+            get;
+            private set;
+        }
         // All the blocks that make up this room
         public List<RoomBlock> blocks
         {
@@ -82,6 +93,9 @@ namespace KazgarsRevenge
                 }
             }
 
+            UnRotWidth = maxX - minX + 1;
+            UnRotHeight = maxY - minY + 1;
+
             if (rotation == Rotation.ZERO || rotation == Rotation.ONE_EIGHTY)
             {
                 Width = maxX - minX + 1;
@@ -102,12 +116,13 @@ namespace KazgarsRevenge
             clone.rotation = this.rotation;
             clone.Width = this.Width;
             clone.Height = this.Height;
-            List<RoomBlock> blocks = new List<RoomBlock>();
-            foreach (RoomBlock rb in blocks)
+            clone.UnRotWidth = this.UnRotWidth;
+            clone.UnRotHeight = this.UnRotHeight;
+            clone.blocks = new List<RoomBlock>();
+            foreach (RoomBlock rb in this.blocks)
             {
-                blocks.Add((RoomBlock)rb.Clone());
+                clone.blocks.Add((RoomBlock)rb.Clone());
             }
-            clone.blocks = blocks;
             return clone;
         }
     }

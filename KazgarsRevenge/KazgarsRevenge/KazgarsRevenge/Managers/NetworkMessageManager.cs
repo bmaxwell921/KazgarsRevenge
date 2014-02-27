@@ -75,7 +75,6 @@ namespace KazgarsRevenge
         {
             // Send this client id so the server knows who to disconnect
             String form = String.Format("{0}", players.myId.id);
-            Console.WriteLine(form);
             Client.Shutdown(String.Format("{0}", players.myId.id));
         }
 

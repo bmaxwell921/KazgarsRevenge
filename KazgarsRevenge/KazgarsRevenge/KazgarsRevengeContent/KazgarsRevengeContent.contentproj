@@ -427,60 +427,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Rooms\bottomFloor.fbx">
-      <Name>bottomFloor</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\cooridor.fbx">
-      <Name>cooridor</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\playerSpawn.fbx">
-      <Name>playerSpawn</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\threeWayConnector.fbx">
-      <Name>threeWayConnector</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\threeWayJunc.fbx">
-      <Name>threeWayJunc</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\twoWayConnector.fbx">
-      <Name>twoWayConnector</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\twoWayJunc.fbx">
-      <Name>twoWayJunc</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\twoWayJunc2.fbx">
-      <Name>twoWayJunc2</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\Rooms\floorTest.png">
-      <Name>floorTest</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\wallTest.png">
-      <Name>wallTest</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\groundIndicator.png">
       <Name>groundIndicator</Name>
       <Importer>TextureImporter</Importer>
@@ -579,8 +525,179 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\Particles\plus.png">
-      <Name>plus</Name>
+      <Compile Include="Textures\Particles\plus.png">
+        <Name>plus</Name>
+        <Importer>TextureImporter</Importer>
+        <Processor>TextureProcessor</Processor>
+      </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Rooms\1_5wideLRoomCorner.fbx">
+      <Name>1_5wideLRoomCorner</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Rooms\1_1block2doorAdj.fbx">
+      <Name>1_1block2doorAdj</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_2boxSwitcher.fbx">
+      <Name>1_2boxSwitcher</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_2wideLRoom.fbx">
+      <Name>1_2wideLRoom</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_3boxSwitcher.fbx">
+      <Name>1_3boxSwitcher</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_3wideLRoom.fbx">
+      <Name>1_3wideLRoom</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_4doorConnector.fbx">
+      <Name>1_4doorConnector</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_4doorSingle.fbx">
+      <Name>1_4doorSingle</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_4doorTRoom.fbx">
+      <Name>1_4doorTRoom</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_4wayMixer.fbx">
+      <Name>1_4wayMixer</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_5by5KeyMixer.fbx">
+      <Name>1_5by5KeyMixer</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_6blockChestKeyRoom.fbx">
+      <Name>1_6blockChestKeyRoom</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_6by7SRoom.fbx">
+      <Name>1_6by7SRoom</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_6doorConnector.fbx">
+      <Name>1_6doorConnector</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_chestRoom.fbx">
+      <Name>1_chestRoom</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_corWithSideWalls.fbx">
+      <Name>1_corWithSideWalls</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_deadEndChest.fbx">
+      <Name>1_deadEndChest</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_firstFloorBossRoom.fbx">
+      <Name>1_firstFloorBossRoom</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_LDoorHallwayConnector.fbx">
+      <Name>1_LDoorHallwayConnector</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_playerSpawn.fbx">
+      <Name>1_playerSpawn</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_singleCap.fbx">
+      <Name>1_singleCap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_singleDoorNS.fbx">
+      <Name>1_singleDoorNS</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_threeBlockHallway.fbx">
+      <Name>1_threeBlockHallway</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_threeBlockMobHallway.fbx">
+      <Name>1_threeBlockMobHallway</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_threeDoorBlock.fbx">
+      <Name>1_threeDoorBlock</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_threeDoorCor.fbx">
+      <Name>1_threeDoorCor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\1_twoBlockHallway.fbx">
+      <Name>1_twoBlockHallway</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Rooms\books1.png">
+      <Name>books1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\books2.png">
+      <Name>books2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\floorTest.png">
+      <Name>floorTest</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\lava.jpg">
+      <Name>lava</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\wallTest.png">
+      <Name>wallTest</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Rooms\wood.png">
+      <Name>wood</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

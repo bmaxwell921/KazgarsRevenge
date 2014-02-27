@@ -67,7 +67,7 @@ namespace KazgarsRevenge
             // check if anything is close by
             if (spawnLocations.Count() != 0)
             {
-                // Just check one of them
+                // TODO Just check one of them
                 //return QueryNearEntityFaction(FactionType.Players, spawnLocations.GetEnumerator().Current, 0, proximity, true) != null;
                 return true;
             }

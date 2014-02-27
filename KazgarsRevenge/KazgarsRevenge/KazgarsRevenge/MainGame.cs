@@ -168,8 +168,10 @@ namespace KazgarsRevenge
             lm = new LoggerManager();
             // Log to both the console and a file
             lm.AddLogger(new FileWriteLogger(FileWriteLogger.CLIENT_SUB_DIR));
-            lm.AddLogger(new ConsoleLogger());
+            //lm.AddLogger(new ConsoleLogger());
             Services.AddService(typeof(LoggerManager), lm);
+
+            ChunkUtil.Instance.SetLoggerManager(lm);
         }
 
         protected override void LoadContent()
@@ -233,7 +235,6 @@ namespace KazgarsRevenge
         }
         protected override void Update(GameTime gameTime)
         {
-            //nmm.Update(gameTime);
             if (gameState == GameState.Playing)
             {
                 physics.Update();
@@ -265,35 +266,15 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void LoadLevel(FloorName name)
         {
-            //levels.CreateLevel(name);
-            levels.DemoLevel();
-
-            // TODO put him somewhere useful
-            players.CreateMainPlayer(new Vector3(120, 20, 120), DUMMY_ID);
+            // Testing version
+            //levels.DemoLevel();
             //players.CreateMainPlayer(new Vector3(900, 20, 1400), DUMMY_ID);
-
-            // TODO Spawning Mechanics are ready, just need to get more chunks
-            for (int i = 0; i < 20; ++i)
-            {
-                for (int j = 0; j < 15; ++j)
-                {
-                    int r = rand.Next(3);
-                    if (r == 0)
-                    {
-                        enemies.CreateMagicSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
-                    }
-                    else if (r == 1)
-                    {
-                        enemies.CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
-                    }
-                    else
-                    {
-                        enemies.CreateArmorEnemy(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(130 + i * 150, 20, -100 - j * 150), 1);
-                    }
-                }
-            }
-
             //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(120, 20, 400));
+
+            // Down here is the final version of this method
+            levels.CreateLevel(name);
+            players.CreateMainPlayerInLevel(DUMMY_ID);
+
         }
 
         Vector2 vecLoadingText;

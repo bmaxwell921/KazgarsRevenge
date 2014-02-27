@@ -37,6 +37,11 @@ namespace KazgarsRevenge
             playerMap = new Dictionary<Identification, GameEntity>();
         }
 
+        public void CreateMainPlayerInLevel(Identification id)
+        {
+            this.CreateMainPlayer((Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation(), id);
+        }
+
         public void CreateMainPlayer(Vector3 position, Identification id)
         {
             //TODO: actually load from file (inside of PlayerSave class, maybe)

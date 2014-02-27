@@ -14,6 +14,11 @@ using BEPUphysics.DataStructures;
 using SkinnedModelLib;
 using Newtonsoft.Json;
 
+using QuickGraph;
+using QuickGraph.Algorithms;
+using QuickGraph.Algorithms.ShortestPath;
+using QuickGraph.Algorithms.Observers;
+
 namespace KazgarsRevenge
 {
     class RoomData
@@ -53,17 +58,21 @@ namespace KazgarsRevenge
             // The chunk objects that make up this Level
             public Chunk[,] chunks;
 
-            // The information about the chunks in this level TODO might be unneeded
+            // The information about the chunks in this level
             public ChunkInfo[,] chunkInfos;
 
-            // TODO add this
-            // public Graph pathGraph;
+            public IList<Vector3> spawnLocs;
+
+            // The graph representing enemy pathing possibilities. this is gonna be connected as fuck
+             public AdjacencyGraph<Vector3, Edge<Vector3>> pathGraph;
 
             public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos)
             {
                 this.currentFloor = currentFloor;
                 this.chunks = chunks;
                 this.chunkInfos = chunkInfos;
+                this.spawnLocs = new List<Vector3>();
+                pathGraph = new AdjacencyGraph<Vector3, Edge<Vector3>>();
             }
         }
 
@@ -115,8 +124,7 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void CreateLevel(FloorName name)
         {
-            //this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
-            this.CreateLevel(name, 2, 1);
+            this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
         }
 
         /// <summary>
@@ -128,7 +136,7 @@ namespace KazgarsRevenge
         public void CreateLevel(FloorName name, int levelWidth, int levelHeight)
         {
             this.rooms = new List<GameEntity>();
-            LevelBuilder lBuilder = new LevelBuilder(levelWidth, levelHeight);
+            LevelBuilder lBuilder = new LevelBuilder(Game.Services.GetService(typeof(LoggerManager)) as LoggerManager, levelWidth, levelHeight);
             this.currentLevel = lBuilder.BuildLevel(name);
 
             // Go thru each chunkInfo and add the rooms
@@ -139,8 +147,35 @@ namespace KazgarsRevenge
                     this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j));
                 }
             }
+
+            /*
+             * This is a set of all the locations of doors in the entire map. After we're done connecting
+             * each room's internal blocks together we'll go thru all these door locations and add edges
+             * between doors that are adjacent
+             */ 
+            ISet<Vector3> doors = new HashSet<Vector3>();
+            for (int i = 0; i < levelWidth; ++i)
+            {
+                for (int j = 0; j < levelHeight; ++j)
+                {
+                    BuildAndAddPathing(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j, doors);
+                }
+            }
+
+            ConnectDoors(doors);
         }
 
+        /// <summary>
+        /// Returns a location to spawn the player at
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 GetPlayerSpawnLocation()
+        {
+            Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.Instance.Next(currentLevel.spawnLocs.Count)];
+            return spawnLoc;
+        }
+
+        #region Room Creation
         // Returns a list of all the rooms that belong to this chunk, in their proper locations
         private IList<GameEntity> CreateChunkRooms(Chunk chunk, ChunkInfo chunkInfo, int i, int j)
         {
@@ -162,12 +197,12 @@ namespace KazgarsRevenge
         private GameEntity CreateRoom(Room room, Rotation chunkRotation, Vector3 chunkLocation)
         {
             // Room.location is the top left so we move it to the center by adding half the width and height, then we move it by the chunklocation
-            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2 + chunkLocation;
+            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2;
             // Center is the location plus half the width and height
             Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
 
             // Rotates the center of the room as needed by the chunk rotation
-            Vector3 rotatedCenter = GetRotatedLocation(roomCenter, chunkCenter, chunkRotation);
+            Vector3 rotatedCenter = GetRotatedLocation(roomCenter + chunkLocation, chunkCenter, chunkRotation);
             // The yaw for a room should just be the room's rotation plus the chunk's rotation
             float yaw = room.rotation.ToRadians() + chunkRotation.ToRadians();
 
@@ -175,12 +210,9 @@ namespace KazgarsRevenge
             GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, rotatedCenter * BLOCK_SIZE, yaw);
             
             // Here for convenience
-            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y) + chunkLocation;
+            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
             // Add all the spawners
-            AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, roomCenter, room.rotation, chunkLocation, chunkCenter, chunkRotation);
-
-            //TODO player spawners
-
+            AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, room.rotation, chunkLocation,  chunkRotation, room.UnRotWidth, room.UnRotHeight);
             return roomGE;
         }
 
@@ -300,34 +332,297 @@ namespace KazgarsRevenge
         private static readonly float DELAY = 3000;
 
         // Adds the necessary spawning components to the roomGE
-        private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Vector3 roomCenter, Rotation roomRotation, Vector3 chunkTopLeft, Vector3 chunkCenter, Rotation chunkRotation)
+        private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
         {
             ISet<Vector3> spawnLocs = new HashSet<Vector3>();
             foreach (RoomBlock spawner in enemySpawners)
             {
-                // Need to rotate the location by the room rotation, then by the chunk rotation
-                //Vector3 blockLoc = new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y);
-                //Vector3 rotatedLoc = RotatedLocation(blockLoc, roomCenter, Vector3.Zero, roomRotation);
-                //rotatedLoc = RotatedLocation(rotatedLoc, Vector3.Zero, chunkCenter, chunkRotation);
-                //spawnLocs.Add(rotatedLoc);
-
-                // The location of a block is relative to the room and chunk's top left corner
-                Vector3 spawnCenter = chunkTopLeft +roomTopLeft + new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y) + new Vector3(RoomBlock.SIZE, LEVEL_Y, RoomBlock.SIZE) / 2;
-                // We need to rotate this location to be correct in the room
-                spawnCenter = GetRotatedLocation(spawnCenter, roomCenter, roomRotation);
-                // Then we need to rotate it to the correct location in the chunk
-                spawnCenter = GetRotatedLocation(spawnCenter, chunkCenter, chunkRotation);
-
-                // Set their location a bit above the ground so they don't fall thru
-                spawnCenter = new Vector3(spawnCenter.X * BLOCK_SIZE, MOB_SPAWN_Y, spawnCenter.Z * BLOCK_SIZE);
-
+                Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
                 spawnLocs.Add(spawnCenter);
             }
-            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY);
+            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
             roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
             genComponentManager.AddComponent(eps);
         }
 
+        /// <summary>
+        /// Returns a Vector3 located at the center of the block at the given location basically.
+        /// </summary>
+        /// <param name="chunkTopLeft">Chunk's top left corner location</param>
+        /// <param name="roomTopLeft">Room's top left corner, RELATIVE TO THE CHUNK - IT SHOULD NOT INCLUDE THE CHUNK LOCATION</param>
+        /// <param name="blockLoc"></param>
+        /// <param name="chunkRotation"></param>
+        /// <param name="roomRotation"></param>
+        /// <param name="roomWidth"></param>
+        /// <param name="roomHeight"></param>
+        /// <returns></returns>
+        private Vector3 GetRotatedBlock(Vector3 chunkTopLeft, Vector3 roomTopLeft, Vector3 blockLoc, Rotation chunkRotation, Rotation roomRotation, int roomWidth, int roomHeight)
+        {
+            // Rotate it about the room
+            int numRoomRotations = (int)(roomRotation.ToDegrees() / 90f);
+            int swapWidth = roomWidth;
+            // We start by rotating about the room so leave this position as relative to the room topLeft
+            Vector3 spawnTopLeft = blockLoc;
+            for (int i = 0; i < numRoomRotations; ++i)
+            {
+                spawnTopLeft = rotateBlockTo(spawnTopLeft, swapWidth);
+                // Update the swapWidth to reflect the change from rotating
+                swapWidth = (swapWidth == roomWidth) ? roomHeight : roomWidth;
+            }
+
+            // Rotate it about the chunk
+            int numChunkRotations = (int)(chunkRotation.ToDegrees() / 90f);
+
+            // Now that it's been rotated in the room, add the room position for rotating it about the chunk
+            spawnTopLeft += roomTopLeft;
+
+            for (int i = 0; i < numChunkRotations; ++i)
+            {
+                // Don't need to change the rotate width because chunks are square
+                spawnTopLeft = rotateBlockTo(spawnTopLeft, CHUNK_SIZE);
+            }
+
+            // Now that it's been totally rotated, we can add in the chunkLocation
+            spawnTopLeft += chunkTopLeft;
+
+            // Center it, scale it up, and return
+            return new Vector3((spawnTopLeft.X + RoomBlock.SIZE / 2f) * BLOCK_SIZE, MOB_SPAWN_Y, (spawnTopLeft.Z + RoomBlock.SIZE / 2f) * BLOCK_SIZE);
+        }
+
+        // Rotates the given location by 90 degrees in the room with the given width and height
+        private Vector3 rotateBlockTo(Vector3 blockLoc, int width)
+        {
+            return new Vector3(blockLoc.Z, blockLoc.Y, width - blockLoc.X - 1);
+        }
+
+        #endregion
+
+        #region Graph Building
+        private void BuildAndAddPathing(Chunk chunk, ChunkInfo chunkInfo, int i, int j, ISet<Vector3> doors)
+        {
+            Vector3 chunkLocation = new Vector3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE);
+            foreach (Room room in chunk.rooms)
+            {
+                BuildRoomGraph(room, chunkLocation, chunk.rotation, doors);
+            }
+        }
+
+        // Builds the graph for a single room, adding any doorBlocks to the doors param
+        private void BuildRoomGraph(Room room, Vector3 chunkLocation, Rotation chunkRotation, ISet<Vector3> doors)
+        {
+            // Holds the center of each block
+            ISet<Vector3> blockCenters = new HashSet<Vector3>();
+            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2;
+            Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
+            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
+
+            foreach (RoomBlock block in room.blocks)
+            {
+                Vector3 blockCenter = GetRotatedBlock(chunkLocation, roomTopLeft, new Vector3(block.location.x, LEVEL_Y, block.location.y), chunkRotation, room.rotation, room.UnRotWidth, room.UnRotHeight);
+                // For the graph the y should probs be 0, I'll make it ignore the Y when checking for closeness tho
+                blockCenter.Y = LEVEL_Y;
+                // These have not been transformed by BLOCK_SIZE yet
+                blockCenters.Add(blockCenter);
+
+                // If this block is a door we need to hold onto it so we can attach it to the other doors
+                if (block.IsDoor())
+                {
+                    doors.Add(blockCenter);
+                }
+
+                // If it's a player spawn, we need to know that we can spawn players here
+                if (block.IsPlayerSpawn())
+                {
+                    // Set him a little higher
+                    blockCenter.Y = MOB_SPAWN_Y;
+                    currentLevel.spawnLocs.Add(blockCenter);
+                }
+            }
+
+            /*
+             * Now that we have the center of each block, we can put them in the graph.
+             *  For each block, check if any of it's adjacent neighbors are in the set, if so
+             *  then add an edge
+             */
+            foreach (Vector3 blockCenter in blockCenters)
+            {
+                // Look at all of its adjacent neighbors
+                for (int i = -1; i <= 1; ++i)
+                {
+                    for (int j = -1; j <= 1; ++j)
+                    {
+                        Vector3 testBlock = new Vector3(blockCenter.X + i, blockCenter.Y, blockCenter.Z + j);
+                        // If a neighbor is one of the blocks in the room, the connect them
+                        if (!testBlock.Equals(blockCenter) && blockCenters.Contains(testBlock))
+                        {
+                            this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
+                        }
+                    }
+                }
+            }
+
+        }
+
+        // Connects all adjacent doors to each other
+        private void ConnectDoors(ISet<Vector3> doors)
+        {
+            /*
+             * If the door we're looking at is x, then possible doors to connect to are the z locations
+             *  [ ][z][ ]
+             *  [z][x][z]
+             *  [ ][z][ ]
+             */ 
+            Vector3[] adjs = {new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1)};
+            /*
+             * Same idea as connecting all roomBlocks, iterate over all the doors and then iterate over the
+             * 4 non-diagonal adjacent blocks. If a block is in the doors set, then add an edge
+             */ 
+            foreach (Vector3 door in doors)
+            {
+                foreach (Vector3 adj in adjs)
+                {
+                    Vector3 testDoor = door + adj;
+                    // If the adjacent is one of the doors, add the edge
+                    if (doors.Contains(testDoor))
+                    {
+                        // Doors next to each other in a room have already been connected
+                        this.AddEdge(new Edge<Vector3>(door, testDoor));
+                    }
+                }
+            }
+        }
+
+        // Method used to safely add an edge to the pathGraph
+        private void AddEdge(Edge<Vector3> edge)
+        {
+            if (!currentLevel.pathGraph.ContainsVertex(edge.Source))
+            {
+                currentLevel.pathGraph.AddVertex(edge.Source);
+            }
+            if (!currentLevel.pathGraph.ContainsVertex(edge.Target))
+            {
+                currentLevel.pathGraph.AddVertex(edge.Target);
+            }
+            if (!currentLevel.pathGraph.ContainsEdge(edge))
+            {
+                currentLevel.pathGraph.AddEdge(edge);
+            }
+        }
+        #endregion
+
+        #region Path Finding
+        /// <summary>
+        /// Returns a Path from the source location to the destination location.
+        /// First element is the given src, last element is the  given dest.
+        /// 
+        /// NOTE: BE AWARE OF THE Y VALUE. ALONG THE PATH THE Y'S WILL ALWAYS BE 0
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dest"></param>
+        /// <returns>The path from src to dest, or null if no path exists</returns>
+        public IList<Vector3> GetPath(Vector3 src, Vector3 dest)
+        {
+            // First we gotta find the closest node in the graph to src
+            // and the closest node to dest
+            Vector3 srcNode = FindClosestNodeTo(src);
+            Vector3 destNode = FindClosestNodeTo(dest);
+
+            /* 
+             * If they're too far then that means we couldn't actually find the
+             * locations...not sure if this is actually possible, but it happened
+             * when testing
+             */ 
+            if (TooFar(src, srcNode) || TooFar(dest, destNode))
+            {
+                return null;
+            }
+
+            // Let the library do all the hard work
+            // Delegate to calculate the cost from one node to another
+            Func<Edge<Vector3>, double> cost = edge =>
+            {
+                return Vector3.Distance(edge.Source, edge.Target);
+            };
+
+            // Delegate to calculate the heuristic for a node
+            Func<Vector3, double> heuristic = vect =>
+            {
+                return Vector3.Distance(vect, dest);
+            };
+            AStarShortestPathAlgorithm<Vector3, Edge<Vector3>> aStar = new AStarShortestPathAlgorithm<Vector3, Edge<Vector3>>(currentLevel.pathGraph, cost, heuristic);
+
+            // Observer used to get the path
+            VertexPredecessorRecorderObserver<Vector3, Edge<Vector3>> predObs = new VertexPredecessorRecorderObserver<Vector3, Edge<Vector3>>();
+            predObs.Attach(aStar);
+
+            // Actually do the computation
+            aStar.ComputeDistanceBetween(srcNode, destNode);
+            IEnumerable<Edge<Vector3>> path;
+            bool validPath = predObs.TryGetPath(destNode, out path);
+
+            if (!validPath)
+            {
+                return null;
+            }
+
+            IList<Vector3> pathList = new List<Vector3>();
+            pathList.Add(src);
+            // Fill in the path as a nice, usable list
+            foreach (Edge<Vector3> pathEle in path)
+            {
+                pathList.Add(pathEle.Source);
+            }
+            // The way i'm adding stuff to the path list, we'll miss the final destination, so add it here
+            pathList.Add(destNode);
+            pathList.Add(dest);
+            return pathList;
+            
+        }
+
+        /*
+         * Checks whether the given realLocation is too far from the graphNode, ie calculating the path
+         * will just give us silly answers
+         */ 
+
+        private bool TooFar(Vector3 realLoc, Vector3 graphNode)
+        {
+            // Set they Y to be the same so it doesn't mess with anything
+            Vector3 compReal = new Vector3(realLoc.X, LEVEL_Y, realLoc.Z);
+            Vector3 compGraph = new Vector3(graphNode.X, LEVEL_Y, graphNode.Z);
+            /*
+             * Trig:
+             * Blocks are 100x100. The farthest anything can be from the middle of the center is
+             * the length of the line from the center to a corner. From Pythagorean Theorem the length
+             * is sqrt((BLOCK_SIZE / 2) ^ 2 + (BLOCK_SIZE / 2) ^ 2) 
+             */
+            // Add a buffer cause why not
+            double buffer = 5;
+            double halfBlockSize = BLOCK_SIZE / 2.0;
+            double maxDist = Math.Sqrt(halfBlockSize * halfBlockSize + halfBlockSize * halfBlockSize) + buffer;
+            return Vector3.Distance(compReal, compGraph) > maxDist;
+        }
+
+        // Returns the Vector3 node in the pathGraph closest to the given location
+        private Vector3 FindClosestNodeTo(Vector3 location)
+        {
+            Vector3 min = Vector3.Zero;
+            // Set this as null for the first time around
+            double? minDist = null;
+
+            foreach (Vector3 node in currentLevel.pathGraph.Vertices)
+            {
+                double thisDist = Vector3.Distance(location, node);
+                if (minDist == null || thisDist < minDist)
+                {
+                    min = node;
+                    minDist = thisDist;
+                }
+            }
+            return min;
+        }
+        #endregion
+
+        #region Building Level
         /// <summary>
         /// Class responsible for actually building the chunk
         /// </summary>
@@ -336,16 +631,19 @@ namespace KazgarsRevenge
             private int levelWidth;
             private int levelHeight;
 
+            private LoggerManager lm;
+
             // Default uses the level width and height as defined in the Constants file
-            public LevelBuilder()
-                : this(Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT)
+            public LevelBuilder(LoggerManager lm)
+                : this(lm, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT)
             {
                 
             }
 
             // Specific constructor for more cool stuff
-            public LevelBuilder(int levelWidth, int levelHeight)
+            public LevelBuilder(LoggerManager lm, int levelWidth, int levelHeight)
             {
+                this.lm = lm;
                 this.SetLevelBounds(levelWidth, levelHeight);
             }
 
@@ -369,8 +667,6 @@ namespace KazgarsRevenge
                 ChooseChunks(name, chunkInfos);
 
                 Chunk[,] chunks = ReadChunks(name, chunkInfos);
-                
-                // Graph mvGraph = CreateMovementGraph(name, chunks);
                 return new LevelInfo(name, chunks, chunkInfos);
             }
 
@@ -378,10 +674,15 @@ namespace KazgarsRevenge
             private void ChooseChunks(FloorName name, ChunkInfo[,] chunks)
             {
                 // TODO re-add these for full implementation
-                //PlaceSoulevator(name, chunks);
+                PlaceSoulevator(name, chunks);
                 //Vector2 bossLoc = PlaceBoss(name, chunks);
                 //PlaceKey(name, chunks, bossLoc);
                 PlaceTheRest(name, chunks);
+            }
+
+            private void LogChunkChoice(int i, int j, ChunkInfo ci)
+            {
+                lm.Log(Level.DEBUG, String.Format("LevelGeneration chose chunk:\n\t\t\t{0}\n\t\t\tLocation:({1},{2})\n\t\t\tFileName:{3}", ci.ToString(), i, j, ci.FileName));
             }
 
             // Places a home chunk in the middle of the level
@@ -391,6 +692,7 @@ namespace KazgarsRevenge
                 int midY = levelHeight / 2;
 
                 chunks[midX, midY] = ChunkUtil.Instance.GetSoulevatorChunk(name);
+                this.LogChunkChoice(midX, midY, chunks[midX, midY]);
             }
 
             // Places the boss in a random location
@@ -419,6 +721,7 @@ namespace KazgarsRevenge
                         {
                             ISet<Direction> reqDirs = GetRequiredDirections(name, chunks, i, j);
                             chunks[i, j] = ChunkUtil.Instance.GetSatisfyingChunk(name, ChunkType.NORMAL, reqDirs);
+                            this.LogChunkChoice(i, j, chunks[i, j]);
                         }
                         // Otherwise it's the boss/soulevator/key
                     }
@@ -465,7 +768,7 @@ namespace KazgarsRevenge
                 if (chunks[i, j] == null)
                 {
                     // TODO here is where we can change it to make less doors. Right now by returning true on an unplaced chunk we are 
-                    // forcing the maximum amount of doors
+                    // forcing the maximum amount of doors. Maybe have a density value that is generated?
                     return true;
                 }
 
@@ -482,7 +785,7 @@ namespace KazgarsRevenge
                 {
                     for (int j = 0; j < levelHeight; ++j)
                     {
-                        Chunk c = ChunkUtil.Instance.ReadChunk(chunks[i, j]);
+                        Chunk c = ChunkUtil.Instance.ReadChunk(chunks[i, j], name);
                         // Set the rotation properly, all the JSONs have the rotation as ZERO
                         c.rotation = chunks[i, j].rotation;
                         ret[i, j] = c;
@@ -490,15 +793,7 @@ namespace KazgarsRevenge
                 }
                 return ret;
             }
-
-            //#region Creating Rooms
-            //// Creates a list of all the rooms making up this chunk
-            //private IList<GameEntity> CreateRooms(FloorName name, ChunkInfo[,] chunks)
-            //{
-            //    // DON'T FORGET TO ROTATE!
-            //}
-            //#endregion
         }
-
+        #endregion
     }
 }

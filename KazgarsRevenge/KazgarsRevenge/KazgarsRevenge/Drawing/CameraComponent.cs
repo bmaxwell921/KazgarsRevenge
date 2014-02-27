@@ -127,10 +127,10 @@ namespace KazgarsRevenge
                 {
                     zoom = minZoom;
                 }
-                if (zoom > maxZoom)
-                {
-                    zoom = maxZoom;
-                }
+                //if (zoom > maxZoom)
+                //{
+                //    zoom = maxZoom;
+                //}
 
                 if (curKeys.IsKeyDown(Keys.Right) && prevKeys.IsKeyUp(Keys.Right))
                 {

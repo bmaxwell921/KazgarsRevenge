@@ -1,0 +1,18 @@
+{
+  "blocks": [
+    {
+      "location": {
+        "x": 0,
+        "y": 0
+      },
+      "name": "doorNS",
+      "rotation": "ZERO"
+    }
+  ],
+  "location": {
+    "x": 0,
+    "y": 0
+  },
+  "name": "1_singleDoorNS",
+  "rotation": "ZERO"
+}

@@ -104,17 +104,14 @@ namespace KazgarsRevenge
         KeyboardState curKeys = Keyboard.GetState();
         KeyboardState prevKeys = Keyboard.GetState();
         bool guiClick = false;
-
         public override void Update(GameTime gameTime)
         {
-            // TODO Remove
             Entity sharedData = Entity.GetSharedData(typeof(Entity)) as Entity;
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
             millisRunningCounter += elapsed;
             stateResetCounter += elapsed;
-
 
             if (attState == AttackState.Locked && canInterrupt && stateResetCounter >= stateResetLength)
             {

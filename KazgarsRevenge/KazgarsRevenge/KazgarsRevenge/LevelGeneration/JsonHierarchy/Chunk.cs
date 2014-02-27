@@ -34,7 +34,7 @@ namespace KazgarsRevenge
             ret.rotation = this.rotation;
             ret.rooms = new List<Room>();
 
-            foreach (Room r in rooms)
+            foreach (Room r in this.rooms)
             {
                 ret.rooms.Add((Room)r.Clone());
             }
