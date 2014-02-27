@@ -54,7 +54,7 @@ namespace KazgarsRevenge
         public Rotation rotation
         {
             get;
-            protected set;
+            set;
         }
 
         // The type for this chunk

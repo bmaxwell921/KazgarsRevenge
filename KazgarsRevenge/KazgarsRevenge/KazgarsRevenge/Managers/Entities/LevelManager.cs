@@ -343,7 +343,7 @@ namespace KazgarsRevenge
                 }
                 spawnLocs.Add(spawnCenter);
             }
-            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 10);
+            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
             roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
             genComponentManager.AddComponent(eps);
         }
@@ -361,6 +361,10 @@ namespace KazgarsRevenge
         /// <returns></returns>
         private Vector3 GetRotatedBlock(Vector3 chunkTopLeft, Vector3 roomTopLeft, Vector3 blockLoc, Rotation chunkRotation, Rotation roomRotation, int roomWidth, int roomHeight)
         {
+            if (chunkTopLeft.Equals(new Vector3(48, 0, 48)))
+            {
+            }
+
             // Rotate it about the room
             int numRoomRotations = (int)(roomRotation.ToDegrees() / 90f);
             int swapWidth = roomWidth;

@@ -36,5 +36,14 @@ namespace KazgarsRevenge
         {
             return this.name.Equals(PLAYER_SPAWN_NAME);
         }
+
+        public override object Clone()
+        {
+            RoomBlock comp = new RoomBlock();
+            comp.location = (Location)this.location.Clone();
+            comp.name = (string)this.name.Clone();
+            comp.rotation = this.rotation;
+            return comp;
+        }
     }
 }

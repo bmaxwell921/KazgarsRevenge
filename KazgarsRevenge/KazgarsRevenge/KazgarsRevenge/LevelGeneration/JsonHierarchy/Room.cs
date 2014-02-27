@@ -116,12 +116,11 @@ namespace KazgarsRevenge
             clone.rotation = this.rotation;
             clone.Width = this.Width;
             clone.Height = this.Height;
-            List<RoomBlock> blocks = new List<RoomBlock>();
-            foreach (RoomBlock rb in blocks)
+            clone.blocks = new List<RoomBlock>();
+            foreach (RoomBlock rb in this.blocks)
             {
-                blocks.Add((RoomBlock)rb.Clone());
+                clone.blocks.Add((RoomBlock)rb.Clone());
             }
-            clone.blocks = blocks;
             return clone;
         }
     }
