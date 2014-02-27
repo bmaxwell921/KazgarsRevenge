@@ -9,7 +9,7 @@ namespace KazgarsRevenge
 {
     public class SpriteManager : DrawableGameComponent
     {
-        List<DrawableComponent2D> components = new List<DrawableComponent2D>();
+        List<Component> components = new List<Component>();
         public SpriteManager(MainGame game)
             : base(game)
         {
@@ -30,7 +30,7 @@ namespace KazgarsRevenge
             }
         }
 
-        public void AddComponent(DrawableComponent2D toAdd)
+        public void AddComponent(Component toAdd)
         {
             toAdd.Start();
             components.Add(toAdd);
@@ -38,7 +38,7 @@ namespace KazgarsRevenge
 
         public void Draw(SpriteBatch s)
         {
-            foreach (DrawableComponent2D d in components)
+            foreach (IDrawableComponent2D d in components)
             {
                 d.Draw(s);
             }

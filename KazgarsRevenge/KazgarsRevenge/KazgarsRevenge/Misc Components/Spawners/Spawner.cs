@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     /// <summary>
     /// Component used to Spawn entities. 
     /// </summary>
-    public abstract class Spawner : AIComponent
+    public abstract class Spawner : QueryComponent
     {
         // Where to spawn stuff
         protected ISet<Vector3> spawnLocations;

@@ -18,7 +18,7 @@ using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
-    class LocalPlayerController : PlayerController
+    class LocalPlayerController : PlayerController, IDrawableComponent2D
     {
         public LocalPlayerController(KazgarsRevengeGame game, GameEntity entity, PlayerSave savefile)
             : base(game, entity, savefile)
@@ -910,7 +910,7 @@ namespace KazgarsRevenge
 
         }
 
-        public override void Draw(SpriteBatch s)
+        public void Draw(SpriteBatch s)
         {
 
 

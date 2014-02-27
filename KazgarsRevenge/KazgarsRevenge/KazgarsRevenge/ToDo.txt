@@ -16,7 +16,7 @@ lifesteal/ potion heal particles
 buff particles
 
 put lines on model textures for cartoon effect (took out normal edge detection)
-
+get mouse texture
 
 
 

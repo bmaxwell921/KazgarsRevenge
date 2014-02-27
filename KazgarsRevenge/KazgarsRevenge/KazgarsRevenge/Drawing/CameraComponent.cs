@@ -217,7 +217,7 @@ namespace KazgarsRevenge
         public BoundingBox CameraBox { get; private set; }
         public Vector3[] lightPositions { get; private set; }
         public Vector3[] lightColors { get; private set; }
-        float playerSightRadius = 700;
+        float playerSightRadius = 1000;
         Space physics;
         private Vector3 inactiveLightPos = new Vector3(-10000, 0, 0);
         private void UpdateLights()

@@ -301,7 +301,6 @@ namespace KazgarsRevenge
             GraphicsDevice.Clear(Color.Black);
             if (gameState == GameState.Playing)
             {
-
                 //draw depth render target
                 GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
                 GraphicsDevice.Clear(Color.Black);

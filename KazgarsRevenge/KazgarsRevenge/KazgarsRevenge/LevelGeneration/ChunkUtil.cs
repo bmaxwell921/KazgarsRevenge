@@ -64,7 +64,8 @@ namespace KazgarsRevenge
                 IList<ChunkInfo> infos = parseName(extensionLessName, out message);
                 if (infos == null)
                 {
-                    lm.Log(Level.DEBUG, String.Format("Unable to get ChunkInfos for: {0}. Message: {1}", chunkName, message));
+                    //tries to use lm before it's initialized (the SetLoggerManager() call in MainGame initializes ChunkUtil's instance, which calls this method)
+                    //lm.Log(Level.DEBUG, String.Format("Unable to get ChunkInfos for: {0}. Message: {1}", chunkName, message));
                     continue;
                 }
                 foreach (ChunkInfo ci in infos)

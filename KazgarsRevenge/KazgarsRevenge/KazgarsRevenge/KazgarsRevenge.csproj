@@ -108,6 +108,7 @@
     <Compile Include="Controllers\FallingArrowController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
+    <Compile Include="Controllers\QueryComponent.cs" />
     <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
     <Compile Include="Drawing\Billboards\AbilityTargetDecal.cs" />
     <Compile Include="Drawing\Billboards\ChainBillboard.cs" />
@@ -227,7 +228,7 @@
     <Compile Include="MainGame.cs" />
     <Compile Include="Managers\Entities\EntityManager.cs" />
     <Compile Include="Managers\Components\ModelManager.cs" />
-    <Compile Include="Drawing\DrawableComponent2D.cs" />
+    <Compile Include="Drawing\IDrawableComponent2D.cs" />
     <Compile Include="Managers\Components\SpriteManager.cs" />
     <Compile Include="Drawing\UnanimatedModelComponent.cs" />
     <Compile Include="Misc Components\StaticMeshesComponent.cs" />

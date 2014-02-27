@@ -63,7 +63,7 @@ namespace KazgarsRevenge
         // I know it's bad to have two sprite batches, but they're used completely separately so it should be ok
         public SpriteBatch sb;
 
-        #region Synchornous Loading
+        #region Synchronous Loading
         private LoadingState loadingState;
         // Used to lock the loadingState
         private object lockObj = new Object();
@@ -270,7 +270,8 @@ namespace KazgarsRevenge
         public void LoadLevel(FloorName name)
         {
             // Fire up a new thread for loading
-            new Thread(this.ActualLoad).Start(name);
+            //new Thread(this.ActualLoad).Start(name);
+            this.ActualLoad(name);
         }
 
         // Does the loading, then sets the loadingStae as Complete
