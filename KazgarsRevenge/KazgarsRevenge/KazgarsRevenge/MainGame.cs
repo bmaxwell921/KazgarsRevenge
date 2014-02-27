@@ -235,7 +235,6 @@ namespace KazgarsRevenge
         }
         protected override void Update(GameTime gameTime)
         {
-            //nmm.Update(gameTime);
             if (gameState == GameState.Playing)
             {
                 physics.Update();
@@ -267,13 +266,15 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void LoadLevel(FloorName name)
         {
-            levels.CreateLevel(name);
+            // Testing version
             //levels.DemoLevel();
-
-            // TODO put him somewhere useful
             //players.CreateMainPlayer(new Vector3(900, 20, 1400), DUMMY_ID);
-            players.CreateMainPlayerInLevel(DUMMY_ID);
             //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(120, 20, 400));
+
+            // Down here is the final version of this method
+            levels.CreateLevel(name);
+            players.CreateMainPlayerInLevel(DUMMY_ID);
+
         }
 
         Vector2 vecLoadingText;

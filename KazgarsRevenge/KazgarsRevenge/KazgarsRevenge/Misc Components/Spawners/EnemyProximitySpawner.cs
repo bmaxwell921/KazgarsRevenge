@@ -45,11 +45,6 @@ namespace KazgarsRevenge
             this.delay = delay;
             passedTime = delay;
             this.limit = limit;
-
-            foreach (Vector3 spawnLocs in spawnLocations)
-            {
-                (game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Spawner located at: {0}", spawnLocs / 100f));
-            }
         }
 
         public override void Update(GameTime gameTime)
@@ -72,7 +67,7 @@ namespace KazgarsRevenge
             // check if anything is close by
             if (spawnLocations.Count() != 0)
             {
-                // Just check one of them
+                // TODO Just check one of them
                 //return QueryNearEntityFaction(FactionType.Players, spawnLocations.GetEnumerator().Current, 0, proximity, true) != null;
                 return true;
             }

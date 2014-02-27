@@ -58,7 +58,7 @@ namespace KazgarsRevenge
             // The chunk objects that make up this Level
             public Chunk[,] chunks;
 
-            // The information about the chunks in this level TODO might be unneeded
+            // The information about the chunks in this level
             public ChunkInfo[,] chunkInfos;
 
             public IList<Vector3> spawnLocs;
@@ -172,7 +172,7 @@ namespace KazgarsRevenge
         public Vector3 GetPlayerSpawnLocation()
         {
             Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.Instance.Next(currentLevel.spawnLocs.Count)];
-            return spawnLoc + new Vector3(0, 100, 0);
+            return spawnLoc;
         }
 
         #region Room Creation
@@ -554,7 +554,7 @@ namespace KazgarsRevenge
             VertexPredecessorRecorderObserver<Vector3, Edge<Vector3>> predObs = new VertexPredecessorRecorderObserver<Vector3, Edge<Vector3>>();
             predObs.Attach(aStar);
 
-            // Actually do the computation - TODO hopefully this return correctly...
+            // Actually do the computation
             aStar.ComputeDistanceBetween(srcNode, destNode);
             IEnumerable<Edge<Vector3>> path;
             bool validPath = predObs.TryGetPath(destNode, out path);
@@ -666,8 +666,6 @@ namespace KazgarsRevenge
                 ChooseChunks(name, chunkInfos);
 
                 Chunk[,] chunks = ReadChunks(name, chunkInfos);
-                
-                // Graph mvGraph = CreateMovementGraph(name, chunks);
                 return new LevelInfo(name, chunks, chunkInfos);
             }
 
@@ -769,7 +767,7 @@ namespace KazgarsRevenge
                 if (chunks[i, j] == null)
                 {
                     // TODO here is where we can change it to make less doors. Right now by returning true on an unplaced chunk we are 
-                    // forcing the maximum amount of doors
+                    // forcing the maximum amount of doors. Maybe have a density value that is generated?
                     return true;
                 }
 
