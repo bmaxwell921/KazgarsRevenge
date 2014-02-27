@@ -258,6 +258,7 @@ namespace KazgarsRevenge
         public void TransitionToPlaying()
         {
             gameState = GameState.Playing;
+            genComponentManager.Enabled = true;
         }
 
         /// <summary>
