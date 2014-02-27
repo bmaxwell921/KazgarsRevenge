@@ -125,7 +125,6 @@ namespace KazgarsRevenge
         public void CreateLevel(FloorName name)
         {
             this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
-            //this.CreateLevel(name, 1, 1);
         }
 
         /// <summary>
@@ -338,9 +337,6 @@ namespace KazgarsRevenge
             foreach (RoomBlock spawner in enemySpawners)
             {
                 Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
-                if (spawnCenter.X > 48 && spawnCenter.Y > 48)
-                {
-                }
                 spawnLocs.Add(spawnCenter);
             }
             EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
@@ -361,10 +357,6 @@ namespace KazgarsRevenge
         /// <returns></returns>
         private Vector3 GetRotatedBlock(Vector3 chunkTopLeft, Vector3 roomTopLeft, Vector3 blockLoc, Rotation chunkRotation, Rotation roomRotation, int roomWidth, int roomHeight)
         {
-            if (chunkTopLeft.Equals(new Vector3(48, 0, 48)))
-            {
-            }
-
             // Rotate it about the room
             int numRoomRotations = (int)(roomRotation.ToDegrees() / 90f);
             int swapWidth = roomWidth;
@@ -426,7 +418,8 @@ namespace KazgarsRevenge
             foreach (RoomBlock block in room.blocks)
             {
                 Vector3 blockCenter = GetRotatedBlock(chunkLocation, roomTopLeft, new Vector3(block.location.x, LEVEL_Y, block.location.y), chunkRotation, room.rotation, room.UnRotWidth, room.UnRotHeight);
-
+                // For the graph the y should probs be 0, I'll make it ignore the Y when checking for closeness tho
+                blockCenter.Y = LEVEL_Y;
                 // These have not been transformed by BLOCK_SIZE yet
                 blockCenters.Add(blockCenter);
 
@@ -439,6 +432,8 @@ namespace KazgarsRevenge
                 // If it's a player spawn, we need to know that we can spawn players here
                 if (block.IsPlayerSpawn())
                 {
+                    // Set him a little higher
+                    blockCenter.Y = MOB_SPAWN_Y;
                     currentLevel.spawnLocs.Add(blockCenter);
                 }
             }
@@ -517,7 +512,9 @@ namespace KazgarsRevenge
         #region Path Finding
         /// <summary>
         /// Returns a Path from the source location to the destination location.
-        /// First element is the given src, last element is the  given dest
+        /// First element is the given src, last element is the  given dest.
+        /// 
+        /// NOTE: BE AWARE OF THE Y VALUE. ALONG THE PATH THE Y'S WILL ALWAYS BE 0
         /// </summary>
         /// <param name="src"></param>
         /// <param name="dest"></param>
@@ -588,6 +585,9 @@ namespace KazgarsRevenge
 
         private bool TooFar(Vector3 realLoc, Vector3 graphNode)
         {
+            // Set they Y to be the same so it doesn't mess with anything
+            Vector3 compReal = new Vector3(realLoc.X, LEVEL_Y, realLoc.Z);
+            Vector3 compGraph = new Vector3(graphNode.X, LEVEL_Y, graphNode.Z);
             /*
              * Trig:
              * Blocks are 100x100. The farthest anything can be from the middle of the center is
@@ -598,7 +598,7 @@ namespace KazgarsRevenge
             double buffer = 5;
             double halfBlockSize = BLOCK_SIZE / 2.0;
             double maxDist = Math.Sqrt(halfBlockSize * halfBlockSize + halfBlockSize * halfBlockSize) + buffer;
-            return Vector3.Distance(realLoc, graphNode) > maxDist;
+            return Vector3.Distance(compReal, compGraph) > maxDist;
         }
 
         // Returns the Vector3 node in the pathGraph closest to the given location

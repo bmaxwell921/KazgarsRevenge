@@ -116,6 +116,8 @@ namespace KazgarsRevenge
             clone.rotation = this.rotation;
             clone.Width = this.Width;
             clone.Height = this.Height;
+            clone.UnRotWidth = this.UnRotWidth;
+            clone.UnRotHeight = this.UnRotHeight;
             clone.blocks = new List<RoomBlock>();
             foreach (RoomBlock rb in this.blocks)
             {
