@@ -24,6 +24,17 @@ namespace KazgarsRevenge
             get;
             private set;
         }
+
+        public int UnRotWidth
+        {
+            get;
+            private set;
+        }
+        public int UnRotHeight
+        {
+            get;
+            private set;
+        }
         // All the blocks that make up this room
         public List<RoomBlock> blocks
         {
@@ -81,6 +92,9 @@ namespace KazgarsRevenge
                     maxY = block.location.y;
                 }
             }
+
+            UnRotWidth = maxX - minX + 1;
+            UnRotHeight = maxY - minY + 1;
 
             if (rotation == Rotation.ZERO || rotation == Rotation.ONE_EIGHTY)
             {

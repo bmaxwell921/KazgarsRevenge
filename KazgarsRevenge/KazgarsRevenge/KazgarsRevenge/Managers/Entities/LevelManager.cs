@@ -124,8 +124,8 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void CreateLevel(FloorName name)
         {
-            //this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
-            this.CreateLevel(name, 3, 3);
+            this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
+            //this.CreateLevel(name, 1, 1);
         }
 
         /// <summary>
@@ -148,9 +148,6 @@ namespace KazgarsRevenge
                     this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j));
                 }
             }
-
-            // Build the pathGraph - done here so it's decoupled for multithreading.
-            // TODO this could be done with outside of the KR program if it's too slow - It actually looks ok
 
             /*
              * This is a set of all the locations of doors in the entire map. After we're done connecting
@@ -175,10 +172,8 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public Vector3 GetPlayerSpawnLocation()
         {
-            // The spawnLocs are in their 'untransformed' form so we multiply by BLOCK*SIZE so it's in the right spot
-            //Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.Instance.Next(currentLevel.spawnLocs.Count)];
-            Vector3 spawnLoc = currentLevel.spawnLocs[7];
-            return spawnLoc * BLOCK_SIZE + new Vector3(0, 100, 0);
+            Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.Instance.Next(currentLevel.spawnLocs.Count)];
+            return spawnLoc + new Vector3(0, 100, 0);
         }
 
         #region Room Creation
@@ -218,10 +213,7 @@ namespace KazgarsRevenge
             // Here for convenience
             Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
             // Add all the spawners
-            AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, roomCenter, room.rotation, chunkLocation, chunkCenter, chunkRotation);
-
-            //TODO player spawners
-
+            AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, room.rotation, chunkLocation,  chunkRotation, room.UnRotWidth, room.UnRotHeight);
             return roomGE;
         }
 
@@ -340,35 +332,72 @@ namespace KazgarsRevenge
         private static readonly float DELAY = 3000;
 
         // Adds the necessary spawning components to the roomGE
-        private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Vector3 roomCenter, Rotation roomRotation, Vector3 chunkTopLeft, Vector3 chunkCenter, Rotation chunkRotation)
+        private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
         {
             ISet<Vector3> spawnLocs = new HashSet<Vector3>();
             foreach (RoomBlock spawner in enemySpawners)
             {
-                // The location of a block is relative to the room and chunk's top left corner
-                Vector3 spawnCenter = chunkTopLeft + roomTopLeft + new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y) + new Vector3(RoomBlock.SIZE, LEVEL_Y, RoomBlock.SIZE) / 2;
-                Vector3 oldVal = new Vector3(spawnCenter.X, spawnCenter.Y, spawnCenter.Z);
-                if (oldVal.Equals(new Vector3(5.5f, 0, 11.5f)))
+                Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
+                if (spawnCenter.X > 48 && spawnCenter.Y > 48)
                 {
                 }
-                // We need to rotate this location to be correct in the room
-                spawnCenter = GetRotatedLocation(spawnCenter, chunkTopLeft + roomCenter, roomRotation);
-                // Then we need to rotate it to the correct location in the chunk
-                spawnCenter = GetRotatedLocation(spawnCenter, chunkCenter, chunkRotation);
-
-                // Set their location a bit above the ground so they don't fall thru
-                spawnCenter = new Vector3(spawnCenter.X * BLOCK_SIZE, MOB_SPAWN_Y, spawnCenter.Z * BLOCK_SIZE);
-
                 spawnLocs.Add(spawnCenter);
-
-                if (spawnCenter.X < 400 && spawnCenter.Z < 1300)
-                {
-                }
             }
             EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 10);
             roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
             genComponentManager.AddComponent(eps);
         }
+
+        /// <summary>
+        /// Returns a Vector3 located at the center of the block at the given location basically.
+        /// </summary>
+        /// <param name="chunkTopLeft">Chunk's top left corner location</param>
+        /// <param name="roomTopLeft">Room's top left corner, RELATIVE TO THE CHUNK - IT SHOULD NOT INCLUDE THE CHUNK LOCATION</param>
+        /// <param name="blockLoc"></param>
+        /// <param name="chunkRotation"></param>
+        /// <param name="roomRotation"></param>
+        /// <param name="roomWidth"></param>
+        /// <param name="roomHeight"></param>
+        /// <returns></returns>
+        private Vector3 GetRotatedBlock(Vector3 chunkTopLeft, Vector3 roomTopLeft, Vector3 blockLoc, Rotation chunkRotation, Rotation roomRotation, int roomWidth, int roomHeight)
+        {
+            // Rotate it about the room
+            int numRoomRotations = (int)(roomRotation.ToDegrees() / 90f);
+            int swapWidth = roomWidth;
+            // We start by rotating about the room so leave this position as relative to the room topLeft
+            Vector3 spawnTopLeft = blockLoc;
+            for (int i = 0; i < numRoomRotations; ++i)
+            {
+                spawnTopLeft = rotateBlockTo(spawnTopLeft, swapWidth);
+                // Update the swapWidth to reflect the change from rotating
+                swapWidth = (swapWidth == roomWidth) ? roomHeight : roomWidth;
+            }
+
+            // Rotate it about the chunk
+            int numChunkRotations = (int)(chunkRotation.ToDegrees() / 90f);
+
+            // Now that it's been rotated in the room, add the room position for rotating it about the chunk
+            spawnTopLeft += roomTopLeft;
+
+            for (int i = 0; i < numChunkRotations; ++i)
+            {
+                // Don't need to change the rotate width because chunks are square
+                spawnTopLeft = rotateBlockTo(spawnTopLeft, CHUNK_SIZE);
+            }
+
+            // Now that it's been totally rotated, we can add in the chunkLocation
+            spawnTopLeft += chunkTopLeft;
+
+            // Center it, scale it up, and return
+            return new Vector3((spawnTopLeft.X + RoomBlock.SIZE / 2f) * BLOCK_SIZE, MOB_SPAWN_Y, (spawnTopLeft.Z + RoomBlock.SIZE / 2f) * BLOCK_SIZE);
+        }
+
+        // Rotates the given location by 90 degrees in the room with the given width and height
+        private Vector3 rotateBlockTo(Vector3 blockLoc, int width)
+        {
+            return new Vector3(blockLoc.Z, blockLoc.Y, width - blockLoc.X - 1);
+        }
+
         #endregion
 
         #region Graph Building
@@ -392,16 +421,8 @@ namespace KazgarsRevenge
 
             foreach (RoomBlock block in room.blocks)
             {
-                // The location of a block is relative to the room and chunk's top left corner
-                Vector3 blockCenter = chunkLocation + roomTopLeft + new Vector3(block.location.x, LEVEL_Y, block.location.y) + new Vector3(RoomBlock.SIZE, LEVEL_Y, RoomBlock.SIZE) / 2;
-                // We need to rotate this location to be correct in the room
-                blockCenter = GetRotatedLocation(blockCenter, chunkLocation + roomCenter, room.rotation);
-                // Then we need to rotate it to the correct location in the chunk
-                blockCenter = GetRotatedLocation(blockCenter, chunkCenter, chunkRotation);
+                Vector3 blockCenter = GetRotatedBlock(chunkLocation, roomTopLeft, new Vector3(block.location.x, LEVEL_Y, block.location.y), chunkRotation, room.rotation, room.UnRotWidth, room.UnRotHeight);
 
-                // Set their location a bit above the ground so they don't fall thru
-                blockCenter = new Vector3(blockCenter.X, LEVEL_Y, blockCenter.Z);
-                
                 // These have not been transformed by BLOCK_SIZE yet
                 blockCenters.Add(blockCenter);
 
@@ -430,14 +451,11 @@ namespace KazgarsRevenge
                 {
                     for (int j = -1; j <= 1; ++j)
                     {
-                        Vector3 testBlock = new Vector3(blockCenter.X + i, LEVEL_Y, blockCenter.Z + j);
+                        Vector3 testBlock = new Vector3(blockCenter.X + i, blockCenter.Y, blockCenter.Z + j);
                         // If a neighbor is one of the blocks in the room, the connect them
                         if (!testBlock.Equals(blockCenter) && blockCenters.Contains(testBlock))
                         {
-                            // Transform them by the BLOCK_SIZE
-                            Vector3 transBlockCenter = new Vector3(blockCenter.X * BLOCK_SIZE, LEVEL_Y, blockCenter.Z * BLOCK_SIZE);
-                            Vector3 transTestBlock = new Vector3(testBlock.X * BLOCK_SIZE, LEVEL_Y, testBlock.Z * BLOCK_SIZE);
-                            this.AddEdge(new Edge<Vector3>(transBlockCenter, transTestBlock));
+                            this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
                         }
                     }
                 }
@@ -467,11 +485,8 @@ namespace KazgarsRevenge
                     // If the adjacent is one of the doors, add the edge
                     if (doors.Contains(testDoor))
                     {
-                        Vector3 transDoor = door * BLOCK_SIZE;
-                        Vector3 transTestDoor = testDoor * BLOCK_SIZE;
-                        Edge<Vector3> add = new Edge<Vector3>(transDoor, transTestDoor);
                         // Doors next to each other in a room have already been connected
-                        this.AddEdge(add);
+                        this.AddEdge(new Edge<Vector3>(door, testDoor));
                     }
                 }
             }

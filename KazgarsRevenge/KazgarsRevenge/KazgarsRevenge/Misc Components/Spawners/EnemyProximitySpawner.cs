@@ -45,6 +45,11 @@ namespace KazgarsRevenge
             this.delay = delay;
             passedTime = delay;
             this.limit = limit;
+
+            foreach (Vector3 spawnLocs in spawnLocations)
+            {
+                (game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Spawner located at: {0}", spawnLocs / 100f));
+            }
         }
 
         public override void Update(GameTime gameTime)
