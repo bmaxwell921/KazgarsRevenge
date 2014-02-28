@@ -77,7 +77,6 @@ namespace KazgarsRevenge
         protected override void Initialize()
         {
             genComponentManager = new GeneralComponentManager(this);
-            genComponentManager.Enabled = false;
             Components.Add(genComponentManager);
             Services.AddService(typeof(GeneralComponentManager), genComponentManager);
 

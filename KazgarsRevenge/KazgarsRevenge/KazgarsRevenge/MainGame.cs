@@ -257,8 +257,8 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void TransitionToPlaying()
         {
+            //genComponentManager.Enabled = true;
             gameState = GameState.Playing;
-            genComponentManager.Enabled = true;
         }
 
         /// <summary>
@@ -267,6 +267,9 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void LoadLevel(FloorName name)
         {
+            //genComponentManager.Enabled = false;
+
+
             // Testing version
             //levels.DemoLevel();
             //players.CreateMainPlayer(new Vector3(900, 20, 1400), DUMMY_ID);

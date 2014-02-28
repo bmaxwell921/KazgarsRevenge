@@ -270,8 +270,8 @@ namespace KazgarsRevenge
         public void LoadLevel(FloorName name)
         {
             // Fire up a new thread for loading
-            new Thread(this.ActualLoad).Start(name);
-            //this.ActualLoad(name);
+            //new Thread(this.ActualLoad).Start(name);
+            this.ActualLoad(name);
         }
 
         // Does the loading, then sets the loadingStae as Complete

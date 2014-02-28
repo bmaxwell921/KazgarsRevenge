@@ -67,9 +67,12 @@ namespace KazgarsRevenge
             }
             else
             {
-                LoadAnimatedModel(out m, filePath);
-                animatedModels.Add(filePath, m);
-                return m;
+                //lock (animatedModels)
+                //{
+                    LoadAnimatedModel(out m, filePath);
+                    animatedModels.Add(filePath, m);
+                    return m;
+                //}
             }
         }
 
@@ -82,9 +85,12 @@ namespace KazgarsRevenge
             }
             else
             {
-                LoadUnanimatedModel(out m, modelPath);
-                unanimatedModels.Add(modelPath, m);
-                return m;
+                //lock (unanimatedModels)
+                //{
+                    LoadUnanimatedModel(out m, modelPath);
+                    unanimatedModels.Add(modelPath, m);
+                    return m;
+                //}
             }
         }
 
