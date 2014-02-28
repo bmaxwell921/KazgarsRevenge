@@ -45,8 +45,8 @@ namespace KazgarsRevenge
 
         float distanceFromTarget = 200.0f;
 
-        float nextYaw = 0;
-        float yaw = 0;
+        float nextYaw = MathHelper.PiOver4;
+        float yaw = MathHelper.PiOver4;
         float pitch = -MathHelper.PiOver4;
         public float zoom = 4.0f;
         private float maxZoom = 8;

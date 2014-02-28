@@ -53,8 +53,7 @@ namespace KazgarsRevenge
                 }
             }
             // Comment this to remove gravity
-            //physics.ForceUpdater.Gravity = new Vector3(0, -1600, 0);
-            physics.ForceUpdater.Gravity = new Vector3(0, 00, 0);
+            physics.ForceUpdater.Gravity = new Vector3(0, -1600, 0);
             physics.TimeStepSettings.MaximumTimeStepsPerFrame = 10;
             Services.AddService(typeof(Space), physics);
 
