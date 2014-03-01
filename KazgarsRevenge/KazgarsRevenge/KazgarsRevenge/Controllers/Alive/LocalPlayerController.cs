@@ -97,6 +97,8 @@ namespace KazgarsRevenge
         bool showEquipment = false;
         string abilityToUseString = null;
         int selectedItemSlot = -1;
+        GearSlot selectedEquipPiece;
+        int selectedEquipSlot = -1;
         #endregion
 
         MouseState curMouse = Mouse.GetState();
@@ -166,20 +168,22 @@ namespace KazgarsRevenge
                 newTarget = CheckGUIButtons() || newTarget || mouseHoveredHealth == null;
 
                 string collides = CollidingGuiFrame();
-                bool mouseOnGui = collides != null || selectedItemSlot != -1;
+                bool mouseOnGui = collides != null || selectedItemSlot != -1 || selectedEquipSlot != -1;
                 CheckMouseRay(newTarget, mouseOnGui);
 
                 //#jared Equip gear needs to 1. not take in a slot, 2. output floating text if equip fails
                 //if item is removed from the inventory area
-                if (collides == null && selectedItemSlot != -1 && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
+                if (collides == null && (selectedItemSlot != -1 || selectedEquipSlot != -1) && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
                     //Trash item here?
                     selectedItemSlot = -1;
+                    selectedEquipSlot = -1;
                 }
 
                 //appropriate action for gui element collided with
                 //happens on left mouse released
                 //#Nate
+                #region left click check
                 if (collides != null && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
                     string innerClicked = CollidingInnerFrame(collides);
@@ -230,9 +234,9 @@ namespace KazgarsRevenge
                             break;
 
                         case "equipment":
-                            if (innerClicked == "equipHead")
+                            if (innerClicked == "equip0") //wrist
                             {
-                                if (selectedItemSlot == -1) //Not equipping anything
+                                if (selectedItemSlot == -1) //Not equipping anything, pick up wrist
                                 {
 
                                 }
@@ -241,9 +245,26 @@ namespace KazgarsRevenge
 
                                 }
                             }
-                            else if (innerClicked == "equipShoulder")
+                            else if (innerClicked == "equip1")  //bling
                             {
 
+                            }
+                            else if (innerClicked == "equip2")  //LWep
+                            {
+                                if (selectedItemSlot == -1) //Not equipping anything, pick up wep
+                                {
+                                    selectedEquipSlot = 2;
+                                    selectedEquipPiece = GearSlot.Lefthand;
+                                }
+                                else    //Bringing item in
+                                {
+                                    Equippable e = inventory[selectedItemSlot] as Equippable;
+                                    if (e != null)
+                                    {
+                                        EquipGear(e, GearSlot.Lefthand);
+                                        selectedItemSlot = -1;
+                                    }
+                                }
                             }
                             //Equippable e = inventory[selectedItemSlot] as Equippable;
                             //if( e != null)
@@ -256,6 +277,7 @@ namespace KazgarsRevenge
 
                     }
                 }
+                #endregion
 
                 Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
                 if (targetedPhysicalData != null)
@@ -874,18 +896,18 @@ namespace KazgarsRevenge
             guiInsideRects.Add("player", playerDict);
 
             //Equipment inner
-            equipmentDict.Add("equipWrist", new Rectangle((int)(maxX - 694 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipBling", new Rectangle((int)(maxX - 694 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipLWep", new Rectangle((int)(maxX - 694 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equip0", new Rectangle((int)(maxX - 694 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));    //wrist
+            equipmentDict.Add("equip1", new Rectangle((int)(maxX - 694 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));    //bling
+            equipmentDict.Add("equip2", new Rectangle((int)(maxX - 694 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));    //LWep
 
-            equipmentDict.Add("equipHead", new Rectangle((int)(maxX - 596 * average), (int)(409 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipChest", new Rectangle((int)(maxX - 596 * average), (int)(507 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipLegs", new Rectangle((int)(maxX - 596 * average), (int)(605 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipFeet", new Rectangle((int)(maxX - 596 * average), (int)(703 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equip3", new Rectangle((int)(maxX - 596 * average), (int)(409 * average), (int)(88 * average), (int)(88 * average)));    //head
+            equipmentDict.Add("equip4", new Rectangle((int)(maxX - 596 * average), (int)(507 * average), (int)(88 * average), (int)(88 * average)));    //chest
+            equipmentDict.Add("equip5", new Rectangle((int)(maxX - 596 * average), (int)(605 * average), (int)(88 * average), (int)(88 * average)));    //legs
+            equipmentDict.Add("equip6", new Rectangle((int)(maxX - 596 * average), (int)(703 * average), (int)(88 * average), (int)(88 * average)));    //feet
 
-            equipmentDict.Add("equipShoulder", new Rectangle((int)(maxX - 498 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipCod", new Rectangle((int)(maxX - 498 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipRWep", new Rectangle((int)(maxX - 498 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add("equip7", new Rectangle((int)(maxX - 498 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));    //shoulder
+            equipmentDict.Add("equip8", new Rectangle((int)(maxX - 498 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));    //Cod
+            equipmentDict.Add("equip9", new Rectangle((int)(maxX - 498 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));    //RWep
             //Inventory inner
             for (int i = 0; i < 4; ++i)
             {
@@ -1096,19 +1118,11 @@ namespace KazgarsRevenge
                     //Collapse arrow
                     s.Draw(rightArrow, guiInsideRects["inventory"]["equipArrow"], Color.White);
 
-                    //Equip frames
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipWrist"], Color.White);
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipBling"], Color.White);
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipLWep"], Color.White);
-
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipHead"], Color.White);
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipChest"], Color.White);
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipLegs"], Color.White);
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipFeet"], Color.White);
-
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipShoulder"], Color.White);
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipCod"], Color.White);
-                    s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipRWep"], Color.White);
+                    //Equip icons
+                    for (int i = 0; i < 10; i++)
+                    {
+                        s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equip"+i], Color.White);
+                    }
                 }
                 else
                 {
@@ -1150,17 +1164,23 @@ namespace KazgarsRevenge
             //Mouse
             rectMouse.X = curMouse.X;
             rectMouse.Y = curMouse.Y;
-            if (selectedItemSlot == -1)
+            if (selectedItemSlot == -1 && selectedEquipSlot == -1)
             {
                 rectMouse.Width = 25;
                 rectMouse.Height = 25;
                 s.Draw(texCursor, rectMouse, Color.White);
             }
-            else
+            else if (selectedItemSlot != -1)
             {
                 rectMouse.Width = (int)(60 * average);
                 rectMouse.Height = (int)(60 * average);
                 s.Draw(inventory[selectedItemSlot].Icon, rectMouse, Color.White);
+            }
+            else
+            {
+                rectMouse.Width = (int)(60 * average);
+                rectMouse.Height = (int)(60 * average);
+                s.Draw(gear[selectedEquipPiece].Icon, rectMouse, Color.White);
             }
         }
 

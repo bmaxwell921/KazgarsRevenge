@@ -88,6 +88,7 @@ namespace KazgarsRevenge
         protected Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
         //inventory
         protected Item[] inventory = new Item[16];
+        //#Nate
         protected virtual void EquipGear(Equippable equipMe, GearSlot slot)
         {
             float xRot = 0;
