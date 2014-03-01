@@ -80,7 +80,7 @@ namespace KazgarsRevenge
             SetUpLoggers();
 
 
-            bool fullscreen = false;
+            bool fullscreen = true;
 
             if (fullscreen)
             {
@@ -357,7 +357,7 @@ namespace KazgarsRevenge
                 spriteBatch.Begin();
                 spriteManager.Draw(spriteBatch);
                 //debug strings
-                //spriteBatch.DrawString(normalFont, ""+camera.zoom, new Vector2(50, 100), Color.Red);
+                spriteBatch.DrawString(normalFont, ""+camera.zoom, new Vector2(50, 100), Color.Red);
                 //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
                 foreach (FloatingText f in alertText)
                 {

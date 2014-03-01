@@ -148,7 +148,7 @@ NormalDepthVSOutput VSDepth(NormalDepthVSInput vin)
     float3 worldNormal = mul(vin.Normal, World);
 
     // The output color holds the normal, scaled to fit into a 0 to 1 range.
-    output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
+    output.Color.rgb = float3(0,0,0);
 
     // The output alpha holds the depth, scaled to fit into a 0 to 1 range.
     output.Color.a = lerp(1, output.Position.z / output.Position.w, lineIntensity);

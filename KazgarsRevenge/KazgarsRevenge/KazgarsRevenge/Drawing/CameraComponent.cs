@@ -49,8 +49,8 @@ namespace KazgarsRevenge
         float yaw = MathHelper.PiOver4;
         float pitch = -MathHelper.PiOver4;
         public float zoom = 4.0f;
-        private float maxZoom = 8;
-        private float minZoom = 1f;
+        private float maxZoom = 1000;//10;
+        private float minZoom = 2f;
         #endregion
 
         public void AssignEntity(Entity followMe)
@@ -127,10 +127,10 @@ namespace KazgarsRevenge
                 {
                     zoom = minZoom;
                 }
-                //if (zoom > maxZoom)
-                //{
-                //    zoom = maxZoom;
-                //}
+                if (zoom > maxZoom)
+                {
+                    zoom = maxZoom;
+                }
 
                 if (curKeys.IsKeyDown(Keys.Right) && prevKeys.IsKeyUp(Keys.Right))
                 {

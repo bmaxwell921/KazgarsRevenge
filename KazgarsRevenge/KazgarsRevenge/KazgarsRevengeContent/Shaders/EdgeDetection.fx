@@ -69,6 +69,35 @@ float4 PixelShaderFunction(float2 texCoord : TEXCOORD0) : COLOR0
 
     float normalDelta = 0;//dot(diagonalDelta.xyz, 1);
     float depthDelta = diagonalDelta.w;
+
+	if(depthDelta > DepthThreshold)
+	{
+		float4 n0 = tex2D(NormalDepthSampler, texCoord);
+
+		float3 col = n0.rgb;
+		float amt = n0.r + n0.b + n0.g;
+		if(n1.r + n1.b + n1.g > amt)
+		{
+			col = n1.rgb;
+		}
+		else if(n2.r + n2.b + n2.g > amt)
+		{
+			col = n2.rgb;
+		}
+		else if(n3.r + n3.b + n3.g > amt)
+		{
+			col = n3.rgb;
+		}
+		else if(n4.r + n4.b + n4.g > amt)
+		{
+			col = n4.rgb;
+		}
+		return float4(col,1);
+	}
+	else
+	{
+		return float4(scene, 1);
+	}
     
     // Filter out very small changes, in order to produce nice clean results.
     //normalDelta = saturate((normalDelta - NormalThreshold) * NormalSensitivity);

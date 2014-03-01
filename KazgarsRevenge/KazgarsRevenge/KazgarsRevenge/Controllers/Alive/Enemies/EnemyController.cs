@@ -377,13 +377,11 @@ namespace KazgarsRevenge
                 timerLength = 3000;
                 state = EnemyState.Decaying;
                 animations.PauseAnimation();
-                modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
 
                 lewts.CreateLootSoul(physicalData.Position, Entity.Type);
             }
         }
 
-        SharedGraphicsParams modelParams;
         protected void AIDecaying(double millis)
         {
             //fade out model until completely transparent, then kill the entity

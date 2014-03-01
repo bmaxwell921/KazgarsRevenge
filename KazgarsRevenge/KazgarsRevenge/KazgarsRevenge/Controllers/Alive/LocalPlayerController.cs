@@ -407,6 +407,11 @@ namespace KazgarsRevenge
                             else// if (newTarget)
                             {
                                 mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+                                if (mouseHoveredHealth != null)
+                                {
+                                    mouseHoveredHealth.Target();
+                                }
+
                                 if (mouseHoveredHealth == null)
                                 {
                                     ResetTargettedEntity();
@@ -736,6 +741,10 @@ namespace KazgarsRevenge
         #region Helpers
         private void ResetTargettedEntity()
         {
+            if (mouseHoveredHealth != null)
+            {
+                mouseHoveredHealth.UnTarget();
+            }
             mouseHoveredEntity = null;
             mouseHoveredHealth = null;
         }

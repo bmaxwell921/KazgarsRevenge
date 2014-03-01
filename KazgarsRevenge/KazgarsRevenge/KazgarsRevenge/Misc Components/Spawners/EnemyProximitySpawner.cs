@@ -84,8 +84,19 @@ namespace KazgarsRevenge
                 foreach (Vector3 loc in spawnLocations)
                 {
                     // TODO actual level
-                    ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
-
+                    int r = RandSingleton.Instance.Next(4);
+                    if (r == 0)
+                    {
+                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
+                    }
+                    else if (r == 1)
+                    {
+                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateArmorEnemy(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
+                    }
+                    else
+                    {
+                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateMagicSkeleton(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
+                    }
                     // Make sure to limit as necessary
                     ++numSpawned;
                 }

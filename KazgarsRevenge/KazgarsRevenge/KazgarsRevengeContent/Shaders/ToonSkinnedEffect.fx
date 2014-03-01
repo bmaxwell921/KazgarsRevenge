@@ -4,6 +4,7 @@
 
 float alpha = 1;
 float lineIntensity = 1;
+float3 lineColor = float3(0,0,0);
 
 float3 lightPositions[30];
 float LightAttenuation = 300;
@@ -135,8 +136,7 @@ NormalDepthVSOutput VSDepth(VSInputNmTxWeights vin)
     NormalDepthVSOutput output;
 	
     output.Position = mul(vin.Position, WorldViewProj);
-    float3 worldNormal = mul(vin.Normal, World);
-    output.Color.rgb = ((worldNormal + 1) / 2) * lineIntensity;
+    output.Color.rgb = lineColor;
     output.Color.a = lerp(1, output.Position.z / output.Position.w, lineIntensity);
     
     return output;

@@ -182,6 +182,7 @@ namespace KazgarsRevenge
 
         protected AttackManager attacks;
         protected Random rand;
+        protected SharedGraphicsParams modelParams;
         public AliveComponent(KazgarsRevengeGame game, GameEntity entity, int level)
             : base(game, entity)
         {
@@ -192,7 +193,18 @@ namespace KazgarsRevenge
             this.level = level;
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
+            modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
             RecalculateStats();
+        }
+
+        public void Target()
+        {
+            modelParams.lineColor = Color.Red;
+        }
+
+        public void UnTarget()
+        {
+            modelParams.lineColor = Color.Black;
         }
 
         /// <summary>

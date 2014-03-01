@@ -16,12 +16,14 @@ namespace KazgarsRevenge
     {
         public float alpha;
         public float lineIntensity;
+        public Color lineColor;
         public float size;
         public SharedGraphicsParams()
         {
             alpha = 1f;
             lineIntensity = 1f;
             size = 1;
+            lineColor = Color.Black;
         }
     }
 
@@ -144,6 +146,7 @@ namespace KazgarsRevenge
                     {
                         foreach (CustomSkinnedEffect effect in mesh.Effects)
                         {
+                            effect.Parameters["lineColor"].SetValue(modelParams.lineColor.ToVector3());
                             effect.Parameters["alpha"].SetValue(modelParams.alpha);
                             effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                             effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
@@ -171,6 +174,7 @@ namespace KazgarsRevenge
                         {
                             foreach (CustomSkinnedEffect effect in mesh.Effects)
                             {
+                                effect.Parameters["lineColor"].SetValue(modelParams.lineColor.ToVector3());
                                 effect.Parameters["alpha"].SetValue(modelParams.alpha);
                                 effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                                 effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
