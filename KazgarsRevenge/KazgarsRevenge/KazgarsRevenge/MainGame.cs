@@ -21,11 +21,30 @@ using System.Threading;
 
 namespace KazgarsRevenge
 {
+    
+
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
     public class MainGame : KazgarsRevengeGame
     {
+        #region Settings
+        public enum SettingAmount
+        {
+            Low,
+            Medium,
+            High,
+        }
+        private struct GameSettings
+        {
+            public SettingAmount particleSettings;
+        }
+        private GameSettings settings;
+        public SettingAmount ParticlesSetting { get { return settings.particleSettings; } }
+        #endregion
+
+
         #region components
         public GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;        
@@ -76,6 +95,8 @@ namespace KazgarsRevenge
         
         protected override void Initialize()
         {
+            settings.particleSettings = SettingAmount.High;
+
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
             SetUpLoggers();
 
@@ -357,7 +378,7 @@ namespace KazgarsRevenge
                 spriteBatch.Begin();
                 spriteManager.Draw(spriteBatch);
                 //debug strings
-                spriteBatch.DrawString(normalFont, ""+camera.zoom, new Vector2(50, 100), Color.Red);
+                //spriteBatch.DrawString(normalFont, ""+camera.zoom, new Vector2(50, 100), Color.Red);
                 //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
                 foreach (FloatingText f in alertText)
                 {

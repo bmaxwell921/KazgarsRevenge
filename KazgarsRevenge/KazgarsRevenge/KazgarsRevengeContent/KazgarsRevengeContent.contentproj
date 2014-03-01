@@ -525,11 +525,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="Textures\Particles\plus.png">
-        <Name>plus</Name>
-        <Importer>TextureImporter</Importer>
-        <Processor>TextureProcessor</Processor>
-      </Compile>
+    <Compile Include="Textures\Particles\plus.png">
+      <Name>plus</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Rooms\1_5wideLRoomCorner.fbx">
@@ -698,6 +698,13 @@
     </Compile>
     <Compile Include="Models\Rooms\wood.png">
       <Name>wood</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\chain.png">
+      <Name>chain</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

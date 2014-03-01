@@ -447,7 +447,7 @@ namespace KazgarsRevenge
             PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
             UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook,
                 GetUnanimatedModel("Models\\Attachables\\arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
-            ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator);
+            RopeBillboard chainComponent = new RopeBillboard(mainGame, hook, creator);
             GrapplingHookController hookController = new GrapplingHookController(mainGame, hook, creator);
 
 
@@ -457,7 +457,7 @@ namespace KazgarsRevenge
             hook.AddComponent(typeof(UnanimatedModelComponent), hookGraphics);
             modelManager.AddComponent(hookGraphics);
 
-            hook.AddComponent(typeof(ChainBillboard), chainComponent);
+            hook.AddComponent(typeof(StretchingBillboard), chainComponent);
             billboardManager.AddComponent(chainComponent);
 
             hook.AddComponent(typeof(GrapplingHookController), hookController);
@@ -490,7 +490,7 @@ namespace KazgarsRevenge
             hook.AddComponent(typeof(UnanimatedModelComponent), hookGraphics);
             modelManager.AddComponent(hookGraphics);
 
-            hook.AddComponent(typeof(ChainBillboard), chainComponent);
+            hook.AddComponent(typeof(StretchingBillboard), chainComponent);
             billboardManager.AddComponent(chainComponent);
 
             hook.AddComponent(typeof(ChainSpearController), hookController);

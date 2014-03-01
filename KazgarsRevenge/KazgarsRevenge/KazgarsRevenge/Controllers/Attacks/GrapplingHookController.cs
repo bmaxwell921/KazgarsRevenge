@@ -21,7 +21,7 @@ namespace KazgarsRevenge
         AliveComponent creator;
         Entity creatorData;
         double lifeCounter = 0;
-        double lifeLength = 5000;
+        double lifeLength = 1000;
         public GrapplingHookController(KazgarsRevengeGame game, GameEntity entity, AliveComponent creator)
             : base(game, entity)
         {

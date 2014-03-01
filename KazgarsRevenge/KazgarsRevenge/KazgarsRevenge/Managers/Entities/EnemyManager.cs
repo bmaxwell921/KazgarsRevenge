@@ -91,7 +91,12 @@ namespace KazgarsRevenge
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             enemy.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
             AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, enemy, enemyModel, 10, Vector3.Down * 18);
-            enemyGraphics.AddEmitter(typeof(ArmorSoulSystem), "soul", 50, 4, Vector3.Up * 8);
+
+            if ((mainGame as MainGame).ParticlesSetting == MainGame.SettingAmount.High)
+            {
+                enemyGraphics.AddEmitter(typeof(ArmorSoulSystem), "soul", 50, 4, Vector3.Up * 8);
+            }
+
             enemyGraphics.TurnOffMainModel();
             enemy.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);
