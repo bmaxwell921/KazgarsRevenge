@@ -54,7 +54,7 @@ namespace KazgarsRevenge
                     attacks.CreateTarExplosion(targetPosition, radius, creator);
                 }
 
-                Entity.Kill();
+                Entity.KillEntity();
             }
         }
 

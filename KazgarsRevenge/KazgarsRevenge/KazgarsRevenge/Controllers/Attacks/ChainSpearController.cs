@@ -50,7 +50,7 @@ namespace KazgarsRevenge
                 {
                     if (hitEntity.Name == "room")
                     {
-                        Entity.Kill();
+                        Entity.KillEntity();
                     }
                     if (hitEntity.Faction == factionToSpear)
                     {
@@ -86,7 +86,7 @@ namespace KazgarsRevenge
             target.StopPull();
             targetData.CollisionInformation.CollisionRules.Personal = prevRule;
             targetData.LinearVelocity = Vector3.Zero;
-            Entity.Kill();
+            Entity.KillEntity();
         }
 
         bool pulling = false;
@@ -120,7 +120,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    Entity.Kill();
+                    Entity.KillEntity();
                 }
             }
             base.Update(gameTime);

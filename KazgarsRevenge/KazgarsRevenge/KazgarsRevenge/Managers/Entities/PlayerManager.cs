@@ -186,7 +186,7 @@ namespace KazgarsRevenge
         public void DeletePlayer(Identification id)
         {
             if(playerMap.ContainsKey(id))
-                playerMap[id].Kill();
+                playerMap[id].KillEntity();
             // This line implemented so other clients don't read too much data from snapshots
             playerMap.Remove(id);
         }

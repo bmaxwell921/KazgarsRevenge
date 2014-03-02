@@ -30,7 +30,7 @@ namespace KazgarsRevenge
             if (hitEntity.Name == "room")
             {
                 //makes arrows stick in walls
-                (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
+                (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
             }
             base.HandleEntityCollision(hitEntity);
         }

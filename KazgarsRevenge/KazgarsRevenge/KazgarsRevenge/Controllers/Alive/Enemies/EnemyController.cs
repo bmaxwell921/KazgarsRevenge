@@ -171,17 +171,6 @@ namespace KazgarsRevenge
         protected AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
         {
-            if (state != EnemyState.Dying && state != EnemyState.Decaying && Dead)
-            {
-                state = EnemyState.Dying;
-                timerLength = animations.GetAniMillis(settings.aniPrefix + settings.deathAniName) - 100;
-                timerCounter = 0;
-                PlayAnimation(settings.aniPrefix + settings.deathAniName);
-                animations.StopMixing();
-                AIDeath();
-                Entity.GetComponent(typeof(PhysicsComponent)).Kill();
-                return;
-            }
             switch (state)
             {
                 case EnemyState.Normal:
@@ -388,7 +377,7 @@ namespace KazgarsRevenge
             timerCounter += millis;
             if(timerCounter >= timerLength)
             {
-                Entity.Kill();
+                Entity.KillEntity();
             }
 
             float percent = (float)(1 - timerCounter / timerLength);
@@ -426,9 +415,16 @@ namespace KazgarsRevenge
 
         }
 
-        protected virtual void AIDeath()
+        protected override void KillAlive()
         {
-
+            state = EnemyState.Dying;
+            timerLength = animations.GetAniMillis(settings.aniPrefix + settings.deathAniName) - 100;
+            timerCounter = 0;
+            PlayAnimation(settings.aniPrefix + settings.deathAniName);
+            animations.StopMixing();
+            Entity.GetComponent(typeof(PhysicsComponent)).KillComponent();
+            
+            base.KillAlive();
         }
 
         public override void HandleStun()

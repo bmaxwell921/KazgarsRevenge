@@ -19,7 +19,7 @@ namespace KazgarsRevenge
         {
             if (hitEntity.Name == "room")
             {
-                Entity.Kill();
+                Entity.KillEntity();
             }
             base.HandleEntityCollision(hitEntity);
         }

@@ -35,7 +35,7 @@ namespace KazgarsRevenge
                 if (a != null && a == target)
                 {
                     a.LifeSteal(heal);
-                    Entity.Kill();
+                    Entity.KillEntity();
                 }
             }
         }
@@ -46,7 +46,7 @@ namespace KazgarsRevenge
         {
             if (target == null || target.Dead)
             {
-                Entity.Kill();
+                Entity.KillEntity();
             }
             else
             {

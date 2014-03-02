@@ -74,11 +74,11 @@ namespace KazgarsRevenge
             return false;
         }
 
-        public void Kill()
+        public void KillEntity()
         {
             foreach (KeyValuePair<Type, Component> pair in components)
             {
-                pair.Value.Kill();
+                pair.Value.KillComponent();
             }
 
             Dead = true;

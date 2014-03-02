@@ -62,11 +62,11 @@ namespace KazgarsRevenge
             {
                 if (stickInWalls)
                 {
-                    (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
+                    (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
                 }
                 else
                 {
-                    Entity.Kill();
+                    Entity.KillEntity();
                 }
             }
             base.HandleEntityCollision(hitEntity);

@@ -27,7 +27,7 @@ namespace KazgarsRevenge
             lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (lifeCounter >= lifeLength)
             {
-                Entity.Kill();
+                Entity.KillEntity();
             }
         }
 
@@ -36,7 +36,7 @@ namespace KazgarsRevenge
             GameEntity hitEntity = other.Tag as GameEntity;
             if (hitEntity != null && hitEntity.Name == "room")
             {
-                (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
+                (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
                 lifeCounter = 0;
                 lifeLength = 1000;
             }

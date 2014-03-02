@@ -241,9 +241,14 @@ namespace KazgarsRevenge
             if (Health <= 0)
             {
                 Health = 0;
-                Dead = true;
+                KillAlive();
             }
             return actualDamage;
+        }
+
+        protected virtual void KillAlive()
+        {
+            Dead = true;
         }
 
         public void Pull()

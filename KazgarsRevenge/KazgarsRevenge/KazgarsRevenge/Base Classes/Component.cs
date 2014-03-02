@@ -16,7 +16,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// kills this component by telling the manager to remove it on the next update
         /// </summary>
-        public void Kill()
+        public void KillComponent()
         {
             Remove = true;
         }

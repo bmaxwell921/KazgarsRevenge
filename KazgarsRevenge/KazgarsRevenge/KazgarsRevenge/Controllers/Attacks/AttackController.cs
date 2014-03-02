@@ -54,7 +54,7 @@ namespace KazgarsRevenge
             lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (lifeCounter >= lifeLength)
             {
-                Entity.Kill();
+                Entity.KillEntity();
             }
 
             CheckHitEntities();
@@ -101,7 +101,7 @@ namespace KazgarsRevenge
                 hitData.Clear();
                 if (dieAfterContact)
                 {
-                    Entity.Kill();
+                    Entity.KillEntity();
                 }
             }
         }

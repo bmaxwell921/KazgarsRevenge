@@ -45,7 +45,7 @@ namespace KazgarsRevenge
                     {
                         creator.Pull();
                         physicalData.LinearVelocity = Vector3.Zero;
-                        (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).Kill();
+                        (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
                         pulling = true;
                         prevGrav = creatorData.IsAffectedByGravity;
                         creatorData.IsAffectedByGravity = false;
@@ -67,7 +67,7 @@ namespace KazgarsRevenge
             creator.StopPull();
             creatorData.CollisionInformation.CollisionRules.Personal = prevRule;
             creatorData.LinearVelocity = Vector3.Zero;
-            Entity.Kill();
+            Entity.KillEntity();
         }
 
         bool pulling = false;
@@ -101,7 +101,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    Entity.Kill();
+                    Entity.KillEntity();
                 }
             }
             base.Update(gameTime);

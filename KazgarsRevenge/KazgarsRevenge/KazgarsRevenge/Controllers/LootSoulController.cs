@@ -172,7 +172,7 @@ namespace KazgarsRevenge
                         {
                             if (loot.Count == 0)
                             {
-                                Entity.Kill();
+                                Entity.KillEntity();
                             }
                             else
                             {
@@ -262,7 +262,7 @@ namespace KazgarsRevenge
         public List<Item> Unite()
         {
             soulState = LootSoulState.Dying;
-            Entity.Kill();
+            Entity.KillEntity();
             return loot;
         }
 
@@ -300,7 +300,7 @@ namespace KazgarsRevenge
                             LootManager manager = (Game.Services.GetService(typeof(LootManager)) as LootManager);
                             manager.CreateLootSoul(newPos, loot, toAdd, totalSouls + otherSoul.totalSouls);
                             soulState = LootSoulState.Dying;
-                            Entity.Kill();
+                            Entity.KillEntity();
                         }
                     }
                 }

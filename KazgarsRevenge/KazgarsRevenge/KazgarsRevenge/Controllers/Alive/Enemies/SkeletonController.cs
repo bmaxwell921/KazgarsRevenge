@@ -63,12 +63,11 @@ namespace KazgarsRevenge
 
         }
 
-        protected override void AIDeath()
+        protected override void KillAlive()
         {
-
             model.RemoveEmitter("frostchargeleft");
             model.RemoveEmitter("frostchargeright");
-            base.AIDeath();
+            base.KillAlive();
         }
     }
 }
