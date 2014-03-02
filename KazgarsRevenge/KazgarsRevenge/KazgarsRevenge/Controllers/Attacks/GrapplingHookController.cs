@@ -32,8 +32,6 @@ namespace KazgarsRevenge
             physicalData.PositionUpdateMode = BEPUphysics.PositionUpdating.PositionUpdateMode.Continuous;
         }
 
-        BEPUphysics.CollisionRuleManagement.CollisionRule prevRule;
-        bool prevGrav = false;
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
             GameEntity hitEntity = other.Tag as GameEntity;
@@ -47,10 +45,6 @@ namespace KazgarsRevenge
                         physicalData.LinearVelocity = Vector3.Zero;
                         (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
                         pulling = true;
-                        prevGrav = creatorData.IsAffectedByGravity;
-                        creatorData.IsAffectedByGravity = false;
-                        prevRule = creatorData.CollisionInformation.CollisionRules.Personal;
-                        creatorData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
                         Vector3 dir = physicalData.Position - creatorData.Position;
                         dir.Y = 0;
                         dir.Normalize();
@@ -63,10 +57,8 @@ namespace KazgarsRevenge
 
         private void EndPull()
         {
-            creatorData.IsAffectedByGravity = prevGrav;
-            creator.StopPull();
-            creatorData.CollisionInformation.CollisionRules.Personal = prevRule;
             creatorData.LinearVelocity = Vector3.Zero;
+            creator.StopPull();
             Entity.KillEntity();
         }
 

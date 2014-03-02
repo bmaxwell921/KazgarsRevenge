@@ -249,16 +249,24 @@ namespace KazgarsRevenge
         protected virtual void KillAlive()
         {
             Dead = true;
+            if (pulling)
+            {
+                StopPull();
+            }
         }
 
         public void Pull()
         {
             pulling = true;
+            physicalData.IsAffectedByGravity = false;
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
         }
 
         public virtual void StopPull()
         {
             pulling = false;
+            physicalData.IsAffectedByGravity = true;
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.Normal;
         }
 
         public int Damage(DeBuff db, int d, GameEntity from)

@@ -1,16 +1,8 @@
 // Settings controlling the edge detection filter.
-float EdgeWidth = 1.3;
+float EdgeWidth = 1;
 float EdgeIntensity = 1;
 
-// How sensitive should the edge detection be to tiny variations in the input data?
-// Smaller settings will make it pick up more subtle edges, while larger values get
-// rid of unwanted noise.
-float NormalThreshold = 1;
-float DepthThreshold = .013;
-
-// How dark should the edges get in response to changes in the input data?
-float NormalSensitivity = 0;
-float DepthSensitivity = 50;
+float DepthThreshold = .018;
 
 // Pass in the current screen resolution.
 float2 ScreenResolution;
@@ -66,51 +58,22 @@ float4 PixelShaderFunction(float2 texCoord : TEXCOORD0) : COLOR0
 
     // Work out how much the normal and depth values are changing.
     float4 diagonalDelta = abs(n1 - n2) + abs(n3 - n4);
-
-    float normalDelta = 0;//dot(diagonalDelta.xyz, 1);
     float depthDelta = diagonalDelta.w;
 
 	if(depthDelta > DepthThreshold)
 	{
 		float4 n0 = tex2D(NormalDepthSampler, texCoord);
 
-		float3 col = n0.rgb;
-		float amt = n0.r + n0.b + n0.g;
-		if(n1.r + n1.b + n1.g > amt)
-		{
-			col = n1.rgb;
-		}
-		else if(n2.r + n2.b + n2.g > amt)
-		{
-			col = n2.rgb;
-		}
-		else if(n3.r + n3.b + n3.g > amt)
-		{
-			col = n3.rgb;
-		}
-		else if(n4.r + n4.b + n4.g > amt)
-		{
-			col = n4.rgb;
-		}
+		float3 col = float3(0,0,0);
+		col.r = n0.r + n1.r + n2.r + n3.r + n4.r;
+		col.b = n0.b + n1.b + n2.b + n3.b + n4.b;
+		col.g = n0.g + n1.g + n2.g + n3.g + n4.g;
 		return float4(col,1);
 	}
 	else
 	{
 		return float4(scene, 1);
 	}
-    
-    // Filter out very small changes, in order to produce nice clean results.
-    //normalDelta = saturate((normalDelta - NormalThreshold) * NormalSensitivity);
-    depthDelta = saturate((depthDelta - DepthThreshold) * DepthSensitivity);
-
-    // Does this pixel lie on an edge?
-    float edgeAmount = saturate(normalDelta + depthDelta) * EdgeIntensity;
-
-    // Apply the edge detection result to the main scene color.
-    scene *= (1 - edgeAmount);
-    
-
-    return float4(scene, 1);
 }
 
 
