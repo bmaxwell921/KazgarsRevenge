@@ -188,7 +188,7 @@ namespace KazgarsRevenge
                     possibleChunks.Add(ci);
                 }
             }
-            return possibleChunks[RandSingleton.Instance.Next(possibleChunks.Count)];
+            return possibleChunks[RandSingleton.S_Instance.Next(possibleChunks.Count)];
         }
 
         // Home chunks must have doors on all sides

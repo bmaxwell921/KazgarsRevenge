@@ -84,7 +84,7 @@ namespace KazgarsRevenge
                 foreach (Vector3 loc in spawnLocations)
                 {
                     // TODO actual level
-                    int r = RandSingleton.Instance.Next(4);
+                    int r = RandSingleton.S_Instance.Next(4);
                     if (r == 0)
                     {
                         ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
