@@ -37,6 +37,7 @@ namespace KazgarsRevenge
         Wrist,
         Righthand,
         Lefthand,
+        Bling,
     }
     
     public abstract class PlayerController : AliveComponent

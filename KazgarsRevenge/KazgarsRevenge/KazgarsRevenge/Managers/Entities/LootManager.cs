@@ -315,27 +315,27 @@ namespace KazgarsRevenge
 
         public Equippable GetHelm()
         {
-            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_head_rino"), GearSlot.Chest, GearSlot.None);
+            return new Equippable(GetIcon("helm"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_head_rino"), GearSlot.Chest, GearSlot.None);
         }
         public Equippable GetShoulders()
         {
-            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_shoulders_rino"), GearSlot.Chest, GearSlot.None);
+            return new Equippable(GetIcon("shoulders"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_shoulders_rino"), GearSlot.Chest, GearSlot.None);
         }
         public Equippable GetWrist()
         {
-            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_wrist_rino"), GearSlot.Chest, GearSlot.None);
+            return new Equippable(GetIcon("wrist"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_wrist_rino"), GearSlot.Chest, GearSlot.None);
         }
         public Equippable GetLegs()
         {
-            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_legs_rino"), GearSlot.Chest, GearSlot.None);
+            return new Equippable(GetIcon("legs"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_legs_rino"), GearSlot.Chest, GearSlot.None);
         }
         public Equippable GetBoots()
         {
-            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_boots_rino"), GearSlot.Chest, GearSlot.None);
+            return new Equippable(GetIcon("boots"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_boots_rino"), GearSlot.Chest, GearSlot.None);
         }
         public Equippable GetChest()
         {
-            return new Equippable(GetIcon("bow"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_chest_rino"), GearSlot.Chest, GearSlot.None);
+            return new Equippable(GetIcon("chest"), "armor", GetStats("bow"), GetAnimatedModel("Models\\Armor\\armor_chest_rino"), GearSlot.Chest, GearSlot.None);
         }
 
 
@@ -354,8 +354,11 @@ namespace KazgarsRevenge
                 case "potion":
                     texName += "Items\\HP";
                     break;
+                case "bow":
+                    texName += "Abilities\\LW";
+                    break;
                 default:
-                    texName += "Abilities\\HS";
+                    texName += "Abilities\\I2";
                     break;
             }
 
