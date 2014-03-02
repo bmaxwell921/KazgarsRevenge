@@ -143,7 +143,12 @@ namespace KazgarsRevenge
 
         protected float GetStat(StatType t)
         {
-            return stats[t];
+            float ret = stats[t];
+            if (ret < 0)
+            {
+                return 0;
+            }
+            return ret;
         }
 
         protected void AddGearStats(Equippable gear)
@@ -166,10 +171,6 @@ namespace KazgarsRevenge
             //add base stats, accounting for level
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
             {
-                if (baseStats[(StatType)i] < 0)
-                {
-                    baseStats[(StatType)i] = 0;
-                }
                 stats[(StatType)i] = baseStats[(StatType)i];
             }
 
@@ -383,14 +384,14 @@ namespace KazgarsRevenge
                 case Buff.AdrenalineRush:
                     if (state == BuffState.Starting)
                     {
-                        baseStats[StatType.RunSpeed] += 80;
+                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .75f;
                         baseStats[StatType.AttackSpeed] += .6f;
                         RecalculateStats();
                     }
                     else if (state == BuffState.Ending)
                     {
-                        baseStats[StatType.RunSpeed] = originalBaseStats[StatType.RunSpeed];
-                        baseStats[StatType.AttackSpeed] = originalBaseStats[StatType.AttackSpeed];
+                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .75f * stacks;
+                        baseStats[StatType.AttackSpeed] += .6f;
                         RecalculateStats();
                     }
                     break;
@@ -429,12 +430,12 @@ namespace KazgarsRevenge
                 case DeBuff.Tar:
                     if (state == BuffState.Starting)
                     {
-                        baseStats[StatType.RunSpeed] -= 80;
+                        baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .75f;
                         RecalculateStats();
                     }
                     if (state == BuffState.Ending)
                     {
-                        baseStats[StatType.RunSpeed] = originalBaseStats[StatType.RunSpeed];
+                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .75f * stacks;
                         RecalculateStats();
                     }
                     break;
