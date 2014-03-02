@@ -195,19 +195,36 @@ namespace KazgarsRevenge
                             {
                                 for (int i = 0; i <= maxInventorySlots; i++)
                                 {
-                                    if (innerClicked == "inventory" + i && (inventory[i] != null || inventory[i] == null && selectedItemSlot != -1))
+                                    if (innerClicked == "inventory" + i && (inventory[i] != null || inventory[i] == null && selectedItemSlot != -1 || selectedEquipSlot))
                                     {
-                                        if (selectedItemSlot == -1)
+                                        if (selectedEquipSlot)           //bringing equipment into inventory
                                         {
-                                            selectedItemSlot = i;
+                                            if (inventory[i] == null)    //Unequip equipment being brought in
+                                            {
+                                                UnequipGear(selectedEquipPiece);
+                                                gear[selectedEquipPiece] = null;
+                                                selectedEquipSlot = false;
+                                                selectedItemSlot = -1;
+                                            }
+                                            else                        //try and equip selected item
+                                            {
+                                                selectedItemSlot = i;
+                                                equipHelp(selectedEquipPiece);
+                                                selectedEquipSlot = false;
+                                                selectedItemSlot = -1;
+                                            }                                        
                                         }
-                                        else if (inventory[i] == null)
+                                        else if (selectedItemSlot == -1)//no selected item
+                                        {
+                                            selectedItemSlot = i;       //select item
+                                        }
+                                        else if (inventory[i] == null)  //put selected item into empty spot
                                         {
                                             inventory[i] = inventory[selectedItemSlot];
                                             inventory[selectedItemSlot] = null;
                                             selectedItemSlot = -1;
-                                        }
-                                        else
+                                        } 
+                                        else                            //switch inventory items
                                         {
                                             Item temp = inventory[i];
                                             inventory[i] = inventory[selectedItemSlot];
@@ -240,59 +257,41 @@ namespace KazgarsRevenge
                             }
                             else if (innerClicked == "equipBling")  //bling
                             {
-
+                                equipHelp(GearSlot.Bling);
                             }
                             else if (innerClicked == "equipLWep")  //LWep
                             {
-                                if (selectedItemSlot == -1) //Not equipping anything
-                                {
-                                    if (selectedEquipSlot && selectedEquipPiece == GearSlot.Righthand) //swap weapons
-                                    {
-                                        SwapWeapons();
-                                        selectedEquipSlot = false;
-                                    }
-                                    else   //pick up wep
-                                    {
-                                        selectedEquipSlot = true;
-                                        selectedEquipPiece = GearSlot.Lefthand;
-                                    }
-                                }
-                                else    //Bringing item in
-                                {
-                                    Equippable e = inventory[selectedItemSlot] as Equippable;
-                                    if (e != null && (e.Slot == GearSlot.Lefthand || e.Slot2 == GearSlot.Lefthand))
-                                    {
-                                        inventory[selectedItemSlot] = null;
-                                        EquipGear(e, GearSlot.Lefthand);
-                                        selectedItemSlot = -1;
-                                    }
-                                }
+                                equipHelp(GearSlot.Lefthand);
                             }
-                            else if (innerClicked == "equipRWep")
+
+                            else if (innerClicked == "equipHead")  //head
                             {
-                                if (selectedItemSlot == -1) //Not equipping anything
-                                {
-                                    if (selectedEquipSlot && selectedEquipPiece == GearSlot.Lefthand) //swap weapons
-                                    {
-                                        SwapWeapons();
-                                        selectedEquipSlot = false;
-                                    }
-                                    else   //pick up wep
-                                    {
-                                        selectedEquipSlot = true;
-                                        selectedEquipPiece = GearSlot.Righthand;
-                                    }
-                                }
-                                else    //Bringing item in
-                                {
-                                    Equippable e = inventory[selectedItemSlot] as Equippable;
-                                    if (e != null && (e.Slot == GearSlot.Righthand || e.Slot2 == GearSlot.Righthand))
-                                    {
-                                        inventory[selectedItemSlot] = null;
-                                        EquipGear(e, GearSlot.Righthand);
-                                        selectedItemSlot = -1;
-                                    }
-                                }
+                                equipHelp(GearSlot.Head);
+                            }
+                            else if (innerClicked == "equipChest")  //chest
+                            {
+                                equipHelp(GearSlot.Chest);
+                            }
+                            else if (innerClicked == "equipLegs")  //legs
+                            {
+                                equipHelp(GearSlot.Legs);
+                            }
+                            else if (innerClicked == "equipFeet")  //feet
+                            {
+                                equipHelp(GearSlot.Feet);
+                            }
+
+                            else if (innerClicked == "equipShoulder")  //shoulder
+                            {
+                                equipHelp(GearSlot.Shoulders);
+                            }
+                            else if (innerClicked == "equipCod")  //Cod
+                            {
+                                equipHelp(GearSlot.Codpiece);
+                            }
+                            else if (innerClicked == "equipRWep")  //RWep
+                            {
+                                equipHelp(GearSlot.Righthand);
                             }
                             break;
 
@@ -301,6 +300,33 @@ namespace KazgarsRevenge
                             break;
 
                     }
+                }
+                #endregion
+
+                #region tight click check
+                if (collides != null && prevMouse.RightButton == ButtonState.Pressed && curMouse.RightButton == ButtonState.Released)
+                {
+                    string innerClicked = CollidingInnerFrame(collides);
+                    switch (collides)
+                    {
+                        case "inventory":
+                            if (innerClicked != null && innerClicked.Contains("inventory") && selectedItemSlot == -1)  //equip item right clicked on
+                            {
+                                for (int i = 0; i <= maxInventorySlots; i++)
+                                {
+                                    if (innerClicked == "inventory" + i && inventory[i] != null)
+                                    {
+                                        //selectedItemSlot = i;
+                                        //                                      //set selectedEquipPiece as inventory[i] GearSlot  #Jared need help with this
+                                        //equipHelp(selectedEquipPiece);
+                                        //selectedEquipSlot = false;
+                                        //selectedItemSlot = -1;
+                                    }
+                                }
+                            }
+                            break;
+                    }
+
                 }
                 #endregion
 
@@ -397,37 +423,6 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
-        /// Helps to check and equip gear
-        /// </summary>
-        /// <param name="slot"></param>
-        private void equipHelp(GearSlot slot)
-        {
-            if (selectedItemSlot == -1) //Not equipping anything, pick up slot
-            {   //check for weapon swap
-                if ((slot == GearSlot.Righthand && selectedEquipSlot && selectedEquipPiece == GearSlot.Lefthand) || (slot == GearSlot.Lefthand && selectedEquipSlot && selectedEquipPiece == GearSlot.Righthand))
-                {
-                    SwapWeapons();
-                    selectedEquipSlot = false;
-                }
-                else
-                {
-                    selectedEquipSlot = true;
-                    selectedEquipPiece = slot;
-                }
-            }
-            else    //Bringing item in
-            {
-                Equippable e = inventory[selectedItemSlot] as Equippable;
-                if (e != null && (e.Slot == slot || e.Slot2 == slot))
-                {
-                    inventory[selectedItemSlot] = null;
-                    EquipGear(e, slot);
-                    selectedItemSlot = -1;
-                }
-            }
-        }
-
-        /// <summary>
         /// creates a raycast from the mouse, and returns the position on the ground that it hits.
         /// Also does a bepu raycast and finds the first enemy it hits, and keeps its healthcomponent
         /// for gui purposes
@@ -514,7 +509,7 @@ namespace KazgarsRevenge
         {
             //switch weapon hands (for demo)
             if (curKeys.IsKeyDown(Keys.Tab) && prevKeys.IsKeyUp(Keys.Tab)
-                && !(gear[GearSlot.Righthand] as Weapon).TwoHanded)
+                && (gear[GearSlot.Righthand] != null && gear[GearSlot.Lefthand] != null && !(gear[GearSlot.Righthand] as Weapon).TwoHanded))
             {
                 SwapWeapons();
             }
@@ -817,6 +812,53 @@ namespace KazgarsRevenge
         }
 
         #region Helpers
+        /// <summary>
+        /// Helps to check and equip gear
+        /// </summary>
+        /// <param name="slot"></param>
+        private void equipHelp(GearSlot slot)
+        {
+            if (selectedItemSlot == -1) //Not equipping anything, pick up slot
+            {   //check for weapon swap
+                if ((slot == GearSlot.Righthand && selectedEquipSlot && selectedEquipPiece == GearSlot.Lefthand) || (slot == GearSlot.Lefthand && selectedEquipSlot && selectedEquipPiece == GearSlot.Righthand))
+                {
+                    SwapWeapons();
+                    selectedEquipSlot = false;
+                }
+                else if (selectedEquipSlot) //not swapping weps but equipment already selected
+                {
+                    selectedEquipSlot = false;
+                    if (selectedEquipPiece != slot)
+                    {
+                        //TODO floating text saying that can't be equipped in that slot. #Jared teach me your ways
+                    }
+                }
+                else if (gear[slot] == null)
+                {
+                    //case where nothing is equipped.  TODO Decide if we want to do anything?
+                }
+                else
+                {
+                    selectedEquipSlot = true;
+                    selectedEquipPiece = slot;
+                }
+            }
+            else    //Bringing item in
+            {
+                Equippable e = inventory[selectedItemSlot] as Equippable;
+                if (e != null && (e.Slot == slot || e.Slot2 == slot))
+                {
+                    inventory[selectedItemSlot] = null;
+                    EquipGear(e, slot);
+                    selectedItemSlot = -1;
+                }
+                else
+                {
+                    //TODO floating text saying that can't be equipped! #Jared
+                }
+            }
+        }
+
         private void ResetTargettedEntity()
         {
             if (mouseHoveredHealth != null)
