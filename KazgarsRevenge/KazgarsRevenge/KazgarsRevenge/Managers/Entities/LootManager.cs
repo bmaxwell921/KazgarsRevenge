@@ -357,6 +357,9 @@ namespace KazgarsRevenge
                 case "bow":
                     texName += "Abilities\\LW";
                     break;
+                case "helm":
+                    texName += "Frames\\helmetIcon";
+                    break;
                 default:
                     texName += "Abilities\\I2";
                     break;

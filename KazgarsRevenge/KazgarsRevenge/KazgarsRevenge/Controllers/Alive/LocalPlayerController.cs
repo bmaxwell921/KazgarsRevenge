@@ -236,14 +236,7 @@ namespace KazgarsRevenge
                         case "equipment":
                             if (innerClicked == "equipWrist") //wrist
                             {
-                                if (selectedItemSlot == -1) //Not equipping anything, pick up wrist
-                                {
-
-                                }
-                                else    //Bringing item in
-                                {
-
-                                }
+                                equipHelp(GearSlot.Wrist);
                             }
                             else if (innerClicked == "equipBling")  //bling
                             {
@@ -251,15 +244,23 @@ namespace KazgarsRevenge
                             }
                             else if (innerClicked == "equipLWep")  //LWep
                             {
-                                if (selectedItemSlot == -1) //Not equipping anything, pick up wep
+                                if (selectedItemSlot == -1) //Not equipping anything
                                 {
-                                    selectedEquipSlot = true;
-                                    selectedEquipPiece = GearSlot.Lefthand;
+                                    if (selectedEquipSlot && selectedEquipPiece == GearSlot.Righthand) //swap weapons
+                                    {
+                                        SwapWeapons();
+                                        selectedEquipSlot = false;
+                                    }
+                                    else   //pick up wep
+                                    {
+                                        selectedEquipSlot = true;
+                                        selectedEquipPiece = GearSlot.Lefthand;
+                                    }
                                 }
                                 else    //Bringing item in
                                 {
                                     Equippable e = inventory[selectedItemSlot] as Equippable;
-                                    if (e != null)
+                                    if (e != null && (e.Slot == GearSlot.Lefthand || e.Slot2 == GearSlot.Lefthand))
                                     {
                                         inventory[selectedItemSlot] = null;
                                         EquipGear(e, GearSlot.Lefthand);
@@ -269,15 +270,23 @@ namespace KazgarsRevenge
                             }
                             else if (innerClicked == "equipRWep")
                             {
-                                if (selectedItemSlot == -1) //Not equipping anything, pick up wep
+                                if (selectedItemSlot == -1) //Not equipping anything
                                 {
-                                    selectedEquipSlot = true;
-                                    selectedEquipPiece = GearSlot.Righthand;
+                                    if (selectedEquipSlot && selectedEquipPiece == GearSlot.Lefthand) //swap weapons
+                                    {
+                                        SwapWeapons();
+                                        selectedEquipSlot = false;
+                                    }
+                                    else   //pick up wep
+                                    {
+                                        selectedEquipSlot = true;
+                                        selectedEquipPiece = GearSlot.Righthand;
+                                    }
                                 }
                                 else    //Bringing item in
                                 {
                                     Equippable e = inventory[selectedItemSlot] as Equippable;
-                                    if (e != null)
+                                    if (e != null && (e.Slot == GearSlot.Righthand || e.Slot2 == GearSlot.Righthand))
                                     {
                                         inventory[selectedItemSlot] = null;
                                         EquipGear(e, GearSlot.Righthand);
@@ -385,6 +394,37 @@ namespace KazgarsRevenge
             return entry != physicalData.CollisionInformation
                 && entry.CollisionRules.Personal <= CollisionRule.Normal
                 && (entry as StaticMesh) == null;
+        }
+
+        /// <summary>
+        /// Helps to check and equip gear
+        /// </summary>
+        /// <param name="slot"></param>
+        private void equipHelp(GearSlot slot)
+        {
+            if (selectedItemSlot == -1) //Not equipping anything, pick up slot
+            {   //check for weapon swap
+                if ((slot == GearSlot.Righthand && selectedEquipSlot && selectedEquipPiece == GearSlot.Lefthand) || (slot == GearSlot.Lefthand && selectedEquipSlot && selectedEquipPiece == GearSlot.Righthand))
+                {
+                    SwapWeapons();
+                    selectedEquipSlot = false;
+                }
+                else
+                {
+                    selectedEquipSlot = true;
+                    selectedEquipPiece = slot;
+                }
+            }
+            else    //Bringing item in
+            {
+                Equippable e = inventory[selectedItemSlot] as Equippable;
+                if (e != null && (e.Slot == slot || e.Slot2 == slot))
+                {
+                    inventory[selectedItemSlot] = null;
+                    EquipGear(e, slot);
+                    selectedItemSlot = -1;
+                }
+            }
         }
 
         /// <summary>
