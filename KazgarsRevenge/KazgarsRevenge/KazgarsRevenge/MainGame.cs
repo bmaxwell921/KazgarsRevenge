@@ -265,13 +265,25 @@ namespace KazgarsRevenge
 
         string alertMessage = "";
         double alertTimeLeft = 0;
+        float alertSourceX = 0;
 
-        List<FloatingText> alertText = new List<FloatingText>();
+        List<FloatingText> floatingText = new List<FloatingText>();
         Vector2 alertStart = Vector2.Zero;
         public void AddAlert(string text)
         {
             alertMessage = text;
             alertTimeLeft = 2500;
+            alertSourceX = normalFont.MeasureString(alertMessage).X / 4;
+        }
+
+        public void AddFloatingText(string text, Color color)
+        {
+            floatingText.Add(new FloatingText(new Vector2(maxX / 2 - normalFont.MeasureString(text).X / 2, maxY / 2), text, color));
+        }
+
+        public void AddFloatingText(string text, Color color, float scale)
+        {
+            floatingText.Add(new FloatingText(new Vector2(maxX / 2 - normalFont.MeasureString(text).X * scale / 2, maxY / 2), text, color, scale));
         }
 
         //public void AddAlert(string 
@@ -285,10 +297,10 @@ namespace KazgarsRevenge
                 {
                     alertTimeLeft -= gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
-                for (int i = alertText.Count - 1; i >= 0; ++i)
+                for (int i = floatingText.Count - 1; i >= 0; ++i)
                 {
-                    alertText[i].alpha -= .01f;
-                    alertText[i].position.Y -= 1;
+                    floatingText[i].alpha -= .01f;
+                    floatingText[i].position.Y -= 1;
                 }
             }
 
@@ -407,14 +419,14 @@ namespace KazgarsRevenge
                 //debug strings
                 //spriteBatch.DrawString(normalFont, ""+camera.zoom, new Vector2(50, 100), Color.Red);
                 //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
-                foreach (FloatingText f in alertText)
+                foreach (FloatingText f in floatingText)
                 {
-                    spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, f.scale, SpriteEffects.None, 0);
                 }
 
                 if (alertTimeLeft > 0)
                 {
-                    spriteBatch.DrawString(normalFont, alertMessage, alertTextPosition, Color.Red * (float)(alertTimeLeft / 2500), 0, new Vector2(normalFont.MeasureString(alertMessage).X / 4, 0), .5f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, alertMessage, alertTextPosition, Color.Red * (float)(alertTimeLeft / 2500), 0, new Vector2(alertSourceX, 0), .5f, SpriteEffects.None, 0);
                 }
                 spriteBatch.End();
 
