@@ -34,14 +34,14 @@ namespace KazgarsRevenge
 
         public delegate int AddedStatFunc();
 
-        private AddedStatFunc addedStatFunc;
+        private Func<int> addedStatFunc;
 
         /// <summary>
         /// Constructs a new empty drop table
         /// </summary>
         /// <param name="game"></param>
         /// <param name="entity"></param>
-        public DropTable(KazgarsRevengeGame game, GameEntity entity, AddedStatFunc addedStatFunc)
+        public DropTable(KazgarsRevengeGame game, GameEntity entity, Func<int> addedStatFunc)
             : base(game, entity)
         {
             gearDrops = new List<Droption<Equippable>>();
@@ -127,7 +127,7 @@ namespace KazgarsRevenge
         public IList<Item> GetDrops(FloorName floor, GameEntity killingEntity)
         {
             IList<Item> drops = new List<Item>();
-            // TODO call this in the LootManager
+            // TODO call this in the LootManager and make a way to have nothing drop (just pass in null?)
             GetGoldDrops(drops, floor);
             GetGearDrops(drops, floor, killingEntity);
             GetConsumableDrops(drops, floor);
@@ -169,7 +169,11 @@ namespace KazgarsRevenge
         private void GetGearDrops(IList<Item> drops, FloorName floor, GameEntity killingEntity)
         {
             Equippable dropped = GetDropped<Equippable>(gearDrops, gearTotal);
-            SetGearStats(dropped, floor, killingEntity);
+            if (dropped != null)
+            {
+                SetGearStats(dropped, floor, killingEntity);
+                drops.Add(dropped);
+            }
         }
 
         // Sets the dropped gear's stats
@@ -190,13 +194,21 @@ namespace KazgarsRevenge
         // Gets the consumable drops
         private void GetConsumableDrops(IList<Item> drops, FloorName floor)
         {
-            drops.Add(GetDropped<Item>(consumableDrops, consumableTotal));
+            Item dropped = GetDropped<Item>(consumableDrops, consumableTotal);
+            if (dropped != null)
+            {
+                drops.Add(dropped);
+            }
         }
         #endregion
 
         // Look at all those lovely generics
         private static T GetDropped<T>(IList<Droption<T>> list, int total) where T : Item
         {
+            if (list.Count <= 0)
+            {
+                return null;
+            }
             int val = RandSingleton.U_instance.Next(total);
             int min = 0; int max = 0;
 
@@ -208,7 +220,8 @@ namespace KazgarsRevenge
 
                 if (min <= val && val < max)
                 {
-                    return list[i].item;
+                    // Do a clone so nothing gets messed with
+                    return (T) list[i].item.Clone();
                 }
             }
 
