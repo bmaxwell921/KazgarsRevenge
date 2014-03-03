@@ -98,6 +98,13 @@ namespace KazgarsRevenge
             Weapon possWep = equipMe as Weapon;
             if (possWep != null)
             {
+                Weapon possRightHand = gear[GearSlot.Righthand] as Weapon;
+
+                if (possRightHand != null && possRightHand.TwoHanded)
+                {
+                    UnequipGear(GearSlot.Righthand);
+                }
+
                 weapon = true;
                 if (possWep.TwoHanded)
                 {
@@ -137,7 +144,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// tries to put equipped item into inventory. If there was no inventory space, returns false.
         /// </summary>
-        protected bool UnequipGear(GearSlot slot)
+        protected bool UnequipGear(GearSlot slot, int inventoryPos)
         {
             Equippable toRemove = gear[slot];
             if (toRemove == null)
@@ -145,8 +152,9 @@ namespace KazgarsRevenge
                 //if there was nothing in there to start with, return true
                 return true;
             }
-            if (AddToInventory(toRemove))
+            if (AddToInventory(toRemove, inventoryPos))
             {
+                gear[slot] = null;
                 if (toRemove is Weapon)
                 {
                     attached.Remove(slot.ToString());
@@ -161,6 +169,57 @@ namespace KazgarsRevenge
             {
                 return false;
             }
+        }
+
+        protected bool UnequipGear(GearSlot slot)
+        {
+            Equippable toRemove = gear[slot];
+            if (toRemove == null)
+            {
+                //if there was nothing in there to start with, return true
+                return true;
+            }
+            if (AddToInventory(toRemove))
+            {
+                gear[slot] = null;
+                if (toRemove is Weapon)
+                {
+                    attached.Remove(slot.ToString());
+                }
+                else
+                {
+                    syncedModels.Remove(slot.ToString());
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool AddToInventory(Item toAdd, int inventoryIndex)
+        {
+            if (toAdd == null)
+            {
+                return true;
+            }
+
+            //check if full
+            if (inventory[inventoryIndex] != null)
+            {
+                return false;
+            }
+
+            if (toAdd.Name == "gold")
+            {
+                gold += toAdd.Quantity;
+                return true;
+            }
+
+            inventory[inventoryIndex] = toAdd;
+
+            return true;
         }
         /// <summary>
         /// tries to add item to inventory if there is space. returns false if no space left
@@ -285,9 +344,9 @@ namespace KazgarsRevenge
             EquipGear(lewtz.GenerateBow(), GearSlot.Lefthand);
 
             EquipGear(lewtz.GetBoots(), GearSlot.Feet);
-            //EquipGear(lewtz.GetChest(), GearSlot.Chest);
+            EquipGear(lewtz.GetChest(), GearSlot.Chest);
             EquipGear(lewtz.GetHelm(), GearSlot.Head);
-            //EquipGear(lewtz.GetLegs(), GearSlot.Legs);
+            EquipGear(lewtz.GetLegs(), GearSlot.Legs);
             EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
             EquipGear(lewtz.GetWrist(), GearSlot.Wrist);
         }

@@ -200,7 +200,7 @@ namespace KazgarsRevenge
                                         {
                                             if (inventory[i] == null)    //Unequip equipment being brought in
                                             {
-                                                UnequipGear(selectedEquipPiece);
+                                                UnequipGear(selectedEquipPiece, i);
                                                 gear[selectedEquipPiece] = null;
                                                 selectedEquipSlot = false;
                                                 selectedItemSlot = -1;
@@ -322,7 +322,11 @@ namespace KazgarsRevenge
                                             if (e.Slot == GearSlot.Lefthand || e.Slot == GearSlot.Righthand)
                                             {
                                                 if (gear[GearSlot.Righthand] == null) selectedEquipPiece = GearSlot.Righthand;      //no weapon in right hand.  Equip into right hand;
-                                                else if (gear[GearSlot.Lefthand] == null) selectedEquipPiece = GearSlot.Lefthand;   //TODO 2 handed case?
+                                                else if (gear[GearSlot.Lefthand] == null)
+                                                {
+                                                    if ((gear[GearSlot.Righthand] as Weapon).TwoHanded) selectedEquipPiece = GearSlot.Righthand;
+                                                    else selectedEquipPiece = GearSlot.Lefthand;
+                                                }
                                                 else selectedEquipPiece = GearSlot.Righthand;                                       //prefer replacing the right hand if two weapons are equipped
                                             }
                                             else
