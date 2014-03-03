@@ -32,8 +32,6 @@ namespace KazgarsRevenge
         // Same idea as above
         private int gearTotal;
 
-        public delegate int AddedStatFunc();
-
         private Func<int> addedStatFunc;
 
         /// <summary>
