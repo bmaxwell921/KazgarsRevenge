@@ -127,12 +127,14 @@ namespace KazgarsRevenge
         public IList<Item> GetDrops(FloorName floor, GameEntity killingEntity)
         {
             IList<Item> drops = new List<Item>();
-            // TODO
+            // TODO call this in the LootManager
             GetGoldDrops(drops, floor);
             GetGearDrops(drops, floor, killingEntity);
+            GetConsumableDrops(drops, floor);
             return drops;
         }
 
+        #region Gold
         // Adds the gold drop
         private void GetGoldDrops(IList<Item> drops, FloorName floor)
         {
@@ -160,10 +162,13 @@ namespace KazgarsRevenge
             return 5 * floorAmtSq + RandSingleton.U_instance.Next(-floorAmtSq, floorAmtSq);
         }
 
+        #endregion
+
+        #region Gear
         // Gets the gear dropped
         private void GetGearDrops(IList<Item> drops, FloorName floor, GameEntity killingEntity)
         {
-            Equippable dropped = GetDroppedGear();
+            Equippable dropped = GetDropped<Equippable>(gearDrops, gearTotal);
             SetGearStats(dropped, floor, killingEntity);
         }
 
@@ -178,10 +183,39 @@ namespace KazgarsRevenge
             // TODO do we need additional stats here?
             Dictionary<StatType, float> itemStats = new Dictionary<StatType, float>();
             itemStats[StatType.Strength] = baseStat;
-            //dropped.StatEffects = itemStats;
+        }
+        #endregion
 
+        #region Consumables
+        // Gets the consumable drops
+        private void GetConsumableDrops(IList<Item> drops, FloorName floor)
+        {
+            drops.Add(GetDropped<Item>(consumableDrops, consumableTotal));
+        }
+        #endregion
+
+        // Look at all those lovely generics
+        private static T GetDropped<T>(IList<Droption<T>> list, int total) where T : Item
+        {
+            int val = RandSingleton.U_instance.Next(total);
+            int min = 0; int max = 0;
+
+            bool done = false;
+            for (int i = 0; !done; ++i)
+            {
+                min = max;
+                max += list[i].weight;
+
+                if (min <= val && val < max)
+                {
+                    return list[i].item;
+                }
+            }
+
+            throw new Exception("Oh god something went horribly wrong while getting the dropped gear!");
         }
 
+        #region Delegate Options
         /// <summary>
         /// Method that should be used to calculate the additional stats on an item
         /// </summary>
@@ -208,6 +242,7 @@ namespace KazgarsRevenge
         {
             return 10;
         }
+        #endregion
 
         /// <summary>
         /// returns (rolls)d(sides)
@@ -224,26 +259,6 @@ namespace KazgarsRevenge
                 ret += RandSingleton.U_instance.Next(1, sides + 1);
             }
             return ret;
-        }
-
-        private Equippable GetDroppedGear()
-        {
-            int val = RandSingleton.U_instance.Next(gearTotal);
-            int min = 0; int max = 0;
-
-            bool done = false;
-            for (int i = 0; !done; ++i)
-            {
-                min = max;
-                max += gearDrops[i].weight;
-
-                if (min <= val && val < max)
-                {
-                    return gearDrops[i].item;
-                }
-            }
-
-            throw new Exception("Oh god something went horribly wrong while getting the dropped gear!");
         }
 
         #endregion
