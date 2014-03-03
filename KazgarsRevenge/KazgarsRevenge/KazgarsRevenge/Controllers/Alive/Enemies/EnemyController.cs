@@ -57,6 +57,7 @@ namespace KazgarsRevenge
         protected EnemyControllerSettings settings;
 
         CameraComponent camera;
+        LevelManager levels;
 
         public EnemyController(KazgarsRevengeGame game, GameEntity entity, int level)
             : base(game, entity, level)
@@ -74,7 +75,8 @@ namespace KazgarsRevenge
             settings.walkSpeed = GetStat(StatType.RunSpeed) / 2;
 
 
-            lewts = game.Services.GetService(typeof(LootManager)) as LootManager;
+            lewts = (LootManager)game.Services.GetService(typeof(LootManager));
+            levels = (LevelManager)game.Services.GetService(typeof(LevelManager));
             idleUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
             currentUpdateFunction = idleUpdateFunction;
 
@@ -306,6 +308,7 @@ namespace KazgarsRevenge
                     else
                     {
                         //otherwise, go to run state
+                        maxPathRequestCounter = 10000;
                         currentUpdateFunction = new AIUpdateFunction(AIRunningToTarget);
                         attackCounter = double.MaxValue;
                     }
@@ -317,17 +320,26 @@ namespace KazgarsRevenge
             }
         }
 
+        Vector3 currentPathPoint = Vector3.Zero;
+        List<Vector3> currentPath;
+        const float PATH_RADIUS_SATISFACTION = 10.0f;
+        double maxPathRequestCounter;
+        double maxPathRequestLength = 4000;
         double minChaseCounter;
         double minChaseLength = 7000;
         protected virtual void AIRunningToTarget(double millis)
         {
             minChaseCounter += millis;
+            maxPathRequestCounter += millis;
             if (targetHealth != null && targetData != null && !targetHealth.Dead)
             {
-                //if the target is within attack radius, go to attack state
                 Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
 
-                if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
+                //if the target is within attack radius,
+                //     (TODO: and nothing is between this and the target, e.g. raycast returns nothing but target?)
+                //go to attack state
+                bool nothingBetween = true;
+                if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange && nothingBetween)
                 {
                     currentUpdateFunction = attackingUpdateFunction;
                     ChangeVelocity(Vector3.Zero);
@@ -339,10 +351,41 @@ namespace KazgarsRevenge
                 }
                 else
                 {//otherwise, run towards it
+
+                    //if we're not in the same block as the target, run to next path point. otherwise, run straight towards it
+                    if (nothingBetween || Math.Abs(diff.X) > LevelManager.BLOCK_SIZE || Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE)
+                    {
+                        //if we don't have a path, request one from levels
+                        if ((currentPath == null || currentPath.Count == 0) && currentPathPoint == Vector3.Zero)
+                        {
+                            GetNewPath();
+                        }
+
+                        if (currentPath != null && currentPath.Count > 0)
+                        {
+                            //request new path if target is a block or more away from the last path
+                            Vector3 diffTargetPath = new Vector3(targetData.Position.X - currentPath[currentPath.Count - 1].X, 0, targetData.Position.Z - currentPath[currentPath.Count - 1].Z);
+                            if (Math.Abs(diffTargetPath.X) < LevelManager.BLOCK_SIZE && Math.Abs(diffTargetPath.Z) < LevelManager.BLOCK_SIZE)
+                            {
+                                GetNewPath();
+                            }
+                        }
+
+                        //if we're close enough to the current targeted point, get next point in the path
+                        diff = new Vector3(physicalData.Position.X - currentPathPoint.X, 0, physicalData.Position.Z - currentPathPoint.Z);
+                        if (Math.Abs(diff.X) < PATH_RADIUS_SATISFACTION && Math.Abs(diff.Z) < PATH_RADIUS_SATISFACTION)
+                        {
+                            GetNextPathPoint();
+                            diff = new Vector3(physicalData.Position.X - currentPathPoint.X, 0, physicalData.Position.Z - currentPathPoint.Z);
+                        }
+                    }
+
+                    //run to the next point in the path
                     if (diff != Vector3.Zero)
                     {
                         diff.Normalize();
                     }
+
                     ChangeVelocity(diff * GetStat(StatType.RunSpeed));
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                     if (currentAniName != settings.aniPrefix + settings.moveAniName)
@@ -472,6 +515,29 @@ namespace KazgarsRevenge
                 || pos.X > cameraBox.Max.X
                 || pos.Z < cameraBox.Min.Z
                 || pos.Z > cameraBox.Max.Z);
+        }
+
+        protected void GetNewPath()
+        {
+            if (maxPathRequestCounter >= maxPathRequestLength)
+            {
+                currentPath = levels.GetPath(physicalData.Position, targetData.Position) as List<Vector3>;
+                maxPathRequestCounter = 0;
+                GetNextPathPoint();
+            }
+        }
+
+        protected void GetNextPathPoint()
+        {
+            if (currentPath == null || currentPath.Count > 0)
+            {
+                currentPathPoint = physicalData.Position;
+            }
+            else
+            {
+                currentPathPoint = currentPath[0];
+                currentPath.RemoveAt(0);
+            }
         }
 
     }
