@@ -178,7 +178,7 @@ namespace KazgarsRevenge
             // TODO do we need additional stats here?
             Dictionary<StatType, float> itemStats = new Dictionary<StatType, float>();
             itemStats[StatType.Strength] = baseStat;
-            dropped.StatEffects = itemStats;
+            //dropped.StatEffects = itemStats;
 
         }
 
