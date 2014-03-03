@@ -333,7 +333,7 @@ namespace KazgarsRevenge
 
         public Equippable GetBow()
         {
-            return new Weapon(GetIcon("bow"), "bow", GetStats("bow"), GetUnanimatedModel(attachDir + "bow01"), AttackType.Ranged, false);
+            return new Weapon(GetIcon("bow"), "bow", GetStats("bow"), GetUnanimatedModel(attachDir + "bow01"), AttackType.Ranged, true);
         }
 
         public Equippable GetHelm()
