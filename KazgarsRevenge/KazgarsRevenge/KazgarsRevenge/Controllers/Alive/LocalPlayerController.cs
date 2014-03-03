@@ -171,7 +171,6 @@ namespace KazgarsRevenge
                 bool mouseOnGui = collides != null || selectedItemSlot != -1 || selectedEquipSlot;
                 CheckMouseRay(newTarget, mouseOnGui);
 
-                //#jared Equip gear needs to 1. not take in a slot, 2. output floating text if equip fails
                 //if item is removed from the inventory area
                 if (collides == null && (selectedItemSlot != -1 || selectedEquipSlot) && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
@@ -303,7 +302,7 @@ namespace KazgarsRevenge
                 }
                 #endregion
 
-                #region tight click check
+                #region right click check
                 if (collides != null && prevMouse.RightButton == ButtonState.Pressed && curMouse.RightButton == ButtonState.Released)
                 {
                     string innerClicked = CollidingInnerFrame(collides);
@@ -316,11 +315,19 @@ namespace KazgarsRevenge
                                 {
                                     if (innerClicked == "inventory" + i && inventory[i] != null)
                                     {
-                                        //selectedItemSlot = i;
-                                        //                                      //set selectedEquipPiece as inventory[i] GearSlot  #Jared need help with this
-                                        //equipHelp(selectedEquipPiece);
-                                        //selectedEquipSlot = false;
-                                        //selectedItemSlot = -1;
+                                        selectedItemSlot = i;
+                                        Equippable e = inventory[i] as Equippable;        //set selectedEquipPiece as inventory[i] GearSlot  #Jared need help with this
+                                        if (e != null)
+                                        {
+                                            selectedEquipPiece = e.Slot;         // weapon cases TODO
+                                            equipHelp(selectedEquipPiece);
+                                            selectedEquipSlot = false;
+                                            selectedItemSlot = -1;
+                                        }
+                                        else
+                                        {
+                                            //floating text for not equipable
+                                        }
                                     }
                                 }
                             }
