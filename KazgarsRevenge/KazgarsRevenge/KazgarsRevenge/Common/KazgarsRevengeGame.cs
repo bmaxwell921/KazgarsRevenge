@@ -36,7 +36,7 @@ namespace KazgarsRevenge
 
         public KazgarsRevengeGame()
         {
-            rand = RandSingleton.Instance;
+            rand = RandSingleton.S_Instance;
             InitPhysics();
         }
 

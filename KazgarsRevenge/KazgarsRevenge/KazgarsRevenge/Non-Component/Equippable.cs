@@ -9,7 +9,7 @@ namespace KazgarsRevenge
 {
     public class Equippable : Item
     {
-        public Dictionary<StatType, float> StatEffects { get; private set; }
+        public Dictionary<StatType, float> StatEffects { get; protected set; }
         public Model GearModel { get; private set; }
         public GearSlot Slot { get; private set; }
         public GearSlot Slot2 { get; private set; }
