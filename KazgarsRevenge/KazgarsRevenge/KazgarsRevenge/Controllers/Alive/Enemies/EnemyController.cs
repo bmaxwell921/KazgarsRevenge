@@ -89,6 +89,8 @@ namespace KazgarsRevenge
             PlayAnimation(settings.aniPrefix + settings.idleAniName);
             attackLength = animations.GetAniMillis(settings.aniPrefix + settings.attackAniName);
             attackCheckLength = attackLength / 10;
+
+            base.Start();
         }
 
 

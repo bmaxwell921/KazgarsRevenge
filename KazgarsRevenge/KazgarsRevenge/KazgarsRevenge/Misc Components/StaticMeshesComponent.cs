@@ -34,6 +34,8 @@ namespace KazgarsRevenge
                     physics.Add(s);
                 }
             }
+
+            base.Start();
         }
 
         public override void Update(GameTime gametime)

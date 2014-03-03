@@ -44,7 +44,6 @@ namespace KazgarsRevenge
         public SettingAmount ParticlesSetting { get { return settings.particleSettings; } }
         #endregion
 
-
         #region components
         public GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;        

@@ -57,6 +57,8 @@ namespace KazgarsRevenge
         public override void Start()
         {
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
+
+            base.Start();
         }
 
         const float soulSensorSize = 400;

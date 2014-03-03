@@ -195,9 +195,14 @@ namespace KazgarsRevenge
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
-            model = Entity.GetComponent(typeof(AnimatedModelComponent)) as AnimatedModelComponent;
 
             RecalculateStats();
+        }
+
+        public override void Start()
+        {
+            model = (AnimatedModelComponent)Entity.GetComponent(typeof(AnimatedModelComponent));
+            base.Start();
         }
 
         public void Target()

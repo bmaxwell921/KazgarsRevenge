@@ -59,6 +59,8 @@ namespace KazgarsRevenge
         public override void Start()
         {
             groundIndicator = Entity.GetComponent(typeof(AbilityTargetDecal)) as AbilityTargetDecal;
+
+            base.Start();
         }
 
         //variables for target

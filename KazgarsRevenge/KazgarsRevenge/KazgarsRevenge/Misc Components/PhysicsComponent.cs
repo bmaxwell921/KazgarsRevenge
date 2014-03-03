@@ -27,6 +27,8 @@ namespace KazgarsRevenge
         {
             (Game.Services.GetService(typeof(Space)) as Space).Add(collidable);
             collidable.CollisionInformation.Tag = Entity;
+
+            base.Start();
         }
 
         public override void End()

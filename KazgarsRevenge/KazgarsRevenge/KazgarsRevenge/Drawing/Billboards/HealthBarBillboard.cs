@@ -24,6 +24,8 @@ namespace KazgarsRevenge
         {
             this.owner = Entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
             this.ownerData = Entity.GetSharedData(typeof(Entity)) as Entity;
+
+            base.Start();
         }
 
         float percent = 1;
