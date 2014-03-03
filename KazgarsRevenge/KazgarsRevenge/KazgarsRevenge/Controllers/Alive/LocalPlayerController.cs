@@ -136,13 +136,11 @@ namespace KazgarsRevenge
 
             #region UI Update Section
             //reset the currently used abilities
-            //TODO change for ability use on key up
             for (int i = 0; i < 14; i++)
             {
                 UISlotUsed[i] = false;
             }
             //ability CD updates
-            //TODO make into loop for all bound abilities and items
             foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
             {
                 k.Value.update(elapsed);
@@ -318,10 +316,20 @@ namespace KazgarsRevenge
                                     if (innerClicked == "inventory" + i && inventory[i] != null)
                                     {
                                         selectedItemSlot = i;
-                                        Equippable e = inventory[i] as Equippable;        //set selectedEquipPiece as inventory[i] GearSlot  #Jared need help with this
+                                        Equippable e = inventory[i] as Equippable;        //set selectedEquipPiece as inventory[i]
                                         if (e != null)
                                         {
-                                            selectedEquipPiece = e.Slot;         // weapon cases TODO
+                                            if (e.Slot == GearSlot.Lefthand || e.Slot == GearSlot.Righthand)
+                                            {
+                                                if (gear[GearSlot.Righthand] == null) selectedEquipPiece = GearSlot.Righthand;      //no weapon in right hand.  Equip into right hand;
+                                                else if (gear[GearSlot.Lefthand] == null) selectedEquipPiece = GearSlot.Lefthand;   //TODO 2 handed case?
+                                                else selectedEquipPiece = GearSlot.Righthand;                                       //prefer replacing the right hand if two weapons are equipped
+                                            }
+                                            else
+                                            {
+                                                selectedEquipPiece = e.Slot;
+                                            }
+                                            
                                             equipHelp(selectedEquipPiece);
                                             selectedEquipSlot = false;
                                             selectedItemSlot = -1;
@@ -840,6 +848,7 @@ namespace KazgarsRevenge
                     if (selectedEquipPiece != slot)
                     {
                         //TODO floating text saying that can't be equipped in that slot. #Jared teach me your ways
+                        ((MainGame)Game).AddAlert("Can't put that there me' lord!");
                     }
                 }
                 else if (gear[slot] == null)
@@ -941,7 +950,7 @@ namespace KazgarsRevenge
 
         //Inside Rect Dictionaries
         Dictionary<string, Rectangle> damageDict;
-        Dictionary<string, Rectangle> chatDict;
+        //Dictionary<string, Rectangle> chatDict;
         Dictionary<string, Rectangle> playerDict;
         Dictionary<string, Rectangle> mapDict;
         Dictionary<string, Rectangle> xpDict;
@@ -979,14 +988,14 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("equipment", new Rectangle((int)(maxX - 704 * average), (int)(380 * average), (int)(304 * average), (int)(440 * average)));
 
             guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
-            guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
+            //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
             equipmentDict = new Dictionary<string, Rectangle>();
             inventoryDict = new Dictionary<string, Rectangle>();
             abilityDict = new Dictionary<string, Rectangle>();
             lootDict = new Dictionary<string, Rectangle>();
-            chatDict = new Dictionary<string, Rectangle>();
+            //chatDict = new Dictionary<string, Rectangle>();
             playerDict = new Dictionary<string, Rectangle>();
             mapDict = new Dictionary<string, Rectangle>();
             xpDict = new Dictionary<string, Rectangle>();
@@ -999,7 +1008,7 @@ namespace KazgarsRevenge
             guiInsideRects.Add("xp", xpDict);
             guiInsideRects.Add("damage", damageDict);
             guiInsideRects.Add("map", mapDict);
-            guiInsideRects.Add("chat", chatDict);
+            //guiInsideRects.Add("chat", chatDict);
             guiInsideRects.Add("player", playerDict);
 
             //Equipment inner
@@ -1071,7 +1080,7 @@ namespace KazgarsRevenge
 
             #region UIBase
             //Chat Pane
-            s.Draw(texWhitePixel, guiOutsideRects["chat"], Color.Black * 0.5f);
+            //s.Draw(texWhitePixel, guiOutsideRects["chat"], Color.Black * 0.5f);
 
             #region Ability Bar
             //Ability Bar

@@ -434,7 +434,7 @@ namespace KazgarsRevenge
 
             needInterruptAction = true;
             canInterrupt = false;
-            currentSequence = actionSequences[name];
+            currentSequence = actionSequences[name];        //#jared TODO punch
             actionIndex = 0;
             currentActionName = name;
             stateResetCounter = double.MaxValue;
@@ -1354,7 +1354,7 @@ namespace KazgarsRevenge
 
         #region Damage
 
-        //TODO: damage tracker and "in combat" status
+        //TODO: damage tracker and "in combat" status  #resolved?
         public override void HandleDamageDealt(int damageDealt)
         {
             inCombat = true;
