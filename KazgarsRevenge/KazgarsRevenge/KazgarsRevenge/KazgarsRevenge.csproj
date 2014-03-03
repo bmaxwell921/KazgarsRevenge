@@ -202,6 +202,7 @@
     <Compile Include="Particles\Base Classes\ParticleSettings.cs" />
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
+    <Compile Include="Particles\StunnedParticleSystem.cs" />
     <Compile Include="Particles\Systems\ArmorSoulSystem.cs" />
     <Compile Include="Particles\Systems\ExplosionParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireArrowParticleSystem.cs" />

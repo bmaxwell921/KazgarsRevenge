@@ -513,7 +513,7 @@ namespace KazgarsRevenge
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                                                                                 new Vector3(20), Vector3.Backward * 20, 0, 0, 0);
-            arrowGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 50, 10, Vector3.Zero);
+            arrowGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 50, 5, Vector3.Zero);
 
             ProjectileController arrowAI = new ProjectileController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
             arrowAI.Penetrate();

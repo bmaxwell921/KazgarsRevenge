@@ -195,6 +195,8 @@ namespace KazgarsRevenge
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
+            model = Entity.GetComponent(typeof(AnimatedModelComponent)) as AnimatedModelComponent;
+
             RecalculateStats();
         }
 
@@ -308,10 +310,6 @@ namespace KazgarsRevenge
         public void LifeSteal(int h)
         {
             Heal(h);
-            if (model == null)
-            {
-                model = Entity.GetComponent(typeof(AnimatedModelComponent)) as AnimatedModelComponent;
-            }
             model.AddEmitter(typeof(LifestealParticleSystem), "lifesteal", 10, 15, Vector3.Zero);
             model.AddParticleTimer("lifesteal", 1000);
         }
@@ -430,6 +428,8 @@ namespace KazgarsRevenge
                 case DeBuff.Tar:
                     if (state == BuffState.Starting)
                     {
+                        model.AddEmitter(typeof(TarExplosionParticleSystem), "tar", 15, 10, Vector3.Zero);
+                        model.AddParticleTimer("tar", debuffLengths[DeBuff.Tar]);
                         baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .75f;
                         RecalculateStats();
                     }
@@ -519,6 +519,8 @@ namespace KazgarsRevenge
             if (b == DeBuff.Stunned)
             {
                 HandleStun();
+                model.AddEmitter(typeof(StunnedParticleSystem), "stun", 5, 5, Vector3.Up * 15);
+                model.AddParticleTimer("stun", length);
             }
 
             double tickLength = double.MaxValue;

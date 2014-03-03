@@ -141,8 +141,11 @@ namespace KazgarsRevenge
 
         public void SetDeathTimer(double timerLength)
         {
-            timeLeft = timerLength;
-            Timed = true;
+            if (timerLength > timeLeft)
+            {
+                timeLeft = timerLength;
+                Timed = true;
+            }
         }
     }
 }
