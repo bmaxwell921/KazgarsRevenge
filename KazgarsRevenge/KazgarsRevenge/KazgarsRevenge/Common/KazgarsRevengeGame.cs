@@ -87,5 +87,15 @@ namespace KazgarsRevenge
         {
             base.Update(gameTime);
         }
+
+        /// <summary>
+        /// Method used to turn on and off the updating of Managers who
+        /// should only update when we're in the game playing state
+        /// </summary>
+        /// <param name="enabled"></param>
+        public virtual void SetInGameManagersEnabled(bool enabled)
+        {
+            genComponentManager.Enabled = enabled;
+        }
     }
 }

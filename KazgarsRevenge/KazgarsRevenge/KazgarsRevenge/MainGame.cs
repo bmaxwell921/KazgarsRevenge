@@ -145,13 +145,6 @@ namespace KazgarsRevenge
             Components.Add(lootManager);
             Services.AddService(typeof(LootManager), lootManager);
 
-            //nmm = new NetworkMessageManager(this);
-            //Components.Add(nmm);
-            //Services.AddService(typeof(NetworkMessageManager), nmm);
-
-            //MessageSender ms = new MessageSender(nmm.Client, (LoggerManager)Services.GetService(typeof(LoggerManager)));
-            //Services.AddService(typeof(MessageSender), ms);
-
             soundEffectLibrary = new SoundEffectLibrary(this);
             Services.AddService(typeof(SoundEffectLibrary), soundEffectLibrary);
 
@@ -181,7 +174,29 @@ namespace KazgarsRevenge
 
             //debug drawing
             modelDrawer = new BoundingBoxDrawer(this);
+
+            SetInGameManagersEnabled(false);
             base.Initialize();
+        }
+
+        /// <summary>
+        /// Same as super method. If new XNA components are added make sure 
+        /// you figure out if they should always update, or only update when
+        /// the game is playing
+        /// </summary>
+        /// <param name="enabled"></param>
+        public override void SetInGameManagersEnabled(bool enabled)
+        {
+            camera.Enabled = enabled;
+            renderManager.Enabled = enabled;
+            spriteManager.Enabled = enabled;
+            billboards.Enabled = enabled;
+            players.Enabled = enabled;
+            enemies.Enabled = enabled;
+            levels.Enabled = enabled;
+            attacks.Enabled = enabled;
+            particleManager.Enabled = enabled;
+            levelModelManager.Enabled = enabled;
         }
 
         protected void SetUpLoggers()
@@ -278,7 +293,7 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void TransitionToPlaying()
         {
-            //genComponentManager.Enabled = true;
+            SetInGameManagersEnabled(true);
             gameState = GameState.Playing;
         }
 
