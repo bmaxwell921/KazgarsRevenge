@@ -25,7 +25,7 @@ namespace KazgarsRevenge
                 if (targetHealth != null && !targetHealth.Dead)
                 {
                     targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                    currentUpdateFunction = attackingUpdateFunction;
+                    currentUpdateFunction = new AIUpdateFunction(AIDragonPhase1);
                     PlayAnimation(settings.aniPrefix + settings.moveAniName);
                     return;
                 }
@@ -35,8 +35,60 @@ namespace KazgarsRevenge
         private void AIDragonPhase1(double millis)
         {
             //sit still and rotate towards player
-
+            Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
+            physicalData.LinearVelocity = Vector3.Zero;
+            
             //every 4 seconds, launch ice or fire attack (alternating)
+            /*
+            if (startingAttack)
+            {
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                attackCreateCounter += millis;
+                attackCounter += millis;
+                attackCheckCounter += millis;
+                if (attackCheckCounter >= attackCheckLength)
+                {
+                    DuringAttack(numChecks);
+                    ++numChecks;
+                    attackCheckCounter = 0;
+                }
+                if (attackCreateCounter >= attackLength / 2)
+                {
+                    CreateAttack();
+                    attackCreateCounter = 0;
+                    startingAttack = false;
+                }
+            }
+            else if (targetHealth != null && targetData != null && !targetHealth.Dead)
+            {
+                attackCounter += millis;
+                if (attackCounter >= attackLength)
+                {
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                    attackCounter = 0;
+                    //if the player is within attack radius, swing
+                    if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
+                    {
+                        startingAttack = true;
+                        attackCounter = 0;
+                        attackCreateCounter = 0;
+                        numChecks = 0;
+                        attackCheckCounter = double.MaxValue;
+                        PlayAnimation(settings.aniPrefix + settings.attackAniName);
+                    }
+                    else
+                    {
+                        //otherwise, go to run state
+                        currentUpdateFunction = new AIUpdateFunction(AIRunningToTarget);
+                        attackCounter = double.MaxValue;
+                    }
+                }
+            }
+            else
+            {
+                SwitchToWandering();
+            }*/
+
 
             //if pillars are destroyed, go to phase 2
         }

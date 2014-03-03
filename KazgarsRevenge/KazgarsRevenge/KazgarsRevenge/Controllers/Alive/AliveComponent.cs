@@ -390,8 +390,8 @@ namespace KazgarsRevenge
                     }
                     else if (state == BuffState.Ending)
                     {
-                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .75f * stacks;
-                        baseStats[StatType.AttackSpeed] += .6f;
+                        baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .75f * stacks;
+                        baseStats[StatType.AttackSpeed] -= .6f * stacks;
                         RecalculateStats();
                     }
                     break;

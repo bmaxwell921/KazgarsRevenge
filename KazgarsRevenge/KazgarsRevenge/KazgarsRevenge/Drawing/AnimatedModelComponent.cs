@@ -64,6 +64,16 @@ namespace KazgarsRevenge
             drawMainModel = false;
         }
 
+        public void TurnOffOutline()
+        {
+            modelParams.lineIntensity = 0;
+        }
+
+        public void SetAlpha(float alpha)
+        {
+            this.modelParams.alpha = alpha;
+        }
+
         public ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachBoneName)
         {
             return AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);
