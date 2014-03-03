@@ -39,6 +39,11 @@ namespace KazgarsRevenge
             CreateLootSoul(position, GetLootFor(type), 1);
         }
 
+        public void CreateLootSoul(Vector3 position, GameEntity entity)
+        {
+            CreateLootSoul(position, (List<Item>) GetLootFor(levelManager.currentLevel.currentFloor, entity), 1);
+        }
+
         public void CreateLootSoul(Vector3 position, List<Item> first, List<Item> second, int totalSouls)
         {
             CreateLootSoul(position, CombineLoot(first, second), totalSouls);
@@ -99,11 +104,24 @@ namespace KazgarsRevenge
 
         #region Loot
 
+        private IList<Item> GetLootFor(FloorName floor, GameEntity deadEntity)
+        {
+            DropTable table = deadEntity.GetComponent(typeof(DropTable)) as DropTable;
+            if (table == null)
+            {
+                throw new Exception("UH OH SOMEONE DOESN'T HAVE A DROP TABLE!: " + deadEntity.Name);
+            }
+
+            // TODO we need to pass in the entity that killed it so we can properly
+            // apply some of the boosts. Ie Potion of Luck
+            return table.GetDrops(floor, null);
+        }
+
         Random rand = new Random();
         private List<Item> GetLootFor(EntityType type)
         {
             List<Item> retItems = new List<Item>();
-            int level = (int)levelManager.CurrentFloor;
+            int level = (int)levelManager.currentLevel.currentFloor;
 
             //get gold
             int goldQuantity = 5 * level * level;
@@ -301,6 +319,11 @@ namespace KazgarsRevenge
         public Equippable GetSword()
         {
             return new Weapon(GetIcon("sword"), "sword01", GetStats("sword"), GetUnanimatedModel(attachDir + "sword01"), AttackType.Melee, false);
+        }
+
+        public Equippable GetBaseSword()
+        {
+            return new Weapon(GetIcon("sword"), "sword01", null, GetUnanimatedModel(attachDir + "sword01"), AttackType.Melee, false);
         }
 
         public Equippable GenerateBow()

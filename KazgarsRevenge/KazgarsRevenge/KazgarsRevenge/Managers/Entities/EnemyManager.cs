@@ -16,7 +16,6 @@ namespace KazgarsRevenge
 {
     public class EnemyManager : EntityManager
     {
-        //List<GameEntity> enemies = new List<GameEntity>();
         IDictionary<Identification, GameEntity> enemies;
 
         public EnemyManager(KazgarsRevengeGame game)
@@ -51,6 +50,21 @@ namespace KazgarsRevenge
             AddHealthBarComponent(brute, 40);
 
             enemies.Add(id, brute);
+        }
+
+        private DropTable CreateBruteDropTableFor(GameEntity enemy)
+        {
+            LootManager lm = Game.Services.GetService(typeof(LootManager)) as LootManager;
+            DropTable dt = new DropTable(Game as KazgarsRevengeGame, enemy, DropTable.GetMinionAddItemLevel);
+            // TODO what else?
+            dt.AddGearDrop(lm.GetBaseSword(), 5);
+            // Add stuff for nothing to drop
+            return dt;
+        }
+
+        private void AddCommonDrops(DropTable dt)
+        {
+             //TODO any common drops
         }
 
         public void CreateMagicSkeleton(Identification id, Vector3 position, int level)

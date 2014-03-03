@@ -50,7 +50,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// Class used to hold information about the current level
         /// </summary>
-        private class LevelInfo
+        public class LevelInfo
         {
             // The floor for the level
             public FloorName currentFloor;
@@ -90,10 +90,10 @@ namespace KazgarsRevenge
 
         public static readonly string ROOM_PATH = @"Models\Rooms\";
 
-        public FloorName CurrentFloor = FloorName.Dungeon;
+        //public FloorName CurrentFloor = FloorName.Dungeon;
 
         // The information about the currentLevel
-        private LevelInfo currentLevel;
+        public LevelInfo currentLevel;
 
         // Rooms making up this level
         private List<GameEntity> rooms;
