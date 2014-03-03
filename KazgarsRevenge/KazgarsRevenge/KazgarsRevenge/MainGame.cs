@@ -262,17 +262,29 @@ namespace KazgarsRevenge
             GraphicsDevice.RasterizerState = rs;
         }
 
+
+        string alertMessage = "";
+        double alertTimeLeft = 0;
+
         List<FloatingText> alertText = new List<FloatingText>();
         Vector2 alertStart = Vector2.Zero;
         public void AddAlert(string text)
         {
-            alertText.Add(new FloatingText(alertStart, text));
+            alertMessage = text;
+            alertTimeLeft = 2500;
         }
+
+        //public void AddAlert(string 
+
         protected override void Update(GameTime gameTime)
         {
             if (gameState == GameState.Playing)
             {
                 physics.Update();
+                if (alertTimeLeft > 0)
+                {
+                    alertTimeLeft -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
                 for (int i = alertText.Count - 1; i >= 0; ++i)
                 {
                     alertText[i].alpha -= .01f;
@@ -316,7 +328,7 @@ namespace KazgarsRevenge
         }
 
         Vector2 vecLoadingText;
-
+        Vector2 alertTextPosition = Vector2.Zero;
         public Vector2 guiScale = new Vector2(1,1);
         int maxX;
         int maxY;
@@ -332,6 +344,8 @@ namespace KazgarsRevenge
             vecLoadingText = new Vector2(50, 50);
             guiScale = new Vector2(xRatio, yRatio);
             alertStart = new Vector2(maxX, maxY);
+
+            alertTextPosition = new Vector2(maxX / 2, 172 * average);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -396,6 +410,11 @@ namespace KazgarsRevenge
                 foreach (FloatingText f in alertText)
                 {
                     spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, 0, SpriteEffects.None, 0);
+                }
+
+                if (alertTimeLeft > 0)
+                {
+                    spriteBatch.DrawString(normalFont, alertMessage, alertTextPosition, Color.Red * (float)(alertTimeLeft / 2500), 0, new Vector2(normalFont.MeasureString(alertMessage).X / 4, 0), .5f, SpriteEffects.None, 0);
                 }
                 spriteBatch.End();
 
