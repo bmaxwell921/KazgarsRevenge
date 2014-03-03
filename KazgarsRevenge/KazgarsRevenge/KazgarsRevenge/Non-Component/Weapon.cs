@@ -17,5 +17,15 @@ namespace KazgarsRevenge
             this.PrimaryAttackType = type;
             this.TwoHanded = twoHanded;
         }
+
+        public override object Clone()
+        {
+            Dictionary<StatType, float> statsClone = null;
+            if (this.StatEffects != null)
+            {
+                statsClone = new Dictionary<StatType, float>(this.StatEffects);
+            }
+            return new Weapon(this.Icon, this.Name, statsClone, this.GearModel, this.PrimaryAttackType, this.TwoHanded);
+        }
     }
 }

@@ -21,5 +21,16 @@ namespace KazgarsRevenge
             this.Slot = slot;
             this.Slot2 = secondSlot;
         }
+
+        public override object Clone()
+        {
+            // This is the only thing that needs to be deep copied.
+            Dictionary<StatType, float> statsClone = null;
+            if (this.StatEffects != null)
+            {
+                statsClone = new Dictionary<StatType, float>(this.StatEffects);
+            }
+            return new Equippable(this.Icon, this.Name, statsClone, this.GearModel, this.Slot, this.Slot2);
+        }
     }
 }

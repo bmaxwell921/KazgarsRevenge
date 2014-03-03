@@ -15,7 +15,7 @@ namespace KazgarsRevenge
         Equippable,
         Recipe,
     }
-    public class Item
+    public class Item : ICloneable
     {
         public bool Stackable { get; private set; }
         public int Quantity { get; protected set; }
@@ -51,6 +51,16 @@ namespace KazgarsRevenge
         {
             this.Quantity += quantity;
             this.Stackable = true;
+        }
+
+        /// <summary>
+        /// Returns a 'deep' copy of this item. Everything is either a value type
+        /// or immutable so yeah
+        /// </summary>
+        /// <returns></returns>
+        public virtual object Clone()
+        {
+            return new Item(this.Type, this.Icon, this.Name, this.Quantity);
         }
     }
 }
