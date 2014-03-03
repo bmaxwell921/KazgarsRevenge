@@ -734,7 +734,7 @@ namespace KazgarsRevenge
                             UpdateRotation(dir);
                         }
                         break;
-                    case AttackType.Melle:
+                    case AttackType.Melee:
                         if (distance < melleRange)
                         {
                             StartSequence("swing");
@@ -1077,7 +1077,7 @@ namespace KazgarsRevenge
             switch (GetMainhandType())
             {
                 case AttackType.None:
-                case AttackType.Melle:
+                case AttackType.Melee:
                     s.Draw(texMelee, guiInsideRects["abilities"]["primary"], Color.White);
                     break;
                 case AttackType.Magic:

@@ -300,7 +300,7 @@ namespace KazgarsRevenge
         /// </summary>
         public Equippable GetSword()
         {
-            return new Weapon(GetIcon("sword"), "sword01", GetStats("sword"), GetUnanimatedModel(attachDir + "sword01"), AttackType.Melle, false);
+            return new Weapon(GetIcon("sword"), "sword01", GetStats("sword"), GetUnanimatedModel(attachDir + "sword01"), AttackType.Melee, false);
         }
 
         public Equippable GenerateBow()

@@ -21,7 +21,7 @@ namespace KazgarsRevenge
     public enum AttackType
     {
         None,
-        Melle,
+        Melee,
         Ranged,
         Magic,
     }
