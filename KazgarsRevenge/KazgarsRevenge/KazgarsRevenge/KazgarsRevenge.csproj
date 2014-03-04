@@ -202,8 +202,10 @@
     <Compile Include="Particles\Base Classes\ParticleSettings.cs" />
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
-    <Compile Include="Particles\StunnedParticleSystem.cs" />
+    <Compile Include="Particles\Systems\StunnedParticleSystem.cs" />
     <Compile Include="Particles\Systems\ArmorSoulSystem.cs" />
+    <Compile Include="Particles\Systems\Debuffs\FrostDebuffSystem.cs" />
+    <Compile Include="Particles\Systems\Debuffs\TarDebuffSystem.cs" />
     <Compile Include="Particles\Systems\ExplosionParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireArrowParticleSystem.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeBig.cs" />

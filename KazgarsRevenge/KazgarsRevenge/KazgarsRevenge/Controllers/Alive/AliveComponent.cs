@@ -408,12 +408,14 @@ namespace KazgarsRevenge
                 case DeBuff.Frost:
                     if (state == BuffState.Starting)
                     {
-                        baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .1f;
+                        model.AddEmitter(typeof(FrostDebuffParticleSystem), "frosttrail", 10, 3, Vector3.Zero);
+                        model.AddParticleTimer("frosttrail", debuffLengths[DeBuff.Frost]);
+                        baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .2f;
                         RecalculateStats();
                     }
                     else if (state == BuffState.Ending)
                     {
-                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .1f * stacks;
+                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .2f * stacks;
                         RecalculateStats();
                     }
                     break;
@@ -433,7 +435,7 @@ namespace KazgarsRevenge
                 case DeBuff.Tar:
                     if (state == BuffState.Starting)
                     {
-                        model.AddEmitter(typeof(TarExplosionParticleSystem), "tar", 15, 10, Vector3.Zero);
+                        model.AddEmitter(typeof(TarDebuffParticleSystem), "tar", 10, 10, Vector3.Zero);
                         model.AddParticleTimer("tar", debuffLengths[DeBuff.Tar]);
                         baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .75f;
                         RecalculateStats();

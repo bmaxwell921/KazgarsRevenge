@@ -20,6 +20,8 @@ namespace KazgarsRevenge
 
             settings.MaxParticles = 2000;
 
+            settings.EmitterVelocitySensitivity = .01f;
+
             settings.Duration = TimeSpan.FromSeconds(1);
             settings.DurationRandomness = 1;
 
