@@ -112,7 +112,6 @@ namespace KazgarsRevenge
         bool guiClick = false;
         public override void Update(GameTime gameTime)
         {
-            Entity sharedData = Entity.GetSharedData(typeof(Entity)) as Entity;
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;

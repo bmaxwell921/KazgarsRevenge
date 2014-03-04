@@ -375,11 +375,11 @@ namespace KazgarsRevenge
                         }
 
                         //if we're close enough to the current targeted point, get next point in the path
-                        diff = new Vector3(physicalData.Position.X - currentPathPoint.X, 0, physicalData.Position.Z - currentPathPoint.Z);
+                        diff = new Vector3(currentPathPoint.X - physicalData.Position.X, 0, currentPathPoint.Z - physicalData.Position.Z);
                         if (Math.Abs(diff.X) < PATH_RADIUS_SATISFACTION && Math.Abs(diff.Z) < PATH_RADIUS_SATISFACTION)
                         {
                             GetNextPathPoint();
-                            diff = new Vector3(physicalData.Position.X - currentPathPoint.X, 0, physicalData.Position.Z - currentPathPoint.Z);
+                            diff = new Vector3(currentPathPoint.X - physicalData.Position.X, 0, currentPathPoint.Z - physicalData.Position.Z);
                         }
                     }
 
@@ -524,7 +524,11 @@ namespace KazgarsRevenge
         {
             if (maxPathRequestCounter >= maxPathRequestLength)
             {
-                currentPath = levels.GetPath(physicalData.Position, targetData.Position) as List<Vector3>;
+                Vector3 src = physicalData.Position;
+                src.Y = 0;
+                Vector3 dest = targetData.Position;
+                dest.Y = 0;
+                currentPath = levels.GetPath(src, dest) as List<Vector3>;
                 maxPathRequestCounter = 0;
                 GetNextPathPoint();
             }
@@ -534,7 +538,7 @@ namespace KazgarsRevenge
         {
             if (currentPath == null || currentPath.Count == 0)
             {
-                currentPathPoint = physicalData.Position;
+                currentPathPoint = Vector3.Zero;
             }
             else
             {
