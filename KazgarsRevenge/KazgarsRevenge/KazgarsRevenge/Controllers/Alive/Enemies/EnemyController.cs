@@ -368,7 +368,7 @@ namespace KazgarsRevenge
                         {
                             //request new path if target is a block or more away from the last path
                             Vector3 diffTargetPath = new Vector3(targetData.Position.X - currentPath[currentPath.Count - 1].X, 0, targetData.Position.Z - currentPath[currentPath.Count - 1].Z);
-                            if (Math.Abs(diffTargetPath.X) < LevelManager.BLOCK_SIZE && Math.Abs(diffTargetPath.Z) < LevelManager.BLOCK_SIZE)
+                            if (Math.Abs(diffTargetPath.X) > LevelManager.BLOCK_SIZE && Math.Abs(diffTargetPath.Z) > LevelManager.BLOCK_SIZE)
                             {
                                 GetNewPath();
                             }
@@ -532,7 +532,7 @@ namespace KazgarsRevenge
 
         protected void GetNextPathPoint()
         {
-            if (currentPath == null || currentPath.Count > 0)
+            if (currentPath == null || currentPath.Count == 0)
             {
                 currentPathPoint = physicalData.Position;
             }
