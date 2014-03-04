@@ -160,8 +160,8 @@ namespace KazgarsRevenge
         protected AliveComponent targetHealth;
         protected Entity targetData;
 
-        double timerCounter;
-        double timerLength;
+        protected double timerCounter;
+        protected double timerLength;
         Vector3 curVel = Vector3.Zero;
 
         protected delegate void AIUpdateFunction(double millis);
@@ -240,6 +240,7 @@ namespace KazgarsRevenge
             }
             else
             {
+                //if it's already sitting still, play idle animation (just in case)
                 if (physicalData.LinearVelocity.Length() < .1f)
                 {
                     PlayAnimation(settings.aniPrefix + settings.idleAniName);
@@ -251,7 +252,7 @@ namespace KazgarsRevenge
                 {
                     //once it's wandered a little ways, sit still for a bit
                     timerCounter = 0;
-                    timerLength = rand.Next(1000, 5000);
+                    timerLength = rand.Next(5000, 8500);
                     ChangeVelocity(Vector3.Zero);
 
                     PlayAnimation(settings.aniPrefix + settings.idleAniName);
@@ -267,11 +268,11 @@ namespace KazgarsRevenge
         protected double attackCreateCounter;
         protected double attackCounter = double.MaxValue;
         protected double attackLength = 1000;
-        protected bool startingAttack = false;
+        protected bool startedAttack = false;
         protected virtual void AIAutoAttackingTarget(double millis)
         {
             Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
-            if (startingAttack)
+            if (startedAttack)
             {
                 physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                 attackCreateCounter += millis;
@@ -287,7 +288,7 @@ namespace KazgarsRevenge
                 {
                     CreateAttack();
                     attackCreateCounter = 0;
-                    startingAttack = false;
+                    startedAttack = false;
                 }
             }
             else if (targetHealth != null && targetData != null && !targetHealth.Dead)
@@ -300,7 +301,7 @@ namespace KazgarsRevenge
                     //if the player is within attack radius, swing
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
-                        startingAttack = true;
+                        startedAttack = true;
                         attackCounter = 0;
                         attackCreateCounter = 0;
                         numChecks = 0;
@@ -476,7 +477,7 @@ namespace KazgarsRevenge
         {
             PlayAnimation(settings.aniPrefix + settings.idleAniName);
             attackCreateCounter = 0;
-            startingAttack = false;
+            startedAttack = false;
             attackCounter = attackLength;
             minChaseCounter = 0;
             physicalData.LinearVelocity = Vector3.Zero;

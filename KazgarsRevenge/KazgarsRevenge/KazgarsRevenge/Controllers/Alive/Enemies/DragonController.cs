@@ -16,6 +16,15 @@ namespace KazgarsRevenge
             settings.stopChasingRange = 2000;
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            if (targetHealth != null && targetHealth.Dead)
+            {
+                ResetEncounter();
+            }
+            base.Update(gameTime);
+        }
+
         private void AIDragonWaiting(double millis)
         {
             GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, settings.noticePlayerRange, false);
@@ -27,16 +36,48 @@ namespace KazgarsRevenge
                     targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
                     currentUpdateFunction = new AIUpdateFunction(AIDragonPhase1);
                     PlayAnimation(settings.aniPrefix + settings.moveAniName);
+                    timerCounter = 0;
+                    timerLength = 8000;
                     return;
                 }
             }
         }
 
+        private void ResetEncounter()
+        {
+            targetHealth = null;
+            targetData = null;
+
+            //reset position here?
+
+            //heal and go back to waiting state
+            Heal(MaxHealth);
+            currentUpdateFunction = new AIUpdateFunction(AIDragonWaiting);
+        }
+
+        bool leftHead = true;
+        
         private void AIDragonPhase1(double millis)
         {
+            timerCounter += millis;
+            
             //sit still and rotate towards player
             Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
             physicalData.LinearVelocity = Vector3.Zero;
+            
+                if (startedAttack)
+                {
+                    if (timerCounter >= timerLength)
+                    {
+                    }
+                }
+                else
+                {
+                    if (timerCounter >= timerLength)
+                    {
+                    }
+
+                }
             
             //every 4 seconds, launch ice or fire attack (alternating)
             /*
