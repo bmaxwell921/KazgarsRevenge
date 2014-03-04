@@ -109,9 +109,6 @@ namespace KazgarsRevenge
                 amount *= 3;
             }
             
-            /*
-             * TODO Actually figure out which coin image to use
-             */ 
             drops.Add(new Item(ItemType.Gold, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.FEW), "gold", amount));
         }
 
