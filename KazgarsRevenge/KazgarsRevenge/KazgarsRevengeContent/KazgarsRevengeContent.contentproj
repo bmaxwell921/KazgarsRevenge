@@ -377,7 +377,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\blob.png">
+    <Compile Include="Textures\BillBoards\blob.png">
       <Name>blob</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -427,14 +427,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\groundIndicator.png">
+    <Compile Include="Textures\BillBoards\groundIndicator.png">
       <Name>groundIndicator</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\rope.png">
+    <Compile Include="Textures\BillBoards\rope.png">
       <Name>rope</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -703,7 +703,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\chain.png">
+    <Compile Include="Textures\BillBoards\chain.png">
       <Name>chain</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
