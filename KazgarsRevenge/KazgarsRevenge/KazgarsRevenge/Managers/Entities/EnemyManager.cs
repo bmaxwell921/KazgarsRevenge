@@ -38,10 +38,7 @@ namespace KazgarsRevenge
             // TODO what else?
             dt.AddDrop(ItemType.Equippable, lm.GetBaseSword(), 5);
             dt.AddDrop(ItemType.Equippable, null, 5);
-            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Game.Content.Load<Texture2D>(@"Textures\UI\Items\HP"), "Health Potion", 0), 24, 5);
-            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Game.Content.Load<Texture2D>(@"Textures\UI\Items\HP"), "Super Health Potion", 0), 12, 2);
-            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Game.Content.Load<Texture2D>(@"Textures\UI\Items\HP"), "Potion of Instant Health", 0), 6);
-            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Game.Content.Load<Texture2D>(@"Textures\UI\Items\HP"), "Potion of Luck", 0), 1);
+            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), "Health Potion", 0), 24, 5);
             return dt;
         }
 

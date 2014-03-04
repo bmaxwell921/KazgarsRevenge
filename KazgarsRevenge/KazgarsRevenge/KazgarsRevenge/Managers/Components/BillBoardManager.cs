@@ -30,31 +30,31 @@ namespace KazgarsRevenge
             ShadowEffect.EnableDefaultLighting();
             ShadowEffect.World = Matrix.Identity;
             ShadowEffect.TextureEnabled = true;
-            ShadowEffect.Texture = Game.Content.Load<Texture2D>("Textures\\blob");
+            ShadowEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.BLOB);
 
             GroundTargetEffect = new BasicEffect(Game.GraphicsDevice);
             GroundTargetEffect.EnableDefaultLighting();
             GroundTargetEffect.World = Matrix.Identity;
             GroundTargetEffect.TextureEnabled = true;
-            GroundTargetEffect.Texture = Game.Content.Load<Texture2D>("Textures\\groundIndicator");
+            GroundTargetEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.GRND_IND);
 
             ChainEffect = new BasicEffect(Game.GraphicsDevice);
             ChainEffect.EnableDefaultLighting();
             ChainEffect.World = Matrix.Identity;
             ChainEffect.TextureEnabled = true;
-            ChainEffect.Texture = Game.Content.Load<Texture2D>("Textures\\chain");
+            ChainEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.CHAIN);
 
             RopeEffect = new BasicEffect(Game.GraphicsDevice);
             RopeEffect.EnableDefaultLighting();
             RopeEffect.World = Matrix.Identity;
             RopeEffect.TextureEnabled = true;
-            RopeEffect.Texture = Game.Content.Load<Texture2D>("Textures\\rope");
+            RopeEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.ROPE);
 
             HealthBarEffect = new BasicEffect(Game.GraphicsDevice);
             HealthBarEffect.EnableDefaultLighting();
             HealthBarEffect.World = Matrix.Identity;
             HealthBarEffect.TextureEnabled = true;
-            HealthBarEffect.Texture = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\health_bar");
+            HealthBarEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.HEALTH_BAR);
         }
 
         public override void Update(GameTime gameTime)

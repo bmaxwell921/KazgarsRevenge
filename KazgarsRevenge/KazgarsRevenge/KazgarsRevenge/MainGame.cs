@@ -117,7 +117,8 @@ namespace KazgarsRevenge
                 graphics.ApplyChanges();
                 screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
             }
-            
+
+            Texture2DUtil.Instance.SetContent(Content);
 
             camera = new CameraComponent(this);
             Components.Add(camera);
@@ -211,6 +212,7 @@ namespace KazgarsRevenge
 
         protected override void LoadContent()
         {
+            Texture2DUtil.Instance.PreemptiveLoad();
             normalFont = Content.Load<SpriteFont>("Verdana");
             titleFont = Content.Load<SpriteFont>("Title");
 
@@ -226,9 +228,6 @@ namespace KazgarsRevenge
             GraphicsDevice.DeviceReset += new EventHandler<EventArgs>(resetOutputTarget);
 
             initDrawingParams();
-
-            Texture2D empty = Content.Load<Texture2D>("Textures\\whitePixel");
-
 
             base.LoadContent();
         }

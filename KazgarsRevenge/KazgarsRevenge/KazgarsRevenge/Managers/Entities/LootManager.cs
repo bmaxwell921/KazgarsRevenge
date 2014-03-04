@@ -251,6 +251,7 @@ namespace KazgarsRevenge
             string texName = "Textures\\UI\\";
             switch (name)
             {
+                    // TODO give the texName values meaningful names in the TextureStrings file
                 case "sword":
                     texName += "Abilities\\HS";
                     break;
@@ -271,7 +272,7 @@ namespace KazgarsRevenge
             Texture2D retTex;
             if (!equippableIcons.TryGetValue(texName, out retTex))
             {
-                retTex = Game.Content.Load<Texture2D>(texName);
+                retTex = Texture2DUtil.Instance.GetTexture(texName);
                 equippableIcons.Add(texName, retTex);
             }
             return retTex;
@@ -282,15 +283,15 @@ namespace KazgarsRevenge
             Texture2D goldIcon;
             if (quantity <= 10)
             {
-                goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold1");
+                goldIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.FEW);
             }
             else if (quantity <= 30)
             {
-                goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold2");
+                goldIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.SOME);
             }
             else
             {
-                goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold3");
+                goldIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.LOTS);
             }
             return goldIcon;
         }

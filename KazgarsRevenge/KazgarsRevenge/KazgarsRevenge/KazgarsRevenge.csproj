@@ -94,6 +94,7 @@
     <Compile Include="Account\Account.cs" />
     <Compile Include="Common\Extenders.cs" />
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
+    <Compile Include="Common\TextureStrings.cs" />
     <Compile Include="Controllers\Alive\Enemies\ArmorEnemyController.cs" />
     <Compile Include="Controllers\Alive\Enemies\DragonController.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="Misc Components\StaticMeshesComponent.cs" />
     <Compile Include="Util\IdentificationFactory.cs" />
     <Compile Include="Util\RandSingleton.cs" />
+    <Compile Include="Util\Texture2DUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
