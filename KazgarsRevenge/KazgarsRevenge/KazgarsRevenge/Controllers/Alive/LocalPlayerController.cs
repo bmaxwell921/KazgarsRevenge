@@ -346,6 +346,51 @@ namespace KazgarsRevenge
                                 }
                             }
                             break;
+
+                        case "equipment":
+                            if (innerClicked == "equipWrist") //wrist
+                            {
+                                UnequipGear(GearSlot.Wrist);
+                            }
+                            else if (innerClicked == "equipBling")  //bling
+                            {
+                                UnequipGear(GearSlot.Bling);
+                            }
+                            else if (innerClicked == "equipLWep")  //LWep
+                            {
+                                UnequipGear(GearSlot.Lefthand);
+                            }
+
+                            else if (innerClicked == "equipHead")  //head
+                            {
+                                UnequipGear(GearSlot.Head);
+                            }
+                            else if (innerClicked == "equipChest")  //chest
+                            {
+                                UnequipGear(GearSlot.Chest);
+                            }
+                            else if (innerClicked == "equipLegs")  //legs
+                            {
+                                UnequipGear(GearSlot.Legs); ;
+                            }
+                            else if (innerClicked == "equipFeet")  //feet
+                            {
+                                UnequipGear(GearSlot.Feet);
+                            }
+
+                            else if (innerClicked == "equipShoulder")  //shoulder
+                            {
+                                UnequipGear(GearSlot.Shoulders);
+                            }
+                            else if (innerClicked == "equipCod")  //Cod
+                            {
+                                UnequipGear(GearSlot.Codpiece);
+                            }
+                            else if (innerClicked == "equipRWep")  //RWep
+                            {
+                                UnequipGear(GearSlot.Righthand);
+                            }
+                            break;
                     }
 
                 }
