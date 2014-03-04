@@ -451,7 +451,7 @@ namespace KazgarsRevenge
                 {
                     for (int j = -1; j <= 1; ++j)
                     {
-                        Vector3 testBlock = new Vector3(blockCenter.X + i, blockCenter.Y, blockCenter.Z + j);
+                        Vector3 testBlock = new Vector3(blockCenter.X + i * BLOCK_SIZE, blockCenter.Y, blockCenter.Z + j * BLOCK_SIZE);
                         // If a neighbor is one of the blocks in the room, the connect them
                         if (!testBlock.Equals(blockCenter) && blockCenters.Contains(testBlock))
                         {
@@ -481,7 +481,7 @@ namespace KazgarsRevenge
             {
                 foreach (Vector3 adj in adjs)
                 {
-                    Vector3 testDoor = door + adj;
+                    Vector3 testDoor = door + adj * BLOCK_SIZE;
                     // If the adjacent is one of the doors, add the edge
                     if (doors.Contains(testDoor))
                     {
