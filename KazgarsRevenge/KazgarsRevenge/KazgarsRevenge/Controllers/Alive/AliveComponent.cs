@@ -207,12 +207,22 @@ namespace KazgarsRevenge
 
         public void Target()
         {
-            modelParams.lineColor = Color.Red;
+            if (showHealthWithOutline)
+            {
+                modelParams.lineColor = Color.Lerp(Color.Red, Color.Green, HealthPercent);
+            }
+            else
+            {
+                modelParams.lineColor = Color.LightBlue;
+            }
         }
 
         public void UnTarget()
         {
-            modelParams.lineColor = Color.Black;
+            if (HealthPercent == 1 || !showHealthWithOutline)
+            {
+                modelParams.lineColor = Color.Black;
+            }
         }
 
         /// <summary>
@@ -319,10 +329,16 @@ namespace KazgarsRevenge
             model.AddParticleTimer("lifesteal", 1000);
         }
 
+        protected bool showHealthWithOutline = true;
         protected Dictionary<DeBuff, NegativeEffect> activeDebuffs = new Dictionary<DeBuff, NegativeEffect>();
         protected Dictionary<Buff, PositiveEffect> activeBuffs = new Dictionary<Buff, PositiveEffect>();
         public override void Update(GameTime gameTime)
         {
+            if (showHealthWithOutline &&( modelParams.lineColor != Color.Black || HealthPercent != 1))
+            {
+                modelParams.lineColor = Color.Lerp(Color.Red, Color.Green, HealthPercent);
+            }
+
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
 
             List<DeBuff> toRemoveDebuffs = new List<DeBuff>();

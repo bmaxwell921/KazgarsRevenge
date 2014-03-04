@@ -23,6 +23,8 @@ namespace KazgarsRevenge
         public LocalPlayerController(KazgarsRevengeGame game, GameEntity entity, PlayerSave savefile)
             : base(game, entity, savefile)
         {
+            showHealthWithOutline = false;
+
             //misc
             rand = new Random();
             rayCastFilter = RayCastFilter;
