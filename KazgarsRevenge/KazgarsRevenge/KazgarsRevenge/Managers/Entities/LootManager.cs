@@ -34,11 +34,6 @@ namespace KazgarsRevenge
             this.particles = Game.Services.GetService(typeof(ParticleManager)) as ParticleManager;
         }
 
-        public void CreateLootSoul(Vector3 position, EntityType type)
-        {
-            CreateLootSoul(position, GetLootFor(type), 1);
-        }
-
         public void CreateLootSoul(Vector3 position, GameEntity entity)
         {
             CreateLootSoul(position, (List<Item>) GetLootFor(levelManager.currentLevel.currentFloor, entity), 1);
@@ -98,10 +93,6 @@ namespace KazgarsRevenge
             }
         }
 
-
-
-
-
         #region Loot
 
         private IList<Item> GetLootFor(FloorName floor, GameEntity deadEntity)
@@ -116,80 +107,6 @@ namespace KazgarsRevenge
             // apply some of the boosts. Ie Potion of Luck
             return table.GetDrops(floor, null);
         }
-
-        Random rand = new Random();
-        private List<Item> GetLootFor(EntityType type)
-        {
-            List<Item> retItems = new List<Item>();
-            int level = (int)levelManager.currentLevel.currentFloor;
-
-            //get gold
-            int goldQuantity = 5 * level * level;
-            int extra = rand.Next(0, level * level + 1);
-            if (diceRoll(1, 2) == 1)
-            {
-                goldQuantity += extra;
-            }
-            else
-            {
-                goldQuantity -= extra;
-            }
-
-            if (diceRoll(1, 20) <= 3)
-            {
-                //15% chance to triple gold drop
-                goldQuantity *= 3;
-            }
-
-            retItems.Add(new Item(ItemType.Gold, GetGoldIcon(goldQuantity), "gold", goldQuantity));
-
-            //decide on gear
-            int baseItemLevel = (level - 1) * 10;
-            switch (type)
-            {
-                case EntityType.NormalEnemy:
-                    if (diceRoll(1, 6) == 1)
-                    {
-                        retItems.Add(GetNormalGear(baseItemLevel));
-                    }
-                    break;
-                case EntityType.EliteEnemy:
-                    if (diceRoll(1, 12) < 3)
-                    {
-                        retItems.Add(GetEliteGear(baseItemLevel));
-                    }
-                    break;
-                case EntityType.Boss:
-                    List<Item> bossGear = GetBossGear(baseItemLevel);
-                    for (int i = 0; i < bossGear.Count; ++i)
-                    {
-                        retItems.Add(bossGear[i]);
-                    }
-                    break;
-            }
-
-            //decide on consumable (37.5% chance to drop some potion or other)
-            if (diceRoll(1, 8) < 4)
-            {
-                //small chance to drop rarer potion
-                if (diceRoll(1, 4) == 3)
-                {
-                    retItems.Add(GetRarePotion());
-                }
-                else
-                {
-                    retItems.Add(GetPotion());
-                }
-            }
-
-            //decide on essence
-
-            //decide on recipe
-
-
-            return retItems;
-        }
-
         
         private Item GetNormalGear(int itemBase)
         {
@@ -210,44 +127,7 @@ namespace KazgarsRevenge
             return retItems;
         }
 
-        private Item GetPotion()
-        {
-            if (diceRoll(1, 4) == 1)
-            {
-                return new Item(ItemType.Potion, GetIcon("potion"), "Super Health Potion", diceRoll(1, 2));
-            }
-            return new Item(ItemType.Potion, GetIcon("potion"), "Health Potion", diceRoll(1, 2));
-        }
-
-        private Item GetRarePotion()
-        {
-            if (diceRoll(1, 12) == 2)
-            {
-                return new Item(ItemType.Potion, GetIcon("potion"), "Potion of Luck", 1);
-            }
-            else
-            {
-                return new Item(ItemType.Potion, GetIcon("potion"), "Potion of Instant Health", 1);
-            }
-        }
-
         #region Helpers
-        /// <summary>
-        /// returns (rolls)d(sides)
-        /// diceRoll(3, 6) is the result of 3d6
-        /// </summary>
-        /// <param name="rolls">how many dice to roll</param>
-        /// <param name="sides">how many sides the dice have</param>
-        /// <returns>the combines result</returns>
-        public int diceRoll(int rolls, int sides)
-        {
-            int ret = 0;
-            for (int i = 0; i < rolls; ++i)
-            {
-                ret += rand.Next(1, sides + 1);
-            }
-            return ret;
-        }
         public List<Item> CombineLoot(List<Item> first, List<Item> second)
         {
             List<Item> retItems = new List<Item>();

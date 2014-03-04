@@ -413,7 +413,8 @@ namespace KazgarsRevenge
                 state = EnemyState.Decaying;
                 animations.PauseAnimation();
 
-                lewts.CreateLootSoul(physicalData.Position, Entity.Type);
+                //lewts.CreateLootSoul(physicalData.Position, Entity.Type);
+                lewts.CreateLootSoul(physicalData.Position, this.Entity);
             }
         }
 
