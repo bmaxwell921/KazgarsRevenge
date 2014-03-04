@@ -32,19 +32,20 @@ namespace KazgarsRevenge
             //content
             InitDrawingParams();
             font = game.Content.Load<SpriteFont>("Verdana");
-            texWhitePixel = game.Content.Load<Texture2D>("white");
-            texChargeBarFront = game.Content.Load<Texture2D>("Textures\\UI\\chargeBarFront");
+            texWhitePixel = Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE);
+            texChargeBarFront = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.CHARGE_BAR_FRONT);
 
             #region UI Frame Load
-            texCursor = Game.Content.Load<Texture2D>("Textures\\whiteCursor");
-            icon_selected = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\icon_selected");
-            health_bar = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\health_bar");
-            rightArrow = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\rightArrow");
-            leftArrow = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\leftArrow");
-            helmetIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Frames\\helmetIcon");
+            texCursor = Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_CURSOR);
+            icon_selected = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.ICON_SEL);
+            health_bar = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.HEALTH_BAR);
+            rightArrow = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.RIGHT_ARROW);
+            leftArrow = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.LEFT_ARROW);
+            helmetIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.HELMET);
             #endregion
 
             #region Ability Image Load
+            // TODO give these guys meaningful names in the TextureStrings class and follow the above convention
             texMelee = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\DB");
             texRange = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW");
             texMagic = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR");
@@ -52,8 +53,8 @@ namespace KazgarsRevenge
             #endregion
 
             #region Item Image Load
-            healthPot = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\HP");
-            goldIcon = Game.Content.Load<Texture2D>("Textures\\UI\\Items\\gold3");
+            healthPot = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH);
+            goldIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.LOTS);
             #endregion
         }
 

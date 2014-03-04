@@ -1599,55 +1599,55 @@ namespace KazgarsRevenge
 
         protected Ability GetSnipe()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 1000, AttackType.Ranged, "snipe", AbilityType.Instant);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SNIPE), 1000, AttackType.Ranged, "snipe", AbilityType.Instant);
         }
         protected Ability GetHeartStrike()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6000, AttackType.Ranged, "flip", AbilityType.Instant);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEART_STRIKE), 6000, AttackType.Ranged, "flip", AbilityType.Instant);
         }
         protected Ability GetIceClawPrison()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\whitePixel"), 6000, AttackType.Ranged, "shoot", AbilityType.Instant);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ICE_CLAW_PRI), 6000, AttackType.Ranged, "shoot", AbilityType.Instant);
         }
         protected Ability GetOmniShot()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6000, AttackType.Ranged, "omnishot", AbilityType.Instant);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.OMNI_SHOT), 6000, AttackType.Ranged, "omnishot", AbilityType.Instant);
         }
         protected Ability GetAdrenalineRush()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 6000, AttackType.Ranged, "buffrush", AbilityType.Instant);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ADREN_RUSH), 6000, AttackType.Ranged, "buffrush", AbilityType.Instant);
         }
         protected Ability GetLeechingArrows()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\HS"), 6000, AttackType.Ranged, "buffleech", AbilityType.Instant);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LEECH_ARROWS), 6000, AttackType.Ranged, "buffleech", AbilityType.Instant);
         }
         protected Ability GetLooseCannon()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 2000, AttackType.Ranged, "loosecannon", AbilityType.Charge);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LOOSE_CANNON), 2000, AttackType.Ranged, "loosecannon", AbilityType.Charge);
         }
         protected Ability GetMakeItRain()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW"), 2000, AttackType.Ranged, "makeitrain", AbilityType.GroundTarget);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_RAIN), 2000, AttackType.Ranged, "makeitrain", AbilityType.GroundTarget);
         }
         protected Ability GetFlashBomb()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR"), 2000, AttackType.Ranged, "flashbomb", AbilityType.GroundTarget);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.FLASH_BOMB), 2000, AttackType.Ranged, "flashbomb", AbilityType.GroundTarget);
         }
         protected Ability GetTarBomb()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR"), 2000, AttackType.Ranged, "tarbomb", AbilityType.GroundTarget);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TAR_BOMB), 2000, AttackType.Ranged, "tarbomb", AbilityType.GroundTarget);
         }
         protected Ability GetGrapplingHook()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 2000, AttackType.Ranged, "grapplinghook", AbilityType.Instant);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 2000, AttackType.Ranged, "grapplinghook", AbilityType.Instant);
         }
         protected Ability GetChainSpear()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 2000, AttackType.Ranged, "chainspear", AbilityType.Instant);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.CHAIN_SPEAR), 2000, AttackType.Ranged, "chainspear", AbilityType.Instant);
         }
         protected Ability GetMoltenBolt()
         {
-            return new Ability(1, Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\I4"), 2000, AttackType.Ranged, "moltenbolt", AbilityType.Instant);
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MOLT_BOLT), 2000, AttackType.Ranged, "moltenbolt", AbilityType.Instant);
         }
         
 

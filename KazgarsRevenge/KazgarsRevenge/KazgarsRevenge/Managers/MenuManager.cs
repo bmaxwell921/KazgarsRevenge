@@ -89,7 +89,7 @@ namespace KazgarsRevenge
         {   
             // TODO other menus come up here
             Vector2 titleLoc = new Vector2(screenWidth / 2, screenHeight * .35f);
-            Texture2D background = Game.Content.Load<Texture2D>(@"Textures\Menu\menuBackground");
+            Texture2D background = Texture2DUtil.Instance.GetTexture(TextureStrings.Menu.BACKGRND);
             Rectangle backgroundBox = new Rectangle(0, 0, screenWidth, screenHeight);
 
             LoadingMenu loading = new LoadingMenu(this, LOADING, titleLoc, background, backgroundBox);

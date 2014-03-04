@@ -110,10 +110,9 @@ namespace KazgarsRevenge
             }
             
             /*
-             * TODO THIS LOAD SHOULD ABSOLUTELY NOT HAPPEN HERE. Images like this should be preloaded once and then passed around
-             * to anyone who needs it
+             * TODO Actually figure out which coin image to use
              */ 
-            drops.Add(new Item(ItemType.Gold, Game.Content.Load<Texture2D>(@"Textures\UI\Items\gold1"), "gold", amount));
+            drops.Add(new Item(ItemType.Gold, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.FEW), "gold", amount));
         }
 
         // Returns the normal gold amount for a given floor
