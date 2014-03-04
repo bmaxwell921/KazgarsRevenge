@@ -8,6 +8,8 @@ using BEPUphysics;
 using BEPUphysics.Entities;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.CollisionRuleManagement;
+using BEPUphysics.BroadPhaseEntries;
+using BEPUphysics.Collidables;
 using SkinnedModelLib;
 
 namespace KazgarsRevenge
@@ -50,14 +52,13 @@ namespace KazgarsRevenge
             Decaying,
         }
         EnemyState state = EnemyState.Normal;
-
-        AnimationPlayer animations;
-        LootManager lewts;
-
         protected EnemyControllerSettings settings;
 
+        AnimationPlayer animations;
         CameraComponent camera;
         LevelManager levels;
+        LootManager lewts;
+        Space physics;
 
         public EnemyController(KazgarsRevengeGame game, GameEntity entity, int level)
             : base(game, entity, level)
@@ -77,72 +78,16 @@ namespace KazgarsRevenge
 
             lewts = (LootManager)game.Services.GetService(typeof(LootManager));
             levels = (LevelManager)game.Services.GetService(typeof(LevelManager));
+            physics = (Space)game.Services.GetService(typeof(Space));
             idleUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
             currentUpdateFunction = idleUpdateFunction;
 
             attackingUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
+
+            rayCastFilter = RayCastFilter;
         }
 
-        public override void Start()
-        {
-            PlayAnimation(settings.aniPrefix + settings.idleAniName);
-            attackLength = animations.GetAniMillis(settings.aniPrefix + settings.attackAniName);
-            attackCheckLength = attackLength / 10;
-
-            base.Start();
-        }
-
-
-        /// <summary>
-        /// calculate threat and switch to attacker if it is now the highest
-        /// </summary>
-        protected void CalculateThreat(int d, GameEntity from)
-        {
-
-            //find entity
-            int i;
-            for (i = 0; i < threatLevels.Count; ++i)
-            {
-                if (threatLevels[i].Entity == from)
-                {
-                    break;
-                }
-            }
-            //entity needs to be added to threat list
-            if (i == threatLevels.Count)
-            {
-                threatLevels.Add(new EntityIntPair(from, d));
-            }
-            
-            //add threat
-            threatLevels[i].AddAmount(d);
-
-            //if bigger than next in list, take out and reinsert
-            if (i > 0 && threatLevels[i - 1].amount > threatLevels[i].amount)
-            {
-                EntityIntPair tempEnt = threatLevels[i];
-                threatLevels.RemoveAt(i);
-                InsertThreatEntity(tempEnt);
-            }
-
-            currentUpdateFunction = attackingUpdateFunction;
-            targetData = threatLevels[0].Entity.GetSharedData(typeof(Entity)) as Entity;
-            targetHealth = threatLevels[0].Entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
-        }
-
-        private void InsertThreatEntity(EntityIntPair ent)
-        {
-            for (int i = 0; i < threatLevels.Count; ++i)
-            {
-                if (threatLevels[i].amount < ent.amount)
-                {
-                    threatLevels.Insert(i, ent);
-                    return;
-                }
-            }
-            threatLevels.Add(ent);
-        }
 
         string currentAniName;
         public void PlayAnimation(string animationName)
@@ -165,12 +110,8 @@ namespace KazgarsRevenge
         Vector3 curVel = Vector3.Zero;
 
         protected delegate void AIUpdateFunction(double millis);
-
-        //change this to adjust what the AI falls back on when there is nothing around to kill
         protected AIUpdateFunction idleUpdateFunction;
-
         protected AIUpdateFunction attackingUpdateFunction;
-
         //change this to switch states
         protected AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
@@ -298,9 +239,19 @@ namespace KazgarsRevenge
                 {
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                     attackCounter = 0;
-                    //if the player is within attack radius, swing
+
+
+                    //if the player is within attack radius, begin attack
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
+                        //when about to begin next attack, check if there is anything in between us and the target first
+                        if (settings.attackRange > LevelManager.BLOCK_SIZE && !RayCastCheckForRoom(diff))
+                        {
+                            maxPathRequestCounter = 10000;
+                            currentUpdateFunction = new AIUpdateFunction(AIRunningToTarget);
+                            attackCounter = double.MaxValue;
+                            return;
+                        }
                         startedAttack = true;
                         attackCounter = 0;
                         attackCreateCounter = 0;
@@ -337,11 +288,16 @@ namespace KazgarsRevenge
             if (targetHealth != null && targetData != null && !targetHealth.Dead)
             {
                 Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
+                bool nothingBetween = true;
+                //if we have a longer range on our attack, raycast to check if a wall is in the way
+                if (settings.attackRange > LevelManager.BLOCK_SIZE)
+                {
+                    nothingBetween = RayCastCheckForRoom(diff);
+                }
 
                 //if the target is within attack radius,
                 //     (TODO: and nothing is between this and the target, e.g. raycast returns nothing but target?)
                 //go to attack state
-                bool nothingBetween = true;
                 if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange && nothingBetween)
                 {
                     currentUpdateFunction = attackingUpdateFunction;
@@ -452,6 +408,7 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        #region attack helpers
         protected virtual void CreateAttack()
         {
             attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 25, GeneratePrimaryDamage(StatType.Strength), false, this);
@@ -462,6 +419,25 @@ namespace KazgarsRevenge
 
         }
 
+        List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
+        List<EntityIntPair> threatLevels = new List<EntityIntPair>();
+        protected override void TakeDamage(int d, GameEntity from)
+        {
+            if (state != EnemyState.Dying && state != EnemyState.Decaying)
+            {
+                PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
+                animations.SetNonMixedBones(armBoneIndices);
+                if (d > 0)
+                {
+                    SpawnHitParticles();
+                }
+                CalculateThreat(d, from);
+                minChaseCounter = 0;
+            }
+        }
+        #endregion
+
+        #region overrides
         protected override void KillAlive()
         {
             state = EnemyState.Dying;
@@ -470,7 +446,7 @@ namespace KazgarsRevenge
             PlayAnimation(settings.aniPrefix + settings.deathAniName);
             animations.StopMixing();
             Entity.GetComponent(typeof(PhysicsComponent)).KillComponent();
-            
+
             base.KillAlive();
         }
 
@@ -490,23 +466,106 @@ namespace KazgarsRevenge
             base.StopPull();
         }
 
-        List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
-        List<EntityIntPair> threatLevels = new List<EntityIntPair>();
-        protected override void TakeDamage(int d, GameEntity from)
+        public override void Start()
         {
-            if (state != EnemyState.Dying && state != EnemyState.Decaying)
+            PlayAnimation(settings.aniPrefix + settings.idleAniName);
+            attackLength = animations.GetAniMillis(settings.aniPrefix + settings.attackAniName);
+            attackCheckLength = attackLength / 10;
+
+            base.Start();
+        }
+        #endregion
+
+        #region helpers
+        /// <summary>
+        /// raycasts to see if any physics objects part of an entity named "room" are in the way
+        /// </summary>
+        private bool RayCastCheckForRoom(Vector3 toTarget)
+        {
+            bool nothingBetween = true;
+
+            Vector3 castOrigin = physicalData.Position;
+            Vector3 castDirection = toTarget;
+            if (castDirection != Vector3.Zero)
             {
-                PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
-                animations.SetNonMixedBones(armBoneIndices);
-                if (d > 0)
-                {
-                    SpawnHitParticles();
-                }
-                CalculateThreat(d, from);
-                minChaseCounter = 0;
+                castDirection.Normalize();
             }
+            Ray r = new Ray(castOrigin, castDirection);
+            List<RayCastResult> results = new List<RayCastResult>();
+            physics.RayCast(r, toTarget.Length(), rayCastFilter, results);
+
+            foreach (RayCastResult result in results)
+            {
+                if (result.HitObject != null)
+                {
+                    GameEntity ent = result.HitObject.Tag as GameEntity;
+                    if (ent != null && ent.Name == "room")
+                    {
+                        nothingBetween = false;
+                        break;
+                    }
+                }
+            }
+
+            return nothingBetween;
         }
 
+        Func<BroadPhaseEntry, bool> rayCastFilter;
+        bool RayCastFilter(BroadPhaseEntry entry)
+        {
+            return entry != physicalData.CollisionInformation
+                && entry.CollisionRules.Personal <= CollisionRule.Normal;
+        }
+
+        /// <summary>
+        /// calculate threat and switch to attacker if it is now the highest
+        /// </summary>
+        protected void CalculateThreat(int d, GameEntity from)
+        {
+
+            //find entity
+            int i;
+            for (i = 0; i < threatLevels.Count; ++i)
+            {
+                if (threatLevels[i].Entity == from)
+                {
+                    break;
+                }
+            }
+            //entity needs to be added to threat list
+            if (i == threatLevels.Count)
+            {
+                threatLevels.Add(new EntityIntPair(from, d));
+            }
+
+            //add threat
+            threatLevels[i].AddAmount(d);
+
+            //if bigger than next in list, take out and reinsert
+            if (i > 0 && threatLevels[i - 1].amount > threatLevels[i].amount)
+            {
+                EntityIntPair tempEnt = threatLevels[i];
+                threatLevels.RemoveAt(i);
+                InsertThreatEntity(tempEnt);
+            }
+
+            currentUpdateFunction = attackingUpdateFunction;
+            targetData = threatLevels[0].Entity.GetSharedData(typeof(Entity)) as Entity;
+            targetHealth = threatLevels[0].Entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+        }
+
+        private void InsertThreatEntity(EntityIntPair ent)
+        {
+            for (int i = 0; i < threatLevels.Count; ++i)
+            {
+                if (threatLevels[i].amount < ent.amount)
+                {
+                    threatLevels.Insert(i, ent);
+                    return;
+                }
+            }
+            threatLevels.Add(ent);
+        }
         protected virtual void SpawnHitParticles()
         {
             attacks.SpawnHitBlood(physicalData.Position);
@@ -547,6 +606,8 @@ namespace KazgarsRevenge
                 currentPath.RemoveAt(0);
             }
         }
+
+        #endregion
 
     }
 }
