@@ -30,7 +30,27 @@ namespace KazgarsRevenge
         }
 
         #region entities
-        const float melleRange = 40;
+
+        private DropTable CreateNormalDropTableFor(GameEntity enemy)
+        {
+            LootManager lm = Game.Services.GetService(typeof(LootManager)) as LootManager;
+            DropTable dt = new DropTable(Game as KazgarsRevengeGame, enemy, DropTable.GetNormalAddItemLevel);
+            // TODO what else?
+            dt.AddDrop(ItemType.Equippable, lm.GetBaseSword(), 5);
+            dt.AddDrop(ItemType.Equippable, null, 5);
+            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Game.Content.Load<Texture2D>(@"Textures\UI\Items\HP"), "Health Potion", 0), 24, 5);
+            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Game.Content.Load<Texture2D>(@"Textures\UI\Items\HP"), "Super Health Potion", 0), 12, 2);
+            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Game.Content.Load<Texture2D>(@"Textures\UI\Items\HP"), "Potion of Instant Health", 0), 6);
+            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Game.Content.Load<Texture2D>(@"Textures\UI\Items\HP"), "Potion of Luck", 0), 1);
+            return dt;
+        }
+
+        private void AddCommonDrops(DropTable dt)
+        {
+            //TODO any common drops
+        }
+
+        const float meleeRange = 40;
         public void CreateBrute(Identification id, Vector3 position, int level)
         {
             GameEntity brute = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
@@ -42,29 +62,15 @@ namespace KazgarsRevenge
 
             SetupEnemyEntity(brute, position, new Vector3(20f, 37f, 20f), 100, "Models\\Enemies\\Pigman\\pig_idle");
 
-
             EnemyController bruteController = new EnemyController(mainGame, brute, level);
             brute.AddComponent(typeof(AliveComponent), bruteController);
             genComponentManager.AddComponent(bruteController);
 
             AddHealthBarComponent(brute, 40);
 
+            brute.AddComponent(typeof(DropTable), CreateNormalDropTableFor(brute));
+
             enemies.Add(id, brute);
-        }
-
-        private DropTable CreateBruteDropTableFor(GameEntity enemy)
-        {
-            LootManager lm = Game.Services.GetService(typeof(LootManager)) as LootManager;
-            DropTable dt = new DropTable(Game as KazgarsRevengeGame, enemy, DropTable.GetMinionAddItemLevel);
-            // TODO what else?
-            dt.AddGearDrop(lm.GetBaseSword(), 5);
-            // Add stuff for nothing to drop
-            return dt;
-        }
-
-        private void AddCommonDrops(DropTable dt)
-        {
-             //TODO any common drops
         }
 
         public void CreateMagicSkeleton(Identification id, Vector3 position, int level)
@@ -79,6 +85,8 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(enemyController);
 
             AddHealthBarComponent(enemy, 40);
+
+            enemy.AddComponent(typeof(DropTable), CreateNormalDropTableFor(enemy));
 
             enemies.Add(id, enemy);
         }
@@ -115,12 +123,13 @@ namespace KazgarsRevenge
             enemy.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);
 
-
             ArmorEnemyController controller = new ArmorEnemyController(mainGame, enemy, level);
             enemy.AddComponent(typeof(AliveComponent), controller);
             genComponentManager.AddComponent(controller);
 
             AddHealthBarComponent(enemy, 40);
+
+            enemy.AddComponent(typeof(DropTable), CreateNormalDropTableFor(enemy));
 
             enemies.Add(id, enemy);
         }

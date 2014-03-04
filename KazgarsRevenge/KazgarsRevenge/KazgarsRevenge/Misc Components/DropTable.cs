@@ -14,24 +14,20 @@ namespace KazgarsRevenge
     ///         i) Sword - 10
     ///         ii) Shoulders - 5
     ///         iii) Legs - 3
-    ///         Meaning the ratio of drops is 10:5:3. This doesn't have to add up to 100 cause it's all relative
+    ///         iv) null - 2 <- null means no drop
+    ///         Meaning the ratio of drops is 10:5:3:2. This doesn't have to add up to 100 cause it's all relative
     ///     2) Call the add method
     ///     3) When you want to get what's dropped, just call GetDrops
     /// </summary>
-    public class DropTable : Component
+    public class DropTable : Component, ICloneable
     {
-        // Separate list for gear drops
-        private IList<Droption<Equippable>> gearDrops;
+        // The actual drops
+        private IDictionary<ItemType, IList<Droption>> drops;
 
-        // Separate list for consumable drops
-        private IList<Droption<Item>> consumableDrops;
+        // The count of the weights
+        private IDictionary<ItemType, int> itemTypeTots;
 
-        // Since users just pass in weights for the item drop we need to hold onto the total for our randoms
-        private int consumableTotal;
-
-        // Same idea as above
-        private int gearTotal;
-
+        // Function to calculate added stats for gear
         private Func<int> addedStatFunc;
 
         /// <summary>
@@ -42,78 +38,45 @@ namespace KazgarsRevenge
         public DropTable(KazgarsRevengeGame game, GameEntity entity, Func<int> addedStatFunc)
             : base(game, entity)
         {
-            gearDrops = new List<Droption<Equippable>>();
-            consumableDrops = new List<Droption<Item>>();
+            drops = new Dictionary<ItemType, IList<Droption>>();
+            itemTypeTots = new Dictionary<ItemType, int>();
             this.addedStatFunc = addedStatFunc;
-            consumableTotal = 0;
-            gearTotal = 0;
+        }
+
+        /// <summary>
+        /// Hopefully we'll use this in the future with a DropTableUtil or something that
+        /// reads their values from a file
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            DropTable ret = new DropTable(this.Game as KazgarsRevengeGame, this.Entity, this.addedStatFunc);
+            ret.drops = new Dictionary<ItemType, IList<Droption>>(this.drops);
+            ret.itemTypeTots = new Dictionary<ItemType, int>(this.itemTypeTots);
+            return ret;
         }
 
         #region Setup
         /// <summary>
-        /// Adds the given item to this drop table. Don't bother setting any Item stats because
-        /// they'll be overwritten
+        /// Adds a drop of the given type to this drop table.
+        /// Pass in null for the item to represent no drop
         /// </summary>
+        /// <param name="type"></param>
         /// <param name="item"></param>
         /// <param name="weight"></param>
-        public void AddConsumableDrop(Item item, int weight)
+        /// <param name="maxAmt">Optional param for the maximum amount of the item to drop. Default is 1</param>
+        public void AddDrop(ItemType type, Item item, int weight, int maxAmt = 1)
         {
-            consumableDrops.Add(new Droption<Item>(item, weight));
-
-            // Update the total so it's in sync
-            consumableTotal += weight;
-        }
-
-        /// <summary>
-        /// Adds all of the given items and weights to this drop table.
-        /// items and weights should have the same length
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="weights"></param>
-        public void AddAllConsumableDrops(IList<Item> items, IList<int> weights)
-        {
-            if (items.Count != weights.Count)
+            if (!drops.ContainsKey(type))
             {
-                throw new ArgumentException("Tried to add items and weights to a drop table, but the lengths weren't the same.");
+                drops[type] = new List<Droption>();
+                itemTypeTots[type] = 0;
             }
-
-            for (int i = 0; i < items.Count; ++i)
-            {
-                AddConsumableDrop(items[i], weights[i]);
-            }
-        }
-
-        /// <summary>
-        /// Adds a new gear drop to this drop table.
-        /// Don't bother setting the stats because they'll be overwritten, EVERYTHING ELSE SHOULD BE INITIALIZED
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="weight"></param>
-        public void AddGearDrop(Equippable item, int weight)
-        {
-            gearDrops.Add(new Droption<Equippable>(item, weight));
-            gearTotal += weight;
-        }
-
-        /// <summary>
-        /// Same as AddAllConsumableDrops
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="weights"></param>
-        public void AddAllGearDrops(IList<Equippable> items, IList<int> weights)
-        {
-            if (items.Count != weights.Count)
-            {
-                throw new ArgumentException("Tried to add equippables and weights to a drop table, but the lengths weren't the same.");
-            }
-
-            for (int i = 0; i < items.Count; ++i)
-            {
-                AddGearDrop(items[i], weights[i]);
-            }
+            IList<Droption> dropList = drops[type];
+            dropList.Add(new Droption(item, weight, maxAmt));
+            itemTypeTots[type] = itemTypeTots[type] + weight;
         }
         #endregion
-        // TODO remember to set the weapon levels when returning drops
 
         #region Getting Drops
         /// <summary>
@@ -125,10 +88,11 @@ namespace KazgarsRevenge
         public IList<Item> GetDrops(FloorName floor, GameEntity killingEntity)
         {
             IList<Item> drops = new List<Item>();
-            // TODO call this in the LootManager and make a way to have nothing drop (just pass in null?)
             GetGoldDrops(drops, floor);
             GetGearDrops(drops, floor, killingEntity);
-            GetConsumableDrops(drops, floor);
+            GetPotionDrops(drops, floor);
+            GetEssenceDrops(drops, floor);
+            GetRecipeDrops(drops, floor);
             return drops;
         }
 
@@ -166,7 +130,12 @@ namespace KazgarsRevenge
         // Gets the gear dropped
         private void GetGearDrops(IList<Item> drops, FloorName floor, GameEntity killingEntity)
         {
-            Equippable dropped = GetDropped<Equippable>(gearDrops, gearTotal);
+            // No drops :(
+            if (!this.drops.ContainsKey(ItemType.Equippable))
+            {
+                return;
+            }
+            Equippable dropped = (Equippable) GetDropped(this.drops[ItemType.Equippable], itemTypeTots[ItemType.Equippable]);
             if (dropped != null)
             {
                 SetGearStats(dropped, floor, killingEntity);
@@ -190,9 +159,13 @@ namespace KazgarsRevenge
 
         #region Consumables
         // Gets the consumable drops
-        private void GetConsumableDrops(IList<Item> drops, FloorName floor)
+        private void GetPotionDrops(IList<Item> drops, FloorName floor)
         {
-            Item dropped = GetDropped<Item>(consumableDrops, consumableTotal);
+            if (!this.drops.ContainsKey(ItemType.Potion))
+            {
+                return;
+            }
+            Item dropped = GetDropped(this.drops[ItemType.Potion], itemTypeTots[ItemType.Potion]);
             if (dropped != null)
             {
                 drops.Add(dropped);
@@ -200,8 +173,41 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        // Look at all those lovely generics
-        private static T GetDropped<T>(IList<Droption<T>> list, int total) where T : Item
+        #region Essence
+        private void GetEssenceDrops(IList<Item> drops, FloorName floor)
+        {
+            // TODO anything else? - Set the strength or whatever
+            if (!this.drops.ContainsKey(ItemType.Essence))
+            {
+                return;
+            }
+
+            Item dropped = GetDropped(this.drops[ItemType.Essence], itemTypeTots[ItemType.Essence]);
+            if (dropped != null)
+            {
+                drops.Add(dropped);
+            }
+        }
+        #endregion
+
+        #region Recipe
+        private void GetRecipeDrops(IList<Item> drops, FloorName floor)
+        {
+            // TODO anything else?
+            if (!this.drops.ContainsKey(ItemType.Recipe))
+            {
+                return;
+            }
+
+            Item dropped = GetDropped(this.drops[ItemType.Recipe], itemTypeTots[ItemType.Recipe]);
+            if (dropped != null)
+            {
+                drops.Add(dropped);
+            }
+        }
+        #endregion
+
+        private static Item GetDropped(IList<Droption> list, int total)
         {
             if (list.Count <= 0)
             {
@@ -210,8 +216,7 @@ namespace KazgarsRevenge
             int val = RandSingleton.U_instance.Next(total);
             int min = 0; int max = 0;
 
-            bool done = false;
-            for (int i = 0; !done; ++i)
+            for (int i = 0; i < list.Count; ++i)
             {
                 min = max;
                 max += list[i].weight;
@@ -219,7 +224,13 @@ namespace KazgarsRevenge
                 if (min <= val && val < max)
                 {
                     // Do a clone so nothing gets messed with
-                    return (T) list[i].item.Clone();
+                    if (list[i].item == null)
+                    {
+                        return null;
+                    }
+                    Item clone = (Item) list[i].item.Clone();
+                    clone.Quantity = RandSingleton.U_instance.Next(list[i].maxAmt) + 1;
+                    return clone;
                 }
             }
 
@@ -231,7 +242,7 @@ namespace KazgarsRevenge
         /// Method that should be used to calculate the additional stats on an item
         /// </summary>
         /// <returns></returns>
-        public static int GetMinionAddItemLevel()
+        public static int GetNormalAddItemLevel()
         {
             return diceRoll(1, 6);
         }
@@ -278,23 +289,27 @@ namespace KazgarsRevenge
         /// Class used to box up a drop option and it's weight.
         /// The weight is related to it's probability
         /// </summary>
-        private class Droption<T> where T : Item
+        private class Droption
         {
             // THE ITEM!
-            public T item;
+            public Item item;
 
             // THE WEIGHT!
             public int weight;
+
+            // The max amount of the item to drop
+            public int maxAmt;
 
             /// <summary>
             /// Creates a new Drop option with the given values
             /// </summary>
             /// <param name="item"></param>
             /// <param name="weight"></param>
-            public Droption(T item, int weight)
+            public Droption(Item item, int weight, int maxAmt)
             {
                 this.item = item;
                 this.weight = weight;
+                this.maxAmt = maxAmt;
             }
         }
     }

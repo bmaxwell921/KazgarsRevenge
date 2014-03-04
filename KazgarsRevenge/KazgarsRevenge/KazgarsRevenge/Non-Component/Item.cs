@@ -18,7 +18,7 @@ namespace KazgarsRevenge
     public class Item : ICloneable
     {
         public bool Stackable { get; private set; }
-        public int Quantity { get; protected set; }
+        public int Quantity { get; set; }
         public ItemType Type { get; protected set; }
         public Texture2D Icon { get; protected set; }
         public string Name { get; protected set; }
