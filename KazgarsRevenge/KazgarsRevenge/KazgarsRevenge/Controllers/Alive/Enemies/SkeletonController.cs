@@ -24,7 +24,6 @@ namespace KazgarsRevenge
 
         protected override void CreateAttack()
         {
-            
             attacks.CreateFrostbolt(physicalData.Position + physicalData.OrientationMatrix.Forward * 16 + physicalData.OrientationMatrix.Right * 8, physicalData.OrientationMatrix.Forward, 1, this as AliveComponent);
         }
 
@@ -32,7 +31,6 @@ namespace KazgarsRevenge
         protected override void StartAttack()
         {
             base.StartAttack();
-
             AddChargeParticles(typeof(FrostChargeSystem));
         }
 

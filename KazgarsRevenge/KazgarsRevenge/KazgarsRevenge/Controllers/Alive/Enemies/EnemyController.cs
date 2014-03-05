@@ -230,7 +230,6 @@ namespace KazgarsRevenge
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
                     attackCounter = 0;
 
-
                     //if the player is within attack radius, begin attack
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
@@ -381,7 +380,7 @@ namespace KazgarsRevenge
             }
         }
 
-        protected void SwitchToWandering()
+        protected virtual void SwitchToWandering()
         {
             targetHealth = null;
             targetData = null;
