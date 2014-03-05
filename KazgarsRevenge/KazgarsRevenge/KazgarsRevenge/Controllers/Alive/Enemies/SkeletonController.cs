@@ -39,10 +39,10 @@ namespace KazgarsRevenge
             if (i == 0)
             {
                 model.AddEmitter(typeof(FrostChargeSystem), "frostchargeleft", 50, 0, Vector3.Zero, "s_hand_L");
-                model.AddEmitterSizeIncrementExponential("frostchargeleft", 15, 1);
+                model.AddEmitterSizeIncrementExponential("frostchargeleft", 15, 2);
 
                 model.AddEmitter(typeof(FrostChargeSystem), "frostchargeright", 50, 0, Vector3.Zero, "s_hand_R");
-                model.AddEmitterSizeIncrementExponential("frostchargeright", 15, 1);
+                model.AddEmitterSizeIncrementExponential("frostchargeright", 15, 2);
             }
         }
 

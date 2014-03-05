@@ -1,11 +1,3 @@
-//-----------------------------------------------------------------------------
-// ParticleEffect.fx
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-
-
 // Camera parameters.
 float4x4 View;
 float4x4 Projection;
@@ -23,6 +15,11 @@ float3 Gravity;
 float EndVelocity;
 float4 MinColor;
 float4 MaxColor;
+
+//changing texture coords (sprite animation)
+float rows = 1; //corresponds to spritesheet
+float cols = 1;
+float frameDuration = 1000;//sprite frames per second
 
 
 // These float2 parameters describe the min and max of a range.
@@ -180,6 +177,27 @@ VertexShaderOutput ParticleVertexShader(VertexShaderInput input)
     
     return output;
 }
+
+/*
+VSOut SpriteSheetVS(VSIn IN)
+{
+    VSOut OUT = (VSOut) 0;
+    
+    OUT.Position = mul(IN.Position, WorldViewProjection);
+    
+    // the global UV coordinate of the current frame's upper-left corner on the texture map
+    float cellU = (CurrentFrame % SpritesPerRow) / (float)SpritesPerRow;
+    float cellV = floor(CurrentFrame / SpritesPerRow) / (float)SpritesPerCol;
+    
+    // the local UV offset inside the current frame
+    float cellDU = IN.UV.x / (float)SpritesPerRow;
+    float cellDV = IN.UV.y / (float)SpritesPerCol;
+    
+    OUT.UV.x = cellU + cellDU;
+    OUT.UV.y = cellV + cellDV;
+    
+    return OUT;
+}*/
 
 
 // Pixel shader for drawing particles.
