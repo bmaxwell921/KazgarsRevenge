@@ -175,16 +175,27 @@ VertexShaderOutput ParticleVertexShader(VertexShaderInput input)
     
     output.Color = ComputeParticleColor(output.Position, input.Random.z, normalizedAge);
 	
-    output.TextureCoordinate = (input.Corner + 1) / 2;
 
+
+//spritesheet animation
+
+	//the initial uv coords
+    float2 uv = (input.Corner + 1) / 2;
+
+	//size the coords
+	//(rescale x to be between 0 and frameWidth, and y to be between 0 and frameHeight)
+	uv.x /= cols;
+	uv.y /= rows;
+
+	//get the zero-based index of the frame
 	float frame = floor((CurrentTime - input.Time) * framesPerSecond) % totalFrames;
 
-    // the global UV coordinate of the current frame's upper-left corner on the texture map
-    float cellU = (frame % cols) / (float)cols;
-    float cellV = floor(frame / cols) / (float)rows;
-	
-	output.TextureCoordinate.x += output.TextureCoordinate.x + cellU + (output.TextureCoordinate.x / cols);
-	output.TextureCoordinate.y += output.TextureCoordinate.y + cellV + (output.TextureCoordinate.y / rows);
+    //get the upper left coordinate of the frame we're on, and add it to the coords so the frame starts there
+    uv.x += (frame % cols) / (float)cols;
+    uv.y += floor(frame / cols) / (float)rows;
+
+	//pass it to the pixel shader
+	output.TextureCoordinate = uv;
     
     return output;
 }
