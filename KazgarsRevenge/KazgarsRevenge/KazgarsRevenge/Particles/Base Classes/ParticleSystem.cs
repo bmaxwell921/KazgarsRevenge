@@ -258,6 +258,13 @@ namespace KazgarsRevenge
             Texture2D texture = content.Load<Texture2D>("Textures\\Particles\\"+settings.TextureName);
 
             parameters["Texture"].SetValue(texture);
+
+            parameters["rows"].SetValue(settings.SpriteDimensions.X);
+            parameters["cols"].SetValue(settings.SpriteDimensions.Y);
+
+            parameters["totalFrames"].SetValue(settings.totalFrames);
+
+            parameters["framesPerSecond"].SetValue(settings.framesPerSecond);
         }
 
 

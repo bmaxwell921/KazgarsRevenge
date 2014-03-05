@@ -19,7 +19,8 @@ float4 MaxColor;
 //changing texture coords (sprite animation)
 float rows = 1; //corresponds to spritesheet
 float cols = 1;
-float frameDuration = 1000;//sprite frames per second
+float totalFrames = 1;
+float framesPerSecond = 1000;//sprite frames per second
 
 
 // These float2 parameters describe the min and max of a range.
@@ -38,8 +39,8 @@ sampler Sampler = sampler_state
     Texture = (Texture);
     
     MinFilter = Linear;
+    MipFilter = Linear;
     MagFilter = Linear;
-    MipFilter = Point;
     
     AddressU = Clamp;
     AddressV = Clamp;
@@ -173,7 +174,17 @@ VertexShaderOutput ParticleVertexShader(VertexShaderInput input)
     output.Position.xy += mul(input.Corner, rotation) * size * input.SizePercent * ViewportScale;
     
     output.Color = ComputeParticleColor(output.Position, input.Random.z, normalizedAge);
+	
     output.TextureCoordinate = (input.Corner + 1) / 2;
+
+	float frame = floor((CurrentTime - input.Time) * framesPerSecond) % totalFrames;
+
+    // the global UV coordinate of the current frame's upper-left corner on the texture map
+    float cellU = (frame % cols) / (float)cols;
+    float cellV = floor(frame / cols) / (float)rows;
+	
+	output.TextureCoordinate.x += output.TextureCoordinate.x + cellU + (output.TextureCoordinate.x / cols);
+	output.TextureCoordinate.y += output.TextureCoordinate.y + cellV + (output.TextureCoordinate.y / rows);
     
     return output;
 }
@@ -185,9 +196,11 @@ VSOut SpriteSheetVS(VSIn IN)
     
     OUT.Position = mul(IN.Position, WorldViewProjection);
     
+	float frame = floor((CurrentTime - input.Time) * framesPerSecond) % totalFrames;
+
     // the global UV coordinate of the current frame's upper-left corner on the texture map
-    float cellU = (CurrentFrame % SpritesPerRow) / (float)SpritesPerRow;
-    float cellV = floor(CurrentFrame / SpritesPerRow) / (float)SpritesPerCol;
+    float cellU = (frame % cols) / (float)cols;
+    float cellV = floor(frame / cols) / (float)rows;
     
     // the local UV offset inside the current frame
     float cellDU = IN.UV.x / (float)SpritesPerRow;

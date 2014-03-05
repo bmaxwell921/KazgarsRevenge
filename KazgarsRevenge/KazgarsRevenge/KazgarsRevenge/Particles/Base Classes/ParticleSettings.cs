@@ -13,6 +13,10 @@ namespace KazgarsRevenge
         // Name of the texture used by this particle system.
         public string TextureName = null;
 
+        public Vector2 SpriteDimensions = new Vector2(1, 1);
+        public float framesPerSecond = 1000;
+        public float totalFrames = 1;
+
 
         // Maximum number of particles that can be displayed at one time.
         public int MaxParticles = 100;
