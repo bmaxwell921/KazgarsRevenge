@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
@@ -181,12 +182,14 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        protected AnimationPlayer animations;
         protected AttackManager attacks;
         protected Random rand;
         protected SharedGraphicsParams modelParams;
         public AliveComponent(KazgarsRevengeGame game, GameEntity entity, int level)
             : base(game, entity)
         {
+            this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             rand = game.rand;
 
             this.MaxHealth = 100 * level;
@@ -195,7 +198,7 @@ namespace KazgarsRevenge
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
-
+            
             RecalculateStats();
         }
 
@@ -321,7 +324,7 @@ namespace KazgarsRevenge
             }
         }
 
-        AnimatedModelComponent model;
+        protected AnimatedModelComponent model;
         public void LifeSteal(int h)
         {
             Heal(h);

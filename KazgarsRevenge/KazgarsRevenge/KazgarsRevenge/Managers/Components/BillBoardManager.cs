@@ -39,6 +39,7 @@ namespace KazgarsRevenge
             GroundTargetEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.GRND_IND);
 
             ChainEffect = new BasicEffect(Game.GraphicsDevice);
+            
             ChainEffect.EnableDefaultLighting();
             ChainEffect.World = Matrix.Identity;
             ChainEffect.TextureEnabled = true;
@@ -82,10 +83,11 @@ namespace KazgarsRevenge
             Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             Game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-                for (int i = 0; i < components.Count; ++i)
-                {
-                    components[i].Draw(camera);
-                }
+
+            for (int i = 0; i < components.Count; ++i)
+            {
+                components[i].Draw(camera);
+            }
         }
     }
 }

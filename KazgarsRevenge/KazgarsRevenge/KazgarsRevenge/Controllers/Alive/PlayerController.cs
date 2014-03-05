@@ -52,7 +52,6 @@ namespace KazgarsRevenge
         protected NetworkMessageManager nmm;
 
         //data
-        protected AnimationPlayer animations;
         protected Dictionary<string, AttachableModel> attached;
         protected Dictionary<string, Model> syncedModels;
 
@@ -331,7 +330,6 @@ namespace KazgarsRevenge
             : base(game, entity, savefile.CharacterLevel)
         {
             //shared data
-            this.animations = Entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
             this.syncedModels = Entity.GetSharedData(typeof(Dictionary<string, Model>)) as Dictionary<string, Model>;
 

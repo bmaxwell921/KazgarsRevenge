@@ -31,7 +31,7 @@ namespace KazgarsRevenge
             origin.Z = (followData.Position.Z + creatorData.Position.Z) / 2;
             diff.Y = 0;
             size.X = diff.Length();
-            source.X = Math.Min(1, size.X / maxSize);
+            source.X = size.X / maxSize;
             
             //get Up vector3 for billboard (normal crossed with direction towards followData)
             diff.Normalize();

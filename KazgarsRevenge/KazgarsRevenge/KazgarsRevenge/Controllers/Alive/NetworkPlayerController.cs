@@ -25,7 +25,6 @@ namespace KazgarsRevenge
             : base(game, entity, savefile)
         {
             this.targetPos = physicalData.Position;
-            this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
             LootManager gearGenerator = Game.Services.GetService(typeof(LootManager)) as LootManager;
             gear[GearSlot.Righthand] = null;
