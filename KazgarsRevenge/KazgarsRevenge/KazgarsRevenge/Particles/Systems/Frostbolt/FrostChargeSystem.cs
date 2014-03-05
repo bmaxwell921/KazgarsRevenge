@@ -10,9 +10,9 @@ namespace KazgarsRevenge
     /// <summary>
     /// Custom particle system for leaving smoke trails behind the rocket projectiles.
     /// </summary>
-    class FrostCharge3System : ParticleSystem
+    class FrostChargeSystem : ParticleSystem
     {
-        public FrostCharge3System(Game game, ContentManager content)
+        public FrostChargeSystem(Game game, ContentManager content)
             : base(game, content)
         { }
 
@@ -22,7 +22,7 @@ namespace KazgarsRevenge
 
             settings.MaxParticles = 500;
 
-            settings.Duration = TimeSpan.FromSeconds(.5f);
+            settings.Duration = TimeSpan.FromSeconds(.25f);
 
             settings.DurationRandomness = 1.5f;
 
@@ -40,11 +40,12 @@ namespace KazgarsRevenge
             settings.MinRotateSpeed = 4;
             settings.MaxRotateSpeed = 4;
 
-            settings.MinStartSize = 37;
-            settings.MaxStartSize = 37;
+            settings.MinStartSize = 2;
+            settings.MaxStartSize = 2;
 
-            settings.MinEndSize = 20;
-            settings.MaxEndSize = 20;
+            settings.MinEndSize = 2;
+            settings.MaxEndSize = 2;
+
             settings.BlendState = BlendState.Additive;
         }
     }

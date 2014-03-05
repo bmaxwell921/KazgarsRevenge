@@ -49,7 +49,7 @@ namespace KazgarsRevenge
         float yaw = MathHelper.PiOver4;
         float pitch = -MathHelper.PiOver4;
         public float zoom = 4.0f;
-        private float maxZoom = 1000;//10;
+        private float maxZoom = 10;
         private float minZoom = 2f;
         #endregion
 

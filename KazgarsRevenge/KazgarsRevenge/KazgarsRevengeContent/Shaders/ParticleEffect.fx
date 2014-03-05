@@ -32,8 +32,6 @@ float2 RotateSpeed;
 float2 StartSize;
 float2 EndSize;
 
-float sizePercent = 1;
-
 
 // Particle texture and sampler.
 texture Texture;
@@ -61,6 +59,7 @@ struct VertexShaderInput
     float3 Velocity : NORMAL0;
     float4 Random : COLOR0;
     float Time : TEXCOORD0;
+    float SizePercent : TEXCOORD1;
 };
 
 
@@ -111,7 +110,7 @@ float ComputeParticleSize(float randomValue, float normalizedAge)
     float endSize = lerp(EndSize.x, EndSize.y, randomValue);
     
     // Compute the actual size based on the age of the particle.
-    float size = lerp(startSize, endSize, normalizedAge) * sizePercent;
+    float size = lerp(startSize, endSize, normalizedAge);
     
     // Project the size into screen coordinates.
     return size * Projection._m11;
@@ -174,7 +173,7 @@ VertexShaderOutput ParticleVertexShader(VertexShaderInput input)
     float size = ComputeParticleSize(input.Random.y, normalizedAge);
     float2x2 rotation = ComputeParticleRotation(input.Random.w, age);
 
-    output.Position.xy += mul(input.Corner, rotation) * size * ViewportScale;
+    output.Position.xy += mul(input.Corner, rotation) * size * input.SizePercent * ViewportScale;
     
     output.Color = ComputeParticleColor(output.Position, input.Random.z, normalizedAge);
     output.TextureCoordinate = (input.Corner + 1) / 2;

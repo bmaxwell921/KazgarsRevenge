@@ -39,10 +39,7 @@ namespace KazgarsRevenge
             systems.Add(typeof(TarExplosionParticleSystem), new TarExplosionParticleSystem(Game, Game.Content));
             systems.Add(typeof(FrostboltTrailParticleSystem), new FrostboltTrailParticleSystem(Game, Game.Content));
             systems.Add(typeof(FrostMistParticleSystem), new FrostMistParticleSystem(Game, Game.Content));
-            systems.Add(typeof(FrostCharge4System), new FrostCharge4System(Game, Game.Content));
-            systems.Add(typeof(FrostCharge3System), new FrostCharge3System(Game, Game.Content));
-            systems.Add(typeof(FrostCharge2System), new FrostCharge2System(Game, Game.Content));
-            systems.Add(typeof(FrostCharge1System), new FrostCharge1System(Game, Game.Content));
+            systems.Add(typeof(FrostChargeSystem), new FrostChargeSystem(Game, Game.Content));
             systems.Add(typeof(ArmorSoulSystem), new ArmorSoulSystem(Game, Game.Content));
             systems.Add(typeof(HitSparksSystem), new HitSparksSystem(Game, Game.Content));
             systems.Add(typeof(StunnedParticleSystem), new StunnedParticleSystem(Game, Game.Content));

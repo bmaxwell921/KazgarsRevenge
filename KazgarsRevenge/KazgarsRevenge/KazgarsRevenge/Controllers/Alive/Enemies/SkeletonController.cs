@@ -38,9 +38,12 @@ namespace KazgarsRevenge
         {
             if (i == 0)
             {
-                model.AddEmitter(typeof(FrostCharge1System), "frostchargeleft", 20, 0, Vector3.Zero, "s_hand_L");
-                model.AddEmitter(typeof(FrostCharge1System), "frostchargeright", 20, 0, Vector3.Zero, "s_hand_R");
-            }
+                model.AddEmitter(typeof(FrostChargeSystem), "frostchargeleft", 50, 0, Vector3.Zero, "s_hand_L");
+                model.AddEmitterSizeIncrementExponential("frostchargeleft", 15, 1);
+
+                model.AddEmitter(typeof(FrostChargeSystem), "frostchargeright", 50, 0, Vector3.Zero, "s_hand_R");
+                model.AddEmitterSizeIncrementExponential("frostchargeright", 15, 1);
+            }/*
             if (i == 1)
             {
                 model.AddEmitter(typeof(FrostCharge2System), "frostchargeleft", 20, 0, Vector3.Zero, "s_hand_L");
@@ -55,7 +58,7 @@ namespace KazgarsRevenge
             {
                 model.AddEmitter(typeof(FrostCharge4System), "frostchargeleft", 20, 0, Vector3.Zero, "s_hand_L");
                 model.AddEmitter(typeof(FrostCharge4System), "frostchargeright", 20, 0, Vector3.Zero, "s_hand_R");
-            }
+            }*/
         }
 
         protected override void SpawnHitParticles()

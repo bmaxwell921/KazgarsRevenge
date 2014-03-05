@@ -24,6 +24,8 @@ namespace KazgarsRevenge
         // The time (in seconds) at which this particle was created.
         public float Time;
 
+        //Stores the percent of the normal size this particle will be
+        public float SizePercent;
 
         // Describe the layout of this vertex structure.
         public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
@@ -41,11 +43,14 @@ namespace KazgarsRevenge
                                   VertexElementUsage.Color, 0),
 
             new VertexElement(32, VertexElementFormat.Single,
-                                  VertexElementUsage.TextureCoordinate, 0)
+                                  VertexElementUsage.TextureCoordinate, 0),
+
+            new VertexElement(36, VertexElementFormat.Single,
+                                  VertexElementUsage.TextureCoordinate, 1)
         );
 
 
         // Describe the size of this vertex structure.
-        public const int SizeInBytes = 36;
+        public const int SizeInBytes = 40;
     }
 }

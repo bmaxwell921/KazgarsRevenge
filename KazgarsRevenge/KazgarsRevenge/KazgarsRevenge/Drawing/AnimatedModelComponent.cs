@@ -74,6 +74,22 @@ namespace KazgarsRevenge
             this.modelParams.alpha = alpha;
         }
 
+        public void AddEmitterSizeIncrementExponential(string emitterKey, float incrementPerSecond, float incrementIncrementPerSecond)
+        {
+            if (emitters.ContainsKey(emitterKey))
+            {
+                emitters[emitterKey].IncreaseSizePerSecondExponential(incrementPerSecond, incrementIncrementPerSecond);
+            }
+        }
+
+        public void AddEmitterSizeIncrement(string emitterKey, float incrementPerSecond)
+        {
+            if (emitters.ContainsKey(emitterKey))
+            {
+                emitters[emitterKey].IncreaseSizePerSecond(incrementPerSecond);
+            }
+        }
+
         public ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachBoneName)
         {
             return AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);

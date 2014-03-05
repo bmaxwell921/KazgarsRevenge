@@ -486,10 +486,15 @@ namespace KazgarsRevenge
         }
 
 
+        public void AddParticle(Vector3 position, Vector3 velocity)
+        {
+            AddParticle(position, velocity, 1);
+        }
+
         /// <summary>
         /// Adds a new particle to the system.
         /// </summary>
-        public void AddParticle(Vector3 position, Vector3 velocity)
+        public void AddParticle(Vector3 position, Vector3 velocity, float size)
         {
             // Figure out where in the circular queue to allocate the new particle.
             int nextFreeParticle = firstFreeParticle + 1;
@@ -534,6 +539,7 @@ namespace KazgarsRevenge
                 particles[firstFreeParticle * 4 + i].Velocity = velocity;
                 particles[firstFreeParticle * 4 + i].Random = randomValues;
                 particles[firstFreeParticle * 4 + i].Time = currentTime;
+                particles[firstFreeParticle * 4 + i].SizePercent = size;
             }
 
             firstFreeParticle = nextFreeParticle;

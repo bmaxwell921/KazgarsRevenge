@@ -212,11 +212,8 @@
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeSmall.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSparksParticleSystem.cs" />
-    <Compile Include="Particles\Systems\Frostbolt\FrostCharge1System.cs" />
-    <Compile Include="Particles\Systems\Frostbolt\FrostCharge2System.cs" />
-    <Compile Include="Particles\Systems\Frostbolt\FrostCharge3System.cs" />
+    <Compile Include="Particles\Systems\Frostbolt\FrostChargeSystem.cs" />
     <Compile Include="Particles\Systems\Frostbolt\FrostMistParticleSystem.cs" />
-    <Compile Include="Particles\Systems\Frostbolt\FrostCharge4System.cs" />
     <Compile Include="Particles\Systems\Frostbolt\FrostboltTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\HealTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\Hit\HitSparksSystem.cs" />

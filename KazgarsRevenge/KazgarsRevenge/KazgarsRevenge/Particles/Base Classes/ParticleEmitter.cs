@@ -83,6 +83,25 @@ namespace KazgarsRevenge
             Dead = false;
         }
 
+        float sizePercent = 1;
+        float sizeIncrement = 0;
+        float sizeIncrementIncrement = 0;
+        public void IncreaseSizePerSecond(float sizeIncrement)
+        {
+            this.sizeIncrement = sizeIncrement;
+        }
+
+        /// <summary>
+        /// increases the size by sizeIncrement per second, and increases that increment by sizeIncrementIncrement per second.
+        /// 
+        /// Increment-ception!
+        /// </summary>
+        public void IncreaseSizePerSecondExponential(float sizeIncrement, float sizeIncrementIncrement)
+        {
+            this.sizeIncrement = sizeIncrement;
+            this.sizeIncrementIncrement = sizeIncrementIncrement;
+        }
+
         /// <summary>
         /// Updates the emitter, creating the appropriate number of particles
         /// in the appropriate positions.
@@ -98,8 +117,23 @@ namespace KazgarsRevenge
                 }
             }
 
+
             // Work out how much time has passed since the previous update.
             float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (sizeIncrement != 0)
+            {
+                if (sizeIncrementIncrement != 0)
+                {
+                    sizeIncrement += sizeIncrementIncrement;
+                }
+
+                sizePercent += sizeIncrement * elapsedTime;
+                if (sizePercent < 0)
+                {
+                    sizePercent = 0;
+                }
+            }
 
             if (elapsedTime > 0)
             {
@@ -129,7 +163,7 @@ namespace KazgarsRevenge
                     // Create the particle.
                     Vector3 finalpos = Vector3.Transform(offset, rotation);
                     finalpos += position;
-                    particleSystem.AddParticle(finalpos + new Vector3(rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset), velocity);
+                    particleSystem.AddParticle(finalpos + new Vector3(rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset), velocity, sizePercent);
                 }
 
                 // Store any time we didn't use, so it can be part of the next update.
