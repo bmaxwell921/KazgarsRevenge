@@ -427,10 +427,16 @@ namespace KazgarsRevenge
             IDictionary<Vector3, RoomBlock> blockCenters = new Dictionary<Vector3, RoomBlock>();
             foreach (RoomBlock block in room.blocks)
             {
+                // Soulevator shouldn't be connected bc enemies can't go in it
+                if (block.IsSoulevator())
+                {
+                    continue;
+                }
+
                 Vector3 blockCenter = GetRotatedBlock(chunkLocation, roomTopLeft, new Vector3(block.location.x, LEVEL_Y, block.location.y), chunkRotation, room.rotation, room.UnRotWidth, room.UnRotHeight);
                 // For the graph the y should probs be 0, I'll make it ignore the Y when checking for closeness tho
                 blockCenter.Y = LEVEL_Y;
-                // These have not been transformed by BLOCK_SIZE yet
+
                 blockCenters[blockCenter] = block;
 
                 // If this block is a door we need to hold onto it so we can attach it to the other doors
