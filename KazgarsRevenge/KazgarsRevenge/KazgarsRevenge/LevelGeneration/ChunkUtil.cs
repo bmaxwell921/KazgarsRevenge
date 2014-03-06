@@ -32,7 +32,7 @@ namespace KazgarsRevenge
         private LoggerManager lm;
 
         // Where all the ChunkDefinitions should be
-        public static readonly string CHUNK_DEF_PATH = "./Chunks";
+        public static readonly string CHUNK_DEF_PATH = "Chunks";
 
         // Mapping from number of doors to ChunkInfo. Done like this for 'efficient' look ups
         private IDictionary<ChunkType, IDictionary<int, IList<ChunkInfo>>> chunkDefs;
