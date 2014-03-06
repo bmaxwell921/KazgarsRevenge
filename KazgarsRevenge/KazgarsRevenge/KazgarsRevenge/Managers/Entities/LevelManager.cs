@@ -847,5 +847,34 @@ namespace KazgarsRevenge
             }
         }
         #endregion
+
+        public override void Update(GameTime gameTime)
+        {
+            for (int i = markers.Count - 1; i >= 0; --i)
+            {
+                if (markers[i].Dead)
+                {
+                    markers.RemoveAt(i);
+                }
+            }
+            base.Update(gameTime);
+        }
+
+        List<GameEntity> markers = new List<GameEntity>();
+        public GameEntity AddPathMarker(Vector3 position)
+        {
+            GameEntity marker = new GameEntity("marker", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(position, 1, 1, 1);
+            marker.AddSharedData(typeof(Entity), physicalData);
+
+            UnanimatedModelComponent markerGraphics = new UnanimatedModelComponent(mainGame, marker, GetUnanimatedModel("Models\\Attachables\\sword01"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            marker.AddComponent(typeof(UnanimatedModelComponent), markerGraphics);
+            modelManager.AddComponent(markerGraphics);
+
+            markers.Add(marker);
+
+            return marker;
+        }
     }
 }

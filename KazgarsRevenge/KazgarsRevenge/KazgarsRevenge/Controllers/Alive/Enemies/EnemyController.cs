@@ -583,6 +583,7 @@ namespace KazgarsRevenge
                 || pos.Z > cameraBox.Max.Z);
         }
 
+        List<GameEntity> currentPathMarkers = new List<GameEntity>();
         protected void GetNewPath()
         {
             if (maxPathRequestCounter >= maxPathRequestLength)
@@ -592,8 +593,24 @@ namespace KazgarsRevenge
                 Vector3 dest = targetData.Position;
                 dest.Y = 0;
                 currentPath = levels.GetPath(src, dest) as List<Vector3>;
+                UpdatePathMarkers();
+
                 maxPathRequestCounter = 0;
                 GetNextPathPoint();
+            }
+        }
+
+        private void UpdatePathMarkers()
+        {
+            for (int i = 0; i < currentPathMarkers.Count; ++i)
+            {
+                currentPathMarkers[i].KillEntity();
+            }
+
+            currentPathMarkers.Clear();
+            for (int i = 0; i < currentPath.Count; ++i)
+            {
+                currentPathMarkers.Add(levels.AddPathMarker(currentPath[i]));
             }
         }
 
