@@ -20,8 +20,8 @@ namespace KazgarsRevenge
 {
     class LocalPlayerController : PlayerController, IDrawableComponent2D
     {
-        public LocalPlayerController(KazgarsRevengeGame game, GameEntity entity, PlayerSave savefile)
-            : base(game, entity, savefile)
+        public LocalPlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
+            : base(game, entity, account)
         {
             showHealthWithOutline = false;
 

@@ -21,8 +21,8 @@ namespace KazgarsRevenge
         private NetPlayerState state;
 
         Vector3 targetPos = Vector3.Zero;
-        public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity, PlayerSave savefile)
-            : base(game, entity, savefile)
+        public NetworkPlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
+            : base(game, entity, account)
         {
             this.targetPos = physicalData.Position;
             this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;

@@ -47,6 +47,7 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public override object Unload()
         {
+            mm.SetPlayerAccount(accounts[currentSel]);
             // Accounts and selections should match
             return accounts[currentSel];
         }

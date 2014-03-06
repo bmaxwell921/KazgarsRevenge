@@ -30,6 +30,9 @@ namespace KazgarsRevenge
             }
         }
 
+        // The account for the current player
+        public Account currentAccount;
+
         IDictionary<Identification, GameEntity> playerMap;
         public PlayerManager(KazgarsRevengeGame game)
             : base(game)
@@ -44,8 +47,7 @@ namespace KazgarsRevenge
 
         public void CreateMainPlayer(Vector3 position, Identification id)
         {
-            //TODO: actually load from file (inside of PlayerSave class, maybe)
-            PlayerSave saveFile = new PlayerSave();
+            // TODO use the currentAccount to set up the abilities and stuffs
 
             GameEntity player = new GameEntity("localplayer", FactionType.Players, EntityType.Player);
             player.id = id;
@@ -81,7 +83,7 @@ namespace KazgarsRevenge
             //the components that make up the player
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, 10f, Vector3.Down * 18);
-            LocalPlayerController playerController = new LocalPlayerController(mainGame, player, saveFile);
+            LocalPlayerController playerController = new LocalPlayerController(mainGame, player, currentAccount);
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
             AbilityTargetDecal groundIndicator = new AbilityTargetDecal(mainGame, player, 0);
 
@@ -130,7 +132,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent playerPhysics = new PhysicsComponent(mainGame, player);
             AnimatedModelComponent playerGraphics = new AnimatedModelComponent(mainGame, player, playerModel, 10f, Vector3.Down * 18);
-            NetworkPlayerController controller = new NetworkPlayerController(mainGame, player, new PlayerSave());
+            NetworkPlayerController controller = new NetworkPlayerController(mainGame, player, new Account("BLAH"));
             BlobShadowDecal shadow = new BlobShadowDecal(mainGame, player, 15);
 
             player.AddComponent(typeof(BlobShadowDecal), shadow);

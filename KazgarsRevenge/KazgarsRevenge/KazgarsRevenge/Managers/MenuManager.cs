@@ -230,9 +230,7 @@ namespace KazgarsRevenge
                     {
                         continue;
                     }
-                    /*
-                     * TODO remove this part for the actual stuff
-                     */
+
                     TransitionTo(sel.GetSelection());
                     return;
 
@@ -313,6 +311,15 @@ namespace KazgarsRevenge
                 this.menu = menu;
                 this.info = info;
             }
+        }
+
+        /// <summary>
+        /// Method to let the player manager know who's account is currently being used
+        /// </summary>
+        /// <param name="account"></param>
+        public void SetPlayerAccount(Account account)
+        {
+            (Game.Services.GetService(typeof(PlayerManager)) as PlayerManager).currentAccount = account;
         }
     }
 }

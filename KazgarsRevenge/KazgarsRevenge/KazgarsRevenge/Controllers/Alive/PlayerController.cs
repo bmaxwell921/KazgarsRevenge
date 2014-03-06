@@ -326,8 +326,8 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        public PlayerController(KazgarsRevengeGame game, GameEntity entity, PlayerSave savefile)
-            : base(game, entity, savefile.CharacterLevel)
+        public PlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
+            : base(game, entity, account.CharacterLevel)
         {
             //shared data
             this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
