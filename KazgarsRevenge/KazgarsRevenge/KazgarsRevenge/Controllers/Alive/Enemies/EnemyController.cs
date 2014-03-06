@@ -451,6 +451,12 @@ namespace KazgarsRevenge
             model.RemoveEmitter("chargeleft");
             model.RemoveEmitter("chargeright");
 
+            if (debuggingPaths)
+            {
+                currentPath.Clear();
+                UpdatePathMarkers();
+            }
+
             base.KillAlive();
         }
 
@@ -583,6 +589,7 @@ namespace KazgarsRevenge
                 || pos.Z > cameraBox.Max.Z);
         }
 
+        bool debuggingPaths = true;
         List<GameEntity> currentPathMarkers = new List<GameEntity>();
         protected void GetNewPath()
         {
@@ -593,7 +600,10 @@ namespace KazgarsRevenge
                 Vector3 dest = targetData.Position;
                 dest.Y = 0;
                 currentPath = levels.GetPath(src, dest) as List<Vector3>;
-                UpdatePathMarkers();
+                if (debuggingPaths)
+                {
+                    UpdatePathMarkers();
+                }
 
                 maxPathRequestCounter = 0;
                 GetNextPathPoint();
@@ -608,9 +618,12 @@ namespace KazgarsRevenge
             }
 
             currentPathMarkers.Clear();
-            for (int i = 0; i < currentPath.Count; ++i)
+            if (currentPath != null)
             {
-                currentPathMarkers.Add(levels.AddPathMarker(currentPath[i]));
+                for (int i = 0; i < currentPath.Count; ++i)
+                {
+                    currentPathMarkers.Add(levels.AddPathMarker(currentPath[i]));
+                }
             }
         }
 
@@ -618,7 +631,8 @@ namespace KazgarsRevenge
         {
             if (currentPath == null || currentPath.Count == 0)
             {
-                currentPathPoint = Vector3.Zero;
+                //if no path, run straight at the target
+                currentPathPoint = targetData.Position;
             }
             else
             {
