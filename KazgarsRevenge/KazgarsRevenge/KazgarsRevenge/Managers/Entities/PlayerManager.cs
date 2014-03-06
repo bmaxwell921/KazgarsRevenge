@@ -109,8 +109,6 @@ namespace KazgarsRevenge
 
         public void CreateNetworkedPlayer(Vector3 position, Identification id)
         {
-            PlayerSave characterInfo = new PlayerSave();
-
             // TODO ISSUE #9
             GameEntity player = new GameEntity("netplayer", FactionType.Players, EntityType.Player);
             player.id = id;

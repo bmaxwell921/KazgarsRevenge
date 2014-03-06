@@ -211,7 +211,6 @@
     <Compile Include="Controllers\Attacks\AttackController.cs" />
     <Compile Include="Managers\Entities\PlayerManager.cs" />
     <Compile Include="Managers\Entities\AttackManager.cs" />
-    <Compile Include="Non-Component\PlayerSave.cs" />
     <Compile Include="Non-Component\Potion.cs" />
     <Compile Include="Non-Component\Weapon.cs" />
     <Compile Include="Managers\ParticleManager.cs" />
