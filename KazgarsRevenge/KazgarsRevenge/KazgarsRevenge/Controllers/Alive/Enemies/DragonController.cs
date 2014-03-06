@@ -22,9 +22,16 @@ namespace KazgarsRevenge
         public DragonController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity, 10)
         {
+            settings.aniPrefix = "d_";
+            settings.moveAniName = "walk";
+            settings.attackAniName = "fireball";
+            settings.deathAniName = "fireball";
+            settings.hitAniName = "fireball";
+            settings.idleAniName = "fireball";
+
             settings.stopChasingRange = 2000;
-            settings.attackLength = 1337;
-            settings.attackCreateMillis = settings.attackLength / 2;
+            settings.attackLength = 7250;
+            settings.attackCreateMillis = 5000;
 
             currentUpdateFunction = new AIUpdateFunction(AIDragonWaiting);
         }
@@ -215,11 +222,11 @@ namespace KazgarsRevenge
                     settings.attackCreateMillis = settings.attackCreateMillis;
                     if (iceHead)
                     {
-                        PlayAnimation(settings.aniPrefix + "attack");
+                        PlayAnimation(settings.aniPrefix + settings.attackAniName);
                     }
                     else
                     {
-                        PlayAnimation(settings.aniPrefix + "attack");
+                        PlayAnimation(settings.aniPrefix + settings.attackAniName);
                     }
                     break;
                 case DragonState.Phase2:
@@ -229,11 +236,11 @@ namespace KazgarsRevenge
                         nextSpitBomb = rand.Next(4000, 15000);
                         if (iceHead)
                         {
-                            PlayAnimation(settings.aniPrefix + "attack");
+                            PlayAnimation(settings.aniPrefix + settings.attackAniName);
                         }
                         else
                         {
-                            PlayAnimation(settings.aniPrefix + "attack");
+                            PlayAnimation(settings.aniPrefix + settings.attackAniName);
                         }
                         settings.attackLength = settings.attackLength;
                         settings.attackCreateMillis = settings.attackCreateMillis;
@@ -245,28 +252,28 @@ namespace KazgarsRevenge
                         {
                             case 0:
                                 //left bite
-                                PlayAnimation(settings.aniPrefix + "attack");
+                                PlayAnimation(settings.aniPrefix + settings.attackAniName);
                                 settings.attackLength = settings.attackLength;
                                 settings.attackCreateMillis = settings.attackCreateMillis;
 
                                 break;
                             case 1:
                                 //right bite
-                                PlayAnimation(settings.aniPrefix + "attack");
+                                PlayAnimation(settings.aniPrefix + settings.attackAniName);
                                 settings.attackLength = settings.attackLength;
                                 settings.attackCreateMillis = settings.attackCreateMillis;
 
                                 break;
                             case 2:
                                 //left claw
-                                PlayAnimation(settings.aniPrefix + "attack");
+                                PlayAnimation(settings.aniPrefix + settings.attackAniName);
                                 settings.attackLength = settings.attackLength;
                                 settings.attackCreateMillis = settings.attackCreateMillis;
 
                                 break;
                             case 3:
                                 //right claw
-                                PlayAnimation(settings.aniPrefix + "attack");
+                                PlayAnimation(settings.aniPrefix + settings.attackAniName);
                                 settings.attackLength = settings.attackLength;
                                 settings.attackCreateMillis = settings.attackCreateMillis;
 

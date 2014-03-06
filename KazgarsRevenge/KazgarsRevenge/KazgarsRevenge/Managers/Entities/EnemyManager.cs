@@ -141,10 +141,10 @@ namespace KazgarsRevenge
 
             SetupEntityPhysicsAndShadow(dragon, position, new Vector3(100, 100, 100), 250);
 
-            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
+            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Dragon\\d_walk");
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             dragon.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
-            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 50, Vector3.Down * 30);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 10, Vector3.Down * 30);
 
             dragon.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);

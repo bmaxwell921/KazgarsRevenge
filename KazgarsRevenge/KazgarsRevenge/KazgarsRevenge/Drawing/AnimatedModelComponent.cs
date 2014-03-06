@@ -128,6 +128,7 @@ namespace KazgarsRevenge
 
             animationPlayer.Update(gameTime.ElapsedGameTime, true, conglomeration);
 
+            Matrix[] boneTransforms = animationPlayer.GetWorldTransforms();
 
             List<string> toRemove = new List<string>();
             foreach (KeyValuePair<string, ParticleEmitter> k in emitters)
@@ -138,7 +139,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    Vector3 bonePos = animationPlayer.GetWorldTransforms()[k.Value.BoneIndex].Translation;
+                    Vector3 bonePos = boneTransforms[k.Value.BoneIndex].Translation;
                     k.Value.Update(gameTime, bonePos, rot);
                 }
 
@@ -267,6 +268,11 @@ namespace KazgarsRevenge
         public AnimationClip GetAnimationClip(string clipName)
         {
             return animationPlayer.skinningDataValue.AnimationClips[clipName];
+        }
+
+        public Vector3 GetBonePosition(string boneName)
+        {
+            return animationPlayer.GetWorldTransforms()[model.Bones[boneName].Index - 2].Translation;
         }
 
     }
