@@ -60,7 +60,7 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public override bool NeedsSpawn()
         {
-            if (limit != NO_LIMIT && numSpawned > limit)
+            if (limit != NO_LIMIT && numSpawned >= limit)
             {
                 return false;
             }
@@ -84,7 +84,7 @@ namespace KazgarsRevenge
                 foreach (Vector3 loc in spawnLocations)
                 {
                     // TODO actual level
-                    int r = RandSingleton.S_Instance.Next(4);
+                    int r = RandSingleton.U_Instance.Next(4);
                     if (r == 0)
                     {
                         ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
