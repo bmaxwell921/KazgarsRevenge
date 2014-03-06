@@ -411,18 +411,19 @@ namespace KazgarsRevenge
         private void BuildRoomGraph(Room room, Vector3 chunkLocation, Rotation chunkRotation, ISet<Vector3> doors)
         {
             // Holds the center of each block
-            ISet<Vector3> blockCenters = new HashSet<Vector3>();
+            //ISet<Vector3> blockCenters = new HashSet<Vector3>();
             Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2;
             Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
             Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
-
+            IDictionary<Vector3, RoomBlock> blockCenters = new Dictionary<Vector3, RoomBlock>();
             foreach (RoomBlock block in room.blocks)
             {
                 Vector3 blockCenter = GetRotatedBlock(chunkLocation, roomTopLeft, new Vector3(block.location.x, LEVEL_Y, block.location.y), chunkRotation, room.rotation, room.UnRotWidth, room.UnRotHeight);
                 // For the graph the y should probs be 0, I'll make it ignore the Y when checking for closeness tho
                 blockCenter.Y = LEVEL_Y;
                 // These have not been transformed by BLOCK_SIZE yet
-                blockCenters.Add(blockCenter);
+                //blockCenters.Add(blockCenter);
+                blockCenters[blockCenter] = block;
 
                 // If this block is a door we need to hold onto it so we can attach it to the other doors
                 if (block.IsDoor())
@@ -444,23 +445,52 @@ namespace KazgarsRevenge
              *  For each block, check if any of it's adjacent neighbors are in the set, if so
              *  then add an edge
              */
-            foreach (Vector3 blockCenter in blockCenters)
+            //foreach (Vector3 blockCenter in blockCenters)
+            //{
+            //    // Look at all of its adjacent neighbors
+            //    for (int i = -1; i <= 1; ++i)
+            //    {
+            //        for (int j = -1; j <= 1; ++j)
+            //        {
+            //            Vector3 testBlock = new Vector3(blockCenter.X + i * BLOCK_SIZE, blockCenter.Y, blockCenter.Z + j * BLOCK_SIZE);
+            //            // If a neighbor is one of the blocks in the room, the connect them
+            //            if (!testBlock.Equals(blockCenter) && !isDiagWall(testBlock, i, j) && blockCenters.Contains(testBlock))
+            //            {
+            //                this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
+            //            }
+            //        }
+            //    }
+            //}
+
+            foreach (Vector3 blockCenter in blockCenters.Keys)
             {
-                // Look at all of its adjacent neighbors
                 for (int i = -1; i <= 1; ++i)
                 {
                     for (int j = -1; j <= 1; ++j)
                     {
                         Vector3 testBlock = new Vector3(blockCenter.X + i * BLOCK_SIZE, blockCenter.Y, blockCenter.Z + j * BLOCK_SIZE);
                         // If a neighbor is one of the blocks in the room, the connect them
-                        if (!testBlock.Equals(blockCenter) && blockCenters.Contains(testBlock))
+                        if (!testBlock.Equals(blockCenter) && !isDiagWall(blockCenters, testBlock, i, j) && blockCenters.Keys.Contains(testBlock))
                         {
                             this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
                         }
                     }
                 }
             }
+        }
 
+        // Enemies have problems moving diagonally
+        private bool isDiagWall(IDictionary<Vector3, RoomBlock> blockLoc, Vector3 test, int i, int j) 
+        {
+            if (!blockLoc.ContainsKey(test))
+            {
+                return false;
+            }
+            if (i == 1 || j == 1)
+            {
+                return false;
+            }
+            return blockLoc[test].IsWall();
         }
 
         // Connects all adjacent doors to each other
