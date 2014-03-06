@@ -46,9 +46,6 @@ namespace KazgarsRevenge
 
             #region Ability Image Load
             // TODO give these guys meaningful names in the TextureStrings class and follow the above convention
-            texMelee = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\DB");
-            texRange = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\LW");
-            texMagic = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BR");
             texPlaceHolder = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BN");
             #endregion
 
@@ -84,9 +81,6 @@ namespace KazgarsRevenge
         #endregion
 
         #region Ability Icons
-        Texture2D texMelee;
-        Texture2D texRange;
-        Texture2D texMagic;
         Texture2D texPlaceHolder;
         #endregion
 
@@ -145,7 +139,7 @@ namespace KazgarsRevenge
             //ability CD updates
             foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
             {
-                k.Value.update(elapsed);
+                if(k.Value != null) k.Value.update(elapsed);
             }
             #endregion
 
@@ -1137,28 +1131,18 @@ namespace KazgarsRevenge
             //Ability Bar
             s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Red * 0.5f);
             for (int i = 0; i < 4; ++i)
-            {//Convert below to inside Rects
+            {
                 s.Draw(boundAbilities[i].Value.icon, guiInsideRects["abilities"]["ability" + i], Color.White);
                 s.Draw(boundAbilities[i + 4].Value.icon, guiInsideRects["abilities"]["ability" + (i + 4)], Color.White);
             }
 
             //LM
-            switch (GetMainhandType())
-            {
-                case AttackType.None:
-                case AttackType.Melee:
-                    s.Draw(texMelee, guiInsideRects["abilities"]["primary"], Color.White);
-                    break;
-                case AttackType.Magic:
-                    s.Draw(texMagic, guiInsideRects["abilities"]["primary"], Color.White);
-                    break;
-                case AttackType.Ranged:
-                    s.Draw(texRange, guiInsideRects["abilities"]["primary"], Color.White);
-                    break;
-            }
+            if (gear[GearSlot.Righthand] == null) s.Draw(texPlaceHolder, guiInsideRects["abilities"]["primary"], Color.White);
+            else s.Draw(gear[GearSlot.Righthand].Icon, guiInsideRects["abilities"]["primary"], Color.White);
 
             //RM
-            s.Draw(texPlaceHolder, guiInsideRects["abilities"]["rightmouse"], Color.White);
+            if(boundAbilities[8].Value == null) s.Draw(texPlaceHolder, guiInsideRects["abilities"]["rightmouse"], Color.White);
+            else s.Draw(boundAbilities[8].Value.icon, guiInsideRects["abilities"]["rightmouse"], Color.White);
 
             //Item 1
             s.Draw(healthPot, guiInsideRects["abilities"]["item1"], Color.White);
