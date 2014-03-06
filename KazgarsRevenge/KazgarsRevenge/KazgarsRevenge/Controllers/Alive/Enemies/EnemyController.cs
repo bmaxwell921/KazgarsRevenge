@@ -260,7 +260,7 @@ namespace KazgarsRevenge
         List<Vector3> currentPath;
         const float PATH_RADIUS_SATISFACTION = 10.0f;
         double maxPathRequestCounter;
-        double maxPathRequestLength = 4000;
+        double maxPathRequestLength = 1500;
         double minChaseCounter;
         double minChaseLength = 7000;
         protected virtual void AIRunningToTarget(double millis)
@@ -294,19 +294,19 @@ namespace KazgarsRevenge
                 {//otherwise, run towards it
 
                     //if we're not in the same block as the target, run to next path point. otherwise, run straight towards it
-                    if (nothingBetween || Math.Abs(diff.X) > LevelManager.BLOCK_SIZE || Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE)
+                    if (nothingBetween || Math.Abs(diff.X) > LevelManager.BLOCK_SIZE / 2 || Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE / 2)
                     {
                         //if we don't have a path, request one from levels
-                        if ((currentPath == null || currentPath.Count == 0) && currentPathPoint == Vector3.Zero)
+                        if ((currentPath == null || currentPath.Count == 0))
                         {
                             GetNewPath();
                         }
 
                         if (currentPath != null && currentPath.Count > 0)
                         {
-                            //request new path if target is a block or more away from the last path
+                            //request new path if target is far enough away from the last path's endpoint
                             Vector3 diffTargetPath = new Vector3(targetData.Position.X - currentPath[currentPath.Count - 1].X, 0, targetData.Position.Z - currentPath[currentPath.Count - 1].Z);
-                            if (Math.Abs(diffTargetPath.X) > LevelManager.BLOCK_SIZE && Math.Abs(diffTargetPath.Z) > LevelManager.BLOCK_SIZE)
+                            if (Math.Abs(diffTargetPath.X) > LevelManager.BLOCK_SIZE / 2 && Math.Abs(diffTargetPath.Z) > LevelManager.BLOCK_SIZE / 2)
                             {
                                 GetNewPath();
                             }
@@ -319,6 +319,16 @@ namespace KazgarsRevenge
                             GetNextPathPoint();
                             diff = new Vector3(currentPathPoint.X - physicalData.Position.X, 0, currentPathPoint.Z - physicalData.Position.Z);
                         }
+                    }
+                    else
+                    {
+                        //if we're not in the same block and just running at the target, get rid of old path (so that the next point won't be backwards)
+                        if (currentPath != null)
+                        {
+                            currentPath.Clear();
+                            UpdatePathMarkers();
+                        }
+
                     }
 
                     //run to the next point in the path
@@ -380,6 +390,11 @@ namespace KazgarsRevenge
 
         protected virtual void SwitchToAttacking()
         {
+            if (currentPath != null)
+            {
+                currentPath.Clear();
+                UpdatePathMarkers();
+            }
             currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
         }
 
@@ -453,7 +468,10 @@ namespace KazgarsRevenge
 
             if (debuggingPaths)
             {
-                currentPath.Clear();
+                if (currentPath != null)
+                {
+                    currentPath.Clear();
+                }
                 UpdatePathMarkers();
             }
 
@@ -622,7 +640,7 @@ namespace KazgarsRevenge
             {
                 for (int i = 0; i < currentPath.Count; ++i)
                 {
-                    currentPathMarkers.Add(levels.AddPathMarker(currentPath[i]));
+                    currentPathMarkers.Add(levels.AddPathMarker(currentPath[i], Entity.Name));
                 }
             }
         }

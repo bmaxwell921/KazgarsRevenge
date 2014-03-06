@@ -850,14 +850,27 @@ namespace KazgarsRevenge
         }
 
         List<GameEntity> markers = new List<GameEntity>();
-        public GameEntity AddPathMarker(Vector3 position)
+        public GameEntity AddPathMarker(Vector3 position, string name)
         {
             GameEntity marker = new GameEntity("marker", FactionType.Neutral, EntityType.None);
 
             Entity physicalData = new Box(position, 1, 1, 1);
             marker.AddSharedData(typeof(Entity), physicalData);
 
-            UnanimatedModelComponent markerGraphics = new UnanimatedModelComponent(mainGame, marker, GetUnanimatedModel("Models\\Attachables\\sword01"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            string modelPath;
+            switch (name)
+            {
+                case "Animated Armor":
+                    modelPath = "Models\\Attachables\\axe";
+                    break;
+                case "Skeleton":
+                    modelPath = "Models\\Attachables\\bow01";
+                    break;
+                default:
+                    modelPath = "Models\\Attachables\\sword01";
+                    break;
+            }
+            UnanimatedModelComponent markerGraphics = new UnanimatedModelComponent(mainGame, marker, GetUnanimatedModel(modelPath), new Vector3(10), Vector3.Zero, 0, 0, 0);
             marker.AddComponent(typeof(UnanimatedModelComponent), markerGraphics);
             modelManager.AddComponent(markerGraphics);
 

@@ -111,7 +111,7 @@ namespace KazgarsRevenge
             //if pillars are destroyed, go to phase 2
             if (frostPillar == null || firePillar == null || (frostPillar.Dead && firePillar.Dead))
             {
-            //    StartPhase2();
+                StartPhase2();
             }
 
             //launch ice or fire attacks (alternating)
@@ -130,6 +130,10 @@ namespace KazgarsRevenge
             //every so often seconds, launch fire or ice ground attack (alternating)
 
             nextSpitBomb -= millis;
+            if (nextSpitBomb <= 0)
+            {
+                settings.attackRange = 2000;
+            }
 
             AIAutoAttackingTarget(millis);
 
@@ -155,11 +159,11 @@ namespace KazgarsRevenge
                 case DragonState.Phase1:
                     if (iceHead)
                     {
-                        attacks.CreateFrostbolt(physicalData.Position, physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                        attacks.CreateFrostbolt(model.GetBonePosition("d_mouth_emittor_R"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
                     }
                     else
                     {
-                        attacks.CreateFirebolt(physicalData.Position, physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                        attacks.CreateFirebolt(model.GetBonePosition("d_mouth_emittor_L"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
                     }
                     iceHead = !iceHead;
                     break;
@@ -168,17 +172,18 @@ namespace KazgarsRevenge
                     {
                         if (iceHead)
                         {
-                            attacks.CreateFireSpitBomb(physicalData.Position, targetData.Position, 50, this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, 50, this as AliveComponent);
                         }
                         else
                         {
-                            attacks.CreateFireSpitBomb(physicalData.Position, targetData.Position, 50, this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, 50, this as AliveComponent);
                         }
                         iceHead = !iceHead;
+                        settings.attackRange = 300;
                     }
                     else
                     {
-                        attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 50, 35, false, this as AliveComponent);
+                        attacks.CreateMeleeAttack(model.GetBonePosition("d_mouth_emittor_R"), 35, false, this as AliveComponent);
                         switch (chosenAttack)
                         {
                             case 1:
@@ -197,11 +202,11 @@ namespace KazgarsRevenge
                     //breathe fire
                     if (iceHead)
                     {
-                        attacks.CreateFrostbolt(physicalData.Position, physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                        attacks.CreateFrostbolt(model.GetBonePosition("d_mouth_emittor_R"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
                     }
                     else
                     {
-                        attacks.CreateFirebolt(physicalData.Position, physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                        attacks.CreateFirebolt(model.GetBonePosition("d_mouth_emittor_L"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
                     }
                     iceHead = !iceHead;
                     break;
