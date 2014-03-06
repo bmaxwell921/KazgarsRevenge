@@ -37,7 +37,7 @@ namespace KazgarsRevenge
         /// This is the random instance that should be used for loot and enemy levels
         /// and stuff that shouldn't be the same when a seed is given
         /// </summary>
-        public static Random U_instance
+        public static Random U_Instance
         {
             get
             {

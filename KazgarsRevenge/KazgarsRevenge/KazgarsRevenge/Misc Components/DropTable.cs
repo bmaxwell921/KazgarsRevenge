@@ -104,7 +104,7 @@ namespace KazgarsRevenge
             int amount = GetNormGoldAmt(floor);
 
             // 15% chance to get double gold
-            if (RandSingleton.U_instance.NextDouble() < TRIP_PERC)
+            if (RandSingleton.U_Instance.NextDouble() < TRIP_PERC)
             {
                 amount *= 3;
             }
@@ -117,7 +117,7 @@ namespace KazgarsRevenge
         {
             int floorAmtSq = floor.ToInt() * floor.ToInt();
             // Equation: (5 * level^2) +/- rand(0, level^2)
-            return 5 * floorAmtSq + RandSingleton.U_instance.Next(-floorAmtSq, floorAmtSq);
+            return 5 * floorAmtSq + RandSingleton.U_Instance.Next(-floorAmtSq, floorAmtSq);
         }
 
         #endregion
@@ -209,7 +209,7 @@ namespace KazgarsRevenge
             {
                 return null;
             }
-            int val = RandSingleton.U_instance.Next(total);
+            int val = RandSingleton.U_Instance.Next(total);
             int min = 0; int max = 0;
 
             for (int i = 0; i < list.Count; ++i)
@@ -225,7 +225,7 @@ namespace KazgarsRevenge
                         return null;
                     }
                     Item clone = (Item) list[i].item.Clone();
-                    clone.Quantity = RandSingleton.U_instance.Next(list[i].maxAmt) + 1;
+                    clone.Quantity = RandSingleton.U_Instance.Next(list[i].maxAmt) + 1;
                     return clone;
                 }
             }
@@ -274,7 +274,7 @@ namespace KazgarsRevenge
             int ret = 0;
             for (int i = 0; i < rolls; ++i)
             {
-                ret += RandSingleton.U_instance.Next(1, sides + 1);
+                ret += RandSingleton.U_Instance.Next(1, sides + 1);
             }
             return ret;
         }

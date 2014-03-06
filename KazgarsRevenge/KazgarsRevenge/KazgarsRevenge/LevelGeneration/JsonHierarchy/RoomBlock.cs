@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
@@ -16,8 +17,11 @@ namespace KazgarsRevenge
 
         // Used to know if this block is a door
         public static readonly string DOOR_NAME = "door";
-
         public static readonly string PLAYER_SPAWN_NAME = "playerSpawn";
+        public static readonly string WALL_NAME = "wall";
+        public static readonly string WALL_NAME2 = "wallAdj";
+
+        public Vector3 inGameLoc;
 
         /// <summary>
         /// Returns whether this block is a door or not
@@ -35,6 +39,11 @@ namespace KazgarsRevenge
         public bool IsPlayerSpawn()
         {
             return this.name.Equals(PLAYER_SPAWN_NAME);
+        }
+
+        public bool IsWall()
+        {
+            return this.name.Equals(WALL_NAME) || this.name.Equals(WALL_NAME2);
         }
 
         public override object Clone()
