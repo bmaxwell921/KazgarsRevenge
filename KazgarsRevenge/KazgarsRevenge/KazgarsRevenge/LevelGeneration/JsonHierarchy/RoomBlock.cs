@@ -20,6 +20,7 @@ namespace KazgarsRevenge
         public static readonly string PLAYER_SPAWN_NAME = "playerSpawn";
         public static readonly string WALL_NAME = "wall";
         public static readonly string WALL_NAME2 = "wallAdj";
+        public static readonly string SOULEVATOR = "soulevator";
 
         public Vector3 inGameLoc;
 
@@ -44,6 +45,11 @@ namespace KazgarsRevenge
         public bool IsWall()
         {
             return this.name.Equals(WALL_NAME) || this.name.Equals(WALL_NAME2);
+        }
+
+        public bool IsSoulevator()
+        {
+            return this.name.Equals(SOULEVATOR);
         }
 
         public override object Clone()

@@ -330,7 +330,7 @@ namespace KazgarsRevenge
         private static readonly float PROXIMITY = 60;
         // Spawn every 3 seconds
         private static readonly float DELAY = 3000;
-        bool done = false;
+
         // Adds the necessary spawning components to the roomGE
         private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
         {
@@ -340,20 +340,9 @@ namespace KazgarsRevenge
                 Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
                 spawnLocs.Add(spawnCenter);
             }
-            // TODO readd
             EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
             roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
             genComponentManager.AddComponent(eps);
-
-            //if (!done)
-            //{
-            //    ISet<Vector3> tempLocs = new HashSet<Vector3>();
-            //    tempLocs.Add(new Vector3(3230, MOB_SPAWN_Y, 3915));
-            //    EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, tempLocs, PROXIMITY, DELAY, 1);
-            //    roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
-            //    genComponentManager.AddComponent(eps);
-            //    done = true;
-            //}
         }
 
         /// <summary>
@@ -438,10 +427,16 @@ namespace KazgarsRevenge
             IDictionary<Vector3, RoomBlock> blockCenters = new Dictionary<Vector3, RoomBlock>();
             foreach (RoomBlock block in room.blocks)
             {
+                // Soulevator shouldn't be connected bc enemies can't go in it
+                if (block.IsSoulevator())
+                {
+                    continue;
+                }
+
                 Vector3 blockCenter = GetRotatedBlock(chunkLocation, roomTopLeft, new Vector3(block.location.x, LEVEL_Y, block.location.y), chunkRotation, room.rotation, room.UnRotWidth, room.UnRotHeight);
                 // For the graph the y should probs be 0, I'll make it ignore the Y when checking for closeness tho
                 blockCenter.Y = LEVEL_Y;
-                // These have not been transformed by BLOCK_SIZE yet
+
                 blockCenters[blockCenter] = block;
 
                 // If this block is a door we need to hold onto it so we can attach it to the other doors
@@ -618,13 +613,6 @@ namespace KazgarsRevenge
             pathList.Add(destNode);
             pathList.Add(dest);
 
-            //Console.Write("Calculated Path of: ");
-            //foreach (Vector3 node in pathList)
-            //{
-            //    Console.Write("{0}, ", node);
-            //}
-            Console.WriteLine();
-
             return pathList;
             
         }
@@ -662,8 +650,9 @@ namespace KazgarsRevenge
             foreach (Vector3 node in currentLevel.pathGraph.Vertices)
             {
                 double thisDist = Vector3.Distance(location, node);
-                // TODO make it so the returned source gravitates toward the target
-                double heuristic = 0; // Vector3.Distance(dest, node);
+                
+                // If it's not broke, don't fix it.
+                double heuristic = 0;
                 if (minDist == null || thisDist + heuristic < minDist)
                 {
                     min = node;
