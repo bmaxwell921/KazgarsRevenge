@@ -335,7 +335,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
             UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
-            BombController bombController = new BombController(mainGame, bomb, AbilityName.FlashBomb, targetPos, creator, radius);
+            FlashBomb bombController = new FlashBomb(mainGame, bomb, targetPos, creator, radius);
 
             bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
             genComponentManager.AddComponent(bombPhysics);
@@ -367,7 +367,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
             UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
-            BombController bombController = new BombController(mainGame, bomb, AbilityName.TarBomb, targetPos, creator, radius);
+            TarBomb bombController = new TarBomb(mainGame, bomb, targetPos, creator, radius);
 
             bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
             genComponentManager.AddComponent(bombPhysics);
@@ -379,58 +379,6 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(bombController);
 
             attacks.Add(bomb);
-        }
-
-        public void CreateFlashExplosion(Vector3 position, float radius, AliveComponent creator)
-        {
-            GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
-
-            Entity attackData = new Cylinder(position, 47, radius);
-            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
-            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            attackData.LinearVelocity = Vector3.Zero;
-            newAttack.AddSharedData(typeof(Entity), attackData);
-
-            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, 0, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
-            attackAI.HitMultipleTargets();
-            attackAI.AddFlashStun();
-
-            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
-            genComponentManager.AddComponent(attackPhysics);
-
-            newAttack.AddComponent(typeof(AttackController), attackAI);
-            genComponentManager.AddComponent(attackAI);
-
-            attacks.Add(newAttack);
-
-            SpawnFlashParticles(position);
-        }
-
-        public void CreateTarExplosion(Vector3 position, float radius, AliveComponent creator)
-        {
-            GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
-
-            Entity attackData = new Cylinder(position, 47, radius);
-            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
-            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            attackData.LinearVelocity = Vector3.Zero;
-            newAttack.AddSharedData(typeof(Entity), attackData);
-
-            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, 0, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
-            attackAI.HitMultipleTargets();
-            attackAI.AddTarExplosion();
-
-            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
-            genComponentManager.AddComponent(attackPhysics);
-
-            newAttack.AddComponent(typeof(AttackController), attackAI);
-            genComponentManager.AddComponent(attackAI);
-
-            attacks.Add(newAttack);
-
-            SpawnTarParticles(position);
         }
 
         public void CreateGrapplingHook(Vector3 position, Vector3 dir, AliveComponent creator, float speed)
@@ -501,7 +449,7 @@ namespace KazgarsRevenge
 
         public void CreateMoltenBolt(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
         {
-            GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
+            GameEntity arrow = new GameEntity("bolt", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
             Entity arrowData = new Box(position, 10, 17, 32, .001f);
             arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
@@ -517,7 +465,7 @@ namespace KazgarsRevenge
 
             ProjectileController arrowAI = new ProjectileController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
             arrowAI.Penetrate();
-            arrowAI.Ignite();
+            arrowAI.AddDebuff(DeBuff.Igniting);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -548,7 +496,7 @@ namespace KazgarsRevenge
             UnanimatedModelComponent boltGraphics = new UnanimatedModelComponent(mainGame, bolt, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"),
                                                                                 new Vector3(20), Vector3.Backward * 20, 0, 0, 0);
             boltGraphics.AddRollSpeed(.3f);
-            boltGraphics.SetAlpha(.5f);
+            boltGraphics.SetAlpha(.75f);
             boltGraphics.TurnOffOutline();
 
             boltGraphics.AddEmitter(typeof(FrostboltTrailParticleSystem), "trail", 20, 10, Vector3.Zero);
@@ -556,7 +504,7 @@ namespace KazgarsRevenge
 
             ProjectileController boltAI = new ProjectileController(mainGame, bolt, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
             boltAI.KillOnFirstContact();
-            boltAI.Frost();
+            boltAI.AddDebuff(DeBuff.Frost);
 
             bolt.AddComponent(typeof(PhysicsComponent), boltPhysics);
             genComponentManager.AddComponent(boltPhysics);
@@ -569,9 +517,155 @@ namespace KazgarsRevenge
 
             attacks.Add(bolt);
         }
+
+        public void CreateFirebolt(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
+        {
+            GameEntity bolt = new GameEntity("bolt", creator.Entity.Faction, EntityType.Misc);
+            position.Y = 40;
+            Entity boltData = new Box(position, 10, 17, 32, .001f);
+            boltData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            boltData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            boltData.LinearVelocity = dir * 450;
+            boltData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
+            bolt.AddSharedData(typeof(Entity), boltData);
+
+            PhysicsComponent boltPhysics = new PhysicsComponent(mainGame, bolt);
+            UnanimatedModelComponent boltGraphics = new UnanimatedModelComponent(mainGame, bolt, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"),
+                                                                                new Vector3(20), Vector3.Backward * 20, 0, 0, 0);
+            boltGraphics.AddRollSpeed(.3f);
+            boltGraphics.TurnOffOutline();
+
+            boltGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 50, 10, Vector3.Zero);
+            //boltGraphics.AddEmitter(typeof(FireMistTrailSystem), "mist", 80, 10, Vector3.Zero);
+
+            ProjectileController boltAI = new ProjectileController(mainGame, bolt, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            boltAI.KillOnFirstContact();
+
+            bolt.AddComponent(typeof(PhysicsComponent), boltPhysics);
+            genComponentManager.AddComponent(boltPhysics);
+
+            bolt.AddComponent(typeof(UnanimatedModelComponent), boltGraphics);
+            modelManager.AddComponent(boltGraphics);
+
+            bolt.AddComponent(typeof(AttackController), boltAI);
+            genComponentManager.AddComponent(boltAI);
+
+            attacks.Add(bolt);
+        }
+
+        public void CreateFireSpitBomb(Vector3 startPos, Vector3 targetPos, float radius, AliveComponent creator)
+        {
+            GameEntity bomb = new GameEntity("firespit", FactionType.Neutral, EntityType.Misc);
+
+            Entity bombData = new Box(startPos, 15, 50, 15, 1);
+            bombData.IsAffectedByGravity = true;
+            bombData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            bombData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            bombData.Orientation = Quaternion.CreateFromYawPitchRoll(0, 0, 0);
+
+            Vector3 vel = targetPos - startPos;
+            vel.Y = 0;
+            bombData.LinearVelocity = Vector3.Up * 400 + vel * 2;
+
+            bomb.AddSharedData(typeof(Entity), bombData);
+
+            PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
+            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
+            bombGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 50, 5, Vector3.Zero);
+
+            FireSpitBomb bombController = new FireSpitBomb(mainGame, bomb, targetPos, creator, radius);
+
+            bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
+            genComponentManager.AddComponent(bombPhysics);
+
+            bomb.AddComponent(typeof(UnanimatedModelComponent), bombGraphics);
+            modelManager.AddComponent(bombGraphics);
+
+            bomb.AddComponent(typeof(FallingArrowController), bombController);
+            genComponentManager.AddComponent(bombController);
+
+            attacks.Add(bomb);
+        }
         #endregion
 
         #region Misc
+        public void CreateFireSpitExplosion(Vector3 position, float radius, AliveComponent creator)
+        {
+            GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
+
+            Entity attackData = new Cylinder(position, 47, radius);
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+            newAttack.AddSharedData(typeof(Entity), attackData);
+
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
+            AttackController attackAI = new AttackController(mainGame, newAttack, 0, GetHitFaction(creator), creator);
+            attackAI.HitMultipleTargets();
+
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
+
+            newAttack.AddComponent(typeof(AttackController), attackAI);
+            genComponentManager.AddComponent(attackAI);
+
+            attacks.Add(newAttack);
+
+            SpawnFireSpitExplosionParticles(position);
+        }
+
+        public void CreateFlashExplosion(Vector3 position, float radius, AliveComponent creator)
+        {
+            GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
+
+            Entity attackData = new Cylinder(position, 47, radius);
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+            newAttack.AddSharedData(typeof(Entity), attackData);
+
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
+            AttackController attackAI = new AttackController(mainGame, newAttack, 0, GetHitFaction(creator), creator);
+            attackAI.HitMultipleTargets();
+            attackAI.AddDebuff(DeBuff.FlashBomb);
+
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
+
+            newAttack.AddComponent(typeof(AttackController), attackAI);
+            genComponentManager.AddComponent(attackAI);
+
+            attacks.Add(newAttack);
+
+            SpawnFlashParticles(position);
+        }
+
+        public void CreateTarExplosion(Vector3 position, float radius, AliveComponent creator)
+        {
+            GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
+
+            Entity attackData = new Cylinder(position, 47, radius);
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+            newAttack.AddSharedData(typeof(Entity), attackData);
+
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
+            AttackController attackAI = new AttackController(mainGame, newAttack, 0, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            attackAI.HitMultipleTargets();
+            attackAI.AddDebuff(DeBuff.Tar);
+
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
+
+            newAttack.AddComponent(typeof(AttackController), attackAI);
+            genComponentManager.AddComponent(attackAI);
+
+            attacks.Add(newAttack);
+
+            SpawnTarParticles(position);
+        }
+
         public void CreateFallingArrow(Vector3 position)
         {
             GameEntity arrow = new GameEntity("arrow", FactionType.Neutral, EntityType.Misc);
@@ -663,6 +757,11 @@ namespace KazgarsRevenge
             rotation.Up = Vector3.Up;
             return rotation;
         }
+
+        private FactionType GetHitFaction(AliveComponent creator)
+        {
+            return creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players;
+        }
         #endregion
 
         #region Particles
@@ -720,6 +819,11 @@ namespace KazgarsRevenge
             {
                 boom.AddParticle(position, Vector3.Zero);
             }
+        }
+
+        public void SpawnFireSpitExplosionParticles(Vector3 position)
+        {
+            SpawnExplosionParticles(position);
         }
 
         public void SpawnFlashParticles(Vector3 position)

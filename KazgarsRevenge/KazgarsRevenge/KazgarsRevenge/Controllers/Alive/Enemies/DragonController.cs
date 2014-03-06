@@ -10,12 +10,23 @@ namespace KazgarsRevenge
 {
     public class DragonController : EnemyController
     {
+        private enum DragonState
+        {
+            Phase1,
+            Phase2,
+            Phase3,
+        }
+
+        DragonState state = DragonState.Phase1;
+
         public DragonController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity, 10)
         {
             settings.stopChasingRange = 2000;
             settings.attackLength = 1337;
             settings.attackCreateMillis = settings.attackLength / 2;
+
+            currentUpdateFunction = new AIUpdateFunction(AIDragonWaiting);
         }
 
         public override void Update(GameTime gameTime)
@@ -29,32 +40,43 @@ namespace KazgarsRevenge
 
         private void StartPhase1()
         {
+            state = DragonState.Phase1;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase1);
             PlayAnimation(settings.aniPrefix + settings.moveAniName);
             timerCounter = 0;
             timerLength = 8000;
+
+            settings.attackRange = 10000;
         }
 
         private void StartPhase2()
         {
+            state = DragonState.Phase2;
+            currentUpdateFunction = new AIUpdateFunction(AIDragonPhase2);
+            settings.attackRange = 300;
 
+            nextSpitBomb = 8000;
         }
 
         private void StartPhase3()
         {
-
+            state = DragonState.Phase3;
+            currentUpdateFunction = new AIUpdateFunction(AIDragonEnrage);
         }
 
         private void ResetEncounter()
         {
+            state = DragonState.Phase1;
             targetHealth = null;
             targetData = null;
+            enrageTimer = 120000;
 
             //reset position here?
 
             //heal and go back to waiting state
             Heal(MaxHealth);
             currentUpdateFunction = new AIUpdateFunction(AIDragonWaiting);
+            PlayAnimation(settings.aniPrefix + settings.idleAniName);
         }
 
         private void AIDragonWaiting(double millis)
@@ -73,7 +95,7 @@ namespace KazgarsRevenge
         }
 
 
-        bool leftHead = true;
+        bool iceHead = true;
 
         GameEntity frostPillar;
         GameEntity firePillar;
@@ -82,7 +104,7 @@ namespace KazgarsRevenge
             //if pillars are destroyed, go to phase 2
             if (frostPillar == null || firePillar == null || (frostPillar.Dead && firePillar.Dead))
             {
-                StartPhase2();
+            //    StartPhase2();
             }
 
             //launch ice or fire attacks (alternating)
@@ -91,14 +113,18 @@ namespace KazgarsRevenge
 
         }
 
+        double nextSpitBomb = 8000;
+
         double enrageTimer = 120000;
         private void AIDragonPhase2(double millis)
         {
             //run towards player
-
             //if in range, bite player (alternating heads)
+            //every so often seconds, launch fire or ice ground attack (alternating)
 
-            //every 6 seconds, launch fire or ice ground attack (alternating)
+            nextSpitBomb -= millis;
+
+            AIAutoAttackingTarget(millis);
 
             //if 2 minutes pass, enrage
             enrageTimer -= millis;
@@ -114,6 +140,160 @@ namespace KazgarsRevenge
 
         }
 
+        int chosenAttack = 0;
+        protected override void CreateAttack()
+        {
+            switch (state)
+            {
+                case DragonState.Phase1:
+                    if (iceHead)
+                    {
+                        attacks.CreateFrostbolt(physicalData.Position, physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                    }
+                    else
+                    {
+                        attacks.CreateFirebolt(physicalData.Position, physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                    }
+                    iceHead = !iceHead;
+                    break;
+                case DragonState.Phase2:
+                    if(chosenAttack == 0)
+                    {
+                        if (iceHead)
+                        {
+                            attacks.CreateFireSpitBomb(physicalData.Position, targetData.Position, 50, this as AliveComponent);
+                        }
+                        else
+                        {
+                            attacks.CreateFireSpitBomb(physicalData.Position, targetData.Position, 50, this as AliveComponent);
+                        }
+                        iceHead = !iceHead;
+                    }
+                    else
+                    {
+                        attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 50, 35, false, this as AliveComponent);
+                        switch (chosenAttack)
+                        {
+                            case 1:
+
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+                case DragonState.Phase3:
+                    //breathe fire
+                    if (iceHead)
+                    {
+                        attacks.CreateFrostbolt(physicalData.Position, physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                    }
+                    else
+                    {
+                        attacks.CreateFirebolt(physicalData.Position, physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                    }
+                    iceHead = !iceHead;
+                    break;
+            }
+        }
+
+        protected override void StartAttack()
+        {
+            startedAttack = true;
+            attackCounter = 0;
+            attackCreateCounter = 0;
+            switch (state)
+            {
+                case DragonState.Phase1:
+                    //TODO: replace with fire/ice spit animation length 
+                    //and put in correct animation names when we get the dragon model
+                    settings.attackLength = settings.attackLength;
+                    settings.attackCreateMillis = settings.attackCreateMillis;
+                    if (iceHead)
+                    {
+                        PlayAnimation(settings.aniPrefix + "attack");
+                    }
+                    else
+                    {
+                        PlayAnimation(settings.aniPrefix + "attack");
+                    }
+                    break;
+                case DragonState.Phase2:
+                    if (nextSpitBomb <= 0)
+                    {
+                        chosenAttack = 0;
+                        nextSpitBomb = rand.Next(4000, 15000);
+                        if (iceHead)
+                        {
+                            PlayAnimation(settings.aniPrefix + "attack");
+                        }
+                        else
+                        {
+                            PlayAnimation(settings.aniPrefix + "attack");
+                        }
+                        settings.attackLength = settings.attackLength;
+                        settings.attackCreateMillis = settings.attackCreateMillis;
+                    }
+                    else
+                    {
+                        chosenAttack = rand.Next(1, 5);
+                        switch (chosenAttack)
+                        {
+                            case 0:
+                                //left bite
+                                PlayAnimation(settings.aniPrefix + "attack");
+                                settings.attackLength = settings.attackLength;
+                                settings.attackCreateMillis = settings.attackCreateMillis;
+
+                                break;
+                            case 1:
+                                //right bite
+                                PlayAnimation(settings.aniPrefix + "attack");
+                                settings.attackLength = settings.attackLength;
+                                settings.attackCreateMillis = settings.attackCreateMillis;
+
+                                break;
+                            case 2:
+                                //left claw
+                                PlayAnimation(settings.aniPrefix + "attack");
+                                settings.attackLength = settings.attackLength;
+                                settings.attackCreateMillis = settings.attackCreateMillis;
+
+                                break;
+                            case 3:
+                                //right claw
+                                PlayAnimation(settings.aniPrefix + "attack");
+                                settings.attackLength = settings.attackLength;
+                                settings.attackCreateMillis = settings.attackCreateMillis;
+
+                                break;
+                        }
+                    }
+                    break;
+                case DragonState.Phase3:
+                    break;
+            }
+        }
+
+        protected override void SwitchToAttacking()
+        {
+            switch (state)
+            {
+                case DragonState.Phase1:
+                    currentUpdateFunction = new AIUpdateFunction(AIDragonPhase1);
+                    break;
+                case DragonState.Phase2:
+                    currentUpdateFunction = new AIUpdateFunction(AIDragonPhase2);
+                    break;
+                case DragonState.Phase3:
+                    currentUpdateFunction = new AIUpdateFunction(AIDragonEnrage);
+                    break;
+            }
+        }
 
         protected override void SwitchToWandering()
         {

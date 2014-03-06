@@ -21,11 +21,6 @@ namespace KazgarsRevenge
         }
         bool homing = false;
 
-        public void Frost()
-        {
-            debuff = DeBuff.Frost;
-        }
-
         public void Penetrate()
         {
             aoe = true;

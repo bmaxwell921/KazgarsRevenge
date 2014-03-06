@@ -57,7 +57,8 @@ namespace KazgarsRevenge
             attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R"));
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
-            SetupEnemyEntity(brute, position, new Vector3(20f, 37f, 20f), 100, "Models\\Enemies\\Pigman\\pig_idle");
+            SetupEntityPhysicsAndShadow(brute, position, new Vector3(20f, 37f, 20f), 100);
+            SetupEntityGraphics(brute, "Models\\Enemies\\Pigman\\pig_idle");
 
             EnemyController bruteController = new EnemyController(mainGame, brute, level);
             brute.AddComponent(typeof(AliveComponent), bruteController);
@@ -75,7 +76,9 @@ namespace KazgarsRevenge
             GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, EntityType.NormalEnemy);
             enemy.id = id;
 
-            SetupEnemyEntity(enemy, position, new Vector3(20f, 37f, 20f), 100, "Models\\Enemies\\Skeleton\\s_idle");
+            SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20f, 37f, 20f), 100);
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle");
+
 
             SkeletonController enemyController = new SkeletonController(mainGame, enemy, level);
             enemy.AddComponent(typeof(AliveComponent), enemyController);
@@ -103,7 +106,7 @@ namespace KazgarsRevenge
             attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\sword01"), "Hand_R", MathHelper.Pi, 0));
             enemy.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
-            SetupEntityNoGraphics(enemy, position, new Vector3(20, 37, 20), 100);
+            SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20, 37, 20), 100);
 
             //get kazgar's animations, but don't add his model
             Model enemyModel = GetAnimatedModel("Models\\Player\\k_idle1");
@@ -136,7 +139,15 @@ namespace KazgarsRevenge
             GameEntity dragon = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
             dragon.id = id;
 
-            SetupEnemyEntity(dragon, position, new Vector3(100, 37, 100), 250, "Models\\Enemies\\Pigman\\pig_idle");
+            SetupEntityPhysicsAndShadow(dragon, position, new Vector3(100, 100, 100), 250);
+
+            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
+            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
+            dragon.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 50, Vector3.Down * 30);
+
+            dragon.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
+            modelManager.AddComponent(enemyGraphics);
 
             DragonController dragonController = new DragonController(mainGame, dragon);
 
@@ -150,10 +161,8 @@ namespace KazgarsRevenge
         /// Creates an enemy with typical physics and animated graphics around the given entity.
         /// You still need to give it an AIController and add the entity to the entity list after calling this.
         /// </summary>
-        private void SetupEnemyEntity(GameEntity entity, Vector3 position, Vector3 dimensions, float mass, string model)
+        private void SetupEntityGraphics(GameEntity entity, string model)
         {
-            SetupEntityNoGraphics(entity, position, dimensions, mass);
-
             Model enemyModel = GetAnimatedModel(model);
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             entity.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
@@ -163,7 +172,7 @@ namespace KazgarsRevenge
             modelManager.AddComponent(enemyGraphics);
         }
 
-        private void SetupEntityNoGraphics(GameEntity entity, Vector3 position, Vector3 dimensions, float mass)
+        private void SetupEntityPhysicsAndShadow(GameEntity entity, Vector3 position, Vector3 dimensions, float mass)
         {
             Entity enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z, mass);
             enemyPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;

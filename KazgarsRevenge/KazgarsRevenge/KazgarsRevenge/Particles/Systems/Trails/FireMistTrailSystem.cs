@@ -1,18 +1,16 @@
-﻿#region Using Statements
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-#endregion
 
 namespace KazgarsRevenge
 {
     /// <summary>
     /// Custom particle system for leaving smoke trails behind the rocket projectiles.
     /// </summary>
-    class FrostMistParticleSystem : ParticleSystem
+    class FireMistTrailSystem : ParticleSystem
     {
-        public FrostMistParticleSystem(Game game, ContentManager content)
+        public FireMistTrailSystem(Game game, ContentManager content)
             : base(game, content)
         { }
 
@@ -34,8 +32,8 @@ namespace KazgarsRevenge
             settings.MinVerticalVelocity = -10;
             settings.MaxVerticalVelocity = 10;
 
-            settings.MinColor = Color.DodgerBlue;
-            settings.MaxColor = Color.DodgerBlue;
+            settings.MinColor = Color.OrangeRed;
+            settings.MaxColor = Color.OrangeRed;
 
             settings.MinRotateSpeed = -4;
             settings.MaxRotateSpeed = 4;

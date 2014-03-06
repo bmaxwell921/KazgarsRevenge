@@ -45,6 +45,8 @@ namespace KazgarsRevenge
             systems.Add(typeof(StunnedParticleSystem), new StunnedParticleSystem(Game, Game.Content));
             systems.Add(typeof(FrostDebuffParticleSystem), new FrostDebuffParticleSystem(Game, Game.Content));
             systems.Add(typeof(TarDebuffParticleSystem), new TarDebuffParticleSystem(Game, Game.Content));
+            systems.Add(typeof(FireboltTrailSystem), new FireboltTrailSystem(Game, Game.Content));
+            systems.Add(typeof(FireMistTrailSystem), new FireMistTrailSystem(Game, Game.Content));
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)
             {

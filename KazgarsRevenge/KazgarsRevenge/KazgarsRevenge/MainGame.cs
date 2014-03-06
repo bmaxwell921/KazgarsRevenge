@@ -82,7 +82,6 @@ namespace KazgarsRevenge
         float screenScale = 1;
         #endregion
 
-
         public MainGame()
         {
             gameState = GameState.StartMenu;
@@ -335,7 +334,8 @@ namespace KazgarsRevenge
             // Down here is the final version of this method
             levels.CreateLevel(name);
             players.CreateMainPlayerInLevel(DUMMY_ID);
-
+            
+            //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), levels.GetPlayerSpawnLocation() + Vector3.Right * 200);
         }
 
         Vector2 vecLoadingText;

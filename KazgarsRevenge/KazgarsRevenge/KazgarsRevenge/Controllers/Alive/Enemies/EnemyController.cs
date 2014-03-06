@@ -84,7 +84,6 @@ namespace KazgarsRevenge
             idleUpdateFunction = new AIUpdateFunction(AIWanderingHostile);
             currentUpdateFunction = idleUpdateFunction;
 
-            attackingUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
             camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
             rayCastFilter = RayCastFilter;
@@ -113,7 +112,6 @@ namespace KazgarsRevenge
 
         protected delegate void AIUpdateFunction(double millis);
         protected AIUpdateFunction idleUpdateFunction;
-        protected AIUpdateFunction attackingUpdateFunction;
         //change this to switch states
         protected AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
@@ -152,7 +150,7 @@ namespace KazgarsRevenge
                 if (targetHealth != null && !targetHealth.Dead)
                 {
                     targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                    currentUpdateFunction = attackingUpdateFunction;
+                    SwitchToAttacking();
                     PlayAnimation(settings.aniPrefix + settings.moveAniName);
                     return;
                 }
@@ -284,7 +282,7 @@ namespace KazgarsRevenge
                 //go to attack state
                 if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange && nothingBetween)
                 {
-                    currentUpdateFunction = attackingUpdateFunction;
+                    SwitchToAttacking();
                     ChangeVelocity(Vector3.Zero);
                 }
                 else if (minChaseCounter > minChaseLength && (Math.Abs(diff.X) > settings.stopChasingRange || Math.Abs(diff.Z) > settings.stopChasingRange))
@@ -378,6 +376,11 @@ namespace KazgarsRevenge
             {
                 physicalData.LinearVelocity = vel;
             }
+        }
+
+        protected virtual void SwitchToAttacking()
+        {
+            currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
         }
 
         protected virtual void SwitchToWandering()
@@ -549,7 +552,7 @@ namespace KazgarsRevenge
                 InsertThreatEntity(tempEnt);
             }
 
-            currentUpdateFunction = attackingUpdateFunction;
+            SwitchToAttacking();
             targetData = threatLevels[0].Entity.GetSharedData(typeof(Entity)) as Entity;
             targetHealth = threatLevels[0].Entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
         }
