@@ -294,7 +294,7 @@ namespace KazgarsRevenge
                 {//otherwise, run towards it
 
                     //if we're not in the same block as the target, run to next path point. otherwise, run straight towards it
-                    if (nothingBetween || Math.Abs(diff.X) > LevelManager.BLOCK_SIZE || Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE)
+                    if (nothingBetween || Math.Abs(diff.X) > LevelManager.BLOCK_SIZE / 2 || Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE / 2)
                     {
                         //if we don't have a path, request one from levels
                         if ((currentPath == null || currentPath.Count == 0))
@@ -306,7 +306,7 @@ namespace KazgarsRevenge
                         {
                             //request new path if target is far enough away from the last path's endpoint
                             Vector3 diffTargetPath = new Vector3(targetData.Position.X - currentPath[currentPath.Count - 1].X, 0, targetData.Position.Z - currentPath[currentPath.Count - 1].Z);
-                            if (Math.Abs(diffTargetPath.X) > 75 && Math.Abs(diffTargetPath.Z) > 75)
+                            if (Math.Abs(diffTargetPath.X) > LevelManager.BLOCK_SIZE / 2 && Math.Abs(diffTargetPath.Z) > LevelManager.BLOCK_SIZE / 2)
                             {
                                 GetNewPath();
                             }
