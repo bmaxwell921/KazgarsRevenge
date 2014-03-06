@@ -330,7 +330,7 @@ namespace KazgarsRevenge
         private static readonly float PROXIMITY = 60;
         // Spawn every 3 seconds
         private static readonly float DELAY = 3000;
-
+        bool done = false;
         // Adds the necessary spawning components to the roomGE
         private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
         {
@@ -340,9 +340,20 @@ namespace KazgarsRevenge
                 Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
                 spawnLocs.Add(spawnCenter);
             }
+            // TODO readd
             EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
             roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
             genComponentManager.AddComponent(eps);
+
+            //if (!done)
+            //{
+            //    ISet<Vector3> tempLocs = new HashSet<Vector3>();
+            //    tempLocs.Add(new Vector3(3230, MOB_SPAWN_Y, 3915));
+            //    EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, tempLocs, PROXIMITY, DELAY, 1);
+            //    roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
+            //    genComponentManager.AddComponent(eps);
+            //    done = true;
+            //}
         }
 
         /// <summary>
@@ -407,11 +418,20 @@ namespace KazgarsRevenge
             }
         }
 
+        /*
+         * Arrays for what to add to a location to get a nonDiagonal location, or diagonal location
+         *  [ ][z][ ]                       [z][z][z]
+         *  [z][x][z]   as opposed to       [z][x][z]
+         *  [ ][z][ ]                       [z][z][z]
+         */
+        private readonly Vector3[] nonDiags = { new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1) };
+        private readonly Vector3[] allAdj = { new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1), 
+                                                new Vector3(-1, 0, -1), new Vector3(1, 0, -1), new Vector3(-1, 0, 1), new Vector3(1, 0, 1) };
+
         // Builds the graph for a single room, adding any doorBlocks to the doors param
         private void BuildRoomGraph(Room room, Vector3 chunkLocation, Rotation chunkRotation, ISet<Vector3> doors)
         {
             // Holds the center of each block
-            //ISet<Vector3> blockCenters = new HashSet<Vector3>();
             Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2;
             Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
             Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
@@ -422,7 +442,6 @@ namespace KazgarsRevenge
                 // For the graph the y should probs be 0, I'll make it ignore the Y when checking for closeness tho
                 blockCenter.Y = LEVEL_Y;
                 // These have not been transformed by BLOCK_SIZE yet
-                //blockCenters.Add(blockCenter);
                 blockCenters[blockCenter] = block;
 
                 // If this block is a door we need to hold onto it so we can attach it to the other doors
@@ -445,35 +464,16 @@ namespace KazgarsRevenge
              *  For each block, check if any of it's adjacent neighbors are in the set, if so
              *  then add an edge
              */
-            //foreach (Vector3 blockCenter in blockCenters)
-            //{
-            //    // Look at all of its adjacent neighbors
-            //    for (int i = -1; i <= 1; ++i)
-            //    {
-            //        for (int j = -1; j <= 1; ++j)
-            //        {
-            //            Vector3 testBlock = new Vector3(blockCenter.X + i * BLOCK_SIZE, blockCenter.Y, blockCenter.Z + j * BLOCK_SIZE);
-            //            // If a neighbor is one of the blocks in the room, the connect them
-            //            if (!testBlock.Equals(blockCenter) && !isDiagWall(testBlock, i, j) && blockCenters.Contains(testBlock))
-            //            {
-            //                this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
-            //            }
-            //        }
-            //    }
-            //}
-
             foreach (Vector3 blockCenter in blockCenters.Keys)
             {
-                for (int i = -1; i <= 1; ++i)
+                // If this isn't in the middle of a room we shouldn't allow the diagonals cause 
+                // enemies get caught on the walls
+                foreach (Vector3 add in (allowDiag(blockCenters, blockCenter)) ? allAdj : nonDiags)
                 {
-                    for (int j = -1; j <= 1; ++j)
+                    Vector3 testBlock = blockCenter + add * BLOCK_SIZE;
+                    if (!testBlock.Equals(blockCenter) && blockCenters.ContainsKey(testBlock))
                     {
-                        Vector3 testBlock = new Vector3(blockCenter.X + i * BLOCK_SIZE, blockCenter.Y, blockCenter.Z + j * BLOCK_SIZE);
-                        // If a neighbor is one of the blocks in the room, the connect them
-                        if (!testBlock.Equals(blockCenter) && !isDiagWall(blockCenters, testBlock, i, j) && blockCenters.Keys.Contains(testBlock))
-                        {
-                            this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
-                        }
+                        this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
                     }
                 }
             }
@@ -493,23 +493,35 @@ namespace KazgarsRevenge
             return blockLoc[test].IsWall();
         }
 
+        // Check so they don't get caught on walls
+        private bool allowDiag(IDictionary<Vector3, RoomBlock> blocks, Vector3 block)
+        {
+            foreach (Vector3 adj in nonDiags)
+            {
+                // If anything to your left, right, top, or bottom isn't in the room or is a wall
+                if (!blocks.ContainsKey(block + adj * BLOCK_SIZE) || blocks[block + adj * BLOCK_SIZE].IsWall())
+                {
+                    // Then we don't allow the diagonal connections
+                    return false;
+                }
+            }
+            return true;
+        }
+
         // Connects all adjacent doors to each other
         private void ConnectDoors(ISet<Vector3> doors)
         {
             /*
              * If the door we're looking at is x, then possible doors to connect to are the z locations
-             *  [ ][z][ ]
-             *  [z][x][z]
-             *  [ ][z][ ]
+
              */ 
-            Vector3[] adjs = {new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1)};
             /*
              * Same idea as connecting all roomBlocks, iterate over all the doors and then iterate over the
              * 4 non-diagonal adjacent blocks. If a block is in the doors set, then add an edge
              */ 
             foreach (Vector3 door in doors)
             {
-                foreach (Vector3 adj in adjs)
+                foreach (Vector3 adj in nonDiags)
                 {
                     Vector3 testDoor = door + adj * BLOCK_SIZE;
                     // If the adjacent is one of the doors, add the edge
@@ -554,14 +566,14 @@ namespace KazgarsRevenge
         {
             // First we gotta find the closest node in the graph to src
             // and the closest node to dest
-            Vector3 srcNode = FindClosestNodeTo(src);
-            Vector3 destNode = FindClosestNodeTo(dest);
+            Vector3 destNode = FindClosestNodeTo(dest, dest);
+            Vector3 srcNode = FindClosestNodeTo(src, destNode);
 
             /* 
              * If they're too far then that means we couldn't actually find the
              * locations...not sure if this is actually possible, but it happened
              * when testing
-             */ 
+             */
             if (TooFar(src, srcNode) || TooFar(dest, destNode))
             {
                 return null;
@@ -577,7 +589,7 @@ namespace KazgarsRevenge
             // Delegate to calculate the heuristic for a node
             Func<Vector3, double> heuristic = vect =>
             {
-                return Vector3.Distance(vect, dest);
+                return Vector3.Distance(vect, destNode);
             };
             AStarShortestPathAlgorithm<Vector3, Edge<Vector3>> aStar = new AStarShortestPathAlgorithm<Vector3, Edge<Vector3>>(currentLevel.pathGraph, cost, heuristic);
 
@@ -605,6 +617,14 @@ namespace KazgarsRevenge
             // The way i'm adding stuff to the path list, we'll miss the final destination, so add it here
             pathList.Add(destNode);
             pathList.Add(dest);
+
+            //Console.Write("Calculated Path of: ");
+            //foreach (Vector3 node in pathList)
+            //{
+            //    Console.Write("{0}, ", node);
+            //}
+            Console.WriteLine();
+
             return pathList;
             
         }
@@ -632,8 +652,8 @@ namespace KazgarsRevenge
             return Vector3.Distance(compReal, compGraph) > maxDist;
         }
 
-        // Returns the Vector3 node in the pathGraph closest to the given location
-        private Vector3 FindClosestNodeTo(Vector3 location)
+        // Returns the Vector3 node in the pathGraph closest to the given location. Taking into account the final location we're trying to get to
+        private Vector3 FindClosestNodeTo(Vector3 location, Vector3 dest)
         {
             Vector3 min = Vector3.Zero;
             // Set this as null for the first time around
@@ -642,10 +662,12 @@ namespace KazgarsRevenge
             foreach (Vector3 node in currentLevel.pathGraph.Vertices)
             {
                 double thisDist = Vector3.Distance(location, node);
-                if (minDist == null || thisDist < minDist)
+                // TODO make it so the returned source gravitates toward the target
+                double heuristic = 0; // Vector3.Distance(dest, node);
+                if (minDist == null || thisDist + heuristic < minDist)
                 {
                     min = node;
-                    minDist = thisDist;
+                    minDist = thisDist + heuristic;
                 }
             }
             return min;
