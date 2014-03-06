@@ -76,7 +76,7 @@ namespace KazgarsRevenge
         protected const float bowRange = 1000;
         protected Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
         //array of key-ability pairs
-        protected KeyValuePair<Keys, Ability>[] boundAbilities = new KeyValuePair<Keys, Ability>[8];
+        protected KeyValuePair<Keys, Ability>[] boundAbilities = new KeyValuePair<Keys, Ability>[9];
         protected Dictionary<AbilityName, bool> abilityLearnedFlags = new Dictionary<AbilityName, bool>();
         #endregion
 
@@ -394,6 +394,7 @@ namespace KazgarsRevenge
             boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.LooseCannon));
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.FlashBomb));
             boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.ChainSpear));
+            //boundAbilities[8] = new KeyValuePair<Keys, Ability>( , GetAbility(AbilityName.ChainSpear));
 
 
             for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
