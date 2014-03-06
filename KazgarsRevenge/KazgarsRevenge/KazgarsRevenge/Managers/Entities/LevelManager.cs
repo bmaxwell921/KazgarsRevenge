@@ -330,7 +330,7 @@ namespace KazgarsRevenge
         private static readonly float PROXIMITY = 60;
         // Spawn every 3 seconds
         private static readonly float DELAY = 3000;
-        bool done = false;
+
         // Adds the necessary spawning components to the roomGE
         private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
         {
@@ -340,20 +340,9 @@ namespace KazgarsRevenge
                 Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
                 spawnLocs.Add(spawnCenter);
             }
-            // TODO readd
             EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
             roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
             genComponentManager.AddComponent(eps);
-
-            //if (!done)
-            //{
-            //    ISet<Vector3> tempLocs = new HashSet<Vector3>();
-            //    tempLocs.Add(new Vector3(3230, MOB_SPAWN_Y, 3915));
-            //    EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, tempLocs, PROXIMITY, DELAY, 1);
-            //    roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
-            //    genComponentManager.AddComponent(eps);
-            //    done = true;
-            //}
         }
 
         /// <summary>
@@ -618,13 +607,6 @@ namespace KazgarsRevenge
             pathList.Add(destNode);
             pathList.Add(dest);
 
-            //Console.Write("Calculated Path of: ");
-            //foreach (Vector3 node in pathList)
-            //{
-            //    Console.Write("{0}, ", node);
-            //}
-            Console.WriteLine();
-
             return pathList;
             
         }
@@ -662,8 +644,9 @@ namespace KazgarsRevenge
             foreach (Vector3 node in currentLevel.pathGraph.Vertices)
             {
                 double thisDist = Vector3.Distance(location, node);
-                // TODO make it so the returned source gravitates toward the target
-                double heuristic = 0; // Vector3.Distance(dest, node);
+                
+                // If it's not broke, don't fix it.
+                double heuristic = 0;
                 if (minDist == null || thisDist + heuristic < minDist)
                 {
                     min = node;
