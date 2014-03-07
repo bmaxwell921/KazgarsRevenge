@@ -255,7 +255,7 @@ namespace KazgarsRevenge
                                                                                 new Vector3(10), Vector3.Backward * 6, 0, 0, 0);
             arrowGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), "trail", 80, 0, Vector3.Forward * 13);
 
-            LooseCannonController arrowAI = new LooseCannonController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            LooseCannonController arrowAI = new LooseCannonController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, percentCharged);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -271,7 +271,7 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateExplosion(Vector3 position, int damage, AliveComponent creator)
+        public void CreateExplosion(Vector3 position, int damage, AliveComponent creator, float intensity)
         {
             GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
 
@@ -293,7 +293,7 @@ namespace KazgarsRevenge
 
             attacks.Add(newAttack);
 
-            SpawnExplosionParticles(position);
+            SpawnExplosionParticles(position, intensity);
         }
 
         public void CreateMakeItRain(Vector3 position, int damage, float radius, AliveComponent creator)
@@ -851,21 +851,21 @@ namespace KazgarsRevenge
             }
         }
 
-        public void SpawnExplosionParticles(Vector3 position)
+        public void SpawnExplosionParticles(Vector3 position, float intensity)
         {
             ParticleSystem boom = particles.GetSystem(typeof(ToonExplosionMainSystem));
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < (int)(19 * intensity + 1); ++i)
             {
                 boom.AddParticle(position, Vector3.Zero);
             }
 
             boom = particles.GetSystem(typeof(ToonExplosionPoofSystem));
-            for (int i = 0; i < 35; ++i)
+            for (int i = 0; i < (int)(34 * intensity + 1); ++i)
             {
                 boom.AddParticle(position, Vector3.Zero);
             }
 
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < (int)(10 * intensity); ++i)
             {
                 CreateExplosionDebris(position);
             }
@@ -873,7 +873,7 @@ namespace KazgarsRevenge
 
         public void SpawnFireSpitExplosionParticles(Vector3 position)
         {
-            SpawnExplosionParticles(position);
+            SpawnExplosionParticles(position, 1.5f);
         }
 
         public void SpawnFlashParticles(Vector3 position)

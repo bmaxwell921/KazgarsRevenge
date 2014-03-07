@@ -8,11 +8,13 @@ namespace KazgarsRevenge
 {
     class LooseCannonController : AttackController
     {
-        public LooseCannonController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
+        float chargedPercent = 0;
+        public LooseCannonController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator, float chargedPercent)
             : base(game, entity, damage, factionToHit, creator)
         {
             lifeLength = 4000;
             dieAfterContact = true;
+            this.chargedPercent = chargedPercent;
         }
 
         protected override void HandleEntityCollision(GameEntity hitEntity)
@@ -26,7 +28,7 @@ namespace KazgarsRevenge
 
         public override void End()
         {
-            (Game.Services.GetService(typeof(AttackManager)) as AttackManager).CreateExplosion(physicalData.Position, (int)damage, creator);
+            (Game.Services.GetService(typeof(AttackManager)) as AttackManager).CreateExplosion(physicalData.Position, (int)damage, creator, chargedPercent * 2);
         }
     }
 }
