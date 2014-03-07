@@ -238,9 +238,11 @@ namespace KazgarsRevenge
                 List<Vector3> lightPositions = levelInfo.lightLocations;
                 if (lightPositions != null)
                 {
+                    Matrix roomTransform = Matrix.CreateScale(roomScale) * Matrix.CreateFromYawPitchRoll(yaw, 0, 0) * Matrix.CreateTranslation(position);
                     foreach (Vector3 v in lightPositions)
                     {
-                        CreatePointLight(v);
+                        Vector3 pos = Vector3.Transform(v, roomTransform);
+                        CreatePointLight(pos);
                     }
                 }
                 

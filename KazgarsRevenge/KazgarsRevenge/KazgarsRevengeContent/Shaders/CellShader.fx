@@ -2,7 +2,7 @@ float alpha = 1;
 float lineIntensity = 1;
 
 float3 lightPositions[30];
-float LightAttenuation = 300;
+float LightAttenuation = 200;
 float LightFalloff = 2;
 float3 lightColors[30];
 
@@ -93,6 +93,7 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 	
 	totalColor /= curActiveLights;
 	
+	/*
     if (light> ToonThresholds[0])
 	{
         light = ToonBrightnessLevels[0];
@@ -105,7 +106,8 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 	{
         light = ToonBrightnessLevels[2];
     }
-	
+	*/
+
 	light += float3(.15f, .15f, .15f);//float3(.3, .3, .3);
 
     Color.rgb *= light * totalColor;

@@ -24,7 +24,6 @@ namespace KazgarsRevenge
             : base(game, entity, account)
         {
             showHealthWithOutline = false;
-
             //misc
             rand = new Random();
             rayCastFilter = RayCastFilter;

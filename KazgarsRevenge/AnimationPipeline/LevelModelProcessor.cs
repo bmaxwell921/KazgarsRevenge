@@ -34,15 +34,12 @@ namespace AnimationPipeline
         void AddLights(NodeContent input, LevelTagData tag)
         {
             //get the object that has lights as children (should be named "lights")
-            MeshContent lightHolder = FindMeshNameBFS(input, "lights");
+            NodeContent lightHolder = FindNodeNameBFS(input, "lights");
 
             List<Vector3> lightLocations = new List<Vector3>();
             //iterate through and get positions
             if (lightHolder != null)
             {
-                BoundingSphere holderSphere = BoundingSphere.CreateFromPoints(lightHolder.Positions);
-                lightLocations.Add(Vector3.Transform(holderSphere.Center, lightHolder.AbsoluteTransform));
-
                 for (int i = lightHolder.Children.Count - 1; i >= 0; --i)
                 {
                     MeshContent light = lightHolder.Children[i] as MeshContent;
@@ -67,14 +64,10 @@ namespace AnimationPipeline
             List<int[]> allInds = new List<int[]>();
             List<Matrix> allTransforms = new List<Matrix>();
 
-            MeshContent physics = FindMeshNameBFS(input, "physics");
+            NodeContent physics = FindNodeNameBFS(input, "physics");
 
             if (physics != null)
             {
-                allVerts.Add(physics.Geometry[0].Vertices.Positions.ToArray());
-                allInds.Add(physics.Geometry[0].Indices.ToArray());
-                allTransforms.Add(physics.AbsoluteTransform);
-
                 for (int i = physics.Children.Count - 1; i >= 0; --i)
                 {
                     MeshContent box = physics.Children[i] as MeshContent;
@@ -95,7 +88,7 @@ namespace AnimationPipeline
             tag.physicsTransforms = allTransforms;
         }
 
-        MeshContent FindMeshNameBFS(NodeContent node, string name)
+        NodeContent FindNodeNameBFS(NodeContent node, string name)
         {
             List<NodeContent> toProcess = new List<NodeContent>();
             toProcess.Add(node);
@@ -109,7 +102,7 @@ namespace AnimationPipeline
 
                     if (n.Name == name)
                     {
-                        return n as MeshContent;
+                        return n;
                     }
 
                     foreach (NodeContent childnode in n.Children)
