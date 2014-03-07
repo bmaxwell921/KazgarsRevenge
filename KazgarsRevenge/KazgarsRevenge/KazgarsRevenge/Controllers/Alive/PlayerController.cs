@@ -76,7 +76,8 @@ namespace KazgarsRevenge
         protected const float bowRange = 1000;
         protected Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
         //array of key-ability pairs
-        protected KeyValuePair<Keys, Ability>[] boundAbilities = new KeyValuePair<Keys, Ability>[9];
+        protected KeyValuePair<Keys, Ability>[] boundAbilities = new KeyValuePair<Keys, Ability>[8];
+        protected KeyValuePair<ButtonState, Ability>[] mouseBoundAbility = new KeyValuePair<ButtonState, Ability>[1];
         protected Dictionary<AbilityName, bool> abilityLearnedFlags = new Dictionary<AbilityName, bool>();
         #endregion
 
@@ -394,8 +395,8 @@ namespace KazgarsRevenge
             boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.LooseCannon));
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.FlashBomb));
             boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.ChainSpear));
-            //boundAbilities[8] = new KeyValuePair<Keys, Ability>( , GetAbility(AbilityName.ChainSpear));
 
+            mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(ButtonState.Pressed, GetAbility(AbilityName.Omnishot));
 
             for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
             {
@@ -464,16 +465,19 @@ namespace KazgarsRevenge
 
         protected void StartSequence(string name)
         {
-            InterruptReset(name);
-
-            currentSequence[0]();
-            millisActionCounter = 0;
-
-            if (name != "fightingstance" && name != "idle")
+            if (!name.Equals("PlaceHolder"))
             {
-                groundTargetLocation = physicalData.Position;
-                targetingGroundLocation = false;
-                lastUsedAbility = null;
+                InterruptReset(name);
+
+                currentSequence[0]();
+                millisActionCounter = 0;
+
+                if (name != "fightingstance" && name != "idle")
+                {
+                    groundTargetLocation = physicalData.Position;
+                    targetingGroundLocation = false;
+                    lastUsedAbility = null;
+                }
             }
         }
 
@@ -488,14 +492,17 @@ namespace KazgarsRevenge
         //for buffs, so as to not disrupt running / whatever else
         protected void InterruptReset(string name)
         {
-            InterruptCurrentSequence();
+            if (!name.Equals("PlaceHolder"))
+            {
+                InterruptCurrentSequence();
 
-            needInterruptAction = true;
-            canInterrupt = false;
-            currentSequence = actionSequences[name];        //#jared TODO punch
-            actionIndex = 0;
-            currentActionName = name;
-            stateResetCounter = double.MaxValue;
+                needInterruptAction = true;
+                canInterrupt = false;
+                currentSequence = actionSequences[name];        //#jared TODO punch
+                actionIndex = 0;
+                currentActionName = name;
+                stateResetCounter = double.MaxValue;
+            }
         }
         //calls the interrupt handler for the current sequence
         protected void InterruptCurrentSequence()
@@ -1565,6 +1572,8 @@ namespace KazgarsRevenge
         {
             switch (ability)
             {
+                case AbilityName.None:
+                    return GetNone();
                 case AbilityName.Snipe:
                     return GetSnipe();
                 case AbilityName.HeartStrike:
@@ -1594,6 +1603,11 @@ namespace KazgarsRevenge
                 default:
                     throw new Exception("That ability hasn't been implemented.");
             }
+        }
+        //Placeholder Ability
+        protected Ability GetNone()
+        {
+            return new Ability(1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder), 0, AttackType.Ranged, "PlaceHolder", AbilityType.Instant);
         }
 
         protected Ability GetSnipe()

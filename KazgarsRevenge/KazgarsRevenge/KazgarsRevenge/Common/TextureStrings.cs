@@ -17,6 +17,7 @@ namespace KazgarsRevenge
         public class UI
         {
             public static readonly string CHARGE_BAR_FRONT = @"Textures\UI\chargeBarFront";
+            public static readonly string Place_Holder = @"Textures\\UI\\Abilities\\BN";
 
             public class Items
             {

@@ -154,9 +154,12 @@ namespace KazgarsRevenge
 
         protected void AddGearStats(Equippable gear)
         {
-            foreach (KeyValuePair<StatType, float> k in gear.StatEffects)
+            if (gear.StatEffects != null)
             {
-                stats[k.Key] += k.Value;
+                foreach (KeyValuePair<StatType, float> k in gear.StatEffects)
+                {
+                    stats[k.Key] += k.Value;
+                }
             }
         }
 

@@ -46,7 +46,7 @@ namespace KazgarsRevenge
 
             #region Ability Image Load
             // TODO give these guys meaningful names in the TextureStrings class and follow the above convention
-            texPlaceHolder = Game.Content.Load<Texture2D>("Textures\\UI\\Abilities\\BN");
+            texPlaceHolder = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder);
             #endregion
 
             #region Item Image Load
@@ -140,6 +140,11 @@ namespace KazgarsRevenge
             foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
             {
                 if(k.Value != null) k.Value.update(elapsed);
+            }
+            //Mouse Ability Updates
+            foreach (KeyValuePair<ButtonState, Ability> k in mouseBoundAbility)
+            {
+                if (k.Value != null) k.Value.update(elapsed);
             }
             #endregion
 
@@ -691,8 +696,18 @@ namespace KazgarsRevenge
             Ability abilityToUse = null;
 
             foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
-            {//#Nate a
+            {
                 if (curKeys.IsKeyDown(k.Key) && prevKeys.IsKeyUp(k.Key) && !k.Value.onCooldown)
+                {
+                    useAbility = true;
+                    abilityToUse = k.Value;
+                    break;
+                }
+            }
+
+            foreach (KeyValuePair<ButtonState, Ability> k in mouseBoundAbility)
+            {//#Nate
+                if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown)
                 {
                     useAbility = true;
                     abilityToUse = k.Value;
@@ -1141,8 +1156,7 @@ namespace KazgarsRevenge
             else s.Draw(gear[GearSlot.Righthand].Icon, guiInsideRects["abilities"]["primary"], Color.White);
 
             //RM
-            if(boundAbilities[8].Value == null) s.Draw(texPlaceHolder, guiInsideRects["abilities"]["rightmouse"], Color.White);
-            else s.Draw(boundAbilities[8].Value.icon, guiInsideRects["abilities"]["rightmouse"], Color.White);
+            s.Draw(mouseBoundAbility[0].Value.icon, guiInsideRects["abilities"]["rightmouse"], Color.White);
 
             //Item 1
             s.Draw(healthPot, guiInsideRects["abilities"]["item1"], Color.White);
@@ -1171,6 +1185,9 @@ namespace KazgarsRevenge
                     s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (10 + 64 * (boundAbilities[i + 4].Value.cooldownMillisRemaining / boundAbilities[i + 4].Value.cooldownMillisLength)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i + 4].Value.cooldownMillisRemaining / boundAbilities[i + 4].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
                 }
             }
+            //RM ability
+            s.Draw(texWhitePixel, new Rectangle(guiInsideRects["abilities"]["rightmouse"].X, (int) (guiInsideRects["abilities"]["rightmouse"].Y + 64 * average - (64 * (mouseBoundAbility[0].Value.cooldownMillisRemaining / mouseBoundAbility[0].Value.cooldownMillisLength)) * average), (int)(64 * average), (int)(64 * (mouseBoundAbility[0].Value.cooldownMillisRemaining / mouseBoundAbility[0].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
+
             #endregion
             #region Ability Frames
             //Draw the frames around abilities being used
