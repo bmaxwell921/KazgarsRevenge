@@ -2,7 +2,7 @@ float alpha = 1;
 float lineIntensity = 1;
 
 float3 lightPositions[30];
-float LightAttenuation = 200;
+float LightAttenuation = 300;
 float LightFalloff = 2;
 float3 lightColors[30];
 

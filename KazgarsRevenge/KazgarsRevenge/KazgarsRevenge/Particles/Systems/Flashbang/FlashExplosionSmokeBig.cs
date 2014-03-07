@@ -27,29 +27,28 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "smoke";
+            settings.TextureName = "smoketoon";
 
             settings.MaxParticles = 200;
             
-            settings.Duration = TimeSpan.FromSeconds(.25);
-            settings.DurationRandomness = 1;
+            settings.Duration = TimeSpan.FromSeconds(.75f);
+            settings.DurationRandomness = .5f;
 
-            settings.MinHorizontalVelocity = -100;
-            settings.MaxHorizontalVelocity = 100;
+            settings.MinHorizontalVelocity = -200;
+            settings.MaxHorizontalVelocity = 200;
+            settings.EndVelocity = .2f;
 
             settings.MinVerticalVelocity = 0;
             settings.MaxVerticalVelocity = 30;
 
-            settings.MinRotateSpeed = -1;
-            settings.MaxRotateSpeed = 1;
+            settings.MinRotateSpeed = 4;
+            settings.MaxRotateSpeed = 8;
 
-            settings.MinStartSize = 0;
-            settings.MaxStartSize = 0;
+            settings.MinStartSize = 10;
+            settings.MaxStartSize = 10;
 
-            settings.MinEndSize = 80;
-            settings.MaxEndSize = 120;
-
-            settings.BlendState = BlendState.AlphaBlend;
+            settings.MinEndSize = 45;
+            settings.MaxEndSize = 55;
         }
     }
 }

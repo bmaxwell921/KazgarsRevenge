@@ -222,7 +222,8 @@
     <Compile Include="Particles\Systems\ArmorSoulSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostDebuffSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\TarDebuffSystem.cs" />
-    <Compile Include="Particles\Systems\ExplosionParticleSystem.cs" />
+    <Compile Include="Particles\Systems\FireExplosionSystem.cs" />
+    <Compile Include="Particles\Systems\Trails\ArrowTrailSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireArrowParticleSystem.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeSmall.cs" />

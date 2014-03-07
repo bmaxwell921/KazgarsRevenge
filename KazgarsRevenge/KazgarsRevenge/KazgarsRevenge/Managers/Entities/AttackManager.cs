@@ -814,7 +814,7 @@ namespace KazgarsRevenge
 
         public void SpawnExplosionParticles(Vector3 position)
         {
-            ParticleSystem boom = particles.GetSystem(typeof(ExplosionParticleSystem));
+            ParticleSystem boom = particles.GetSystem(typeof(FireExplosionSystem));
             for (int i = 0; i < 10; ++i)
             {
                 boom.AddParticle(position, Vector3.Zero);
@@ -829,27 +829,9 @@ namespace KazgarsRevenge
         public void SpawnFlashParticles(Vector3 position)
         {
             ParticleSystem boom = particles.GetSystem(typeof(FlashExplosionSmokeBig));
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < 55; ++i)
             {
                 boom.AddParticle(position, Vector3.Zero);
-            }
-
-            boom = particles.GetSystem(typeof(FlashExplosionSmokeSmall));
-            for (int i = 0; i < 15; ++i)
-            {
-                boom.AddParticle(position, Vector3.Zero);
-            }
-
-            boom = particles.GetSystem(typeof(FlashExplosionSparksParticleSystem));
-            for (int i = 0; i < 10; ++i)
-            {
-                boom.AddParticle(position, Vector3.Zero);
-            }
-
-            boom = particles.GetSystem(typeof(ExplosionParticleSystem));
-            for (int i = 0; i < 10; ++i)
-            {
-                //boom.AddParticle(position, Vector3.Zero);
             }
         }
 

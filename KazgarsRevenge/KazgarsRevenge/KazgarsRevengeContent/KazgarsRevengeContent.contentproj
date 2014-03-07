@@ -535,7 +535,7 @@
     <Compile Include="Models\Rooms\1_5wideLRoomCorner.fbx">
       <Name>1_5wideLRoomCorner</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>LevelModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -632,7 +632,7 @@
     <Compile Include="Models\Rooms\1_playerSpawn.fbx">
       <Name>1_playerSpawn</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>LevelModelProcessor</Processor>
     </Compile>
     <Compile Include="Models\Rooms\1_singleCap.fbx">
       <Name>1_singleCap</Name>
@@ -723,6 +723,27 @@
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_MergeAnimations>Models\\Enemies\\Dragon\\d_fireball.fbx%3b</ProcessorParameters_MergeAnimations>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Particles\explosion_animated.png">
+      <Name>explosion_animated</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Particles\smoketoon.png">
+      <Name>smoketoon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Particles\arrow_particle.png">
+      <Name>arrow_particle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

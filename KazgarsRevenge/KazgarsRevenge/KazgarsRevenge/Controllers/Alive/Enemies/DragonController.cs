@@ -60,7 +60,7 @@ namespace KazgarsRevenge
         {
             state = DragonState.Phase2;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase2);
-            settings.attackRange = 300;
+            settings.attackRange = 60;
 
             nextSpitBomb = 8000;
         }
@@ -179,7 +179,7 @@ namespace KazgarsRevenge
                             attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, 50, this as AliveComponent);
                         }
                         iceHead = !iceHead;
-                        settings.attackRange = 300;
+                        settings.attackRange = 60;
                     }
                     else
                     {

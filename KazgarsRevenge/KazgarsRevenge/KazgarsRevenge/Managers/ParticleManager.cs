@@ -31,7 +31,7 @@ namespace KazgarsRevenge
             systems.Add(typeof(HealTrailParticleSystem), new HealTrailParticleSystem(Game, Game.Content));
             systems.Add(typeof(FireArrowParticleSystem), new FireArrowParticleSystem(Game, Game.Content));
             systems.Add(typeof(SmokeTrailParticleSystem), new SmokeTrailParticleSystem(Game, Game.Content));
-            systems.Add(typeof(ExplosionParticleSystem), new ExplosionParticleSystem(Game, Game.Content));
+            systems.Add(typeof(FireExplosionSystem), new FireExplosionSystem(Game, Game.Content));
             systems.Add(typeof(LifestealParticleSystem), new LifestealParticleSystem(Game, Game.Content));
             systems.Add(typeof(FlashExplosionSmokeBig), new FlashExplosionSmokeBig(Game, Game.Content));
             systems.Add(typeof(FlashExplosionSmokeSmall), new FlashExplosionSmokeSmall(Game, Game.Content));

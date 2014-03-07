@@ -19,40 +19,39 @@ namespace KazgarsRevenge
     /// <summary>
     /// Custom particle system for leaving smoke trails behind the rocket projectiles.
     /// </summary>
-    class ExplosionParticleSystem : ParticleSystem
+    class FireExplosionSystem : ParticleSystem
     {
-        public ExplosionParticleSystem(Game game, ContentManager content)
+        public FireExplosionSystem(Game game, ContentManager content)
             : base(game, content)
         { }
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "explosion";
-
+            settings.TextureName = "explosion_animated";
+            settings.framesPerSecond = 35;
+            settings.totalFrames = 23;
+            settings.SpriteDimensions = new Vector2(5, 5);
+            
             settings.MaxParticles = 100;
 
-            settings.Duration = TimeSpan.FromSeconds(1);
-            settings.DurationRandomness = 1;
+            settings.Duration = TimeSpan.FromSeconds(.65f);
 
-            settings.MinHorizontalVelocity = 20;
-            settings.MaxHorizontalVelocity = 30;
+            settings.MinHorizontalVelocity = 40;
+            settings.MaxHorizontalVelocity = 60;
 
-            settings.MinVerticalVelocity = -20;
-            settings.MaxVerticalVelocity = 20;
+            settings.MinVerticalVelocity = -40;
+            settings.MaxVerticalVelocity = 40;
 
             settings.EndVelocity = 0;
-
-            settings.MinColor = Color.DarkGray;
-            settings.MaxColor = Color.Gray;
 
             settings.MinRotateSpeed = -1;
             settings.MaxRotateSpeed = 1;
 
-            settings.MinStartSize = 30;
-            settings.MaxStartSize = 30;
+            settings.MinStartSize = 10;
+            settings.MaxStartSize = 10;
 
-            settings.MinEndSize = 100;
-            settings.MaxEndSize = 300;
+            settings.MinEndSize = 80;
+            settings.MaxEndSize = 80;
 
             // Use additive blending.
             settings.BlendState = BlendState.Additive;
