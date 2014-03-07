@@ -46,8 +46,8 @@ namespace KazgarsRevenge
 
             settings.Gravity = new Vector3(0, 100, 0);
 
-            settings.MinColor = Color.LightGreen;
-            settings.MaxColor = Color.LightGreen;
+            settings.StartColor = Color.LightGreen;
+            settings.EndColor = Color.LightGreen;
 
             settings.MinStartSize = 7;
             settings.MaxStartSize = 9;

@@ -122,7 +122,8 @@
     <Compile Include="Controllers\Attacks\Projectiles\SnipeController.cs" />
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
     <Compile Include="Controllers\Attacks\Bombs\TarBomb.cs" />
-    <Compile Include="Controllers\FallingArrowController.cs" />
+    <Compile Include="Controllers\Misc\DebrisController.cs" />
+    <Compile Include="Controllers\Misc\FallingArrowController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
@@ -184,7 +185,7 @@
     <Compile Include="Common\Networking\Handlers\BaseHandler.cs" />
     <Compile Include="Controllers\AIComponent.cs" />
     <Compile Include="Controllers\Alive\Enemies\EnemyController.cs" />
-    <Compile Include="Controllers\CursorSpikeController.cs" />
+    <Compile Include="Controllers\Misc\CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedModelComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
@@ -218,11 +219,14 @@
     <Compile Include="Particles\Base Classes\ParticleSettings.cs" />
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
+    <Compile Include="Particles\Systems\Explosions\ToonExplosionDebrisSystem.cs" />
+    <Compile Include="Particles\Systems\Explosions\ToonExplosionMainSystem.cs" />
+    <Compile Include="Particles\Systems\Explosions\ToonExplosionPoofSystem.cs" />
     <Compile Include="Particles\Systems\StunnedParticleSystem.cs" />
     <Compile Include="Particles\Systems\ArmorSoulSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostDebuffSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\TarDebuffSystem.cs" />
-    <Compile Include="Particles\Systems\FireExplosionSystem.cs" />
+    <Compile Include="Particles\Systems\Explosions\AnimatedFireExplosionSystem.cs" />
     <Compile Include="Particles\Systems\Trails\ArrowTrailSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireArrowParticleSystem.cs" />
     <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeBig.cs" />
@@ -239,7 +243,7 @@
     <Compile Include="Particles\Systems\LifestealParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\SmokeTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\SnipeTrailParticleSystem.cs" />
-    <Compile Include="Particles\Systems\TarExplosionParticleSystem.cs" />
+    <Compile Include="Particles\Systems\Explosions\TarExplosionParticleSystem.cs" />
     <Compile Include="Particles\Systems\WeaponSparksSystem.cs" />
     <Compile Include="Particles\Systems\SoulCreationParticleSystem.cs" />
     <Compile Include="Particles\Systems\Buff1ParticleSystem.cs" />

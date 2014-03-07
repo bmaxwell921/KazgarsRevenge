@@ -44,8 +44,8 @@ namespace KazgarsRevenge
             settings.Gravity = new Vector3(0, -45, 0);
             settings.EndVelocity = 0;
 
-            settings.MinColor = Color.DarkGray;
-            settings.MaxColor = Color.Gray;
+            settings.StartColor = Color.DarkGray;
+            settings.EndColor = Color.Gray;
 
             settings.MinRotateSpeed = -1;
             settings.MaxRotateSpeed = 1;

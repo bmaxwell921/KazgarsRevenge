@@ -12,7 +12,7 @@ namespace KazgarsRevenge
 
         /// <summary>
         /// I put this distinction between a seeded instance and a non seeded instance.
-        /// If we allow users to put in a seed it should only affect the level generation,
+        /// If we allow users to put in a seed it should only affect the level generation;
         /// loot and enemy levels shouldn't be affected by the seed so you can still have 
         /// a unique play through.
         /// </summary>

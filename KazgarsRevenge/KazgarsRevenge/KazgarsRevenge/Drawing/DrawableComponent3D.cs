@@ -46,6 +46,22 @@ namespace KazgarsRevenge
             }
         }
 
+        public void AddEmitterSizeIncrementExponential(string emitterKey, float incrementPerSecond, float incrementIncrementPerSecond)
+        {
+            if (emitters.ContainsKey(emitterKey))
+            {
+                emitters[emitterKey].IncreaseSizePerSecondExponential(incrementPerSecond, incrementIncrementPerSecond);
+            }
+        }
+
+        public void AddEmitterSizeIncrement(string emitterKey, float incrementPerSecond)
+        {
+            if (emitters.ContainsKey(emitterKey))
+            {
+                emitters[emitterKey].IncreaseSizePerSecond(incrementPerSecond);
+            }
+        }
+
         protected bool InsideCameraBox(BoundingBox cameraBox)
         {
             Box boxData = physicalData as Box;

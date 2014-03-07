@@ -242,8 +242,8 @@ namespace KazgarsRevenge
             parameters["DurationRandomness"].SetValue(settings.DurationRandomness);
             parameters["Gravity"].SetValue(settings.Gravity);
             parameters["EndVelocity"].SetValue(settings.EndVelocity);
-            parameters["MinColor"].SetValue(settings.MinColor.ToVector4());
-            parameters["MaxColor"].SetValue(settings.MaxColor.ToVector4());
+            parameters["MinColor"].SetValue(settings.StartColor.ToVector4());
+            parameters["MaxColor"].SetValue(settings.EndColor.ToVector4());
 
             parameters["RotateSpeed"].SetValue(
                 new Vector2(settings.MinRotateSpeed, settings.MaxRotateSpeed));

@@ -34,8 +34,8 @@ namespace KazgarsRevenge
             settings.MinVerticalVelocity = -10;
             settings.MaxVerticalVelocity = 10;
 
-            settings.MinColor = Color.DodgerBlue;
-            settings.MaxColor = Color.DodgerBlue;
+            settings.StartColor = Color.DodgerBlue;
+            settings.EndColor = Color.DodgerBlue;
 
             settings.MinRotateSpeed = -4;
             settings.MaxRotateSpeed = 4;

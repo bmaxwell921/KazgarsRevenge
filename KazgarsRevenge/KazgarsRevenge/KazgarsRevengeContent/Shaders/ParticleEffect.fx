@@ -120,7 +120,7 @@ float4 ComputeParticleColor(float4 projectedPosition,
                             float randomValue, float normalizedAge)
 {
     // Apply a random factor to make each particle a slightly different color.
-    float4 color = lerp(MinColor, MaxColor, randomValue);
+    float4 color = lerp(MinColor, MaxColor, normalizedAge);
     
     // Fade the alpha based on the age of the particle. This curve is hard coded
     // to make the particle fade in fairly quickly, then fade out more slowly:

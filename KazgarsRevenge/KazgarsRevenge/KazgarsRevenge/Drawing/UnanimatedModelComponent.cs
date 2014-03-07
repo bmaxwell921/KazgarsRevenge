@@ -17,6 +17,9 @@ namespace KazgarsRevenge
         private Vector3 localOffset;
 
         private Matrix currentRot = Matrix.Identity;
+        /// <summary>
+        /// constructs a new model component for rendering models without animations
+        /// </summary>
         public UnanimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 localOffset, float xRot, float yRot, float zRot)
             : base(game, entity)
         {
@@ -27,6 +30,15 @@ namespace KazgarsRevenge
             this.yaw = xRot;
             this.pitch = yRot;
             this.roll = zRot;
+        }
+
+        /// <summary>
+        /// constructs an empty model component, basically just for rendering particles
+        /// </summary>
+        public UnanimatedModelComponent(KazgarsRevengeGame game, GameEntity entity)
+            :base(game, entity)
+        {
+            this.model = null;
         }
 
         public void TurnOffOutline()

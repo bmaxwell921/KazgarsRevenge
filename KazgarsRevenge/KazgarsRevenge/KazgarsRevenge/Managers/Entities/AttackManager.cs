@@ -36,6 +36,18 @@ namespace KazgarsRevenge
             particles = Game.Services.GetService(typeof(ParticleManager)) as ParticleManager;
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            for (int i = attacks.Count - 1; i >= 0; --i)
+            {
+                if (attacks[i].Dead)
+                {
+                    attacks.RemoveAt(i);
+                }
+            }
+            base.Update(gameTime);
+        }
+
         #region Primaries
         public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool homing, bool penetrating, bool leeching, bool bleeding)
         {
@@ -241,7 +253,7 @@ namespace KazgarsRevenge
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Attachables\\arrow"),
                                                                                 new Vector3(10), Vector3.Backward * 6, 0, 0, 0);
-            arrowGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), "trail", 200, 0, Vector3.Forward * 13);
+            arrowGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), "trail", 80, 0, Vector3.Forward * 13);
 
             LooseCannonController arrowAI = new LooseCannonController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
@@ -695,6 +707,33 @@ namespace KazgarsRevenge
             attacks.Add(arrow);
         }
 
+        public void CreateExplosionDebris(Vector3 position)
+        {
+            GameEntity debris = new GameEntity("debris", FactionType.Neutral, EntityType.None);
+
+            float dir = (float)rand.Next(0, 628) / 100f;
+            Entity physicalData = new Box(position, 1, 1, 50);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.LinearVelocity = new Vector3((float)Math.Cos(dir) * 100, 150, (float)Math.Sin(dir) * 100);
+            debris.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, debris);
+            debris.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            DebrisController controller = new DebrisController(mainGame, debris);
+            debris.AddComponent(typeof(DebrisController), controller);
+            genComponentManager.AddComponent(controller);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, debris);
+            graphics.AddEmitter(typeof(ToonExplosionDebrisSystem), "trail", 20, 0, Vector3.Zero);
+            graphics.AddEmitterSizeIncrement("trail", -.75f);
+            debris.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            attacks.Add(debris);
+        }
+
         public void CreateHomingHeal(Vector3 position, AliveComponent target, int healAmount)
         {
             GameEntity heal = new GameEntity("heal", FactionType.Neutral, EntityType.Misc);
@@ -707,7 +746,7 @@ namespace KazgarsRevenge
             heal.AddSharedData(typeof(Entity), healPhysicalData);
 
             PhysicsComponent healPhysics = new PhysicsComponent(mainGame, heal);
-            UnanimatedModelComponent healGraphics = new UnanimatedModelComponent(mainGame, heal, null, Vector3.Zero, Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent healGraphics = new UnanimatedModelComponent(mainGame, heal);
             healGraphics.AddEmitter(typeof(HealTrailParticleSystem), "trail", 75, 5, Vector3.Zero);
 
             HomingHealController healAI = new HomingHealController(mainGame, heal, target, healAmount);
@@ -814,10 +853,21 @@ namespace KazgarsRevenge
 
         public void SpawnExplosionParticles(Vector3 position)
         {
-            ParticleSystem boom = particles.GetSystem(typeof(FireExplosionSystem));
-            for (int i = 0; i < 10; ++i)
+            ParticleSystem boom = particles.GetSystem(typeof(ToonExplosionMainSystem));
+            for (int i = 0; i < 20; ++i)
             {
                 boom.AddParticle(position, Vector3.Zero);
+            }
+
+            boom = particles.GetSystem(typeof(ToonExplosionPoofSystem));
+            for (int i = 0; i < 35; ++i)
+            {
+                boom.AddParticle(position, Vector3.Zero);
+            }
+
+            for (int i = 0; i < 5; ++i)
+            {
+                CreateExplosionDebris(position);
             }
         }
 

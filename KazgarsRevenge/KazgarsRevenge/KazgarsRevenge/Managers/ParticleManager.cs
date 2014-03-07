@@ -31,7 +31,7 @@ namespace KazgarsRevenge
             systems.Add(typeof(HealTrailParticleSystem), new HealTrailParticleSystem(Game, Game.Content));
             systems.Add(typeof(FireArrowParticleSystem), new FireArrowParticleSystem(Game, Game.Content));
             systems.Add(typeof(SmokeTrailParticleSystem), new SmokeTrailParticleSystem(Game, Game.Content));
-            systems.Add(typeof(FireExplosionSystem), new FireExplosionSystem(Game, Game.Content));
+            systems.Add(typeof(AnimatedFireExplosionSystem), new AnimatedFireExplosionSystem(Game, Game.Content));
             systems.Add(typeof(LifestealParticleSystem), new LifestealParticleSystem(Game, Game.Content));
             systems.Add(typeof(FlashExplosionSmokeBig), new FlashExplosionSmokeBig(Game, Game.Content));
             systems.Add(typeof(FlashExplosionSmokeSmall), new FlashExplosionSmokeSmall(Game, Game.Content));
@@ -47,6 +47,9 @@ namespace KazgarsRevenge
             systems.Add(typeof(TarDebuffParticleSystem), new TarDebuffParticleSystem(Game, Game.Content));
             systems.Add(typeof(FireboltTrailSystem), new FireboltTrailSystem(Game, Game.Content));
             systems.Add(typeof(FireMistTrailSystem), new FireMistTrailSystem(Game, Game.Content));
+            systems.Add(typeof(ToonExplosionMainSystem), new ToonExplosionMainSystem(Game, Game.Content));
+            systems.Add(typeof(ToonExplosionPoofSystem), new ToonExplosionPoofSystem(Game, Game.Content));
+            systems.Add(typeof(ToonExplosionDebrisSystem), new ToonExplosionDebrisSystem(Game, Game.Content));
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)
             {

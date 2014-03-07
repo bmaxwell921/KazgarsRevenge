@@ -35,10 +35,13 @@ namespace KazgarsRevenge
 
         float pitch = 0;
         float yaw = 0;
+
+        protected float pitchIncrement = .02f;
+        protected float yawIncrement = .12f;
         public override void Update(GameTime gameTime)
         {
-            pitch += .12f;
-            yaw += .01f;
+            pitch += pitchIncrement;
+            yaw += yawIncrement;
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, pitch, 0);
 
             if (physicalData.Position.Y <= 0)

@@ -67,8 +67,8 @@ namespace KazgarsRevenge
 
         // Range of values controlling the particle color and alpha. Values for
         // individual particles are randomly chosen from somewhere between these limits.
-        public Color MinColor = Color.White;
-        public Color MaxColor = Color.White;
+        public Color StartColor = Color.White;
+        public Color EndColor = Color.White;
 
 
         // Range of values controlling how fast the particles rotate. Values for

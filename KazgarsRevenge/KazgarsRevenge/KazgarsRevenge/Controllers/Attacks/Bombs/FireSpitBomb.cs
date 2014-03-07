@@ -12,7 +12,8 @@ namespace KazgarsRevenge
         public FireSpitBomb(KazgarsRevengeGame game, GameEntity entity, Vector3 targetPosition, AliveComponent creator, float radius)
             : base(game, entity, targetPosition, creator, radius)
         {
-
+            yawIncrement = 0;
+            pitchIncrement = 0;
         }
 
         protected override void CreateExplosion()
