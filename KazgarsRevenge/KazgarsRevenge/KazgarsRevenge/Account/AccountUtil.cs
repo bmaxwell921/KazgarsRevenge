@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace KazgarsRevenge
 {
@@ -14,6 +16,9 @@ namespace KazgarsRevenge
         #region Singleton Stuff
         // Singleton instance
         private static AccountUtil instance;
+
+        private static readonly String ACCT_PATH = "accounts";
+        private static readonly String ACCT_EXT = ".json";
 
         // Accessor
         public static AccountUtil Instance
@@ -35,6 +40,15 @@ namespace KazgarsRevenge
         private AccountUtil()
         {
             accounts = new List<Account>();
+            CreateFiles();
+        }
+
+        private void CreateFiles()
+        {
+            if (!Directory.Exists(ACCT_PATH))
+            {
+                Directory.CreateDirectory(ACCT_PATH);
+            }
         }
 
         /// <summary>
@@ -54,8 +68,17 @@ namespace KazgarsRevenge
         // Loads all the accounts from file
         private void LoadAccounts()
         {
-            // TODO actually load accounts from file
-            DummyLoad();
+            string[] saves = Directory.GetFiles(ACCT_PATH, "*" + ACCT_EXT).Select(path => Path.GetFileName(path)).ToArray();
+            foreach (string save in saves)
+            {
+                using (StreamReader sr = new StreamReader(Path.Combine(ACCT_PATH, save)))
+                {
+                    string json = sr.ReadToEnd();
+                    Account read = JsonConvert.DeserializeObject<Account>(json);
+                    Console.WriteLine(read);
+                    accounts.Add(read);
+                }
+            }
         }
 
         // Load used for initial testing
@@ -66,10 +89,16 @@ namespace KazgarsRevenge
             accounts.Add(new Account("Dummy Account 3", 1, 5, 0));
         }
 
+        /// <summary>
+        /// Writes the account to a file
+        /// </summary>
+        /// <param name="account"></param>
         public void SaveAccount(Account account)
         {
-            // TODO save to file
-            // Update accounts list??
+            using (StreamWriter file = new StreamWriter(Path.Combine(ACCT_PATH, account.Name + ACCT_EXT)))
+            {
+                file.WriteLine(account.ToString());
+            }
         }
     }
 }
