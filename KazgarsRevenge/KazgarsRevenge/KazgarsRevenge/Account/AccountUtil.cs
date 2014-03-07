@@ -81,14 +81,6 @@ namespace KazgarsRevenge
             }
         }
 
-        // Load used for initial testing
-        private void DummyLoad()
-        {
-            accounts.Add(new Account("Dummy Account 1", 1, 1, 0));
-            accounts.Add(new Account("Dummy Account 2", 1, 2, 0));
-            accounts.Add(new Account("Dummy Account 3", 1, 5, 0));
-        }
-
         /// <summary>
         /// Writes the account to a file
         /// </summary>
