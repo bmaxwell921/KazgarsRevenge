@@ -20,16 +20,16 @@ namespace KazgarsRevenge
         /// <summary>
         /// constructs a new model component for rendering models without animations
         /// </summary>
-        public UnanimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 localOffset, float xRot, float yRot, float zRot)
+        public UnanimatedModelComponent(KazgarsRevengeGame game, GameEntity entity, Model model, Vector3 drawScale, Vector3 localOffset, float yaw, float pitch, float roll)
             : base(game, entity)
         {
             this.model = model;
             this.drawScale = drawScale;
             this.localOffset = localOffset;
 
-            this.yaw = xRot;
-            this.pitch = yRot;
-            this.roll = zRot;
+            this.yaw = yaw;
+            this.pitch = pitch;
+            this.roll = roll;
         }
 
         /// <summary>

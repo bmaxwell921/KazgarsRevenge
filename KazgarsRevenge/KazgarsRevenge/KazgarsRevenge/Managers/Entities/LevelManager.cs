@@ -839,19 +839,70 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        #region Boss Script Stuff
+        public GameEntity CreateDragonFirePillar(Vector3 position)
+        {
+            GameEntity pillar = new GameEntity("firepillar", FactionType.Enemies, EntityType.Misc);
+
+            Entity physicalData = new Box(position, 50, 50, 50, 50000);
+            pillar.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, pillar);
+            pillar.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"), new Vector3(150), Vector3.Up * 20, 0, MathHelper.PiOver2, 0);
+            pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            PillarController AI = new PillarController(mainGame, pillar);
+            pillar.AddComponent(typeof(PillarController), AI);
+            genComponentManager.AddComponent(AI);
+
+            misc.Add(pillar);
+
+            return pillar;
+        }
+
+        public GameEntity CreateDragonFrostPillar(Vector3 position)
+        {
+            GameEntity pillar = new GameEntity("frostpillar", FactionType.Enemies, EntityType.Misc);
+
+            Entity physicalData = new Box(position, 50, 50, 50, 50000);
+            pillar.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, pillar);
+            pillar.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"), new Vector3(150), Vector3.Up * 20, 0, MathHelper.PiOver2, 0);
+            pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            PillarController AI = new PillarController(mainGame, pillar);
+            pillar.AddComponent(typeof(PillarController), AI);
+            genComponentManager.AddComponent(AI);
+
+            misc.Add(pillar);
+
+            return pillar;
+        }
+
+        #endregion
+
         public override void Update(GameTime gameTime)
         {
-            for (int i = markers.Count - 1; i >= 0; --i)
+            for (int i = misc.Count - 1; i >= 0; --i)
             {
-                if (markers[i].Dead)
+                if (misc[i].Dead)
                 {
-                    markers.RemoveAt(i);
+                    misc.RemoveAt(i);
                 }
             }
             base.Update(gameTime);
         }
 
-        List<GameEntity> markers = new List<GameEntity>();
+        List<GameEntity> misc = new List<GameEntity>();
         public GameEntity AddPathMarker(Vector3 position, string name)
         {
             GameEntity marker = new GameEntity("marker", FactionType.Neutral, EntityType.None);
@@ -876,7 +927,7 @@ namespace KazgarsRevenge
             marker.AddComponent(typeof(UnanimatedModelComponent), markerGraphics);
             modelManager.AddComponent(markerGraphics);
 
-            markers.Add(marker);
+            misc.Add(marker);
 
             return marker;
         }

@@ -9,8 +9,8 @@ namespace KazgarsRevenge
     public class FireSpitBomb : BombController
     {
 
-        public FireSpitBomb(KazgarsRevengeGame game, GameEntity entity, Vector3 targetPosition, AliveComponent creator, float radius)
-            : base(game, entity, targetPosition, creator, radius)
+        public FireSpitBomb(KazgarsRevengeGame game, GameEntity entity, Vector3 targetPosition, AliveComponent creator)
+            : base(game, entity, targetPosition, creator, 100)
         {
             yawIncrement = 0;
             pitchIncrement = 0;

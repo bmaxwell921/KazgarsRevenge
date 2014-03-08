@@ -530,7 +530,44 @@ namespace KazgarsRevenge
             attacks.Add(bolt);
         }
 
-        public void CreateFirebolt(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
+        public void CreateDragonFrostbolt(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
+        {
+            GameEntity bolt = new GameEntity("bolt", creator.Entity.Faction, EntityType.Misc);
+            position.Y = 40;
+            Entity boltData = new Box(position, 10, 17, 32, .001f);
+            boltData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            boltData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            boltData.LinearVelocity = dir * 500;
+            boltData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
+            bolt.AddSharedData(typeof(Entity), boltData);
+
+            PhysicsComponent boltPhysics = new PhysicsComponent(mainGame, bolt);
+            UnanimatedModelComponent boltGraphics = new UnanimatedModelComponent(mainGame, bolt, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"),
+                                                                                new Vector3(30), Vector3.Backward * 20, 0, 0, 0);
+            boltGraphics.AddRollSpeed(.3f);
+            boltGraphics.SetAlpha(.75f);
+            boltGraphics.TurnOffOutline();
+
+            boltGraphics.AddEmitter(typeof(FrostboltTrailParticleSystem), "trail", 30, 10, Vector3.Zero);
+            boltGraphics.AddEmitter(typeof(FrostMistParticleSystem), "misttrail", 80, 10, Vector3.Zero);
+
+            DragonFrostbolt boltAI = new DragonFrostbolt(mainGame, bolt, damage, creator);
+            boltAI.KillOnFirstContact();
+            boltAI.AddDebuff(DeBuff.Frost);
+
+            bolt.AddComponent(typeof(PhysicsComponent), boltPhysics);
+            genComponentManager.AddComponent(boltPhysics);
+
+            bolt.AddComponent(typeof(UnanimatedModelComponent), boltGraphics);
+            modelManager.AddComponent(boltGraphics);
+
+            bolt.AddComponent(typeof(AttackController), boltAI);
+            genComponentManager.AddComponent(boltAI);
+
+            attacks.Add(bolt);
+        }
+
+        public void CreateDragonFirebolt(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
         {
             GameEntity bolt = new GameEntity("bolt", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
@@ -550,7 +587,7 @@ namespace KazgarsRevenge
             boltGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 50, 10, Vector3.Zero);
             //boltGraphics.AddEmitter(typeof(FireMistTrailSystem), "mist", 80, 10, Vector3.Zero);
 
-            ProjectileController boltAI = new ProjectileController(mainGame, bolt, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            DragonFirebolt boltAI = new DragonFirebolt(mainGame, bolt, damage, creator);
             boltAI.KillOnFirstContact();
 
             bolt.AddComponent(typeof(PhysicsComponent), boltPhysics);
@@ -565,7 +602,7 @@ namespace KazgarsRevenge
             attacks.Add(bolt);
         }
 
-        public void CreateFireSpitBomb(Vector3 startPos, Vector3 targetPos, float radius, AliveComponent creator)
+        public void CreateFireSpitBomb(Vector3 startPos, Vector3 targetPos, AliveComponent creator)
         {
             GameEntity bomb = new GameEntity("firespit", FactionType.Neutral, EntityType.Misc);
 
@@ -585,7 +622,7 @@ namespace KazgarsRevenge
             UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
             bombGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 50, 5, Vector3.Zero);
 
-            FireSpitBomb bombController = new FireSpitBomb(mainGame, bomb, targetPos, creator, radius);
+            FireSpitBomb bombController = new FireSpitBomb(mainGame, bomb, targetPos, creator);
 
             bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
             genComponentManager.AddComponent(bombPhysics);
@@ -712,7 +749,7 @@ namespace KazgarsRevenge
             GameEntity debris = new GameEntity("debris", FactionType.Neutral, EntityType.None);
 
             float dir = (float)rand.Next(0, 628) / 100f;
-            Entity physicalData = new Box(position, 1, 1, 50);
+            Entity physicalData = new Box(position, 1, 1, 1);
             physicalData.IsAffectedByGravity = false;
             physicalData.LinearVelocity = new Vector3((float)Math.Cos(dir) * 100, 150, (float)Math.Sin(dir) * 100);
             debris.AddSharedData(typeof(Entity), physicalData);

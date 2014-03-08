@@ -14,7 +14,7 @@ namespace KazgarsRevenge
         {
             Phase1,
             Phase2,
-            Phase3,
+            Enrage,
         }
 
         DragonState state = DragonState.Phase1;
@@ -33,7 +33,7 @@ namespace KazgarsRevenge
             settings.attackLength = 7250;
             settings.attackCreateMillis = 5000;
 
-            currentUpdateFunction = new AIUpdateFunction(AIDragonWaiting);
+            ResetEncounter();
         }
 
         public override void Update(GameTime gameTime)
@@ -65,9 +65,9 @@ namespace KazgarsRevenge
             nextSpitBomb = 8000;
         }
 
-        private void StartPhase3()
+        private void StartEnrage()
         {
-            state = DragonState.Phase3;
+            state = DragonState.Enrage;
             currentUpdateFunction = new AIUpdateFunction(AIDragonEnrage);
         }
 
@@ -84,6 +84,18 @@ namespace KazgarsRevenge
             Heal(MaxHealth);
             currentUpdateFunction = new AIUpdateFunction(AIDragonWaiting);
             PlayAnimation(settings.aniPrefix + settings.idleAniName);
+
+            if (firePillar != null)
+            {
+                firePillar.KillEntity();
+            }
+            if (frostPillar != null)
+            {
+                frostPillar.KillEntity();
+            }
+
+            firePillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFirePillar(physicalData.Position + Vector3.Right * 150);
+            frostPillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFrostPillar(physicalData.Position + Vector3.Left * 150);
         }
 
         private void AIDragonWaiting(double millis)
@@ -141,7 +153,7 @@ namespace KazgarsRevenge
             enrageTimer -= millis;
             if (enrageTimer <= 0)
             {
-                StartPhase3();
+                StartEnrage();
             }
         }
 
@@ -159,11 +171,11 @@ namespace KazgarsRevenge
                 case DragonState.Phase1:
                     if (iceHead)
                     {
-                        attacks.CreateFrostbolt(model.GetBonePosition("d_mouth_emittor_R"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                        attacks.CreateDragonFrostbolt(model.GetBonePosition("d_mouth_emittor_R"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
                     }
                     else
                     {
-                        attacks.CreateFirebolt(model.GetBonePosition("d_mouth_emittor_L"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                        attacks.CreateDragonFirebolt(model.GetBonePosition("d_mouth_emittor_L"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
                     }
                     iceHead = !iceHead;
                     break;
@@ -172,11 +184,11 @@ namespace KazgarsRevenge
                     {
                         if (iceHead)
                         {
-                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, 50, this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, this as AliveComponent);
                         }
                         else
                         {
-                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, 50, this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, this as AliveComponent);
                         }
                         iceHead = !iceHead;
                         settings.attackRange = 60;
@@ -198,17 +210,8 @@ namespace KazgarsRevenge
                         }
                     }
                     break;
-                case DragonState.Phase3:
+                case DragonState.Enrage:
                     //breathe fire
-                    if (iceHead)
-                    {
-                        attacks.CreateFrostbolt(model.GetBonePosition("d_mouth_emittor_R"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
-                    }
-                    else
-                    {
-                        attacks.CreateFirebolt(model.GetBonePosition("d_mouth_emittor_L"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
-                    }
-                    iceHead = !iceHead;
                     break;
             }
         }
@@ -286,7 +289,7 @@ namespace KazgarsRevenge
                         }
                     }
                     break;
-                case DragonState.Phase3:
+                case DragonState.Enrage:
                     break;
             }
         }
@@ -301,7 +304,7 @@ namespace KazgarsRevenge
                 case DragonState.Phase2:
                     currentUpdateFunction = new AIUpdateFunction(AIDragonPhase2);
                     break;
-                case DragonState.Phase3:
+                case DragonState.Enrage:
                     currentUpdateFunction = new AIUpdateFunction(AIDragonEnrage);
                     break;
             }

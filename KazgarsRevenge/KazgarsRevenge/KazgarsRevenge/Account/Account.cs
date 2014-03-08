@@ -123,5 +123,11 @@ namespace KazgarsRevenge
             // TODO is this good enough?
             return String.Equals(this.Name, other.Name);
         }
+
+        //the warning bothered me :P
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

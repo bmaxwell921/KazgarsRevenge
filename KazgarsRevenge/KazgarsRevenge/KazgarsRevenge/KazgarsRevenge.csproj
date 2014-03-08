@@ -119,6 +119,8 @@
     <Compile Include="Controllers\Attacks\GrapplingHookController.cs" />
     <Compile Include="Controllers\Attacks\LooseCannonController.cs" />
     <Compile Include="Controllers\Attacks\OmnishotController.cs" />
+    <Compile Include="Controllers\Attacks\Projectiles\DragonFirebolt.cs" />
+    <Compile Include="Controllers\Attacks\Projectiles\DragonFrostbolt.cs" />
     <Compile Include="Controllers\Attacks\Projectiles\SnipeController.cs" />
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
     <Compile Include="Controllers\Attacks\Bombs\TarBomb.cs" />
@@ -126,6 +128,7 @@
     <Compile Include="Controllers\Misc\FallingArrowController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
+    <Compile Include="Controllers\Misc\PillarController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
     <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
     <Compile Include="Drawing\Billboards\AbilityTargetDecal.cs" />
