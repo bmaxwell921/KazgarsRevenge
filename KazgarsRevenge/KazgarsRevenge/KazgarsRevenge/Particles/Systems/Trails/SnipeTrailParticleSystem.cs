@@ -19,15 +19,16 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "spark";
+            settings.TextureName = "mist_white";
 
             settings.MaxParticles = 1000;
 
-            settings.Duration = TimeSpan.FromSeconds(2);
-
-            settings.DurationRandomness = 1.5f;
+            settings.Duration = TimeSpan.FromSeconds(.5);
 
             settings.EmitterVelocitySensitivity = 0.1f;
+
+            settings.StartColor = Color.Yellow;
+            settings.EndColor = Color.Yellow;
 
             settings.MinHorizontalVelocity = 0;
             settings.MaxHorizontalVelocity = 0;
@@ -35,13 +36,13 @@ namespace KazgarsRevenge
             settings.MinVerticalVelocity = 0;
             settings.MaxVerticalVelocity = 0;
 
-            settings.Gravity = new Vector3(0, -140, 0);
+            settings.MinStartSize = 76;
+            settings.MaxStartSize = 76;
 
-            settings.MinStartSize = 15;
-            settings.MaxStartSize = 10;
+            settings.MinEndSize = 30;
+            settings.MaxEndSize = 30;
 
-            settings.MinEndSize = 1;
-            settings.MaxEndSize = 5;
+            settings.BlendState = BlendState.Additive;
         }
     }
 }
