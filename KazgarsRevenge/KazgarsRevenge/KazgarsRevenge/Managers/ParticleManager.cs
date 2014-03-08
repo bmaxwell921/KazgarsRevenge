@@ -59,6 +59,10 @@ namespace KazgarsRevenge
 
         public ParticleSystem GetSystem(Type t)
         {
+            if (!systems[t].InitializedFlag)
+            {
+                systems[t].Initialize();
+            }
             return systems[t];
         }
 

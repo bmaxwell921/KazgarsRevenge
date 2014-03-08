@@ -69,7 +69,7 @@ namespace KazgarsRevenge
             if (homing)
             {
                 arrowAI.Home();
-                arrowGraphics.AddEmitter(typeof(HomingTrailParticleSystem), "trail", 50, 5, Vector3.Zero);
+                arrowGraphics.AddEmitter(typeof(HomingTrailParticleSystem), "trail", 80, 0, Vector3.Forward * 6);
             }
             if (penetrating)
             {

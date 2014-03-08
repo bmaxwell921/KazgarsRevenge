@@ -16,7 +16,7 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "mist";
+            settings.TextureName = "mist_white";
 
             settings.MaxParticles = 3000;
 

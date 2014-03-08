@@ -511,13 +511,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\Particles\mist.png">
-      <Name>mist</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Particles\mist_white.png">
       <Name>mist_white</Name>
       <Importer>TextureImporter</Importer>

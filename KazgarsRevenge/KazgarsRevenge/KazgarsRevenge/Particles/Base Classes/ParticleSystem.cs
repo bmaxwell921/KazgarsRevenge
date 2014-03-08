@@ -12,7 +12,7 @@ namespace KazgarsRevenge
     public abstract class ParticleSystem : DrawableGameComponent
     {
         #region Fields
-
+        public bool InitializedFlag { get; private set; }
 
         // Settings class controls the appearance and animation of this particle system.
         ParticleSettings settings = new ParticleSettings();
@@ -148,6 +148,7 @@ namespace KazgarsRevenge
         protected ParticleSystem(Game game, ContentManager content)
             : base(game)
         {
+            this.InitializedFlag = false;
             this.content = content;
         }
 
@@ -157,6 +158,7 @@ namespace KazgarsRevenge
         /// </summary>
         public override void Initialize()
         {
+            InitializedFlag = true;
             InitializeSettings(settings);
 
             // Allocate the particle array, and fill in the corner fields (which never change).
