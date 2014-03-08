@@ -53,7 +53,7 @@ namespace KazgarsRevenge
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
-            Entity arrowData = new Box(position, 10, 17, 15, .001f);
+            Entity arrowData = new Box(position, 17, 17, 15, .001f);
             arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = dir * 450.0f;
@@ -177,7 +177,7 @@ namespace KazgarsRevenge
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
-            Entity arrowData = new Box(position, 10, 17, 32, .001f);
+            Entity arrowData = new Box(position, 17, 17, 32, .001f);
             arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = dir * 700;
@@ -765,6 +765,7 @@ namespace KazgarsRevenge
         
         public void CreateMouseSpikes(Vector3 position)
         {
+            position.Y = 0;
             GameEntity spikes = new GameEntity("cursor", FactionType.Neutral, EntityType.Misc);
 
             Entity spikesPhysical = new Box(position, 1, 1, 1);

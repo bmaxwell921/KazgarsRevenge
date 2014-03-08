@@ -60,7 +60,6 @@ namespace KazgarsRevenge
         protected float stopRadius = 10;
         protected const float targetResetDistance = 1000;
         protected Vector3 mouseHoveredLocation = Vector3.Zero;
-        protected Vector3 mouseHoveredLocationHigh = Vector3.Zero;
         protected Vector3 groundTargetLocation = Vector3.Zero;
         protected double millisRunningCounter = 2000;
         protected double millisRunTime = 2000;

@@ -28,6 +28,14 @@ namespace KazgarsRevenge
 
             dieAfterContact = false;
         }
+        protected override void HandleEntityCollision(GameEntity hitEntity)
+        {
+            if (hitEntity.Name == "room")
+            {
+                Entity.KillEntity();
+            }
+            base.HandleEntityCollision(hitEntity);
+        }
 
         public override void End()
         {
