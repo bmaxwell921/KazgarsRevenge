@@ -30,7 +30,7 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "soulTrail";
 
-            settings.MaxParticles = 10000;
+            settings.MaxParticles = 1000;
 
             settings.Duration = TimeSpan.FromSeconds(1);
 

@@ -18,7 +18,7 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "question";
 
-            settings.MaxParticles = 2000;
+            settings.MaxParticles = 1000;
 
             settings.EmitterVelocitySensitivity = .01f;
 

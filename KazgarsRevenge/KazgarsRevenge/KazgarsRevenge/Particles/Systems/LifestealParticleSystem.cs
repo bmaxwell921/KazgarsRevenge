@@ -30,7 +30,7 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "plus";
 
-            settings.MaxParticles = 1000;
+            settings.MaxParticles = 100;
 
             settings.Duration = TimeSpan.FromSeconds(1);
 

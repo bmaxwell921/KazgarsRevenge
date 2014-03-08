@@ -20,7 +20,7 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "smoketoon";
 
-            settings.MaxParticles = 1000;
+            settings.MaxParticles = 400;
 
             settings.Duration = TimeSpan.FromSeconds(3);
 

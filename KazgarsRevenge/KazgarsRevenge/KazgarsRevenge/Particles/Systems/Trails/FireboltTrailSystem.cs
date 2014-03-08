@@ -20,7 +20,7 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "fire";
 
-            settings.MaxParticles = 1000;
+            settings.MaxParticles = 400;
 
             settings.Duration = TimeSpan.FromSeconds(3);
 
