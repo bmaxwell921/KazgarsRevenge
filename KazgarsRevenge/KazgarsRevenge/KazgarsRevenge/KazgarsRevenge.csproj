@@ -219,6 +219,7 @@
     <Compile Include="Particles\Base Classes\ParticleSettings.cs" />
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
+    <Compile Include="Particles\Systems\Explosions\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionDebrisSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionMainSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionPoofSystem.cs" />
@@ -227,11 +228,7 @@
     <Compile Include="Particles\Systems\Debuffs\FrostDebuffSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\TarDebuffSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\AnimatedFireExplosionSystem.cs" />
-    <Compile Include="Particles\Systems\Trails\ArrowTrailSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireArrowParticleSystem.cs" />
-    <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeBig.cs" />
-    <Compile Include="Particles\Systems\Flashbang\FlashExplosionSmokeSmall.cs" />
-    <Compile Include="Particles\Systems\Flashbang\FlashExplosionSparksParticleSystem.cs" />
     <Compile Include="Particles\Systems\FrostChargeSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireMistTrailSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FrostMistParticleSystem.cs" />
