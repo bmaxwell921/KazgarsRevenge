@@ -16,7 +16,7 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "smoke";
+            settings.TextureName = "tar";
 
             settings.MaxParticles = 200;
 
@@ -25,11 +25,14 @@ namespace KazgarsRevenge
 
             settings.MinHorizontalVelocity = -100;
             settings.MaxHorizontalVelocity = 100;
-
+            
             settings.MinVerticalVelocity = 100;
             settings.MaxVerticalVelocity = 130;
 
             settings.Gravity = new Vector3(0, -130, 0);
+
+            settings.StartColor = Color.White;
+            settings.EndColor = Color.Black;
 
             settings.MinRotateSpeed = -1;
             settings.MaxRotateSpeed = 1;
@@ -39,7 +42,6 @@ namespace KazgarsRevenge
 
             settings.MinEndSize = 6;
             settings.MaxEndSize = 15;
-
         }
     }
 }
