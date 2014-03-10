@@ -6,10 +6,10 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
-    public class FireSpitBomb : BombController
+    public class FrostSpitBomb : BombController
     {
         int damage;
-        public FireSpitBomb(KazgarsRevengeGame game, GameEntity entity, Vector3 targetPosition, int damage, AliveComponent creator)
+        public FrostSpitBomb(KazgarsRevengeGame game, GameEntity entity, Vector3 targetPosition, int damage, AliveComponent creator)
             : base(game, entity, targetPosition, creator, 100)
         {
             yawIncrement = 0;
@@ -19,7 +19,7 @@ namespace KazgarsRevenge
 
         protected override void CreateExplosion()
         {
-            (Game.Services.GetService(typeof(AttackManager)) as AttackManager).CreateFireSpitExplosion(targetPosition, radius, damage, creator);
+            (Game.Services.GetService(typeof(AttackManager)) as AttackManager).CreateFrostSpitExplosion(targetPosition, radius, damage, creator);
         }
     }
 }

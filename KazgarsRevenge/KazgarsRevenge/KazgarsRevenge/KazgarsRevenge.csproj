@@ -112,10 +112,21 @@
     <Compile Include="Controllers\Alive\Enemies\DragonController.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
     <Compile Include="Controllers\Alive\Enemies\SkeletonController.cs" />
-    <Compile Include="Controllers\Attacks\Bombs\BombController.cs" />
+    <Compile Include="Controllers\Attacks\AOEController.cs" />
+    <Compile Include="Controllers\Attacks\Bombs\BombController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\Attacks\Bombs\FireSpitBomb.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\Attacks\Bombs\FlashBomb.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\Attacks\Bombs\FrostSpitBomb.cs" />
+    <Compile Include="Controllers\Attacks\Bombs\TarBomb.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Controllers\Attacks\ChainSpearController.cs" />
-    <Compile Include="Controllers\Attacks\Bombs\FireSpitBomb.cs" />
-    <Compile Include="Controllers\Attacks\Bombs\FlashBomb.cs" />
     <Compile Include="Controllers\Attacks\GrapplingHookController.cs" />
     <Compile Include="Controllers\Attacks\LooseCannonController.cs" />
     <Compile Include="Controllers\Attacks\OmnishotController.cs" />
@@ -123,7 +134,6 @@
     <Compile Include="Controllers\Attacks\Projectiles\DragonFrostbolt.cs" />
     <Compile Include="Controllers\Attacks\Projectiles\SnipeController.cs" />
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
-    <Compile Include="Controllers\Attacks\Bombs\TarBomb.cs" />
     <Compile Include="Controllers\Misc\DebrisController.cs" />
     <Compile Include="Controllers\Misc\FallingArrowController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
@@ -222,10 +232,17 @@
     <Compile Include="Particles\Base Classes\ParticleSettings.cs" />
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
+    <Compile Include="Particles\Systems\Debuffs\FireAOESystem.cs" />
+    <Compile Include="Particles\Systems\Debuffs\FrostAOEMist.cs" />
+    <Compile Include="Particles\Systems\Debuffs\FrostAOEMistSystem.cs" />
+    <Compile Include="Particles\Systems\Debuffs\FrostAOESystem.cs" />
     <Compile Include="Particles\Systems\Explosions\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionDebrisSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionMainSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionPoofSystem.cs" />
+    <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionDebrisSystem.cs" />
+    <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionMainSystem.cs" />
+    <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionPoofSystem.cs" />
     <Compile Include="Particles\Systems\StunnedParticleSystem.cs" />
     <Compile Include="Particles\Systems\ArmorSoulSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostDebuffSystem.cs" />

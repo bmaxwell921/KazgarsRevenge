@@ -298,7 +298,7 @@ namespace KazgarsRevenge
             if (db == DeBuff.Igniting && activeDebuffs.ContainsKey(DeBuff.Tar))
             {
                 d *= 4;
-                attacks.SpawnExplosionParticles(physicalData.Position, .5f);
+                attacks.SpawnFireExplosionParticles(physicalData.Position, .5f);
             }
 
             int actualDamage = Damage(d, false);

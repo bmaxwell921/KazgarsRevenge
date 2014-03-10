@@ -184,11 +184,11 @@ namespace KazgarsRevenge
                     {
                         if (iceHead)
                         {
-                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, GeneratePrimaryDamage(StatType.Strength) * 15, this as AliveComponent);
                         }
                         else
                         {
-                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, this as AliveComponent);
+                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, GeneratePrimaryDamage(StatType.Strength) * 15, this as AliveComponent);
                         }
                         iceHead = !iceHead;
                         settings.attackRange = 60;

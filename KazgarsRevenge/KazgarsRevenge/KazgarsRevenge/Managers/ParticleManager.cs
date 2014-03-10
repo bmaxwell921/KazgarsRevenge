@@ -48,6 +48,13 @@ namespace KazgarsRevenge
             systems.Add(typeof(ToonExplosionMainSystem), new ToonExplosionMainSystem(Game, Game.Content));
             systems.Add(typeof(ToonExplosionPoofSystem), new ToonExplosionPoofSystem(Game, Game.Content));
             systems.Add(typeof(ToonExplosionDebrisSystem), new ToonExplosionDebrisSystem(Game, Game.Content));
+            systems.Add(typeof(ToonFrostExplosionMainSystem), new ToonFrostExplosionMainSystem(Game, Game.Content));
+            systems.Add(typeof(ToonFrostExplosionPoofSystem), new ToonFrostExplosionPoofSystem(Game, Game.Content));
+            systems.Add(typeof(ToonFrostExplosionDebrisSystem), new ToonFrostExplosionDebrisSystem(Game, Game.Content));
+            systems.Add(typeof(FrostAOESystem), new FrostAOESystem(Game, Game.Content));
+            systems.Add(typeof(FireAOESystem), new FireAOESystem(Game, Game.Content));
+            systems.Add(typeof(FrostAOEMistSystem), new FrostAOEMistSystem(Game, Game.Content));
+            
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)
             {

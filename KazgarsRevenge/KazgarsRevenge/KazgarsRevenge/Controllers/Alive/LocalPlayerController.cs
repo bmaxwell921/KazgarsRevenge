@@ -504,7 +504,7 @@ namespace KazgarsRevenge
 
             //check where on the zero plane the ray hits, to guide the character by the mouse
             float? distance;
-            Plane p = new Plane(Vector3.Up, -20);
+            Plane p = new Plane(Vector3.Up, 0);
             r.Intersects(ref p, out distance);
             if (distance.HasValue)
             {

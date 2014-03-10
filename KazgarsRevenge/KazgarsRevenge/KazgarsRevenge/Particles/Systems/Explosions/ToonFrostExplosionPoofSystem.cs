@@ -8,9 +8,9 @@ namespace KazgarsRevenge
     /// <summary>
     /// Custom particle system for leaving smoke trails behind the rocket projectiles.
     /// </summary>
-    class ToonExplosionPoofSystem : ParticleSystem
+    class ToonFrostExplosionPoofSystem : ParticleSystem
     {
-        public ToonExplosionPoofSystem(Game game, ContentManager content)
+        public ToonFrostExplosionPoofSystem(Game game, ContentManager content)
             : base(game, content)
         { }
 
@@ -20,13 +20,13 @@ namespace KazgarsRevenge
 
             settings.MaxParticles = 150;
 
-            settings.Duration = TimeSpan.FromSeconds(1);
+            settings.Duration = TimeSpan.FromSeconds(.85);
 
-            settings.MinHorizontalVelocity = -185;
-            settings.MaxHorizontalVelocity = 185;
+            settings.MinHorizontalVelocity = -275;
+            settings.MaxHorizontalVelocity = 275;
 
-            settings.StartColor = Color.Orange;
-            settings.EndColor = new Color(80, 0, 0);
+            settings.StartColor = Color.Blue;
+            settings.EndColor = Color.DarkBlue;
 
             settings.MinVerticalVelocity = 0;
             settings.MaxVerticalVelocity = 2;

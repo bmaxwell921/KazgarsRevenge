@@ -5,7 +5,6 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using BEPUphysics;
 using BEPUphysics.Entities;
-using BEPUphysics.NarrowPhaseSystems.Pairs;
 using SkinnedModelLib;
 
 namespace KazgarsRevenge
@@ -108,18 +107,5 @@ namespace KazgarsRevenge
 
             return retYaw;
         }
-
-        protected bool PairIsColliding(CollidablePairHandler pair)
-        {
-            foreach (var contactInformation in pair.Contacts)
-            {
-                if (contactInformation.Contact.PenetrationDepth >= 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
     }
 }

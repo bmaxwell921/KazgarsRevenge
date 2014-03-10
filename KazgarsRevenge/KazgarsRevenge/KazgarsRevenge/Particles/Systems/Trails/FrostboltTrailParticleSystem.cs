@@ -20,7 +20,7 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "frost_trail";
 
-            settings.MaxParticles = 200;
+            settings.MaxParticles = 1000;
 
             settings.Duration = TimeSpan.FromSeconds(3);
 
