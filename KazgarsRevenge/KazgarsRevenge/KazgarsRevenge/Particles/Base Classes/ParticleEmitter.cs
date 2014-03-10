@@ -34,7 +34,8 @@ namespace KazgarsRevenge
         Vector3 previousPosition;
         float timeLeftOver;
         Random rand;
-        int maxOffset;
+        int maxHorizontalOffset;
+        int maxVerticalOffset;
         Vector3 offset;
 
         public bool Timed { get; private set; }
@@ -42,12 +43,21 @@ namespace KazgarsRevenge
         private double timeLeft = 0;
         #endregion
 
+        public void SetHorizontalOffset(int offset)
+        {
+            this.maxHorizontalOffset = offset;
+        }
+
+        public void SetVerticalOffset(int offset)
+        {
+            this.maxVerticalOffset = offset;
+        }
 
         /// <summary>
         /// Constructs a new particle emitter object.
         /// </summary>
         public ParticleEmitter(ParticleSystem particleSystem,
-                               float particlesPerSecond, Vector3 initialPosition, int maxOffset, Vector3 offset)
+                               float particlesPerSecond, Vector3 initialPosition, Vector3 offset)
         {
             this.particleSystem = particleSystem;
 
@@ -56,7 +66,6 @@ namespace KazgarsRevenge
             previousPosition = initialPosition;
 
             rand = new Random();
-            this.maxOffset = maxOffset;
             this.offset = offset;
 
             this.BoneIndex = -1;
@@ -65,7 +74,7 @@ namespace KazgarsRevenge
             Dead = false;
         }
         public ParticleEmitter(ParticleSystem particleSystem,
-                       float particlesPerSecond, Vector3 initialPosition, int maxOffset, Vector3 offset, int attachIndex)
+                       float particlesPerSecond, Vector3 initialPosition,Vector3 offset, int attachIndex)
         {
             this.particleSystem = particleSystem;
 
@@ -74,7 +83,6 @@ namespace KazgarsRevenge
             previousPosition = initialPosition;
 
             rand = new Random();
-            this.maxOffset = maxOffset;
             this.offset = offset;
 
             this.BoneIndex = attachIndex;
@@ -163,7 +171,7 @@ namespace KazgarsRevenge
                     // Create the particle.
                     Vector3 finalpos = Vector3.Transform(offset, rotation);
                     finalpos += position;
-                    particleSystem.AddParticle(finalpos + new Vector3(rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset, rand.Next(maxOffset * 2) - maxOffset), velocity, sizePercent);
+                    particleSystem.AddParticle(finalpos + new Vector3(rand.Next(maxHorizontalOffset * 2) - maxHorizontalOffset, rand.Next(maxVerticalOffset * 2) - maxVerticalOffset, rand.Next(maxHorizontalOffset * 2) - maxHorizontalOffset), velocity, sizePercent);
                 }
 
                 // Store any time we didn't use, so it can be part of the next update.

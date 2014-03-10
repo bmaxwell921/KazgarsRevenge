@@ -21,12 +21,22 @@ namespace KazgarsRevenge
         }
 
         protected Dictionary<string, ParticleEmitter> emitters = new Dictionary<string, ParticleEmitter>();
+
         public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter)
+        {
+            AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, maxOffset, offsetFromCenter);
+        }
+
+        public void AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxHorizontalOffset, int maxVerticalOffset, Vector3 offsetFromCenter)
         {
             if (!emitters.ContainsKey(systemName))
             {
-                emitters.Add(systemName, new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
-                    particlesPerSecond, physicalData.Position, maxOffset, offsetFromCenter));
+                ParticleEmitter toAdd = new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
+                    particlesPerSecond, physicalData.Position, offsetFromCenter);
+                toAdd.SetHorizontalOffset(maxHorizontalOffset);
+                toAdd.SetVerticalOffset(maxVerticalOffset);
+
+                emitters.Add(systemName, toAdd);
             }
         }
 
