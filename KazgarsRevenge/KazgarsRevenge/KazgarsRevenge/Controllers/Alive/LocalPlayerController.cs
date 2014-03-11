@@ -93,6 +93,7 @@ namespace KazgarsRevenge
         bool[] UISlotUsed = new bool[14];     //0-7 abilities, 8 primary, 9 secondary, 10-13 items
         bool showInventory = false;
         bool showEquipment = false;
+        bool showTalents = false;
         string abilityToUseString = null;
         int selectedItemSlot = -1;
         GearSlot selectedEquipPiece;
@@ -1008,7 +1009,7 @@ namespace KazgarsRevenge
         Rectangle rectMouse;
 
         //Inside Rect Dictionaries
-        Dictionary<string, Rectangle> damageDict;
+        //Dictionary<string, Rectangle> damageDict;
         //Dictionary<string, Rectangle> chatDict;
         Dictionary<string, Rectangle> playerDict;
         Dictionary<string, Rectangle> mapDict;
@@ -1017,6 +1018,7 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> equipmentDict;
         Dictionary<string, Rectangle> abilityDict;
         Dictionary<string, Rectangle> lootDict;
+        Dictionary<string, Rectangle> talentDict;
 
         private void InitDrawingParams()
         {
@@ -1042,10 +1044,9 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("damage", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
-            //Nate Here
             guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average)));
             guiOutsideRects.Add("equipment", new Rectangle((int)(maxX - 704 * average), (int)(380 * average), (int)(304 * average), (int)(440 * average)));
-
+            guiOutsideRects.Add("talents", new Rectangle((int)(maxX / 2 - 203 * average), (int)(75 * average), (int)(406 * average), (int)(738 * average)));
             guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
@@ -1058,17 +1059,21 @@ namespace KazgarsRevenge
             playerDict = new Dictionary<string, Rectangle>();
             mapDict = new Dictionary<string, Rectangle>();
             xpDict = new Dictionary<string, Rectangle>();
-            damageDict = new Dictionary<string, Rectangle>();
+            //damageDict = new Dictionary<string, Rectangle>();
+            talentDict = new Dictionary<string, Rectangle>();
+
+
             //Add frame dictionaries
             guiInsideRects.Add("inventory", inventoryDict);
             guiInsideRects.Add("equipment", equipmentDict);
             guiInsideRects.Add("abilities", abilityDict);
             guiInsideRects.Add("loot", lootDict);
             guiInsideRects.Add("xp", xpDict);
-            guiInsideRects.Add("damage", damageDict);
+            //guiInsideRects.Add("damage", damageDict);
             guiInsideRects.Add("map", mapDict);
             //guiInsideRects.Add("chat", chatDict);
             guiInsideRects.Add("player", playerDict);
+            guiInsideRects.Add("talents", talentDict);
 
             //Equipment inner
             equipmentDict.Add("equipWrist", new Rectangle((int)(maxX - 694 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
@@ -1106,6 +1111,16 @@ namespace KazgarsRevenge
             abilityDict.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
             abilityDict.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
             abilityDict.Add("item4", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+
+            // guiOutsideRects.Add("talents", new Rectangle((int)(maxX / 2 - 203 * average), (int)(75 * average), (int)(406 * average), (int)(738 * average)));
+            //Talents
+            for (int i = 0; i < 4; ++i)
+            {
+                for (int j = 0; j < 7; j++)
+                {
+                    talentDict.Add("talent" + (i + j * 4), new Rectangle((int)(maxX / 2 - 203 * average + 30*average + i * 94 * average), (int)(75 * average + 30*average + j * 94 * average), (int)(64 * average), (int)(64 * average)));
+                }
+            }
 
             //Loot
             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
@@ -1246,6 +1261,8 @@ namespace KazgarsRevenge
             s.Draw(health_bar, new Rectangle((int)(163 * average), 3, (int)(304 * HealthPercent * average), (int)(46 * average)), new Rectangle(0, 0, (int)(health_bar.Width * HealthPercent * average), (int)health_bar.Height), Color.White);
             #endregion
 
+            #region extra player frames
+            /*
             #region second player frame
             //Second Player Frame Pic
             s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(180 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
@@ -1272,6 +1289,8 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, new Rectangle((int)(20 * average), (int)(402 * average), (int)(54 * average), (int)(54 * average)), Color.Blue * 0.5f);
             //Fifth Player Frame Health
             s.Draw(texWhitePixel, new Rectangle((int)(74 * average), (int)(402 * average), (int)(74 * average), (int)(30 * average)), Color.Blue * 0.5f);
+            #endregion
+             */
             #endregion
 
             #region inventory / Equipment
@@ -1353,6 +1372,17 @@ namespace KazgarsRevenge
             }
             #endregion
 
+            #region talents
+            if (showTalents)
+            {
+                s.Draw(texWhitePixel, guiOutsideRects["talents"], Color.Pink * .5f);
+
+                for (int i = 0; i < 28; ++i)
+                {
+                    s.Draw(texPlaceHolder, guiInsideRects["talents"]["talent" + i], Color.White);
+                }
+            }
+            #endregion
             #endregion
 
             //Mouse
