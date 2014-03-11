@@ -518,7 +518,8 @@ namespace KazgarsRevenge
         public override void Start()
         {
             PlayAnimation(settings.aniPrefix + settings.idleAniName);
-            
+
+            attackAniLength = animations.GetAniMillis(settings.aniPrefix + settings.attackAniName);
 
             base.Start();
         }

@@ -18,12 +18,12 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "flamethrower";
+            settings.TextureName = "fire";/*
             settings.framesPerSecond = 30;
             settings.totalFrames = 23;
-            settings.SpriteDimensions = new Vector2(5, 5);
+            settings.SpriteDimensions = new Vector2(5, 5);*/
 
-            settings.MaxParticles = 200;
+            settings.MaxParticles = 500;
 
             settings.Duration = TimeSpan.FromSeconds(1.5);
 
@@ -43,8 +43,8 @@ namespace KazgarsRevenge
             settings.MinStartSize = 1;
             settings.MaxStartSize = 5;
 
-            settings.MinEndSize = 80;
-            settings.MaxEndSize = 80;
+            settings.MinEndSize = 150;
+            settings.MaxEndSize = 150;
         }
     }
 }

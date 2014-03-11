@@ -154,6 +154,8 @@ namespace KazgarsRevenge
             dragon.AddComponent(typeof(AliveComponent), dragonController);
             genComponentManager.AddComponent(dragonController);
 
+            dragon.AddComponent(typeof(DropTable), CreateNormalDropTableFor(dragon));
+
             enemies.Add(id, dragon);
         }
 
