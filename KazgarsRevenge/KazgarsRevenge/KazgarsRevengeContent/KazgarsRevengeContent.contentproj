@@ -743,7 +743,7 @@
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
-      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Dragon\\d_claw_L.fbx%3bModels\\Enemies\\Dragon\\d_claw_R.fbx%3bModels\\Enemies\\Dragon\\d_enrage.fbx%3bModels\\Enemies\\Dragon\\d_enrage_end.fbx%3bModels\\Enemies\\Dragon\\d_enrage_fire.fbx%3bModels\\Enemies\\Dragon\\d_fireball_lob_L.fbx%3bModels\\Enemies\\Dragon\\d_fireball_lob_R.fbx%3bModels\\Enemies\\Dragon\\d_old_flamethrower.fbx%3bModels\\Enemies\\Dragon\\d_snap.fbx%3bModels\\Enemies\\Dragon\\d_snap3.fbx%3bModels\\Enemies\\Dragon\\d_walk.fbx%3bModels\\Enemies\\Dragon\\d_fireball_L.fbx%3bModels\\Enemies\\Dragon\\d_fireball_R.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Dragon\\d_claw_L.fbx%3bModels\\Enemies\\Dragon\\d_claw_R.fbx%3bModels\\Enemies\\Dragon\\d_enrage.fbx%3bModels\\Enemies\\Dragon\\d_enrage_end.fbx%3bModels\\Enemies\\Dragon\\d_enrage_fire.fbx%3bModels\\Enemies\\Dragon\\d_fireball_lob_L.fbx%3bModels\\Enemies\\Dragon\\d_fireball_lob_R.fbx%3bModels\\Enemies\\Dragon\\d_old_flamethrower.fbx%3bModels\\Enemies\\Dragon\\d_snap.fbx%3bModels\\Enemies\\Dragon\\d_snap3.fbx%3bModels\\Enemies\\Dragon\\d_walk.fbx%3bModels\\Enemies\\Dragon\\d_fireball_L.fbx%3bModels\\Enemies\\Dragon\\d_fireball_R.fbx%3bModels\\Enemies\\Dragon\\d_death.fbx%3b</ProcessorParameters_MergeAnimations>
     </Compile>
   </ItemGroup>
   <ItemGroup>

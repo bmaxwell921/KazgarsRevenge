@@ -26,7 +26,7 @@ namespace KazgarsRevenge
             settings.aniPrefix = "d_";
             settings.moveAniName = "walk";
             settings.attackAniName = "snap";
-            settings.deathAniName = "fireball";
+            settings.deathAniName = "death";
             settings.idleAniName = "idle";
 
             settings.stopChasingRange = 2000;
@@ -198,8 +198,8 @@ namespace KazgarsRevenge
             {
                 if (currentAniName == "d_enrage")
                 {
-                    model.AddEmitter(typeof(FlameThrowerSystem), "flamethrower", 250, 5, Vector3.Zero, "d_mouth_emittor_R");
-                    model.AddEmitter(typeof(FrostThrowerSystem), "frostthrower", 250, 5, Vector3.Zero, "d_mouth_emittor_L");
+                    model.AddEmitter(typeof(FlameThrowerSystem), "flamethrower", 100, 5, Vector3.Zero, "d_mouth_emittor_R");
+                    model.AddEmitter(typeof(FrostThrowerSystem), "frostthrower", 100, 5, Vector3.Zero, "d_mouth_emittor_L");
 
                     PlayAnimation("d_enrage_fire");
                     attacks.CreateDragonFlamethrower(this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) * 2);
