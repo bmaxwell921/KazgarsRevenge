@@ -1512,13 +1512,20 @@ namespace KazgarsRevenge
             {
                 s.Draw(texWhitePixel, guiOutsideRects["talents"], Color.Pink * .5f);
 
+                //Draw Talent Icons
                 for (int i = 0; i < 4; ++i)
                 {
                     for (int j = 0; j < 7; j++)
                     {
                         if (!rangedAbilities[j, i].ToString().Equals("None"))
                         {
+                            //Draw Icon
                             s.Draw(GetAbility(rangedAbilities[j, i]).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
+                            //Draw shadow over locked abilities
+                            if (!abilityLearnedFlags[rangedAbilities[j, i]])
+                            {
+                                s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black *.8f);
+                            }
                         }
                     }
                 }

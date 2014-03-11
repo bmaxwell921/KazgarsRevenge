@@ -406,7 +406,6 @@ namespace KazgarsRevenge
                 abilityLearnedFlags[(AbilityName)i] = true;
             }
 
-
             #endregion
         }
 
