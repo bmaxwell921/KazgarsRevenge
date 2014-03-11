@@ -37,6 +37,7 @@ namespace KazgarsRevenge
             this.ActionName = actionName;
             onCooldown = true;
             this.AbilityType = abilityType;
+            this.AbilityName = abilityName;
         }
 
         public void setToolTip(String toolTipString)

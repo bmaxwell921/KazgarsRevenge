@@ -403,7 +403,7 @@ namespace KazgarsRevenge
 
             for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
             {
-                abilityLearnedFlags[(AbilityName)i] = true;
+                abilityLearnedFlags[(AbilityName)i] = false;
             }
 
             #endregion

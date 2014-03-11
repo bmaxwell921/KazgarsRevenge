@@ -244,6 +244,7 @@
     <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionMainSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionPoofSystem.cs" />
     <Compile Include="Particles\Systems\FlameThrowerSystem.cs" />
+    <Compile Include="Particles\Systems\FrostThrowerSystem.cs" />
     <Compile Include="Particles\Systems\StunnedParticleSystem.cs" />
     <Compile Include="Particles\Systems\ArmorSoulSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostDebuffSystem.cs" />

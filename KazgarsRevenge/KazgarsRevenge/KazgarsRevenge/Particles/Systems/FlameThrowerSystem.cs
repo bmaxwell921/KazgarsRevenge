@@ -1,50 +1,50 @@
-﻿#region Using Statements
+﻿                        #region Using Statements
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 #endregion
 
-namespace KazgarsRevenge
-{
-    /// <summary>
-    /// Custom particle system for leaving smoke trails behind the rocket projectiles.
-    /// </summary>
-    class FlameThrowerSystem : ParticleSystem
+    namespace KazgarsRevenge
     {
-        public FlameThrowerSystem(Game game, ContentManager content)
-            : base(game, content)
-        { }
-
-        protected override void InitializeSettings(ParticleSettings settings)
+        /// <summary>
+        /// Custom particle system for leaving smoke trails behind the rocket projectiles.
+        /// </summary>
+        class FlameThrowerSystem : ParticleSystem
         {
-            settings.TextureName = "fire";/*
-            settings.framesPerSecond = 30;
-            settings.totalFrames = 23;
-            settings.SpriteDimensions = new Vector2(5, 5);*/
+            public FlameThrowerSystem(Game game, ContentManager content)
+                : base(game, content)
+            { }
 
-            settings.MaxParticles = 500;
+            protected override void InitializeSettings(ParticleSettings settings)
+            {
+                settings.TextureName = "fire";/*
+                settings.framesPerSecond = 30;
+                settings.totalFrames = 23;
+                settings.SpriteDimensions = new Vector2(5, 5);*/
 
-            settings.Duration = TimeSpan.FromSeconds(1.5);
+                settings.MaxParticles = 500;
 
-            settings.DurationRandomness = 1.5f;
+                settings.Duration = TimeSpan.FromSeconds(1.5);
 
-            settings.EmitterVelocitySensitivity = 0.03f;
+                settings.DurationRandomness = 1.5f;
 
-            settings.MinHorizontalVelocity = -8;
-            settings.MaxHorizontalVelocity = 8;
+                settings.EmitterVelocitySensitivity = 0.03f;
 
-            settings.MinVerticalVelocity = -8;
-            settings.MaxVerticalVelocity = 8;
+                settings.MinHorizontalVelocity = -8;
+                settings.MaxHorizontalVelocity = 8;
 
-            settings.MinRotateSpeed = -4;
-            settings.MaxRotateSpeed = 4;
+                settings.MinVerticalVelocity = -8;
+                settings.MaxVerticalVelocity = 8;
 
-            settings.MinStartSize = 1;
-            settings.MaxStartSize = 5;
+                settings.MinRotateSpeed = -4;
+                settings.MaxRotateSpeed = 4;
 
-            settings.MinEndSize = 150;
-            settings.MaxEndSize = 150;
+                settings.MinStartSize = 1;
+                settings.MaxStartSize = 5;
+
+                settings.MinEndSize = 150;
+                settings.MaxEndSize = 150;
+            }
         }
     }
-}

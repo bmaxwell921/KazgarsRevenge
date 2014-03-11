@@ -199,6 +199,8 @@ namespace KazgarsRevenge
                 if (currentAniName == "d_enrage")
                 {
                     model.AddEmitter(typeof(FlameThrowerSystem), "flamethrower", 250, 5, Vector3.Zero, "d_mouth_emittor_R");
+                    model.AddEmitter(typeof(FrostThrowerSystem), "frostthrower", 250, 5, Vector3.Zero, "d_mouth_emittor_L");
+
                     PlayAnimation("d_enrage_fire");
                     attacks.CreateDragonFlamethrower(this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) * 2);
                     timerLength = animations.GetAniMillis("d_enrage_fire") * 3;
@@ -207,6 +209,7 @@ namespace KazgarsRevenge
                 else if (currentAniName == "d_enrage_fire")
                 {
                     model.RemoveEmitter("flamethrower");
+                    model.RemoveEmitter("frostthrower");
                     PlayAnimation("d_enrage_end", MixType.PauseAtEnd);
                     timerLength = animations.GetAniMillis("d_enrage_end");
                     timerCounter = 0;
@@ -217,6 +220,7 @@ namespace KazgarsRevenge
                 }
             }
             model.SetEmitterVel("flamethrower", 1000, "d_mouth_emittor_R", Vector3.Down * 5);
+            model.SetEmitterVel("frostthrower", 1000, "d_mouth_emittor_L", Vector3.Down * 5);
         }
 
         int chosenAttack = 0;
@@ -375,7 +379,7 @@ namespace KazgarsRevenge
         protected override void KillAlive()
         {
             model.RemoveEmitter("flamethrower");
-            model.RemoveEmitter("icethrower");
+            model.RemoveEmitter("frostthrower");
             base.KillAlive();
         }
     }
