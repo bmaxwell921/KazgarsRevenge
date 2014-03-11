@@ -1010,7 +1010,7 @@ namespace KazgarsRevenge
                     //set targeting to true, set target size, go back to no attack state and fighting stance
                     targetingGroundLocation = true;
                     targetedGroundSize = makeItRainSize;
-                    if (abilityLearnedFlags[AbilityName.SplittingRain])
+                    if (abilityLearnedFlags[AbilityName.StrongWinds])
                     {
                         targetedGroundSize *= 5;
                     }
@@ -1047,13 +1047,13 @@ namespace KazgarsRevenge
                 }
 
                 int damage = GeneratePrimaryDamage(StatType.Agility);
-                if (abilityLearnedFlags[AbilityName.LeadRain])
+                if (abilityLearnedFlags[AbilityName.MakeItHail])
                 {
                     damage = (int)(damage * 1.5f);
                 }
 
                 float radius = makeItRainSize;
-                if (abilityLearnedFlags[AbilityName.SplittingRain])
+                if (abilityLearnedFlags[AbilityName.StrongWinds])
                 {
                     radius *= 5;
                 }
@@ -1452,6 +1452,7 @@ namespace KazgarsRevenge
         }
         protected void OpenLoot()
         {
+
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
             if (possLoot != null)
             {
@@ -1579,7 +1580,7 @@ namespace KazgarsRevenge
                     return GetNone();
                 case AbilityName.Snipe:
                     return GetSnipe();
-                case AbilityName.HeartStrike:
+                case AbilityName.Garrote:
                     return GetHeartStrike();
                 case AbilityName.IceClawPrison:
                     return GetIceClawPrison();
@@ -1632,7 +1633,7 @@ namespace KazgarsRevenge
         }
         protected Ability GetHeartStrike()
         {
-            return new Ability(AbilityName.HeartStrike, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEART_STRIKE), 6000, AttackType.Ranged, "flip", AbilityType.Instant);
+            return new Ability(AbilityName.Garrote, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEART_STRIKE), 6000, AttackType.Ranged, "flip", AbilityType.Instant);
         }
         protected Ability GetIceClawPrison()
         {
@@ -1704,12 +1705,10 @@ namespace KazgarsRevenge
         MagneticImplant,
         LooseCannon,
         MakeItRain,
-        LeadRain,
-        SplittingRain,
+        MakeItHail,
+        StrongWinds,
         GrapplingHook,
         SpeedyGrapple,
-        ChainSpear,
-        ForcefulThrow,
         TarBomb,
         MoltenBolt,
         FlashBomb,
@@ -1718,7 +1717,9 @@ namespace KazgarsRevenge
 
 
 
-        HeartStrike,
+        Garrote,
+        ChainSpear,
+        ForcefulThrow,
 
         IceClawPrison,
 
@@ -1727,10 +1728,8 @@ namespace KazgarsRevenge
         InivisibilityPotion,
 
         //#Jared TODO Nate added these, need support for them
-        MakeItHail,
         Elusiveness,
         Tumble,
-        MakeItSpray,
 
     }
 }

@@ -18,7 +18,7 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "explosion_animated";
+            settings.TextureName = "flamethrower";
             settings.framesPerSecond = 30;
             settings.totalFrames = 23;
             settings.SpriteDimensions = new Vector2(5, 5);

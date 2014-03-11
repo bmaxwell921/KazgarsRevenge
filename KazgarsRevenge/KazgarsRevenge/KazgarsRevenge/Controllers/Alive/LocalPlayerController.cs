@@ -80,7 +80,7 @@ namespace KazgarsRevenge
             rangedAbilities[5, 2] = AbilityName.MoltenBolt;
 
             rangedAbilities[6, 0] = AbilityName.Omnishot;
-            rangedAbilities[6, 1] = AbilityName.MakeItSpray;
+            rangedAbilities[6, 1] = AbilityName.StrongWinds;
             #endregion
         }
 
@@ -213,222 +213,7 @@ namespace KazgarsRevenge
                     selectedEquipSlot = false;
                 }
 
-                //appropriate action for gui element collided with
-                //happens on left mouse released
-                //#Nate
-                #region left click check
-                if (collides != null && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
-                {
-                    string innerClicked = CollidingInnerFrame(collides);
-                    switch (collides)
-                    {
-                        case "inventory":
-                            if (innerClicked == "equipArrow") showEquipment = !showEquipment;
-                            if (innerClicked != null && innerClicked.Contains("inventory"))
-                            {
-                                for (int i = 0; i <= maxInventorySlots; i++)
-                                {
-                                    if (innerClicked == "inventory" + i && (inventory[i] != null || inventory[i] == null && selectedItemSlot != -1 || selectedEquipSlot))
-                                    {
-                                        if (selectedEquipSlot)           //bringing equipment into inventory
-                                        {
-                                            if (inventory[i] == null)    //Unequip equipment being brought in
-                                            {
-                                                UnequipGear(selectedEquipPiece, i);
-                                                gear[selectedEquipPiece] = null;
-                                                selectedEquipSlot = false;
-                                                selectedItemSlot = -1;
-                                            }
-                                            else                        //try and equip selected item
-                                            {
-                                                selectedItemSlot = i;
-                                                equipHelp(selectedEquipPiece);
-                                                selectedEquipSlot = false;
-                                                selectedItemSlot = -1;
-                                            }                                        
-                                        }
-                                        else if (selectedItemSlot == -1)//no selected item
-                                        {
-                                            selectedItemSlot = i;       //select item
-                                        }
-                                        else if (inventory[i] == null)  //put selected item into empty spot
-                                        {
-                                            inventory[i] = inventory[selectedItemSlot];
-                                            inventory[selectedItemSlot] = null;
-                                            selectedItemSlot = -1;
-                                        } 
-                                        else                            //switch inventory items
-                                        {
-                                            Item temp = inventory[i];
-                                            inventory[i] = inventory[selectedItemSlot];
-                                            inventory[selectedItemSlot] = temp;
-                                            selectedItemSlot = -1;
-                                        }
-                                    }
-                                }
-                            }
-                            break;
-                        case "loot":
-                            for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
-                            {
-                                if (RectContains(guiInsideRects["loot"]["loot" + i], curMouse.X, curMouse.Y))
-                                {
-                                    //clicked on item, add to inventory
-                                    if (AddToInventory(lootingSoul.GetLoot(i)))
-                                    {
-                                        lootingSoul.RemoveLoot(i);
-                                    }
-
-                                }
-                            }
-                            break;
-
-                        case "equipment":
-                            if (innerClicked == "equipWrist") //wrist
-                            {
-                                equipHelp(GearSlot.Wrist);
-                            }
-                            else if (innerClicked == "equipBling")  //bling
-                            {
-                                equipHelp(GearSlot.Bling);
-                            }
-                            else if (innerClicked == "equipLWep")  //LWep
-                            {
-                                equipHelp(GearSlot.Lefthand);
-                            }
-
-                            else if (innerClicked == "equipHead")  //head
-                            {
-                                equipHelp(GearSlot.Head);
-                            }
-                            else if (innerClicked == "equipChest")  //chest
-                            {
-                                equipHelp(GearSlot.Chest);
-                            }
-                            else if (innerClicked == "equipLegs")  //legs
-                            {
-                                equipHelp(GearSlot.Legs);
-                            }
-                            else if (innerClicked == "equipFeet")  //feet
-                            {
-                                equipHelp(GearSlot.Feet);
-                            }
-
-                            else if (innerClicked == "equipShoulder")  //shoulder
-                            {
-                                equipHelp(GearSlot.Shoulders);
-                            }
-                            else if (innerClicked == "equipCod")  //Cod
-                            {
-                                equipHelp(GearSlot.Codpiece);
-                            }
-                            else if (innerClicked == "equipRWep")  //RWep
-                            {
-                                equipHelp(GearSlot.Righthand);
-                            }
-                            break;
-
-                        case "abilities":
-                            abilityToUseString = innerClicked;
-                            break;
-
-                    }
-                }
-                #endregion
-
-                #region right click check
-                if (collides != null && prevMouse.RightButton == ButtonState.Pressed && curMouse.RightButton == ButtonState.Released)
-                {
-                    string innerClicked = CollidingInnerFrame(collides);
-                    switch (collides)
-                    {
-                        case "inventory":
-                            if (innerClicked != null && innerClicked.Contains("inventory") && selectedItemSlot == -1)  //equip item right clicked on
-                            {
-                                for (int i = 0; i <= maxInventorySlots; i++)
-                                {
-                                    if (innerClicked == "inventory" + i && inventory[i] != null)
-                                    {
-                                        selectedItemSlot = i;
-                                        Equippable e = inventory[i] as Equippable;        //set selectedEquipPiece as inventory[i]
-                                        if (e != null)
-                                        {
-                                            if (e.Slot == GearSlot.Lefthand || e.Slot == GearSlot.Righthand)
-                                            {
-                                                if (gear[GearSlot.Righthand] == null) selectedEquipPiece = GearSlot.Righthand;      //no weapon in right hand.  Equip into right hand;
-                                                else if (gear[GearSlot.Lefthand] == null)
-                                                {
-                                                    if ((gear[GearSlot.Righthand] as Weapon).TwoHanded) selectedEquipPiece = GearSlot.Righthand;
-                                                    else selectedEquipPiece = GearSlot.Lefthand;
-                                                }
-                                                else selectedEquipPiece = GearSlot.Righthand;                                       //prefer replacing the right hand if two weapons are equipped
-                                            }
-                                            else
-                                            {
-                                                selectedEquipPiece = e.Slot;
-                                            }
-                                            
-                                            equipHelp(selectedEquipPiece);
-                                            selectedEquipSlot = false;
-                                            selectedItemSlot = -1;
-                                        }
-                                        else
-                                        {
-                                            //floating text for not equipable
-                                        }
-                                    }
-                                }
-                            }
-                            break;
-
-                        case "equipment":
-                            if (innerClicked == "equipWrist") //wrist
-                            {
-                                UnequipGear(GearSlot.Wrist);
-                            }
-                            else if (innerClicked == "equipBling")  //bling
-                            {
-                                UnequipGear(GearSlot.Bling);
-                            }
-                            else if (innerClicked == "equipLWep")  //LWep
-                            {
-                                UnequipGear(GearSlot.Lefthand);
-                            }
-
-                            else if (innerClicked == "equipHead")  //head
-                            {
-                                UnequipGear(GearSlot.Head);
-                            }
-                            else if (innerClicked == "equipChest")  //chest
-                            {
-                                UnequipGear(GearSlot.Chest);
-                            }
-                            else if (innerClicked == "equipLegs")  //legs
-                            {
-                                UnequipGear(GearSlot.Legs); ;
-                            }
-                            else if (innerClicked == "equipFeet")  //feet
-                            {
-                                UnequipGear(GearSlot.Feet);
-                            }
-
-                            else if (innerClicked == "equipShoulder")  //shoulder
-                            {
-                                UnequipGear(GearSlot.Shoulders);
-                            }
-                            else if (innerClicked == "equipCod")  //Cod
-                            {
-                                UnequipGear(GearSlot.Codpiece);
-                            }
-                            else if (innerClicked == "equipRWep")  //RWep
-                            {
-                                UnequipGear(GearSlot.Righthand);
-                            }
-                            break;
-                    }
-
-                }
-                #endregion
+                CheckButtonClicks(collides);
 
                 Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
                 if (targetedPhysicalData != null)
@@ -625,10 +410,18 @@ namespace KazgarsRevenge
                 if (!looting)
                 {
                     OpenLoot();
+                    if (!guiOutsideRects.ContainsKey("loot"))
+                    {
+                        guiOutsideRects.Add("loot", lootRect);
+                    }
                 }
                 else
                 {
                     CloseLoot();
+                    if (guiOutsideRects.ContainsKey("loot"))
+                    {
+                        guiOutsideRects.Remove("loot");
+                    }
                 }
             }
             else if (looting && (lootingSoul == null || lootingSoul.Loot.Count == 0) && currentAniName != "k_loot_smash")
@@ -646,25 +439,94 @@ namespace KazgarsRevenge
             {
                 showInventory = !showInventory;
                 showEquipment = false;
+
+                if (showInventory)
+                {
+                    if (!guiOutsideRects.ContainsKey("inventory"))
+                    {
+                        guiOutsideRects.Add("inventory", inventoryRect);
+                    }
+                }
+                else
+                {
+                    if (guiOutsideRects.ContainsKey("inventory"))
+                    {
+                        guiOutsideRects.Remove("inventory");
+                    }
+                }
+
+                if (guiOutsideRects.ContainsKey("equipment"))
+                {
+                    guiOutsideRects.Remove("equipment");
+                }
             }
             //Equipment
             if (curKeys.IsKeyDown(Keys.O) && prevKeys.IsKeyUp(Keys.O))
             {
                 showEquipment = !showEquipment;
-                if (showEquipment) showInventory = true;
-                else showInventory = false;
+                showInventory = showEquipment;
+
+                if (showEquipment)
+                {
+                    if (!guiOutsideRects.ContainsKey("equipment"))
+                    {
+                        guiOutsideRects.Add("equipment", equipmentRect);
+                    }
+                    if (!guiOutsideRects.ContainsKey("inventory"))
+                    {
+                        guiOutsideRects.Add("inventory", inventoryRect);
+                    }
+                }
+                else
+                {
+                    if (guiOutsideRects.ContainsKey("equipment"))
+                    {
+                        guiOutsideRects.Remove("equipment");
+                    }
+                    if (guiOutsideRects.ContainsKey("inventory"))
+                    {
+                        guiOutsideRects.Remove("inventory");
+                    }
+                }
             }
             //Talents
             if (curKeys.IsKeyDown(Keys.P) && prevKeys.IsKeyUp(Keys.P))
             {
                 showTalents = !showTalents;
+
+                if (showTalents)
+                {
+                    if (!guiOutsideRects.ContainsKey("talents"))
+                    {
+                        guiOutsideRects.Add("talents", talentRect);
+                    }
+                }
+                else
+                {
+                    if (guiOutsideRects.ContainsKey("talents"))
+                    {
+                        guiOutsideRects.Remove("talents");
+                    }
+                }
             }
             //Esc closes all
             if (curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
             {
                 showEquipment = false;
+                if (guiOutsideRects.ContainsKey("equipment"))
+                {
+                    guiOutsideRects.Remove("equipment");
+                }
                 showInventory = false;
+                if (guiOutsideRects.ContainsKey("inventory"))
+                {
+                    guiOutsideRects.Remove("inventory");
+                }
                 showTalents = false;
+                if (guiOutsideRects.ContainsKey("talents"))
+                {
+                    guiOutsideRects.Remove("talents");
+                }
             }
 
 
@@ -997,12 +859,6 @@ namespace KazgarsRevenge
             {
                 if (RectContains(k.Value, curMouse.X, curMouse.Y))
                 {
-                    //only check against inventory or loot if they are shown
-                    if (k.Key == "inventory" && !showInventory || k.Key == "equipment" && !showEquipment || k.Key == "loot" && !looting)
-                    {
-                        continue;
-                    }
-
                     return k.Key;
                 }
 
@@ -1026,6 +882,243 @@ namespace KazgarsRevenge
 
             }
             return null;
+        }
+
+        private void CheckButtonClicks(string collides)
+        {
+            //appropriate action for gui element collided with
+            //happens on left mouse released
+            //#Nate
+            #region left click check
+            if (collides != null && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
+            {
+                string innerClicked = CollidingInnerFrame(collides);
+                switch (collides)
+                {
+                    case "inventory":
+                        if (innerClicked == "equipArrow")
+                        {
+                            showEquipment = !showEquipment;
+                            if (showEquipment)
+                            {
+                                if (!guiOutsideRects.ContainsKey("equipment"))
+                                {
+                                    guiOutsideRects.Add("equipment", equipmentRect);
+                                }
+                            }
+                            else
+                            {
+                                if (guiOutsideRects.ContainsKey("equipment"))
+                                {
+                                    guiOutsideRects.Remove("equipment");
+                                }
+                            }
+                        }
+                        if (innerClicked != null && innerClicked.Contains("inventory"))
+                        {
+                            for (int i = 0; i <= maxInventorySlots; i++)
+                            {
+                                if (innerClicked == "inventory" + i && (inventory[i] != null || inventory[i] == null && selectedItemSlot != -1 || selectedEquipSlot))
+                                {
+                                    if (selectedEquipSlot)           //bringing equipment into inventory
+                                    {
+                                        if (inventory[i] == null)    //Unequip equipment being brought in
+                                        {
+                                            UnequipGear(selectedEquipPiece, i);
+                                            gear[selectedEquipPiece] = null;
+                                            selectedEquipSlot = false;
+                                            selectedItemSlot = -1;
+                                        }
+                                        else                        //try and equip selected item
+                                        {
+                                            selectedItemSlot = i;
+                                            equipHelp(selectedEquipPiece);
+                                            selectedEquipSlot = false;
+                                            selectedItemSlot = -1;
+                                        }
+                                    }
+                                    else if (selectedItemSlot == -1)//no selected item
+                                    {
+                                        selectedItemSlot = i;       //select item
+                                    }
+                                    else if (inventory[i] == null)  //put selected item into empty spot
+                                    {
+                                        inventory[i] = inventory[selectedItemSlot];
+                                        inventory[selectedItemSlot] = null;
+                                        selectedItemSlot = -1;
+                                    }
+                                    else                            //switch inventory items
+                                    {
+                                        Item temp = inventory[i];
+                                        inventory[i] = inventory[selectedItemSlot];
+                                        inventory[selectedItemSlot] = temp;
+                                        selectedItemSlot = -1;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case "loot":
+                        for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
+                        {
+                            if (RectContains(guiInsideRects["loot"]["loot" + i], curMouse.X, curMouse.Y))
+                            {
+                                //clicked on item, add to inventory
+                                if (AddToInventory(lootingSoul.GetLoot(i)))
+                                {
+                                    lootingSoul.RemoveLoot(i);
+                                }
+
+                            }
+                        }
+                        break;
+
+                    case "equipment":
+                        if (innerClicked == "equipWrist") //wrist
+                        {
+                            equipHelp(GearSlot.Wrist);
+                        }
+                        else if (innerClicked == "equipBling")  //bling
+                        {
+                            equipHelp(GearSlot.Bling);
+                        }
+                        else if (innerClicked == "equipLWep")  //LWep
+                        {
+                            equipHelp(GearSlot.Lefthand);
+                        }
+
+                        else if (innerClicked == "equipHead")  //head
+                        {
+                            equipHelp(GearSlot.Head);
+                        }
+                        else if (innerClicked == "equipChest")  //chest
+                        {
+                            equipHelp(GearSlot.Chest);
+                        }
+                        else if (innerClicked == "equipLegs")  //legs
+                        {
+                            equipHelp(GearSlot.Legs);
+                        }
+                        else if (innerClicked == "equipFeet")  //feet
+                        {
+                            equipHelp(GearSlot.Feet);
+                        }
+
+                        else if (innerClicked == "equipShoulder")  //shoulder
+                        {
+                            equipHelp(GearSlot.Shoulders);
+                        }
+                        else if (innerClicked == "equipCod")  //Cod
+                        {
+                            equipHelp(GearSlot.Codpiece);
+                        }
+                        else if (innerClicked == "equipRWep")  //RWep
+                        {
+                            equipHelp(GearSlot.Righthand);
+                        }
+                        break;
+
+                    case "abilities":
+                        abilityToUseString = innerClicked;
+                        break;
+
+                }
+            }
+            #endregion
+
+            #region right click check
+            if (collides != null && prevMouse.RightButton == ButtonState.Pressed && curMouse.RightButton == ButtonState.Released)
+            {
+                string innerClicked = CollidingInnerFrame(collides);
+                switch (collides)
+                {
+                    case "inventory":
+                        if (innerClicked != null && innerClicked.Contains("inventory") && selectedItemSlot == -1)  //equip item right clicked on
+                        {
+                            for (int i = 0; i <= maxInventorySlots; i++)
+                            {
+                                if (innerClicked == "inventory" + i && inventory[i] != null)
+                                {
+                                    selectedItemSlot = i;
+                                    Equippable e = inventory[i] as Equippable;        //set selectedEquipPiece as inventory[i]
+                                    if (e != null)
+                                    {
+                                        if (e.Slot == GearSlot.Lefthand || e.Slot == GearSlot.Righthand)
+                                        {
+                                            if (gear[GearSlot.Righthand] == null) selectedEquipPiece = GearSlot.Righthand;      //no weapon in right hand.  Equip into right hand;
+                                            else if (gear[GearSlot.Lefthand] == null)
+                                            {
+                                                if ((gear[GearSlot.Righthand] as Weapon).TwoHanded) selectedEquipPiece = GearSlot.Righthand;
+                                                else selectedEquipPiece = GearSlot.Lefthand;
+                                            }
+                                            else selectedEquipPiece = GearSlot.Righthand;                                       //prefer replacing the right hand if two weapons are equipped
+                                        }
+                                        else
+                                        {
+                                            selectedEquipPiece = e.Slot;
+                                        }
+
+                                        equipHelp(selectedEquipPiece);
+                                        selectedEquipSlot = false;
+                                        selectedItemSlot = -1;
+                                    }
+                                    else
+                                    {
+                                        //floating text for not equipable
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case "equipment":
+                        if (innerClicked == "equipWrist") //wrist
+                        {
+                            UnequipGear(GearSlot.Wrist);
+                        }
+                        else if (innerClicked == "equipBling")  //bling
+                        {
+                            UnequipGear(GearSlot.Bling);
+                        }
+                        else if (innerClicked == "equipLWep")  //LWep
+                        {
+                            UnequipGear(GearSlot.Lefthand);
+                        }
+
+                        else if (innerClicked == "equipHead")  //head
+                        {
+                            UnequipGear(GearSlot.Head);
+                        }
+                        else if (innerClicked == "equipChest")  //chest
+                        {
+                            UnequipGear(GearSlot.Chest);
+                        }
+                        else if (innerClicked == "equipLegs")  //legs
+                        {
+                            UnequipGear(GearSlot.Legs); ;
+                        }
+                        else if (innerClicked == "equipFeet")  //feet
+                        {
+                            UnequipGear(GearSlot.Feet);
+                        }
+
+                        else if (innerClicked == "equipShoulder")  //shoulder
+                        {
+                            UnequipGear(GearSlot.Shoulders);
+                        }
+                        else if (innerClicked == "equipCod")  //Cod
+                        {
+                            UnequipGear(GearSlot.Codpiece);
+                        }
+                        else if (innerClicked == "equipRWep")  //RWep
+                        {
+                            UnequipGear(GearSlot.Righthand);
+                        }
+                        break;
+                }
+
+            }
+            #endregion
         }
         #endregion
 
@@ -1058,6 +1151,10 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> lootDict;
         Dictionary<string, Rectangle> talentDict;
 
+        Rectangle inventoryRect;
+        Rectangle equipmentRect;
+        Rectangle talentRect;
+        Rectangle lootRect;
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
@@ -1082,10 +1179,11 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("tooltip", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
-            guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average)));
-            guiOutsideRects.Add("equipment", new Rectangle((int)(maxX - 704 * average), (int)(380 * average), (int)(304 * average), (int)(440 * average)));
-            guiOutsideRects.Add("talents", new Rectangle((int)(maxX / 2 - 203 * average), (int)(75 * average), (int)(406 * average), (int)(738 * average)));
-            guiOutsideRects.Add("loot", new Rectangle((int)(150 * average), (int)(150 * average), 150, 300));
+
+            inventoryRect = new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average));
+            equipmentRect = new Rectangle((int)(maxX - 704 * average), (int)(380 * average), (int)(304 * average), (int)(440 * average));
+            talentRect = new Rectangle((int)(maxX / 2 - 203 * average), (int)(75 * average), (int)(406 * average), (int)(738 * average));
+            lootRect = new Rectangle((int)(150 * average), (int)(150 * average), 150, 300);
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
