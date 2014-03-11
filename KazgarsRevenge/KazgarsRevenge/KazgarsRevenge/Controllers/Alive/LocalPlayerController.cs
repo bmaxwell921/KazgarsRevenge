@@ -598,8 +598,10 @@ namespace KazgarsRevenge
 
             foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
             {
-                if (curKeys.IsKeyDown(k.Key) && prevKeys.IsKeyUp(k.Key) && !k.Value.onCooldown)
+                if (curKeys.IsKeyDown(k.Key) && prevKeys.IsKeyUp(k.Key) && !k.Value.onCooldown && abilityLearnedFlags[k.Value.AbilityName])
                 {
+                    bool look = abilityLearnedFlags[k.Value.AbilityName];               //#JARED FIND ME!!!!!  Why is this always coming back as true / why is none being returned for the name?
+                    AbilityName name = k.Value.AbilityName;
                     useAbility = true;
                     abilityToUse = k.Value;
                     break;
@@ -608,7 +610,7 @@ namespace KazgarsRevenge
 
             foreach (KeyValuePair<ButtonState, Ability> k in mouseBoundAbility)
             {//#Nate
-                if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown && !mouseOnGui)
+                if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown && !mouseOnGui && abilityLearnedFlags[k.Value.AbilityName])
                 {
                     useAbility = true;
                     abilityToUse = k.Value;
@@ -895,6 +897,7 @@ namespace KazgarsRevenge
                 string innerClicked = CollidingInnerFrame(collides);
                 switch (collides)
                 {
+                    #region inventory
                     case "inventory":
                         if (innerClicked == "equipArrow")
                         {
@@ -958,6 +961,8 @@ namespace KazgarsRevenge
                             }
                         }
                         break;
+                    #endregion
+                    #region loot
                     case "loot":
                         for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
                         {
@@ -972,7 +977,8 @@ namespace KazgarsRevenge
                             }
                         }
                         break;
-
+                    #endregion
+                    #region equipment
                     case "equipment":
                         if (innerClicked == "equipWrist") //wrist
                         {
@@ -1017,11 +1023,26 @@ namespace KazgarsRevenge
                             equipHelp(GearSlot.Righthand);
                         }
                         break;
-
+                    #endregion
+                    #region abilities
                     case "abilities":
                         abilityToUseString = innerClicked;
                         break;
-
+                    #endregion
+                    #region abilities
+                    case "talents":
+                        if (innerClicked != null)
+                        {
+                            //TODO if we add any more innerFrames in abilities make sure we check those first
+                            int check = Convert.ToInt32(innerClicked.Remove(0, 6));
+                            if (!rangedAbilities[(int) check/4 , check%4].ToString().Equals("None"))
+                            {
+                                //String look = rangedAbilities[(int)check / 4, check % 4].ToString();
+                                abilityLearnedFlags[rangedAbilities[(int)check / 4, check % 4]] = !abilityLearnedFlags[rangedAbilities[(int)check / 4, check % 4]];
+                            }
+                        }
+                        break;
+                    #endregion
                 }
             }
             #endregion
