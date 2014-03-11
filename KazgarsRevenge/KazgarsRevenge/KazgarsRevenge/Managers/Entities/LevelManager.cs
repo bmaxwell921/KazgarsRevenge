@@ -80,7 +80,7 @@ namespace KazgarsRevenge
         public static readonly int CHUNK_SIZE = 24;
 
         // How large a block is in 3D space
-        public static readonly int BLOCK_SIZE = 100;
+        public static readonly int BLOCK_SIZE = 200;
 
         // The y component of the room location
         public static readonly float LEVEL_Y = 0;
@@ -225,7 +225,7 @@ namespace KazgarsRevenge
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {
             position.Y = LEVEL_Y;
-            float roomScale = 10;
+            float roomScale = 20;
 
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 

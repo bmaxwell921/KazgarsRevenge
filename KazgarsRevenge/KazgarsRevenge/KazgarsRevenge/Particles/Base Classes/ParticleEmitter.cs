@@ -110,6 +110,11 @@ namespace KazgarsRevenge
             this.sizeIncrementIncrement = sizeIncrementIncrement;
         }
 
+        Vector3 extraVel = Vector3.Zero;
+        public void SetVelocity(Vector3 vel)
+        {
+            extraVel = vel;
+        }
         /// <summary>
         /// Updates the emitter, creating the appropriate number of particles
         /// in the appropriate positions.
@@ -146,7 +151,7 @@ namespace KazgarsRevenge
             if (elapsedTime > 0)
             {
                 // Work out how fast we are moving.
-                Vector3 velocity = (newPosition - previousPosition) / elapsedTime;
+                Vector3 velocity = (newPosition - previousPosition) / elapsedTime + extraVel;
 
                 // If we had any time left over that we didn't use during the
                 // previous update, add that to the current elapsed time.

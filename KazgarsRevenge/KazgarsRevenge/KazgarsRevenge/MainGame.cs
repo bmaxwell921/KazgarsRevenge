@@ -335,7 +335,7 @@ namespace KazgarsRevenge
             levels.CreateLevel(name);
             players.CreateMainPlayerInLevel(DUMMY_ID);
             
-            //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), levels.GetPlayerSpawnLocation() + Vector3.Right * 200);
+            enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), levels.GetPlayerSpawnLocation() + Vector3.Right * 200);
         }
 
         Vector2 vecLoadingText;

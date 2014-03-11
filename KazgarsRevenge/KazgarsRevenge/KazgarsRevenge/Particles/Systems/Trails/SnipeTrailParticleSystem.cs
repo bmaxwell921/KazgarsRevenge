@@ -28,7 +28,7 @@ namespace KazgarsRevenge
             settings.EmitterVelocitySensitivity = 0.1f;
 
             settings.StartColor = Color.Yellow;
-            settings.EndColor = Color.Yellow;
+            settings.EndColor = Color.Red;
 
             settings.MinHorizontalVelocity = 0;
             settings.MaxHorizontalVelocity = 0;
@@ -36,11 +36,11 @@ namespace KazgarsRevenge
             settings.MinVerticalVelocity = 0;
             settings.MaxVerticalVelocity = 0;
 
-            settings.MinStartSize = 76;
-            settings.MaxStartSize = 76;
+            settings.MinStartSize = 40;
+            settings.MaxStartSize = 40;
 
-            settings.MinEndSize = 30;
-            settings.MaxEndSize = 30;
+            settings.MinEndSize = 20;
+            settings.MaxEndSize = 20;
 
             settings.BlendState = BlendState.Additive;
         }

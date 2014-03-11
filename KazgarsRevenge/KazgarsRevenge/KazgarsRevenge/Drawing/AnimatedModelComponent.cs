@@ -74,6 +74,18 @@ namespace KazgarsRevenge
             this.modelParams.alpha = alpha;
         }
 
+        public void SetEmitterVel(string emitterName, float vel, string relativeBone, Vector3 offset)
+        {
+            ParticleEmitter possEmitter;
+            if (emitters.TryGetValue(emitterName, out possEmitter))
+            {
+                if (possEmitter != null)
+                {
+                    possEmitter.SetVelocity(vel * (animationPlayer.GetWorldTransforms()[model.Bones[relativeBone].Index - 2].Forward + offset));
+                }
+            }
+        }
+
         public ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachBoneName)
         {
             return AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);

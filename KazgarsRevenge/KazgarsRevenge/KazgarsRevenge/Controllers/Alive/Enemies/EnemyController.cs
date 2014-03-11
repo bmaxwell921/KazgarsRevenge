@@ -38,8 +38,8 @@ namespace KazgarsRevenge
         public string hitAniName;
         public string deathAniName;
 
-        public float attackLength;
-        public float attackCreateMillis;
+        public double attackLength;
+        public double attackCreateMillis;
         public float attackRange;
         public float noticePlayerRange;
         public float stopChasingRange;
@@ -90,7 +90,7 @@ namespace KazgarsRevenge
         }
 
 
-        string currentAniName;
+        protected string currentAniName { get; private set; }
         public void PlayAnimation(string animationName)
         {
             animations.StartClip(animationName, MixType.None);
@@ -205,8 +205,18 @@ namespace KazgarsRevenge
         protected double attackCreateCounter;
         protected double attackCounter = double.MaxValue;
         protected bool startedAttack = false;
+        protected double attackAniLength = 0;
+        protected double attackAniCounter = 0;
+        protected bool endingAttack = false;
+        protected bool raycastCheckTarget = true;
         protected virtual void AIAutoAttackingTarget(double millis)
         {
+            attackAniCounter += millis;
+            if (endingAttack && attackAniCounter >= attackAniLength)
+            {
+                PlayAnimation(settings.aniPrefix + settings.idleAniName);
+                endingAttack = false;
+            }
             Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
             if (startedAttack)
             {
@@ -218,6 +228,7 @@ namespace KazgarsRevenge
                     CreateAttack();
                     attackCreateCounter = 0;
                     startedAttack = false;
+                    endingAttack = true;
                 }
             }
             else if (targetHealth != null && targetData != null && !targetHealth.Dead)
@@ -232,10 +243,10 @@ namespace KazgarsRevenge
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
                         //when about to begin next attack, check if there is anything in between us and the target first
-                        if (settings.attackRange > LevelManager.BLOCK_SIZE && !RayCastCheckForRoom(diff))
+                        if (raycastCheckTarget && settings.attackRange > LevelManager.BLOCK_SIZE && !RayCastCheckForRoom(diff))
                         {
-                            maxPathRequestCounter = 10000;
                             currentUpdateFunction = new AIUpdateFunction(AIRunningToTarget);
+                            maxPathRequestCounter = 10000;
                             attackCounter = double.MaxValue;
                             return;
                         }
@@ -256,6 +267,7 @@ namespace KazgarsRevenge
             }
         }
 
+        protected bool usesPath = true;
         Vector3 currentPathPoint = Vector3.Zero;
         List<Vector3> currentPath;
         const float PATH_RADIUS_SATISFACTION = 10.0f;
@@ -294,7 +306,11 @@ namespace KazgarsRevenge
                 {//otherwise, run towards it
 
                     //if we're not in the same block as the target, run to next path point. otherwise, run straight towards it
-                    if (nothingBetween || Math.Abs(diff.X) > LevelManager.BLOCK_SIZE / 2 || Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE / 2)
+                    if (!usesPath)
+                    {
+
+                    }
+                    else if (nothingBetween || Math.Abs(diff.X) > LevelManager.BLOCK_SIZE / 2 || Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE / 2)
                     {
                         //if we don't have a path, request one from levels
                         if ((currentPath == null || currentPath.Count == 0))
@@ -418,6 +434,7 @@ namespace KazgarsRevenge
 
         protected virtual void StartAttack()
         {
+            attackAniCounter = 0;
             startedAttack = true;
             attackCounter = 0;
             attackCreateCounter = 0;
@@ -441,15 +458,19 @@ namespace KazgarsRevenge
         {
             if (state != EnemyState.Dying && state != EnemyState.Decaying)
             {
-                PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
-                animations.SetNonMixedBones(armBoneIndices);
                 if (d > 0)
                 {
-                    SpawnHitParticles();
+                    DoDamagedGraphics();
                 }
                 CalculateThreat(d, from);
                 minChaseCounter = 0;
             }
+        }
+        protected virtual void DoDamagedGraphics()
+        {
+            PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
+            animations.SetNonMixedBones(armBoneIndices);
+            SpawnHitParticles();
         }
         #endregion
 

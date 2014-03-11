@@ -710,15 +710,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Enemies\Dragon\d_walk.fbx">
-      <Name>d_walk</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Dragon\\d_fireball.fbx%3b</ProcessorParameters_MergeAnimations>
-      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Particles\explosion_animated.png">
       <Name>explosion_animated</Name>
       <Importer>TextureImporter</Importer>
@@ -744,6 +735,15 @@
       <Name>tar</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Enemies\Dragon\d_idle.fbx">
+      <Name>d_idle</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Dragon\\d_claw_L.fbx%3bModels\\Enemies\\Dragon\\d_claw_R.fbx%3bModels\\Enemies\\Dragon\\d_enrage.fbx%3bModels\\Enemies\\Dragon\\d_enrage_end.fbx%3bModels\\Enemies\\Dragon\\d_enrage_fire.fbx%3bModels\\Enemies\\Dragon\\d_fireball_lob_L.fbx%3bModels\\Enemies\\Dragon\\d_fireball_lob_R.fbx%3bModels\\Enemies\\Dragon\\d_old_flamethrower.fbx%3bModels\\Enemies\\Dragon\\d_snap.fbx%3bModels\\Enemies\\Dragon\\d_snap3.fbx%3bModels\\Enemies\\Dragon\\d_walk.fbx%3bModels\\Enemies\\Dragon\\d_fireball_L.fbx%3bModels\\Enemies\\Dragon\\d_fireball_R.fbx%3b</ProcessorParameters_MergeAnimations>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using BEPUphysics;
 using BEPUphysics.Entities;
+using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
@@ -24,16 +25,16 @@ namespace KazgarsRevenge
         {
             settings.aniPrefix = "d_";
             settings.moveAniName = "walk";
-            settings.attackAniName = "fireball";
+            settings.attackAniName = "d_snap";
             settings.deathAniName = "fireball";
-            settings.hitAniName = "fireball";
-            settings.idleAniName = "fireball";
+            settings.idleAniName = "idle";
 
             settings.stopChasingRange = 2000;
-            settings.attackLength = 7250;
-            settings.attackCreateMillis = 5000;
 
             ResetEncounter();
+
+            usesPath = false;
+
         }
 
         public override void Update(GameTime gameTime)
@@ -49,15 +50,18 @@ namespace KazgarsRevenge
         {
             state = DragonState.Phase1;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase1);
-            PlayAnimation(settings.aniPrefix + settings.moveAniName);
             timerCounter = 0;
             timerLength = 8000;
+            raycastCheckTarget = false;
 
+            settings.attackLength = 10000;
             settings.attackRange = 10000;
+            attackAniLength = animations.GetAniMillis("d_fireball_lob_L");
         }
 
         private void StartPhase2()
         {
+            raycastCheckTarget = true;
             state = DragonState.Phase2;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase2);
             settings.attackRange = 60;
@@ -67,8 +71,12 @@ namespace KazgarsRevenge
 
         private void StartEnrage()
         {
+            raycastCheckTarget = true;
             state = DragonState.Enrage;
             currentUpdateFunction = new AIUpdateFunction(AIDragonEnrage);
+            PlayAnimation("d_enrage", MixType.PauseAtEnd);
+            timerLength = animations.GetAniMillis("d_enrage");
+            timerCounter = 0;
         }
 
         private void ResetEncounter()
@@ -76,7 +84,8 @@ namespace KazgarsRevenge
             state = DragonState.Phase1;
             targetHealth = null;
             targetData = null;
-            enrageTimer = 120000;
+            enrageTimer = 5000;
+            nextSpitBomb = 1000;
 
             //reset position here?
 
@@ -107,17 +116,17 @@ namespace KazgarsRevenge
                 if (targetHealth != null && !targetHealth.Dead)
                 {
                     targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                    StartPhase1();
+                    StartPhase2();
                     return;
                 }
             }
         }
 
-
         bool iceHead = true;
 
         GameEntity frostPillar;
         GameEntity firePillar;
+
         private void AIDragonPhase1(double millis)
         {
             //if pillars are destroyed, go to phase 2
@@ -128,13 +137,33 @@ namespace KazgarsRevenge
 
             //launch ice or fire attacks (alternating)
             AIAutoAttackingTarget(millis);
-            
-
         }
 
-        double nextSpitBomb = 8000;
+        double nextSpitBomb = 1000;
 
-        double enrageTimer = 120000;
+        double enrageTimer = 5000;
+
+        protected override void AIRunningToTarget(double millis)
+        {
+            if (state == DragonState.Phase2)
+            {
+                nextSpitBomb -= millis;
+                if (nextSpitBomb <= 0)
+                {
+                    settings.attackRange = 2000; 
+                }
+            }
+
+            //if 2 minutes pass, enrage
+            enrageTimer -= millis;
+            if (enrageTimer <= 0)
+            {
+                StartEnrage();
+                return;
+            }
+            base.AIRunningToTarget(millis);
+        }
+
         private void AIDragonPhase2(double millis)
         {
             //run towards player
@@ -159,8 +188,36 @@ namespace KazgarsRevenge
 
         private void AIDragonEnrage(double millis)
         {
-            //breathe fire continuously at player
+            Vector3 diff = targetData.Position - physicalData.Position;
+            diff.Y = 0;
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
 
+            //breathe fire continuously at player
+            timerCounter += millis;
+            if (timerCounter >= timerLength)
+            {
+                if (currentAniName == "d_enrage")
+                {
+                    model.AddEmitter(typeof(FlameThrowerSystem), "flamethrower", 80, 5, Vector3.Zero, "d_mouth_emittor_R");
+                    model.AddEmitterSizeIncrement("flamethrower", .5f);
+                    PlayAnimation("d_enrage_fire");
+                    attacks.CreateDragonFlamethrower(this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) * 2);
+                    timerLength = animations.GetAniMillis("d_enrage_fire") * 3;
+                    timerCounter = 0;
+                }
+                else if (currentAniName == "d_enrage_fire")
+                {
+                    model.RemoveEmitter("flamethrower");
+                    PlayAnimation("d_enrage_end", MixType.PauseAtEnd);
+                    timerLength = animations.GetAniMillis("d_enrage_end");
+                    timerCounter = 0;
+                }
+                else if (currentAniName == "d_enrage_end")
+                {
+                    StartEnrage();
+                }
+            }
+            model.SetEmitterVel("flamethrower", 1000, "d_mouth_emittor_R", Vector3.Down * 5);
         }
 
         int chosenAttack = 0;
@@ -171,11 +228,11 @@ namespace KazgarsRevenge
                 case DragonState.Phase1:
                     if (iceHead)
                     {
-                        attacks.CreateDragonFrostbolt(model.GetBonePosition("d_mouth_emittor_R"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                        attacks.CreateDragonFrostbolt(model.GetBonePosition("d_mouth_emittor_R"), physicalData.OrientationMatrix.Forward, 20, this as AliveComponent);
                     }
                     else
                     {
-                        attacks.CreateDragonFirebolt(model.GetBonePosition("d_mouth_emittor_L"), physicalData.OrientationMatrix.Forward, 50, this as AliveComponent);
+                        attacks.CreateDragonFirebolt(model.GetBonePosition("d_mouth_emittor_L"), physicalData.OrientationMatrix.Forward, 20, this as AliveComponent);
                     }
                     iceHead = !iceHead;
                     break;
@@ -184,11 +241,11 @@ namespace KazgarsRevenge
                     {
                         if (iceHead)
                         {
-                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, GeneratePrimaryDamage(StatType.Strength) * 15, this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
                         }
                         else
                         {
-                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, GeneratePrimaryDamage(StatType.Strength) * 15, this as AliveComponent);
+                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
                         }
                         iceHead = !iceHead;
                         settings.attackRange = 60;
@@ -199,7 +256,6 @@ namespace KazgarsRevenge
                         switch (chosenAttack)
                         {
                             case 1:
-
                                 break;
                             case 2:
                                 break;
@@ -210,14 +266,12 @@ namespace KazgarsRevenge
                         }
                     }
                     break;
-                case DragonState.Enrage:
-                    //breathe fire
-                    break;
             }
         }
 
         protected override void StartAttack()
         {
+            attackAniCounter = 0;
             startedAttack = true;
             attackCounter = 0;
             attackCreateCounter = 0;
@@ -226,70 +280,69 @@ namespace KazgarsRevenge
                 case DragonState.Phase1:
                     //TODO: replace with fire/ice spit animation length 
                     //and put in correct animation names when we get the dragon model
-                    settings.attackLength = settings.attackLength;
-                    settings.attackCreateMillis = settings.attackCreateMillis;
                     if (iceHead)
                     {
-                        PlayAnimation(settings.aniPrefix + settings.attackAniName);
+                        PlayAnimation("d_fireball_R");
+                        settings.attackLength = animations.GetAniMillis("d_fireball_R");
+                        settings.attackCreateMillis = settings.attackLength / 2;
                     }
                     else
                     {
-                        PlayAnimation(settings.aniPrefix + settings.attackAniName);
+                        PlayAnimation("d_fireball_L");
+                        settings.attackLength = animations.GetAniMillis("d_fireball_R");
+                        settings.attackCreateMillis = settings.attackLength / 2;
                     }
+                    attackAniCounter = 0;
+                    attackAniLength = settings.attackLength;
                     break;
                 case DragonState.Phase2:
+                    //shoot spit bomb
                     if (nextSpitBomb <= 0)
                     {
                         chosenAttack = 0;
-                        nextSpitBomb = rand.Next(4000, 15000);
+                        nextSpitBomb = 1000;// rand.Next(3000, 8000);
                         if (iceHead)
                         {
-                            PlayAnimation(settings.aniPrefix + settings.attackAniName);
+                            PlayAnimation("d_fireball_lob_R");
+                            settings.attackLength = animations.GetAniMillis("d_fireball_lob_R");
+                            settings.attackCreateMillis = settings.attackLength / 2;
                         }
                         else
                         {
-                            PlayAnimation(settings.aniPrefix + settings.attackAniName);
+                            PlayAnimation("d_fireball_lob_L");
+                            settings.attackLength = animations.GetAniMillis("d_fireball_lob_L");
+                            settings.attackCreateMillis = settings.attackLength / 2;
                         }
-                        settings.attackLength = settings.attackLength;
-                        settings.attackCreateMillis = settings.attackCreateMillis;
+                        attackAniCounter = 0;
+                        attackAniLength = settings.attackLength;
                     }
                     else
                     {
-                        chosenAttack = rand.Next(1, 5);
+                        chosenAttack = rand.Next(1, 4);
                         switch (chosenAttack)
                         {
-                            case 0:
-                                //left bite
-                                PlayAnimation(settings.aniPrefix + settings.attackAniName);
-                                settings.attackLength = settings.attackLength;
-                                settings.attackCreateMillis = settings.attackCreateMillis;
-
-                                break;
                             case 1:
-                                //right bite
-                                PlayAnimation(settings.aniPrefix + settings.attackAniName);
-                                settings.attackLength = settings.attackLength;
-                                settings.attackCreateMillis = settings.attackCreateMillis;
-
+                                // bite
+                                PlayAnimation("d_snap");
+                                settings.attackLength = animations.GetAniMillis("d_snap");
+                                settings.attackCreateMillis = settings.attackLength / 2;
                                 break;
                             case 2:
                                 //left claw
-                                PlayAnimation(settings.aniPrefix + settings.attackAniName);
-                                settings.attackLength = settings.attackLength;
-                                settings.attackCreateMillis = settings.attackCreateMillis;
-
+                                PlayAnimation("d_claw_L");
+                                settings.attackLength = animations.GetAniMillis("d_claw_L");
+                                settings.attackCreateMillis = settings.attackLength / 2;
                                 break;
                             case 3:
                                 //right claw
-                                PlayAnimation(settings.aniPrefix + settings.attackAniName);
-                                settings.attackLength = settings.attackLength;
-                                settings.attackCreateMillis = settings.attackCreateMillis;
-
+                                PlayAnimation("d_claw_R");
+                                settings.attackLength = animations.GetAniMillis("d_claw_R");
+                                settings.attackCreateMillis = settings.attackLength / 2;
                                 break;
                         }
+                        attackAniCounter = 0;
+                        attackAniLength = settings.attackLength;
                     }
-                    break;
-                case DragonState.Enrage:
                     break;
             }
         }
@@ -313,6 +366,11 @@ namespace KazgarsRevenge
         protected override void SwitchToWandering()
         {
             ResetEncounter();
+        }
+
+        protected override void DoDamagedGraphics()
+        {
+            
         }
     }
 }

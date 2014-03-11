@@ -487,6 +487,9 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
+        #endregion
+
+        #region Enemy Abilities
         public void CreateFrostbolt(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
         {
             GameEntity bolt = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
@@ -658,6 +661,11 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(bombController);
 
             attacks.Add(bomb);
+        }
+
+        public void CreateDragonFlamethrower(AliveComponent creator, int damagePerTick)
+        {
+
         }
         #endregion
 

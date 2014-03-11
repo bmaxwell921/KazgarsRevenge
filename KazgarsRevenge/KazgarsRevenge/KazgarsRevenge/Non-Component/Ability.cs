@@ -19,6 +19,7 @@ namespace KazgarsRevenge
         public Texture2D icon { get; private set; }
         public AttackType PrimaryType { get; private set; }
         public AbilityType AbilityType { get; private set; }
+        public AbilityName AbilityName { get; private set; }
 
         int abilityLevel;
         public double cooldownMillisLength;
@@ -26,7 +27,7 @@ namespace KazgarsRevenge
         public bool onCooldown { get; private set; }
         String tooltip = "N/A";
 
-        public Ability(int abilityLevelIn, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType)
+        public Ability(AbilityName abilityName, int abilityLevelIn, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType)
         {   
             abilityLevel = abilityLevelIn;
             icon = iconIn;
