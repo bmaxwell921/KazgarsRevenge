@@ -52,6 +52,36 @@ namespace KazgarsRevenge
             healthPot = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH);
             goldIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.LOTS);
             #endregion
+
+            #region ranged ability array
+            rangedAbilities[0, 0] = AbilityName.AdrenalineRush;
+            rangedAbilities[0, 1] = AbilityName.Snipe;
+
+            rangedAbilities[1, 0] = AbilityName.Serrated;
+            rangedAbilities[1, 1] = AbilityName.Headshot;
+            rangedAbilities[1, 2] = AbilityName.GrapplingHook;
+
+            rangedAbilities[2, 0] = AbilityName.Homing;
+            rangedAbilities[2, 1] = AbilityName.MagneticImplant;
+            rangedAbilities[2, 2] = AbilityName.SpeedyGrapple;
+            rangedAbilities[2, 3] = AbilityName.Elusiveness;
+
+            rangedAbilities[3, 1] = AbilityName.LooseCannon;
+            rangedAbilities[3, 2] = AbilityName.FlashBomb;
+            rangedAbilities[3, 3] = AbilityName.Tumble;
+
+            rangedAbilities[4, 0] = AbilityName.Leeching;
+            rangedAbilities[4, 1] = AbilityName.MakeItRain;
+            rangedAbilities[4, 2] = AbilityName.BiggerBombs;
+            rangedAbilities[4, 3] = AbilityName.TarBomb;
+
+            rangedAbilities[5, 0] = AbilityName.Penetrating;
+            rangedAbilities[5, 1] = AbilityName.MakeItHail;
+            rangedAbilities[5, 2] = AbilityName.MoltenBolt;
+
+            rangedAbilities[6, 0] = AbilityName.Omnishot;
+            rangedAbilities[6, 1] = AbilityName.MakeItSpray;
+            #endregion
         }
 
         AbilityTargetDecal groundIndicator;
@@ -98,6 +128,9 @@ namespace KazgarsRevenge
         int selectedItemSlot = -1;
         GearSlot selectedEquipPiece;
         bool selectedEquipSlot = false;
+        AbilityName[,] rangedAbilities = new AbilityName[7 , 4];
+
+
         #endregion
 
         MouseState curMouse = Mouse.GetState();
@@ -413,7 +446,7 @@ namespace KazgarsRevenge
                 }
                 if (attState != AttackState.Locked && !looting)
                 {
-                    CheckAbilities(move);
+                    CheckAbilities(move, mouseOnGui);
                 }
 
                 if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
@@ -621,11 +654,17 @@ namespace KazgarsRevenge
                 if (showEquipment) showInventory = true;
                 else showInventory = false;
             }
+            //Talents
+            if (curKeys.IsKeyDown(Keys.P) && prevKeys.IsKeyUp(Keys.P))
+            {
+                showTalents = !showTalents;
+            }
             //Esc closes all
             if (curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
             {
                 showEquipment = false;
                 showInventory = false;
+                showTalents = false;
             }
 
 
@@ -654,7 +693,7 @@ namespace KazgarsRevenge
         /// checks player input to see what ability to use
         /// </summary>
         /// <param name="gameTime"></param>
-        private void CheckAbilities(Vector3 move)
+        private void CheckAbilities(Vector3 move, bool mouseOnGui)
         {
             if (curKeys.IsKeyDown(Keys.Escape))
             {
@@ -707,7 +746,7 @@ namespace KazgarsRevenge
 
             foreach (KeyValuePair<ButtonState, Ability> k in mouseBoundAbility)
             {//#Nate
-                if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown)
+                if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown && !mouseOnGui)
                 {
                     useAbility = true;
                     abilityToUse = k.Value;
@@ -954,7 +993,6 @@ namespace KazgarsRevenge
         /// </summary>
         private string CollidingGuiFrame()
         {
-
             foreach (KeyValuePair<string, Rectangle> k in guiOutsideRects)
             {
                 if (RectContains(k.Value, curMouse.X, curMouse.Y))
@@ -1009,7 +1047,7 @@ namespace KazgarsRevenge
         Rectangle rectMouse;
 
         //Inside Rect Dictionaries
-        //Dictionary<string, Rectangle> damageDict;
+        Dictionary<string, Rectangle> tooltipDict;
         //Dictionary<string, Rectangle> chatDict;
         Dictionary<string, Rectangle> playerDict;
         Dictionary<string, Rectangle> mapDict;
@@ -1041,7 +1079,7 @@ namespace KazgarsRevenge
             guiOutsideRects = new Dictionary<string, Rectangle>();
             guiOutsideRects.Add("abilities", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 158 * average)), (int)(622 * average), (int)(158 * average)));
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
-            guiOutsideRects.Add("damage", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
+            guiOutsideRects.Add("tooltip", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
             guiOutsideRects.Add("inventory", new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average)));
@@ -1059,7 +1097,7 @@ namespace KazgarsRevenge
             playerDict = new Dictionary<string, Rectangle>();
             mapDict = new Dictionary<string, Rectangle>();
             xpDict = new Dictionary<string, Rectangle>();
-            //damageDict = new Dictionary<string, Rectangle>();
+            tooltipDict = new Dictionary<string, Rectangle>();
             talentDict = new Dictionary<string, Rectangle>();
 
 
@@ -1069,7 +1107,7 @@ namespace KazgarsRevenge
             guiInsideRects.Add("abilities", abilityDict);
             guiInsideRects.Add("loot", lootDict);
             guiInsideRects.Add("xp", xpDict);
-            //guiInsideRects.Add("damage", damageDict);
+            guiInsideRects.Add("tooltip", tooltipDict);
             guiInsideRects.Add("map", mapDict);
             //guiInsideRects.Add("chat", chatDict);
             guiInsideRects.Add("player", playerDict);
@@ -1112,7 +1150,6 @@ namespace KazgarsRevenge
             abilityDict.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
             abilityDict.Add("item4", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
 
-            // guiOutsideRects.Add("talents", new Rectangle((int)(maxX / 2 - 203 * average), (int)(75 * average), (int)(406 * average), (int)(738 * average)));
             //Talents
             for (int i = 0; i < 4; ++i)
             {
@@ -1248,7 +1285,7 @@ namespace KazgarsRevenge
             //XP Area
             s.Draw(texWhitePixel, guiOutsideRects["xp"], Color.Brown * 0.5f);
             //Damage Tracker
-            s.Draw(texWhitePixel, guiOutsideRects["damage"], Color.Green * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Green * 0.5f);
             //Mini Map (square for now)
             s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Orange * 0.5f);
 
@@ -1377,9 +1414,15 @@ namespace KazgarsRevenge
             {
                 s.Draw(texWhitePixel, guiOutsideRects["talents"], Color.Pink * .5f);
 
-                for (int i = 0; i < 28; ++i)
+                for (int i = 0; i < 4; ++i)
                 {
-                    s.Draw(texPlaceHolder, guiInsideRects["talents"]["talent" + i], Color.White);
+                    for (int j = 0; j < 7; j++)
+                    {
+                        if (!rangedAbilities[j, i].ToString().Equals("None"))
+                        {
+                            s.Draw(GetAbility(rangedAbilities[j, i]).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
+                        }
+                    }
                 }
             }
             #endregion

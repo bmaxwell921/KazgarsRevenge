@@ -1604,7 +1604,8 @@ namespace KazgarsRevenge
                 case AbilityName.MoltenBolt:
                     return GetMoltenBolt();
                 default:
-                    throw new Exception("That ability hasn't been implemented.");
+                    return GetNone();
+                    //throw new Exception("That ability hasn't been implemented.");
             }
         }
 
@@ -1724,5 +1725,12 @@ namespace KazgarsRevenge
         HealthPotion,
         PotionOfLuck,
         InivisibilityPotion,
+
+        //#Jared TODO Nate added these, need support for them
+        MakeItHail,
+        Elusiveness,
+        Tumble,
+        MakeItSpray,
+
     }
 }
