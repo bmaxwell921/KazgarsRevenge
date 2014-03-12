@@ -106,7 +106,7 @@ namespace KazgarsRevenge
 
         public override void Load(object info)
         {
-            // Do nothing
+            this.selections.Clear();
         }
 
         public override object Unload()

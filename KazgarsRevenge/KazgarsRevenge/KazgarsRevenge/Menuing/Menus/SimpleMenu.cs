@@ -49,7 +49,10 @@ namespace KazgarsRevenge
 
         public virtual void Draw(GameTime gameTime)
         {
-            mm.sb.Draw(background, backgroundBounds, Color.White);
+            if (background != null)
+            {
+                mm.sb.Draw(background, backgroundBounds, Color.White);
+            }
             // Just draw the title
             mm.sb.DrawString(mm.titleFont, title, drawLocation, NORMAL_COLOR, 0, drawCenter, mm.guiScale, SpriteEffects.None, 0);
         }

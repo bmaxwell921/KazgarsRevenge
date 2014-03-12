@@ -80,6 +80,8 @@ namespace KazgarsRevenge
             Texture2D background = Texture2DUtil.Instance.GetTexture(TextureStrings.Menu.BACKGRND);
             Rectangle backgroundBox = new Rectangle(0, 0, screenWidth, screenHeight);
 
+            NewAccountMenu newAcct = new NewAccountMenu(this, NEW_ACCOUNT, titleLoc, background, backgroundBox, new Vector2(screenWidth / 2f, screenHeight * 0.47f));
+
             LoadingMenu loading = new LoadingMenu(this, LOADING, titleLoc, background, backgroundBox);
 
             LevelSelectMenu levelsMenu = new LevelSelectMenu(this, LEVELS, titleLoc, background, backgroundBox, new Vector2(screenWidth / 2f, screenHeight * 0.47f));
@@ -99,7 +101,7 @@ namespace KazgarsRevenge
             menus[ACCOUNTS] = accountMenu;
             menus[LEVELS] = levelsMenu;
             menus[LOADING] = loading;
-            menus[NEW_ACCOUNT] = null;
+            menus[NEW_ACCOUNT] = newAcct;
         }
         #endregion
 

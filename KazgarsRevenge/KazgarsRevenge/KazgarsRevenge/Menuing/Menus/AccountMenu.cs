@@ -29,6 +29,7 @@ namespace KazgarsRevenge
         /// <param name="info"></param>
         public override void Load(object info)
         {
+            base.Load(info);
             // All the accounts are our selections
             accounts = AccountUtil.Instance.GetAccounts();
             float yOffset = mm.normalFont.MeasureString(NEW_ACCT).Y;
@@ -51,9 +52,16 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public override object Unload()
         {
-            mm.SetPlayerAccount(accounts[currentSel]);
-            // Accounts and selections should match
-            return accounts[currentSel];
+            if (currentSel < accounts.Count)
+            {
+                // Actually chose an account
+                mm.SetPlayerAccount(accounts[currentSel]);
+                // Accounts and selections should match
+                return accounts[currentSel];
+            }
+
+            // Chose new
+            return null;
         }
     }
 }

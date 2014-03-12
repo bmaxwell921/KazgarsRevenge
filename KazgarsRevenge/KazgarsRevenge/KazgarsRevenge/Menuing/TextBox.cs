@@ -2,6 +2,7 @@
 using System;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using KazgarsRevenge;
 
 /// <summary>
 /// Taken from http://stackoverflow.com/questions/10216757/adding-inputbox-like-control-to-xna-game
@@ -13,14 +14,28 @@ public class TextBox : IKeyboardSubscriber
 
     SpriteFont _font;
 
+    private string test = "Enter Name";
+
     public int X { get; set; }
     public int Y { get; set; }
     public int Width { get; set; }
     public int Height { get; private set; }
+    private Vector2 _guiScale;
+    public Vector2 guiScale
+    {
+        get
+        {
+            return _guiScale;
+        }
+        set
+        {
+            average = (value.X + value.Y) / 2;
+            _guiScale = value;
+        }
+    }
+    private float average;
 
     public bool Highlighted { get; set; }
-
-    public bool PasswordBox { get; set; }
 
     string _text = "";
     public String Text
@@ -48,7 +63,7 @@ public class TextBox : IKeyboardSubscriber
 
                 _text = filtered;
 
-                if (_font.MeasureString(_text).X > Width)
+                if (_text.Length > NewAccountMenu.NAME_LENGTH_LIMIT)
                 {
                     //recursion to ensure that text cannot be larger than the box
                     Text = _text.Substring(0, _text.Length - 1);
@@ -80,33 +95,33 @@ public class TextBox : IKeyboardSubscriber
     {
         bool caretVisible = true;
 
-        if ((gameTime.TotalGameTime.TotalMilliseconds % 1000) < 500)
+        if (Text.Length == 0 || (gameTime.TotalGameTime.TotalMilliseconds % 1000) < 500)
             caretVisible = false;
         else
             caretVisible = true;
 
-        String toDraw = Text;
+        String toDraw = Text.Length == 0 ? test : Text;
+        Height = (int) (_font.MeasureString(toDraw).Y * guiScale.Y);
 
-        if (PasswordBox)
-        {
-            toDraw = "";
-            for (int i = 0; i < Text.Length; i++)
-                toDraw += (char)0x2022; //bullet character (make sure you include it in the font!!!!)
-        }
-
-        //my texture was split vertically in 2 parts, upper was unhighlighted, lower was highlighted version of the box
-        spriteBatch.Draw(_textBoxTexture, new Rectangle(X, Y, Width, Height), new Rectangle(0, Highlighted ? (_textBoxTexture.Height / 2) : 0, _textBoxTexture.Width, _textBoxTexture.Height / 2), Color.White);
-
-
+        spriteBatch.Draw(_textBoxTexture, new Rectangle(X, Y, (int) (Width), (int) (Height)), Color.White);
 
         Vector2 size = _font.MeasureString(toDraw);
+        size.X = size.X * guiScale.X;
+        size.Y = size.Y * guiScale.Y;
 
         if (caretVisible && Selected)
-            spriteBatch.Draw(_caretTexture, new Vector2(X + (int)size.X + 2, Y + 2), Color.White); //my caret texture was a simple vertical line, 4 pixels smaller than font size.Y
+        {
+            spriteBatch.Draw(_caretTexture, new Rectangle((int) (X + size.X + 2), (int) ((Y + 2)), 2, (int)size.Y - 2), Color.Yellow);
+        }
 
         //shadow first, then the actual text
-        spriteBatch.DrawString(_font, toDraw, new Vector2(X, Y) + Vector2.One, Color.Black);
-        spriteBatch.DrawString(_font, toDraw, new Vector2(X, Y), Color.White);
+        spriteBatch.DrawString(_font, toDraw, new Vector2(X, Y) + Vector2.One, Color.Black, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+        spriteBatch.DrawString(_font, toDraw, new Vector2(X, Y) + Vector2.One, Color.White, 0, Vector2.Zero, guiScale, SpriteEffects.None, 0);
+    }
+
+    public void ClearText()
+    {
+        _text = "";
     }
 
     public bool ReceiveTextInput(char inputChar)
