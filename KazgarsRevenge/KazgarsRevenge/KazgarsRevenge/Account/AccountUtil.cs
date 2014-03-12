@@ -20,6 +20,8 @@ namespace KazgarsRevenge
         private static readonly String ACCT_PATH = "accounts";
         private static readonly String ACCT_EXT = ".json";
 
+        private bool newAccts;
+
         // Accessor
         public static AccountUtil Instance
         {
@@ -41,6 +43,7 @@ namespace KazgarsRevenge
         {
             accounts = new List<Account>();
             CreateFiles();
+            newAccts = true;
         }
 
         private void CreateFiles()
@@ -57,9 +60,10 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public IList<Account> GetAccounts()
         {
-            if (accounts.Count <= 0)
+            if (newAccts)
             {
                 LoadAccounts();
+                newAccts = false;
             }
 
             return accounts;
@@ -68,6 +72,7 @@ namespace KazgarsRevenge
         // Loads all the accounts from file
         private void LoadAccounts()
         {
+            accounts.Clear();
             string[] saves = Directory.GetFiles(ACCT_PATH, "*" + ACCT_EXT).Select(path => Path.GetFileName(path)).ToArray();
             foreach (string save in saves)
             {
@@ -75,7 +80,6 @@ namespace KazgarsRevenge
                 {
                     string json = sr.ReadToEnd();
                     Account read = JsonConvert.DeserializeObject<Account>(json);
-                    Console.WriteLine(read);
                     accounts.Add(read);
                 }
             }
@@ -91,6 +95,7 @@ namespace KazgarsRevenge
             {
                 file.WriteLine(account.ToString());
             }
+            newAccts = true;
         }
     }
 }
