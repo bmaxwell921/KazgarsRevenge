@@ -37,14 +37,6 @@ namespace KazgarsRevenge
             handledEvents = new Dictionary<IEvent, IAction>();
             this.selections = new List<SelectionBox>();
             this.currentSel = -1;
-
-            SetUpHandledEvents();
-        }
-
-        private void SetUpHandledEvents()
-        {
-            handledEvents[new KeyEvent(Keys.Up)] = new UpAction(this);
-            handledEvents[new KeyEvent(Keys.Down)] = new DownAction(this);
         }
 
         /// <summary>
@@ -132,7 +124,7 @@ namespace KazgarsRevenge
             }
             else if (key == Keys.Up)
             {
-                this.MoveToNextSel();
+                this.MoveToPrevSel();
                 return true;
             }
             return base.ReceiveSpecialInput(key);
