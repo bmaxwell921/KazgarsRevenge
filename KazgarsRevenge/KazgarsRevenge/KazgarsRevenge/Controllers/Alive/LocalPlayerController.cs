@@ -622,7 +622,6 @@ namespace KazgarsRevenge
             {
                 if (curKeys.IsKeyDown(k.Key) && prevKeys.IsKeyUp(k.Key) && !k.Value.onCooldown && abilityLearnedFlags[k.Value.AbilityName])
                 {
-                    bool look = abilityLearnedFlags[k.Value.AbilityName];               //#JARED FIND ME!!!!!  Why is this always coming back as true / why is none being returned for the name?
                     AbilityName name = k.Value.AbilityName;
                     useAbility = true;
                     abilityToUse = k.Value;
@@ -631,7 +630,7 @@ namespace KazgarsRevenge
             }
 
             foreach (KeyValuePair<ButtonState, Ability> k in mouseBoundAbility)
-            {//#Nate
+            {
                 if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown && !mouseOnGui && abilityLearnedFlags[k.Value.AbilityName])
                 {
                     useAbility = true;
@@ -862,6 +861,29 @@ namespace KazgarsRevenge
             }
         }
 
+        private void talentHelp(int check, AbilityNode[,] talents)
+        {
+            if (talents[(int)check / 4, check % 4] != null)
+                {   //if not learned
+                    if (!abilityLearnedFlags[talents[(int)check / 4, check % 4].name])
+                    {   //if can be unlocked
+                        if (talents[(int)check / 4, check % 4].canUnlock() && (totalTalentPoints - spentTalentPoints) >= talents[(int)check / 4, check % 4].cost)
+                        {   //unlock it
+                            spentTalentPoints += talents[(int)check / 4, check % 4].cost;
+                            abilityLearnedFlags[talents[(int)check / 4, check % 4].name] = true;
+                        }
+                        else
+                        {   //floating error TODO decide if we like that it's over the interface or not
+                            ((MainGame)Game).AddAlert("I can't unlock that yet!");
+                        }
+                    }
+                    else        //if talent is already learned
+                    {
+                        selectedTalentSlot = check;
+                    }
+                }
+          }
+
         private void ResetTargettedEntity()
         {
             if (mouseHoveredHealth != null)
@@ -1051,6 +1073,19 @@ namespace KazgarsRevenge
                         if (innerClicked != null && selectedTalentSlot != -1)
                         {
                             int check = Convert.ToInt32(innerClicked.Remove(0, 7));
+                            for (int i = 0; i < 12; i++)
+                            {   //if ability is already on bar
+                                if (boundAbilities[i].Value.AbilityName.Equals(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
+                                {   //set that slot to empty
+                                    boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(AbilityName.None));
+                                }
+                            }
+                            //if ability is already on right mouse
+                            if (mouseBoundAbility[0].Value.AbilityName.Equals(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
+                            {   //set that slot to empty
+                                mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(AbilityName.None));
+                            }
+
                             if(currentTalentTree == TalentTrees.ranged){
                                 if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 else boundAbilities[check] = new KeyValuePair<Keys,Ability>(boundAbilities[check].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
@@ -1077,25 +1112,15 @@ namespace KazgarsRevenge
                             int check = Convert.ToInt32(innerClicked.Remove(0, 6));
                             if (currentTalentTree == TalentTrees.ranged)
                             {
-                                if (rangedAbilities[(int)check / 4, check % 4] != null)
-                                {   //if not learned
-                                    if (!abilityLearnedFlags[rangedAbilities[(int)check / 4, check % 4].name])
-                                    {   //if can be unlocked
-                                        if (rangedAbilities[(int)check / 4, check % 4].canUnlock() && (totalTalentPoints - spentTalentPoints) >= rangedAbilities[(int)check / 4, check % 4].cost)
-                                        {   //unlock it
-                                            spentTalentPoints += rangedAbilities[(int)check / 4, check % 4].cost;
-                                            abilityLearnedFlags[rangedAbilities[(int)check / 4, check % 4].name] = true;
-                                        }
-                                        else
-                                        {   //floating error TODO decide if we like that it's over the interface or not
-                                            ((MainGame)Game).AddAlert("I can't unlock that yet!");
-                                        }
-                                    }
-                                    else        //is learned
-                                    {
-                                        selectedTalentSlot = check;
-                                    }
-                                }
+                                talentHelp(check, rangedAbilities);
+                            }
+                            else if (currentTalentTree == TalentTrees.melee)
+                            {
+                                //talentHelp(check, meleeAbilities);
+                            }
+                            else if (currentTalentTree == TalentTrees.magic)
+                            {
+                                //talentHelp(check, magicAbilities);
                             }
                         }
                         break;

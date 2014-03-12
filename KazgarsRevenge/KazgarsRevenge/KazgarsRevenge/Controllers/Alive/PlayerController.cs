@@ -399,10 +399,10 @@ namespace KazgarsRevenge
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.None));
             boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.None));
             //added item slot abilities
-            boundAbilities[8] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.None));
-            boundAbilities[9] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.None));
-            boundAbilities[10] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.None));
-            boundAbilities[11] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.None));
+            boundAbilities[8] = new KeyValuePair<Keys, Ability>(Keys.D1, GetAbility(AbilityName.None));
+            boundAbilities[9] = new KeyValuePair<Keys, Ability>(Keys.D2, GetAbility(AbilityName.None));
+            boundAbilities[10] = new KeyValuePair<Keys, Ability>(Keys.D3, GetAbility(AbilityName.None));
+            boundAbilities[11] = new KeyValuePair<Keys, Ability>(Keys.D4, GetAbility(AbilityName.None));
 
             mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(ButtonState.Pressed, GetAbility(AbilityName.None));
             for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
