@@ -61,37 +61,5 @@ namespace KazgarsRevenge
             }
             base.Draw(gameTime);
         }
-
-        #region Do Nothings
-        /// <summary>
-        /// Do nothing
-        /// </summary>
-        /// <param name="e"></param>
-        public override void HandleEvent(IEvent e)
-        {
-            // Do nothing, this should handle no events
-        }
-
-        /// <summary>
-        /// Always returns false
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        public override bool Handles(IEvent e)
-        {
-            // Doesn't handle any
-            return false;
-        }
-
-        /// <summary>
-        /// Do nothing
-        /// </summary>
-        /// <param name="e"></param>
-        /// <param name="action"></param>
-        public override void Register(IEvent e, IAction action)
-        {
-            // Do nothing
-        }
-        #endregion
     }
 }

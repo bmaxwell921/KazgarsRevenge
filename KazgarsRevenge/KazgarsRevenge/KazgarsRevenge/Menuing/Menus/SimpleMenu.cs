@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KazgarsRevenge
 {
@@ -57,10 +58,26 @@ namespace KazgarsRevenge
 
         public abstract object Unload();
 
-        public abstract void HandleEvent(IEvent e);
+        #region Keyboard Registation
+        public bool Selected { get; set; }
 
-        public abstract bool Handles(IEvent e);
-
-        public abstract void Register(IEvent e, IAction action);
+        // Default do nothing behavior
+        public virtual bool ReceiveTextInput(char inputChar)
+        {
+            return false;
+        }
+        public virtual bool ReceiveTextInput(string text)
+        {
+            return false;
+        }
+        public virtual bool ReceiveCommandInput(char command)
+        {
+            return false;
+        }
+        public virtual bool ReceiveSpecialInput(Keys key)
+        {
+            return false;
+        }
+        #endregion
     }
 }

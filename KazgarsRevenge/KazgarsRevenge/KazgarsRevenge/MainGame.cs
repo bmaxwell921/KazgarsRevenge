@@ -18,6 +18,7 @@ using BEPUphysicsDrawer;
 using BEPUphysicsDrawer.Lines;
 using KazgarsRevenge.Libraries;
 using System.Threading;
+using EventInput;
 
 namespace KazgarsRevenge
 {
@@ -118,6 +119,10 @@ namespace KazgarsRevenge
             }
 
             Texture2DUtil.Instance.SetContent(Content);
+
+            // Adds a keyboard to listen for key events
+            Services.AddService(typeof(KeyboardDispatcher), new KeyboardDispatcher(this.Window));
+            Services.AddService(typeof(KeyboardLayout), new KeyboardLayout());
 
             camera = new CameraComponent(this);
             Components.Add(camera);

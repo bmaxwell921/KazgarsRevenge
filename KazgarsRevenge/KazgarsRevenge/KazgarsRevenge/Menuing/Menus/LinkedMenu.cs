@@ -123,6 +123,21 @@ namespace KazgarsRevenge
             return null;
         }
 
+        public override bool ReceiveSpecialInput(Keys key)
+        {
+            if (key == Keys.Down)
+            {
+                this.MoveToNextSel();
+                return true;
+            }
+            else if (key == Keys.Up)
+            {
+                this.MoveToNextSel();
+                return true;
+            }
+            return base.ReceiveSpecialInput(key);
+        }
+
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
@@ -130,29 +145,6 @@ namespace KazgarsRevenge
             {
                 sb.sel.Draw();
             }
-        }
-
-        public override void HandleEvent(IEvent e)
-        {
-            /*
-             * Down pressed: Go to next selection
-             * Up pressed: Go to prev selection
-             */
-            if (!Handles(e))
-            {
-                return;
-            }
-            handledEvents[e].Perform();
-        }
-
-        public override bool Handles(IEvent e)
-        {
-            return handledEvents.ContainsKey(e);
-        }
-
-        public override void Register(IEvent e, IAction action)
-        {
-            handledEvents[e] = action;
         }
 
         /// <summary>

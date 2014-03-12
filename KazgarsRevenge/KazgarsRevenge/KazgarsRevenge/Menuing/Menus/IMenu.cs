@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     /// <summary>
     /// Interface describing behavior for menu screens
     /// </summary>
-    public interface IMenu : EventHandler
+    public interface IMenu : IKeyboardSubscriber
     {
         /// <summary>
         /// Loads the Menu

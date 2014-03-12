@@ -9,6 +9,8 @@ namespace KazgarsRevenge
 {
     public class AccountMenu : LinkedMenu
     {
+        private static readonly string NEW_ACCT = "New Account";
+
         // The accounts
         private IList<Account> accounts;
 
@@ -29,9 +31,9 @@ namespace KazgarsRevenge
         {
             // All the accounts are our selections
             accounts = AccountUtil.Instance.GetAccounts();
+            float yOffset = mm.normalFont.MeasureString(NEW_ACCT).Y;
             if (accounts.Count > 0)
             {
-                float yOffset = mm.normalFont.MeasureString(accounts[0].Name).Y;
                 // Create a selection for each
                 for (int i = 0; i < accounts.Count; ++i)
                 {
@@ -39,6 +41,8 @@ namespace KazgarsRevenge
                     base.AddSelection(new SelectionV2(base.mm, account.Name, acctsDrawLoc + new Vector2(0, yOffset * i)), (LinkedMenu)mm.menus[MenuManager.LEVELS]);
                 }
             }
+
+            base.AddSelection(new SelectionV2(base.mm, NEW_ACCT, acctsDrawLoc + new Vector2(0, yOffset * accounts.Count)), (LinkedMenu)mm.menus[MenuManager.NEW_ACCOUNT]);
         }
 
         /// <summary>
