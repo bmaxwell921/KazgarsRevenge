@@ -74,7 +74,7 @@ namespace KazgarsRevenge
             Dead = false;
         }
         public ParticleEmitter(ParticleSystem particleSystem,
-                       float particlesPerSecond, Vector3 initialPosition,Vector3 offset, int attachIndex)
+                       float particlesPerSecond, Vector3 initialPosition, Vector3 offset, int attachIndex)
         {
             this.particleSystem = particleSystem;
 

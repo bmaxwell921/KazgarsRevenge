@@ -36,6 +36,7 @@ namespace KazgarsRevenge
         AdrenalineRush,
         Homing,
         SerratedBleeding,
+        Elusiveness,
     }
     public enum BuffState
     {
@@ -293,6 +294,19 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.Normal;
         }
 
+        public int DamageDodgeable(DeBuff db, int d, GameEntity from)
+        {
+            if (activeBuffs.ContainsKey(Buff.Elusiveness))
+            {
+                //dodge
+                return 0;
+            }
+            else
+            {
+                return Damage(db, d, from);
+            }
+        }
+
         public int Damage(DeBuff db, int d, GameEntity from)
         {
             if (db == DeBuff.Igniting && activeDebuffs.ContainsKey(DeBuff.Tar))
@@ -303,8 +317,6 @@ namespace KazgarsRevenge
 
             int actualDamage = Damage(d, false);
             TakeDamage(actualDamage, from);
-
-
 
             //handle negative effect
             if (db != DeBuff.None)
@@ -497,6 +509,7 @@ namespace KazgarsRevenge
             {Buff.AdrenalineRush, 6000},
             {Buff.Homing, 6000},
             {Buff.SerratedBleeding, 6000},
+            {Buff.Elusiveness, 6000},
         };
 
         Dictionary<Buff, double> buffTickLengths = new Dictionary<Buff, double>()

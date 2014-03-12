@@ -191,6 +191,7 @@
     <Compile Include="Networking\MessageSender.cs" />
     <Compile Include="Account\AccountUtil.cs" />
     <Compile Include="Misc Components\DropTable.cs" />
+    <Compile Include="Non-Component\AbilityNode.cs" />
     <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
     <Compile Include="Networking\Handlers\GameStateChangeHandler.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Particles\Systems\Debuffs\FrostAOEMist.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOEMistSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOESystem.cs" />
+    <Compile Include="Particles\Systems\Charge\DragonFireChargeSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionDebrisSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionMainSystem.cs" />
@@ -256,7 +258,7 @@
     <Compile Include="Particles\Systems\Debuffs\TarDebuffSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\AnimatedFireExplosionSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireArrowParticleSystem.cs" />
-    <Compile Include="Particles\Systems\FrostChargeSystem.cs" />
+    <Compile Include="Particles\Systems\Charge\FrostChargeSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireMistTrailSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FrostMistParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FrostboltTrailParticleSystem.cs" />

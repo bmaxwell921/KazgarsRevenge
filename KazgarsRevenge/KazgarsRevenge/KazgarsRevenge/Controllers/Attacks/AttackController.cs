@@ -127,7 +127,7 @@ namespace KazgarsRevenge
         {
             if (t != null)
             {
-                int d = t.Damage(debuff, (int)damage, creator.Entity);
+                int d = t.DamageDodgeable(debuff, (int)damage, creator.Entity);
                 damageDealt += d;
                 if (lifesteal)
                 {
