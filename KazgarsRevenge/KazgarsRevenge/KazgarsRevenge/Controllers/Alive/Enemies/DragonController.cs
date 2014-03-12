@@ -24,10 +24,7 @@ namespace KazgarsRevenge
             : base(game, entity, 10)
         {
             settings.aniPrefix = "d_";
-            settings.moveAniName = "walk";
             settings.attackAniName = "snap";
-            settings.deathAniName = "death";
-            settings.idleAniName = "idle";
 
             settings.stopChasingRange = 2000;
 
@@ -84,7 +81,7 @@ namespace KazgarsRevenge
             state = DragonState.Phase1;
             targetHealth = null;
             targetData = null;
-            enrageTimer = 5000;
+            enrageTimer = 120000;
             nextSpitBomb = 1000;
 
             //reset position here?
@@ -244,29 +241,20 @@ namespace KazgarsRevenge
                     {
                         if (iceHead)
                         {
-                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, 1, this as AliveComponent);
                         }
                         else
                         {
-                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
+                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, 1, this as AliveComponent);
                         }
                         iceHead = !iceHead;
                         settings.attackRange = 60;
                     }
                     else
                     {
-                        attacks.CreateMeleeAttack(model.GetBonePosition("d_mouth_emittor_R"), 35, false, this as AliveComponent);
-                        switch (chosenAttack)
-                        {
-                            case 1:
-                                break;
-                            case 2:
-                                break;
-                            case 3:
-                                break;
-                            default:
-                                break;
-                        }
+                        Vector3 dir = targetData.Position - physicalData.Position;
+                        dir.Y = 0;
+                        attacks.CreateCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 20, GetPhysicsYaw(dir), 35, this as AliveComponent);
                     }
                     break;
             }
@@ -285,13 +273,13 @@ namespace KazgarsRevenge
                     //and put in correct animation names when we get the dragon model
                     if (iceHead)
                     {
-                        PlayAnimation("d_fireball_R", MixType.MixInto);
+                        PlayAnimation("d_fireball_R");
                         settings.attackLength = animations.GetAniMillis("d_fireball_R");
                         settings.attackCreateMillis = settings.attackLength / 2;
                     }
                     else
                     {
-                        PlayAnimation("d_fireball_L", MixType.MixInto);
+                        PlayAnimation("d_fireball_L");
                         settings.attackLength = animations.GetAniMillis("d_fireball_R");
                         settings.attackCreateMillis = settings.attackLength / 2;
                     }
@@ -303,16 +291,16 @@ namespace KazgarsRevenge
                     if (nextSpitBomb <= 0)
                     {
                         chosenAttack = 0;
-                        nextSpitBomb = 1000;// rand.Next(3000, 8000);
+                        nextSpitBomb = rand.Next(3000, 8000);
                         if (iceHead)
                         {
-                            PlayAnimation("d_fireball_lob_R", MixType.MixInto);
+                            PlayAnimation("d_fireball_lob_R");
                             settings.attackLength = animations.GetAniMillis("d_fireball_lob_R");
                             settings.attackCreateMillis = settings.attackLength / 2;
                         }
                         else
                         {
-                            PlayAnimation("d_fireball_lob_L", MixType.MixInto);
+                            PlayAnimation("d_fireball_lob_L");
                             settings.attackLength = animations.GetAniMillis("d_fireball_lob_L");
                             settings.attackCreateMillis = settings.attackLength / 2;
                         }
@@ -326,19 +314,19 @@ namespace KazgarsRevenge
                         {
                             case 1:
                                 // bite
-                                PlayAnimation("d_snap", MixType.MixInto);
+                                PlayAnimation("d_snap");
                                 settings.attackLength = animations.GetAniMillis("d_snap");
                                 settings.attackCreateMillis = settings.attackLength / 2;
                                 break;
                             case 2:
                                 //left claw
-                                PlayAnimation("d_claw_L", MixType.MixInto);
+                                PlayAnimation("d_claw_L");
                                 settings.attackLength = animations.GetAniMillis("d_claw_L");
                                 settings.attackCreateMillis = settings.attackLength / 2;
                                 break;
                             case 3:
                                 //right claw
-                                PlayAnimation("d_claw_R", MixType.MixInto);
+                                PlayAnimation("d_claw_R");
                                 settings.attackLength = animations.GetAniMillis("d_claw_R");
                                 settings.attackCreateMillis = settings.attackLength / 2;
                                 break;

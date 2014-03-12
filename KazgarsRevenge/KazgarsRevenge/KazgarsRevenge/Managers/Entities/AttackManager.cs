@@ -487,6 +487,31 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
+
+
+        public void CreateCleave(Vector3 position, float yaw, int damage, AliveComponent creator)
+        {
+            position.Y = 20;
+            GameEntity cleave = new GameEntity("att", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(position, 60, 40, 30);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            cleave.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, cleave);
+            cleave.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            AttackController controller = new AttackController(mainGame, cleave, damage, GetHitFaction(creator), creator);
+            controller.HitMultipleTargets();
+            cleave.AddComponent(typeof(AttackController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(cleave);
+
+            //TODO: spawn particles or w/e
+        }
         #endregion
 
         #region Enemy Abilities
