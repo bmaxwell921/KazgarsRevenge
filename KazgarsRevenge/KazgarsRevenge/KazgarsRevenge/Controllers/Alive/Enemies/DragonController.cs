@@ -32,6 +32,9 @@ namespace KazgarsRevenge
 
             usesPath = false;
 
+            chargingBoneNames.Add("d_mouth_emittor_R");
+            chargingBoneNames.Add("d_mouth_emittor_L");
+
         }
 
         public override void Update(GameTime gameTime)
@@ -61,7 +64,7 @@ namespace KazgarsRevenge
             raycastCheckTarget = true;
             state = DragonState.Phase2;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase2);
-            settings.attackRange = 60;
+            settings.attackRange = 80;
 
             nextSpitBomb = 8000;
         }
@@ -113,7 +116,7 @@ namespace KazgarsRevenge
                 if (targetHealth != null && !targetHealth.Dead)
                 {
                     targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                    StartPhase2();
+                    StartPhase1();
                     return;
                 }
             }
@@ -195,7 +198,7 @@ namespace KazgarsRevenge
             {
                 if (currentAniName == "d_enrage")
                 {
-                    model.AddEmitter(typeof(FlameThrowerSystem), "flamethrower", 100, 5, Vector3.Zero, "d_mouth_emittor_R");
+                    model.AddEmitter(typeof(FlameThrowerSystem), "flamethrower", 100, 5, Vector3.Right * 15, "d_mouth_emittor_R");
                     model.AddEmitter(typeof(FrostThrowerSystem), "frostthrower", 100, 5, Vector3.Zero, "d_mouth_emittor_L");
 
                     PlayAnimation("d_enrage_fire");
@@ -241,20 +244,20 @@ namespace KazgarsRevenge
                     {
                         if (iceHead)
                         {
-                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, 1, this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, 1, this as AliveComponent);
                         }
                         else
                         {
-                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, 1, this as AliveComponent);
+                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, 1, this as AliveComponent);
                         }
                         iceHead = !iceHead;
-                        settings.attackRange = 60;
+                        settings.attackRange = 80;
                     }
                     else
                     {
                         Vector3 dir = targetData.Position - physicalData.Position;
                         dir.Y = 0;
-                        attacks.CreateCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 20, GetPhysicsYaw(dir), 35, this as AliveComponent);
+                        attacks.CreateCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetPhysicsYaw(dir), 35, this as AliveComponent);
                     }
                     break;
             }
@@ -273,12 +276,14 @@ namespace KazgarsRevenge
                     //and put in correct animation names when we get the dragon model
                     if (iceHead)
                     {
+                        //AddChargeParticles(typeof(FrostChargeSystem));
                         PlayAnimation("d_fireball_R");
                         settings.attackLength = animations.GetAniMillis("d_fireball_R");
                         settings.attackCreateMillis = settings.attackLength / 2;
                     }
                     else
                     {
+                        //AddChargeParticles(typeof(DragonFireChargeSystem));
                         PlayAnimation("d_fireball_L");
                         settings.attackLength = animations.GetAniMillis("d_fireball_R");
                         settings.attackCreateMillis = settings.attackLength / 2;

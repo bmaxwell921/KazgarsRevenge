@@ -494,7 +494,7 @@ namespace KazgarsRevenge
             position.Y = 20;
             GameEntity cleave = new GameEntity("att", FactionType.Neutral, EntityType.None);
 
-            Entity physicalData = new Box(position, 60, 40, 30);
+            Entity physicalData = new Box(position, 40, 40, 100);
             physicalData.IsAffectedByGravity = false;
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
             cleave.AddSharedData(typeof(Entity), physicalData);
@@ -890,6 +890,7 @@ namespace KazgarsRevenge
 
             float dir = (float)rand.Next(0, 628) / 100f;
             Entity physicalData = new Box(position, 1, 1, 1);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoBroadPhase;
             physicalData.IsAffectedByGravity = false;
             physicalData.LinearVelocity = new Vector3((float)Math.Cos(dir) * 100, 150, (float)Math.Sin(dir) * 100);
             debris.AddSharedData(typeof(Entity), physicalData);
@@ -917,6 +918,7 @@ namespace KazgarsRevenge
 
             float dir = (float)rand.Next(0, 628) / 100f;
             Entity physicalData = new Box(position, 1, 1, 1);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoBroadPhase;
             physicalData.IsAffectedByGravity = false;
             physicalData.LinearVelocity = new Vector3((float)Math.Cos(dir) * 100, 150, (float)Math.Sin(dir) * 100);
             debris.AddSharedData(typeof(Entity), physicalData);

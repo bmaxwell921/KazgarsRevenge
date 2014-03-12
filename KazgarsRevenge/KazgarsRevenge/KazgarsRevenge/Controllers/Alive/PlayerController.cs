@@ -1571,6 +1571,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region Ability Definitions
+        
         protected Ability GetAbility(AbilityName ability)
         {
             switch (ability)
@@ -1579,10 +1580,6 @@ namespace KazgarsRevenge
                     return GetNone();
                 case AbilityName.Snipe:
                     return GetSnipe();
-                case AbilityName.Garrote:
-                    return GetHeartStrike();
-                case AbilityName.IceClawPrison:
-                    return GetIceClawPrison();
                 case AbilityName.Omnishot:
                     return GetOmniShot();
                 case AbilityName.AdrenalineRush:
@@ -1599,10 +1596,14 @@ namespace KazgarsRevenge
                     return GetTarBomb();
                 case AbilityName.GrapplingHook:
                     return GetGrapplingHook();
-                case AbilityName.ChainSpear:
-                    return GetChainSpear();
                 case AbilityName.MoltenBolt:
                     return GetMoltenBolt();
+                case AbilityName.Garrote:
+                    return GetGarrote();
+                case AbilityName.ChainSpear:
+                    return GetChainSpear();
+                case AbilityName.IceClawPrison:
+                    return GetIceClawPrison();
                 default:
                     return GetNone();
                     //throw new Exception("That ability hasn't been implemented.");
@@ -1630,7 +1631,7 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.Snipe, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SNIPE), 1000, AttackType.Ranged, "snipe", AbilityType.Instant);
         }
-        protected Ability GetHeartStrike()
+        protected Ability GetGarrote()
         {
             return new Ability(AbilityName.Garrote, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEART_STRIKE), 6000, AttackType.Ranged, "flip", AbilityType.Instant);
         }
@@ -1678,6 +1679,43 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.MoltenBolt, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MOLT_BOLT), 2000, AttackType.Ranged, "moltenbolt", AbilityType.Instant);
         }
+        protected Ability GetPenetrating()
+        {
+            return new Ability(AbilityName.Penetrating, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.PENETRATING), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetHoming()
+        {
+            return new Ability(AbilityName.Penetrating, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HOMING), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetSerrated()
+        {
+            return new Ability(AbilityName.Penetrating, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SERRATED), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetHeadshot()
+        {
+            return new Ability(AbilityName.Penetrating, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEADSHOT), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetMagneticImplant()
+        {
+            return new Ability(AbilityName.Penetrating, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAGNETIC_IMPLANT), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetMakeItHail()
+        {
+            return new Ability(AbilityName.Penetrating, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_HAIL), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetStrongWinds()
+        {
+            return new Ability(AbilityName.Penetrating, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.STRONG_WINDS), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetSpeedyGrapple()
+        {
+            return new Ability(AbilityName.Penetrating, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SPEEDY_GRAPPLE), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetBiggerBombs()
+        {
+            return new Ability(AbilityName.Penetrating, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.BIGGER_BOMBS), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        
         #endregion
 
         #region Potion Definitions

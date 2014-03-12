@@ -56,6 +56,7 @@ namespace KazgarsRevenge
             systems.Add(typeof(FrostAOEMistSystem), new FrostAOEMistSystem(Game, Game.Content));
             systems.Add(typeof(FlameThrowerSystem), new FlameThrowerSystem(Game, Game.Content));
             systems.Add(typeof(FrostThrowerSystem), new FrostThrowerSystem(Game, Game.Content));
+            systems.Add(typeof(DragonFireChargeSystem), new DragonFireChargeSystem(Game, Game.Content));
             
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)

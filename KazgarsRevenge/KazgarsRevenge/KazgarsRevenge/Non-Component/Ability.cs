@@ -12,6 +12,7 @@ namespace KazgarsRevenge
         Instant,
         Charge,
         GroundTarget,
+        Passive,
     }
     public class Ability
     {

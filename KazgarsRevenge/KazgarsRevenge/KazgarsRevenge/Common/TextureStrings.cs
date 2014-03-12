@@ -60,6 +60,15 @@ namespace KazgarsRevenge
                     public static readonly string GRAP_HOOK = @"Textures\UI\Abilities\I4";
                     public static readonly string CHAIN_SPEAR = @"Textures\UI\Abilities\I4";
                     public static readonly string MOLT_BOLT = @"Textures\UI\Abilities\I4";
+                    public static readonly string PENETRATING = @"Textures\UI\Abilities\BN";
+                    public static readonly string HOMING = @"Textures\UI\Abilities\BN";
+                    public static readonly string SERRATED = @"Textures\UI\Abilities\BN";
+                    public static readonly string HEADSHOT = @"Textures\UI\Abilities\BN";
+                    public static readonly string MAGNETIC_IMPLANT = @"Textures\UI\Abilities\BN";
+                    public static readonly string MAKE_IT_HAIL = @"Textures\UI\Abilities\BN";
+                    public static readonly string STRONG_WINDS = @"Textures\UI\Abilities\BN";
+                    public static readonly string SPEEDY_GRAPPLE = @"Textures\UI\Abilities\BN";
+                    public static readonly string BIGGER_BOMBS = @"Textures\UI\Abilities\BN";
                 }
             }
 
