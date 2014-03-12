@@ -190,6 +190,7 @@
     <Compile Include="Networking\MessageSender.cs" />
     <Compile Include="Account\AccountUtil.cs" />
     <Compile Include="Misc Components\DropTable.cs" />
+    <Compile Include="Non-Component\AbilityNode.cs" />
     <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
     <Compile Include="Networking\Handlers\GameStateChangeHandler.cs" />
