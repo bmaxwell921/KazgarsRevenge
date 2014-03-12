@@ -59,21 +59,6 @@ namespace KazgarsRevenge
             components.Add(t, o);
         }
 
-        /// <summary>
-        /// tries to hit this entity for the damage given. returns true if it was an entity with health that could be hit.
-        /// </summary>
-        public bool Hit(DeBuff neg, int d, GameEntity from)
-        {
-            Component possAI;
-            if (components.TryGetValue(typeof(AliveComponent), out possAI))
-            {
-                AliveComponent health = components[typeof(AliveComponent)] as AliveComponent;
-                (possAI as AliveComponent).Damage(neg, d, from);
-                return true;
-            }
-            return false;
-        }
-
         public void KillEntity()
         {
             foreach (KeyValuePair<Type, Component> pair in components)

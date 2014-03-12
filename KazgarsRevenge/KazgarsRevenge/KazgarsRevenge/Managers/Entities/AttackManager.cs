@@ -556,7 +556,7 @@ namespace KazgarsRevenge
         {
             GameEntity bolt = new GameEntity("bolt", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
-            Entity boltData = new Box(position, 10, 17, 32, .001f);
+            Entity boltData = new Box(position, 32, 17, 32, .001f);
             boltData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             boltData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             boltData.LinearVelocity = dir * 500;
@@ -593,7 +593,7 @@ namespace KazgarsRevenge
         {
             GameEntity bolt = new GameEntity("bolt", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
-            Entity boltData = new Box(position, 10, 17, 32, .001f);
+            Entity boltData = new Box(position, 32, 17, 32, .001f);
             boltData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             boltData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             boltData.LinearVelocity = dir * 450;

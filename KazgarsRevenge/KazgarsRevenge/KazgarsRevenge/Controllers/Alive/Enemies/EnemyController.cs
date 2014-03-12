@@ -375,7 +375,6 @@ namespace KazgarsRevenge
                 timerCounter = 0;
                 timerLength = 3000;
                 state = EnemyState.Decaying;
-                animations.PauseAnimation();
 
                 //lewts.CreateLootSoul(physicalData.Position, Entity.Type);
                 lewts.CreateLootSoul(physicalData.Position, this.Entity);
@@ -480,7 +479,7 @@ namespace KazgarsRevenge
             state = EnemyState.Dying;
             timerLength = animations.GetAniMillis(settings.aniPrefix + settings.deathAniName) - 100;
             timerCounter = 0;
-            PlayAnimation(settings.aniPrefix + settings.deathAniName);
+            PlayAnimation(settings.aniPrefix + settings.deathAniName, MixType.PauseAtEnd);
             animations.StopMixing();
             Entity.GetComponent(typeof(PhysicsComponent)).KillComponent();
 

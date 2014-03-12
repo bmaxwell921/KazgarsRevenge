@@ -59,13 +59,14 @@ namespace KazgarsRevenge
             rangedAbilities[0, 1] = new AbilityNode(AbilityName.Snipe, null, true, 3, abilityLearnedFlags);
 
             rangedAbilities[1, 0] = new AbilityNode(AbilityName.Serrated, new AbilityName[] {AbilityName.AdrenalineRush}, false, 2, abilityLearnedFlags);
-            rangedAbilities[1, 1] = new AbilityNode(AbilityName.Headshot, new AbilityName[] { AbilityName.Snipe}, false, 2, abilityLearnedFlags);
+            rangedAbilities[1, 1] = new AbilityNode(AbilityName.Headshot, new AbilityName[] { AbilityName.Snipe}, false, 2,abilityLearnedFlags);
             rangedAbilities[1, 2] = new AbilityNode(AbilityName.GrapplingHook, null, true, 4, abilityLearnedFlags);
 
             rangedAbilities[2, 0] = new AbilityNode(AbilityName.Homing, new AbilityName[] {AbilityName.Serrated}, false, 2, abilityLearnedFlags);
             rangedAbilities[2, 1] = new AbilityNode(AbilityName.MagneticImplant, new AbilityName[] {AbilityName.Headshot}, false, 2, abilityLearnedFlags);
             rangedAbilities[2, 2] = new AbilityNode(AbilityName.SpeedyGrapple, new AbilityName[] {AbilityName.GrapplingHook}, false, 2, abilityLearnedFlags);
             rangedAbilities[2, 3] = new AbilityNode(AbilityName.Elusiveness, new AbilityName[] {AbilityName.Tumble}, false, 1, abilityLearnedFlags);
+
 
             rangedAbilities[3, 1] = new AbilityNode(AbilityName.LooseCannon, new AbilityName[] {AbilityName.Homing, AbilityName.MagneticImplant}, false, 5, abilityLearnedFlags);
             rangedAbilities[3, 2] = new AbilityNode(AbilityName.FlashBomb, new AbilityName[] {AbilityName.SpeedyGrapple, AbilityName.LooseCannon, AbilityName.Tumble}, false, 2, abilityLearnedFlags);
@@ -297,7 +298,14 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    ChangeVelocity(Vector3.Zero);
+                    if (velDir == Vector3.Zero)
+                    {
+                        ChangeVelocity(Vector3.Zero);
+                    }
+                    else
+                    {
+                        ChangeVelocity(velDir);
+                    }
                 }
             }
             else
