@@ -16,6 +16,7 @@ namespace KazgarsRevenge
         public static readonly string WHITE_CURSOR = @"Textures\whiteCursor";
         public class UI
         {
+            public static readonly string INPUT_TEXTURE = @"Textures\UI\TextBox";
             public static readonly string CHARGE_BAR_FRONT = @"Textures\UI\chargeBarFront";
             public static readonly string Place_Holder = @"Textures\\UI\\Abilities\\BN";
 
