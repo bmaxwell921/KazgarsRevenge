@@ -180,6 +180,7 @@
     <Compile Include="Menuing\Menus\LinkedMenu.cs" />
     <Compile Include="Menuing\Menus\LoadingMenu.cs" />
     <Compile Include="Menuing\Menus\SimpleMenu.cs" />
+    <Compile Include="Menuing\Menus\TitleMenu.cs" />
     <Compile Include="Menuing\Selections\SelectionV2.cs" />
     <Compile Include="Menuing\TextBox.cs" />
     <Compile Include="Misc Components\Spawners\EnemyProximitySpawner.cs" />

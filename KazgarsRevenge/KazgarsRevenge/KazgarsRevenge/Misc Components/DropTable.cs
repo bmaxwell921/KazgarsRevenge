@@ -205,7 +205,7 @@ namespace KazgarsRevenge
 
         private static Item GetDropped(IList<Droption> list, int total)
         {
-            if (list.Count <= 0)
+            if (list == null || list.Count <= 0)
             {
                 return null;
             }
