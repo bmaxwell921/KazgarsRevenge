@@ -489,6 +489,7 @@ namespace KazgarsRevenge
 
 
 
+
         public void CreateCleave(Vector3 position, float yaw, int damage, AliveComponent creator)
         {
             position.Y = 20;
@@ -559,7 +560,7 @@ namespace KazgarsRevenge
             Entity boltData = new Box(position, 32, 17, 32, .001f);
             boltData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             boltData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            boltData.LinearVelocity = dir * 400;
+            boltData.LinearVelocity = dir * 450;
             boltData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             bolt.AddSharedData(typeof(Entity), boltData);
 
@@ -596,7 +597,7 @@ namespace KazgarsRevenge
             Entity boltData = new Box(position, 32, 17, 32, .001f);
             boltData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             boltData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            boltData.LinearVelocity = dir * 450;
+            boltData.LinearVelocity = dir * 500;
             boltData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             bolt.AddSharedData(typeof(Entity), boltData);
 
@@ -633,7 +634,7 @@ namespace KazgarsRevenge
 
             Vector3 vel = targetPos - startPos;
             vel.Y = 0;
-            bombData.LinearVelocity = Vector3.Up * 700 + vel * 1.25f;
+            bombData.LinearVelocity = Vector3.Up * 700 + vel * 1.2f;
 
             bomb.AddSharedData(typeof(Entity), bombData);
 
@@ -665,7 +666,7 @@ namespace KazgarsRevenge
 
             Vector3 vel = targetPos - startPos;
             vel.Y = 0;
-            bombData.LinearVelocity = Vector3.Up * 700 + vel * 1.25f;
+            bombData.LinearVelocity = Vector3.Up * 700 + vel * 1.2f;
 
             bomb.AddSharedData(typeof(Entity), bombData);
 
