@@ -845,6 +845,7 @@ namespace KazgarsRevenge
             GameEntity pillar = new GameEntity("firepillar", FactionType.Enemies, EntityType.Misc);
 
             Entity physicalData = new Box(position, 50, 50, 50, 50000);
+            physicalData.LocalInertiaTensorInverse = new Matrix3X3();
             pillar.AddSharedData(typeof(Entity), physicalData);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, pillar);
@@ -869,6 +870,7 @@ namespace KazgarsRevenge
             GameEntity pillar = new GameEntity("frostpillar", FactionType.Enemies, EntityType.Misc);
 
             Entity physicalData = new Box(position, 50, 50, 50, 50000);
+            physicalData.LocalInertiaTensorInverse = new Matrix3X3();
             pillar.AddSharedData(typeof(Entity), physicalData);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, pillar);
