@@ -861,7 +861,7 @@ namespace KazgarsRevenge
             }
         }
 
-        private void talentHelp(int check, AbilityNode[,] talents)
+        private void talentHelp(int check, AbilityNode[,] talents, bool rightclick)
         {
             if (talents[(int)check / 4, check % 4] != null)
                 {   //if not learned
@@ -878,11 +878,45 @@ namespace KazgarsRevenge
                         }
                     }
                     else        //if talent is already learned
-                    {
-                        selectedTalentSlot = check;
+                    {   //equip in first open slot
+                        if (rightclick)
+                        {
+                            bool placed = false;
+                            for (int i = 0; i < 12; i++)
+                            {
+                                if (boundAbilities[i].Value.AbilityName == AbilityName.None)
+                                {
+                                    selectedTalentSlot = check;
+                                    checkTalentOnBar(talents);
+                                    if (i == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    else boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    placed = true;
+                                    selectedTalentSlot = -1;
+                                    break;
+                                }
+                            }
+                            if (!placed) selectedTalentSlot = check;
+                        }
+                        else selectedTalentSlot = check;
                     }
                 }
           }
+
+        private void checkTalentOnBar(AbilityNode[,] curentTalentTree)
+        {
+            for (int i = 0; i < 12; i++)
+            {   //if ability is already on bar
+                if (boundAbilities[i].Value.AbilityName.Equals(curentTalentTree[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
+                {   //set that slot to empty
+                    boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(AbilityName.None));
+                }
+            }
+            //if ability is already on right mouse
+            if (mouseBoundAbility[0].Value.AbilityName.Equals(curentTalentTree[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
+            {   //set that slot to empty
+                mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(AbilityName.None));
+            }
+        }
 
         private void ResetTargettedEntity()
         {
@@ -1073,20 +1107,9 @@ namespace KazgarsRevenge
                         if (innerClicked != null && selectedTalentSlot != -1)
                         {
                             int check = Convert.ToInt32(innerClicked.Remove(0, 7));
-                            for (int i = 0; i < 12; i++)
-                            {   //if ability is already on bar
-                                if (boundAbilities[i].Value.AbilityName.Equals(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
-                                {   //set that slot to empty
-                                    boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(AbilityName.None));
-                                }
-                            }
-                            //if ability is already on right mouse
-                            if (mouseBoundAbility[0].Value.AbilityName.Equals(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
-                            {   //set that slot to empty
-                                mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(AbilityName.None));
-                            }
-
+                            
                             if(currentTalentTree == TalentTrees.ranged){
+                                checkTalentOnBar(rangedAbilities);
                                 if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 else boundAbilities[check] = new KeyValuePair<Keys,Ability>(boundAbilities[check].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                             }
@@ -1112,7 +1135,7 @@ namespace KazgarsRevenge
                             int check = Convert.ToInt32(innerClicked.Remove(0, 6));
                             if (currentTalentTree == TalentTrees.ranged)
                             {
-                                talentHelp(check, rangedAbilities);
+                                talentHelp(check, rangedAbilities, false);
                             }
                             else if (currentTalentTree == TalentTrees.melee)
                             {
@@ -1135,6 +1158,7 @@ namespace KazgarsRevenge
                 string innerClicked = CollidingInnerFrame(collides);
                 switch (collides)
                 {
+                    #region inventory
                     case "inventory":
                         if (innerClicked != null && innerClicked.Contains("inventory") && selectedItemSlot == -1)  //equip item right clicked on
                         {
@@ -1173,7 +1197,8 @@ namespace KazgarsRevenge
                             }
                         }
                         break;
-
+                    #endregion
+                    #region equipment
                     case "equipment":
                         if (innerClicked == "equipWrist") //wrist
                         {
@@ -1218,6 +1243,28 @@ namespace KazgarsRevenge
                             UnequipGear(GearSlot.Righthand);
                         }
                         break;
+                    #endregion
+                    #region talents
+                        case "talents":
+                        if (innerClicked != null)
+                        {
+                            //TODO if we add any more innerFrames in abilities make sure we check those first
+                            int check = Convert.ToInt32(innerClicked.Remove(0, 6));
+                            if (currentTalentTree == TalentTrees.ranged)
+                            {
+                                talentHelp(check, rangedAbilities, true);
+                            }
+                            else if (currentTalentTree == TalentTrees.melee)
+                            {
+                                //talentHelp(check, meleeAbilities);
+                            }
+                            else if (currentTalentTree == TalentTrees.magic)
+                            {
+                                //talentHelp(check, magicAbilities);
+                            }
+                        }
+                        break;
+                    #endregion
                 }
 
             }
