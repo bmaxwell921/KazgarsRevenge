@@ -37,14 +37,6 @@ namespace KazgarsRevenge
             handledEvents = new Dictionary<IEvent, IAction>();
             this.selections = new List<SelectionBox>();
             this.currentSel = -1;
-
-            SetUpHandledEvents();
-        }
-
-        private void SetUpHandledEvents()
-        {
-            handledEvents[new KeyEvent(Keys.Up)] = new UpAction(this);
-            handledEvents[new KeyEvent(Keys.Down)] = new DownAction(this);
         }
 
         /// <summary>
@@ -114,13 +106,28 @@ namespace KazgarsRevenge
 
         public override void Load(object info)
         {
-            // Do nothing
+            this.selections.Clear();
         }
 
         public override object Unload()
         {
             // Do nothing
             return null;
+        }
+
+        public override bool ReceiveSpecialInput(Keys key)
+        {
+            if (key == Keys.Down)
+            {
+                this.MoveToNextSel();
+                return true;
+            }
+            else if (key == Keys.Up)
+            {
+                this.MoveToPrevSel();
+                return true;
+            }
+            return base.ReceiveSpecialInput(key);
         }
 
         public override void Draw(GameTime gameTime)
@@ -130,29 +137,6 @@ namespace KazgarsRevenge
             {
                 sb.sel.Draw();
             }
-        }
-
-        public override void HandleEvent(IEvent e)
-        {
-            /*
-             * Down pressed: Go to next selection
-             * Up pressed: Go to prev selection
-             */
-            if (!Handles(e))
-            {
-                return;
-            }
-            handledEvents[e].Perform();
-        }
-
-        public override bool Handles(IEvent e)
-        {
-            return handledEvents.ContainsKey(e);
-        }
-
-        public override void Register(IEvent e, IAction action)
-        {
-            handledEvents[e] = action;
         }
 
         /// <summary>

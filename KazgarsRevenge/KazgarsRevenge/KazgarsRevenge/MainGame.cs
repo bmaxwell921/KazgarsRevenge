@@ -18,6 +18,7 @@ using BEPUphysicsDrawer;
 using BEPUphysicsDrawer.Lines;
 using KazgarsRevenge.Libraries;
 using System.Threading;
+using EventInput;
 
 namespace KazgarsRevenge
 {
@@ -114,10 +115,14 @@ namespace KazgarsRevenge
                 graphics.PreferredBackBufferHeight = 720;
                 graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
-                screenScale = ((float)GraphicsDevice.Viewport.Height / 480.0f + (float)GraphicsDevice.Viewport.Width / 800.0f) / 2;
+                screenScale = ((float)GraphicsDevice.Viewport.Height / 720f + (float)GraphicsDevice.Viewport.Width / 1280f) / 2;
             }
 
             Texture2DUtil.Instance.SetContent(Content);
+
+            // Adds a keyboard to listen for key events
+            Services.AddService(typeof(KeyboardDispatcher), new KeyboardDispatcher(this.Window));
+            Services.AddService(typeof(KeyboardLayout), new KeyboardLayout());
 
             camera = new CameraComponent(this);
             Components.Add(camera);
@@ -404,14 +409,14 @@ namespace KazgarsRevenge
 
 
                 //physics debugging
-                /*
+                
                 effectModelDrawer.LightingEnabled = false;
                 effectModelDrawer.VertexColorEnabled = true;
                 effectModelDrawer.World = Matrix.Identity;
                 effectModelDrawer.View = camera.View;
                 effectModelDrawer.Projection = camera.Projection;
                 modelDrawer.Draw(effectModelDrawer, physics);
-                */
+                
 
                 spriteBatch.Begin();
                 spriteManager.Draw(spriteBatch);

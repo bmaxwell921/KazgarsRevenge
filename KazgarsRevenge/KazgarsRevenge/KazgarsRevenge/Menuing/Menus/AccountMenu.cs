@@ -9,6 +9,8 @@ namespace KazgarsRevenge
 {
     public class AccountMenu : LinkedMenu
     {
+        private static readonly string NEW_ACCT = "New Account";
+
         // The accounts
         private IList<Account> accounts;
 
@@ -27,11 +29,12 @@ namespace KazgarsRevenge
         /// <param name="info"></param>
         public override void Load(object info)
         {
+            base.Load(info);
             // All the accounts are our selections
             accounts = AccountUtil.Instance.GetAccounts();
+            float yOffset = mm.normalFont.MeasureString(NEW_ACCT).Y;
             if (accounts.Count > 0)
             {
-                float yOffset = mm.normalFont.MeasureString(accounts[0].Name).Y;
                 // Create a selection for each
                 for (int i = 0; i < accounts.Count; ++i)
                 {
@@ -39,6 +42,8 @@ namespace KazgarsRevenge
                     base.AddSelection(new SelectionV2(base.mm, account.Name, acctsDrawLoc + new Vector2(0, yOffset * i)), (LinkedMenu)mm.menus[MenuManager.LEVELS]);
                 }
             }
+
+            base.AddSelection(new SelectionV2(base.mm, NEW_ACCT, acctsDrawLoc + new Vector2(0, yOffset * accounts.Count)), (LinkedMenu)mm.menus[MenuManager.NEW_ACCOUNT]);
         }
 
         /// <summary>
@@ -47,9 +52,16 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public override object Unload()
         {
-            mm.SetPlayerAccount(accounts[currentSel]);
-            // Accounts and selections should match
-            return accounts[currentSel];
+            if (currentSel < accounts.Count)
+            {
+                // Actually chose an account
+                mm.SetPlayerAccount(accounts[currentSel]);
+                // Accounts and selections should match
+                return accounts[currentSel];
+            }
+
+            // Chose new
+            return null;
         }
     }
 }

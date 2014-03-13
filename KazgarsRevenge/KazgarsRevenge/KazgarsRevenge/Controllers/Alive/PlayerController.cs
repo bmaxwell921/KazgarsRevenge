@@ -79,7 +79,7 @@ namespace KazgarsRevenge
         protected const float bowRange = 1000;
         protected Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
         //array of key-ability pairs
-        protected KeyValuePair<Keys, Ability>[] boundAbilities = new KeyValuePair<Keys, Ability>[8];
+        protected KeyValuePair<Keys, Ability>[] boundAbilities = new KeyValuePair<Keys, Ability>[12];
         protected KeyValuePair<ButtonState, Ability>[] mouseBoundAbility = new KeyValuePair<ButtonState, Ability>[1];
         protected Dictionary<AbilityName, bool> abilityLearnedFlags = new Dictionary<AbilityName, bool>();
         #endregion
@@ -390,17 +390,21 @@ namespace KazgarsRevenge
             #region ability initialization
             //create initial abilities
 
-            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.TarBomb));
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.GrapplingHook));
-            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Snipe));
-            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.AdrenalineRush));
-            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.MoltenBolt));
-            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.LooseCannon));
-            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.FlashBomb));
-            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.ChainSpear));
+            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.None));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.None));
+            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.None));
+            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.None));
+            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.None));
+            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.None));
+            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.None));
+            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.None));
+            //added item slot abilities
+            boundAbilities[8] = new KeyValuePair<Keys, Ability>(Keys.D1, GetAbility(AbilityName.None));
+            boundAbilities[9] = new KeyValuePair<Keys, Ability>(Keys.D2, GetAbility(AbilityName.None));
+            boundAbilities[10] = new KeyValuePair<Keys, Ability>(Keys.D3, GetAbility(AbilityName.None));
+            boundAbilities[11] = new KeyValuePair<Keys, Ability>(Keys.D4, GetAbility(AbilityName.None));
 
-            mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(ButtonState.Pressed, GetAbility(AbilityName.Omnishot));
-
+            mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(ButtonState.Pressed, GetAbility(AbilityName.None));
             for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
             {
                 abilityLearnedFlags[(AbilityName)i] = false;
@@ -411,6 +415,7 @@ namespace KazgarsRevenge
 
         #region Action Sequences
 
+        protected Vector3 velDir = Vector3.Zero;
         protected bool targetingGroundLocation = false;
         protected Vector3 groundAbilityTarget = Vector3.Zero;
         protected float targetedGroundSize = 0;
@@ -467,7 +472,7 @@ namespace KazgarsRevenge
 
         protected void StartSequence(string name)
         {
-            if (!name.Equals("PlaceHolder"))
+            if (name != "PlaceHolder" && name != "")
             {
                 InterruptReset(name);
 
@@ -563,11 +568,12 @@ namespace KazgarsRevenge
             actionSequences.Add("flashbomb", FlashBombActions());
             actionSequences.Add("tarbomb", TarBombActions());
             actionSequences.Add("grapplinghook", GrapplingHookActions());
-            actionSequences.Add("chainspear", ChainSpearActions());
             actionSequences.Add("moltenbolt", MoltenBoltActions());
+            actionSequences.Add("tumble", TumbleActions());
 
             //melee
             actionSequences.Add("flip", FlipActions());
+            actionSequences.Add("chainspear", ChainSpearActions());
 
             //magic
 
@@ -1217,43 +1223,6 @@ namespace KazgarsRevenge
 
             return sequence;
         }
-        private List<Action> ChainSpearActions()
-        {
-            List<Action> sequence = new List<Action>();
-
-            sequence.Add(() =>
-            {
-                canInterrupt = false;
-                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
-                attState = AttackState.Locked;
-                millisActionLength = arrowDrawMillis;
-                stateResetCounter = 0;
-            });
-            sequence.Add(actionSequences["shoot"][1]);
-
-            sequence.Add(() =>
-            {
-                if (attached.ContainsKey("handarrow"))
-                {
-                    attached.Remove("handarrow");
-                }
-                float speed = grapplingHookSpeed;
-                if (abilityLearnedFlags[AbilityName.SpeedyGrapple])
-                {
-                    speed *= 2.5f;
-                }
-
-                Vector3 forward = GetForward();
-                attacks.CreateChainSpear(physicalData.Position + forward * 10, forward, this as AliveComponent, speed, abilityLearnedFlags[AbilityName.ForcefulThrow]);
-
-                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
-
-            });
-
-            sequence.Add(abilityFinishedAction);
-
-            return sequence;
-        }
         private List<Action> MoltenBoltActions()
         {
             //some of these actions are identical to "shoot", so just copying those Actions
@@ -1296,6 +1265,40 @@ namespace KazgarsRevenge
 
             return sequence;
         }
+        private List<Action> TumbleActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                physicalData.CollisionInformation.CollisionRules.Group = Game.UntouchableCollisionGroup;
+                canInterrupt = false;
+                PlayAnimation("k_flip" + aniSuffix, MixType.None);
+                attState = AttackState.Locked;
+                stateResetCounter = 0;
+                velDir = GetForward() * 500;
+                ChangeVelocity(velDir);
+                millisActionLength = 500;
+            });
+
+            sequence.Add(() =>
+            {
+                physicalData.CollisionInformation.CollisionRules.Group = Game.PlayerCollisionGroup;
+                velDir = Vector3.Zero;
+                ChangeVelocity(Vector3.Zero);
+                millisActionLength = 0;
+                groundTargetLocation = physicalData.Position;
+
+                if (abilityLearnedFlags[AbilityName.Elusiveness])
+                {
+                    AddBuff(Buff.Elusiveness, Entity);
+                }
+            });
+
+            sequence.Add(abilityFinishedAction);
+
+            return sequence;
+        }
 
         /*
          * Melee abilities
@@ -1326,6 +1329,43 @@ namespace KazgarsRevenge
                 attState = AttackState.None;
                 StartSequence("fightingstance");
             });
+
+            return sequence;
+        }
+        private List<Action> ChainSpearActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                canInterrupt = false;
+                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                attState = AttackState.Locked;
+                millisActionLength = arrowDrawMillis;
+                stateResetCounter = 0;
+            });
+            sequence.Add(actionSequences["shoot"][1]);
+
+            sequence.Add(() =>
+            {
+                if (attached.ContainsKey("handarrow"))
+                {
+                    attached.Remove("handarrow");
+                }
+                float speed = grapplingHookSpeed;
+                if (abilityLearnedFlags[AbilityName.SpeedyGrapple])
+                {
+                    speed *= 2.5f;
+                }
+
+                Vector3 forward = GetForward();
+                attacks.CreateChainSpear(physicalData.Position + forward * 10, forward, this as AliveComponent, speed, abilityLearnedFlags[AbilityName.ForcefulThrow]);
+
+                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
+
+            });
+
+            sequence.Add(abilityFinishedAction);
 
             return sequence;
         }
@@ -1571,18 +1611,15 @@ namespace KazgarsRevenge
         #endregion
 
         #region Ability Definitions
+        
         protected Ability GetAbility(AbilityName ability)
         {
             switch (ability)
             {
                 case AbilityName.None:
                     return GetNone();
-                case AbilityName.Snipe:
+                case AbilityName.Snipe://ranged actives
                     return GetSnipe();
-                case AbilityName.Garrote:
-                    return GetHeartStrike();
-                case AbilityName.IceClawPrison:
-                    return GetIceClawPrison();
                 case AbilityName.Omnishot:
                     return GetOmniShot();
                 case AbilityName.AdrenalineRush:
@@ -1599,10 +1636,34 @@ namespace KazgarsRevenge
                     return GetTarBomb();
                 case AbilityName.GrapplingHook:
                     return GetGrapplingHook();
-                case AbilityName.ChainSpear:
-                    return GetChainSpear();
                 case AbilityName.MoltenBolt:
                     return GetMoltenBolt();
+                case AbilityName.Tumble:
+                    return GetTumble();
+
+                case AbilityName.Penetrating://ranged passives
+                    return GetPenetrating();
+                case AbilityName.Serrated:
+                    return GetSerrated();
+                case AbilityName.Headshot:
+                    return GetHeadshot();
+                case AbilityName.MagneticImplant:
+                    return GetMagneticImplant();
+                case AbilityName.MakeItHail:
+                    return GetMakeItHail();
+                case AbilityName.StrongWinds:
+                    return GetStrongWinds();
+                case AbilityName.SpeedyGrapple:
+                    return GetSpeedyGrapple();
+                case AbilityName.BiggerBombs:
+                    return GetBiggerBombs();
+
+                case AbilityName.Garrote://melle actives
+                    return GetGarrote();
+                case AbilityName.ChainSpear://melle passives
+                    return GetChainSpear();
+                case AbilityName.IceClawPrison://magic actives
+                    return GetIceClawPrison();
                 default:
                     return GetNone();
                     //throw new Exception("That ability hasn't been implemented.");
@@ -1623,67 +1684,108 @@ namespace KazgarsRevenge
         //Placeholder Ability
         protected Ability GetNone()
         {
-            return new Ability(AbilityName.None, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder), 0, AttackType.Ranged, "PlaceHolder", AbilityType.Instant);
+            return new Ability(AbilityName.None, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder), 0, AttackType.Ranged, "PlaceHolder", AbilityType.Instant);
         }
 
         protected Ability GetSnipe()
         {
-            return new Ability(AbilityName.Snipe, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SNIPE), 1000, AttackType.Ranged, "snipe", AbilityType.Instant);
+            return new Ability(AbilityName.Snipe, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SNIPE), 1000, AttackType.Ranged, "snipe", AbilityType.Instant);
         }
-        protected Ability GetHeartStrike()
+        protected Ability GetGarrote()
         {
-            return new Ability(AbilityName.Garrote, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEART_STRIKE), 6000, AttackType.Ranged, "flip", AbilityType.Instant);
+            return new Ability(AbilityName.Garrote, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEART_STRIKE), 6000, AttackType.Ranged, "flip", AbilityType.Instant);
         }
         protected Ability GetIceClawPrison()
         {
-            return new Ability(AbilityName.IceClawPrison, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ICE_CLAW_PRI), 6000, AttackType.Ranged, "shoot", AbilityType.Instant);
+            return new Ability(AbilityName.IceClawPrison, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ICE_CLAW_PRI), 6000, AttackType.Ranged, "shoot", AbilityType.Instant);
         }
         protected Ability GetOmniShot()
         {
-            return new Ability(AbilityName.Omnishot, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.OMNI_SHOT), 6000, AttackType.Ranged, "omnishot", AbilityType.Instant);
+            return new Ability(AbilityName.Omnishot, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.OMNI_SHOT), 6000, AttackType.Ranged, "omnishot", AbilityType.Instant);
         }
         protected Ability GetAdrenalineRush()
         {
-            return new Ability(AbilityName.AdrenalineRush, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ADREN_RUSH), 6000, AttackType.Ranged, "buffrush", AbilityType.Instant);
+            return new Ability(AbilityName.AdrenalineRush, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ADREN_RUSH), 6000, AttackType.Ranged, "buffrush", AbilityType.Instant);
         }
         protected Ability GetLeechingArrows()
         {
-            return new Ability(AbilityName.Leeching, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LEECH_ARROWS), 6000, AttackType.Ranged, "buffleech", AbilityType.Instant);
+            return new Ability(AbilityName.Leeching, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LEECH_ARROWS), 6000, AttackType.Ranged, "", AbilityType.Passive);
         }
         protected Ability GetLooseCannon()
         {
-            return new Ability(AbilityName.LooseCannon, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LOOSE_CANNON), 2000, AttackType.Ranged, "loosecannon", AbilityType.Charge);
+            return new Ability(AbilityName.LooseCannon, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LOOSE_CANNON), 2000, AttackType.Ranged, "loosecannon", AbilityType.Charge);
         }
         protected Ability GetMakeItRain()
         {
-            return new Ability(AbilityName.MakeItRain, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_RAIN), 2000, AttackType.Ranged, "makeitrain", AbilityType.GroundTarget);
+            return new Ability(AbilityName.MakeItRain, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_RAIN), 2000, AttackType.Ranged, "makeitrain", AbilityType.GroundTarget);
         }
         protected Ability GetFlashBomb()
         {
-            return new Ability(AbilityName.FlashBomb, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.FLASH_BOMB), 2000, AttackType.Ranged, "flashbomb", AbilityType.GroundTarget);
+            return new Ability(AbilityName.FlashBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.FLASH_BOMB), 2000, AttackType.Ranged, "flashbomb", AbilityType.GroundTarget);
         }
         protected Ability GetTarBomb()
         {
-            return new Ability(AbilityName.TarBomb, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TAR_BOMB), 2000, AttackType.Ranged, "tarbomb", AbilityType.GroundTarget);
+            return new Ability(AbilityName.TarBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TAR_BOMB), 2000, AttackType.Ranged, "tarbomb", AbilityType.GroundTarget);
         }
         protected Ability GetGrapplingHook()
         {
-            return new Ability(AbilityName.GrapplingHook, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 2000, AttackType.Ranged, "grapplinghook", AbilityType.Instant);
+            return new Ability(AbilityName.GrapplingHook, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 2000, AttackType.Ranged, "grapplinghook", AbilityType.Instant);
         }
         protected Ability GetChainSpear()
         {
-            return new Ability(AbilityName.ChainSpear, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.CHAIN_SPEAR), 2000, AttackType.Ranged, "chainspear", AbilityType.Instant);
+            return new Ability(AbilityName.ChainSpear, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.CHAIN_SPEAR), 2000, AttackType.Ranged, "chainspear", AbilityType.Instant);
         }
         protected Ability GetMoltenBolt()
         {
-            return new Ability(AbilityName.MoltenBolt, 1, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MOLT_BOLT), 2000, AttackType.Ranged, "moltenbolt", AbilityType.Instant);
+            return new Ability(AbilityName.MoltenBolt, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MOLT_BOLT), 2000, AttackType.Ranged, "moltenbolt", AbilityType.Instant);
         }
+        protected Ability GetTumble()
+        {
+            return new Ability(AbilityName.Tumble, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 3000, AttackType.Ranged, "tumble", AbilityType.Instant);
+        }
+        protected Ability GetPenetrating()
+        {
+            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.PENETRATING), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetHoming()
+        {
+            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HOMING), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetSerrated()
+        {
+            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SERRATED), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetHeadshot()
+        {
+            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEADSHOT), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetMagneticImplant()
+        {
+            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAGNETIC_IMPLANT), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetMakeItHail()
+        {
+            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_HAIL), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetStrongWinds()
+        {
+            return new Ability(AbilityName.StrongWinds, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.STRONG_WINDS), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetSpeedyGrapple()
+        {
+            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SPEEDY_GRAPPLE), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        protected Ability GetBiggerBombs()
+        {
+            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.BIGGER_BOMBS), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+        
         #endregion
 
         #region Potion Definitions
         protected Ability GetHealthPotion()
         {
-            return new Ability(AbilityName.HealthPotion, 0, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 2000, AttackType.None, "grapplinghook", AbilityType.Instant);
+            return new Ability(AbilityName.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 2000, AttackType.None, "grapplinghook", AbilityType.Instant);
         }
         #endregion
 
@@ -1711,7 +1813,9 @@ namespace KazgarsRevenge
         TarBomb,
         MoltenBolt,
         FlashBomb,
-        BiggerBombs,
+        BiggerBombs, 
+        Elusiveness,
+        Tumble,
         Omnishot,
 
 
@@ -1725,10 +1829,5 @@ namespace KazgarsRevenge
         HealthPotion,
         PotionOfLuck,
         InivisibilityPotion,
-
-        //#Jared TODO Nate added these, need support for them
-        Elusiveness,
-        Tumble,
-
     }
 }

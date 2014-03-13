@@ -375,7 +375,6 @@ namespace KazgarsRevenge
                 timerCounter = 0;
                 timerLength = 3000;
                 state = EnemyState.Decaying;
-                animations.PauseAnimation();
 
                 //lewts.CreateLootSoul(physicalData.Position, Entity.Type);
                 lewts.CreateLootSoul(physicalData.Position, this.Entity);
@@ -441,15 +440,15 @@ namespace KazgarsRevenge
             PlayAnimation(settings.aniPrefix + settings.attackAniName);
         }
 
+        protected List<string> chargingBoneNames = new List<string>();
         protected virtual void AddChargeParticles(Type particleType)
         {
-            model.AddEmitter(particleType, "chargeleft", 50, 0, Vector3.Zero, "s_hand_L");
-            model.AddEmitterSizeIncrementExponential("chargeleft", 15, 2);
-            model.AddParticleTimer("chargeleft", settings.attackCreateMillis);
-
-            model.AddEmitter(particleType, "chargeright", 50, 0, Vector3.Zero, "s_hand_R");
-            model.AddEmitterSizeIncrementExponential("chargeright", 15, 2);
-            model.AddParticleTimer("chargeright", settings.attackCreateMillis);
+            foreach (string s in chargingBoneNames)
+            {
+                model.AddEmitter(particleType, "charge" + s, 50, 0, Vector3.Zero, s);
+                model.AddEmitterSizeIncrementExponential("charge" + s, 15, 2);
+                model.AddParticleTimer("charge" + s, settings.attackCreateMillis);
+            }
         }
 
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
@@ -480,7 +479,7 @@ namespace KazgarsRevenge
             state = EnemyState.Dying;
             timerLength = animations.GetAniMillis(settings.aniPrefix + settings.deathAniName) - 100;
             timerCounter = 0;
-            PlayAnimation(settings.aniPrefix + settings.deathAniName);
+            PlayAnimation(settings.aniPrefix + settings.deathAniName, MixType.PauseAtEnd);
             animations.StopMixing();
             Entity.GetComponent(typeof(PhysicsComponent)).KillComponent();
 

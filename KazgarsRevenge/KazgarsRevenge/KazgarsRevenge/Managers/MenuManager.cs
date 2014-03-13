@@ -2,31 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KazgarsRevenge
 {
     /// <summary>
     /// Class used to manage all the menuing
     /// </summary>
-    public class MenuManager : DrawableGameComponent
+    public class MenuManager : DrawableGameComponent, IKeyboardSubscriber
     {
-        /*
-         * To add in MenuManger:
-         *  1) Add MenuManager initialization to MainGame.Initialize();
-         *  2) Change Update code
-         *      a) Delete all of the update code except the initial stuff and the GameState.Playing stuff
-         *      b) Pull base.Update(gameTime) outside of the GameState.Playing case
-         *  3) Change Draw code
-         *      a) Delete all the Draw code except for the initial stuff and the GameState.Playing stuff
-         *      b) In the not GameState.Playing do base.Draw(gameTime)
-         *      
-         * TODO next:
-         *  - Update moving between menus (unless Andy gets me my models....)
-         */ 
+
         #region Fonts
         public SpriteFont titleFont;
         public SpriteFont normalFont;
@@ -42,6 +30,7 @@ namespace KazgarsRevenge
         public static readonly string NEW_ACCOUNT = "New Account";
         #endregion
 
+        public KeyboardDispatcher kd;
         // Screen info
         public Vector2 guiScale;
         public int screenWidth;
@@ -55,10 +44,6 @@ namespace KazgarsRevenge
 
         // Dictionary so Menus can set up links as needed
         public IDictionary<string, IMenu> menus;
-
-        // I don't like that these are here
-        private KeyboardState keyboardState;
-        private KeyboardState prevKeyboardState;
 
         // I know it's bad to have two sprite batches, but they're used completely separately so it should be ok
         public SpriteBatch sb;
@@ -82,6 +67,9 @@ namespace KazgarsRevenge
 
             normalFont = Game.Content.Load<SpriteFont>("Verdana");
             titleFont = Game.Content.Load<SpriteFont>("Title");
+
+            this.kd = Game.Services.GetService(typeof(KeyboardDispatcher)) as KeyboardDispatcher;
+            kd.Register(this);
         }
 
         #region Setup
@@ -91,6 +79,8 @@ namespace KazgarsRevenge
             Vector2 titleLoc = new Vector2(screenWidth / 2, screenHeight * .35f);
             Texture2D background = Texture2DUtil.Instance.GetTexture(TextureStrings.Menu.BACKGRND);
             Rectangle backgroundBox = new Rectangle(0, 0, screenWidth, screenHeight);
+
+            NewAccountMenu newAcct = new NewAccountMenu(this, NEW_ACCOUNT, titleLoc, background, backgroundBox, new Vector2(screenWidth / 2f, screenHeight * 0.47f));
 
             LoadingMenu loading = new LoadingMenu(this, LOADING, titleLoc, background, backgroundBox);
 
@@ -102,6 +92,7 @@ namespace KazgarsRevenge
             title.AddSelection(new SelectionV2(this, PLAY, new Vector2(screenWidth / 2f, screenHeight * 0.47f)), accountMenu);
             title.AddSelection(new SelectionV2(this, SETTINGS, new Vector2(screenWidth / 2f, screenHeight * 0.55f)), null);
             this.currentMenu = title;
+            kd.Register(currentMenu);
 
             //LoadingMenu loading = new LoadingMenu(sb, LOADING, titleFont, guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));
 
@@ -110,6 +101,7 @@ namespace KazgarsRevenge
             menus[ACCOUNTS] = accountMenu;
             menus[LEVELS] = levelsMenu;
             menus[LOADING] = loading;
+            menus[NEW_ACCOUNT] = newAcct;
         }
         #endregion
 
@@ -130,7 +122,12 @@ namespace KazgarsRevenge
 
             // Bring in new
             next.Load(info);
+            // Unregister the old current
+            kd.Unregister(currentMenu);
             currentMenu = next;
+
+            // Register the new current
+            kd.Register(currentMenu);
         }
 
         /// <summary>
@@ -188,7 +185,8 @@ namespace KazgarsRevenge
             {
                 if (loadingState == LoadingState.NOT_STARTED)
                 {
-                    NormalUpdate(gameTime);
+                    // TODO
+                    //NormalUpdate(gameTime);
                     return;
                 }
             }
@@ -205,59 +203,6 @@ namespace KazgarsRevenge
                 {
                     (Game as MainGame).TransitionToPlaying();
                 }
-            }
-        }
-
-        // Normal, non-loading update method
-        private void NormalUpdate(GameTime gameTime)
-        {
-            prevKeyboardState = keyboardState;
-            keyboardState = Keyboard.GetState();
-
-            // Get all the events to send
-            IList<IEvent> events = new List<IEvent>();
-            GetKeyEvents(events);
-            GetMouseEvent(events);
-
-            // Send em
-            foreach (IEvent e in events)
-            {
-                if (enterKey.Equals(e))
-                {
-                    // Bit of a hack here
-                    LinkedMenu sel = currentMenu as LinkedMenu;
-                    if (sel == null)
-                    {
-                        continue;
-                    }
-
-                    TransitionTo(sel.GetSelection());
-                    return;
-
-                }
-                currentMenu.HandleEvent(e);
-            }
-        }
-
-        // Adds any keyEvents
-        private void GetKeyEvents(IList<IEvent> events)
-        {
-            foreach (Keys pressed in keyboardState.GetPressedKeys())
-            {
-                if (prevKeyboardState.IsKeyUp(pressed)) 
-                {
-                    events.Add(new KeyEvent(pressed));
-                }
-            }
-        }
-
-        // Adds any mouseEvent
-        private void GetMouseEvent(IList<IEvent> events)
-        {
-            MouseState state = Mouse.GetState();
-            if (state.LeftButton == ButtonState.Pressed)
-            {
-                events.Add(new MouseEvent(new Vector2(state.X, state.Y)));
             }
         }
 
@@ -295,6 +240,56 @@ namespace KazgarsRevenge
 
         #endregion
 
+
+        #region Keyboard Subscriber
+        // MenuManager only needs to listen for enter key
+        public bool ReceiveTextInput(char inputChar)
+        {
+            return false;
+        }
+
+        public bool ReceiveTextInput(string text)
+        {
+            return false;
+        }
+
+        public bool ReceiveCommandInput(char command)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// MenuManager is only listening for the Enter key. If it's pressed
+        /// we transition to the selected menu
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public bool ReceiveSpecialInput(Keys key)
+        {
+            if (key.Equals(Keys.Enter))
+            {
+                LinkedMenu lm = currentMenu as LinkedMenu;
+                if (lm == null)
+                {
+                    return false;
+                }
+                TransitionTo(lm.GetSelection());
+                return true;
+            }
+            return false;
+        }
+
+        public bool Selected {
+            get
+            {
+                return this.Enabled;
+            }
+            set
+            {
+                // Do nothing
+            }
+        } 
+        #endregion
         /// <summary>
         /// Class to box up Menus and info passed to their load method
         /// </summary>

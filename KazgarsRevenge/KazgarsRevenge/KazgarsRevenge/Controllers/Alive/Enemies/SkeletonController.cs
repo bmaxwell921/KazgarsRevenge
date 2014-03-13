@@ -19,7 +19,8 @@ namespace KazgarsRevenge
             settings.attackLength = 1667;
             settings.attackCreateMillis = settings.attackLength / 2;
 
-            
+            chargingBoneNames.Add("s_hand_R");
+            chargingBoneNames.Add("s_hand_L");
         }
 
         protected override void CreateAttack()

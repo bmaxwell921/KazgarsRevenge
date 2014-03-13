@@ -15,6 +15,7 @@ using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.Collidables;
 using SkinnedModelLib;
 using KazgarsRevenge.Libraries;
+using KazgarsRevenge.Non_Component;
 
 namespace KazgarsRevenge
 {
@@ -54,33 +55,34 @@ namespace KazgarsRevenge
             #endregion
 
             #region ranged ability array
-            rangedAbilities[0, 0] = AbilityName.AdrenalineRush;
-            rangedAbilities[0, 1] = AbilityName.Snipe;
+            rangedAbilities[0, 0] = new AbilityNode(AbilityName.AdrenalineRush, null, true, 3, abilityLearnedFlags);
+            rangedAbilities[0, 1] = new AbilityNode(AbilityName.Snipe, null, true, 3, abilityLearnedFlags);
 
-            rangedAbilities[1, 0] = AbilityName.Serrated;
-            rangedAbilities[1, 1] = AbilityName.Headshot;
-            rangedAbilities[1, 2] = AbilityName.GrapplingHook;
+            rangedAbilities[1, 0] = new AbilityNode(AbilityName.Serrated, new AbilityName[] {AbilityName.AdrenalineRush}, false, 2, abilityLearnedFlags);
+            rangedAbilities[1, 1] = new AbilityNode(AbilityName.Headshot, new AbilityName[] { AbilityName.Snipe}, false, 2,abilityLearnedFlags);
+            rangedAbilities[1, 2] = new AbilityNode(AbilityName.GrapplingHook, null, true, 4, abilityLearnedFlags);
 
-            rangedAbilities[2, 0] = AbilityName.Homing;
-            rangedAbilities[2, 1] = AbilityName.MagneticImplant;
-            rangedAbilities[2, 2] = AbilityName.SpeedyGrapple;
-            rangedAbilities[2, 3] = AbilityName.Elusiveness;
+            rangedAbilities[2, 0] = new AbilityNode(AbilityName.Homing, new AbilityName[] {AbilityName.Serrated}, false, 2, abilityLearnedFlags);
+            rangedAbilities[2, 1] = new AbilityNode(AbilityName.MagneticImplant, new AbilityName[] {AbilityName.Headshot}, false, 2, abilityLearnedFlags);
+            rangedAbilities[2, 2] = new AbilityNode(AbilityName.SpeedyGrapple, new AbilityName[] {AbilityName.GrapplingHook}, false, 2, abilityLearnedFlags);
+            rangedAbilities[2, 3] = new AbilityNode(AbilityName.Elusiveness, new AbilityName[] {AbilityName.Tumble}, false, 1, abilityLearnedFlags);
 
-            rangedAbilities[3, 1] = AbilityName.LooseCannon;
-            rangedAbilities[3, 2] = AbilityName.FlashBomb;
-            rangedAbilities[3, 3] = AbilityName.Tumble;
 
-            rangedAbilities[4, 0] = AbilityName.Leeching;
-            rangedAbilities[4, 1] = AbilityName.MakeItRain;
-            rangedAbilities[4, 2] = AbilityName.BiggerBombs;
-            rangedAbilities[4, 3] = AbilityName.TarBomb;
+            rangedAbilities[3, 1] = new AbilityNode(AbilityName.LooseCannon, new AbilityName[] {AbilityName.Homing, AbilityName.MagneticImplant}, false, 5, abilityLearnedFlags);
+            rangedAbilities[3, 2] = new AbilityNode(AbilityName.FlashBomb, new AbilityName[] {AbilityName.SpeedyGrapple, AbilityName.LooseCannon, AbilityName.Tumble}, false, 2, abilityLearnedFlags);
+            rangedAbilities[3, 3] = new AbilityNode(AbilityName.Tumble, null, true, 4, abilityLearnedFlags);
 
-            rangedAbilities[5, 0] = AbilityName.Penetrating;
-            rangedAbilities[5, 1] = AbilityName.MakeItHail;
-            rangedAbilities[5, 2] = AbilityName.MoltenBolt;
+            rangedAbilities[4, 0] = new AbilityNode(AbilityName.Leeching, new AbilityName[] {AbilityName.LooseCannon}, false, 2, abilityLearnedFlags);
+            rangedAbilities[4, 1] = new AbilityNode(AbilityName.MakeItRain, new AbilityName[] {AbilityName.LooseCannon}, false, 4, abilityLearnedFlags);
+            rangedAbilities[4, 2] = new AbilityNode(AbilityName.BiggerBombs, new AbilityName[] {AbilityName.FlashBomb}, false, 1, abilityLearnedFlags);
+            rangedAbilities[4, 3] = new AbilityNode(AbilityName.TarBomb, new AbilityName[] {AbilityName.FlashBomb}, false, 1, abilityLearnedFlags);
 
-            rangedAbilities[6, 0] = AbilityName.Omnishot;
-            rangedAbilities[6, 1] = AbilityName.StrongWinds;
+            rangedAbilities[5, 0] = new AbilityNode(AbilityName.Penetrating, new AbilityName[] {AbilityName.Leeching}, false, 2, abilityLearnedFlags);
+            rangedAbilities[5, 1] = new AbilityNode(AbilityName.MakeItHail, new AbilityName[] {AbilityName.MakeItRain}, false, 3, abilityLearnedFlags);
+            rangedAbilities[5, 2] = new AbilityNode(AbilityName.MoltenBolt, new AbilityName[] {AbilityName.TarBomb}, false, 2, abilityLearnedFlags);
+
+            rangedAbilities[6, 0] = new AbilityNode(AbilityName.Omnishot, new AbilityName[] {AbilityName.MakeItHail}, false, 10, abilityLearnedFlags);
+            rangedAbilities[6, 1] = new AbilityNode(AbilityName.StrongWinds, new AbilityName[] {AbilityName.MakeItHail}, false, 3, abilityLearnedFlags);
             #endregion
         }
 
@@ -126,9 +128,21 @@ namespace KazgarsRevenge
         bool showTalents = false;
         string abilityToUseString = null;
         int selectedItemSlot = -1;
+        int selectedTalentSlot = -1;
         GearSlot selectedEquipPiece;
         bool selectedEquipSlot = false;
-        AbilityName[,] rangedAbilities = new AbilityName[7 , 4];
+
+        enum TalentTrees
+        {
+            ranged,
+            melee,
+            magic
+        }
+
+         TalentTrees currentTalentTree = TalentTrees.ranged;
+        
+        
+        AbilityNode[,] rangedAbilities = new AbilityNode[7 , 4];
 
 
         #endregion
@@ -205,11 +219,12 @@ namespace KazgarsRevenge
                 bool mouseOnGui = collides != null || selectedItemSlot != -1 || selectedEquipSlot;
                 CheckMouseRay(newTarget, mouseOnGui);
 
-                //if item is removed from the inventory area
-                if (collides == null && (selectedItemSlot != -1 || selectedEquipSlot) && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
+                //if icon is removed from the inventory area
+                if (collides == null && (selectedItemSlot != -1 || selectedEquipSlot || selectedTalentSlot != -1) && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
                     //Trash item here?
                     selectedItemSlot = -1;
+                    selectedTalentSlot = -1;
                     selectedEquipSlot = false;
                 }
 
@@ -283,7 +298,14 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    ChangeVelocity(Vector3.Zero);
+                    if (velDir == Vector3.Zero)
+                    {
+                        ChangeVelocity(Vector3.Zero);
+                    }
+                    else
+                    {
+                        ChangeVelocity(velDir);
+                    }
                 }
             }
             else
@@ -600,7 +622,6 @@ namespace KazgarsRevenge
             {
                 if (curKeys.IsKeyDown(k.Key) && prevKeys.IsKeyUp(k.Key) && !k.Value.onCooldown && abilityLearnedFlags[k.Value.AbilityName])
                 {
-                    bool look = abilityLearnedFlags[k.Value.AbilityName];               //#JARED FIND ME!!!!!  Why is this always coming back as true / why is none being returned for the name?
                     AbilityName name = k.Value.AbilityName;
                     useAbility = true;
                     abilityToUse = k.Value;
@@ -609,7 +630,7 @@ namespace KazgarsRevenge
             }
 
             foreach (KeyValuePair<ButtonState, Ability> k in mouseBoundAbility)
-            {//#Nate
+            {
                 if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown && !mouseOnGui && abilityLearnedFlags[k.Value.AbilityName])
                 {
                     useAbility = true;
@@ -682,7 +703,7 @@ namespace KazgarsRevenge
             }
 
             //primary attack (autos)
-            if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || targetedPhysicalData != null)
+            if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space) || targetedPhysicalData != null)
             {
                 //used to differentiate between left hand, right hand, and two hand animations
                 aniSuffix = "right";
@@ -811,7 +832,7 @@ namespace KazgarsRevenge
                     if (selectedEquipPiece != slot)
                     {
                         //TODO floating text saying that can't be equipped in that slot. #Jared teach me your ways
-                        ((MainGame)Game).AddAlert("Can't put that there me' lord!");
+                        ((MainGame)Game).AddAlert("I can't equip that there!");
                     }
                 }
                 else if (gear[slot] == null)
@@ -839,6 +860,29 @@ namespace KazgarsRevenge
                 }
             }
         }
+
+        private void talentHelp(int check, AbilityNode[,] talents)
+        {
+            if (talents[(int)check / 4, check % 4] != null)
+                {   //if not learned
+                    if (!abilityLearnedFlags[talents[(int)check / 4, check % 4].name])
+                    {   //if can be unlocked
+                        if (talents[(int)check / 4, check % 4].canUnlock() && (totalTalentPoints - spentTalentPoints) >= talents[(int)check / 4, check % 4].cost)
+                        {   //unlock it
+                            spentTalentPoints += talents[(int)check / 4, check % 4].cost;
+                            abilityLearnedFlags[talents[(int)check / 4, check % 4].name] = true;
+                        }
+                        else
+                        {   //floating error TODO decide if we like that it's over the interface or not
+                            ((MainGame)Game).AddAlert("I can't unlock that yet!");
+                        }
+                    }
+                    else        //if talent is already learned
+                    {
+                        selectedTalentSlot = check;
+                    }
+                }
+          }
 
         private void ResetTargettedEntity()
         {
@@ -1026,19 +1070,57 @@ namespace KazgarsRevenge
                     #endregion
                     #region abilities
                     case "abilities":
-                        abilityToUseString = innerClicked;
+                        if (innerClicked != null && selectedTalentSlot != -1)
+                        {
+                            int check = Convert.ToInt32(innerClicked.Remove(0, 7));
+                            for (int i = 0; i < 12; i++)
+                            {   //if ability is already on bar
+                                if (boundAbilities[i].Value.AbilityName.Equals(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
+                                {   //set that slot to empty
+                                    boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(AbilityName.None));
+                                }
+                            }
+                            //if ability is already on right mouse
+                            if (mouseBoundAbility[0].Value.AbilityName.Equals(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
+                            {   //set that slot to empty
+                                mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(AbilityName.None));
+                            }
+
+                            if(currentTalentTree == TalentTrees.ranged){
+                                if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                else boundAbilities[check] = new KeyValuePair<Keys,Ability>(boundAbilities[check].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                            }
+                            else if (currentTalentTree == TalentTrees.melee){
+
+                            }
+                            else if (currentTalentTree == TalentTrees.magic){
+
+                            }
+                            selectedTalentSlot = -1;
+                        }
+                        else
+                        {
+                            abilityToUseString = innerClicked;
+                        }
                         break;
                     #endregion
-                    #region abilities
+                    #region talents
                     case "talents":
                         if (innerClicked != null)
                         {
                             //TODO if we add any more innerFrames in abilities make sure we check those first
                             int check = Convert.ToInt32(innerClicked.Remove(0, 6));
-                            if (!rangedAbilities[(int) check/4 , check%4].ToString().Equals("None"))
+                            if (currentTalentTree == TalentTrees.ranged)
                             {
-                                //String look = rangedAbilities[(int)check / 4, check % 4].ToString();
-                                abilityLearnedFlags[rangedAbilities[(int)check / 4, check % 4]] = !abilityLearnedFlags[rangedAbilities[(int)check / 4, check % 4]];
+                                talentHelp(check, rangedAbilities);
+                            }
+                            else if (currentTalentTree == TalentTrees.melee)
+                            {
+                                //talentHelp(check, meleeAbilities);
+                            }
+                            else if (currentTalentTree == TalentTrees.magic)
+                            {
+                                //talentHelp(check, magicAbilities);
                             }
                         }
                         break;
@@ -1257,17 +1339,17 @@ namespace KazgarsRevenge
 
             //ability
             abilityDict.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("rightmouse", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability12", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
             //abilities 0-7
             for (int i = 0; i < 4; ++i)
             {
                 abilityDict.Add("ability" + i, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
                 abilityDict.Add("ability" + (i + 4), new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
             }
-            abilityDict.Add("item1", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("item2", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("item3", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("item4", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability8", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability9", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability10", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability11", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
 
             //Talents
             for (int i = 0; i < 4; ++i)
@@ -1315,10 +1397,9 @@ namespace KazgarsRevenge
             #region Ability Bar
             //Ability Bar
             s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Red * 0.5f);
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < 12; ++i)
             {
                 s.Draw(boundAbilities[i].Value.icon, guiInsideRects["abilities"]["ability" + i], Color.White);
-                s.Draw(boundAbilities[i + 4].Value.icon, guiInsideRects["abilities"]["ability" + (i + 4)], Color.White);
             }
 
             //LM
@@ -1326,16 +1407,8 @@ namespace KazgarsRevenge
             else s.Draw(gear[GearSlot.Righthand].Icon, guiInsideRects["abilities"]["primary"], Color.White);
 
             //RM
-            s.Draw(mouseBoundAbility[0].Value.icon, guiInsideRects["abilities"]["rightmouse"], Color.White);
+            s.Draw(mouseBoundAbility[0].Value.icon, guiInsideRects["abilities"]["ability12"], Color.White);
 
-            //Item 1
-            s.Draw(healthPot, guiInsideRects["abilities"]["item1"], Color.White);
-            //Item 2
-            s.Draw(healthPot, guiInsideRects["abilities"]["item2"], Color.White);
-            //Item 3
-            s.Draw(healthPot, guiInsideRects["abilities"]["item3"], Color.White);
-            //Item 4
-            s.Draw(healthPot, guiInsideRects["abilities"]["item4"], Color.White);
 
             #endregion
 
@@ -1344,20 +1417,27 @@ namespace KazgarsRevenge
             //TODO make into for loop for all bound abilities / items
             //s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * 0) * average)), (int)((maxY - (84 + 64 * (boundAbilities[0].timeRemaining / boundAbilities[0].cooldownSeconds)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[0].timeRemaining / boundAbilities[0].cooldownSeconds) * average) + 1), Color.Black * 0.5f);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 12; i++)
             {
-                if (boundAbilities[i].Value.onCooldown)
+                if (!abilityLearnedFlags[boundAbilities[i].Value.AbilityName])
                 {
-                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (84 + 64 * (boundAbilities[i].Value.cooldownMillisRemaining / boundAbilities[i].Value.cooldownMillisLength)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i].Value.cooldownMillisRemaining / boundAbilities[i].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
+                    s.Draw(texWhitePixel, guiInsideRects["abilities"]["ability" + i], Color.Black * .5f);
                 }
-                if (boundAbilities[i + 4].Value.onCooldown)
+                else if (boundAbilities[i].Value.onCooldown)
                 {
-                    s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (10 + 64 * (boundAbilities[i + 4].Value.cooldownMillisRemaining / boundAbilities[i + 4].Value.cooldownMillisLength)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i + 4].Value.cooldownMillisRemaining / boundAbilities[i + 4].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
+                    s.Draw(texWhitePixel, new Rectangle(guiInsideRects["abilities"]["ability" + i].X, (int)(guiInsideRects["abilities"]["ability" + i].Y + 64 * average - (64 * (boundAbilities[i].Value.cooldownMillisRemaining / boundAbilities[i].Value.cooldownMillisLength)) * average), (int)(64 * average), (int)(64 * (boundAbilities[i].Value.cooldownMillisRemaining / boundAbilities[i].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
+                    //s.Draw(texWhitePixel, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - (84 + 64 * (boundAbilities[i].Value.cooldownMillisRemaining / boundAbilities[i].Value.cooldownMillisLength)) * average)), (int)(64 * average), (int)(64 * (boundAbilities[i].Value.cooldownMillisRemaining / boundAbilities[i].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
                 }
             }
             //RM ability
-            s.Draw(texWhitePixel, new Rectangle(guiInsideRects["abilities"]["rightmouse"].X, (int) (guiInsideRects["abilities"]["rightmouse"].Y + 64 * average - (64 * (mouseBoundAbility[0].Value.cooldownMillisRemaining / mouseBoundAbility[0].Value.cooldownMillisLength)) * average), (int)(64 * average), (int)(64 * (mouseBoundAbility[0].Value.cooldownMillisRemaining / mouseBoundAbility[0].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
-
+            if (!abilityLearnedFlags[mouseBoundAbility[0].Value.AbilityName])
+            {
+                s.Draw(texWhitePixel, guiInsideRects["abilities"]["ability12"], Color.Black * .5f);
+            }
+            else if (mouseBoundAbility[0].Value.onCooldown)
+            {
+                s.Draw(texWhitePixel, new Rectangle(guiInsideRects["abilities"]["ability12"].X, (int)(guiInsideRects["abilities"]["ability12"].Y + 64 * average - (64 * (mouseBoundAbility[0].Value.cooldownMillisRemaining / mouseBoundAbility[0].Value.cooldownMillisLength)) * average), (int)(64 * average), (int)(64 * (mouseBoundAbility[0].Value.cooldownMillisRemaining / mouseBoundAbility[0].Value.cooldownMillisLength) * average) + 1), Color.Black * 0.5f);
+            }
             #endregion
             #region Ability Frames
             //Draw the frames around abilities being used
@@ -1538,18 +1618,27 @@ namespace KazgarsRevenge
                 {
                     for (int j = 0; j < 7; j++)
                     {
-                        if (!rangedAbilities[j, i].ToString().Equals("None"))
+                        if (rangedAbilities[j, i] != null)
                         {
                             //Draw Icon
-                            s.Draw(GetAbility(rangedAbilities[j, i]).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
+                            s.Draw(GetAbility(rangedAbilities[j, i].name).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
                             //Draw shadow over locked abilities
-                            if (!abilityLearnedFlags[rangedAbilities[j, i]])
-                            {
-                                s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black *.8f);
+                            if (!abilityLearnedFlags[rangedAbilities[j, i].name])
+                            {   //can be unlocked
+                                if (rangedAbilities[j, i].canUnlock())
+                                {
+                                    s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White * .5f);
+                                    s.DrawString(font, rangedAbilities[j, i].cost.ToString(), new Vector2(guiInsideRects["talents"]["talent" + (i + j * 4)].X, guiInsideRects["talents"]["talent" + (i + j * 4)].Y), Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                                }
+                                //locked
+                                else s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black *.8f);
                             }
                         }
                     }
                 }
+
+                //Draw Talent Points
+                s.DrawString(font, (totalTalentPoints - spentTalentPoints) + "/" + totalTalentPoints, vecName, Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
             }
             #endregion
             #endregion
@@ -1557,23 +1646,38 @@ namespace KazgarsRevenge
             //Mouse
             rectMouse.X = curMouse.X;
             rectMouse.Y = curMouse.Y;
-            if (selectedItemSlot == -1 && selectedEquipSlot == false)
-            {
-                rectMouse.Width = 25;
-                rectMouse.Height = 25;
-                s.Draw(texCursor, rectMouse, Color.White);
-            }
-            else if (selectedItemSlot != -1)
+            if (selectedItemSlot != -1)
             {
                 rectMouse.Width = (int)(60 * average);
                 rectMouse.Height = (int)(60 * average);
                 s.Draw(inventory[selectedItemSlot].Icon, rectMouse, Color.White);
             }
-            else
+            else if (selectedEquipSlot)
             {
                 rectMouse.Width = (int)(60 * average);
                 rectMouse.Height = (int)(60 * average);
                 s.Draw(gear[selectedEquipPiece].Icon, rectMouse, Color.White);
+            }
+            else if(selectedTalentSlot != -1)
+            {
+                rectMouse.Width = (int)(60 * average);
+                rectMouse.Height = (int)(60 * average);
+                if (currentTalentTree == TalentTrees.ranged){
+                    s.Draw(GetAbility(rangedAbilities[selectedTalentSlot/4, selectedTalentSlot%4].name).icon, rectMouse, Color.White);
+                }
+                else if (currentTalentTree == TalentTrees.melee){
+
+                }
+                else{
+
+                }
+                
+            }
+            else
+            {
+                rectMouse.Width = 25;
+                rectMouse.Height = 25;
+                s.Draw(texCursor, rectMouse, Color.White);
             }
         }
 

@@ -91,6 +91,7 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="QuickGraph">
       <HintPath>..\..\..\QuickGraph.dll</HintPath>
     </Reference>
@@ -170,13 +171,17 @@
     <Compile Include="Menuing\EventHandler.cs" />
     <Compile Include="Menuing\Events\KeyEvent.cs" />
     <Compile Include="Menuing\Events\MouseEvent.cs" />
+    <Compile Include="Menuing\Input.cs" />
+    <Compile Include="Menuing\KeyboardHandling.cs" />
     <Compile Include="Menuing\Menus\AccountMenu.cs" />
+    <Compile Include="Menuing\Menus\NewAccountMenu.cs" />
     <Compile Include="Menuing\Menus\IMenu.cs" />
     <Compile Include="Menuing\Menus\LevelSelectMenu.cs" />
     <Compile Include="Menuing\Menus\LinkedMenu.cs" />
     <Compile Include="Menuing\Menus\LoadingMenu.cs" />
     <Compile Include="Menuing\Menus\SimpleMenu.cs" />
     <Compile Include="Menuing\Selections\SelectionV2.cs" />
+    <Compile Include="Menuing\TextBox.cs" />
     <Compile Include="Misc Components\Spawners\EnemyProximitySpawner.cs" />
     <Compile Include="Misc Components\Spawners\Spawner.cs" />
     <Compile Include="Misc Components\TimerComponent.cs" />
@@ -186,6 +191,7 @@
     <Compile Include="Networking\MessageSender.cs" />
     <Compile Include="Account\AccountUtil.cs" />
     <Compile Include="Misc Components\DropTable.cs" />
+    <Compile Include="Non-Component\AbilityNode.cs" />
     <Compile Include="Non-Component\FloatingText.cs" />
     <Compile Include="Networking\Handlers\DataMessageHandler.cs" />
     <Compile Include="Networking\Handlers\GameStateChangeHandler.cs" />
@@ -236,6 +242,7 @@
     <Compile Include="Particles\Systems\Debuffs\FrostAOEMist.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOEMistSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOESystem.cs" />
+    <Compile Include="Particles\Systems\Charge\DragonFireChargeSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionDebrisSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionMainSystem.cs" />
@@ -251,7 +258,7 @@
     <Compile Include="Particles\Systems\Debuffs\TarDebuffSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\AnimatedFireExplosionSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireArrowParticleSystem.cs" />
-    <Compile Include="Particles\Systems\FrostChargeSystem.cs" />
+    <Compile Include="Particles\Systems\Charge\FrostChargeSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireMistTrailSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FrostMistParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FrostboltTrailParticleSystem.cs" />

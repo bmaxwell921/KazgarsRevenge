@@ -31,6 +31,7 @@ namespace KazgarsRevenge
         public CollisionGroup EnemyCollisionGroup;
         public CollisionGroup LevelCollisionGroup;
         public CollisionGroup NetworkedPlayerCollisionGroup;
+        public CollisionGroup UntouchableCollisionGroup;
 
         public Random rand;
 
@@ -62,6 +63,7 @@ namespace KazgarsRevenge
             EnemyCollisionGroup = new CollisionGroup();
             LevelCollisionGroup = new CollisionGroup();
             NetworkedPlayerCollisionGroup = new CollisionGroup();
+            UntouchableCollisionGroup = new CollisionGroup();
 
             //players don't collide with each other
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(PlayerCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
@@ -72,6 +74,10 @@ namespace KazgarsRevenge
 
             //enemies don't collide with each other
             CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(EnemyCollisionGroup, EnemyCollisionGroup), CollisionRule.NoBroadPhase);
+
+            //untouchables only collide with level (e.g. if kazgar is tumbling)
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(UntouchableCollisionGroup, PlayerCollisionGroup), CollisionRule.NoBroadPhase);
+            CollisionRules.CollisionGroupRules.Add(new CollisionGroupPair(UntouchableCollisionGroup, EnemyCollisionGroup), CollisionRule.NoBroadPhase);
         }
 
         protected override void Initialize()
