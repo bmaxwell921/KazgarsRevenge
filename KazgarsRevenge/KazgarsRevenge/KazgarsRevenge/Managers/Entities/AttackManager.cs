@@ -329,7 +329,7 @@ namespace KazgarsRevenge
             }
         }
 
-        public void CreateFlashBomb(Vector3 startPos, Vector3 targetPos, float radius, AliveComponent creator)
+        public void CreateFlashBomb(Vector3 startPos, Vector3 targetPos, float radius, bool tar, AliveComponent creator)
         {
             GameEntity bomb = new GameEntity("arrow", FactionType.Neutral, EntityType.Misc);
 
@@ -344,7 +344,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
             UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
-            FlashBomb bombController = new FlashBomb(mainGame, bomb, targetPos, creator, radius);
+            FlashBomb bombController = new FlashBomb(mainGame, bomb, targetPos, creator, radius, tar);
 
             bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
             genComponentManager.AddComponent(bombPhysics);
@@ -804,8 +804,13 @@ namespace KazgarsRevenge
 
             attacks.Add(hazard);
         }
-        public void CreateFlashExplosion(Vector3 position, float radius, AliveComponent creator)
+        public void CreateFlashExplosion(Vector3 position, float radius, bool tar, AliveComponent creator)
         {
+            if (tar)
+            {
+                CreateTarExplosion(position, radius, creator);
+            }
+
             GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
 
             Entity attackData = new Cylinder(position, 47, radius);
@@ -1121,7 +1126,7 @@ namespace KazgarsRevenge
         public void SpawnTarParticles(Vector3 position)
         {
             ParticleSystem boom = particles.GetSystem(typeof(TarExplosionParticleSystem));
-            for (int i = 0; i < 30; ++i)
+            for (int i = 0; i < 15; ++i)
             {
                 boom.AddParticle(position, Vector3.Zero);
             }

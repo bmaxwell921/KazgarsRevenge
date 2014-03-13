@@ -1124,7 +1124,7 @@ namespace KazgarsRevenge
                 {
                     radius *= 2.5f;
                 }
-                attacks.CreateFlashBomb(physicalData.Position, groundAbilityTarget, radius, this as AliveComponent);
+                attacks.CreateFlashBomb(physicalData.Position, groundAbilityTarget, radius, abilityLearnedFlags[AbilityName.TarBomb],this as AliveComponent);
 
                 millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
             });

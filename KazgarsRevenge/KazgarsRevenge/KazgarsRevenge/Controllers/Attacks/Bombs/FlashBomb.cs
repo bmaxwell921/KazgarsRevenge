@@ -8,16 +8,16 @@ namespace KazgarsRevenge
 {
     class FlashBomb : BombController
     {
-
-        public FlashBomb(KazgarsRevengeGame game, GameEntity entity, Vector3 targetPosition, AliveComponent creator, float radius)
+        bool tar;
+        public FlashBomb(KazgarsRevengeGame game, GameEntity entity, Vector3 targetPosition, AliveComponent creator, float radius, bool tar)
             : base(game, entity, targetPosition, creator, radius)
         {
-
+            this.tar = tar;
         }
 
         protected override void CreateExplosion()
         {
-            (Game.Services.GetService(typeof(AttackManager)) as AttackManager).CreateFlashExplosion(targetPosition, radius, creator);
+            (Game.Services.GetService(typeof(AttackManager)) as AttackManager).CreateFlashExplosion(targetPosition, radius, tar, creator);
         }
     }
 }

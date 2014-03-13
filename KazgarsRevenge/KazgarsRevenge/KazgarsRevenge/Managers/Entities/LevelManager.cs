@@ -222,7 +222,7 @@ namespace KazgarsRevenge
             return Vector3.Transform(location - rotationPoint, Matrix.CreateRotationY(rotationAmt.ToRadians())) + rotationPoint;
         }
 
-        bool addlight = false;
+        //bool addlight = false;
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {/*
             if (addlight)
