@@ -22,7 +22,7 @@ namespace KazgarsRevenge
         DragonState state = DragonState.Phase1;
 
         public DragonController(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity, 10)
+            : base(game, entity, 1)
         {
             settings.aniPrefix = "d_";
             settings.attackAniName = "snap";
@@ -149,7 +149,7 @@ namespace KazgarsRevenge
             if (state == DragonState.Phase2)
             {
                 Vector3 diff = targetData.Position - physicalData.Position;
-                float timeMultiplier = Math.Max(5 * (Math.Abs(diff.X) + Math.Abs(diff.Z)) / 600, 1);
+                float timeMultiplier = Math.Max(5 * (Math.Abs(diff.X) + Math.Abs(diff.Z)) / 1000, 1);
                 nextSpitBomb -= millis * timeMultiplier;
                 if (nextSpitBomb <= 0)
                 {
@@ -176,7 +176,7 @@ namespace KazgarsRevenge
             //becomes more often the farther away the target is
             //(anyone kiting the dragon from far away will get bombarded)
             Vector3 diff = targetData.Position - physicalData.Position;
-            float timeMultiplier = Math.Min(5 * (Math.Abs(diff.X) + Math.Abs(diff.Z)) / 600, 1);
+            float timeMultiplier = Math.Max(5 * (Math.Abs(diff.X) + Math.Abs(diff.Z)) / 1000, 1);
 
             nextSpitBomb -= millis * timeMultiplier;
             if (nextSpitBomb <= 0)
@@ -252,11 +252,11 @@ namespace KazgarsRevenge
                     {
                         if (iceHead)
                         {
-                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, 1, this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
                         }
                         else
                         {
-                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, 1, this as AliveComponent);
+                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
                         }
                         iceHead = !iceHead;
                         settings.attackRange = 80;
@@ -265,7 +265,12 @@ namespace KazgarsRevenge
                     {
                         Vector3 dir = targetData.Position - physicalData.Position;
                         dir.Y = 0;
-                        attacks.CreateCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetPhysicsYaw(dir), 35, this as AliveComponent);
+                        int damage = GeneratePrimaryDamage(StatType.Strength);
+                        if (chosenAttack == 3)
+                        {
+                            damage = (int)(damage * 1.5f);
+                        }
+                        attacks.CreateCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetPhysicsYaw(dir), damage, this as AliveComponent);
                     }
                     break;
             }

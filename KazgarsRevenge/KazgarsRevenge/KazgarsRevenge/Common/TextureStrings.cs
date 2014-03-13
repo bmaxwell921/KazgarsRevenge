@@ -71,6 +71,7 @@ namespace KazgarsRevenge
                     public static readonly string SPEEDY_GRAPPLE = @"Textures\UI\Abilities\speedy Graple";
                     public static readonly string BIGGER_BOMBS = @"Textures\UI\Abilities\biggerBombs";
                     public static readonly string TUMBLE = @"Textures\UI\Abilities\tumble";
+                    public static readonly string ELUSIVENESS = @"Textures\UI\Abilities\evasion";
                 }
             }
 

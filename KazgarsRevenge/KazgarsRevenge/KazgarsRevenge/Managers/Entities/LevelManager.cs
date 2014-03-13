@@ -80,7 +80,7 @@ namespace KazgarsRevenge
         public static readonly int CHUNK_SIZE = 24;
 
         // How large a block is in 3D space
-        public static readonly int BLOCK_SIZE = 200;
+        public static readonly int BLOCK_SIZE = 150;
 
         // The y component of the room location
         public static readonly float LEVEL_Y = 0;
@@ -222,10 +222,19 @@ namespace KazgarsRevenge
             return Vector3.Transform(location - rotationPoint, Matrix.CreateRotationY(rotationAmt.ToRadians())) + rotationPoint;
         }
 
+        bool addlight = false;
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
-        {
+        {/*
+            if (addlight)
+            {
+                Vector3 pos = position;
+                pos.Y = 50;
+                CreatePointLight(pos);
+            }
+            addlight = !addlight;*/
+
             position.Y = LEVEL_Y;
-            float roomScale = 20;
+            float roomScale = 15;
 
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 

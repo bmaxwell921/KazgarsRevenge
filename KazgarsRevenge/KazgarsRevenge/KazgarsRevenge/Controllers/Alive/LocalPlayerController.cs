@@ -1652,7 +1652,7 @@ namespace KazgarsRevenge
                 }
             }
 
-            if (looting && lootingSoul != null)
+            if (looting && lootingSoul != null && guiOutsideRects.ContainsKey("loot"))
             {
                 s.Draw(texWhitePixel, guiOutsideRects["loot"], Color.Black * .5f);
 

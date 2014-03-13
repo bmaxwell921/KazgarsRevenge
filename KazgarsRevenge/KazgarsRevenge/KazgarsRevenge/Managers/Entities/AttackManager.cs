@@ -522,7 +522,7 @@ namespace KazgarsRevenge
             Entity boltData = new Box(position, 10, 17, 32, .001f);
             boltData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             boltData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            boltData.LinearVelocity = dir * 450;
+            boltData.LinearVelocity = dir * 400;
             boltData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             bolt.AddSharedData(typeof(Entity), boltData);
 
@@ -559,7 +559,7 @@ namespace KazgarsRevenge
             Entity boltData = new Box(position, 32, 17, 32, .001f);
             boltData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             boltData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            boltData.LinearVelocity = dir * 500;
+            boltData.LinearVelocity = dir * 400;
             boltData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             bolt.AddSharedData(typeof(Entity), boltData);
 
@@ -709,6 +709,7 @@ namespace KazgarsRevenge
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
             AttackController attackAI = new AttackController(mainGame, newAttack, damage, GetHitFaction(creator), creator);
             attackAI.HitMultipleTargets();
+            
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             genComponentManager.AddComponent(attackPhysics);

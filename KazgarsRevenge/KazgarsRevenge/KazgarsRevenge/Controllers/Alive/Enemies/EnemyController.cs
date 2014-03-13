@@ -286,13 +286,13 @@ namespace KazgarsRevenge
                 //if we have a longer range on our attack, raycast to check if a wall is in the way
                 if (settings.attackRange > LevelManager.BLOCK_SIZE)
                 {
-                    nothingBetween = RayCastCheckForRoom(diff);
+                    nothingBetween = !raycastCheckTarget || RayCastCheckForRoom(diff);
                 }
 
                 //if the target is within attack radius,
                 //     (TODO: and nothing is between this and the target, e.g. raycast returns nothing but target?)
                 //go to attack state
-                if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange && (nothingBetween || !usesPath))
+                if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange && nothingBetween)
                 {
                     SwitchToAttacking();
                     ChangeVelocity(Vector3.Zero);

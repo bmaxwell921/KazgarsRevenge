@@ -19,7 +19,7 @@
     <ApplicationIcon>Game.ico</ApplicationIcon>
     <Thumbnail>GameThumbnail.png</Thumbnail>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>E:\Publish\Kazgar\</PublishUrl>
+    <PublishUrl>C:\Users\jdcook\Desktop\Publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -29,7 +29,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -293,9 +293,9 @@
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
-    <Content Include="TextFile1.txt" />
-    <Content Include="Things to Cite.txt" />
-    <Content Include="ToDo.txt" />
+    <None Include="TextFile1.txt" />
+    <None Include="Things to Cite.txt" />
+    <None Include="ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KazgarsRevengeContent\KazgarsRevengeContent.contentproj">
@@ -332,36 +332,36 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Chunks\01-1-S-NSEW.json">
+    <Content Include="Chunks\01-1-S-NSEW.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Chunks\02-1-S-NSEW.json">
+    </Content>
+    <Content Include="Chunks\02-1-S-NSEW.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Chunks\03-1-S-NSEW.json">
+    </Content>
+    <Content Include="Chunks\03-1-S-NSEW.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Chunks\04-1-K-ESW.json">
+    </Content>
+    <Content Include="Chunks\04-1-K-ESW.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Chunks\06-1-N-ESW.json">
+    </Content>
+    <Content Include="Chunks\06-1-N-ESW.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Chunks\09-1-B-NW.json">
+    </Content>
+    <Content Include="Chunks\09-1-B-NW.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Chunks\10-1-N-ES.json">
+    </Content>
+    <Content Include="Chunks\10-1-N-ES.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Chunks\12-1-K-W.json">
+    </Content>
+    <Content Include="Chunks\12-1-K-W.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Chunks\13-1-B-S.json">
+    </Content>
+    <Content Include="Chunks\13-1-B-S.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Chunks\14-1-N-E.json">
+    </Content>
+    <Content Include="Chunks\14-1-N-E.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
