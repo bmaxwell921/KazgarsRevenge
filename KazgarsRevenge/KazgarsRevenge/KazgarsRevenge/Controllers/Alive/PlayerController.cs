@@ -1643,6 +1643,8 @@ namespace KazgarsRevenge
 
                 case AbilityName.Penetrating://ranged passives
                     return GetPenetrating();
+                case AbilityName.Homing:
+                    return GetHoming();
                 case AbilityName.Serrated:
                     return GetSerrated();
                 case AbilityName.Headshot:
@@ -1657,6 +1659,8 @@ namespace KazgarsRevenge
                     return GetSpeedyGrapple();
                 case AbilityName.BiggerBombs:
                     return GetBiggerBombs();
+                //case AbilityName.Elusiveness:     TODO #Jared
+                  //  return GetElusiveness();
 
                 case AbilityName.Garrote://melle actives
                     return GetGarrote();

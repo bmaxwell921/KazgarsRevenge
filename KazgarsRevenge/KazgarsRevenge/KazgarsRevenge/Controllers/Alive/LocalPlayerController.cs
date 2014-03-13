@@ -864,11 +864,11 @@ namespace KazgarsRevenge
         private void talentHelp(int check, AbilityNode[,] talents, bool rightclick)
         {
             if (talents[(int)check / 4, check % 4] != null)
-                {   //if not learned
+                {       //if not learned
                     if (!abilityLearnedFlags[talents[(int)check / 4, check % 4].name])
-                    {   //if can be unlocked
+                    {       //if can be unlocked
                         if (talents[(int)check / 4, check % 4].canUnlock() && (totalTalentPoints - spentTalentPoints) >= talents[(int)check / 4, check % 4].cost)
-                        {   //unlock it
+                        {       //unlock it
                             spentTalentPoints += talents[(int)check / 4, check % 4].cost;
                             abilityLearnedFlags[talents[(int)check / 4, check % 4].name] = true;
                         }
@@ -879,25 +879,33 @@ namespace KazgarsRevenge
                     }
                     else        //if talent is already learned
                     {   //equip in first open slot
-                        if (rightclick)
+                        if (GetAbility(talents[(int)check / 4, check % 4].name).AbilityType == AbilityType.Passive)
                         {
-                            bool placed = false;
-                            for (int i = 0; i < 12; i++)
-                            {
-                                if (boundAbilities[i].Value.AbilityName == AbilityName.None)
-                                {
-                                    selectedTalentSlot = check;
-                                    checkTalentOnBar(talents);
-                                    if (i == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    else boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    placed = true;
-                                    selectedTalentSlot = -1;
-                                    break;
-                                }
-                            }
-                            if (!placed) selectedTalentSlot = check;
+                            //Trying to put a passive on the bar.  Tell them no?
+                            ((MainGame)Game).AddAlert("I can't use a passive ability!");
                         }
-                        else selectedTalentSlot = check;
+                        else
+                        {
+                            if (rightclick)
+                            {
+                                bool placed = false;
+                                for (int i = 0; i < 12; i++)
+                                {
+                                    if (boundAbilities[i].Value.AbilityName == AbilityName.None)
+                                    {
+                                        selectedTalentSlot = check;
+                                        checkTalentOnBar(talents);
+                                        if (i == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                        else boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                        placed = true;
+                                        selectedTalentSlot = -1;
+                                        break;
+                                    }
+                                }
+                                if (!placed) selectedTalentSlot = check;
+                            }
+                            else selectedTalentSlot = check;
+                        }
                     }
                 }
           }
