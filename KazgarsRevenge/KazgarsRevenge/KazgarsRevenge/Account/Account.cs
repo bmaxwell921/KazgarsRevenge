@@ -76,7 +76,7 @@ namespace KazgarsRevenge
         {
             this.Name = name;
             this.CharacterLevel = START_CHAR_LEVEL;
-            this.UnlockedFloors = START_UNLOCKED_FLOORS;
+            this.UnlockedFloors = 1; // TODO change back to START_UNLOCKED_FLOORS
             this.AvailTalentPoints = START_TALENT_POINTS;
 
             this.UnlockedAbilities = new List<Ability>();
