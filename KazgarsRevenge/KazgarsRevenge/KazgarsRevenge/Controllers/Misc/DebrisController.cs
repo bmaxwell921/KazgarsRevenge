@@ -11,11 +11,11 @@ namespace KazgarsRevenge
     public class DebrisController : Component
     {
         Entity physicalData;
-        double lifeLength = 1000;
+        double lifeLength = 500;
         public DebrisController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
-            lifeLength += RandSingleton.U_Instance.Next(2500, 5500);
+            lifeLength += RandSingleton.U_Instance.Next(500, 1500);
         }
 
         public override void Start()

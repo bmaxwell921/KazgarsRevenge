@@ -104,8 +104,8 @@ namespace KazgarsRevenge
                 frostPillar.KillEntity();
             }
 
-            firePillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFirePillar(physicalData.Position + Vector3.Right * 150);
-            frostPillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFrostPillar(physicalData.Position + Vector3.Left * 150);
+            //firePillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFirePillar(physicalData.Position + Vector3.Right * 150);
+            //frostPillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFrostPillar(physicalData.Position + Vector3.Left * 150);
         }
 
         private void AIDragonWaiting(double millis)
@@ -148,7 +148,9 @@ namespace KazgarsRevenge
         {
             if (state == DragonState.Phase2)
             {
-                nextSpitBomb -= millis;
+                Vector3 diff = targetData.Position - physicalData.Position;
+                float timeMultiplier = Math.Max(5 * (Math.Abs(diff.X) + Math.Abs(diff.Z)) / 600, 1);
+                nextSpitBomb -= millis * timeMultiplier;
                 if (nextSpitBomb <= 0)
                 {
                     settings.attackRange = 2000; 
@@ -170,9 +172,11 @@ namespace KazgarsRevenge
             //run towards player
             //if in range, bite player (alternating heads)
             //every so often seconds, launch fire or ice ground attack (alternating)
-            Vector3 diff = targetData.Position - physicalData.Position;
-            float timeMultiplier = 1;
 
+            //becomes more often the farther away the target is
+            //(anyone kiting the dragon from far away will get bombarded)
+            Vector3 diff = targetData.Position - physicalData.Position;
+            float timeMultiplier = Math.Min(5 * (Math.Abs(diff.X) + Math.Abs(diff.Z)) / 600, 1);
 
             nextSpitBomb -= millis * timeMultiplier;
             if (nextSpitBomb <= 0)

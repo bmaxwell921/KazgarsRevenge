@@ -292,7 +292,7 @@ namespace KazgarsRevenge
                 //if the target is within attack radius,
                 //     (TODO: and nothing is between this and the target, e.g. raycast returns nothing but target?)
                 //go to attack state
-                if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange && nothingBetween)
+                if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange && (nothingBetween || !usesPath))
                 {
                     SwitchToAttacking();
                     ChangeVelocity(Vector3.Zero);
