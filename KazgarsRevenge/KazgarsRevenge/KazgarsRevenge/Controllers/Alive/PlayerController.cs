@@ -415,6 +415,7 @@ namespace KazgarsRevenge
 
         #region Action Sequences
 
+        protected bool usingPrimary = false;
         protected Vector3 velDir = Vector3.Zero;
         protected bool targetingGroundLocation = false;
         protected Vector3 groundAbilityTarget = Vector3.Zero;
@@ -509,6 +510,7 @@ namespace KazgarsRevenge
                 actionIndex = 0;
                 currentActionName = name;
                 stateResetCounter = double.MaxValue;
+                usingPrimary = false;
             }
         }
         //calls the interrupt handler for the current sequence
@@ -549,7 +551,7 @@ namespace KazgarsRevenge
             //idles
             actionSequences.Add("idle", IdleActions());
             actionSequences.Add("fightingstance", FightingStanceActions());
-            //primariy attacks
+            //primary attacks
             actionSequences.Add("swing", SwingActions());
             actionSequences.Add("shoot", ShootActions());
             //actionSequences.Add("punch", PunchActions());
@@ -566,7 +568,6 @@ namespace KazgarsRevenge
             actionSequences.Add("loosecannon", LooseCannonActions());
             actionSequences.Add("makeitrain", MakeItRainActions());
             actionSequences.Add("flashbomb", FlashBombActions());
-            actionSequences.Add("tarbomb", TarBombActions());
             actionSequences.Add("grapplinghook", GrapplingHookActions());
             actionSequences.Add("moltenbolt", MoltenBoltActions());
             actionSequences.Add("tumble", TumbleActions());
@@ -661,6 +662,8 @@ namespace KazgarsRevenge
         }
         private const int arrowDrawMillis = 200;
         private const int arrowReleaseMillis = 300;
+
+        //Primary attacks
         private List<Action> ShootActions()
         {
             List<Action> sequence = new List<Action>();
@@ -673,6 +676,7 @@ namespace KazgarsRevenge
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
                 millisActionLength = arrowDrawMillis;
+                usingPrimary = true;
             });
             sequence.Add(() =>
             {
@@ -730,6 +734,7 @@ namespace KazgarsRevenge
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
                 millisActionLength = animations.GetAniMillis("k_onehanded_swing") / 2;
+                usingPrimary = true;
             });
             sequence.Add(() =>
             {
@@ -753,6 +758,8 @@ namespace KazgarsRevenge
 
             return sequence;
         }
+
+
         private List<Action> LootActions()
         {
             List<Action> sequence = new List<Action>();
@@ -811,9 +818,7 @@ namespace KazgarsRevenge
             return sequence;
         }
 
-        /*
-         * Ranged abilities
-         */
+        //Ranged abilities
         private List<Action> SnipeActions()
         {
             //some of these actions are identical to "shoot", so just copying those Actions
@@ -1093,7 +1098,6 @@ namespace KazgarsRevenge
                         millisActionCounter = aniCounter;
                         millisActionLength = aniLength;
                     }
-
                     attState = AttackState.None;
                 }
                 else
@@ -1121,63 +1125,6 @@ namespace KazgarsRevenge
                     radius *= 2.5f;
                 }
                 attacks.CreateFlashBomb(physicalData.Position, groundAbilityTarget, radius, this as AliveComponent);
-
-                millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
-            });
-            sequence.Add(abilityFinishedAction);
-
-            return sequence;
-        }
-        private List<Action> TarBombActions()
-        {
-            List<Action> sequence = new List<Action>();
-
-            sequence.Add(() =>
-            {
-                if (!targetingGroundLocation)
-                {
-                    targetingGroundLocation = true;
-                    targetedGroundSize = bombSize;
-                    if (abilityLearnedFlags[AbilityName.BiggerBombs])
-                    {
-                        targetedGroundSize *= 2.5f;
-                    }
-                    actionIndex = 10;
-
-                    if (currentAniName == "k_fighting_stance" || currentAniName == "k_from_fighting_stance")
-                    {
-                        InterruptReset("fightingstance");
-                        millisActionCounter = aniCounter;
-                        millisActionLength = aniLength;
-                    }
-
-                    attState = AttackState.None;
-                }
-                else
-                {
-                    targetingGroundLocation = false;
-                    actionSequences["snipe"][0]();
-                    groundAbilityTarget = mouseHoveredLocation;
-                    groundTargetLocation = physicalData.Position;
-                }
-            });
-
-            sequence.Add(actionSequences["shoot"][1]);
-
-            sequence.Add(() =>
-            {
-                //looks like kazgar releases arrow
-                if (attached.ContainsKey("handarrow"))
-                {
-                    attached.Remove("handarrow");
-                }
-
-                float radius = bombSize;
-                if (abilityLearnedFlags[AbilityName.BiggerBombs])
-                {
-                    radius *= 2.5f;
-                }
-                attacks.CreateTarBomb(physicalData.Position, groundAbilityTarget, radius, this as AliveComponent);
 
                 millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
             });
@@ -1300,9 +1247,7 @@ namespace KazgarsRevenge
             return sequence;
         }
 
-        /*
-         * Melee abilities
-         */
+        //Melee abilities
         private List<Action> FlipActions()
         {
             List<Action> sequence = new List<Action>();
@@ -1632,8 +1577,6 @@ namespace KazgarsRevenge
                     return GetMakeItRain();
                 case AbilityName.FlashBomb:
                     return GetFlashBomb();
-                case AbilityName.TarBomb:
-                    return GetTarBomb();
                 case AbilityName.GrapplingHook:
                     return GetGrapplingHook();
                 case AbilityName.MoltenBolt:
@@ -1643,6 +1586,8 @@ namespace KazgarsRevenge
 
                 case AbilityName.Penetrating://ranged passives
                     return GetPenetrating();
+                case AbilityName.TarBomb:
+                    return GetTarBomb();
                 case AbilityName.Homing:
                     return GetHoming();
                 case AbilityName.Serrated:
@@ -1729,7 +1674,7 @@ namespace KazgarsRevenge
         }
         protected Ability GetTarBomb()
         {
-            return new Ability(AbilityName.TarBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TAR_BOMB), 2000, AttackType.Ranged, "tarbomb", AbilityType.GroundTarget);
+            return new Ability(AbilityName.TarBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TAR_BOMB), 2000, AttackType.Ranged, "tarbomb", AbilityType.Passive);
         }
         protected Ability GetGrapplingHook()
         {

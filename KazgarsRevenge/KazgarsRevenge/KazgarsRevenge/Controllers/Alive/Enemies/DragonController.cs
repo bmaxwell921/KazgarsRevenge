@@ -13,6 +13,7 @@ namespace KazgarsRevenge
     {
         private enum DragonState
         {
+            Waiting,
             Phase1,
             Phase2,
             Enrage,
@@ -81,7 +82,7 @@ namespace KazgarsRevenge
 
         private void ResetEncounter()
         {
-            state = DragonState.Phase1;
+            state = DragonState.Waiting;
             targetHealth = null;
             targetData = null;
             enrageTimer = 120000;
@@ -169,8 +170,11 @@ namespace KazgarsRevenge
             //run towards player
             //if in range, bite player (alternating heads)
             //every so often seconds, launch fire or ice ground attack (alternating)
+            Vector3 diff = targetData.Position - physicalData.Position;
+            float timeMultiplier = 1;
 
-            nextSpitBomb -= millis;
+
+            nextSpitBomb -= millis * timeMultiplier;
             if (nextSpitBomb <= 0)
             {
                 settings.attackRange = 2000;
@@ -347,6 +351,9 @@ namespace KazgarsRevenge
         {
             switch (state)
             {
+                case DragonState.Waiting:
+                    StartPhase1();
+                    break;
                 case DragonState.Phase1:
                     currentUpdateFunction = new AIUpdateFunction(AIDragonPhase1);
                     break;

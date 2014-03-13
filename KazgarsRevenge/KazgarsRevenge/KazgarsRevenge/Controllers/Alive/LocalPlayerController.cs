@@ -244,7 +244,8 @@ namespace KazgarsRevenge
                 {
                     ResetTargettedEntity();
                 }
-                if (attState != AttackState.Locked && !looting)
+
+                if ((attState != AttackState.Locked || usingPrimary) && !looting)
                 {
                     CheckAbilities(move, mouseOnGui);
                 }
@@ -703,7 +704,7 @@ namespace KazgarsRevenge
             }
 
             //primary attack (autos)
-            if (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space) || targetedPhysicalData != null)
+            if (!usingPrimary && (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space) || targetedPhysicalData != null))
             {
                 //used to differentiate between left hand, right hand, and two hand animations
                 aniSuffix = "right";

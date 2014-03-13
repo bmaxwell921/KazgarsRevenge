@@ -597,9 +597,9 @@ namespace KazgarsRevenge
                 InsertThreatEntity(tempEnt);
             }
 
-            SwitchToAttacking();
             targetData = threatLevels[0].Entity.GetSharedData(typeof(Entity)) as Entity;
             targetHealth = threatLevels[0].Entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+            SwitchToAttacking();
         }
 
         private void InsertThreatEntity(EntityIntPair ent)
