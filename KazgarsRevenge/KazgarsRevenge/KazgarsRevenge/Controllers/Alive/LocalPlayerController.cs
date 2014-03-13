@@ -1675,7 +1675,16 @@ namespace KazgarsRevenge
                     for (int j = 0; j < 7; j++)
                     {
                         if (rangedAbilities[j, i] != null)
-                        {
+                        {       //Draw active frames around active items
+                            if (GetAbility(rangedAbilities[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[rangedAbilities[j, i].name])
+                            {
+                                Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
+                                temp.X = temp.X - 4;
+                                temp.Y = temp.Y - 4;
+                                temp.Width = temp.Width + 8;
+                                temp.Height = temp.Height + 8;
+                                s.Draw(texWhitePixel, temp, Color.Red * .8f);
+                            }
                             //Draw Icon
                             s.Draw(GetAbility(rangedAbilities[j, i].name).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
                             //Draw shadow over locked abilities

@@ -48,28 +48,29 @@ namespace KazgarsRevenge
             {
                 public class Range
                 {
-                    public static readonly string SNIPE = @"Textures\UI\Abilities\LW";
+                    public static readonly string SNIPE = @"Textures\UI\Abilities\snipe";
                     public static readonly string HEART_STRIKE = @"Textures\UI\Abilities\HS";
                     public static readonly string ICE_CLAW_PRI = @"Textures\whitePixel";
-                    public static readonly string OMNI_SHOT = @"Textures\UI\Abilities\I4";
-                    public static readonly string ADREN_RUSH = @"Textures\UI\Abilities\I4";
-                    public static readonly string LEECH_ARROWS = @"Textures\UI\Abilities\HS";
-                    public static readonly string LOOSE_CANNON = @"Textures\UI\Abilities\I4";
-                    public static readonly string MAKE_IT_RAIN = @"Textures\UI\Abilities\LW";
-                    public static readonly string FLASH_BOMB = @"Textures\UI\Abilities\BR";
-                    public static readonly string TAR_BOMB = @"Textures\UI\Abilities\BR";
-                    public static readonly string GRAP_HOOK = @"Textures\UI\Abilities\I4";
+                    public static readonly string OMNI_SHOT = @"Textures\UI\Abilities\OmniShot";
+                    public static readonly string ADREN_RUSH = @"Textures\UI\Abilities\AdrenR";
+                    public static readonly string LEECH_ARROWS = @"Textures\UI\Abilities\leechingArrow";
+                    public static readonly string LOOSE_CANNON = @"Textures\UI\Abilities\looseCan";
+                    public static readonly string MAKE_IT_RAIN = @"Textures\UI\Abilities\makeItRain";
+                    public static readonly string FLASH_BOMB = @"Textures\UI\Abilities\flashBomb";
+                    public static readonly string TAR_BOMB = @"Textures\UI\Abilities\tarBomb";
+                    public static readonly string GRAP_HOOK = @"Textures\UI\Abilities\graple";
                     public static readonly string CHAIN_SPEAR = @"Textures\UI\Abilities\I4";
-                    public static readonly string MOLT_BOLT = @"Textures\UI\Abilities\I4";
-                    public static readonly string PENETRATING = @"Textures\UI\Abilities\BN";
-                    public static readonly string HOMING = @"Textures\UI\Abilities\BN";
-                    public static readonly string SERRATED = @"Textures\UI\Abilities\BN";
-                    public static readonly string HEADSHOT = @"Textures\UI\Abilities\BN";
-                    public static readonly string MAGNETIC_IMPLANT = @"Textures\UI\Abilities\BN";
-                    public static readonly string MAKE_IT_HAIL = @"Textures\UI\Abilities\BN";
-                    public static readonly string STRONG_WINDS = @"Textures\UI\Abilities\BN";
-                    public static readonly string SPEEDY_GRAPPLE = @"Textures\UI\Abilities\BN";
-                    public static readonly string BIGGER_BOMBS = @"Textures\UI\Abilities\BN";
+                    public static readonly string MOLT_BOLT = @"Textures\UI\Abilities\moltenBolt";
+                    public static readonly string PENETRATING = @"Textures\UI\Abilities\penetratingShot";
+                    public static readonly string HOMING = @"Textures\UI\Abilities\homingM";
+                    public static readonly string SERRATED = @"Textures\UI\Abilities\seratedA";
+                    public static readonly string HEADSHOT = @"Textures\UI\Abilities\headshot";
+                    public static readonly string MAGNETIC_IMPLANT = @"Textures\UI\Abilities\magI";
+                    public static readonly string MAKE_IT_HAIL = @"Textures\UI\Abilities\makeItHail";
+                    public static readonly string STRONG_WINDS = @"Textures\UI\Abilities\strongWinds";
+                    public static readonly string SPEEDY_GRAPPLE = @"Textures\UI\Abilities\speedy Graple";
+                    public static readonly string BIGGER_BOMBS = @"Textures\UI\Abilities\biggerBombs";
+                    public static readonly string TUMBLE = @"Textures\UI\Abilities\tumble";
                 }
             }
 

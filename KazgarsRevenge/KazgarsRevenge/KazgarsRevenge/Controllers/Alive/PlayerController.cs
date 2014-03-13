@@ -1690,7 +1690,7 @@ namespace KazgarsRevenge
         }
         protected Ability GetTumble()
         {
-            return new Ability(AbilityName.Tumble, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 3000, AttackType.Ranged, "tumble", AbilityType.Instant);
+            return new Ability(AbilityName.Tumble, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TUMBLE), 3000, AttackType.Ranged, "tumble", AbilityType.Instant);
         }
         protected Ability GetPenetrating()
         {
@@ -1698,23 +1698,23 @@ namespace KazgarsRevenge
         }
         protected Ability GetHoming()
         {
-            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HOMING), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.Homing, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HOMING), 2000, AttackType.Ranged, "", AbilityType.Passive);
         }
         protected Ability GetSerrated()
         {
-            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SERRATED), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.Serrated, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SERRATED), 2000, AttackType.Ranged, "", AbilityType.Passive);
         }
         protected Ability GetHeadshot()
         {
-            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEADSHOT), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.Headshot, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEADSHOT), 2000, AttackType.Ranged, "", AbilityType.Passive);
         }
         protected Ability GetMagneticImplant()
         {
-            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAGNETIC_IMPLANT), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.MagneticImplant, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAGNETIC_IMPLANT), 2000, AttackType.Ranged, "", AbilityType.Passive);
         }
         protected Ability GetMakeItHail()
         {
-            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_HAIL), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.MakeItHail, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_HAIL), 2000, AttackType.Ranged, "", AbilityType.Passive);
         }
         protected Ability GetStrongWinds()
         {
@@ -1722,11 +1722,11 @@ namespace KazgarsRevenge
         }
         protected Ability GetSpeedyGrapple()
         {
-            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SPEEDY_GRAPPLE), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.SpeedyGrapple, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SPEEDY_GRAPPLE), 2000, AttackType.Ranged, "", AbilityType.Passive);
         }
         protected Ability GetBiggerBombs()
         {
-            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.BIGGER_BOMBS), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.BiggerBombs, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.BIGGER_BOMBS), 2000, AttackType.Ranged, "", AbilityType.Passive);
         }
         
         #endregion
