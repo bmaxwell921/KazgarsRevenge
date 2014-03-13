@@ -1124,7 +1124,7 @@ namespace KazgarsRevenge
                 {
                     radius *= 2.5f;
                 }
-                attacks.CreateFlashBomb(physicalData.Position, groundAbilityTarget, radius, this as AliveComponent);
+                attacks.CreateFlashBomb(physicalData.Position, groundAbilityTarget, radius, abilityLearnedFlags[AbilityName.TarBomb],this as AliveComponent);
 
                 millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
             });
@@ -1220,12 +1220,12 @@ namespace KazgarsRevenge
             {
                 physicalData.CollisionInformation.CollisionRules.Group = Game.UntouchableCollisionGroup;
                 canInterrupt = false;
-                PlayAnimation("k_flip" + aniSuffix, MixType.None);
+                PlayAnimation("k_tumble", MixType.None);
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
                 velDir = GetForward() * 500;
                 ChangeVelocity(velDir);
-                millisActionLength = 500;
+                millisActionLength = 600;
             });
 
             sequence.Add(() =>
@@ -1604,8 +1604,8 @@ namespace KazgarsRevenge
                     return GetSpeedyGrapple();
                 case AbilityName.BiggerBombs:
                     return GetBiggerBombs();
-                //case AbilityName.Elusiveness:     TODO #Jared
-                  //  return GetElusiveness();
+                case AbilityName.Elusiveness:
+                    return GetElusiveness();
 
                 case AbilityName.Garrote://melle actives
                     return GetGarrote();
@@ -1728,6 +1728,11 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.BiggerBombs, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.BIGGER_BOMBS), 2000, AttackType.Ranged, "", AbilityType.Passive);
         }
+        protected Ability GetElusiveness()
+        {
+            return new Ability(AbilityName.Elusiveness, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ELUSIVENESS), 2000, AttackType.Ranged, "", AbilityType.Passive);
+        }
+
         
         #endregion
 

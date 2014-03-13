@@ -10,7 +10,6 @@ kazgar death animation
 Loose Cannon arrow model
 change k_fire_arrow so that his wrist bone is oriented straight towards the bow when he releases
 
-snipe particles
 buff particles
 
 bomb model (tar / flash bomb)
@@ -23,14 +22,7 @@ gui work needed
 =================
 inventory
 	-mouse interaction (hover and mouse down, along with click and drag equipping)
-	-display what character is wearing
 scrollable loot (or clickable arrows to see next/previous items)
-
-
-Enemy AI
-========
-first boss's AI
-pathfinding (need level generation first (which needs more levels first))
 
 
 Abilities
@@ -44,3 +36,7 @@ Floating Text
 combat text for heals and damage
 
 
+Dragon
+========
+balance time multiplier
+adjust bomb velocity to make it land correctly

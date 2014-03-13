@@ -136,6 +136,7 @@ namespace KazgarsRevenge
 
         public void CreateDragon(Identification id, Vector3 position)
         {
+            position.Y = 42;
             GameEntity dragon = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
             dragon.id = id;
 
@@ -144,7 +145,7 @@ namespace KazgarsRevenge
             Model enemyModel = GetAnimatedModel("Models\\Enemies\\Dragon\\d_idle");
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             dragon.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
-            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 10, Vector3.Down * 30);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 10, Vector3.Down * 50);
 
             dragon.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);
