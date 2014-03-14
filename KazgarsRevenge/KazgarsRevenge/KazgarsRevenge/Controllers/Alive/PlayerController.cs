@@ -718,6 +718,8 @@ namespace KazgarsRevenge
                 }
                 Vector3 forward = GetForward();
                 attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this as AliveComponent, activeBuffs.ContainsKey(Buff.Homing), abilityLearnedFlags[AbilityName.Penetrating], abilityLearnedFlags[AbilityName.Leeching], activeBuffs.ContainsKey(Buff.SerratedBleeding));
+
+                PlayAnimation("k_fighting_stance", MixType.None);
             });
 
             return sequence;

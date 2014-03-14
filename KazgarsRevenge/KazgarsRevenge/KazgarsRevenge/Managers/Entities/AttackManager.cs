@@ -691,9 +691,24 @@ namespace KazgarsRevenge
             attacks.Add(bomb);
         }
 
-        public void CreateDragonFlamethrower(AliveComponent creator, int damagePerTick)
+        public void CreateDragonFlamethrower(Vector3 position, AliveComponent creator, int damagePerTick, double duration)
         {
+            GameEntity entity = new GameEntity("flamethrower", FactionType.Enemies, EntityType.None);
 
+            Entity physicalData = new Box(position, 100, 40, 550);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            entity.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
+            entity.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            FlamethrowerController AI = new FlamethrowerController(mainGame, entity, damagePerTick, creator, duration);
+            entity.AddSharedData(typeof(FlamethrowerController), AI);
+            genComponentManager.AddComponent(AI);
+
+            attacks.Add(entity);
         }
         #endregion
 

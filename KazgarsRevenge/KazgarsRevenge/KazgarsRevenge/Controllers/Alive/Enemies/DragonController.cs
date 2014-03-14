@@ -72,20 +72,28 @@ namespace KazgarsRevenge
 
         private void StartEnrage()
         {
+            settings.attackRange = 200;
             raycastCheckTarget = true;
             state = DragonState.Enrage;
             currentUpdateFunction = new AIUpdateFunction(AIDragonEnrage);
             PlayAnimation("d_enrage", MixType.PauseAtEnd);
             timerLength = animations.GetAniMillis("d_enrage");
             timerCounter = 0;
+            running = false;
         }
 
         private void ResetEncounter()
         {
+            if (model != null)
+            {
+                model.RemoveEmitter("flamethrower");
+                model.RemoveEmitter("frostthrower");
+            }
+
             state = DragonState.Waiting;
             targetHealth = null;
             targetData = null;
-            enrageTimer = 120000;
+            enrageTimer = 12000;
             nextSpitBomb = 1000;
 
             //reset position here?
@@ -194,11 +202,31 @@ namespace KazgarsRevenge
             }
         }
 
+        bool running = false;
         private void AIDragonEnrage(double millis)
         {
             Vector3 diff = targetData.Position - physicalData.Position;
             diff.Y = 0;
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+
+            if (running)
+            {
+                if (Math.Abs(diff.X) + Math.Abs(diff.Z) < settings.attackRange)
+                {
+                    StartEnrage();
+                    running = false;
+                    physicalData.LinearVelocity = Vector3.Zero;
+                }
+                else
+                {
+                    diff.Normalize();
+                    physicalData.LinearVelocity = diff * (GetStat(StatType.RunSpeed) + 80);
+                }
+            }
+            else
+            {
+                physicalData.LinearVelocity = Vector3.Zero;
+            }
 
             //breathe fire continuously at player
             timerCounter += millis;
@@ -210,8 +238,8 @@ namespace KazgarsRevenge
                     model.AddEmitter(typeof(FrostThrowerSystem), "frostthrower", 100, 5, Vector3.Zero, "d_mouth_emittor_L");
 
                     PlayAnimation("d_enrage_fire");
-                    attacks.CreateDragonFlamethrower(this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) * 2);
                     timerLength = animations.GetAniMillis("d_enrage_fire") * 3;
+                    attacks.CreateDragonFlamethrower(physicalData.Position + physicalData.OrientationMatrix.Forward * 200, this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) / 5, timerLength);
                     timerCounter = 0;
                 }
                 else if (currentAniName == "d_enrage_fire")
@@ -224,7 +252,15 @@ namespace KazgarsRevenge
                 }
                 else if (currentAniName == "d_enrage_end")
                 {
-                    StartEnrage();
+                    if (diff.Length() < 400)
+                    {
+                        StartEnrage();
+                    }
+                    else
+                    {
+                        PlayAnimation(settings.aniPrefix + settings.moveAniName);
+                        running = true;
+                    }
                 }
             }
             model.SetEmitterVel("flamethrower", 1000, "d_mouth_emittor_R", Vector3.Down * 5);
@@ -268,7 +304,7 @@ namespace KazgarsRevenge
                         int damage = GeneratePrimaryDamage(StatType.Strength);
                         if (chosenAttack == 3)
                         {
-                            damage = (int)(damage * 1.5f);
+                            damage = (int)(damage * 2f);
                         }
                         attacks.CreateCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetPhysicsYaw(dir), damage, this as AliveComponent);
                     }

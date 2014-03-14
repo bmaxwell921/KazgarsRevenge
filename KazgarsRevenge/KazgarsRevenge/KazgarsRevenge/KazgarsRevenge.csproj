@@ -128,6 +128,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\Attacks\ChainSpearController.cs" />
+    <Compile Include="Controllers\Attacks\FlamethrowerController.cs" />
     <Compile Include="Controllers\Attacks\GrapplingHookController.cs" />
     <Compile Include="Controllers\Attacks\LooseCannonController.cs" />
     <Compile Include="Controllers\Attacks\OmnishotController.cs" />

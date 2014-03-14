@@ -15,7 +15,7 @@ namespace KazgarsRevenge
         int damage = 0;
         DeBuff debuff = DeBuff.None;
         Entity physicalData;
-        AliveComponent creator;
+        protected AliveComponent creator;
         FactionType factionToHit;
         public AOEController(KazgarsRevengeGame game, GameEntity entity, double tickLength, int damage, DeBuff d, AliveComponent creator, double duration, FactionType factionToHit)
             : base(game, entity)

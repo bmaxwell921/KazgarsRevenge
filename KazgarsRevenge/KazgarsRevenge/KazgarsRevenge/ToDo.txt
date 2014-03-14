@@ -7,7 +7,6 @@ change pigman death animation such that the weapon doesn't stick in the the grou
 change pigman hand attach point
 kazgar death animation
 
-Loose Cannon arrow model
 change k_fire_arrow so that his wrist bone is oriented straight towards the bow when he releases
 
 buff particles
