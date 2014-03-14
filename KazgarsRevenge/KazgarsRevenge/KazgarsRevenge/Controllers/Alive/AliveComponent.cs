@@ -29,6 +29,7 @@ namespace KazgarsRevenge
         Stunned,//hide this from gui (just show description for flashbomb or forceful throw or w/e)
         ForcefulThrow,
         Igniting,
+        Frozen,
     }
     public enum Buff
     {
@@ -414,7 +415,7 @@ namespace KazgarsRevenge
 
         }
 
-        private void HandleBuff(Buff b, BuffState state, int stacks)
+        private bool HandleBuff(Buff b, BuffState state, int stacks)
         {
             switch (b)
             {
@@ -433,23 +434,35 @@ namespace KazgarsRevenge
                     }
                     break;
             }
+            return true;
         }
 
-        private void HandleDeBuff(DeBuff d, BuffState state, int stacks)
+        /// <summary>
+        /// returns true if it applied the debuff, false if no (to limit certain debuffs, like slows)
+        /// </summary>
+        private bool HandleDeBuff(DeBuff d, BuffState state, int stacks)
         {
             switch (d)
             {
+                case DeBuff.Frozen:
+
+                    break;
                 case DeBuff.Frost:
                     if (state == BuffState.Starting)
                     {
+                        if (activeDebuffs.ContainsKey(DeBuff.Frost) && activeDebuffs[DeBuff.Frost].stacks > 7)
+                        {
+                            AddDebuff(DeBuff.Frozen, null);
+                            return false;
+                        }
                         model.AddEmitter(typeof(FrostDebuffParticleSystem), "frosttrail", 10, 3, Vector3.Zero);
                         model.AddParticleTimer("frosttrail", debuffLengths[DeBuff.Frost]);
-                        baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .2f;
+                        baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .15f;
                         RecalculateStats();
                     }
                     else if (state == BuffState.Ending)
                     {
-                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .2f * stacks;
+                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .15f * stacks;
                         RecalculateStats();
                     }
                     break;
@@ -487,17 +500,20 @@ namespace KazgarsRevenge
                     }
                     break;
             }
+
+            return true;
         }
 
         Dictionary<DeBuff, double> debuffLengths = new Dictionary<DeBuff, double>()
         {
             {DeBuff.SerratedBleeding, 5000},
-            {DeBuff.Frost, 1000},
+            {DeBuff.Frost, 1500},
             {DeBuff.FlashBomb, 3000},
             {DeBuff.Tar, 6000},
             {DeBuff.MagneticImplant, 2000},
             {DeBuff.ForcefulThrow, 3000},
-            {DeBuff.Igniting, 0}
+            {DeBuff.Igniting, 0},
+            {DeBuff.Frozen, 1500}
         };
         Dictionary<DeBuff, double> debuffTickLengths = new Dictionary<DeBuff, double>()
         {
@@ -532,16 +548,18 @@ namespace KazgarsRevenge
                 tickLength = buffTickLengths[b];
             }
 
-            HandleBuff(b, BuffState.Starting, 1);
-            if (activeBuffs.ContainsKey(b))
+            if (HandleBuff(b, BuffState.Starting, 1))
             {
-                activeBuffs[b].stacks += 1;
-                activeBuffs[b].nextTick = activeBuffs[b].timeLeft - activeBuffs[b].nextTick;
-                activeBuffs[b].timeLeft = length;
-            }
-            else
-            {
-                activeBuffs.Add(b, new PositiveEffect(b, length, from, tickLength));
+                if (activeBuffs.ContainsKey(b))
+                {
+                    activeBuffs[b].stacks += 1;
+                    activeBuffs[b].nextTick = activeBuffs[b].timeLeft - activeBuffs[b].nextTick;
+                    activeBuffs[b].timeLeft = length;
+                }
+                else
+                {
+                    activeBuffs.Add(b, new PositiveEffect(b, length, from, tickLength));
+                }
             }
         }
 
@@ -572,17 +590,19 @@ namespace KazgarsRevenge
                 tickLength = debuffTickLengths[b];
             }
 
-            HandleDeBuff(b, BuffState.Starting, 1);
 
-            if (activeDebuffs.ContainsKey(b))
+            if (HandleDeBuff(b, BuffState.Starting, 1))
             {
-                activeDebuffs[b].stacks += 1;
-                activeDebuffs[b].nextTick = activeDebuffs[b].timeLeft - activeDebuffs[b].nextTick;
-                activeDebuffs[b].timeLeft = length;
-            }
-            else
-            {
-                activeDebuffs.Add(b, new NegativeEffect(b, length, from, tickLength));
+                if (activeDebuffs.ContainsKey(b))
+                {
+                    activeDebuffs[b].stacks += 1;
+                    activeDebuffs[b].nextTick = activeDebuffs[b].timeLeft - activeDebuffs[b].nextTick;
+                    activeDebuffs[b].timeLeft = length;
+                }
+                else
+                {
+                    activeDebuffs.Add(b, new NegativeEffect(b, length, from, tickLength));
+                }
             }
         }
 
