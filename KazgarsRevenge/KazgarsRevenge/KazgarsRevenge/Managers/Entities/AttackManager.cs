@@ -634,12 +634,13 @@ namespace KazgarsRevenge
 
             Vector3 vel = targetPos - startPos;
             vel.Y = 0;
-            bombData.LinearVelocity = Vector3.Up * 700 + vel * 1.2f;
+            bombData.LinearVelocity = Vector3.Up * 700 + vel * 1.05f;
 
             bomb.AddSharedData(typeof(Entity), bombData);
 
             PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
-            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Projectiles\\fireball"), new Vector3(20), Vector3.Zero, 0, 0, 0);
+            bombGraphics.AddRollSpeed(.1f);
             bombGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 80, 5, Vector3.Zero);
             bombGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), "trailfire", 80, 0, Vector3.Zero);
 
@@ -666,12 +667,13 @@ namespace KazgarsRevenge
 
             Vector3 vel = targetPos - startPos;
             vel.Y = 0;
-            bombData.LinearVelocity = Vector3.Up * 700 + vel * 1.2f;
+            bombData.LinearVelocity = Vector3.Up * 700 + vel * 1.05f;
 
             bomb.AddSharedData(typeof(Entity), bombData);
 
             PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
-            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Attachables\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"), new Vector3(25), Vector3.Zero, 0, MathHelper.Pi, 0);
+            
             bombGraphics.AddEmitter(typeof(FrostboltTrailParticleSystem), "trail", 80, 5, Vector3.Zero);
             bombGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), "trailfire", 80, 0, Vector3.Zero);
 

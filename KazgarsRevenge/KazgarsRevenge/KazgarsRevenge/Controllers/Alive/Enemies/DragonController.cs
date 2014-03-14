@@ -62,12 +62,12 @@ namespace KazgarsRevenge
 
         private void StartPhase2()
         {
-            raycastCheckTarget = true;
+            raycastCheckTarget = false;
             state = DragonState.Phase2;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase2);
             settings.attackRange = 80;
 
-            nextSpitBomb = 8000;
+            nextSpitBomb = 1000;
         }
 
         private void StartEnrage()
