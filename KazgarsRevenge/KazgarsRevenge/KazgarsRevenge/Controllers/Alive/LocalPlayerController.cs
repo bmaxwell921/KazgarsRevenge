@@ -42,6 +42,15 @@ namespace KazgarsRevenge
             rightArrow = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.RIGHT_ARROW);
             leftArrow = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.LEFT_ARROW);
             helmetIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.HELMET);
+            talentArrowUp = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_U);
+            talentArrowUpLeft = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_UL);
+            talentArrowUpRight = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_UR);
+            talentArrowDown = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_D);
+            talentArrowDownRight = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_DR);
+            talentArrowDownLeft = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_DL);
+            talentArrowRight = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_R);
+            talentArrowLeft = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_L);
+
             #endregion
 
             #region Ability Image Load
@@ -107,6 +116,15 @@ namespace KazgarsRevenge
         Texture2D health_bar;
         Texture2D rightArrow;
         Texture2D leftArrow;
+        Texture2D talentArrowDown;
+        Texture2D talentArrowDownRight;
+        Texture2D talentArrowLeft;
+        Texture2D talentArrowDownLeft;
+        Texture2D talentArrowRight;
+        Texture2D talentArrowUp;
+        Texture2D talentArrowUpRight;
+        Texture2D talentArrowUpLeft;
+
         //Equipment Base
         Texture2D helmetIcon;
         #endregion
@@ -1413,6 +1431,11 @@ namespace KazgarsRevenge
                 for (int j = 0; j < 7; j++)
                 {
                     talentDict.Add("talent" + (i + j * 4), new Rectangle((int)(maxX / 2 - 203 * average + 30*average + i * 94 * average), (int)(75 * average + 30*average + j * 94 * average), (int)(64 * average), (int)(64 * average)));
+                    talentDict.Add("arrowL" + (i + j * 4), new Rectangle((int)(maxX / 2 - 233 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentDict.Add("arrowBL" + (i + j * 4), new Rectangle((int)(maxX / 2 - 233 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentDict.Add("arrowB" + (i + j * 4), new Rectangle((int)(maxX / 2 - 186 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentDict.Add("arrowBR" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentDict.Add("arrowR" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
                 }
             }
 
@@ -1701,6 +1724,34 @@ namespace KazgarsRevenge
                         }
                     }
                 }
+                //Draw Ranged arrows
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB0"], Color.White);
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB1"], Color.White);
+
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB4"], Color.White);
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB5"], Color.White);
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB6"], Color.White);
+
+                s.Draw(talentArrowDownRight, guiInsideRects["talents"]["arrowBR8"], Color.White);
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB9"], Color.White);
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB10"], Color.White);
+                s.Draw(talentArrowUp, guiInsideRects["talents"]["arrowB11"], Color.White);
+
+                s.Draw(talentArrowDownLeft, guiInsideRects["talents"]["arrowBL13"], Color.White);
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB13"], Color.White);
+                s.Draw(talentArrowRight, guiInsideRects["talents"]["arrowR13"], Color.White);
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB14"], Color.White);
+                s.Draw(talentArrowDownRight, guiInsideRects["talents"]["arrowBR14"], Color.White);
+                s.Draw(talentArrowLeft, guiInsideRects["talents"]["arrowL15"], Color.White);
+
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB16"], Color.White);
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB17"], Color.White);
+                s.Draw(talentArrowDownLeft, guiInsideRects["talents"]["arrowBL19"], Color.White);
+
+                s.Draw(talentArrowDownLeft, guiInsideRects["talents"]["arrowBL21"], Color.White);
+                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB21"], Color.White);
+
+
 
                 //Draw Talent Points
                 s.DrawString(font, (totalTalentPoints - spentTalentPoints) + "/" + totalTalentPoints, vecName, Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
@@ -1708,7 +1759,7 @@ namespace KazgarsRevenge
             #endregion
             #endregion
 
-            //Mouse
+            #region mouse
             rectMouse.X = curMouse.X;
             rectMouse.Y = curMouse.Y;
             if (selectedItemSlot != -1)
@@ -1744,6 +1795,7 @@ namespace KazgarsRevenge
                 rectMouse.Height = 25;
                 s.Draw(texCursor, rectMouse, Color.White);
             }
+            #endregion mouse
         }
 
     }
