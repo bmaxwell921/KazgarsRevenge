@@ -194,10 +194,10 @@ namespace KazgarsRevenge
         }
 
         private void AddHealthBarComponent(GameEntity entity, float barHeight)
-        {
+        {/*
             HealthBarBillboard hp = new HealthBarBillboard(mainGame, entity, 5, barHeight);
             entity.AddComponent(typeof(HealthBarBillboard), hp);
-            billboardManager.AddComponent(hp);
+            billboardManager.AddComponent(hp);*/
         }
         #endregion
         

@@ -1328,6 +1328,8 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> lootDict;
         Dictionary<string, Rectangle> talentDict;
 
+        Dictionary<string, Rectangle> talentArrowsDict;
+
         Rectangle inventoryRect;
         Rectangle equipmentRect;
         Rectangle talentRect;
@@ -1374,6 +1376,7 @@ namespace KazgarsRevenge
             xpDict = new Dictionary<string, Rectangle>();
             tooltipDict = new Dictionary<string, Rectangle>();
             talentDict = new Dictionary<string, Rectangle>();
+            talentArrowsDict = new Dictionary<string, Rectangle>();
 
 
             //Add frame dictionaries
@@ -1430,12 +1433,13 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < 7; j++)
                 {
-                    talentDict.Add("talent" + (i + j * 4), new Rectangle((int)(maxX / 2 - 203 * average + 30*average + i * 94 * average), (int)(75 * average + 30*average + j * 94 * average), (int)(64 * average), (int)(64 * average)));
-                    talentDict.Add("arrowL" + (i + j * 4), new Rectangle((int)(maxX / 2 - 233 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
-                    talentDict.Add("arrowBL" + (i + j * 4), new Rectangle((int)(maxX / 2 - 233 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
-                    talentDict.Add("arrowB" + (i + j * 4), new Rectangle((int)(maxX / 2 - 186 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
-                    talentDict.Add("arrowBR" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
-                    talentDict.Add("arrowR" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    //"q" is bottomright, "w" is bottomleft ("br" and "bl" made string too long)
+                    talentDict.Add("talent" + (i + j * 4), new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + i * 94 * average), (int)(75 * average + 30 * average + j * 94 * average), (int)(64 * average), (int)(64 * average)));
+                    talentArrowsDict.Add("arrowL" + (i + j * 4), new Rectangle((int)(maxX / 2 - 233 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentArrowsDict.Add("arrowW" + (i + j * 4), new Rectangle((int)(maxX / 2 - 233 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentArrowsDict.Add("arrowB" + (i + j * 4), new Rectangle((int)(maxX / 2 - 186 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentArrowsDict.Add("arrowQ" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentArrowsDict.Add("arrowR" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
                 }
             }
 
@@ -1725,31 +1729,31 @@ namespace KazgarsRevenge
                     }
                 }
                 //Draw Ranged arrows
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB0"], Color.White);
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB1"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB0"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB1"], Color.White);
 
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB4"], Color.White);
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB5"], Color.White);
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB6"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB4"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB5"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB6"], Color.White);
 
-                s.Draw(talentArrowDownRight, guiInsideRects["talents"]["arrowBR8"], Color.White);
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB9"], Color.White);
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB10"], Color.White);
-                s.Draw(talentArrowUp, guiInsideRects["talents"]["arrowB11"], Color.White);
+                s.Draw(talentArrowDownRight, talentArrowsDict["arrowQ8"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB9"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB10"], Color.White);
+                s.Draw(talentArrowUp, talentArrowsDict["arrowB11"], Color.White);
 
-                s.Draw(talentArrowDownLeft, guiInsideRects["talents"]["arrowBL13"], Color.White);
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB13"], Color.White);
-                s.Draw(talentArrowRight, guiInsideRects["talents"]["arrowR13"], Color.White);
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB14"], Color.White);
-                s.Draw(talentArrowDownRight, guiInsideRects["talents"]["arrowBR14"], Color.White);
-                s.Draw(talentArrowLeft, guiInsideRects["talents"]["arrowL15"], Color.White);
+                s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW13"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB13"], Color.White);
+                s.Draw(talentArrowRight, talentArrowsDict["arrowR13"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB14"], Color.White);
+                s.Draw(talentArrowDownRight, talentArrowsDict["arrowQ14"], Color.White);
+                s.Draw(talentArrowLeft, talentArrowsDict["arrowL15"], Color.White);
 
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB16"], Color.White);
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB17"], Color.White);
-                s.Draw(talentArrowDownLeft, guiInsideRects["talents"]["arrowBL19"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB16"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB17"], Color.White);
+                s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW19"], Color.White);
 
-                s.Draw(talentArrowDownLeft, guiInsideRects["talents"]["arrowBL21"], Color.White);
-                s.Draw(talentArrowDown, guiInsideRects["talents"]["arrowB21"], Color.White);
+                s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW21"], Color.White);
+                s.Draw(talentArrowDown, talentArrowsDict["arrowB21"], Color.White);
 
 
 

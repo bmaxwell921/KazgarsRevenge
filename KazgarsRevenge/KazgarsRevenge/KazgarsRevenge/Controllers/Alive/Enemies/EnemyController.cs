@@ -182,7 +182,7 @@ namespace KazgarsRevenge
             else
             {
                 //if it's already sitting still, play idle animation (just in case)
-                if (physicalData.LinearVelocity.Length() < .1f)
+                if (Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) < .1f)
                 {
                     PlayAnimation(settings.aniPrefix + settings.idleAniName);
                     chillin = true;
