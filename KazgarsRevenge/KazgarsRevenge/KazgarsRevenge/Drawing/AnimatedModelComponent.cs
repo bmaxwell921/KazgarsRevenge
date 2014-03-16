@@ -74,6 +74,14 @@ namespace KazgarsRevenge
             this.modelParams.alpha = alpha;
         }
 
+        public void SetEmitterUp(string key, float amount)
+        {
+            if (emitters.ContainsKey(key))
+            {
+                emitters[key].SetAlongUpAmount(amount);
+            }
+        }
+
         public void SetEmitterVel(string emitterName, float vel, string relativeBone, Vector3 offset)
         {
             ParticleEmitter possEmitter;
@@ -144,6 +152,8 @@ namespace KazgarsRevenge
                 {
                     Vector3 bonePos = boneTransforms[k.Value.BoneIndex].Translation;
                     k.Value.Update(gameTime, bonePos, rot);
+
+                    k.Value.SetUpTranslationVector(boneTransforms[k.Value.BoneIndex].Up);
                 }
 
                 if (k.Value.Dead)

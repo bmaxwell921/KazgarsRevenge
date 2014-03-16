@@ -77,8 +77,15 @@ namespace KazgarsRevenge
             enemy.id = id;
 
             SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20f, 37f, 20f), 100);
-            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle");
+            //SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle");
 
+            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Skeleton\\s_idle");
+            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
+            enemy.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, enemy, enemyModel, 15, Vector3.Down * 18);
+
+            enemy.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
+            modelManager.AddComponent(enemyGraphics);
 
             SkeletonController enemyController = new SkeletonController(mainGame, enemy, level);
             enemy.AddComponent(typeof(AliveComponent), enemyController);
@@ -145,7 +152,7 @@ namespace KazgarsRevenge
             Model enemyModel = GetAnimatedModel("Models\\Enemies\\Dragon\\d_idle");
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             dragon.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
-            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 10, Vector3.Down * 20);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 10, Vector3.Down * 9);
 
             dragon.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);

@@ -506,7 +506,7 @@ namespace KazgarsRevenge
 
                 needInterruptAction = true;
                 canInterrupt = false;
-                currentSequence = actionSequences[name];        //#jared TODO punch
+                currentSequence = actionSequences[name];
                 actionIndex = 0;
                 currentActionName = name;
                 stateResetCounter = double.MaxValue;
@@ -554,8 +554,8 @@ namespace KazgarsRevenge
             //primary attacks
             actionSequences.Add("swing", SwingActions());
             actionSequences.Add("shoot", ShootActions());
-            //actionSequences.Add("punch", PunchActions());
-            //actionSequences.Add("magic", MagicActions());
+            actionSequences.Add("punch", PunchActions());
+            actionSequences.Add("magic", MagicActions());
             //loot
             actionSequences.Add("loot", LootActions());
             actionSequences.Add("loot_spin", LootSpinActions());
@@ -660,10 +660,45 @@ namespace KazgarsRevenge
 
             return sequence;
         }
-        private const int arrowDrawMillis = 200;
-        private const int arrowReleaseMillis = 300;
+        private const int arrowDrawMillis = 50;
+        private const int arrowReleaseMillis = 150;
 
         //Primary attacks
+        private List<Action> PunchActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                stateResetCounter = 0;
+                canInterrupt = true;
+                PlayAnimation("k_punch", MixType.None);
+                attState = AttackState.Locked;
+                stateResetCounter = 0;
+                millisActionLength = 200;
+                usingPrimary = true;
+            });
+            sequence.Add(() =>
+            {
+                Vector3 forward = GetForward();
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, this as AliveComponent);
+                millisActionLength = animations.GetAniMillis("k_punch") - millisActionLength;
+                needInterruptAction = false;
+            });
+            sequence.Add(() =>
+            {
+                StartSequence("fightingstance");
+                attState = AttackState.None;
+            });
+
+            interruptActions.Add("k_punch", () =>
+            {
+                Vector3 forward = GetForward();
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, this as AliveComponent);
+            });
+
+            return sequence;
+        }
         private List<Action> ShootActions()
         {
             List<Action> sequence = new List<Action>();
@@ -672,7 +707,7 @@ namespace KazgarsRevenge
             {
                 //start playing shooting animation
                 canInterrupt = true;
-                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                PlayAnimation("k_shoot" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
                 millisActionLength = arrowDrawMillis;
@@ -683,7 +718,12 @@ namespace KazgarsRevenge
                 //attach arrow model to hand
                 if (attachedArrow == null)
                 {
-                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_L_005", 0, -MathHelper.PiOver2);
+                    string bone = "Bone_001_L_005";
+                    if(aniSuffix == "r")
+                    {
+                        bone = "Bone_001_R_005";
+                    }
+                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), bone, 0, -MathHelper.PiOver2);
                 }
                 if (!attached.ContainsKey("handarrow"))
                 {
@@ -702,7 +742,7 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this as AliveComponent, activeBuffs.ContainsKey(Buff.Homing), abilityLearnedFlags[AbilityName.Penetrating], abilityLearnedFlags[AbilityName.Leeching], activeBuffs.ContainsKey(Buff.SerratedBleeding));
                 
-                millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
+                millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - arrowReleaseMillis - arrowDrawMillis;
 
                 needInterruptAction = false;
             });
@@ -732,17 +772,26 @@ namespace KazgarsRevenge
             {
                 stateResetCounter = 0;
                 canInterrupt = true;
-                PlayAnimation("k_onehanded_swing" + aniSuffix, MixType.None);
+                PlayAnimation("k_swing" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
-                millisActionLength = animations.GetAniMillis("k_onehanded_swing") / 2;
+                millisActionLength = 350;
+                if (aniSuffix == "_twohand")
+                {
+                    millisActionLength *= 2;
+                }
+
                 usingPrimary = true;
             });
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, true, this as AliveComponent);
-                millisActionLength = animations.GetAniMillis("k_onehanded_swing") - millisActionLength;
+                Vector3 pos = physicalData.Position + forward * 35;
+                attacks.CreateMeleeAttack(pos, 25, this as AliveComponent);
+
+                pos.Y = 3;
+                attacks.SpawnWeaponSparks(pos);
+                millisActionLength = animations.GetAniMillis("k_swing" + aniSuffix) - millisActionLength;
                 needInterruptAction = false;
             });
             sequence.Add(() =>
@@ -755,12 +804,51 @@ namespace KazgarsRevenge
             interruptActions.Add("swing", () =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, true, this as AliveComponent);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, this as AliveComponent);
             });
 
             return sequence;
         }
+        private List<Action> MagicActions()
+        {
+            List<Action> sequence = new List<Action>();
 
+            sequence.Add(() =>
+            {
+                stateResetCounter = 0;
+                canInterrupt = true;
+                PlayAnimation("k_magic" + aniSuffix, MixType.None);
+                attState = AttackState.Locked;
+                stateResetCounter = 0;
+                millisActionLength = 200;
+                if (aniSuffix == "_twohand")
+                {
+                    millisActionLength *= 2;
+                }
+                usingPrimary = true;
+            });
+            sequence.Add(() =>
+            {
+                Vector3 forward = GetForward();
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, this as AliveComponent);
+                millisActionLength = animations.GetAniMillis("k_magic" + aniSuffix) - millisActionLength;
+                needInterruptAction = false;
+            });
+            sequence.Add(() =>
+            {
+                StartSequence("fightingstance");
+                attState = AttackState.None;
+            });
+
+            //if interrupted, this should still create a melle attack
+            interruptActions.Add("magic", () =>
+            {
+                Vector3 forward = GetForward();
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, this as AliveComponent);
+            });
+
+            return sequence;
+        }
 
         private List<Action> LootActions()
         {
@@ -828,7 +916,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 canInterrupt = true;
-                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                PlayAnimation("k_shoot" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
                 millisActionLength = arrowDrawMillis;
                 stateResetCounter = 0;
@@ -879,7 +967,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 canInterrupt = true;
-                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                PlayAnimation("k_shoot" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
                 millisActionLength = 200;
                 stateResetCounter = 0;
@@ -895,7 +983,7 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this as AliveComponent, activeBuffs.ContainsKey(Buff.Homing), abilityLearnedFlags[AbilityName.Penetrating], abilityLearnedFlags[AbilityName.Leeching], activeBuffs.ContainsKey(Buff.SerratedBleeding));
 
-                millisActionLength = animations.GetAniMillis("k_fire_arrow") - millisActionLength - 200;
+                millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - millisActionLength - 200;
 
                 needInterruptAction = false;
             });
@@ -1142,7 +1230,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 canInterrupt = false;
-                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                PlayAnimation("k_punch", MixType.None);
                 attState = AttackState.Locked;
                 millisActionLength = arrowDrawMillis;
                 stateResetCounter = 0;
@@ -1164,7 +1252,7 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 attacks.CreateGrapplingHook(physicalData.Position + forward * 10, forward, this as AliveComponent, speed);
 
-                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
+                millisActionLength = 800 - arrowDrawMillis - arrowReleaseMillis;
 
             });
 
@@ -1179,7 +1267,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 canInterrupt = true;
-                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                PlayAnimation("k_shoot" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
                 millisActionLength = arrowDrawMillis;
                 stateResetCounter = 0;
@@ -1262,13 +1350,13 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, true, this as AliveComponent);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, this as AliveComponent);
                 millisActionLength = 500;
             });
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, true, this as AliveComponent);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 50, this as AliveComponent);
                 millisActionLength = animations.GetAniMillis("k_flip") - 900;
             });
             sequence.Add(() =>
@@ -1286,7 +1374,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 canInterrupt = false;
-                PlayAnimation("k_fire_arrow" + aniSuffix, MixType.None);
+                PlayAnimation("k_shoot" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
                 millisActionLength = arrowDrawMillis;
                 stateResetCounter = 0;

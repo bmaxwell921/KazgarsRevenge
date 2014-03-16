@@ -112,8 +112,8 @@ namespace KazgarsRevenge
                 frostPillar.KillEntity();
             }
 
-            //firePillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFirePillar(physicalData.Position + Vector3.Right * 150);
-            //frostPillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFrostPillar(physicalData.Position + Vector3.Left * 150);
+            firePillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFirePillar(physicalData.Position + Vector3.Right * 150);
+            frostPillar = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateDragonFrostPillar(physicalData.Position + Vector3.Left * 150);
         }
 
         private void AIDragonWaiting(double millis)

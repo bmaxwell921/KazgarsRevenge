@@ -99,7 +99,7 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateMeleeAttack(Vector3 position, int damage, bool sparks, AliveComponent creator)
+        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator)
         {
             GameEntity newAttack = new GameEntity("melee", creator.Entity.Faction, EntityType.Misc);
             newAttack.id = IdentificationFactory.getId(EntityType.Misc, players.myId.id);
@@ -124,11 +124,6 @@ namespace KazgarsRevenge
 
             attacks.Add(newAttack);
             soundEffects.playMeleeSound();
-
-            if (sparks)
-            {
-                SpawnWeaponSparks(position + Vector3.Down * 18);
-            }
         }
 
         /// <summary>

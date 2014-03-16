@@ -11,7 +11,7 @@ namespace KazgarsRevenge
             : base(game, entity, level)
         {
             settings.aniPrefix = "k_";
-            settings.attackAniName = "onehanded_swing";
+            settings.attackAniName = "swing_r";
             settings.idleAniName = "idle2";
             settings.moveAniName = "run";
             settings.deathAniName = "idle4";

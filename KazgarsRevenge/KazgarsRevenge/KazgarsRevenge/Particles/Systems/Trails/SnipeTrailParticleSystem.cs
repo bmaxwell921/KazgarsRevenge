@@ -21,7 +21,7 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "mist_white";
 
-            settings.MaxParticles = 150;
+            settings.MaxParticles = 200;
 
             settings.Duration = TimeSpan.FromSeconds(.5);
 

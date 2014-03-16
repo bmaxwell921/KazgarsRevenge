@@ -428,7 +428,7 @@ namespace KazgarsRevenge
         #region attack helpers
         protected virtual void CreateAttack()
         {
-            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 25, GeneratePrimaryDamage(StatType.Strength), false, this);
+            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 25, GeneratePrimaryDamage(StatType.Strength), this);
         }
 
         protected virtual void StartAttack()

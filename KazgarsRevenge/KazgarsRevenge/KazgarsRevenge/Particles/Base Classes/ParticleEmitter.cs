@@ -110,10 +110,23 @@ namespace KazgarsRevenge
             this.sizeIncrementIncrement = sizeIncrementIncrement;
         }
 
+
         Vector3 extraVel = Vector3.Zero;
         public void SetVelocity(Vector3 vel)
         {
             extraVel = vel;
+        }
+
+        float alongUp = 0;
+        public void SetAlongUpAmount(float amount)
+        {
+            this.alongUp = amount;
+        }
+
+        Vector3 up = Vector3.Up;
+        public void SetUpTranslationVector(Vector3 up)
+        {
+            this.up = up;
         }
         /// <summary>
         /// Updates the emitter, creating the appropriate number of particles
@@ -175,7 +188,7 @@ namespace KazgarsRevenge
 
                     // Create the particle.
                     Vector3 finalpos = Vector3.Transform(offset, rotation);
-                    finalpos += position;
+                    finalpos += position + up * alongUp;
                     particleSystem.AddParticle(finalpos + new Vector3(rand.Next(maxHorizontalOffset * 2) - maxHorizontalOffset, rand.Next(maxVerticalOffset * 2) - maxVerticalOffset, rand.Next(maxHorizontalOffset * 2) - maxHorizontalOffset), velocity, sizePercent);
                 }
 

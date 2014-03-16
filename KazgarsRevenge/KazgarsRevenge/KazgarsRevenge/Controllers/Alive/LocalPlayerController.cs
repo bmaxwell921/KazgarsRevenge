@@ -592,6 +592,7 @@ namespace KazgarsRevenge
             return false;
         }
 
+        string lastAniSuffix = "";
         /// <summary>
         /// checks player input to see what ability to use
         /// </summary>
@@ -634,17 +635,33 @@ namespace KazgarsRevenge
 
 
             bool useAbility = false;
-
             Ability abilityToUse = null;
 
             foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
             {
                 if (curKeys.IsKeyDown(k.Key) && prevKeys.IsKeyUp(k.Key) && !k.Value.onCooldown && abilityLearnedFlags[k.Value.AbilityName])
                 {
-                    AbilityName name = k.Value.AbilityName;
-                    useAbility = true;
-                    abilityToUse = k.Value;
+                    if (GetMainhandType() == k.Value.PrimaryType)
+                    {
+                        if ((gear[GearSlot.Righthand] as Weapon).TwoHanded)
+                        {
+                            aniSuffix = "_twohand";
+                        }
+                        else
+                        {
+                            aniSuffix = "_r";
+                        }
+                        useAbility = true;
+                        abilityToUse = k.Value;
+                    }
+                    else if (GetOffhandType() == k.Value.PrimaryType)
+                    {
+                        aniSuffix = "_l";
+                        useAbility = true;
+                        abilityToUse = k.Value;
+                    }
                     break;
+
                 }
             }
 
@@ -652,8 +669,11 @@ namespace KazgarsRevenge
             {
                 if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown && !mouseOnGui && abilityLearnedFlags[k.Value.AbilityName])
                 {
-                    useAbility = true;
-                    abilityToUse = k.Value;
+                    if (GetMainhandType() == k.Value.PrimaryType || GetOffhandType() == k.Value.PrimaryType)
+                    {
+                        useAbility = true;
+                        abilityToUse = k.Value;
+                    }
                     break;
                 }
             }
@@ -725,7 +745,7 @@ namespace KazgarsRevenge
             if (!usingPrimary && (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space) || targetedPhysicalData != null))
             {
                 //used to differentiate between left hand, right hand, and two hand animations
-                aniSuffix = "right";
+                aniSuffix = "_r";
 
                 //figure out what kind of weapon is in the main hand
                 AttackType mainHandType = GetMainhandType();
@@ -736,14 +756,34 @@ namespace KazgarsRevenge
                 {
                     if ((gear[GearSlot.Righthand] as Weapon).TwoHanded)
                     {
-                        aniSuffix = "twohanded";
+                        aniSuffix = "_twohand";
                     }
+                    else if(offHandType != AttackType.None)
+                    {
+                        if (lastAniSuffix == "_r")
+                        {
+                            aniSuffix = "_l";
+                        }
+                    }
+                }
+                else if (offHandType != AttackType.None)
+                {
+                    aniSuffix = "_l";
+                }
+                else
+                {
+                    aniSuffix = "_r";
                 }
 
                 //remove this once we get more animations
-                aniSuffix = "";
+                //aniSuffix = "";
 
                 //attack if in range
+                AttackType aniDecidingType = mainHandType;
+                if (aniSuffix == "_l")
+                {
+                    aniDecidingType = offHandType;
+                }
                 switch (mainHandType)
                 {
                     case AttackType.None:
@@ -772,11 +812,13 @@ namespace KazgarsRevenge
                         if (distance < bowRange)
                         {
                             //need magic item animation here
-                            StartSequence("shoot");
+                            StartSequence("magic");
                             UpdateRotation(dir);
                         }
                         break;
                 }
+
+                lastAniSuffix = aniSuffix;
             }
 
         }
