@@ -32,8 +32,8 @@ namespace KazgarsRevenge
             settings.MinStartSize = 1;
             settings.MaxStartSize = 5;
 
-            settings.MinEndSize = 25;
-            settings.MaxEndSize = 35;
+            settings.MinEndSize = 15;
+            settings.MaxEndSize = 25;
         }
     }
 }

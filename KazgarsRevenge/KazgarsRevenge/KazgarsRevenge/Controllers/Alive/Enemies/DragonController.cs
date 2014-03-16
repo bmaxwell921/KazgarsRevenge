@@ -93,7 +93,7 @@ namespace KazgarsRevenge
             state = DragonState.Waiting;
             targetHealth = null;
             targetData = null;
-            enrageTimer = 12000;
+            enrageTimer = 120000;
             nextSpitBomb = 1000;
 
             //reset position here?
@@ -150,7 +150,7 @@ namespace KazgarsRevenge
 
         double nextSpitBomb = 1000;
 
-        double enrageTimer = 5000;
+        double enrageTimer = 12000;
 
         protected override void AIRunningToTarget(double millis)
         {
@@ -288,11 +288,11 @@ namespace KazgarsRevenge
                     {
                         if (iceHead)
                         {
-                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
+                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_R"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
                         }
                         else
                         {
-                            attacks.CreateFrostSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
+                            attacks.CreateFireSpitBomb(model.GetBonePosition("d_mouth_emittor_L"), targetData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
                         }
                         iceHead = !iceHead;
                         settings.attackRange = 80;
@@ -302,9 +302,12 @@ namespace KazgarsRevenge
                         Vector3 dir = targetData.Position - physicalData.Position;
                         dir.Y = 0;
                         int damage = GeneratePrimaryDamage(StatType.Strength);
-                        if (chosenAttack == 3)
+                        if (chosenAttack == 1)
                         {
                             damage = (int)(damage * 2f);
+                            Vector3 off = physicalData.OrientationMatrix.Forward * 8;
+                            attacks.SpawnSpitSparks(model.GetBonePosition("d_mouth_emittor_R") + off);
+                            attacks.SpawnSpitSparks(model.GetBonePosition("d_mouth_emittor_L") + off);
                         }
                         attacks.CreateCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetPhysicsYaw(dir), damage, this as AliveComponent);
                     }
@@ -350,13 +353,13 @@ namespace KazgarsRevenge
                         {
                             PlayAnimation("d_fireball_lob_R");
                             settings.attackLength = animations.GetAniMillis("d_fireball_lob_R");
-                            settings.attackCreateMillis = settings.attackLength / 2;
+                            settings.attackCreateMillis = 550;
                         }
                         else
                         {
                             PlayAnimation("d_fireball_lob_L");
                             settings.attackLength = animations.GetAniMillis("d_fireball_lob_L");
-                            settings.attackCreateMillis = settings.attackLength / 2;
+                            settings.attackCreateMillis = 550;
                         }
                         attackAniCounter = 0;
                         attackAniLength = settings.attackLength;
@@ -370,19 +373,23 @@ namespace KazgarsRevenge
                                 // bite
                                 PlayAnimation("d_snap");
                                 settings.attackLength = animations.GetAniMillis("d_snap");
-                                settings.attackCreateMillis = settings.attackLength / 2;
+                                settings.attackCreateMillis = settings.attackLength / 2 + 200;
                                 break;
                             case 2:
                                 //left claw
                                 PlayAnimation("d_claw_L");
                                 settings.attackLength = animations.GetAniMillis("d_claw_L");
                                 settings.attackCreateMillis = settings.attackLength / 2;
+                                model.AddEmitter(typeof(FireSwipeSystem), "swipe1", 120, 0, Vector3.Zero, "d_f_foot_ik_L");
+                                model.AddParticleTimer("swipe1", settings.attackLength - 800);
                                 break;
                             case 3:
                                 //right claw
                                 PlayAnimation("d_claw_R");
                                 settings.attackLength = animations.GetAniMillis("d_claw_R");
                                 settings.attackCreateMillis = settings.attackLength / 2;
+                                model.AddEmitter(typeof(FrostSwipeSystem), "swipe2", 120, 0, Vector3.Zero, "d_f_foot_ik_R");
+                                model.AddParticleTimer("swipe2", settings.attackLength - 800);
                                 break;
                         }
                         attackAniCounter = 0;

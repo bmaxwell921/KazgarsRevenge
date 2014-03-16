@@ -672,10 +672,11 @@ namespace KazgarsRevenge
             bomb.AddSharedData(typeof(Entity), bombData);
 
             PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
-            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"), new Vector3(25), Vector3.Zero, 0, MathHelper.Pi, 0);
+            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Projectiles\\iceball"), new Vector3(25), Vector3.Zero, 0, MathHelper.Pi, 0);
+            bombGraphics.AddRollSpeed(.1f);
             
             bombGraphics.AddEmitter(typeof(FrostboltTrailParticleSystem), "trail", 80, 5, Vector3.Zero);
-            bombGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), "trailfire", 80, 0, Vector3.Zero);
+            bombGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), "trailfire", 35, 0, Vector3.Zero);
 
             FrostSpitBomb bombController = new FrostSpitBomb(mainGame, bomb, targetPos, damage, creator);
 
@@ -758,6 +759,7 @@ namespace KazgarsRevenge
 
             UnanimatedModelComponent emitters = new UnanimatedModelComponent(mainGame, hazard);
             emitters.AddEmitter(typeof(FireAOESystem), "fire", 35, radius, 0, Vector3.Zero);
+            emitters.AddEmitter(typeof(SmokeAOESystem), "smoke", 10, radius, 0, Vector3.Zero);
             hazard.AddComponent(typeof(UnanimatedModelComponent), emitters);
             modelManager.AddComponent(emitters);
 
@@ -811,7 +813,7 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(physics);
 
             UnanimatedModelComponent emitters = new UnanimatedModelComponent(mainGame, hazard);
-            emitters.AddEmitter(typeof(FrostAOESystem), "frost", 54, radius, 0, Vector3.Zero);
+            emitters.AddEmitter(typeof(FrostAOESystem), "frost", 35, radius, 0, Vector3.Zero);
             emitters.AddEmitter(typeof(FrostAOEMistSystem), "frostmist", 80, radius, 0, Vector3.Zero);
             hazard.AddComponent(typeof(UnanimatedModelComponent), emitters);
             modelManager.AddComponent(emitters);
@@ -822,6 +824,7 @@ namespace KazgarsRevenge
 
             attacks.Add(hazard);
         }
+
         public void CreateFlashExplosion(Vector3 position, float radius, bool tar, AliveComponent creator)
         {
             if (tar)
@@ -1036,6 +1039,15 @@ namespace KazgarsRevenge
 
         #region Particles
         ParticleManager particles;
+        public void SpawnSpitSparks(Vector3 position)
+        {
+            ParticleSystem spit = particles.GetSystem(typeof(SpitSparks));
+            for (int i = 0; i < 30; ++i)
+            {
+                spit.AddParticle(position, Vector3.Zero);
+            }
+        }
+
         public void SpawnWeaponSparks(Vector3 position)
         {
             ParticleSystem explosions = particles.GetSystem(typeof(WeaponSparksSystem));

@@ -8,34 +8,37 @@ namespace KazgarsRevenge
     /// <summary>
     /// Custom particle system for creating the smokey part of the explosions.
     /// </summary>
-    class FireAOESystem : ParticleSystem
+    class SmokeAOESystem : ParticleSystem
     {
-        public FireAOESystem(Game game, ContentManager content)
+        public SmokeAOESystem(Game game, ContentManager content)
             : base(game, content)
         { }
 
 
+
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "fire";
+            settings.TextureName = "smoketoon";
 
             settings.MaxParticles = 100;
 
-            settings.Duration = TimeSpan.FromSeconds(1.5);
+            settings.Duration = TimeSpan.FromSeconds(2);
 
             settings.MinHorizontalVelocity = 0;
             settings.MaxHorizontalVelocity = 0;
 
-            settings.MinVerticalVelocity = 8;
-            settings.MaxVerticalVelocity = 15;
+            settings.StartColor = Color.DarkGray;
+            settings.EndColor = Color.Black;
+
+
+            settings.MinVerticalVelocity = 15;
+            settings.MaxVerticalVelocity = 25;
 
             settings.MinStartSize = 1;
             settings.MaxStartSize = 5;
 
             settings.MinEndSize = 55;
-            settings.MaxEndSize = 65;
-
-            settings.BlendState = BlendState.Additive;
+            settings.MaxEndSize = 75;
         }
     }
 }

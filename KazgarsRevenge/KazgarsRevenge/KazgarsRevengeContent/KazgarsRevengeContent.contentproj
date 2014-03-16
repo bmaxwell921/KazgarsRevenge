@@ -459,12 +459,6 @@
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
-    <Compile Include="Models\Armor\armor_legs_rino.fbx">
-      <Name>armor_legs_rino</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
-    </Compile>
     <Compile Include="Models\Armor\armor_shoulders_rino.fbx">
       <Name>armor_shoulders_rino</Name>
       <Importer>FbxImporter</Importer>
@@ -921,6 +915,21 @@
       <Name>fireball</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Projectiles\iceball.fbx">
+      <Name>iceball</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Armor\armor_legs_rino.fbx">
+      <Name>armor_legs_rino</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

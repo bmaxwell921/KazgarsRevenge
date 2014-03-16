@@ -1,4 +1,4 @@
-#region File Description
+﻿#region File Description
 //-----------------------------------------------------------------------------
 // ExplosionParticleSystem.cs
 //
@@ -19,9 +19,9 @@ namespace KazgarsRevenge
     /// <summary>
     /// Custom particle system for creating the fiery part of the explosions.
     /// </summary>
-    class WeaponSparksSystem : ParticleSystem
+    class SpitSparks : ParticleSystem
     {
-        public WeaponSparksSystem(Game game, ContentManager content)
+        public SpitSparks(Game game, ContentManager content)
             : base(game, content)
         { }
 
@@ -30,7 +30,7 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "spark";
 
-            settings.MaxParticles = 500;
+            settings.MaxParticles = 60;
 
             settings.Duration = TimeSpan.FromSeconds(.5);
             settings.DurationRandomness = 1;
@@ -40,9 +40,6 @@ namespace KazgarsRevenge
 
             settings.MinVerticalVelocity = 60;
             settings.MaxVerticalVelocity = 80;
-
-            settings.Gravity = new Vector3(0, -45, 0);
-            settings.EndVelocity = 0;
 
             settings.MinRotateSpeed = -1;
             settings.MaxRotateSpeed = 1;

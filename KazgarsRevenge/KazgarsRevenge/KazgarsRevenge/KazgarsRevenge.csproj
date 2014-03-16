@@ -241,10 +241,10 @@
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
     <Compile Include="Particles\Systems\Debuffs\FireAOESystem.cs" />
-    <Compile Include="Particles\Systems\Debuffs\FrostAOEMist.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOEMistSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOESystem.cs" />
     <Compile Include="Particles\Systems\Charge\DragonFireChargeSystem.cs" />
+    <Compile Include="Particles\Systems\Debuffs\SmokeAOESystem.cs" />
     <Compile Include="Particles\Systems\Explosions\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionDebrisSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionMainSystem.cs" />
@@ -252,8 +252,10 @@
     <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionDebrisSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionMainSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionPoofSystem.cs" />
+    <Compile Include="Particles\Systems\Trails\FireSwipeSystem.cs" />
     <Compile Include="Particles\Systems\FlameThrowerSystem.cs" />
     <Compile Include="Particles\Systems\FrostThrowerSystem.cs" />
+    <Compile Include="Particles\Systems\SpitSparks.cs" />
     <Compile Include="Particles\Systems\StunnedParticleSystem.cs" />
     <Compile Include="Particles\Systems\ArmorSoulSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostDebuffSystem.cs" />
@@ -265,6 +267,7 @@
     <Compile Include="Particles\Systems\Trails\FrostMistParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FrostboltTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireboltTrailSystem.cs" />
+    <Compile Include="Particles\Systems\Trails\FrostSwipeSystem.cs" />
     <Compile Include="Particles\Systems\Trails\HealTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\Hit\HitSparksSystem.cs" />
     <Compile Include="Particles\Systems\Trails\HomingTrailParticleSystem.cs" />
