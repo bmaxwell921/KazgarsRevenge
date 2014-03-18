@@ -82,7 +82,7 @@ namespace KazgarsRevenge
             if (passedTime >= delay)
             {
                 foreach (Vector3 loc in spawnLocations)
-                {/*
+                {
                     // TODO actual level
                     int r = RandSingleton.U_Instance.Next(4);
                     if (r == 0)
@@ -96,7 +96,7 @@ namespace KazgarsRevenge
                     else
                     {
                         ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateMagicSkeleton(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
-                    }*/
+                    }
                     // Make sure to limit as necessary
                     ++numSpawned;
                 }

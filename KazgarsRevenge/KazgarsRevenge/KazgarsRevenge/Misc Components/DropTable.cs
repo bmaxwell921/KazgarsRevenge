@@ -109,7 +109,7 @@ namespace KazgarsRevenge
                 amount *= 3;
             }
             
-            drops.Add(new Item(ItemType.Gold, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.FEW), "gold", amount));
+            drops.Add(new Item(ItemType.Gold, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.FEW), "gold", amount, 0));
         }
 
         // Returns the normal gold amount for a given floor
@@ -268,7 +268,7 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="rolls">how many dice to roll</param>
         /// <param name="sides">how many sides the dice have</param>
-        /// <returns>the combines result</returns>
+        /// <returns>the combined result</returns>
         public static int diceRoll(int rolls, int sides)
         {
             int ret = 0;

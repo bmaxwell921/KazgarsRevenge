@@ -16,37 +16,38 @@ namespace KazgarsRevenge
 {
     public class EnemyManager : EntityManager
     {
+        LootManager lm;
         IDictionary<Identification, GameEntity> enemies;
 
         public EnemyManager(KazgarsRevengeGame game)
             : base(game)
         {
             enemies = new Dictionary<Identification, GameEntity>();
+            
+        }
+        public override void Initialize()
+        {
+            lm = Game.Services.GetService(typeof(LootManager)) as LootManager;
+            base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
         {
-            
+            List<Identification> toRemove = new List<Identification>();
+            foreach (KeyValuePair<Identification, GameEntity> k in enemies)
+            {
+                if (k.Value.Dead)
+                {
+                    toRemove.Add(k.Key);
+                }
+            }
+            for (int i = toRemove.Count - 1; i >= 0; --i)
+            {
+                enemies.Remove(toRemove[i]);
+            }
         }
 
         #region entities
-
-        private DropTable CreateNormalDropTableFor(GameEntity enemy)
-        {
-            LootManager lm = Game.Services.GetService(typeof(LootManager)) as LootManager;
-            DropTable dt = new DropTable(Game as KazgarsRevengeGame, enemy, DropTable.GetNormalAddItemLevel);
-            // TODO what else?
-            dt.AddDrop(ItemType.Equippable, lm.GetBaseSword(), 5);
-            dt.AddDrop(ItemType.Equippable, null, 5);
-            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), "Health Potion", 0), 24, 5);
-            return dt;
-        }
-
-        private void AddCommonDrops(DropTable dt)
-        {
-            //TODO any common drops
-        }
-
         const float meleeRange = 40;
         public void CreateBrute(Identification id, Vector3 position, int level)
         {
@@ -54,7 +55,7 @@ namespace KazgarsRevenge
             brute.id = id;
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
-            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R"));
+            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Weapons\\axe"), "pig_hand_R"));
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             SetupEntityPhysicsAndShadow(brute, position, new Vector3(20f, 37f, 20f), 100);
@@ -66,7 +67,7 @@ namespace KazgarsRevenge
 
             AddHealthBarComponent(brute, 40);
 
-            brute.AddComponent(typeof(DropTable), CreateNormalDropTableFor(brute));
+            brute.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(brute, AttackType.Melee, AttackType.None));
 
             enemies.Add(id, brute);
         }
@@ -93,7 +94,7 @@ namespace KazgarsRevenge
 
             AddHealthBarComponent(enemy, 40);
 
-            enemy.AddComponent(typeof(DropTable), CreateNormalDropTableFor(enemy));
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Magic, AttackType.None));
 
             enemies.Add(id, enemy);
         }
@@ -110,7 +111,7 @@ namespace KazgarsRevenge
             enemy.AddSharedData(typeof(Dictionary<string, Model>), syncedModels);
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
-            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\sword01"), "Hand_R", MathHelper.Pi, 0));
+            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Weapons\\sword01"), "Hand_R", MathHelper.Pi, 0));
             enemy.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20, 37, 20), 100);
@@ -136,7 +137,7 @@ namespace KazgarsRevenge
 
             AddHealthBarComponent(enemy, 40);
 
-            enemy.AddComponent(typeof(DropTable), CreateNormalDropTableFor(enemy));
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Melee, AttackType.Magic));
 
             enemies.Add(id, enemy);
         }
@@ -144,7 +145,7 @@ namespace KazgarsRevenge
         public void CreateDragon(Identification id, Vector3 position)
         {
             position.Y = 42;
-            GameEntity dragon = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
+            GameEntity dragon = new GameEntity("Chillinator", FactionType.Enemies, EntityType.NormalEnemy);
             dragon.id = id;
 
             SetupEntityPhysicsAndShadow(dragon, position, new Vector3(100, 40, 100), 250);
@@ -162,7 +163,7 @@ namespace KazgarsRevenge
             dragon.AddComponent(typeof(AliveComponent), dragonController);
             genComponentManager.AddComponent(dragonController);
 
-            dragon.AddComponent(typeof(DropTable), CreateNormalDropTableFor(dragon));
+            dragon.AddComponent(typeof(DropTable), lm.CreateBossDropTable(dragon, FloorName.Dungeon));
 
             enemies.Add(id, dragon);
         }

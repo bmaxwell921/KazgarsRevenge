@@ -13,8 +13,8 @@ namespace KazgarsRevenge
         public Model GearModel { get; private set; }
         public GearSlot Slot { get; private set; }
         public GearSlot Slot2 { get; private set; }
-        public Equippable(Texture2D icon, string name, Dictionary<StatType, float> statEffects, Model gearModel, GearSlot slot, GearSlot secondSlot)
-            : base(ItemType.Equippable, icon, name, 1)
+        public Equippable(Texture2D icon, string name, Dictionary<StatType, float> statEffects, Model gearModel, GearSlot slot, GearSlot secondSlot, int id)
+            : base(ItemType.Equippable, icon, name, 1, id)
         {
             this.StatEffects = statEffects;
             this.GearModel = gearModel;
@@ -30,7 +30,7 @@ namespace KazgarsRevenge
             {
                 statsClone = new Dictionary<StatType, float>(this.StatEffects);
             }
-            return new Equippable(this.Icon, this.Name, statsClone, this.GearModel, this.Slot, this.Slot2);
+            return new Equippable(this.Icon, this.Name, statsClone, this.GearModel, this.Slot, this.Slot2, this.ItemID);
         }
     }
 }

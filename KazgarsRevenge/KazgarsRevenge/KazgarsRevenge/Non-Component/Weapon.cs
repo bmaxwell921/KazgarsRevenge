@@ -11,8 +11,8 @@ namespace KazgarsRevenge
     {
         public bool TwoHanded { get; private set; }
         public AttackType PrimaryAttackType { get; private set; }
-        public Weapon(Texture2D icon, string name, Dictionary<StatType, float> statEffects, Model gearModel, AttackType type, bool twoHanded)
-            : base(icon, name, statEffects, gearModel, GearSlot.Righthand, GearSlot.Lefthand)
+        public Weapon(Texture2D icon, string name, Dictionary<StatType, float> statEffects, Model gearModel, AttackType type, bool twoHanded, int id)
+            : base(icon, name, statEffects, gearModel, GearSlot.Righthand, GearSlot.Lefthand, id)
         {
             this.PrimaryAttackType = type;
             this.TwoHanded = twoHanded;
@@ -25,7 +25,7 @@ namespace KazgarsRevenge
             {
                 statsClone = new Dictionary<StatType, float>(this.StatEffects);
             }
-            return new Weapon(this.Icon, this.Name, statsClone, this.GearModel, this.PrimaryAttackType, this.TwoHanded);
+            return new Weapon(this.Icon, this.Name, statsClone, this.GearModel, this.PrimaryAttackType, this.TwoHanded, this.ItemID);
         }
     }
 }

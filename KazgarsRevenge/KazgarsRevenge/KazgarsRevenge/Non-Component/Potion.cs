@@ -7,34 +7,26 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
-    public enum PotionType
-    {
-        HP,
-        SuperHP,
-        InstantHP,
-        Luck,
-        Invis,
-    }
     class Potion : Item
     {
-        public Potion(ItemType type, Texture2D icon, PotionType potionType, int quantity)
-            : base(type, icon, "potion", quantity)
+        public Potion(ItemType type, Texture2D icon, int quantity, int id)
+            : base(type, icon, "potion", quantity, id)
         {
-            switch (potionType)
+            switch (id)
             {
-                case PotionType.HP:
+                case 1:
                     this.Name = "Health Potion";
                     break;
-                case PotionType.SuperHP:
+                case 2:
                     this.Name = "Healthier Potion";
                     break;
-                case PotionType.InstantHP:
+                case 3:
                     this.Name = "Instanta-Health";
                     break;
-                case PotionType.Luck:
+                case 4:
                     this.Name = "Potion of Luck";
                     break;
-                case PotionType.Invis:
+                case 5:
                     this.Name = "Potion of Invisibility";
                     break;
             }

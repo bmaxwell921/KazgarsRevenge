@@ -49,7 +49,38 @@ namespace KazgarsRevenge
 
                 public class Armor
                 {
+                    public static readonly string MELEE_HEAD_RHINO = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MELEE_CHEST_RHINO = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MELEE_LEGS_RHINO = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MELEE_FEET_RHINO = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MELEE_SHOULDERS_RHINO = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MELEE_WRIST_RHINO = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MELEE_BLING = @"Textures\UI\Items\Armor\helmetIcon";
 
+                    public static readonly string RANGED_HEAD_SKELETON = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string RANGED_CHEST_SKELETON = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string RANGED_LEGS_SKELETON = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string RANGED_FEET_SKELETON = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string RANGED_SHOULDERS_SKELETON = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string RANGED_WRIST_SKELETON = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string RANGED_BLING = @"Textures\UI\Items\Armor\helmetIcon";
+
+                    public static readonly string MAGIC_HEAD_SMART = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MAGIC_CHEST_SMART = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MAGIC_LEGS_SMART = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MAGIC_FEET_SMART = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MAGIC_SHOULDERS_SMART = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MAGIC_WRIST_SMART = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string MAGIC_BLING = @"Textures\UI\Items\Armor\helmetIcon";
+                }
+                public class Weapons
+                {
+                    public static readonly string BRUTISH_AXE = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string GENERIC_SWORD = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string GENERIC_STAFF = @"Textures\UI\Items\Armor\helmetIcon";
+
+                    public static readonly string GENERIC_BOW = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string GENERIC_CROSSBOW = @"Textures\UI\Items\Armor\helmetIcon";
                 }
             }
 

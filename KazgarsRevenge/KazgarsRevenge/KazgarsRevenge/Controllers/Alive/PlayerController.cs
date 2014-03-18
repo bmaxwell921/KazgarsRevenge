@@ -75,7 +75,7 @@ namespace KazgarsRevenge
         protected int totalPower = 100;
         protected int spentTalentPoints = 0;
         protected int totalTalentPoints = 100;
-        protected const float melleRange = 50;
+        protected const float meleeRange = 50;
         protected const float bowRange = 1000;
         protected Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
         //array of key-ability pairs
@@ -342,15 +342,14 @@ namespace KazgarsRevenge
             InitNewPlayer();
 
             //adding sword and bow for demo
-            EquipGear(lewtz.GenerateSword(), GearSlot.Righthand);
-            EquipGear(lewtz.GenerateBow(), GearSlot.Lefthand);
+            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Righthand);
+        }
 
-            EquipGear(lewtz.GetBoots(), GearSlot.Feet);
-            EquipGear(lewtz.GetChest(), GearSlot.Chest);
-            EquipGear(lewtz.GetHelm(), GearSlot.Head);
-            EquipGear(lewtz.GetLegs(), GearSlot.Legs);
-            EquipGear(lewtz.GetShoulders(), GearSlot.Shoulders);
-            EquipGear(lewtz.GetWrist(), GearSlot.Wrist);
+        public override void Start()
+        {
+            attachedArrowL = new AttachableModel(attacks.GetUnanimatedModel("Models\\Weapons\\arrow"), GearSlotToBoneName(GearSlot.Lefthand), 0, -MathHelper.PiOver2);
+            attachedArrowR = new AttachableModel(attacks.GetUnanimatedModel("Models\\Weapons\\arrow"), GearSlotToBoneName(GearSlot.Righthand), 0, -MathHelper.PiOver2);
+            base.Start();
         }
 
         private void InitPlayerFromFile()
@@ -716,18 +715,16 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 //attach arrow model to hand
-                if (attachedArrow == null)
-                {
-                    string bone = "Bone_001_L_005";
-                    if(aniSuffix == "r")
-                    {
-                        bone = "Bone_001_R_005";
-                    }
-                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), bone, 0, -MathHelper.PiOver2);
-                }
                 if (!attached.ContainsKey("handarrow"))
                 {
-                    attached.Add("handarrow", attachedArrow);
+                    if (aniSuffix == "_r")
+                    {
+                        attached.Add("handarrow", attachedArrowR);
+                    }
+                    else
+                    {
+                        attached.Add("handarrow", attachedArrowL);
+                    }
                 }
 
                 millisActionLength = arrowReleaseMillis;
@@ -800,7 +797,7 @@ namespace KazgarsRevenge
                 attState = AttackState.None;
             });
 
-            //if interrupted, this should still create a melle attack
+            //if interrupted, this should still create a melee attack
             interruptActions.Add("swing", () =>
             {
                 Vector3 forward = GetForward();
@@ -840,7 +837,7 @@ namespace KazgarsRevenge
                 attState = AttackState.None;
             });
 
-            //if interrupted, this should still create a melle attack
+            //if interrupted, this should still create a melee attack
             interruptActions.Add("magic", () =>
             {
                 Vector3 forward = GetForward();
@@ -1041,13 +1038,16 @@ namespace KazgarsRevenge
             {
 
                 //attach arrow model to hand
-                if (attachedArrow == null)
-                {
-                    attachedArrow = new AttachableModel(attacks.GetUnanimatedModel("Models\\Attachables\\arrow"), "Bone_001_L_004", 0, -MathHelper.PiOver2);
-                }
                 if (!attached.ContainsKey("handarrow"))
                 {
-                    attached.Add("handarrow", attachedArrow);
+                    if (aniSuffix == "_r")
+                    {
+                        attached.Add("handarrow", attachedArrowR);
+                    }
+                    else
+                    {
+                        attached.Add("handarrow", attachedArrowL);
+                    }
                 }
 
                 millisActionLength = arrowReleaseMillis;
@@ -1370,15 +1370,7 @@ namespace KazgarsRevenge
         private List<Action> ChainSpearActions()
         {
             List<Action> sequence = new List<Action>();
-
-            sequence.Add(() =>
-            {
-                canInterrupt = false;
-                PlayAnimation("k_shoot" + aniSuffix, MixType.None);
-                attState = AttackState.Locked;
-                millisActionLength = arrowDrawMillis;
-                stateResetCounter = 0;
-            });
+            sequence.Add(actionSequences["grapplinghook"][0]);
             sequence.Add(actionSequences["shoot"][1]);
 
             sequence.Add(() =>
@@ -1413,7 +1405,8 @@ namespace KazgarsRevenge
 
 
         int fightingStanceLoops = 0;
-        AttachableModel attachedArrow;
+        AttachableModel attachedArrowL;
+        AttachableModel attachedArrowR;
         protected void UpdateActionSequences(double elapsed)
         {
             millisActionCounter += elapsed;
@@ -1697,9 +1690,9 @@ namespace KazgarsRevenge
                 case AbilityName.Elusiveness:
                     return GetElusiveness();
 
-                case AbilityName.Garrote://melle actives
+                case AbilityName.Garrote://melee actives
                     return GetGarrote();
-                case AbilityName.ChainSpear://melle passives
+                case AbilityName.ChainSpear://melee passives
                     return GetChainSpear();
                 case AbilityName.IceClawPrison://magic actives
                     return GetIceClawPrison();

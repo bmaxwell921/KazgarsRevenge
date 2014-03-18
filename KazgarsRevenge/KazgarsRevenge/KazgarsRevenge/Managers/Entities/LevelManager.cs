@@ -925,13 +925,13 @@ namespace KazgarsRevenge
             switch (name)
             {
                 case "Animated Armor":
-                    modelPath = "Models\\Attachables\\axe";
+                    modelPath = "Models\\Weapons\\axe";
                     break;
                 case "Skeleton":
-                    modelPath = "Models\\Attachables\\bow01";
+                    modelPath = "Models\\Weapons\\bow01";
                     break;
                 default:
-                    modelPath = "Models\\Attachables\\sword01";
+                    modelPath = "Models\\Weapons\\sword01";
                     break;
             }
             UnanimatedModelComponent markerGraphics = new UnanimatedModelComponent(mainGame, marker, GetUnanimatedModel(modelPath), new Vector3(10), Vector3.Zero, 0, 0, 0);

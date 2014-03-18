@@ -9,11 +9,11 @@ namespace KazgarsRevenge
 {
     public enum ItemType
     {
-        Potion,
-        Gold,
-        Essence,
-        Equippable,
-        Recipe,
+        Gold,//id of 0
+        Potion,//ids from 1 to 1000
+        Recipe,//ids from 1001 to 2000
+        Essence,//ids from 2001 to 3000
+        Equippable,//ids from 3001 to 10,000
     }
     public class Item : ICloneable
     {
@@ -22,11 +22,12 @@ namespace KazgarsRevenge
         public ItemType Type { get; protected set; }
         public Texture2D Icon { get; protected set; }
         public string Name { get; protected set; }
+        public int ItemID { get; private set; }
 
         /// <summary>
         /// creates a stackable item
         /// </summary>
-        public Item(ItemType type, Texture2D icon, string name, int quantity)
+        public Item(ItemType type, Texture2D icon, string name, int quantity, int id)
         {
             this.Icon = icon;
             this.Name = name;
@@ -41,6 +42,8 @@ namespace KazgarsRevenge
                 this.Stackable = false;
                 this.Quantity = 1;
             }
+
+            this.ItemID = id;
         }
 
         /// <summary>
@@ -60,7 +63,7 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public virtual object Clone()
         {
-            return new Item(this.Type, this.Icon, this.Name, this.Quantity);
+            return new Item(this.Type, this.Icon, this.Name, this.Quantity, this.ItemID);
         }
     }
 }

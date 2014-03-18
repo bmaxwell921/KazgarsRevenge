@@ -669,8 +669,22 @@ namespace KazgarsRevenge
             {
                 if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown && !mouseOnGui && abilityLearnedFlags[k.Value.AbilityName])
                 {
-                    if (GetMainhandType() == k.Value.PrimaryType || GetOffhandType() == k.Value.PrimaryType)
+                    if (GetMainhandType() == k.Value.PrimaryType)
                     {
+                        if ((gear[GearSlot.Righthand] as Weapon).TwoHanded)
+                        {
+                            aniSuffix = "_twohand";
+                        }
+                        else
+                        {
+                            aniSuffix = "_r";
+                        }
+                        useAbility = true;
+                        abilityToUse = k.Value;
+                    }
+                    else if (GetOffhandType() == k.Value.PrimaryType)
+                    {
+                        aniSuffix = "_l";
                         useAbility = true;
                         abilityToUse = k.Value;
                     }
@@ -787,7 +801,7 @@ namespace KazgarsRevenge
                 switch (mainHandType)
                 {
                     case AttackType.None:
-                        if (distance < melleRange)
+                        if (distance < meleeRange)
                         {
                             //need punch animation
                             StartSequence("punch");
@@ -795,7 +809,7 @@ namespace KazgarsRevenge
                         }
                         break;
                     case AttackType.Melee:
-                        if (distance < melleRange)
+                        if (distance < meleeRange)
                         {
                             StartSequence("swing");
                             UpdateRotation(dir);
