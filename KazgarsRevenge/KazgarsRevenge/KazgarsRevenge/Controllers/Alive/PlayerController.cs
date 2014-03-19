@@ -1286,7 +1286,7 @@ namespace KazgarsRevenge
                 }
 
                 Vector3 forward = GetForward();
-                attacks.CreateChainSpear(physicalData.Position + forward * 10, forward, this as AliveComponent, speed, false);
+                attacks.CreateGrapplingHook(physicalData.Position + forward * 10, forward, this as AliveComponent, speed);
 
                 millisActionLength = animations.GetAniMillis("k_throw") - 300;
 
