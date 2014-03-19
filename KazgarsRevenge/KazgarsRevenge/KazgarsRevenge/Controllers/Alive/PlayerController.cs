@@ -343,6 +343,7 @@ namespace KazgarsRevenge
 
             //adding sword and bow for demo
             EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3202], GearSlot.Righthand);
         }
 
         public override void Start()
@@ -926,7 +927,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, this as AliveComponent);
+                attacks.CreateMagicAttack(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Intellect), this as AliveComponent);
                 millisActionLength = animations.GetAniMillis("k_magic" + aniSuffix) - millisActionLength;
                 needInterruptAction = false;
             });
@@ -940,7 +941,7 @@ namespace KazgarsRevenge
             interruptActions.Add("magic", () =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, 25, this as AliveComponent);
+                attacks.CreateMagicAttack(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Intellect), this as AliveComponent);
             });
 
             return sequence;

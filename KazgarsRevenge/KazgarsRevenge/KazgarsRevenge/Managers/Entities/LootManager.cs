@@ -254,7 +254,7 @@ namespace KazgarsRevenge
         }
 
         #region Item IDs and Such
-        string attachDir = "Models\\Weapons\\";
+        string weaponDir = "Models\\Weapons\\";
         string armorDir = "Models\\Armor\\";
         #region Get Melee Items
         public Equippable GetMeleeWeapon(FloorName currentFloor)
@@ -513,7 +513,7 @@ namespace KazgarsRevenge
             AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.BRUTISH_AXE),
                 "Brutish Axe",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Health, .75f } },
-                GetUnanimatedModel(attachDir + "axe"),
+                GetUnanimatedModel(weaponDir + "axe"),
                 AttackType.Melee,
                 true,
                 id));
@@ -521,7 +521,7 @@ namespace KazgarsRevenge
             AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.GENERIC_SWORD),
                 "Typical Sword",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Health, .75f } },
-                GetUnanimatedModel(attachDir + "sword01"),
+                GetUnanimatedModel(weaponDir + "sword01"),
                 AttackType.Melee,
                 true,
                 id));
@@ -562,7 +562,7 @@ namespace KazgarsRevenge
                 "Rhino Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Health, .75f } },
                 GetAnimatedModel(armorDir + "armor_shoulders_rino"),
-                GearSlot.Feet,
+                GearSlot.Shoulders,
                 GearSlot.None,
                 id));
             id = 3008;
@@ -588,7 +588,7 @@ namespace KazgarsRevenge
             AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.GENERIC_BOW),
                 "Skeleton Crossbow",
                 new Dictionary<StatType, float>() { { StatType.Agility, .75f }, { StatType.CritChance, .25f } },
-                GetUnanimatedModel(attachDir + "crossbow"),
+                GetUnanimatedModel(weaponDir + "crossbow"),
                 AttackType.Ranged,
                 false,
                 id));
@@ -629,7 +629,7 @@ namespace KazgarsRevenge
                 "Skeleton Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Health, .25f }, { StatType.AttackSpeed, .5f } },
                 GetAnimatedModel(armorDir + "armor_shoulders_rino"),
-                GearSlot.Feet,
+                GearSlot.Shoulders,
                 GearSlot.None, 
                 id));
             id = 3108;
@@ -655,7 +655,7 @@ namespace KazgarsRevenge
             AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.GENERIC_STAFF),
                 "Typical Staff",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Health, .25f }, {StatType.CooldownReduction, .5f} },
-                GetUnanimatedModel(attachDir + "sword01"),
+                GetUnanimatedModel(weaponDir + "staff"),
                 AttackType.Magic,
                 true,
                 id));
@@ -696,7 +696,7 @@ namespace KazgarsRevenge
                 "Wimpy Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Health, .25f }, { StatType.CooldownReduction, .5f } },
                 GetAnimatedModel(armorDir + "armor_shoulders_rino"),
-                GearSlot.Feet,
+                GearSlot.Shoulders,
                 GearSlot.None, 
                 id));
             id = 3208;

@@ -61,6 +61,7 @@ namespace KazgarsRevenge
             systems.Add(typeof(SpitSparks), new SpitSparks(Game, Game.Content));
             systems.Add(typeof(FireSwipeSystem), new FireSwipeSystem(Game, Game.Content));
             systems.Add(typeof(FrostSwipeSystem), new FrostSwipeSystem(Game, Game.Content));
+            systems.Add(typeof(MagicPrimaryTrail), new MagicPrimaryTrail(Game, Game.Content));
             
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)

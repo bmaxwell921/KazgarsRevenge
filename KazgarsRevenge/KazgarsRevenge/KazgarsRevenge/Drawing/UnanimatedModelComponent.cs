@@ -30,6 +30,9 @@ namespace KazgarsRevenge
             this.yaw = yaw;
             this.pitch = pitch;
             this.roll = roll;
+
+            Matrix3X3 bepurot = physicalData.OrientationMatrix;
+            rotation = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
         }
 
         /// <summary>

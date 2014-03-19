@@ -160,8 +160,36 @@ namespace KazgarsRevenge
             SpawnWeaponSparks(position + Vector3.Down * 18);
         }
 
-        public void CreateMagicAttack()
+        public void CreateMagicAttack(Vector3 position, Vector3 dir, int damage, AliveComponent creator)
         {
+
+            GameEntity magicks = new GameEntity("magic", creator.Entity.Faction, EntityType.Misc);
+            position.Y = 40;
+            Entity magicData = new Box(position, 17, 17, 15, .001f);
+            magicData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            magicData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            magicData.LinearVelocity = dir * 450.0f;
+            magicData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
+            magicks.AddSharedData(typeof(Entity), magicData);
+
+            PhysicsComponent magicPhysics = new PhysicsComponent(mainGame, magicks);
+            UnanimatedModelComponent arrowGraphics =
+                new UnanimatedModelComponent(mainGame, magicks);
+            arrowGraphics.AddEmitter(typeof(MagicPrimaryTrail), "trail", 80, 0, Vector3.Forward * 6);
+
+            ProjectileController magicController = new ProjectileController(mainGame, magicks, damage, GetHitFaction(creator), creator);
+            magicController.KillOnFirstContact();
+
+            magicks.AddComponent(typeof(PhysicsComponent), magicPhysics);
+            genComponentManager.AddComponent(magicPhysics);
+
+            magicks.AddComponent(typeof(UnanimatedModelComponent), arrowGraphics);
+            modelManager.AddComponent(arrowGraphics);
+
+            magicks.AddComponent(typeof(AttackController), magicController);
+            genComponentManager.AddComponent(magicController);
+
+            attacks.Add(magicks);
 
             soundEffects.playMagicSound();
         }

@@ -273,6 +273,7 @@
     <Compile Include="Particles\Systems\Hit\HitSparksSystem.cs" />
     <Compile Include="Particles\Systems\Trails\HomingTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\LifestealParticleSystem.cs" />
+    <Compile Include="Particles\Systems\Trails\MagicPrimaryTrail.cs" />
     <Compile Include="Particles\Systems\Trails\SmokeTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\Trails\SnipeTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\TarExplosionParticleSystem.cs" />

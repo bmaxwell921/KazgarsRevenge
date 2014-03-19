@@ -54,7 +54,7 @@ namespace KazgarsRevenge
             public double timeLeft;
             public double nextTick;
             public double tickLength { get; private set; }
-            GameEntity from;
+            public GameEntity from { get; private set; }
             public int stacks = 1;
             public NegativeEffect(DeBuff type, double time, GameEntity from, double tickLength)
             {
@@ -72,7 +72,7 @@ namespace KazgarsRevenge
             public double timeLeft;
             public double nextTick;
             public double tickLength { get; private set; }
-            GameEntity from;
+            public GameEntity from { get; private set; }
             public int stacks = 1;
             public PositiveEffect(Buff type, double time, GameEntity from, double tickLength)
             {
@@ -380,12 +380,12 @@ namespace KazgarsRevenge
                 cur.timeLeft -= elapsed;
                 if (cur.timeLeft < cur.nextTick)
                 {
-                    HandleDeBuff(cur.type, BuffState.Ticking, cur.stacks);
+                    HandleDeBuff(cur.type, BuffState.Ticking, cur.stacks, cur.from);
                     cur.nextTick -= cur.tickLength;
                 }
                 if (cur.timeLeft <= 0 || Dead)
                 {
-                    HandleDeBuff(cur.type, BuffState.Ending, cur.stacks);
+                    HandleDeBuff(cur.type, BuffState.Ending, cur.stacks, cur.from);
                     toRemoveDebuffs.Add(cur.type);
                 }
             }
@@ -401,12 +401,12 @@ namespace KazgarsRevenge
                 cur.timeLeft -= elapsed;
                 if (cur.timeLeft < cur.nextTick)
                 {
-                    HandleBuff(cur.type, BuffState.Ticking, cur.stacks);
+                    HandleBuff(cur.type, BuffState.Ticking, cur.stacks, cur.from);
                     cur.nextTick -= cur.tickLength;
                 }
                 if (cur.timeLeft <= 0 || Dead)
                 {
-                    HandleBuff(cur.type, BuffState.Ending, cur.stacks);
+                    HandleBuff(cur.type, BuffState.Ending, cur.stacks, cur.from);
                     toRemoveBuffs.Add(cur.type);
                 }
             }
@@ -428,7 +428,7 @@ namespace KazgarsRevenge
 
         }
 
-        private bool HandleBuff(Buff b, BuffState state, int stacks)
+        private bool HandleBuff(Buff b, BuffState state, int stacks, GameEntity from)
         {
             switch (b)
             {
@@ -453,7 +453,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// returns true if it applied the debuff, false if no (to limit certain debuffs, like slows)
         /// </summary>
-        private bool HandleDeBuff(DeBuff d, BuffState state, int stacks)
+        private bool HandleDeBuff(DeBuff d, BuffState state, int stacks, GameEntity from)
         {
             switch (d)
             {
@@ -482,7 +482,7 @@ namespace KazgarsRevenge
                 case DeBuff.SerratedBleeding:
                     if (state == BuffState.Ticking)
                     {
-                        Damage((int)Math.Ceiling(MaxHealth * .01f * stacks), null);
+                        Damage((int)Math.Ceiling(MaxHealth * .01f * stacks), from);
                         attacks.SpawnLittleBloodSpurt(physicalData.Position);
                     }
                     break;
@@ -561,7 +561,7 @@ namespace KazgarsRevenge
                 tickLength = buffTickLengths[b];
             }
 
-            if (HandleBuff(b, BuffState.Starting, 1))
+            if (HandleBuff(b, BuffState.Starting, 1, from))
             {
                 if (activeBuffs.ContainsKey(b))
                 {
@@ -604,7 +604,7 @@ namespace KazgarsRevenge
             }
 
 
-            if (HandleDeBuff(b, BuffState.Starting, 1))
+            if (HandleDeBuff(b, BuffState.Starting, 1, from))
             {
                 if (activeDebuffs.ContainsKey(b))
                 {

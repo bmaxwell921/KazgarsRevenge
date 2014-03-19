@@ -15,7 +15,6 @@ namespace KazgarsRevenge
             : base(game, entity, damage, factionToHit, creator)
         {
             this.lifeLength = 2000;
-            this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);
 
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
         }
@@ -38,6 +37,7 @@ namespace KazgarsRevenge
         {
             homing = true;
             this.target = null;
+            this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);
         }
 
         public void Bleed()
