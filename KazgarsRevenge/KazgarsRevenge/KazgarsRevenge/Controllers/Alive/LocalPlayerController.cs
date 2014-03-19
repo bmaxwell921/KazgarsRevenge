@@ -511,7 +511,7 @@ namespace KazgarsRevenge
                 }
             }
             //Equipment
-            if (curKeys.IsKeyDown(Keys.O) && prevKeys.IsKeyUp(Keys.O))
+            if (curKeys.IsKeyDown(Keys.U) && prevKeys.IsKeyUp(Keys.U))
             {
                 showEquipment = !showEquipment;
                 showInventory = showEquipment;
@@ -540,7 +540,7 @@ namespace KazgarsRevenge
                 }
             }
             //Talents
-            if (curKeys.IsKeyDown(Keys.P) && prevKeys.IsKeyUp(Keys.P))
+            if (curKeys.IsKeyDown(Keys.T) && prevKeys.IsKeyUp(Keys.T))
             {
                 showTalents = !showTalents;
 
