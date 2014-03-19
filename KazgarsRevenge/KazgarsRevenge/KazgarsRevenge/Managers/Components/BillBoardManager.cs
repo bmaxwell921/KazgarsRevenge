@@ -19,6 +19,8 @@ namespace KazgarsRevenge
 
         private Effect billboardEffect;
 
+        public Effect CircleBlueEffect { get; private set; }
+        public Effect CircleEffect { get; private set; }
         public Effect ArrowVEffect { get; private set; }
         public Effect ShadowEffect { get; private set; }
         public Effect GroundTargetEffect { get; private set; }
@@ -30,6 +32,15 @@ namespace KazgarsRevenge
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
             billboardEffect = Game.Content.Load<Effect>("Shaders\\BillboardEffect");
+
+            CircleBlueEffect = billboardEffect.Clone();
+            CircleBlueEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.CIRCLE));
+            CircleBlueEffect.Parameters["World"].SetValue(Matrix.Identity);
+            CircleBlueEffect.Parameters["colorTint"].SetValue(Color.Blue.ToVector3());
+
+            CircleEffect = billboardEffect.Clone();
+            CircleEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.CIRCLE));
+            CircleEffect.Parameters["World"].SetValue(Matrix.Identity);
 
             ArrowVEffect = billboardEffect.Clone();
             ArrowVEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.ARROWV));

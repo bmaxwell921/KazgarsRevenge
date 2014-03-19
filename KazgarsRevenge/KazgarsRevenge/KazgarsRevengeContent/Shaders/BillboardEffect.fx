@@ -1,6 +1,7 @@
 float4x4 World;
 float4x4 View;
 float4x4 Projection;
+float3 colorTint = float3(1,1,1);
 
 texture Texture;
 
@@ -44,7 +45,7 @@ VSOut VS(VSIn input)
 
 float4 PS(VSOut input) : COLOR0
 {
-	return tex2D(Sampler, input.TexCoord);
+	return tex2D(Sampler, input.TexCoord) * float4(colorTint, 1);
 }
 
 technique Technique0

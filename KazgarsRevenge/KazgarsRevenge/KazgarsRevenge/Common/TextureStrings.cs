@@ -132,6 +132,7 @@ namespace KazgarsRevenge
             public static readonly string CHAIN = @"Textures\Billboards\chain";
             public static readonly string ROPE = @"Textures\Billboards\rope";
             public static readonly string ARROWV = @"Textures\Billboards\arrowtrail";
+            public static readonly string CIRCLE = @"Textures\Billboards\circle";
         }
 
         public class Menu

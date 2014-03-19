@@ -30,7 +30,7 @@ namespace KazgarsRevenge
         {
             settings.TextureName = "spark";
 
-            settings.MaxParticles = 500;
+            settings.MaxParticles = 1000;
 
             settings.Duration = TimeSpan.FromSeconds(.5);
             settings.DurationRandomness = 1;

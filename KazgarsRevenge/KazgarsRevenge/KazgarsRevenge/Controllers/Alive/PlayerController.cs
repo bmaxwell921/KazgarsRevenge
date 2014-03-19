@@ -977,7 +977,7 @@ namespace KazgarsRevenge
                 }
                 attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this as AliveComponent, abilityLearnedFlags[AbilityName.MagneticImplant]);
 
-                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
+                millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - arrowReleaseMillis - arrowDrawMillis;
 
                 needInterruptAction = false;
             });
@@ -1009,7 +1009,7 @@ namespace KazgarsRevenge
                 canInterrupt = true;
                 PlayAnimation("k_shoot" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
-                millisActionLength = 200;
+                millisActionLength = arrowDrawMillis;
                 stateResetCounter = 0;
             });
             sequence.Add(actionSequences["shoot"][1]);
@@ -1023,7 +1023,7 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 attacks.CreateOmnishot(physicalData.Position + forward * 10, forward, 25, this as AliveComponent, activeBuffs.ContainsKey(Buff.Homing), abilityLearnedFlags[AbilityName.Penetrating], abilityLearnedFlags[AbilityName.Leeching], activeBuffs.ContainsKey(Buff.SerratedBleeding));
 
-                millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - millisActionLength - 200;
+                millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - arrowReleaseMillis - arrowDrawMillis;
 
                 needInterruptAction = false;
             });
@@ -1114,7 +1114,7 @@ namespace KazgarsRevenge
                 int damage = GeneratePrimaryDamage(StatType.Agility) * 5;
                 attacks.CreateLooseCannon(physicalData.Position + forward * 10, forward, damage, this as AliveComponent, 1);
 
-                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
+                millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - arrowReleaseMillis - arrowDrawMillis;
                 needInterruptAction = false;
                 attState = AttackState.None;
 
@@ -1202,7 +1202,7 @@ namespace KazgarsRevenge
                 }
                 attacks.CreateMakeItRain(groundAbilityTarget, damage, radius, this as AliveComponent);
 
-                millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
+                millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - arrowReleaseMillis - arrowDrawMillis;
             });
             sequence.Add(abilityFinishedAction);
 
@@ -1319,7 +1319,7 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 attacks.CreateMoltenBolt(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this as AliveComponent);
 
-                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
+                millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - arrowReleaseMillis - arrowDrawMillis;
 
                 needInterruptAction = false;
             });

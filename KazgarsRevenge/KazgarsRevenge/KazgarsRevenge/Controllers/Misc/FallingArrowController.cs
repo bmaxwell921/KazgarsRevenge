@@ -15,30 +15,29 @@ namespace KazgarsRevenge
     class FallingArrowController : Component
     {
         double lifeCounter = 0;
-        double lifeLength = 5000;
+        double lifeLength = 2000;
+        Entity physicalData;
         public FallingArrowController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
-            (entity.GetSharedData(typeof(Entity)) as Entity).CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
+            physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
         }
 
+        bool sparked = false;
         public override void Update(GameTime gameTime)
         {
+            Vector3 pos = physicalData.Position;
+            if (!sparked && pos.Y <= 14)
+            {
+                sparked = true;
+                ExpandingCircleBillboard circle = Entity.GetComponent(typeof(ExpandingCircleBillboard)) as ExpandingCircleBillboard;
+                (Game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).AddComponent(circle);
+                (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
+            }
             lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (lifeCounter >= lifeLength)
             {
                 Entity.KillEntity();
-            }
-        }
-
-        protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
-        {
-            GameEntity hitEntity = other.Tag as GameEntity;
-            if (hitEntity != null && hitEntity.Name == "room")
-            {
-                (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
-                lifeCounter = 0;
-                lifeLength = 1000;
             }
         }
     }

@@ -326,7 +326,7 @@ namespace KazgarsRevenge
         {
             GameEntity newAttack = new GameEntity("aoe", creator.Entity.Faction, EntityType.Misc);
 
-            Entity attackData = new Cylinder(position, 47, radius);//new Box(position, radius * 2, 47, radius * 2, .01f);
+            Entity attackData = new Cylinder(position, 47, radius);
             attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
@@ -345,12 +345,14 @@ namespace KazgarsRevenge
             attacks.Add(newAttack);
 
 
-            for (int i = 0; i < 50; ++i)
+            for (int i = 0; i < radius / 2; ++i)
             {
+                float randAngle = (float)rand.Next(628) / 100.0f;
+                float randDist = rand.Next(5, (int)(radius));
                 Vector3 randPos = new Vector3();
-                randPos.X = rand.Next((int)(position.X - radius), (int)(position.X + radius));
-                randPos.Z = rand.Next((int)(position.Z - radius), (int)(position.Z + radius));
+                randPos.X = (float)(Math.Cos(randAngle) * randDist) + position.X;
                 randPos.Y = rand.Next(80, 300);
+                randPos.Z = (float)(Math.Sin(randAngle) * randDist) + position.Z;
                 CreateFallingArrow(randPos);
             }
         }
@@ -912,18 +914,23 @@ namespace KazgarsRevenge
         {
             GameEntity arrow = new GameEntity("arrow", FactionType.Neutral, EntityType.Misc);
 
-            Entity arrowData = new Box(position, 15, 50, 15, 1);
+            Entity arrowData = new Box(position, 15, 20, 15, 1);
             arrowData.IsAffectedByGravity = true;
             arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = Vector3.Down * 50;
-            arrowData.Orientation = Quaternion.CreateFromYawPitchRoll(0, MathHelper.PiOver2, 0);
+            arrowData.Orientation = Quaternion.CreateFromYawPitchRoll(0, -MathHelper.PiOver2, 0);
             arrow.AddSharedData(typeof(Entity), arrowData);
             
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
-            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(10), Vector3.Backward * 15, 0, 0, 0);
+            arrowGraphics.AddColorTint(Color.Blue);
+
             FallingArrowController arrowController = new FallingArrowController(mainGame, arrow);
-            arrowGraphics.AddEmitter(typeof(HomingTrailParticleSystem), "trail", 10, 2, Vector3.Zero);
+
+            position.Y = 3;
+            ExpandingCircleBillboard impact = new ExpandingCircleBillboard(mainGame, arrow, position);
+            arrow.AddComponent(typeof(ExpandingCircleBillboard), impact);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -1065,6 +1072,7 @@ namespace KazgarsRevenge
 
         #region Particles
         ParticleManager particles;
+
         public void SpawnSpitSparks(Vector3 position)
         {
             ParticleSystem spit = particles.GetSystem(typeof(SpitSparks));
