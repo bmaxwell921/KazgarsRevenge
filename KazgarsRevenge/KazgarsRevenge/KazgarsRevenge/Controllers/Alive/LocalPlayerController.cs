@@ -67,31 +67,31 @@ namespace KazgarsRevenge
             rangedAbilities[0, 0] = new AbilityNode(AbilityName.AdrenalineRush, null, true, 3, abilityLearnedFlags);
             rangedAbilities[0, 1] = new AbilityNode(AbilityName.Snipe, null, true, 3, abilityLearnedFlags);
 
-            rangedAbilities[1, 0] = new AbilityNode(AbilityName.Serrated, new AbilityName[] {AbilityName.AdrenalineRush}, false, 2, abilityLearnedFlags);
-            rangedAbilities[1, 1] = new AbilityNode(AbilityName.Headshot, new AbilityName[] { AbilityName.Snipe}, false, 2,abilityLearnedFlags);
+            rangedAbilities[1, 0] = new AbilityNode(AbilityName.Serrated, new AbilityName[] { AbilityName.AdrenalineRush }, false, 2, abilityLearnedFlags);
+            rangedAbilities[1, 1] = new AbilityNode(AbilityName.Headshot, new AbilityName[] { AbilityName.Snipe }, false, 2, abilityLearnedFlags);
             rangedAbilities[1, 2] = new AbilityNode(AbilityName.GrapplingHook, null, true, 4, abilityLearnedFlags);
 
-            rangedAbilities[2, 0] = new AbilityNode(AbilityName.Homing, new AbilityName[] {AbilityName.Serrated}, false, 2, abilityLearnedFlags);
-            rangedAbilities[2, 1] = new AbilityNode(AbilityName.MagneticImplant, new AbilityName[] {AbilityName.Headshot}, false, 2, abilityLearnedFlags);
-            rangedAbilities[2, 2] = new AbilityNode(AbilityName.SpeedyGrapple, new AbilityName[] {AbilityName.GrapplingHook}, false, 2, abilityLearnedFlags);
-            rangedAbilities[2, 3] = new AbilityNode(AbilityName.Elusiveness, new AbilityName[] {AbilityName.Tumble}, false, 1, abilityLearnedFlags);
+            rangedAbilities[2, 0] = new AbilityNode(AbilityName.Homing, new AbilityName[] { AbilityName.Serrated }, false, 2, abilityLearnedFlags);
+            rangedAbilities[2, 1] = new AbilityNode(AbilityName.MagneticImplant, new AbilityName[] { AbilityName.Headshot }, false, 2, abilityLearnedFlags);
+            rangedAbilities[2, 2] = new AbilityNode(AbilityName.SpeedyGrapple, new AbilityName[] { AbilityName.GrapplingHook }, false, 2, abilityLearnedFlags);
+            rangedAbilities[2, 3] = new AbilityNode(AbilityName.Elusiveness, new AbilityName[] { AbilityName.Tumble }, false, 1, abilityLearnedFlags);
 
 
-            rangedAbilities[3, 1] = new AbilityNode(AbilityName.LooseCannon, new AbilityName[] {AbilityName.Homing, AbilityName.MagneticImplant}, false, 5, abilityLearnedFlags);
-            rangedAbilities[3, 2] = new AbilityNode(AbilityName.FlashBomb, new AbilityName[] {AbilityName.SpeedyGrapple, AbilityName.LooseCannon, AbilityName.Tumble}, false, 2, abilityLearnedFlags);
+            rangedAbilities[3, 1] = new AbilityNode(AbilityName.LooseCannon, new AbilityName[] { AbilityName.Homing, AbilityName.MagneticImplant }, false, 5, abilityLearnedFlags);
+            rangedAbilities[3, 2] = new AbilityNode(AbilityName.FlashBomb, new AbilityName[] { AbilityName.SpeedyGrapple, AbilityName.LooseCannon, AbilityName.Tumble }, false, 2, abilityLearnedFlags);
             rangedAbilities[3, 3] = new AbilityNode(AbilityName.Tumble, null, true, 4, abilityLearnedFlags);
 
-            rangedAbilities[4, 0] = new AbilityNode(AbilityName.Leeching, new AbilityName[] {AbilityName.LooseCannon}, false, 2, abilityLearnedFlags);
-            rangedAbilities[4, 1] = new AbilityNode(AbilityName.MakeItRain, new AbilityName[] {AbilityName.LooseCannon}, false, 4, abilityLearnedFlags);
-            rangedAbilities[4, 2] = new AbilityNode(AbilityName.BiggerBombs, new AbilityName[] {AbilityName.FlashBomb}, false, 1, abilityLearnedFlags);
-            rangedAbilities[4, 3] = new AbilityNode(AbilityName.TarBomb, new AbilityName[] {AbilityName.FlashBomb}, false, 1, abilityLearnedFlags);
+            rangedAbilities[4, 0] = new AbilityNode(AbilityName.Leeching, new AbilityName[] { AbilityName.LooseCannon }, false, 2, abilityLearnedFlags);
+            rangedAbilities[4, 1] = new AbilityNode(AbilityName.MakeItRain, new AbilityName[] { AbilityName.LooseCannon }, false, 4, abilityLearnedFlags);
+            rangedAbilities[4, 2] = new AbilityNode(AbilityName.BiggerBombs, new AbilityName[] { AbilityName.FlashBomb }, false, 1, abilityLearnedFlags);
+            rangedAbilities[4, 3] = new AbilityNode(AbilityName.TarBomb, new AbilityName[] { AbilityName.FlashBomb }, false, 1, abilityLearnedFlags);
 
-            rangedAbilities[5, 0] = new AbilityNode(AbilityName.Penetrating, new AbilityName[] {AbilityName.Leeching}, false, 2, abilityLearnedFlags);
-            rangedAbilities[5, 1] = new AbilityNode(AbilityName.MakeItHail, new AbilityName[] {AbilityName.MakeItRain}, false, 3, abilityLearnedFlags);
-            rangedAbilities[5, 2] = new AbilityNode(AbilityName.MoltenBolt, new AbilityName[] {AbilityName.TarBomb}, false, 2, abilityLearnedFlags);
+            rangedAbilities[5, 0] = new AbilityNode(AbilityName.Penetrating, new AbilityName[] { AbilityName.Leeching }, false, 2, abilityLearnedFlags);
+            rangedAbilities[5, 1] = new AbilityNode(AbilityName.MakeItHail, new AbilityName[] { AbilityName.MakeItRain }, false, 3, abilityLearnedFlags);
+            rangedAbilities[5, 2] = new AbilityNode(AbilityName.MoltenBolt, new AbilityName[] { AbilityName.TarBomb }, false, 2, abilityLearnedFlags);
 
-            rangedAbilities[6, 0] = new AbilityNode(AbilityName.Omnishot, new AbilityName[] {AbilityName.MakeItHail}, false, 10, abilityLearnedFlags);
-            rangedAbilities[6, 1] = new AbilityNode(AbilityName.StrongWinds, new AbilityName[] {AbilityName.MakeItHail}, false, 3, abilityLearnedFlags);
+            rangedAbilities[6, 0] = new AbilityNode(AbilityName.Omnishot, new AbilityName[] { AbilityName.MakeItHail }, false, 10, abilityLearnedFlags);
+            rangedAbilities[6, 1] = new AbilityNode(AbilityName.StrongWinds, new AbilityName[] { AbilityName.MakeItHail }, false, 3, abilityLearnedFlags);
             #endregion
         }
 
@@ -147,8 +147,11 @@ namespace KazgarsRevenge
         string abilityToUseString = null;
         int selectedItemSlot = -1;
         int selectedTalentSlot = -1;
+        int lootScroll = 0;
         GearSlot selectedEquipPiece;
         bool selectedEquipSlot = false;
+        bool dragging = false;
+        String draggingSource;
 
         enum TalentTrees
         {
@@ -157,10 +160,10 @@ namespace KazgarsRevenge
             magic
         }
 
-         TalentTrees currentTalentTree = TalentTrees.ranged;
-        
-        
-        AbilityNode[,] rangedAbilities = new AbilityNode[7 , 4];
+        TalentTrees currentTalentTree = TalentTrees.ranged;
+
+
+        AbilityNode[,] rangedAbilities = new AbilityNode[7, 4];
 
 
         #endregion
@@ -204,7 +207,7 @@ namespace KazgarsRevenge
             //ability CD updates
             foreach (KeyValuePair<Keys, Ability> k in boundAbilities)
             {
-                if(k.Value != null) k.Value.update(elapsed);
+                if (k.Value != null) k.Value.update(elapsed);
             }
             //Mouse Ability Updates
             foreach (KeyValuePair<ButtonState, Ability> k in mouseBoundAbility)
@@ -443,6 +446,7 @@ namespace KazgarsRevenge
             if (looting && lootingSoul != null && lootingSoul.Remove && currentAniName != "k_loot_smash")
             {
                 CloseLoot();
+                lootScroll = 0;
             }
 
             //loot nearby soul
@@ -711,7 +715,7 @@ namespace KazgarsRevenge
             //mouse click check
             if (!useAbility && abilityToUseString != null)
             {
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 12; i++)
                 {
                     if (abilityToUseString == "ability" + i)
                     {
@@ -721,6 +725,16 @@ namespace KazgarsRevenge
                             abilityToUse = boundAbilities[i].Value;
                             abilityToUseString = null;
                         }
+                    }
+                }
+                //rm check
+                if (abilityToUseString == "ability12")
+                {
+                    if (!mouseBoundAbility[0].Value.onCooldown)
+                    {
+                        useAbility = true;
+                        abilityToUse = mouseBoundAbility[0].Value;
+                        abilityToUseString = null;
                     }
                 }
             }
@@ -956,51 +970,51 @@ namespace KazgarsRevenge
         private void talentHelp(int check, AbilityNode[,] talents, bool rightclick)
         {
             if (talents[(int)check / 4, check % 4] != null)
-                {       //if not learned
-                    if (!abilityLearnedFlags[talents[(int)check / 4, check % 4].name])
-                    {       //if can be unlocked
-                        if (talents[(int)check / 4, check % 4].canUnlock() && (totalTalentPoints - spentTalentPoints) >= talents[(int)check / 4, check % 4].cost)
-                        {       //unlock it
-                            spentTalentPoints += talents[(int)check / 4, check % 4].cost;
-                            abilityLearnedFlags[talents[(int)check / 4, check % 4].name] = true;
-                        }
-                        else
-                        {   //floating error TODO decide if we like that it's over the interface or not
-                            ((MainGame)Game).AddAlert("I can't unlock that yet!");
-                        }
+            {       //if not learned
+                if (!abilityLearnedFlags[talents[(int)check / 4, check % 4].name])
+                {       //if can be unlocked
+                    if (talents[(int)check / 4, check % 4].canUnlock() && (totalTalentPoints - spentTalentPoints) >= talents[(int)check / 4, check % 4].cost)
+                    {       //unlock it
+                        spentTalentPoints += talents[(int)check / 4, check % 4].cost;
+                        abilityLearnedFlags[talents[(int)check / 4, check % 4].name] = true;
                     }
-                    else        //if talent is already learned
-                    {   //equip in first open slot
-                        if (GetAbility(talents[(int)check / 4, check % 4].name).AbilityType == AbilityType.Passive)
-                        {
-                            //Trying to put a passive on the bar.  Tell them no?
-                            ((MainGame)Game).AddAlert("I can't use a passive ability!");
-                        }
-                        else
-                        {
-                            if (rightclick)
-                            {
-                                bool placed = false;
-                                for (int i = 0; i < 12; i++)
-                                {
-                                    if (boundAbilities[i].Value.AbilityName == AbilityName.None)
-                                    {
-                                        selectedTalentSlot = check;
-                                        checkTalentOnBar(talents);
-                                        if (i == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                        else boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                        placed = true;
-                                        selectedTalentSlot = -1;
-                                        break;
-                                    }
-                                }
-                                if (!placed) selectedTalentSlot = check;
-                            }
-                            else selectedTalentSlot = check;
-                        }
+                    else
+                    {   //floating error TODO decide if we like that it's over the interface or not
+                        ((MainGame)Game).AddAlert("I can't unlock that yet!");
                     }
                 }
-          }
+                else        //if talent is already learned
+                {   //equip in first open slot
+                    if (GetAbility(talents[(int)check / 4, check % 4].name).AbilityType == AbilityType.Passive)
+                    {
+                        //Trying to put a passive on the bar.  Tell them no?
+                        ((MainGame)Game).AddAlert("I can't use a passive ability!");
+                    }
+                    else
+                    {
+                        if (rightclick)
+                        {
+                            bool placed = false;
+                            for (int i = 0; i < 12; i++)
+                            {
+                                if (boundAbilities[i].Value.AbilityName == AbilityName.None)
+                                {
+                                    selectedTalentSlot = check;
+                                    checkTalentOnBar(talents);
+                                    if (i == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    else boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    placed = true;
+                                    selectedTalentSlot = -1;
+                                    break;
+                                }
+                            }
+                            if (!placed) selectedTalentSlot = check;
+                        }
+                        else selectedTalentSlot = check;
+                    }
+                }
+            }
+        }
 
         private void checkTalentOnBar(AbilityNode[,] curentTalentTree)
         {
@@ -1031,7 +1045,6 @@ namespace KazgarsRevenge
         /// <summary>
         /// Checks what frame of the gui that the mouse is colliding with and returns its name.
         /// If the mouse is not colliding with the gui, returns null.
-        /// #Nate :P
         /// </summary>
         private string CollidingGuiFrame()
         {
@@ -1070,184 +1083,226 @@ namespace KazgarsRevenge
             //happens on left mouse released
             //#Nate
             #region left click check
-            if (collides != null && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
+            if (collides != null && ((prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released) || (curMouse.LeftButton == ButtonState.Pressed && !dragging) || (curMouse.LeftButton == ButtonState.Released && dragging)))
             {
                 string innerClicked = CollidingInnerFrame(collides);
-                switch (collides)
+                //Set dragging to true if draggin mouse
+                if (curMouse.LeftButton == ButtonState.Pressed && innerClicked != null && !dragging){
+                    draggingSource = innerClicked;
+                    dragging = true;
+                }
+                else{
+                    dragging = false;
+                }
+                if ((!dragging && draggingSource != innerClicked) || dragging)
                 {
-                    #region inventory
-                    case "inventory":
-                        if (innerClicked == "equipArrow")
-                        {
-                            showEquipment = !showEquipment;
-                            if (showEquipment)
+                    switch (collides)
+                    {
+                        #region inventory
+                        case "inventory":
+                            if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
+                            if (innerClicked == "equipArrow")
                             {
-                                if (!guiOutsideRects.ContainsKey("equipment"))
+                                showEquipment = !showEquipment;
+                                if (showEquipment)
                                 {
-                                    guiOutsideRects.Add("equipment", equipmentRect);
+                                    if (!guiOutsideRects.ContainsKey("equipment"))
+                                    {
+                                        guiOutsideRects.Add("equipment", equipmentRect);
+                                    }
                                 }
+                                else
+                                {
+                                    if (guiOutsideRects.ContainsKey("equipment"))
+                                    {
+                                        guiOutsideRects.Remove("equipment");
+                                    }
+                                }
+                            }
+                            if (innerClicked != null && innerClicked.Contains("inventory"))
+                            {
+                                for (int i = 0; i <= maxInventorySlots; i++)
+                                {
+                                    if (innerClicked == "inventory" + i && (inventory[i] != null || inventory[i] == null && selectedItemSlot != -1 || selectedEquipSlot))
+                                    {
+                                        if (selectedEquipSlot)           //bringing equipment into inventory
+                                        {
+                                            if (inventory[i] == null)    //Unequip equipment being brought in
+                                            {
+                                                UnequipGear(selectedEquipPiece, i);
+                                                gear[selectedEquipPiece] = null;
+                                                selectedEquipSlot = false;
+                                                selectedItemSlot = -1;
+                                            }
+                                            else                        //try and equip selected item
+                                            {
+                                                selectedItemSlot = i;
+                                                equipHelp(selectedEquipPiece);
+                                                selectedEquipSlot = false;
+                                                selectedItemSlot = -1;
+                                            }
+                                        }
+                                        else if (selectedItemSlot == -1)//no selected item
+                                        {
+                                            selectedItemSlot = i;       //select item
+                                        }
+                                        else if (inventory[i] == null)  //put selected item into empty spot
+                                        {
+                                            inventory[i] = inventory[selectedItemSlot];
+                                            inventory[selectedItemSlot] = null;
+                                            selectedItemSlot = -1;
+                                        }
+                                        else                            //switch inventory items
+                                        {
+                                            Item temp = inventory[i];
+                                            inventory[i] = inventory[selectedItemSlot];
+                                            inventory[selectedItemSlot] = temp;
+                                            selectedItemSlot = -1;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        #endregion
+                        #region loot
+                        case "loot":
+                            if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
+                            if (innerClicked == null) break;
+                            //Loot All
+                            else if (innerClicked.Equals("lootAll"))
+                            {
+                                while (lootingSoul.Loot.Count() > 0)
+                                {             //add items to inventory
+                                    if (AddToInventory(lootingSoul.GetLoot(0)))
+                                    {
+                                        lootingSoul.RemoveLoot(0);
+                                    }
+                                }
+                            }
+                            //Scroll Up
+                            else if (innerClicked.Equals("upArrow") && lootingSoul.Loot.Count > NUM_LOOT_SHOWN)
+                            {
+                                lootScroll++;
+                            }
+                            //Scroll Down
+                            else if (innerClicked.Equals("downArrow") && lootScroll > 0)
+                            {
+                                lootScroll--;
+                            }
+                            else
+                            {//Normal Loot
+                                for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
+                                {
+                                    if (RectContains(guiInsideRects["loot"]["loot" + i], curMouse.X, curMouse.Y))
+                                    {
+                                        //clicked on item, add to inventory
+                                        if (AddToInventory(lootingSoul.GetLoot(i + NUM_LOOT_SHOWN * lootScroll)))
+                                        {
+                                            lootingSoul.RemoveLoot(i + NUM_LOOT_SHOWN * lootScroll);
+                                        }
+
+                                    }
+                                }
+                            }
+                            break;
+                        #endregion
+                        #region equipment
+                        case "equipment":
+                            if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
+                            if (innerClicked == "equipWrist") //wrist
+                            {
+                                equipHelp(GearSlot.Wrist);
+                            }
+                            else if (innerClicked == "equipBling")  //bling
+                            {
+                                equipHelp(GearSlot.Bling);
+                            }
+                            else if (innerClicked == "equipLWep")  //LWep
+                            {
+                                equipHelp(GearSlot.Lefthand);
+                            }
+
+                            else if (innerClicked == "equipHead")  //head
+                            {
+                                equipHelp(GearSlot.Head);
+                            }
+                            else if (innerClicked == "equipChest")  //chest
+                            {
+                                equipHelp(GearSlot.Chest);
+                            }
+                            else if (innerClicked == "equipLegs")  //legs
+                            {
+                                equipHelp(GearSlot.Legs);
+                            }
+                            else if (innerClicked == "equipFeet")  //feet
+                            {
+                                equipHelp(GearSlot.Feet);
+                            }
+
+                            else if (innerClicked == "equipShoulder")  //shoulder
+                            {
+                                equipHelp(GearSlot.Shoulders);
+                            }
+                            else if (innerClicked == "equipCod")  //Cod
+                            {
+                                equipHelp(GearSlot.Codpiece);
+                            }
+                            else if (innerClicked == "equipRWep")  //RWep
+                            {
+                                equipHelp(GearSlot.Righthand);
+                            }
+                            break;
+                        #endregion
+                        #region abilities
+                        case "abilities":
+                            if (innerClicked != null && selectedTalentSlot != -1)
+                            {
+                                int check = Convert.ToInt32(innerClicked.Remove(0, 7));
+
+                                if (currentTalentTree == TalentTrees.ranged)
+                                {
+                                    checkTalentOnBar(rangedAbilities);
+                                    if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    else boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                }
+                                else if (currentTalentTree == TalentTrees.melee)
+                                {
+
+                                }
+                                else if (currentTalentTree == TalentTrees.magic)
+                                {
+
+                                }
+                                selectedTalentSlot = -1;
                             }
                             else
                             {
-                                if (guiOutsideRects.ContainsKey("equipment"))
+                                abilityToUseString = innerClicked;
+                            }
+                            break;
+                        #endregion
+                        #region talents
+                        case "talents":
+                            if (innerClicked != null)
+                            {
+                                //TODO if we add any more innerFrames in abilities make sure we check those first
+                                int check = Convert.ToInt32(innerClicked.Remove(0, 6));
+                                if (currentTalentTree == TalentTrees.ranged)
                                 {
-                                    guiOutsideRects.Remove("equipment");
+                                    talentHelp(check, rangedAbilities, false);
+                                }
+                                else if (currentTalentTree == TalentTrees.melee)
+                                {
+                                    //talentHelp(check, meleeAbilities);
+                                }
+                                else if (currentTalentTree == TalentTrees.magic)
+                                {
+                                    //talentHelp(check, magicAbilities);
                                 }
                             }
-                        }
-                        if (innerClicked != null && innerClicked.Contains("inventory"))
-                        {
-                            for (int i = 0; i <= maxInventorySlots; i++)
-                            {
-                                if (innerClicked == "inventory" + i && (inventory[i] != null || inventory[i] == null && selectedItemSlot != -1 || selectedEquipSlot))
-                                {
-                                    if (selectedEquipSlot)           //bringing equipment into inventory
-                                    {
-                                        if (inventory[i] == null)    //Unequip equipment being brought in
-                                        {
-                                            UnequipGear(selectedEquipPiece, i);
-                                            gear[selectedEquipPiece] = null;
-                                            selectedEquipSlot = false;
-                                            selectedItemSlot = -1;
-                                        }
-                                        else                        //try and equip selected item
-                                        {
-                                            selectedItemSlot = i;
-                                            equipHelp(selectedEquipPiece);
-                                            selectedEquipSlot = false;
-                                            selectedItemSlot = -1;
-                                        }
-                                    }
-                                    else if (selectedItemSlot == -1)//no selected item
-                                    {
-                                        selectedItemSlot = i;       //select item
-                                    }
-                                    else if (inventory[i] == null)  //put selected item into empty spot
-                                    {
-                                        inventory[i] = inventory[selectedItemSlot];
-                                        inventory[selectedItemSlot] = null;
-                                        selectedItemSlot = -1;
-                                    }
-                                    else                            //switch inventory items
-                                    {
-                                        Item temp = inventory[i];
-                                        inventory[i] = inventory[selectedItemSlot];
-                                        inventory[selectedItemSlot] = temp;
-                                        selectedItemSlot = -1;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    #endregion
-                    #region loot
-                    case "loot":
-                        for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
-                        {
-                            if (RectContains(guiInsideRects["loot"]["loot" + i], curMouse.X, curMouse.Y))
-                            {
-                                //clicked on item, add to inventory
-                                if (AddToInventory(lootingSoul.GetLoot(i)))
-                                {
-                                    lootingSoul.RemoveLoot(i);
-                                }
-
-                            }
-                        }
-                        break;
-                    #endregion
-                    #region equipment
-                    case "equipment":
-                        if (innerClicked == "equipWrist") //wrist
-                        {
-                            equipHelp(GearSlot.Wrist);
-                        }
-                        else if (innerClicked == "equipBling")  //bling
-                        {
-                            equipHelp(GearSlot.Bling);
-                        }
-                        else if (innerClicked == "equipLWep")  //LWep
-                        {
-                            equipHelp(GearSlot.Lefthand);
-                        }
-
-                        else if (innerClicked == "equipHead")  //head
-                        {
-                            equipHelp(GearSlot.Head);
-                        }
-                        else if (innerClicked == "equipChest")  //chest
-                        {
-                            equipHelp(GearSlot.Chest);
-                        }
-                        else if (innerClicked == "equipLegs")  //legs
-                        {
-                            equipHelp(GearSlot.Legs);
-                        }
-                        else if (innerClicked == "equipFeet")  //feet
-                        {
-                            equipHelp(GearSlot.Feet);
-                        }
-
-                        else if (innerClicked == "equipShoulder")  //shoulder
-                        {
-                            equipHelp(GearSlot.Shoulders);
-                        }
-                        else if (innerClicked == "equipCod")  //Cod
-                        {
-                            equipHelp(GearSlot.Codpiece);
-                        }
-                        else if (innerClicked == "equipRWep")  //RWep
-                        {
-                            equipHelp(GearSlot.Righthand);
-                        }
-                        break;
-                    #endregion
-                    #region abilities
-                    case "abilities":
-                        if (innerClicked != null && selectedTalentSlot != -1)
-                        {
-                            int check = Convert.ToInt32(innerClicked.Remove(0, 7));
-                            
-                            if(currentTalentTree == TalentTrees.ranged){
-                                checkTalentOnBar(rangedAbilities);
-                                if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                else boundAbilities[check] = new KeyValuePair<Keys,Ability>(boundAbilities[check].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                            }
-                            else if (currentTalentTree == TalentTrees.melee){
-
-                            }
-                            else if (currentTalentTree == TalentTrees.magic){
-
-                            }
-                            selectedTalentSlot = -1;
-                        }
-                        else
-                        {
-                            abilityToUseString = innerClicked;
-                        }
-                        break;
-                    #endregion
-                    #region talents
-                    case "talents":
-                        if (innerClicked != null)
-                        {
-                            //TODO if we add any more innerFrames in abilities make sure we check those first
-                            int check = Convert.ToInt32(innerClicked.Remove(0, 6));
-                            if (currentTalentTree == TalentTrees.ranged)
-                            {
-                                talentHelp(check, rangedAbilities, false);
-                            }
-                            else if (currentTalentTree == TalentTrees.melee)
-                            {
-                                //talentHelp(check, meleeAbilities);
-                            }
-                            else if (currentTalentTree == TalentTrees.magic)
-                            {
-                                //talentHelp(check, magicAbilities);
-                            }
-                        }
-                        break;
-                    #endregion
+                            break;
+                        #endregion
+                    }
                 }
             }
             #endregion
@@ -1345,7 +1400,7 @@ namespace KazgarsRevenge
                         break;
                     #endregion
                     #region talents
-                        case "talents":
+                    case "talents":
                         if (innerClicked != null)
                         {
                             //TODO if we add any more innerFrames in abilities make sure we check those first
@@ -1435,7 +1490,7 @@ namespace KazgarsRevenge
             inventoryRect = new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average));
             equipmentRect = new Rectangle((int)(maxX - 704 * average), (int)(380 * average), (int)(304 * average), (int)(440 * average));
             talentRect = new Rectangle((int)(maxX / 2 - 203 * average), (int)(75 * average), (int)(406 * average), (int)(738 * average));
-            lootRect = new Rectangle((int)(150 * average), (int)(150 * average), 150, 300);
+            lootRect = new Rectangle((int)(160 * average), (int)(160 * average), (int)(150 * average), (int)(300 * average));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
@@ -1468,12 +1523,12 @@ namespace KazgarsRevenge
             equipmentDict.Add("equipWrist", new Rectangle((int)(maxX - 694 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add("equipBling", new Rectangle((int)(maxX - 694 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add("equipLWep", new Rectangle((int)(maxX - 694 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
-            
+
             equipmentDict.Add("equipHead", new Rectangle((int)(maxX - 596 * average), (int)(409 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add("equipChest", new Rectangle((int)(maxX - 596 * average), (int)(507 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add("equipLegs", new Rectangle((int)(maxX - 596 * average), (int)(605 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add("equipFeet", new Rectangle((int)(maxX - 596 * average), (int)(703 * average), (int)(88 * average), (int)(88 * average)));
-            
+
             equipmentDict.Add("equipShoulder", new Rectangle((int)(maxX - 498 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add("equipCod", new Rectangle((int)(maxX - 498 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add("equipRWep", new Rectangle((int)(maxX - 498 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
@@ -1519,10 +1574,14 @@ namespace KazgarsRevenge
             //Loot
             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
             {
-                lootDict.Add("loot" + i, new Rectangle((int)(165 * average), (int)(165 * average + i * 65), 50, 50));
+                lootDict.Add("loot" + i, new Rectangle((int)(175 * average), (int)(175 * average + i * 65), (int)(50 * average), (int)(50 * average)));
             }
-
-
+            //up arrow
+            lootDict.Add("upArrow", new Rectangle((int)(280 * average), (int)(400 * average), (int)(25 * average), (int)(25 * average)));
+            //down arrow
+            lootDict.Add("downArrow", new Rectangle((int)(280 * average), (int)(430 * average), (int)(25 * average), (int)(25 * average)));
+            //loot all button
+            lootDict.Add("lootAll", new Rectangle((int)(265 * average), (int)(165 * average), (int)(40 * average), (int)(40 * average)));
         }
 
         public void Draw(SpriteBatch s)
@@ -1743,7 +1802,6 @@ namespace KazgarsRevenge
                 //Draw inventory items
                 for (int i = 0; i < inventory.Length; ++i)
                 {
-                    //Nate working here
                     if (inventory[i] != null)
                     {
                         s.Draw(inventory[i].Icon, guiInsideRects["inventory"]["inventory" + i], Color.White);
@@ -1751,7 +1809,7 @@ namespace KazgarsRevenge
 
                 }
             }
-
+            //Draw Loot
             if (looting && lootingSoul != null && guiOutsideRects.ContainsKey("loot"))
             {
                 s.Draw(texWhitePixel, guiOutsideRects["loot"], Color.Black * .5f);
@@ -1759,8 +1817,27 @@ namespace KazgarsRevenge
                 List<Item> loot = lootingSoul.Loot;
                 for (int i = 0; i < loot.Count && i < NUM_LOOT_SHOWN; ++i)
                 {
-                    s.Draw(loot[i].Icon, guiInsideRects["loot"]["loot" + i], Color.White);
+                    s.Draw(loot[i + lootScroll*NUM_LOOT_SHOWN].Icon, guiInsideRects["loot"]["loot" + i], Color.White);
                 }
+                if (lootingSoul.Loot.Count() > NUM_LOOT_SHOWN + NUM_LOOT_SHOWN * lootScroll)
+                {
+                    s.Draw(talentArrowDown, guiInsideRects["loot"]["downArrow"], Color.White);
+                }
+                else
+                {
+                    s.Draw(texPlaceHolder, guiInsideRects["loot"]["downArrow"], Color.Black * .5f);
+                }
+                if (lootScroll > 0)
+                {
+
+                    s.Draw(talentArrowUp, guiInsideRects["loot"]["upArrow"], Color.White);
+                }
+                else
+                {
+                    s.Draw(texPlaceHolder, guiInsideRects["loot"]["upArrow"], Color.Black * .5f);
+                }
+
+                s.Draw(texPlaceHolder, guiInsideRects["loot"]["lootAll"], Color.White);
             }
             #endregion
 
@@ -1796,7 +1873,7 @@ namespace KazgarsRevenge
                                     s.DrawString(font, rangedAbilities[j, i].cost.ToString(), new Vector2(guiInsideRects["talents"]["talent" + (i + j * 4)].X, guiInsideRects["talents"]["talent" + (i + j * 4)].Y), Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                                 }
                                 //locked
-                                else s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black *.8f);
+                                else s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black * .8f);
                             }
                         }
                     }
@@ -1851,20 +1928,23 @@ namespace KazgarsRevenge
                 rectMouse.Height = (int)(60 * average);
                 s.Draw(gear[selectedEquipPiece].Icon, rectMouse, Color.White);
             }
-            else if(selectedTalentSlot != -1)
+            else if (selectedTalentSlot != -1)
             {
                 rectMouse.Width = (int)(60 * average);
                 rectMouse.Height = (int)(60 * average);
-                if (currentTalentTree == TalentTrees.ranged){
-                    s.Draw(GetAbility(rangedAbilities[selectedTalentSlot/4, selectedTalentSlot%4].name).icon, rectMouse, Color.White);
+                if (currentTalentTree == TalentTrees.ranged)
+                {
+                    s.Draw(GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name).icon, rectMouse, Color.White);
                 }
-                else if (currentTalentTree == TalentTrees.melee){
+                else if (currentTalentTree == TalentTrees.melee)
+                {
 
                 }
-                else{
+                else
+                {
 
                 }
-                
+
             }
             else
             {
