@@ -103,6 +103,12 @@ namespace KazgarsRevenge
         }
         public bool Dead { get; private set; }
 
+        public void ReviveAlive()
+        {
+            Dead = false;
+            Health = (int)(MaxHealth * .25f);
+        }
+
         #region stats
         protected int level = 0;
         protected bool pulling = false;

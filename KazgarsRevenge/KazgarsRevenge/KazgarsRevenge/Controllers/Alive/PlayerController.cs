@@ -347,8 +347,8 @@ namespace KazgarsRevenge
 
         public override void Start()
         {
-            attachedArrowL = new AttachableModel(attacks.GetUnanimatedModel("Models\\Weapons\\arrow"), GearSlotToBoneName(GearSlot.Lefthand), 0, -MathHelper.PiOver2);
-            attachedArrowR = new AttachableModel(attacks.GetUnanimatedModel("Models\\Weapons\\arrow"), GearSlotToBoneName(GearSlot.Righthand), 0, -MathHelper.PiOver2);
+            attachedArrowL = new AttachableModel(attacks.GetUnanimatedModel("Models\\Projectiles\\Arrow"), GearSlotToBoneName(GearSlot.Lefthand), 0, -MathHelper.PiOver2);
+            attachedArrowR = new AttachableModel(attacks.GetUnanimatedModel("Models\\Projectiles\\Arrow"), GearSlotToBoneName(GearSlot.Righthand), 0, -MathHelper.PiOver2);
             base.Start();
         }
 
@@ -550,15 +550,16 @@ namespace KazgarsRevenge
             //idles
             actionSequences.Add("idle", IdleActions());
             actionSequences.Add("fightingstance", FightingStanceActions());
+            //misc
+            actionSequences.Add("loot", LootActions());
+            actionSequences.Add("loot_spin", LootSpinActions());
+            actionSequences.Add("loot_smash", LootSmashActions());
+            actionSequences.Add("death", DeathActions());
             //primary attacks
             actionSequences.Add("swing", SwingActions());
             actionSequences.Add("shoot", ShootActions());
             actionSequences.Add("punch", PunchActions());
             actionSequences.Add("magic", MagicActions());
-            //loot
-            actionSequences.Add("loot", LootActions());
-            actionSequences.Add("loot_spin", LootSpinActions());
-            actionSequences.Add("loot_smash", LootSmashActions());
             //abilities
             //ranged
             actionSequences.Add("snipe", SnipeActions());
@@ -661,6 +662,89 @@ namespace KazgarsRevenge
         }
         private const int arrowDrawMillis = 50;
         private const int arrowReleaseMillis = 150;
+
+        //Misc actions
+        private List<Action> LootActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                PlayAnimation("k_loot", MixType.PauseAtEnd);
+                millisActionLength = animations.GetAniMillis("k_loot");
+
+                if (attached[GearSlot.Righthand.ToString()] != null)
+                {
+                    attached[GearSlot.Righthand.ToString()].Draw = false;
+                }
+            });
+            sequence.Add(() =>
+            {
+                StartSequence("loot_spin");
+            });
+            return sequence;
+        }
+        private List<Action> LootSpinActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                PlayAnimation("k_loot_spin", MixType.PauseAtEnd);
+                millisActionLength = animations.GetAniMillis("k_loot_spin");
+                if (lootingSoul != null)
+                {
+                    lootingSoul.StartSpin();
+                }
+            });
+            sequence.Add(() =>
+            {
+                StartSequence("loot_spin");
+            });
+            return sequence;
+        }
+        private List<Action> LootSmashActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                PlayAnimation("k_loot_smash", MixType.MixInto);
+                millisActionLength = animations.GetAniMillis("k_loot_smash");
+            });
+            sequence.Add(() =>
+            {
+                lootingSoul = null;
+                looting = false;
+                if (attached[GearSlot.Righthand.ToString()] != null)
+                {
+                    attached[GearSlot.Righthand.ToString()].Draw = true;
+                }
+                PlayAnimation("k_fighting_stance", MixType.None);
+            });
+            return sequence;
+        }
+        private List<Action> DeathActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                attState = AttackState.Locked;
+                canInterrupt = false;
+                Entity.GetComponent(typeof(PhysicsComponent)).End();
+                PlayAnimation("k_death", MixType.PauseAtEnd);
+                millisActionLength = animations.GetAniMillis("k_death");
+            });
+
+            sequence.Add(() =>
+            {
+                attState = AttackState.None;
+                Entity.GetComponent(typeof(PhysicsComponent)).Start();
+                physicalData.Position = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
+                ReviveAlive();
+                StartSequence("fightingstance");
+            });
+
+            return sequence;
+        }
 
         //Primary attacks
         private List<Action> PunchActions()
@@ -847,63 +931,6 @@ namespace KazgarsRevenge
             return sequence;
         }
 
-        private List<Action> LootActions()
-        {
-            List<Action> sequence = new List<Action>();
-            sequence.Add(() =>
-            {
-                PlayAnimation("k_loot", MixType.PauseAtEnd);
-                millisActionLength = animations.GetAniMillis("k_loot");
-
-                if (attached[GearSlot.Righthand.ToString()] != null)
-                {
-                    attached[GearSlot.Righthand.ToString()].Draw = false;
-                }
-            });
-            sequence.Add(() =>
-            {
-                StartSequence("loot_spin");
-            });
-            return sequence;
-        }
-        private List<Action> LootSpinActions()
-        {
-            List<Action> sequence = new List<Action>();
-            sequence.Add(() =>
-            {
-                PlayAnimation("k_loot_spin", MixType.PauseAtEnd);
-                millisActionLength = animations.GetAniMillis("k_loot_spin");
-                if (lootingSoul != null)
-                {
-                    lootingSoul.StartSpin();
-                }
-            });
-            sequence.Add(() =>
-            {
-                StartSequence("loot_spin");
-            });
-            return sequence;
-        }
-        private List<Action> LootSmashActions()
-        {
-            List<Action> sequence = new List<Action>();
-            sequence.Add(() =>
-            {
-                PlayAnimation("k_loot_smash", MixType.MixInto);
-                millisActionLength = animations.GetAniMillis("k_loot_smash");
-            });
-            sequence.Add(() =>
-            {
-                lootingSoul = null;
-                looting = false;
-                if (attached[GearSlot.Righthand.ToString()] != null)
-                {
-                    attached[GearSlot.Righthand.ToString()].Draw = true;
-                }
-                PlayAnimation("k_fighting_stance", MixType.None);
-            });
-            return sequence;
-        }
 
         //Ranged abilities
         private List<Action> SnipeActions()
@@ -1193,22 +1220,20 @@ namespace KazgarsRevenge
                 else
                 {
                     targetingGroundLocation = false;
-                    actionSequences["snipe"][0]();
+
+                    canInterrupt = true;
+                    PlayAnimation("k_throw", MixType.None);
+                    attState = AttackState.Locked;
+                    millisActionLength = 300;
+                    stateResetCounter = 0;
+
                     groundAbilityTarget = mouseHoveredLocation;
                     groundTargetLocation = physicalData.Position;
                 }
             });
 
-            sequence.Add(actionSequences["shoot"][1]);
-
             sequence.Add(() =>
             {
-                //looks like kazgar releases arrow
-                if (attached.ContainsKey("handarrow"))
-                {
-                    attached.Remove("handarrow");
-                }
-
                 float radius = bombSize;
                 if (abilityLearnedFlags[AbilityName.BiggerBombs])
                 {
@@ -1216,13 +1241,13 @@ namespace KazgarsRevenge
                 }
                 attacks.CreateFlashBomb(physicalData.Position, groundAbilityTarget, radius, abilityLearnedFlags[AbilityName.TarBomb],this as AliveComponent);
 
-                millisActionLength = 1000 - arrowReleaseMillis - arrowDrawMillis;
+                millisActionLength = animations.GetAniMillis("k_throw") - millisActionLength;
             });
             sequence.Add(abilityFinishedAction);
 
             return sequence;
         }
-        private const float grapplingHookSpeed = 400;
+        private const float grapplingHookSpeed = 600;
         private List<Action> GrapplingHookActions()
         {
             List<Action> sequence = new List<Action>();
@@ -1230,19 +1255,14 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 canInterrupt = false;
-                PlayAnimation("k_punch", MixType.None);
+                PlayAnimation("k_throw", MixType.PauseAtEnd);
                 attState = AttackState.Locked;
-                millisActionLength = arrowDrawMillis;
+                millisActionLength = 300;
                 stateResetCounter = 0;
             });
-            sequence.Add(actionSequences["shoot"][1]);
 
             sequence.Add(() =>
             {
-                if (attached.ContainsKey("handarrow"))
-                {
-                    attached.Remove("handarrow");
-                }
                 float speed = grapplingHookSpeed;
                 if (abilityLearnedFlags[AbilityName.SpeedyGrapple])
                 {
@@ -1252,7 +1272,7 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 attacks.CreateGrapplingHook(physicalData.Position + forward * 10, forward, this as AliveComponent, speed);
 
-                millisActionLength = 800 - arrowDrawMillis - arrowReleaseMillis;
+                millisActionLength = 3000;
 
             });
 
@@ -1371,14 +1391,9 @@ namespace KazgarsRevenge
         {
             List<Action> sequence = new List<Action>();
             sequence.Add(actionSequences["grapplinghook"][0]);
-            sequence.Add(actionSequences["shoot"][1]);
 
             sequence.Add(() =>
             {
-                if (attached.ContainsKey("handarrow"))
-                {
-                    attached.Remove("handarrow");
-                }
                 float speed = grapplingHookSpeed;
                 if (abilityLearnedFlags[AbilityName.SpeedyGrapple])
                 {
@@ -1388,7 +1403,7 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 attacks.CreateChainSpear(physicalData.Position + forward * 10, forward, this as AliveComponent, speed, abilityLearnedFlags[AbilityName.ForcefulThrow]);
 
-                millisActionLength = 1000 - arrowDrawMillis - arrowReleaseMillis;
+                millisActionLength = 3000;
 
             });
 
@@ -1634,6 +1649,8 @@ namespace KazgarsRevenge
         public override void StopPull()
         {
             groundTargetLocation = physicalData.Position;
+            abilityFinishedAction();
+            attState = AttackState.None;
             base.StopPull();
         }
         #endregion

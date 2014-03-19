@@ -30,7 +30,7 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Weapons\arrow.fbx">
+    <Compile Include="Models\Projectiles\arrow.fbx">
       <Name>arrow</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
@@ -68,7 +68,7 @@
       <Name>k_idle1</Name>
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3b</ProcessorParameters_MergeAnimations>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\spikes.fbx">
@@ -951,6 +951,20 @@
       <Name>helmetIcon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Projectiles\grenade.fbx">
+      <Name>grenade</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Shaders\BillboardEffect.fx">
+      <Name>BillboardEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

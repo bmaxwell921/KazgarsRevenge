@@ -142,6 +142,7 @@
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Controllers\Misc\PillarController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
+    <Compile Include="Drawing\Billboards\ArrowVBillboard.cs" />
     <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
     <Compile Include="Drawing\Billboards\AbilityTargetDecal.cs" />
     <Compile Include="Drawing\Billboards\ChainBillboard.cs" />

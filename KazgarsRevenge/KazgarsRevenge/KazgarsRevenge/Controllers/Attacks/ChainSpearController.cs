@@ -109,14 +109,7 @@ namespace KazgarsRevenge
             lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (lifeCounter >= lifeLength)
             {
-                if (pulling)
-                {
-                    EndPull();
-                }
-                else
-                {
-                    Entity.KillEntity();
-                }
+                EndPull();
             }
             base.Update(gameTime);
         }

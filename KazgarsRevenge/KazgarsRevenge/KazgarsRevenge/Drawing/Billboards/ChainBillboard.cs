@@ -14,6 +14,7 @@ namespace KazgarsRevenge
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).ChainEffect;
 
             maxSize = 500;
+            offsetRight = 6;
         }
     }
 }

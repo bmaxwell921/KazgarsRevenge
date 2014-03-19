@@ -610,13 +610,6 @@ namespace KazgarsRevenge
                 }
             }
 
-            //check for click when aiming ground target ability
-            if (targetingGroundLocation && curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
-            {
-                StartAbilitySequence(lastUsedAbility);
-                return;
-            }
-
             Vector3 dir;
             dir.X = move.X;
             dir.Y = move.Y;
@@ -631,6 +624,29 @@ namespace KazgarsRevenge
                 distance = (dir).Length();
                 dir.Normalize();
             }
+
+            //check for click when aiming ground target ability
+            if (targetingGroundLocation)
+            {
+                if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                {
+                    UpdateRotation(dir);
+                    lastUsedAbility.Use();
+                    StartAbilitySequence(lastUsedAbility);
+                    return;
+                }
+                else if (curMouse.LeftButton == ButtonState.Released && prevMouse.LeftButton == ButtonState.Pressed)
+                {
+                    targetingGroundLocation = false;
+                    if (attState == AttackState.Charging)
+                    {
+                        attState = AttackState.None;
+                        CancelFinishSequence();
+                        StartSequence("fightingstance");
+                    }
+                }
+            }
+
 
 
 
@@ -741,6 +757,7 @@ namespace KazgarsRevenge
                 {
                     if (targetingGroundLocation && lastUsedAbility == abilityToUse)
                     {
+                        UpdateRotation(dir);
                         abilityToUse.Use();
                     }
                     StartAbilitySequence(abilityToUse);
@@ -1858,5 +1875,17 @@ namespace KazgarsRevenge
             #endregion mouse
         }
 
+
+        protected override void KillAlive()
+        {
+            if (currentActionName != "death")
+            {
+                if (pulling)
+                {
+                    StopPull();
+                }
+                StartSequence("death");
+            }
+        }
     }
 }

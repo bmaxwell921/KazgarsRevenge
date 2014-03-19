@@ -62,7 +62,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics =
-                new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Weapons\\arrow"),
+                new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"),
                     new Vector3(10), Vector3.Backward * 6, 0, 0, 0);
 
             ProjectileController arrowAI = new ProjectileController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
@@ -180,7 +180,7 @@ namespace KazgarsRevenge
             arrow.AddSharedData(typeof(Entity), arrowData);
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
-            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Weapons\\arrow"),
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"),
                                                                                 new Vector3(20), Vector3.Backward * 20, 0, 0, 0);
             arrowGraphics.AddEmitter(typeof(SnipeTrailParticleSystem), "trail", 80, 0, Vector3.Forward * 8);
 
@@ -212,7 +212,7 @@ namespace KazgarsRevenge
             arrow.AddSharedData(typeof(Entity), arrowData);
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
-            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Weapons\\arrow"),
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"),
                                                                                 new Vector3(10), Vector3.Backward * 6, 0, 0, 0);
             //arrowGraphics.AddEmitter(typeof(SoulTrailParticleSystem), 50, 2, Vector3.Zero);
             
@@ -246,7 +246,7 @@ namespace KazgarsRevenge
             arrow.AddSharedData(typeof(Entity), arrowData);
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
-            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Weapons\\arrow"),
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"),
                                                                                 new Vector3(10), Vector3.Backward * 6, 0, 0, 0);
             arrowGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), "trail", 80, 0, Vector3.Forward * 13);
 
@@ -338,7 +338,7 @@ namespace KazgarsRevenge
             bomb.AddSharedData(typeof(Entity), bombData);
 
             PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
-            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Weapons\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Projectiles\\grenade"), new Vector3(20), Vector3.Zero, 0, 0, 0);
             FlashBomb bombController = new FlashBomb(mainGame, bomb, targetPos, creator, radius, tar);
 
             bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
@@ -367,7 +367,7 @@ namespace KazgarsRevenge
             bomb.AddSharedData(typeof(Entity), bombData);
 
             PhysicsComponent bombPhysics = new PhysicsComponent(mainGame, bomb);
-            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Weapons\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent bombGraphics = new UnanimatedModelComponent(mainGame, bomb, GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
             TarBomb bombController = new TarBomb(mainGame, bomb, targetPos, creator, radius);
 
             bomb.AddComponent(typeof(PhysicsComponent), bombPhysics);
@@ -395,7 +395,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
             UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook,
-                GetUnanimatedModel("Models\\Weapons\\arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
+                GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
             RopeBillboard chainComponent = new RopeBillboard(mainGame, hook, creator);
             GrapplingHookController hookController = new GrapplingHookController(mainGame, hook, creator);
 
@@ -428,7 +428,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
             UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook,
-                GetUnanimatedModel("Models\\Weapons\\arrow"), new Vector3(50), Vector3.Zero, 0, 0, 0);
+                GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(50), Vector3.Zero, 0, 0, 0);
             ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator);
             ChainSpearController hookController = new ChainSpearController(mainGame, hook, creator, forceful);
 
@@ -460,7 +460,7 @@ namespace KazgarsRevenge
             arrow.AddSharedData(typeof(Entity), arrowData);
 
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
-            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Weapons\\arrow"),
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"),
                                                                                 new Vector3(20), Vector3.Backward * 20, 0, 0, 0);
             arrowGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 50, 5, Vector3.Zero);
 
@@ -597,13 +597,13 @@ namespace KazgarsRevenge
             bolt.AddSharedData(typeof(Entity), boltData);
 
             PhysicsComponent boltPhysics = new PhysicsComponent(mainGame, bolt);
-            UnanimatedModelComponent boltGraphics = new UnanimatedModelComponent(mainGame, bolt, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"),
+            UnanimatedModelComponent boltGraphics = new UnanimatedModelComponent(mainGame, bolt, GetUnanimatedModel("Models\\Projectiles\\fireball"),
                                                                                 new Vector3(20), Vector3.Backward * 20, 0, 0, 0);
             boltGraphics.AddRollSpeed(.3f);
             boltGraphics.TurnOffOutline();
 
-            boltGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 50, 10, Vector3.Zero);
-            //boltGraphics.AddEmitter(typeof(FireMistTrailSystem), "mist", 80, 10, Vector3.Zero);
+            boltGraphics.AddEmitter(typeof(FireArrowParticleSystem), "trail", 75, 10, Vector3.Zero);
+            boltGraphics.AddEmitter(typeof(SmokeTrailParticleSystem), "smoketrail", 30, 10, Vector3.Zero);
 
             DragonFirebolt boltAI = new DragonFirebolt(mainGame, bolt, damage, creator);
             boltAI.KillOnFirstContact();
@@ -890,7 +890,7 @@ namespace KazgarsRevenge
             arrow.AddSharedData(typeof(Entity), arrowData);
             
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
-            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Weapons\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
             FallingArrowController arrowController = new FallingArrowController(mainGame, arrow);
             arrowGraphics.AddEmitter(typeof(HomingTrailParticleSystem), "trail", 10, 2, Vector3.Zero);
 

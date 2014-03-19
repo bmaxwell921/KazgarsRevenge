@@ -12,6 +12,7 @@ namespace KazgarsRevenge
             : base(game, entity, creator, new Vector2(0, 8))
         {
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).RopeEffect;
+            offsetRight = 6;
         }
     }
 }

@@ -22,13 +22,16 @@ namespace KazgarsRevenge
         }
 
         protected float maxSize = 600;
+        protected float offsetRight = 0;
         public override void Update(GameTime gameTime)
         {
             //get length of billboard
-            Vector3 diff = followData.Position - creatorData.Position;
-            origin.X = (followData.Position.X + creatorData.Position.X) / 2;
+            Vector3 creatorPos = creatorData.Position;
+            creatorPos += creatorData.OrientationMatrix.Right * offsetRight;
+            Vector3 diff = followData.Position - creatorPos;
+            origin.X = (followData.Position.X + creatorPos.X) / 2;
             origin.Y = 20;
-            origin.Z = (followData.Position.Z + creatorData.Position.Z) / 2;
+            origin.Z = (followData.Position.Z + creatorPos.Z) / 2;
             diff.Y = 0;
             size.X = diff.Length();
             source.X = size.X / maxSize;

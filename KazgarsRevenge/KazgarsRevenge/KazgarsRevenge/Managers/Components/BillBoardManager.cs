@@ -17,6 +17,7 @@ namespace KazgarsRevenge
             this.UpdateOrder = 3;
         }
 
+        public BasicEffect ArrowVEffect { get; private set; }
         public BasicEffect ShadowEffect { get; private set; }
         public BasicEffect GroundTargetEffect { get; private set; }
         public BasicEffect ChainEffect { get; private set; }

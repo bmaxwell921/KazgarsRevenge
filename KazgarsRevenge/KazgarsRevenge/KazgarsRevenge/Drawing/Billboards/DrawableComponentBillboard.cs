@@ -11,7 +11,7 @@ namespace KazgarsRevenge
     {
         public bool Visible { get; protected set; }
 
-
+        public BlendState blend { get; protected set; }
         protected BasicEffect effect;
 
         VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[4];
@@ -40,6 +40,8 @@ namespace KazgarsRevenge
             InitVertsIndices(vertices, indices);
 
             UpdateVerts(vertices, origin);
+
+            this.blend = BlendState.NonPremultiplied;
         }
 
         protected Vector3 origin = Vector3.Zero;
