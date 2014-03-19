@@ -150,6 +150,7 @@
     <Compile Include="Drawing\Billboards\StretchingBillboard.cs" />
     <Compile Include="Drawing\Billboards\DrawableComponentBillboard.cs" />
     <Compile Include="Drawing\Billboards\HealthBarBillboard.cs" />
+    <Compile Include="Drawing\Effects\CustomCelShadedEffect.cs" />
     <Compile Include="LevelGeneration\JsonHierarchy\Chunk.cs" />
     <Compile Include="LevelGeneration\ChunkUtil.cs" />
     <Compile Include="LevelGeneration\ChunkInfo.cs" />

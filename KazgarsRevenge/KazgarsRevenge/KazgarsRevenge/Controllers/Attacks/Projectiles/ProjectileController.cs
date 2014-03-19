@@ -58,6 +58,11 @@ namespace KazgarsRevenge
                 if (stickInWalls)
                 {
                     (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
+                    ArrowVBillboard possV = Entity.GetComponent(typeof(ArrowVBillboard)) as ArrowVBillboard;
+                    if (possV != null)
+                    {
+                        possV.KillComponent();
+                    }
                 }
                 else
                 {

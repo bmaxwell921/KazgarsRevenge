@@ -792,7 +792,8 @@ namespace KazgarsRevenge
             }
 
             //primary attack (autos)
-            if (!usingPrimary && (curMouse.LeftButton == ButtonState.Pressed && curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space) || targetedPhysicalData != null))
+            if (!usingPrimary && (curMouse.LeftButton == ButtonState.Pressed && (curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space)) 
+                || targetedPhysicalData != null))
             {
                 //used to differentiate between left hand, right hand, and two hand animations
                 aniSuffix = "_r";

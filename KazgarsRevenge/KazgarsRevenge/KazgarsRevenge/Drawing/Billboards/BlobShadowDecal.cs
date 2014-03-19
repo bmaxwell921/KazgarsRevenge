@@ -18,7 +18,7 @@ namespace KazgarsRevenge
         {
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).ShadowEffect;
-            this.blend = BlendState.Additive;
+            this.blend = BlendState.AlphaBlend;
         }
 
         Entity physicalData;

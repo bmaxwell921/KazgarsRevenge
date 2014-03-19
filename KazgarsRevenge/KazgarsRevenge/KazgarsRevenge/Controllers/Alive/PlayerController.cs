@@ -1270,15 +1270,15 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-                canInterrupt = false;
-                PlayAnimation("k_throw", MixType.PauseAtEnd);
                 attState = AttackState.Locked;
+                PlayAnimation("k_throw", MixType.PauseAtEnd);
                 millisActionLength = 300;
                 stateResetCounter = 0;
             });
 
             sequence.Add(() =>
             {
+                attState = AttackState.None;
                 float speed = grapplingHookSpeed;
                 if (abilityLearnedFlags[AbilityName.SpeedyGrapple])
                 {
@@ -1286,9 +1286,9 @@ namespace KazgarsRevenge
                 }
 
                 Vector3 forward = GetForward();
-                attacks.CreateGrapplingHook(physicalData.Position + forward * 10, forward, this as AliveComponent, speed);
+                attacks.CreateChainSpear(physicalData.Position + forward * 10, forward, this as AliveComponent, speed, false);
 
-                millisActionLength = 3000;
+                millisActionLength = animations.GetAniMillis("k_throw") - 300;
 
             });
 

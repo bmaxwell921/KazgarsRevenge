@@ -12,7 +12,7 @@ namespace KazgarsRevenge
         public bool Visible { get; protected set; }
 
         public BlendState blend { get; protected set; }
-        protected BasicEffect effect;
+        protected Effect effect;
 
         VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[4];
         short[] indices = new short[6];
@@ -111,10 +111,12 @@ namespace KazgarsRevenge
             }
         }
 
-        protected void Draw(Matrix view, Matrix projection, VertexPositionNormalTexture[] verts, short[] ind, BasicEffect effect)
+        protected void Draw(Matrix view, Matrix projection, VertexPositionNormalTexture[] verts, short[] ind, Effect effect)
         {
-            effect.View = view;
-            effect.Projection = projection;
+            Game.GraphicsDevice.BlendState = blend;
+
+            effect.Parameters["View"].SetValue(view);
+            effect.Parameters["Projection"].SetValue(projection);
             effect.CurrentTechnique.Passes[0].Apply();
 
             Game.GraphicsDevice.DrawUserIndexedPrimitives(

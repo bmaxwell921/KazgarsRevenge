@@ -83,7 +83,10 @@ namespace KazgarsRevenge
             {
                 arrowAI.Bleed();
             }
-            
+
+            ArrowVBillboard trail = new ArrowVBillboard(mainGame, arrow);
+            arrow.AddComponent(typeof(ArrowVBillboard), trail);
+            billboardManager.AddComponent(trail);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);

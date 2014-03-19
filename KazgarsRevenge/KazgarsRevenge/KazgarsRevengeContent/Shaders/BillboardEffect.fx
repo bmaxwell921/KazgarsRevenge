@@ -16,41 +16,42 @@ sampler Sampler = sampler_state
     AddressV = Mirror;
 };
 
-struct VertexShaderInput
+struct VSIn
 {
-    float4 Position : POSITION0;
+    float4 Position : SV_Position;
+    float3 Normal   : NORMAL;
+    float2 TexCoord : TEXCOORD0;
 };
 
-struct VertexShaderOutput
+struct VSOut
 {
     float4 Position : POSITION0;
+    float2 TexCoord   : TEXCOORD0;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+VSOut VS(VSIn input)
 {
-    VertexShaderOutput output;
+    VSOut output;
 
     float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(worldPosition, View);
     output.Position = mul(viewPosition, Projection);
 
+	output.TexCoord = input.TexCoord;
 
     return output;
 }
 
-float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
+float4 PS(VSOut input) : COLOR0
 {
-
-    return float4(1, 0, 0, 1);
+	return tex2D(Sampler, input.TexCoord);
 }
 
-technique Technique1
+technique Technique0
 {
-    pass Pass1
+    pass Pass0
     {
-        // TODO: set renderstates here.
-
-        VertexShader = compile vs_2_0 VertexShaderFunction();
-        PixelShader = compile ps_2_0 PixelShaderFunction();
+        VertexShader = compile vs_2_0 VS();
+        PixelShader = compile ps_2_0 PS();
     }
 }

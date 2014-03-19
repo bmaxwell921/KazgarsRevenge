@@ -6,15 +6,15 @@ using Microsoft.Xna.Framework;
 using BEPUphysics;
 using BEPUphysics.Entities;
 
-namespace KazgarsRevenge.Drawing.Billboards
+namespace KazgarsRevenge
 {
     public class ArrowVBillboard : DrawableComponentBillboard
     {
         Entity followData;
         public ArrowVBillboard(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity, Vector3.Up, Vector3.Forward, new Vector2(10, 10))
+            : base(game, entity, Vector3.Up, Vector3.Forward, new Vector2(25, 25))
         {
-
+            effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).ArrowVEffect;
         }
         public override void Start()
         {

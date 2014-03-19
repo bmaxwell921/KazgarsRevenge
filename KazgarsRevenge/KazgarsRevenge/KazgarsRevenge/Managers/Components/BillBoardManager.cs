@@ -17,46 +17,43 @@ namespace KazgarsRevenge
             this.UpdateOrder = 3;
         }
 
-        public BasicEffect ArrowVEffect { get; private set; }
-        public BasicEffect ShadowEffect { get; private set; }
-        public BasicEffect GroundTargetEffect { get; private set; }
-        public BasicEffect ChainEffect { get; private set; }
-        public BasicEffect RopeEffect { get; private set; }
-        public BasicEffect HealthBarEffect { get; private set; }
+        private Effect billboardEffect;
+
+        public Effect ArrowVEffect { get; private set; }
+        public Effect ShadowEffect { get; private set; }
+        public Effect GroundTargetEffect { get; private set; }
+        public Effect ChainEffect { get; private set; }
+        public Effect RopeEffect { get; private set; }
+        public Effect HealthBarEffect { get; private set; }
         public override void Initialize()
         {
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
-            ShadowEffect = new BasicEffect(Game.GraphicsDevice);
-            ShadowEffect.EnableDefaultLighting();
-            ShadowEffect.World = Matrix.Identity;
-            ShadowEffect.TextureEnabled = true;
-            ShadowEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.BLOB);
+            billboardEffect = Game.Content.Load<Effect>("Shaders\\BillboardEffect");
 
-            GroundTargetEffect = new BasicEffect(Game.GraphicsDevice);
-            GroundTargetEffect.EnableDefaultLighting();
-            GroundTargetEffect.World = Matrix.Identity;
-            GroundTargetEffect.TextureEnabled = true;
-            GroundTargetEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.GRND_IND);
+            ArrowVEffect = billboardEffect.Clone();
+            ArrowVEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.ARROWV));
+            ArrowVEffect.Parameters["World"].SetValue(Matrix.Identity);
 
-            ChainEffect = new BasicEffect(Game.GraphicsDevice);
+            ShadowEffect = billboardEffect.Clone();
+            ShadowEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.BLOB));
+            ShadowEffect.Parameters["World"].SetValue(Matrix.Identity);
+
+            GroundTargetEffect = billboardEffect.Clone();
+            GroundTargetEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.GRND_IND));
+            GroundTargetEffect.Parameters["World"].SetValue(Matrix.Identity);
             
-            ChainEffect.EnableDefaultLighting();
-            ChainEffect.World = Matrix.Identity;
-            ChainEffect.TextureEnabled = true;
-            ChainEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.CHAIN);
-
-            RopeEffect = new BasicEffect(Game.GraphicsDevice);
-            RopeEffect.EnableDefaultLighting();
-            RopeEffect.World = Matrix.Identity;
-            RopeEffect.TextureEnabled = true;
-            RopeEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.ROPE);
-
-            HealthBarEffect = new BasicEffect(Game.GraphicsDevice);
-            HealthBarEffect.EnableDefaultLighting();
-            HealthBarEffect.World = Matrix.Identity;
-            HealthBarEffect.TextureEnabled = true;
-            HealthBarEffect.Texture = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.HEALTH_BAR);
+            ChainEffect = billboardEffect.Clone();
+            ChainEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.CHAIN));
+            ChainEffect.Parameters["World"].SetValue(Matrix.Identity);
+            
+            RopeEffect = billboardEffect.Clone();
+            RopeEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.ROPE));
+            RopeEffect.Parameters["World"].SetValue(Matrix.Identity);
+            
+            HealthBarEffect = billboardEffect.Clone();
+            HealthBarEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.HEALTH_BAR));
+            HealthBarEffect.Parameters["World"].SetValue(Matrix.Identity);
         }
 
         public override void Update(GameTime gameTime)

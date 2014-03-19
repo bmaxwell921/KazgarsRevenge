@@ -79,8 +79,12 @@ namespace KazgarsRevenge
 
         private void EndPull()
         {
-            targetData.LinearVelocity = Vector3.Zero;
-            target.StopPull();
+            if (targetData != null)
+            {
+                targetData.LinearVelocity = Vector3.Zero;
+                target.StopPull();
+            }
+            creator.StopPull();
             Entity.KillEntity();
         }
 
