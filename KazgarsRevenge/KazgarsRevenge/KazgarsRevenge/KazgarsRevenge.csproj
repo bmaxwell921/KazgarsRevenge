@@ -110,9 +110,10 @@
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Common\TextureStrings.cs" />
     <Compile Include="Controllers\Alive\Enemies\ArmorEnemyController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\CrossbowSkeletonController.cs" />
     <Compile Include="Controllers\Alive\Enemies\DragonController.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
-    <Compile Include="Controllers\Alive\Enemies\SkeletonController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\MagicSkeletonController.cs" />
     <Compile Include="Controllers\Attacks\AOEController.cs" />
     <Compile Include="Controllers\Attacks\Bombs\BombController.cs">
       <SubType>Code</SubType>

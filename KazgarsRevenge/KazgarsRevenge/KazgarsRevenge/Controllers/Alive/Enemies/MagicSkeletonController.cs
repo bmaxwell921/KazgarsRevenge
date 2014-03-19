@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
-    public class SkeletonController : EnemyController
+    public class MagicSkeletonController : EnemyController
     {
-        public SkeletonController(KazgarsRevengeGame game, GameEntity entity, int level)
+        public MagicSkeletonController(KazgarsRevengeGame game, GameEntity entity, int level)
             : base(game, entity, level)
         {
             settings.aniPrefix = "s_";

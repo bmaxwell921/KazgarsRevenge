@@ -93,6 +93,10 @@ namespace KazgarsRevenge
                     {
                         ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateArmorEnemy(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
                     }
+                    else if (r == 2)
+                    {
+                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateCrossbowSkeleton(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
+                    }
                     else
                     {
                         ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateMagicSkeleton(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);

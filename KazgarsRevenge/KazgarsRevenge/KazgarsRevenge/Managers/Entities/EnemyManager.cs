@@ -59,7 +59,7 @@ namespace KazgarsRevenge
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             SetupEntityPhysicsAndShadow(brute, position, new Vector3(20f, 37f, 20f), 100);
-            SetupEntityGraphics(brute, "Models\\Enemies\\Pigman\\pig_idle");
+            SetupEntityGraphics(brute, "Models\\Enemies\\Pigman\\pig_idle", 10);
 
             EnemyController bruteController = new EnemyController(mainGame, brute, level);
             brute.AddComponent(typeof(AliveComponent), bruteController);
@@ -78,17 +78,32 @@ namespace KazgarsRevenge
             enemy.id = id;
 
             SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20f, 37f, 20f), 100);
-            //SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle");
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle", 15);
 
-            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Skeleton\\s_idle");
-            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
-            enemy.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
-            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, enemy, enemyModel, 15, Vector3.Down * 18);
+            MagicSkeletonController enemyController = new MagicSkeletonController(mainGame, enemy, level);
+            enemy.AddComponent(typeof(AliveComponent), enemyController);
+            genComponentManager.AddComponent(enemyController);
 
-            enemy.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
-            modelManager.AddComponent(enemyGraphics);
+            AddHealthBarComponent(enemy, 40);
 
-            SkeletonController enemyController = new SkeletonController(mainGame, enemy, level);
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Magic, AttackType.None));
+
+            enemies.Add(id, enemy);
+        }
+
+        public void CreateCrossbowSkeleton(Identification id, Vector3 position, int level)
+        {
+            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, EntityType.NormalEnemy);
+            enemy.id = id;
+
+            Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
+            attached.Add("hand", new AttachableModel(GetUnanimatedModel("Models\\Weapons\\crossbow"), "s_hand_R"));
+            enemy.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
+
+            SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20f, 37f, 20f), 100);
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle", 15);
+
+            CrossbowSkeletonController enemyController = new CrossbowSkeletonController(mainGame, enemy, level);
             enemy.AddComponent(typeof(AliveComponent), enemyController);
             genComponentManager.AddComponent(enemyController);
 
@@ -172,12 +187,12 @@ namespace KazgarsRevenge
         /// Creates an enemy with typical physics and animated graphics around the given entity.
         /// You still need to give it an AIController and add the entity to the entity list after calling this.
         /// </summary>
-        private void SetupEntityGraphics(GameEntity entity, string model)
+        private void SetupEntityGraphics(GameEntity entity, string model, float scale)
         {
             Model enemyModel = GetAnimatedModel(model);
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             entity.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
-            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, entity, enemyModel, 10, Vector3.Down * 18);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, entity, enemyModel, scale, Vector3.Down * 18);
 
             entity.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);
