@@ -103,8 +103,11 @@ namespace KazgarsRevenge
         }
         public bool Dead { get; private set; }
 
+        public GameEntity Killer { get; protected set; }
+
         public void ReviveAlive()
         {
+            Killer = null;
             Dead = false;
             Health = (int)(MaxHealth * .25f);
         }
@@ -261,7 +264,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// calculates the actual amount of damage and then returns what was subtracted
         /// </summary>
-        protected int Damage(int d, bool truedamage)
+        protected int Damage(int d, GameEntity from)
         {
             //TODO: armor and resistance calculations
             int actualDamage = d;
@@ -274,6 +277,10 @@ namespace KazgarsRevenge
             {
                 Health = 0;
                 KillAlive();
+                if (Dead)
+                {
+                    Killer = from;
+                }
             }
             return actualDamage;
         }
@@ -322,7 +329,7 @@ namespace KazgarsRevenge
                 attacks.SpawnFireExplosionParticles(physicalData.Position, .5f);
             }
 
-            int actualDamage = Damage(d, false);
+            int actualDamage = Damage(d, from);
             TakeDamage(actualDamage, from);
 
             //handle negative effect
@@ -475,7 +482,7 @@ namespace KazgarsRevenge
                 case DeBuff.SerratedBleeding:
                     if (state == BuffState.Ticking)
                     {
-                        Damage((int)Math.Ceiling(MaxHealth * .01f * stacks), true);
+                        Damage((int)Math.Ceiling(MaxHealth * .01f * stacks), null);
                         attacks.SpawnLittleBloodSpurt(physicalData.Position);
                     }
                     break;
