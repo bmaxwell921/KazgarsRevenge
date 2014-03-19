@@ -669,6 +669,7 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
+                attState = AttackState.Locked;
                 PlayAnimation("k_loot", MixType.PauseAtEnd);
                 millisActionLength = animations.GetAniMillis("k_loot");
 
@@ -706,13 +707,27 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
+                canInterrupt = false;
                 PlayAnimation("k_loot_smash", MixType.MixInto);
-                millisActionLength = animations.GetAniMillis("k_loot_smash");
+                millisActionLength = 500;
             });
             sequence.Add(() =>
             {
-                lootingSoul = null;
-                looting = false;
+                canInterrupt = true;
+                attState = AttackState.None;
+                millisActionLength = animations.GetAniMillis("k_loot_smash") - 500;
+            });
+            sequence.Add(() =>
+            {
+                if (attached[GearSlot.Righthand.ToString()] != null)
+                {
+                    attached[GearSlot.Righthand.ToString()].Draw = true;
+                }
+                PlayAnimation("k_fighting_stance", MixType.None);
+            });
+
+            interruptActions.Add("loot_smash", () =>
+            {
                 if (attached[GearSlot.Righthand.ToString()] != null)
                 {
                     attached[GearSlot.Righthand.ToString()].Draw = true;
@@ -1413,9 +1428,8 @@ namespace KazgarsRevenge
         }
 
 
-        /*
-         * Magic Abilities
-         */
+        //Magic Abilities
+        
 
 
 
@@ -1526,6 +1540,7 @@ namespace KazgarsRevenge
         #region helpers
         protected void CloseLoot()
         {
+            looting = false;
             StartSequence("loot_smash");
             if (lootingSoul != null)
             {
@@ -1534,7 +1549,6 @@ namespace KazgarsRevenge
         }
         protected void OpenLoot()
         {
-
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
             if (possLoot != null)
             {

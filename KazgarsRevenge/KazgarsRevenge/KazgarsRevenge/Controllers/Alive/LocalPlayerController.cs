@@ -450,32 +450,37 @@ namespace KazgarsRevenge
             }
 
             //loot nearby soul
-            if (attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
+            if (!looting && attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
             {
-                if (!looting)
+                OpenLoot();
+                if (!guiOutsideRects.ContainsKey("loot"))
                 {
-                    OpenLoot();
-                    if (!guiOutsideRects.ContainsKey("loot"))
-                    {
-                        guiOutsideRects.Add("loot", lootRect);
-                    }
+                    guiOutsideRects.Add("loot", lootRect);
                 }
-                else
+            }
+            else if (looting && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
+            {
+                CloseLoot();
+                if (guiOutsideRects.ContainsKey("loot"))
                 {
-                    CloseLoot();
-                    if (guiOutsideRects.ContainsKey("loot"))
-                    {
-                        guiOutsideRects.Remove("loot");
-                    }
+                    guiOutsideRects.Remove("loot");
                 }
             }
             else if (looting && (lootingSoul == null || lootingSoul.Loot.Count == 0) && currentAniName != "k_loot_smash")
             {
                 CloseLoot();
+                if (guiOutsideRects.ContainsKey("loot"))
+                {
+                    guiOutsideRects.Remove("loot");
+                }
             }
             else if (looting && currentAniName != "k_loot_smash" && curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
             {
                 CloseLoot();
+                if (guiOutsideRects.ContainsKey("loot"))
+                {
+                    guiOutsideRects.Remove("loot");
+                }
             }
 
 
@@ -1171,11 +1176,14 @@ namespace KazgarsRevenge
                             //Loot All
                             else if (innerClicked.Equals("lootAll"))
                             {
-                                while (lootingSoul.Loot.Count() > 0)
-                                {             //add items to inventory
-                                    if (AddToInventory(lootingSoul.GetLoot(0)))
-                                    {
-                                        lootingSoul.RemoveLoot(0);
+                                if (lootingSoul != null)
+                                {
+                                    while (lootingSoul.Loot.Count() > 0)
+                                    {             //add items to inventory
+                                        if (AddToInventory(lootingSoul.GetLoot(0)))
+                                        {
+                                            lootingSoul.RemoveLoot(0);
+                                        }
                                     }
                                 }
                             }
