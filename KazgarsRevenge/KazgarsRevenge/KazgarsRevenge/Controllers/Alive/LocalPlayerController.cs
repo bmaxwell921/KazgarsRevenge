@@ -1823,7 +1823,7 @@ namespace KazgarsRevenge
                 s.Draw(texWhitePixel, guiOutsideRects["loot"], Color.Black * .5f);
 
                 List<Item> loot = lootingSoul.Loot;
-                for (int i = 0; i < loot.Count && i < NUM_LOOT_SHOWN; ++i)
+                for (int i = 0; i + lootScroll * NUM_LOOT_SHOWN < loot.Count && i < NUM_LOOT_SHOWN; ++i)
                 {
                     s.Draw(loot[i + lootScroll*NUM_LOOT_SHOWN].Icon, guiInsideRects["loot"]["loot" + i], Color.White);
                 }

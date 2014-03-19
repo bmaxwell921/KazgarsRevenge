@@ -210,26 +210,29 @@ namespace KazgarsRevenge
                 {
                     foreach (Model m in syncedModels.Values)
                     {
-                        foreach (ModelMesh mesh in m.Meshes)
+                        if (m != null)
                         {
-                            foreach (CustomSkinnedEffect effect in mesh.Effects)
+                            foreach (ModelMesh mesh in m.Meshes)
                             {
-                                effect.Parameters["lineColor"].SetValue(modelParams.lineColor.ToVector3());
-                                effect.Parameters["alpha"].SetValue(modelParams.alpha);
-                                effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                                effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                                effect.SetBoneTransforms(bones);
-                                if (lastLightUpdate != currentLightUpdate)
+                                foreach (CustomSkinnedEffect effect in mesh.Effects)
                                 {
-                                    effect.LightPositions = camera.lightPositions;
-                                    effect.LightColors = camera.lightColors;
+                                    effect.Parameters["lineColor"].SetValue(modelParams.lineColor.ToVector3());
+                                    effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                                    effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                                    effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                                    effect.SetBoneTransforms(bones);
+                                    if (lastLightUpdate != currentLightUpdate)
+                                    {
+                                        effect.LightPositions = camera.lightPositions;
+                                        effect.LightColors = camera.lightColors;
+                                    }
+
+                                    effect.View = view;
+                                    effect.Projection = projection;
                                 }
 
-                                effect.View = view;
-                                effect.Projection = projection;
+                                mesh.Draw();
                             }
-
-                            mesh.Draw();
                         }
                     }
                 }
