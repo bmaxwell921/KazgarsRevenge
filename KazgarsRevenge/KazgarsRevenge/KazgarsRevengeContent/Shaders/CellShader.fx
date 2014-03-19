@@ -6,6 +6,8 @@ float LightAttenuation = 300;
 float LightFalloff = 2;
 float3 lightColors[30];
 
+float3 colorTint = float3(1,1,1);
+
 float ToonThresholds[2] = { 0.8, 0.4 };
 float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.65 };
 
@@ -108,9 +110,9 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
     }
 	*/
 
-	light += float3(.15f, .15f, .15f);//float3(.3, .3, .3);
+	light += float3(.15f, .15f, .15f);
 
-    Color.rgb *= light * totalColor;
+    Color.rgb *= light * totalColor * colorTint;
     Color.a = min(alpha, Color.a);
 
     return Color;

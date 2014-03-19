@@ -55,6 +55,17 @@ namespace KazgarsRevenge
             }
         }
 
+        public void AddColorTint(Color tint)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    effect.Parameters["colorTint"].SetValue(tint.ToVector3());
+                }
+            }
+        }
+
         float rollPerFrame = 0;
 
         float yaw;
