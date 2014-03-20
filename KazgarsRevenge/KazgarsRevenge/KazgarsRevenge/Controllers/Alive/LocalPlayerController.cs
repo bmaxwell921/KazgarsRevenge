@@ -666,7 +666,7 @@ namespace KazgarsRevenge
             {
                 if (curKeys.IsKeyDown(k.Key) && prevKeys.IsKeyUp(k.Key) && !k.Value.onCooldown && abilityLearnedFlags[k.Value.AbilityName])
                 {
-                    if (GetMainhandType() == k.Value.PrimaryType)
+                    if (k.Value.PrimaryType == AttackType.None || GetMainhandType() == k.Value.PrimaryType)
                     {
                         if ((gear[GearSlot.Righthand] as Weapon).TwoHanded)
                         {
@@ -684,6 +684,11 @@ namespace KazgarsRevenge
                         aniSuffix = "_l";
                         useAbility = true;
                         abilityToUse = k.Value;
+                    }
+                    else
+                    {
+                        (Game as MainGame).AddAlert("You don't have a " + k.Value.PrimaryType.ToString() + " weapon equipped");
+                        return;
                     }
                     break;
 
@@ -694,7 +699,7 @@ namespace KazgarsRevenge
             {
                 if (curMouse.RightButton == ButtonState.Released && prevMouse.RightButton == ButtonState.Pressed && !k.Value.onCooldown && !mouseOnGui && abilityLearnedFlags[k.Value.AbilityName])
                 {
-                    if (GetMainhandType() == k.Value.PrimaryType)
+                    if (k.Value.PrimaryType == AttackType.None || GetMainhandType() == k.Value.PrimaryType)
                     {
                         if ((gear[GearSlot.Righthand] as Weapon).TwoHanded)
                         {
@@ -712,6 +717,11 @@ namespace KazgarsRevenge
                         aniSuffix = "_l";
                         useAbility = true;
                         abilityToUse = k.Value;
+                    }
+                    else
+                    {
+                        (Game as MainGame).AddAlert("You don't have a " + k.Value.PrimaryType.ToString() + " weapon equipped");
+                        return;
                     }
                     break;
                 }
@@ -746,9 +756,16 @@ namespace KazgarsRevenge
 
             if (useAbility)
             {
+                targetingGroundLocation = false;
+                if (abilityToUse.PowerCost > currentPower)
+                {
+                    (Game as MainGame).AddAlert("Not Enough Power");
+                    return;
+                }
                 if (attState == AttackState.Charging && abilityToUse.ActionName == currentActionName)
                 {
                     abilityToUse.Use();
+                    UsePower(abilityToUse.PowerCost);
                     InterruptCurrentSequence();
                     CancelFinishSequence();
                     targetedPhysicalData = null;
@@ -759,6 +776,7 @@ namespace KazgarsRevenge
                     if (abilityToUse.AbilityType == AbilityType.Instant)
                     {
                         abilityToUse.Use();
+                        UsePower(abilityToUse.PowerCost);
                     }
                     UpdateRotation(dir);
                     StartAbilitySequence(abilityToUse);
@@ -768,6 +786,7 @@ namespace KazgarsRevenge
                 else if (abilityToUse.AbilityType == AbilityType.Instant)
                 {
                     abilityToUse.Use();
+                    UsePower(abilityToUse.PowerCost);
                     UpdateRotation(dir);
                     StartAbilitySequence(abilityToUse);
                     targetedPhysicalData = null;
@@ -778,6 +797,7 @@ namespace KazgarsRevenge
                     {
                         UpdateRotation(dir);
                         abilityToUse.Use();
+                        UsePower(abilityToUse.PowerCost);
                     }
                     StartAbilitySequence(abilityToUse);
                     targetedPhysicalData = null;
@@ -1180,11 +1200,14 @@ namespace KazgarsRevenge
                                 if (lootingSoul != null)
                                 {
                                     while (lootingSoul.Loot.Count() > 0)
-                                    {             //add items to inventory
-                                        if (AddToInventory(lootingSoul.GetLoot(0)))
+                                    {   
+                                        //add items to inventory
+                                        if (!AddToInventory(lootingSoul.GetLoot(0)))
                                         {
-                                            lootingSoul.RemoveLoot(0);
+                                            ((MainGame)Game).AddAlert("Inventory is full");
+                                            break;
                                         }
+                                        lootingSoul.RemoveLoot(0);
                                     }
                                 }
                             }
@@ -1471,6 +1494,10 @@ namespace KazgarsRevenge
         Rectangle equipmentRect;
         Rectangle talentRect;
         Rectangle lootRect;
+        Rectangle portraitRect;
+        Rectangle playerHPRect;
+        Rectangle powerBackRect;
+        Vector2 powerTextPos;
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
@@ -1591,6 +1618,13 @@ namespace KazgarsRevenge
             lootDict.Add("downArrow", new Rectangle((int)(280 * average), (int)(430 * average), (int)(25 * average), (int)(25 * average)));
             //loot all button
             lootDict.Add("lootAll", new Rectangle((int)(265 * average), (int)(165 * average), (int)(40 * average), (int)(40 * average)));
+
+
+
+            portraitRect = new Rectangle(0, 0, (int)(160 * average), (int)(160 * average));
+            playerHPRect = new Rectangle((int)(160 * average), 0, (int)(310 * average), (int)(52 * average));
+            powerBackRect = new Rectangle(playerHPRect.X, playerHPRect.Y + playerHPRect.Height, playerHPRect.Width, playerHPRect.Height);
+            powerTextPos = new Vector2((int)(265 * average), powerBackRect.Y + 15);
         }
 
         public void Draw(SpriteBatch s)
@@ -1706,7 +1740,9 @@ namespace KazgarsRevenge
             #endregion
 
             //XP Area
-            s.Draw(texWhitePixel, guiOutsideRects["xp"], Color.Brown * 0.5f);
+            Rectangle xpRect = guiOutsideRects["xp"];
+            s.Draw(texWhitePixel, xpRect, Color.Brown * 0.5f);
+            s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
             //Damage Tracker
             s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Green * 0.5f);
             //Mini Map (square for now)
@@ -1714,9 +1750,15 @@ namespace KazgarsRevenge
 
             #region main player frame
             //Main Player Frame Pic
-            s.Draw(texWhitePixel, new Rectangle(0, 0, (int)(160 * average), (int)(160 * average)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, portraitRect, Color.Blue * 0.5f);
             //Main Player Frame Health
-            s.Draw(texWhitePixel, new Rectangle((int)(160 * average), 0, (int)(310 * average), (int)(52 * average)), Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, playerHPRect, Color.Blue * 0.5f);
+            //power
+            s.Draw(texWhitePixel, powerBackRect, Color.Black);
+            s.Draw(texWhitePixel, new Rectangle(powerBackRect.X, powerBackRect.Y, powerBackRect.Width * currentPower / maxPower, powerBackRect.Height), Color.Yellow);
+            s.Draw(texChargeBarFront, powerBackRect, Color.Red);
+            s.DrawString(font, currentPower + "", powerTextPos, Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
+            s.DrawString(font, "    /" + maxPower, powerTextPos, Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
             //main player health
             s.Draw(health_bar, new Rectangle((int)(163 * average), 3, (int)(304 * HealthPercent * average), (int)(46 * average)), new Rectangle(0, 0, (int)(health_bar.Width * HealthPercent * average), (int)health_bar.Height), Color.White);
             #endregion
@@ -1967,6 +2009,7 @@ namespace KazgarsRevenge
 
         protected override void KillAlive()
         {
+            currentPower = 0;
             if (currentActionName != "death")
             {
                 if (pulling)

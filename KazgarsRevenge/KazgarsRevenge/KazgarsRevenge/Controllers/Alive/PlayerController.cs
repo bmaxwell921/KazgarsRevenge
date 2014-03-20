@@ -71,8 +71,19 @@ namespace KazgarsRevenge
         #endregion
 
         #region Abilities
+
+
         protected int currentPower = 0;
-        protected int totalPower = 100;
+        protected const int maxPower = 30;
+        public override void AddPower(int power)
+        {
+            currentPower = Math.Min(currentPower + power, maxPower);
+        }
+        public void UsePower(int power)
+        {
+            currentPower = Math.Max(0, currentPower - power);
+        }
+        
         protected int spentTalentPoints = 0;
         protected int totalTalentPoints = 100;
         protected const float meleeRange = 50;
@@ -234,6 +245,12 @@ namespace KazgarsRevenge
                 return true;
             }
 
+            if (toAdd.Name == "gold")
+            {
+                gold += toAdd.Quantity;
+                return true;
+            }
+
             //check if full
             bool full = true;
             for (int i = 0; i < inventory.Length; ++i)
@@ -249,11 +266,6 @@ namespace KazgarsRevenge
                 return false;
             }
 
-            if (toAdd.Name == "gold")
-            {
-                gold += toAdd.Quantity;
-                return true;
-            }
 
             for (int i = 0; i < inventory.Length; ++i)
             {
@@ -556,6 +568,12 @@ namespace KazgarsRevenge
             actionSequences.Add("loot_spin", LootSpinActions());
             actionSequences.Add("loot_smash", LootSmashActions());
             actionSequences.Add("death", DeathActions());
+            //potions
+            actionSequences.Add("healthpot", HealthPotActions());
+            actionSequences.Add("superhealthpot", SuperHealthPotActions());
+            actionSequences.Add("luckpot", LuckPotActions());
+            actionSequences.Add("instahealthpot", InstaHealthPotActions());
+
             //primary attacks
             actionSequences.Add("swing", SwingActions());
             actionSequences.Add("shoot", ShootActions());
@@ -565,7 +583,7 @@ namespace KazgarsRevenge
             //ranged
             actionSequences.Add("snipe", SnipeActions());
             actionSequences.Add("omnishot", OmnishotActions());
-            actionSequences.Add("buffrush", BuffRushActions());
+            actionSequences.Add("buffrush", AdrenalineRushActions());
             actionSequences.Add("loosecannon", LooseCannonActions());
             actionSequences.Add("makeitrain", MakeItRainActions());
             actionSequences.Add("flashbomb", FlashBombActions());
@@ -757,6 +775,52 @@ namespace KazgarsRevenge
                 physicalData.Position = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
                 ReviveAlive();
                 StartSequence("fightingstance");
+            });
+
+            return sequence;
+        }
+
+        //potion actions
+        private List<Action> HealthPotActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                AddBuff(Buff.HealthPotion, Entity);
+            });
+
+            return sequence;
+        }
+        private List<Action> SuperHealthPotActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+
+            });
+
+            return sequence;
+        }
+        private List<Action> LuckPotActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+
+            });
+
+            return sequence;
+        }
+        private List<Action> InstaHealthPotActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+
             });
 
             return sequence;
@@ -1042,7 +1106,7 @@ namespace KazgarsRevenge
 
             return sequence;
         }
-        private List<Action> BuffRushActions()
+        private List<Action> AdrenalineRushActions()
         {
             List<Action> sequence = new List<Action>();
 
@@ -1057,12 +1121,6 @@ namespace KazgarsRevenge
                 if (abilityLearnedFlags[AbilityName.Homing])
                 {
                     AddBuff(Buff.Homing, Entity);
-                }
-                if (currentAniName == "k_fighting_stance" || currentAniName == "k_from_fighting_stance")
-                {
-                    InterruptReset("fightingstance");
-                    millisActionCounter = aniCounter;
-                    millisActionLength = aniLength;
                 }
 
                 attState = AttackState.None;
@@ -1079,7 +1137,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-
+                needInterruptAction = true;
                 //attach arrow model to hand
                 if (!attached.ContainsKey("handarrow"))
                 {
@@ -1748,104 +1806,153 @@ namespace KazgarsRevenge
         //Placeholder Ability
         protected Ability GetNone()
         {
-            return new Ability(AbilityName.None, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder), 0, AttackType.Ranged, "PlaceHolder", AbilityType.Instant);
+            return new Ability(AbilityName.None, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder), 0, AttackType.Ranged, "PlaceHolder", AbilityType.Instant, 0);
         }
 
         protected Ability GetSnipe()
         {
-            return new Ability(AbilityName.Snipe, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SNIPE), 1000, AttackType.Ranged, "snipe", AbilityType.Instant);
-        }
-        protected Ability GetGarrote()
-        {
-            return new Ability(AbilityName.Garrote, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEART_STRIKE), 6000, AttackType.Ranged, "flip", AbilityType.Instant);
-        }
-        protected Ability GetIceClawPrison()
-        {
-            return new Ability(AbilityName.IceClawPrison, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ICE_CLAW_PRI), 6000, AttackType.Ranged, "shoot", AbilityType.Instant);
+            return new Ability(AbilityName.Snipe, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SNIPE), 
+                500, AttackType.Ranged, "snipe", AbilityType.Instant,
+                4);
         }
         protected Ability GetOmniShot()
         {
-            return new Ability(AbilityName.Omnishot, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.OMNI_SHOT), 6000, AttackType.Ranged, "omnishot", AbilityType.Instant);
+            return new Ability(AbilityName.Omnishot, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.OMNI_SHOT), 
+                4000, AttackType.Ranged, "omnishot", AbilityType.Instant,
+                10);
         }
         protected Ability GetAdrenalineRush()
         {
-            return new Ability(AbilityName.AdrenalineRush, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ADREN_RUSH), 6000, AttackType.Ranged, "buffrush", AbilityType.Instant);
+            return new Ability(AbilityName.AdrenalineRush, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ADREN_RUSH), 
+                10000, AttackType.Ranged, "buffrush", AbilityType.Instant,
+                2);
         }
         protected Ability GetLeechingArrows()
         {
-            return new Ability(AbilityName.Leeching, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LEECH_ARROWS), 6000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.Leeching, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LEECH_ARROWS), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
         }
         protected Ability GetLooseCannon()
         {
-            return new Ability(AbilityName.LooseCannon, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LOOSE_CANNON), 2000, AttackType.Ranged, "loosecannon", AbilityType.Charge);
+            return new Ability(AbilityName.LooseCannon, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LOOSE_CANNON), 
+                6000, AttackType.Ranged, "loosecannon", AbilityType.Charge,
+                5);
         }
         protected Ability GetMakeItRain()
         {
-            return new Ability(AbilityName.MakeItRain, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_RAIN), 2000, AttackType.Ranged, "makeitrain", AbilityType.GroundTarget);
+            return new Ability(AbilityName.MakeItRain, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_RAIN), 
+                500, AttackType.Ranged, "makeitrain", AbilityType.GroundTarget,
+                5);
         }
         protected Ability GetFlashBomb()
         {
-            return new Ability(AbilityName.FlashBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.FLASH_BOMB), 2000, AttackType.Ranged, "flashbomb", AbilityType.GroundTarget);
+            return new Ability(AbilityName.FlashBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.FLASH_BOMB), 
+                10000, AttackType.Ranged, "flashbomb", AbilityType.GroundTarget,
+                2);
         }
         protected Ability GetTarBomb()
         {
-            return new Ability(AbilityName.TarBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TAR_BOMB), 2000, AttackType.Ranged, "tarbomb", AbilityType.Passive);
+            return new Ability(AbilityName.TarBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TAR_BOMB), 0, AttackType.Ranged, "tarbomb", AbilityType.Passive, 0);
         }
         protected Ability GetGrapplingHook()
         {
-            return new Ability(AbilityName.GrapplingHook, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 2000, AttackType.Ranged, "grapplinghook", AbilityType.Instant);
+            return new Ability(AbilityName.GrapplingHook, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 
+                8000, AttackType.Ranged, "grapplinghook", AbilityType.Instant,
+                0);
         }
         protected Ability GetChainSpear()
         {
-            return new Ability(AbilityName.ChainSpear, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.CHAIN_SPEAR), 2000, AttackType.Ranged, "chainspear", AbilityType.Instant);
+            return new Ability(AbilityName.ChainSpear, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.CHAIN_SPEAR), 
+                8000, AttackType.Ranged, "chainspear", AbilityType.Instant,
+                1);
         }
         protected Ability GetMoltenBolt()
         {
-            return new Ability(AbilityName.MoltenBolt, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MOLT_BOLT), 2000, AttackType.Ranged, "moltenbolt", AbilityType.Instant);
+            return new Ability(AbilityName.MoltenBolt, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MOLT_BOLT), 
+                3000, AttackType.Ranged, "moltenbolt", AbilityType.Instant,
+                1);
         }
         protected Ability GetTumble()
         {
-            return new Ability(AbilityName.Tumble, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TUMBLE), 3000, AttackType.Ranged, "tumble", AbilityType.Instant);
+            return new Ability(AbilityName.Tumble, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TUMBLE), 
+                4000, AttackType.Ranged, "tumble", AbilityType.Instant,
+                0);
         }
         protected Ability GetPenetrating()
         {
-            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.PENETRATING), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.PENETRATING), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
         }
         protected Ability GetHoming()
         {
-            return new Ability(AbilityName.Homing, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HOMING), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.Homing, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HOMING), 
+                0, AttackType.Ranged, "", AbilityType.Passive, 0);
         }
         protected Ability GetSerrated()
         {
-            return new Ability(AbilityName.Serrated, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SERRATED), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.Serrated, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SERRATED), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
         }
         protected Ability GetHeadshot()
         {
-            return new Ability(AbilityName.Headshot, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEADSHOT), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.Headshot, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEADSHOT), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
         }
         protected Ability GetMagneticImplant()
         {
-            return new Ability(AbilityName.MagneticImplant, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAGNETIC_IMPLANT), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.MagneticImplant, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAGNETIC_IMPLANT), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
         }
         protected Ability GetMakeItHail()
         {
-            return new Ability(AbilityName.MakeItHail, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_HAIL), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.MakeItHail, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_HAIL), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
         }
         protected Ability GetStrongWinds()
         {
-            return new Ability(AbilityName.StrongWinds, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.STRONG_WINDS), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.StrongWinds, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.STRONG_WINDS), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
         }
         protected Ability GetSpeedyGrapple()
         {
-            return new Ability(AbilityName.SpeedyGrapple, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SPEEDY_GRAPPLE), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.SpeedyGrapple, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SPEEDY_GRAPPLE), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
         }
         protected Ability GetBiggerBombs()
         {
-            return new Ability(AbilityName.BiggerBombs, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.BIGGER_BOMBS), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.BiggerBombs, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.BIGGER_BOMBS), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
         }
         protected Ability GetElusiveness()
         {
-            return new Ability(AbilityName.Elusiveness, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ELUSIVENESS), 2000, AttackType.Ranged, "", AbilityType.Passive);
+            return new Ability(AbilityName.Elusiveness, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ELUSIVENESS), 
+                0, AttackType.Ranged, "", AbilityType.Passive,
+                0);
+        }
+
+
+        protected Ability GetGarrote()
+        {
+            return new Ability(AbilityName.Garrote, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEART_STRIKE),
+                100, AttackType.Ranged, "flip", AbilityType.Instant,
+                8);
+        }
+
+
+        protected Ability GetIceClawPrison()
+        {
+            return new Ability(AbilityName.IceClawPrison, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ICE_CLAW_PRI), 
+                6000, AttackType.Ranged, "shoot", AbilityType.Instant,
+                5);
         }
 
         
@@ -1854,8 +1961,21 @@ namespace KazgarsRevenge
         #region Potion Definitions
         protected Ability GetHealthPotion()
         {
-            return new Ability(AbilityName.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 2000, AttackType.None, "grapplinghook", AbilityType.Instant);
+            return new Ability(AbilityName.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, AttackType.None, "healthpot", AbilityType.Instant, 0);
         }
+        protected Ability GetSuperHealthPotion()
+        {
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.SUPER_HEALTH), 0, AttackType.None, "superhealthpot", AbilityType.Instant, 0);
+        }
+        protected Ability GetPotionOfLuck()
+        {
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.LUCK), 0, AttackType.None, "luckpot", AbilityType.Instant, 0);
+        }
+        protected Ability GetInstaHealthPotion()
+        {
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.INSTA_HEALTH), 0, AttackType.None, "instahealthpot", AbilityType.Instant, 0);
+        }
+
         #endregion
 
 

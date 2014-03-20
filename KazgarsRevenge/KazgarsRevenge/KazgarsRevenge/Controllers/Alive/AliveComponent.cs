@@ -28,12 +28,14 @@ namespace KazgarsRevenge
         Tar,
         Stunned,//hide this from gui (just show description for flashbomb or forceful throw or w/e)
         ForcefulThrow,
-        Igniting,
+        Burning,
         Frozen,
     }
     public enum Buff
     {
         None,
+        HealthPotion,
+        SuperHealthPotion,
         AdrenalineRush,
         Homing,
         SerratedBleeding,
@@ -84,6 +86,32 @@ namespace KazgarsRevenge
             }
         }
 
+        public virtual void AddPower(int power)
+        {
+
+        }
+
+        protected int experience = 0;
+        public int NextLevelXP { get { return 100 * level * level; } }
+        public void AddEXP(int level, EntityType entityType)
+        {
+            int exp = level * 25;
+            if (entityType == EntityType.EliteEnemy)
+            {
+                exp *= 2;
+            }
+            if (entityType == EntityType.Boss)
+            {
+                exp *= 10;
+            }
+
+            experience += exp;
+            while (experience >= NextLevelXP)
+            {
+                experience = experience - NextLevelXP;
+                LevelUp();
+            }
+        }
 
         public int Health { get; private set; }
         public int MaxHealth { get; private set; }
@@ -118,7 +146,7 @@ namespace KazgarsRevenge
         
         private Dictionary<StatType, float> statsPerLevel = new Dictionary<StatType, float>()
         {
-            {StatType.RunSpeed, 0},
+            {StatType.RunSpeed, 2},
             {StatType.AttackSpeed, 0},
             {StatType.Strength, 1},
             {StatType.Agility, 1},
@@ -194,6 +222,12 @@ namespace KazgarsRevenge
                 stats[(StatType)i] += statsPerLevel[(StatType)i] * level;
             }
         }
+
+        public void LevelUp()
+        {
+            ++level;
+            RecalculateStats();
+        }
         #endregion
 
         protected AnimationPlayer animations;
@@ -268,21 +302,30 @@ namespace KazgarsRevenge
         {
             //TODO: armor and resistance calculations
             int actualDamage = d;
-            if (activeDebuffs.ContainsKey(DeBuff.MagneticImplant))
+            if (!Dead)
             {
-                actualDamage *= 2;
-            }
-            Health -= actualDamage;
-            if (Health <= 0)
-            {
-                Health = 0;
-                KillAlive();
-                if (Dead)
+                if (activeDebuffs.ContainsKey(DeBuff.MagneticImplant))
                 {
-                    Killer = from;
+                    actualDamage *= 2;
+                }
+                Health -= actualDamage;
+                if (Health <= 0)
+                {
+                    Health = 0;
+                    KillAlive();
+                    if (Dead)
+                    {
+                        Killer = from;
+                        DealWithKiller();
+                    }
                 }
             }
             return actualDamage;
+        }
+
+        protected virtual void DealWithKiller()
+        {
+
         }
 
         protected virtual void KillAlive()
@@ -323,7 +366,7 @@ namespace KazgarsRevenge
 
         public int Damage(DeBuff db, int d, GameEntity from)
         {
-            if (db == DeBuff.Igniting && activeDebuffs.ContainsKey(DeBuff.Tar))
+            if (db == DeBuff.Burning && activeDebuffs.ContainsKey(DeBuff.Tar))
             {
                 d *= 4;
                 attacks.SpawnFireExplosionParticles(physicalData.Position, .5f);
@@ -457,6 +500,13 @@ namespace KazgarsRevenge
         {
             switch (d)
             {
+                case DeBuff.Burning:
+                    if (state == BuffState.Ticking)
+                    {
+                        Damage((int)Math.Ceiling(MaxHealth * .035f * stacks), from);
+                        attacks.SpawnLittleBloodSpurt(physicalData.Position);
+                    }
+                    break;
                 case DeBuff.Frozen:
 
                     break;
@@ -482,7 +532,7 @@ namespace KazgarsRevenge
                 case DeBuff.SerratedBleeding:
                     if (state == BuffState.Ticking)
                     {
-                        Damage((int)Math.Ceiling(MaxHealth * .01f * stacks), from);
+                        Damage((int)Math.Ceiling(MaxHealth * .02f * stacks), from);
                         attacks.SpawnLittleBloodSpurt(physicalData.Position);
                     }
                     break;
@@ -525,12 +575,13 @@ namespace KazgarsRevenge
             {DeBuff.Tar, 6000},
             {DeBuff.MagneticImplant, 2000},
             {DeBuff.ForcefulThrow, 3000},
-            {DeBuff.Igniting, 0},
+            {DeBuff.Burning, 0},
             {DeBuff.Frozen, 1500}
         };
         Dictionary<DeBuff, double> debuffTickLengths = new Dictionary<DeBuff, double>()
         {
-            {DeBuff.SerratedBleeding, 1000}
+            {DeBuff.SerratedBleeding, 1000},
+            {DeBuff.Burning, 1500}
         };
 
         Dictionary<Buff, double> buffLengths = new Dictionary<Buff, double>()
@@ -604,19 +655,23 @@ namespace KazgarsRevenge
             }
 
 
-            if (HandleDeBuff(b, BuffState.Starting, 1, from))
+            if (activeDebuffs.ContainsKey(b))
             {
-                if (activeDebuffs.ContainsKey(b))
+                if (HandleDeBuff(b, BuffState.Starting, activeDebuffs[b].stacks, from))
                 {
                     activeDebuffs[b].stacks += 1;
                     activeDebuffs[b].nextTick = activeDebuffs[b].timeLeft - activeDebuffs[b].nextTick;
                     activeDebuffs[b].timeLeft = length;
                 }
-                else
+            }
+            else
+            {
+                if (HandleDeBuff(b, BuffState.Starting, 1, from))
                 {
                     activeDebuffs.Add(b, new NegativeEffect(b, length, from, tickLength));
                 }
             }
+
         }
 
     }

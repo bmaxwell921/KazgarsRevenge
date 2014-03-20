@@ -21,13 +21,14 @@ namespace KazgarsRevenge
         public AttackType PrimaryType { get; private set; }
         public AbilityType AbilityType { get; private set; }
         public AbilityName AbilityName { get; private set; }
+        public int PowerCost { get; private set; }
 
         public double cooldownMillisLength;
         public double cooldownMillisRemaining;
         public bool onCooldown { get; private set; }
         String tooltip = "N/A";
 
-        public Ability(AbilityName abilityName, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType)
+        public Ability(AbilityName abilityName, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType, int powerCost)
         {   
             icon = iconIn;
             cooldownMillisLength = cooldownMillis;
@@ -37,6 +38,7 @@ namespace KazgarsRevenge
             onCooldown = true;
             this.AbilityType = abilityType;
             this.AbilityName = abilityName;
+            this.PowerCost = powerCost;
         }
 
         public void setToolTip(String toolTipString)

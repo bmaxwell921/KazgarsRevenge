@@ -499,7 +499,7 @@ namespace KazgarsRevenge
 
             ProjectileController arrowAI = new ProjectileController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
             arrowAI.Penetrate();
-            arrowAI.AddDebuff(DeBuff.Igniting);
+            arrowAI.AddDebuff(DeBuff.Burning);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);
@@ -1107,6 +1107,15 @@ namespace KazgarsRevenge
             for (int i = 0; i < 10; ++i)
             {
                 sparks.AddParticle(position, forward);
+            }
+        }
+
+        public void SpawnFireDebuffPoof(Vector3 position)
+        {
+            ParticleSystem poof = particles.GetSystem(typeof(FireArrowParticleSystem));
+            for (int i = 0; i < 10; ++i)
+            {
+                poof.AddParticle(position, Vector3.Zero);
             }
         }
 

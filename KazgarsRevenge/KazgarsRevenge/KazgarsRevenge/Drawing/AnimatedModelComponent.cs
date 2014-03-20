@@ -69,6 +69,17 @@ namespace KazgarsRevenge
             modelParams.lineIntensity = 0;
         }
 
+        public void AddColorTint(Color tint)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    effect.Parameters["colorTint"].SetValue(tint.ToVector3());
+                }
+            }
+        }
+
         public void SetAlpha(float alpha)
         {
             this.modelParams.alpha = alpha;

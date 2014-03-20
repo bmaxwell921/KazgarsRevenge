@@ -49,6 +49,7 @@ namespace KazgarsRevenge
             if (tickCounter >= tickLength)
             {
                 tickCounter = 0;
+                int damageDealt = 0;
                 //go through contacts and find what entities are colliding with this one
                 foreach (var c in physicalData.CollisionInformation.Pairs)
                 {
@@ -74,14 +75,17 @@ namespace KazgarsRevenge
                                 AliveComponent alive = entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
                                 if (alive != null)
                                 {
-                                    
-                                    int actualDamage = alive.Damage(debuff, damage, creator.Entity);
-                                    creator.HandleDamageDealt(actualDamage);
+                                    damageDealt += alive.Damage(debuff, damage, creator.Entity);
                                 }
                             }
                         }
 
                     }
+                }
+                if (damageDealt > 0)
+                {
+                    creator.AddPower(1);
+                    creator.HandleDamageDealt(damageDealt);
                 }
             }
         }

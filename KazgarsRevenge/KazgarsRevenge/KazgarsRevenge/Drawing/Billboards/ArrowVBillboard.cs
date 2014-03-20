@@ -25,7 +25,7 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             up = followData.OrientationMatrix.Forward;
-            origin = followData.Position;
+            origin = followData.Position - up * 15;
             base.Update(gameTime);
         }
     }

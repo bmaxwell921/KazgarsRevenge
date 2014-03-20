@@ -5,6 +5,7 @@
 float alpha = 1;
 float lineIntensity = 1;
 float3 lineColor = float3(0,0,0);
+float3 colorTint = float3(1,1,1);
 
 float3 lightPositions[30];
 float LightAttenuation = 300;
@@ -99,7 +100,7 @@ float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
         light = ToonBrightnessLevels[2];
     }
 	
-    Color.rgb *= light * totalColor;
+    Color.rgb *= light * totalColor * colorTint;
     Color.a = min(alpha, Color.a);
 
     return Color;

@@ -405,6 +405,7 @@ namespace KazgarsRevenge
 
         protected virtual void SwitchToAttacking()
         {
+            minChaseCounter = 0;
             if (currentPath != null)
             {
                 currentPath.Clear();
@@ -474,6 +475,19 @@ namespace KazgarsRevenge
         #endregion
 
         #region overrides
+        protected override void DealWithKiller()
+        {
+            if (Killer != null)
+            {
+                AliveComponent killersController = Killer.GetComponent(typeof(AliveComponent)) as AliveComponent;
+                if (killersController != null)
+                {
+                    killersController.AddEXP(level, Entity.Type);
+                }
+            }
+            base.DealWithKiller();
+        }
+
         protected override void KillAlive()
         {
             state = EnemyState.Dying;

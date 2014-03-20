@@ -254,44 +254,14 @@ namespace KazgarsRevenge
                         CreatePointLight(pos);
                     }
                 }
-                
-                List<Vector3[]> allVertices = levelInfo.physicsVertices;
-                List<int[]> allIndices = levelInfo.physicsIndices;
-                List<Matrix> allTransforms = levelInfo.physicsTransforms;
+            }
 
-                if (allVertices.Count > 0)
-                {
-                    for (int i = 0; i < allVertices.Count; ++i)
-                    {
-                        Matrix m = allTransforms[i] * Matrix.CreateScale(roomScale) * Matrix.CreateFromYawPitchRoll(yaw, 0, 0);
-                        Vector3 scale;
-                        Quaternion rot;
-                        Vector3 trans;
-                        m.Decompose(out scale, out rot, out trans);
-                        AffineTransform a = new AffineTransform(scale, rot, trans + position);
-                        StaticMesh roomMesh = new StaticMesh(allVertices[i], allIndices[i], a);
-                        roomMesh.CollisionRules.Group = mainGame.LevelCollisionGroup;
-                        levelCollidables.Add(roomMesh);
-                    }
-                }
-                else
-                {
-                    Vector3[] vertices;
-                    int[] indices;
-                    TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
-                    StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
-                    roomMesh.CollisionRules.Group = mainGame.LevelCollisionGroup;
-                    levelCollidables.Add(roomMesh);
-                }
-            }
-            else
-            {
-                Vector3[] vertices;
-                int[] indices;
-                TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
-                StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
-                levelCollidables.Add(roomMesh);
-            }
+            Vector3[] vertices;
+            int[] indices;
+            TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
+            StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
+            levelCollidables.Add(roomMesh);
+            
             
 
             room.AddSharedData(typeof(List<StaticMesh>), levelCollidables);

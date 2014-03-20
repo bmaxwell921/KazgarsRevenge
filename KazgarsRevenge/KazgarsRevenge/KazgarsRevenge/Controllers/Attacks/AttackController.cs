@@ -59,7 +59,7 @@ namespace KazgarsRevenge
 
         public void HitMultipleTargets()
         {
-            aoe = true;
+            hitMultiple = true;
         }
 
         public void AddDebuff(DeBuff d)
@@ -67,7 +67,7 @@ namespace KazgarsRevenge
             this.debuff = d;
         }
 
-        protected bool aoe = false;
+        protected bool hitMultiple = false;
         protected bool dieAfterContact = true;
         /// <summary>
         /// called the first update after a collision is detected.
@@ -77,16 +77,18 @@ namespace KazgarsRevenge
         {
             if (hitData.Count > 0)
             {
-                if (aoe)
+                if (hitMultiple)
                 {
                     foreach (AliveComponent a in hitData)
                     {
                         DamageTarget(a);
+                        creator.AddPower(1);
                     }
                 }
                 else
                 {
                     DamageTarget(hitData[0]);
+                    creator.AddPower(1);
                 }
 
                 hitData.Clear();

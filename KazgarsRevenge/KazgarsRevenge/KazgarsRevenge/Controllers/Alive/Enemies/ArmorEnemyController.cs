@@ -12,11 +12,12 @@ namespace KazgarsRevenge
         {
             settings.aniPrefix = "k_";
             settings.attackAniName = "swing_r";
-            settings.idleAniName = "idle2";
+            settings.idleAniName = "fighting_stance";
             settings.moveAniName = "run";
-            settings.deathAniName = "idle4";
+            settings.deathAniName = "death";
             settings.hitAniName = "idle1";
             settings.walkSpeed = 120;
+            settings.attackLength = 1100;
         }
 
         protected override void SpawnHitParticles()

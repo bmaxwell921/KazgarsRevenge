@@ -22,7 +22,7 @@ namespace KazgarsRevenge
 
         public void Penetrate()
         {
-            aoe = true;
+            hitMultiple = true;
             dieAfterContact = false;
         }
 
