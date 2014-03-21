@@ -80,7 +80,8 @@ namespace KazgarsRevenge
         public static readonly int CHUNK_SIZE = 24;
 
         // How large a block is in 3D space
-        public static readonly int BLOCK_SIZE = 150;
+        public static readonly int BLOCK_SIZE = 100;
+        Vector3 roomScale = new Vector3(10);
 
         // The y component of the room location
         public static readonly float LEVEL_Y = 0;
@@ -103,19 +104,6 @@ namespace KazgarsRevenge
             : base(game)
         {
             rooms = new List<GameEntity>();
-        }
-
-        public void DemoLevel()
-        {
-            for (int i = 0; i < 10; ++i)
-            {
-                for (int j = 0; j < 10; ++j)
-                {
-                    CreatePointLight(new Vector3(-700 + i * 700, 0, -700 + j * 700));
-                }
-            }
-            rooms.Add(CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2));
-            //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
         }
 
         /// <summary>
@@ -224,7 +212,6 @@ namespace KazgarsRevenge
         }
 
         //bool addlight = false;
-        float roomScale = 15;
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {/*
             if (addlight)
@@ -244,7 +231,7 @@ namespace KazgarsRevenge
             Vector3[] vertices;
             int[] indices;
             TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
-            StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
+            StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(roomScale, Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
             room.AddSharedData(typeof(StaticMesh), roomMesh);
 
             StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
@@ -254,7 +241,7 @@ namespace KazgarsRevenge
             Entity roomLocation = new Box(position, 1100, 1100, 1100);
             room.AddSharedData(typeof(Entity), roomLocation);
 
-            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, new Vector3(roomScale), Vector3.Zero, yaw, 0, 0);
+            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, roomScale, Vector3.Zero, yaw, 0, 0);
 
             room.AddComponent(typeof(StaticMeshComponent), roomPhysics);
             genComponentManager.AddComponent(roomPhysics);
@@ -344,9 +331,15 @@ namespace KazgarsRevenge
             if (levelInfo != null)
             {
                 List<Vector3> lightPositions = levelInfo.lightLocations;
-                foreach (Vector3 v in lightPositions)
+                List<Color> lightColors = levelInfo.lightColors;
+                for (int i = 0; i < lightPositions.Count; ++i)
                 {
-                    CreatePointLight(Vector3.Transform(v, chunkTransform));
+                    Color c = Color.White;
+                    if (i < lightColors.Count)
+                    {
+                        c = lightColors[i];
+                    }
+                    CreatePointLight(Vector3.Transform(lightPositions[i], chunkTransform), c);
                 }
 
                 List<Vector3> soulpos = levelInfo.soulLocations;
@@ -373,22 +366,10 @@ namespace KazgarsRevenge
                     CreateHangingLightProp(Vector3.Transform(v, chunkTransform));
                 }
 
-                List<Vector3> smallObjects = levelInfo.smallObjLocations;
+                List<Vector3> smallObjects = levelInfo.groundPropLocations;
                 foreach (Vector3 v in smallObjects)
                 {
-                    CreateSmallObject(Vector3.Transform(v, chunkTransform));
-                }
-
-                List<Vector3> mediumObjects = levelInfo.mediumObjLocations;
-                foreach (Vector3 v in mediumObjects)
-                {
-                    CreateMediumObject(Vector3.Transform(v, chunkTransform));
-                }
-
-                List<Vector3> largeObjects = levelInfo.largeObjLocations;
-                foreach (Vector3 v in largeObjects)
-                {
-                    CreateLargeObect(Vector3.Transform(v, chunkTransform));
+                    CreateProp(Vector3.Transform(v, chunkTransform));
                 }
 
                 List<Vector3> mobSpawnLocations = levelInfo.mobSpawnLocations;
@@ -406,7 +387,7 @@ namespace KazgarsRevenge
             }
         }
 
-        private void CreatePointLight(Vector3 position)
+        private void CreatePointLight(Vector3 position, Color color)
         {
             GameEntity light = new GameEntity("light", FactionType.Neutral, EntityType.None);
 
@@ -417,7 +398,7 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoBroadPhase;
             light.AddSharedData(typeof(Entity), physicalData);
 
-            light.AddSharedData(typeof(Color), Color.White);
+            light.AddSharedData(typeof(Color), color);
 
             PhysicsComponent lightPhysics = new PhysicsComponent(mainGame, light);
 
@@ -436,6 +417,7 @@ namespace KazgarsRevenge
 
             //TODO: emitters and effects
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            graphics.SetAlpha(.5f);
             prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
@@ -454,7 +436,7 @@ namespace KazgarsRevenge
             door.AddComponent(typeof(PhysicsComponent), doorPhysics);
             genComponentManager.AddComponent(doorPhysics);
 
-            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-nsdoor"), new Vector3(roomScale), Vector3.Zero, yaw, 0, 0);
+            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-nsdoor"), roomScale, Vector3.Zero, yaw, 0, 0);
             door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
             modelManager.AddComponent(doorGraphics);
 
@@ -475,35 +457,7 @@ namespace KazgarsRevenge
             rooms.Add(lightProp);
         }
 
-        private void CreateSmallObject(Vector3 pos)
-        {
-            GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
-
-            Entity physicalData = new Box(pos, 1, 1, 1);
-            prop.AddSharedData(typeof(Entity), physicalData);
-
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
-            prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
-            modelManager.AddComponent(graphics);
-
-            rooms.Add(prop);
-        }
-
-        private void CreateMediumObject(Vector3 pos)
-        {
-            GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
-
-            Entity physicalData = new Box(pos, 1, 1, 1);
-            prop.AddSharedData(typeof(Entity), physicalData);
-
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
-            prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
-            modelManager.AddComponent(graphics);
-
-            rooms.Add(prop);
-        }
-
-        private void CreateLargeObect(Vector3 pos)
+        private void CreateProp(Vector3 pos)
         {
             GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
 
@@ -519,17 +473,24 @@ namespace KazgarsRevenge
 
         private void CreateMobSpawner(Vector3 pos)
         {
-            GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
+            if (RandSingleton.U_Instance.Next(10) < 5)
+            {
+                GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
-
-            ISet<Vector3> spawnLocs = new HashSet<Vector3>();
-            for(int i=-2; i<2; ++i){
-                for(int j=-2; j<2; ++j)
+                ISet<Vector3> spawnLocs = new HashSet<Vector3>();
+                for (int i = -1; i < 1; ++i)
                 {
-                    spawnLocs.Add(new Vector3(pos.X + i * BLOCK_SIZE / 8, LEVEL_Y, pos.Z + j * BLOCK_SIZE / 8));
+                    for (int j = -1; j < 1; ++j)
+                    {
+                        spawnLocs.Add(new Vector3(pos.X + i * BLOCK_SIZE / 8, LEVEL_Y, pos.Z + j * BLOCK_SIZE / 8));
+                    }
                 }
+                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
+                spawner.AddComponent(typeof(EnemyProximitySpawner), eps);
+                genComponentManager.AddComponent(eps);
+
+                rooms.Add(spawner);
             }
-            EnemyProximitySpawner e = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 2);
         }
 
         private void AddPlayerSpawn(Vector3 pos)

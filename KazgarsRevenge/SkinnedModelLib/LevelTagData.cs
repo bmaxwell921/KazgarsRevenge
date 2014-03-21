@@ -13,11 +13,10 @@ namespace SkinnedModelLib
         public List<Vector3> nsdoorLocations = new List<Vector3>();
         public List<Vector3> hangingLightLocations = new List<Vector3>();
         public List<Vector3> lightLocations = new List<Vector3>();
+        public List<Color> lightColors = new List<Color>();
         public List<Vector3> mobSpawnLocations = new List<Vector3>();
         public List<Vector3> playerSpawnLocations = new List<Vector3>();
-        public List<Vector3> smallObjLocations = new List<Vector3>();
-        public List<Vector3> mediumObjLocations = new List<Vector3>();
-        public List<Vector3> largeObjLocations = new List<Vector3>();
+        public List<Vector3> groundPropLocations = new List<Vector3>();
 
         public LevelTagData()
         {

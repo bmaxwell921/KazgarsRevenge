@@ -30,6 +30,11 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Levels\Props\souls.png">
+      <Name>souls</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="Models\Projectiles\arrow.fbx">
       <Name>arrow</Name>
       <Importer>FbxImporter</Importer>
@@ -1007,7 +1012,6 @@
       <Processor>LevelModelProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Compile Include="Models\Levels\Props\01-chair.fbx">
       <Name>01-chair</Name>

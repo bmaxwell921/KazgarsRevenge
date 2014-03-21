@@ -1114,11 +1114,13 @@ namespace KazgarsRevenge
             {
                 string innerClicked = CollidingInnerFrame(collides);
                 //Set dragging to true if draggin mouse
-                if (curMouse.LeftButton == ButtonState.Pressed && innerClicked != null && !dragging){
+                if (curMouse.LeftButton == ButtonState.Pressed && innerClicked != null && !dragging)
+                {
                     draggingSource = innerClicked;
                     dragging = true;
                 }
-                else{
+                else
+                {
                     dragging = false;
                 }
                 if ((!dragging && draggingSource != innerClicked) || dragging)
@@ -1201,7 +1203,7 @@ namespace KazgarsRevenge
                                 if (lootingSoul != null)
                                 {
                                     while (lootingSoul.Loot.Count() > 0)
-                                    {   
+                                    {
                                         //add items to inventory
                                         if (!AddToInventory(lootingSoul.GetLoot(0)))
                                         {

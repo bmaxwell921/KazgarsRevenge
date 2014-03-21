@@ -212,7 +212,7 @@ namespace KazgarsRevenge
         }
 
         #region Lights
-        public const int MAX_ACTIVE_LIGHTS = 30;
+        public const int MAX_ACTIVE_LIGHTS = 20;
         public int LastLightUpdate { get; private set; }
         public BoundingBox CameraBox { get; private set; }
         public Vector3[] lightPositions { get; private set; }

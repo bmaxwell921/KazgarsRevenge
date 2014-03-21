@@ -76,10 +76,15 @@ namespace KazgarsRevenge
             this.rollPerFrame = roll;
         }
 
-        float alpha = 1;
         public void SetAlpha(float alpha)
         {
-            this.alpha = alpha;
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    effect.Parameters["alpha"].SetValue(alpha);
+                }
+            }
         }
 
         Matrix rotation = Matrix.Identity;
@@ -124,7 +129,6 @@ namespace KazgarsRevenge
                     foreach (Effect effect in mesh.Effects)
                     {
                         effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                        effect.Parameters["alpha"].SetValue(alpha);
                         Matrix world = transforms[mesh.ParentBone.Index]
                             * Matrix.CreateScale(drawScale)
                             * Matrix.CreateTranslation(localOffset)

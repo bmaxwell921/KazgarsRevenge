@@ -91,7 +91,7 @@ namespace KazgarsRevenge
         
         protected override void Initialize()
         {
-            settings.particleSettings = SettingAmount.High;
+            settings.particleSettings = SettingAmount.Low;
 
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
             SetUpLoggers();

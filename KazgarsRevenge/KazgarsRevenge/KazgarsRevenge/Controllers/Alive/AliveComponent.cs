@@ -36,6 +36,7 @@ namespace KazgarsRevenge
         None,
         HealthPotion,
         SuperHealthPotion,
+        LuckPotion,
         AdrenalineRush,
         Homing,
         SerratedBleeding,
@@ -475,6 +476,18 @@ namespace KazgarsRevenge
         {
             switch (b)
             {
+                case Buff.HealthPotion:
+                    if (state == BuffState.Ticking)
+                    {
+                        Heal((int)(MaxHealth * .1f));
+                    }
+                    break;
+                case Buff.SuperHealthPotion:
+                    if (state == BuffState.Ticking)
+                    {
+                        Heal((int)(MaxHealth * .2f));
+                    }
+                    break;
                 case Buff.AdrenalineRush:
                     if (state == BuffState.Starting)
                     {
@@ -590,11 +603,15 @@ namespace KazgarsRevenge
             {Buff.Homing, 6000},
             {Buff.SerratedBleeding, 6000},
             {Buff.Elusiveness, 6000},
+            {Buff.HealthPotion, 5000},
+            {Buff.SuperHealthPotion, 5000},
+            {Buff.LuckPotion, 120000}
         };
 
         Dictionary<Buff, double> buffTickLengths = new Dictionary<Buff, double>()
         {
-
+            {Buff.HealthPotion, 250},
+            {Buff.SuperHealthPotion, 250}
         };
 
         protected void AddBuff(Buff b, GameEntity from)

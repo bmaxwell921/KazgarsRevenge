@@ -22,16 +22,16 @@ namespace AnimationPipeline
 
             LevelTagData tag = new LevelTagData();
             
-            AddPointsTo(input, tag, "soul", tag.soulLocations);
-            AddPointsTo(input, tag, "ewdoors", tag.ewdoorLocations);
-            AddPointsTo(input, tag, "nsdoors", tag.nsdoorLocations);
-            AddPointsTo(input, tag, "hanginglights", tag.hangingLightLocations);
-            AddPointsTo(input, tag, "lights", tag.lightLocations);
-            AddPointsTo(input, tag, "mobspawn", tag.mobSpawnLocations);
-            AddPointsTo(input, tag, "playerspawn", tag.playerSpawnLocations);
-            AddPointsTo(input, tag, "smallobjs", tag.smallObjLocations);
-            AddPointsTo(input, tag, "mediumobjs", tag.mediumObjLocations);
-            AddPointsTo(input, tag, "largeobjs", tag.largeObjLocations);
+            AddPointsTo(GetDataHolder(input, "soul"), tag.soulLocations);
+            AddPointsTo(GetDataHolder(input, "ewdoors"), tag.ewdoorLocations);
+            AddPointsTo(GetDataHolder(input, "nsdoors"), tag.nsdoorLocations);
+            AddPointsTo(GetDataHolder(input, "hanginglights"), tag.hangingLightLocations);
+            NodeContent lightHolder = GetDataHolder(input, "lights");
+            AddPointsTo(lightHolder, tag.lightLocations);
+            GetColorsFromNames(lightHolder, tag.lightColors);
+            AddPointsTo(GetDataHolder(input, "mobspawn"), tag.mobSpawnLocations);
+            AddPointsTo(GetDataHolder(input, "playerspawn"), tag.playerSpawnLocations);
+            AddPointsTo(GetDataHolder(input, "groundobjs"), tag.groundPropLocations);
 
             ModelContent retModel = base.Process(input, context);
             retModel.Tag = tag;
@@ -39,11 +39,8 @@ namespace AnimationPipeline
             return retModel;
         }
 
-        void AddPointsTo(NodeContent input, LevelTagData tag, string nodeName, List<Vector3> list)
+        void AddPointsTo(NodeContent dataHolder, List<Vector3> list)
         {
-            //get the object that has the positions we want as children
-            NodeContent dataHolder = GetDataHolder(input, nodeName);
-
             //iterate through and get positions
             if (dataHolder != null)
             {
@@ -54,7 +51,44 @@ namespace AnimationPipeline
                     {
                         BoundingSphere sphere = BoundingSphere.CreateFromPoints(spherePoint.Positions);
                         list.Add(Vector3.Transform(sphere.Center, spherePoint.AbsoluteTransform));
+                    }
+                }
+            }
+        }
 
+        void GetColorsFromNames(NodeContent dataHolder, List<Color> list)
+        {
+            if (dataHolder != null)
+            {
+                for (int i = dataHolder.Children.Count - 1; i >= 0; --i)
+                {
+                    //interpreting name as color
+                    string[] name = dataHolder.Children[i].Name.Split(new char[] { '-' });
+                    if (name.Length >= 3)
+                    {
+                        int r;
+                        if (!Int32.TryParse(name[0], out r))
+                        {
+                            list.Add(Color.White);
+                            continue;
+                        }
+                        int g;
+                        if (!Int32.TryParse(name[1], out g))
+                        {
+                            list.Add(Color.White);
+                            continue;
+                        }
+                        int b;
+                        if (!Int32.TryParse(name[2], out b))
+                        {
+                            list.Add(Color.White);
+                            continue;
+                        }
+                        list.Add(new Color(Int32.Parse(name[0]), Int32.Parse(name[1]), Int32.Parse(name[2])));
+                    }
+                    else
+                    {
+                        list.Add(Color.White);
                     }
                 }
             }
@@ -69,7 +103,6 @@ namespace AnimationPipeline
 
                 if (n.Name.ToLower() == name.ToLower())
                 {
-                    n.Parent.Children.Remove(n);
                     return n;
                 }
             }
