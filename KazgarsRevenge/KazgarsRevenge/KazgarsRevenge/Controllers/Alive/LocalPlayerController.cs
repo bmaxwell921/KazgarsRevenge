@@ -641,6 +641,7 @@ namespace KazgarsRevenge
                 {
                     UpdateRotation(dir);
                     lastUsedAbility.Use();
+                    UsePower(lastUsedAbility.PowerCost);
                     StartAbilitySequence(lastUsedAbility);
                     return;
                 }
@@ -1126,7 +1127,7 @@ namespace KazgarsRevenge
                     {
                         #region inventory
                         case "inventory":
-                            if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
+                            //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate y u do dis
                             if (innerClicked == "equipArrow")
                             {
                                 showEquipment = !showEquipment;
@@ -1240,7 +1241,7 @@ namespace KazgarsRevenge
                         #endregion
                         #region equipment
                         case "equipment":
-                            if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
+                            //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate  D:<
                             if (innerClicked == "equipWrist") //wrist
                             {
                                 equipHelp(GearSlot.Wrist);

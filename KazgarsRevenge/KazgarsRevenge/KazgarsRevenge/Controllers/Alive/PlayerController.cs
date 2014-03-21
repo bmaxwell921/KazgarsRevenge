@@ -251,6 +251,19 @@ namespace KazgarsRevenge
                 return true;
             }
 
+            //seeing if it can stack with something already in the inventory
+            if (toAdd.Stackable)
+            {
+                for (int i = 0; i < inventory.Length; ++i)
+                {
+                    if (inventory[i] != null && inventory[i].ItemID == toAdd.ItemID)
+                    {
+                        inventory[i].AddQuantity(toAdd.Quantity);
+                        return true;
+                    }
+                }
+            }
+
             //check if full
             bool full = true;
             for (int i = 0; i < inventory.Length; ++i)
@@ -266,17 +279,20 @@ namespace KazgarsRevenge
                 return false;
             }
 
-
+            //inventory is not full and there was nothing to stack with; adding to the first empty slot
             for (int i = 0; i < inventory.Length; ++i)
             {
                 if (inventory[i] == null)
                 {
                     inventory[i] = toAdd;
-                    break;
+                    return true;
                 }
             }
 
-            return true;
+            //this won't happen
+            //...probably
+            //awkward if it does
+            return false;
         }
         protected override void RecalculateStats()
         {
@@ -798,7 +814,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-
+                AddBuff(Buff.SuperHealthPotion, Entity);
             });
 
             return sequence;
@@ -809,7 +825,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-
+                AddBuff(Buff.LuckPotion, Entity);
             });
 
             return sequence;
@@ -820,7 +836,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-
+                Heal((int)(MaxHealth * .3f));
             });
 
             return sequence;
