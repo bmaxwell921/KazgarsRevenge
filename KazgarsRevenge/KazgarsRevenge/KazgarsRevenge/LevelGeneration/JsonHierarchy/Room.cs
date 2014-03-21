@@ -11,6 +11,7 @@ namespace KazgarsRevenge
     /// </summary>
     public class Room : ChunkComponent
     {
+        private static readonly string ENEMY_SPAWNER_NAME = "mobSpawn";
         public int Width
         {
             get;
@@ -38,6 +39,23 @@ namespace KazgarsRevenge
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Returns a list of all the RoomBlocks that represent mobSpawners
+        /// </summary>
+        /// <returns></returns>
+        public IList<RoomBlock> GetEnemySpawners()
+        {
+            IList<RoomBlock> spawnerLocs = new List<RoomBlock>();
+            foreach (RoomBlock rb in blocks)
+            {
+                if (rb.name.Equals(ENEMY_SPAWNER_NAME))
+                {
+                    spawnerLocs.Add(rb);
+                }
+            }
+            return spawnerLocs;
         }
 
         public void CalcWidthHeight()

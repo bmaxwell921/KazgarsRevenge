@@ -89,7 +89,7 @@ namespace KazgarsRevenge
         // Put mobs a little bit above the ground so they don't sink down
         public static readonly float MOB_SPAWN_Y = 20;
 
-        public static readonly string ROOM_PATH = @"Models\Levels\Rooms\";
+        public static readonly string ROOM_PATH = @"Models\Levels\";
 
         //public FloorName CurrentFloor = FloorName.Dungeon;
 
@@ -179,7 +179,7 @@ namespace KazgarsRevenge
                 rooms.Add(CreateRoom(room, chunkInfo.rotation, chunkLocation));
             }
 
-            ProcessObjectMap(chunkInfo.ChunkName + "-objmap", chunkInfo.rotation.ToRadians(), chunkLocation);
+            //ProcessObjectMap(chunkInfo.ChunkName + "-objmap", chunkInfo.rotation.ToRadians(), chunkLocation);
 
             return rooms;
         }
@@ -201,7 +201,9 @@ namespace KazgarsRevenge
             GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, rotatedCenter * BLOCK_SIZE, yaw);
             
             // Here for convenience
-            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
+            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y); 
+            
+            AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, room.rotation, chunkLocation, chunkRotation, room.UnRotWidth, room.UnRotHeight);
             return roomGE;
         }
 
@@ -504,6 +506,21 @@ namespace KazgarsRevenge
         private static readonly float PROXIMITY = 60;
         // Spawn every 3 seconds
         private static readonly float DELAY = 3000;
+
+        // Adds the necessary spawning components to the roomGE
+        private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
+        {
+            ISet<Vector3> spawnLocs = new HashSet<Vector3>();
+            foreach (RoomBlock spawner in enemySpawners)
+            {
+                Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
+                spawnLocs.Add(spawnCenter);
+            }
+            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
+            roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
+            genComponentManager.AddComponent(eps);
+        }
+
         #endregion
 
         #region Graph Building
@@ -553,6 +570,15 @@ namespace KazgarsRevenge
                 {
                     doors.Add(blockCenter);
                 }
+
+                // If it's a player spawn, we need to know that we can spawn players here
+                if (block.IsPlayerSpawn())
+                {
+                    // Set him a little higher
+                    blockCenter.Y = MOB_SPAWN_Y;
+                    currentLevel.spawnLocs.Add(blockCenter);
+                }
+
             }
 
             /*
