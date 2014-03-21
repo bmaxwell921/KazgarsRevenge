@@ -22,8 +22,16 @@ namespace AnimationPipeline
 
             LevelTagData tag = new LevelTagData();
             
-            AddLights(input, tag);
-            AddPhysics(input, tag);
+            AddPointsTo(input, tag, "soul", tag.soulLocations);
+            AddPointsTo(input, tag, "ewdoors", tag.ewdoorLocations);
+            AddPointsTo(input, tag, "nsdoors", tag.nsdoorLocations);
+            AddPointsTo(input, tag, "hanginglights", tag.hangingLightLocations);
+            AddPointsTo(input, tag, "lights", tag.lightLocations);
+            AddPointsTo(input, tag, "mobspawn", tag.mobSpawnLocations);
+            AddPointsTo(input, tag, "playerspawn", tag.playerSpawnLocations);
+            AddPointsTo(input, tag, "smallobjs", tag.smallObjLocations);
+            AddPointsTo(input, tag, "mediumobjs", tag.mediumObjLocations);
+            AddPointsTo(input, tag, "largeobjs", tag.largeObjLocations);
 
             ModelContent retModel = base.Process(input, context);
             retModel.Tag = tag;
@@ -31,63 +39,44 @@ namespace AnimationPipeline
             return retModel;
         }
 
-        void AddLights(NodeContent input, LevelTagData tag)
+        void AddPointsTo(NodeContent input, LevelTagData tag, string nodeName, List<Vector3> list)
         {
-            //get the object that has lights as children (should be named "lights")
-            NodeContent lightHolder = FindNodeNameBFS(input, "lights");
+            //get the object that has the positions we want as children
+            NodeContent dataHolder = GetDataHolder(input, nodeName);
 
-            List<Vector3> lightLocations = new List<Vector3>();
             //iterate through and get positions
-            if (lightHolder != null)
+            if (dataHolder != null)
             {
-                for (int i = lightHolder.Children.Count - 1; i >= 0; --i)
+                for (int i = dataHolder.Children.Count - 1; i >= 0; --i)
                 {
-                    MeshContent light = lightHolder.Children[i] as MeshContent;
-                    if (light != null)
+                    MeshContent spherePoint = dataHolder.Children[i] as MeshContent;
+                    if (spherePoint != null)
                     {
-                        BoundingSphere sphere = BoundingSphere.CreateFromPoints(light.Positions);
-                        lightLocations.Add(Vector3.Transform(sphere.Center, light.AbsoluteTransform));
+                        BoundingSphere sphere = BoundingSphere.CreateFromPoints(spherePoint.Positions);
+                        list.Add(Vector3.Transform(sphere.Center, spherePoint.AbsoluteTransform));
 
                     }
-                    //remove from scene so that it isn't rendered
-                    light.Parent.Children.Remove(light);
                 }
-
-                lightHolder.Parent.Children.Remove(lightHolder);
             }
-            tag.lightLocations = lightLocations;
         }
-        
-        void AddPhysics(NodeContent input, LevelTagData tag)
+
+        NodeContent GetDataHolder(NodeContent input, string name)
         {
-            List<Vector3[]> allVerts = new List<Vector3[]>();
-            List<int[]> allInds = new List<int[]>();
-            List<Matrix> allTransforms = new List<Matrix>();
-
-            NodeContent physics = FindNodeNameBFS(input, "physics");
-
-            if (physics != null)
+            NodeContentCollection children = input.Children;
+            for (int i = children.Count - 1; i >= 0; --i)
             {
-                for (int i = physics.Children.Count - 1; i >= 0; --i)
-                {
-                    MeshContent box = physics.Children[i] as MeshContent;
-                    if (box != null)
-                    {
-                        //assuming the collidables are all cubes and there is only one entry in Geometry
-                        allVerts.Add(box.Geometry[0].Vertices.Positions.ToArray());
-                        allInds.Add(box.Geometry[0].Indices.ToArray());
-                        allTransforms.Add(box.AbsoluteTransform);
-                    }
-                    box.Parent.Children.Remove(box);
-                }
-                physics.Parent.Children.Remove(physics);
-            }
+                NodeContent n = children[i];
 
-            tag.physicsVertices = allVerts;
-            tag.physicsIndices = allInds;
-            tag.physicsTransforms = allTransforms;
+                if (n.Name.ToLower() == name.ToLower())
+                {
+                    n.Parent.Children.Remove(n);
+                    return n;
+                }
+            }
+            return null;
         }
 
+        /*
         NodeContent FindNodeNameBFS(NodeContent node, string name)
         {
             List<NodeContent> toProcess = new List<NodeContent>();
@@ -100,7 +89,7 @@ namespace AnimationPipeline
                     NodeContent n = toProcess[i];
                     toProcess.RemoveAt(i);
 
-                    if (n.Name == name)
+                    if (n.Name.ToLower() == name.ToLower())
                     {
                         return n;
                     }
@@ -113,6 +102,6 @@ namespace AnimationPipeline
             }
 
             return null;
-        }
+        }*/
     }
 }

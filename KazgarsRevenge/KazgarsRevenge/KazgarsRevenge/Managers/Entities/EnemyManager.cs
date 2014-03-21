@@ -200,6 +200,7 @@ namespace KazgarsRevenge
 
         private void SetupEntityPhysicsAndShadow(GameEntity entity, Vector3 position, Vector3 dimensions, float mass)
         {
+            position.Y = LevelManager.MOB_SPAWN_Y;
             Entity enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z, mass);
             enemyPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
             enemyPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();

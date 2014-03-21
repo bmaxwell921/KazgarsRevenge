@@ -36,6 +36,8 @@ namespace KazgarsRevenge
             }
         }
 
+        public string ChunkName { get { return _FileName; } }
+
         // Which 'directions' of this chunk have doors. Directions are post rotation directions
         // ie a chunk with doors at N and E with Rotation.Zero would have doorDirections of W and N after at Rotation.NINETY
         private ISet<Direction> doorDirections;

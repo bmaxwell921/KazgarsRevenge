@@ -22,9 +22,6 @@ using EventInput;
 
 namespace KazgarsRevenge
 {
-    
-
-
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -340,11 +337,10 @@ namespace KazgarsRevenge
             levels.CreateLevel(name);
             players.CreateMainPlayerInLevel(DUMMY_ID);
             
-            enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), levels.GetPlayerSpawnLocation() + Vector3.Right * 200);
+            //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), levels.GetPlayerSpawnLocation() + Vector3.Right * 200);
         }
 
         Vector2 vecLoadingText;
-        Vector2 alertTextPosition = Vector2.Zero;
         public Vector2 guiScale = new Vector2(1,1);
         int maxX;
         int maxY;
@@ -360,8 +356,6 @@ namespace KazgarsRevenge
             vecLoadingText = new Vector2(50, 50);
             guiScale = new Vector2(xRatio, yRatio);
             alertStart = new Vector2(maxX, maxY);
-
-            alertTextPosition = new Vector2(maxX / 2, 172 * average);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -430,7 +424,7 @@ namespace KazgarsRevenge
 
                 if (alertTimeLeft > 0)
                 {
-                    spriteBatch.DrawString(normalFont, alertMessage, alertTextPosition, Color.Red * (float)(alertTimeLeft / 2500), 0, new Vector2(alertSourceX, 0), .5f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, alertMessage, new Vector2(maxX / 2 - normalFont.MeasureString(alertMessage).X * average * .5f / 2, 172 * average), Color.Red * (float)(alertTimeLeft / 2500), 0, new Vector2(alertSourceX, 0), .5f * average, SpriteEffects.None, 0);
                 }
                 spriteBatch.End();
 

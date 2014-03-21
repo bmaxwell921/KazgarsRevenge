@@ -38,11 +38,11 @@ namespace KazgarsRevenge
 
     public enum FloorName
     {
-        Dungeon=1,
-        Library=2,
-        TortureChamber=3,
-        Lab=4,
-        GrandHall=5,
+        Dungeon = 1,
+        Library = 2,
+        TortureChamber = 3,
+        Lab = 4,
+        GrandHall = 5,
     }
 
     public class LevelManager : EntityManager
@@ -88,7 +88,7 @@ namespace KazgarsRevenge
         // Put mobs a little bit above the ground so they don't sink down
         public static readonly float MOB_SPAWN_Y = 20;
 
-        public static readonly string ROOM_PATH = @"Models\Rooms\";
+        public static readonly string ROOM_PATH = @"Models\Levels\Rooms\";
 
         //public FloorName CurrentFloor = FloorName.Dungeon;
 
@@ -176,6 +176,7 @@ namespace KazgarsRevenge
         }
 
         #region Room Creation
+
         // Returns a list of all the rooms that belong to this chunk, in their proper locations
         private IList<GameEntity> CreateChunkRooms(Chunk chunk, ChunkInfo chunkInfo, int i, int j)
         {
@@ -189,6 +190,8 @@ namespace KazgarsRevenge
             {
                 rooms.Add(CreateRoom(room, chunkInfo.rotation, chunkLocation));
             }
+
+            ProcessObjectMap(chunkInfo.ChunkName + "-objmap", chunkInfo.rotation.ToRadians(), chunkLocation);
 
             return rooms;
         }
@@ -211,8 +214,6 @@ namespace KazgarsRevenge
             
             // Here for convenience
             Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
-            // Add all the spawners
-            AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, room.rotation, chunkLocation,  chunkRotation, room.UnRotWidth, room.UnRotHeight);
             return roomGE;
         }
 
@@ -223,6 +224,7 @@ namespace KazgarsRevenge
         }
 
         //bool addlight = false;
+        float roomScale = 15;
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {/*
             if (addlight)
@@ -234,39 +236,18 @@ namespace KazgarsRevenge
             addlight = !addlight;*/
 
             position.Y = LEVEL_Y;
-            float roomScale = 15;
 
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 
             Model roomModel = GetUnanimatedModel(modelPath);
 
-            List<StaticMesh> levelCollidables = new List<StaticMesh>();
-            LevelTagData levelInfo = roomModel.Tag as LevelTagData;
-            if (levelInfo != null)
-            {
-                List<Vector3> lightPositions = levelInfo.lightLocations;
-                if (lightPositions != null)
-                {
-                    Matrix roomTransform = Matrix.CreateScale(roomScale) * Matrix.CreateFromYawPitchRoll(yaw, 0, 0) * Matrix.CreateTranslation(position);
-                    foreach (Vector3 v in lightPositions)
-                    {
-                        Vector3 pos = Vector3.Transform(v, roomTransform);
-                        CreatePointLight(pos);
-                    }
-                }
-            }
-
             Vector3[] vertices;
             int[] indices;
             TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
             StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
-            levelCollidables.Add(roomMesh);
-            
-            
+            room.AddSharedData(typeof(StaticMesh), roomMesh);
 
-            room.AddSharedData(typeof(List<StaticMesh>), levelCollidables);
-
-            StaticMeshesComponent roomPhysics = new StaticMeshesComponent(mainGame, room);
+            StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
 
             //holds the position so the model is drawn correctly (not added to physics)
             //size is related to how far away this will start being rendered
@@ -275,7 +256,7 @@ namespace KazgarsRevenge
 
             UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, new Vector3(roomScale), Vector3.Zero, yaw, 0, 0);
 
-            room.AddComponent(typeof(StaticMeshesComponent), roomPhysics);
+            room.AddComponent(typeof(StaticMeshComponent), roomPhysics);
             genComponentManager.AddComponent(roomPhysics);
 
             room.AddComponent(typeof(UnanimatedModelComponent), roomGraphics);
@@ -283,47 +264,6 @@ namespace KazgarsRevenge
 
 
             return room;
-        }
-
-        private void CreatePointLight(Vector3 position)
-        {
-            GameEntity light = new GameEntity("light", FactionType.Neutral, EntityType.None);
-
-            position.Y = 40;
-            Entity physicalData = new Box(position, .1f, .1f, .1f);
-            physicalData.IsAffectedByGravity = false;
-            physicalData.LocalInertiaTensorInverse = new Matrix3X3();
-            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoBroadPhase;
-            light.AddSharedData(typeof(Entity), physicalData);
-
-            light.AddSharedData(typeof(Color), Color.White);
-
-            PhysicsComponent lightPhysics = new PhysicsComponent(mainGame, light);
-
-            light.AddSharedData(typeof(PhysicsComponent), lightPhysics);
-            genComponentManager.AddComponent(lightPhysics);
-
-            lights.Add(light);
-        }
-
-        // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240
-        // TODO Set these based on a difficulty level???
-        private static readonly float PROXIMITY = 60;
-        // Spawn every 3 seconds
-        private static readonly float DELAY = 3000;
-
-        // Adds the necessary spawning components to the roomGE
-        private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
-        {
-            ISet<Vector3> spawnLocs = new HashSet<Vector3>();
-            foreach (RoomBlock spawner in enemySpawners)
-            {
-                Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
-                spawnLocs.Add(spawnCenter);
-            }
-            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
-            roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
-            genComponentManager.AddComponent(eps);
         }
 
         /// <summary>
@@ -378,6 +318,233 @@ namespace KazgarsRevenge
 
         #endregion
 
+        #region Object Map Processing
+
+        string objectMapDir = "Models\\Levels\\RoomObjectMaps\\";
+        private void ProcessObjectMap(string objectMapName, float yaw, Vector3 position)
+        {
+            //object maps were a chunk and a half off of the chunk's location. not sure why.
+            //something to do with our translations and the origin andy picked
+            position += new Vector3(CHUNK_SIZE, 0, CHUNK_SIZE) * BLOCK_SIZE * 3 / 2;
+            Matrix chunkTransform = Matrix.CreateScale(roomScale)
+                * Matrix.CreateFromYawPitchRoll(yaw, 0, 0)
+                * Matrix.CreateTranslation(position);
+            Model objectMapModel;
+            try
+            {
+                 objectMapModel = Game.Content.Load<Model>(objectMapDir + objectMapName);
+            }
+            catch (Exception)
+            {
+                //squelching the exception for testing (dont have all object maps yet)
+                return;
+            }
+
+            LevelTagData levelInfo = objectMapModel.Tag as LevelTagData;
+            if (levelInfo != null)
+            {
+                List<Vector3> lightPositions = levelInfo.lightLocations;
+                foreach (Vector3 v in lightPositions)
+                {
+                    CreatePointLight(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> soulpos = levelInfo.soulLocations;
+                if (soulpos.Count > 0)
+                {
+                    CreateSoulevator(Vector3.Transform(soulpos[0], chunkTransform));
+                }
+
+                List<Vector3> ewDoors = levelInfo.ewdoorLocations;
+                foreach (Vector3 v in ewDoors)
+                {
+                    CreateDoor(Vector3.Transform(v, chunkTransform), yaw);
+                }
+
+                List<Vector3> nsDoors = levelInfo.nsdoorLocations;
+                foreach (Vector3 v in nsDoors)
+                {
+                    CreateDoor(Vector3.Transform(v, chunkTransform), yaw + MathHelper.PiOver2);
+                }
+
+                List<Vector3> hangingLightProps = levelInfo.hangingLightLocations;
+                foreach (Vector3 v in hangingLightProps)
+                {
+                    CreateHangingLightProp(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> smallObjects = levelInfo.smallObjLocations;
+                foreach (Vector3 v in smallObjects)
+                {
+                    CreateSmallObject(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> mediumObjects = levelInfo.mediumObjLocations;
+                foreach (Vector3 v in mediumObjects)
+                {
+                    CreateMediumObject(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> largeObjects = levelInfo.largeObjLocations;
+                foreach (Vector3 v in largeObjects)
+                {
+                    CreateLargeObect(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> mobSpawnLocations = levelInfo.mobSpawnLocations;
+                foreach (Vector3 v in mobSpawnLocations)
+                {
+                    CreateMobSpawner(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> playerspawns = levelInfo.playerSpawnLocations;
+                foreach (Vector3 v in playerspawns)
+                {
+                    AddPlayerSpawn(Vector3.Transform(v, chunkTransform));
+                }
+
+            }
+        }
+
+        private void CreatePointLight(Vector3 position)
+        {
+            GameEntity light = new GameEntity("light", FactionType.Neutral, EntityType.None);
+
+            position.Y = 40;
+            Entity physicalData = new Box(position, .1f, .1f, .1f);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.LocalInertiaTensorInverse = new Matrix3X3();
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoBroadPhase;
+            light.AddSharedData(typeof(Entity), physicalData);
+
+            light.AddSharedData(typeof(Color), Color.White);
+
+            PhysicsComponent lightPhysics = new PhysicsComponent(mainGame, light);
+
+            light.AddSharedData(typeof(PhysicsComponent), lightPhysics);
+            genComponentManager.AddComponent(lightPhysics);
+
+            lights.Add(light);
+        }
+
+        private void CreateSoulevator(Vector3 pos)
+        {
+            GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, 1, 1, 1);
+            prop.AddSharedData(typeof(Entity), physicalData);
+
+            //TODO: emitters and effects
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            rooms.Add(prop);
+        }
+
+        private void CreateDoor(Vector3 pos, float yaw)
+        {
+            GameEntity door = new GameEntity("room", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, BLOCK_SIZE * .25f, 40, 5);
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            door.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent doorPhysics = new PhysicsComponent(mainGame, door);
+            door.AddComponent(typeof(PhysicsComponent), doorPhysics);
+            genComponentManager.AddComponent(doorPhysics);
+
+            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-nsdoor"), new Vector3(roomScale), Vector3.Zero, yaw, 0, 0);
+            door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
+            modelManager.AddComponent(doorGraphics);
+
+            rooms.Add(door);
+        }
+
+        private void CreateHangingLightProp(Vector3 pos)
+        {
+            GameEntity lightProp = new GameEntity("prop", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, 1, 1, 1);
+            lightProp.AddSharedData(typeof(Entity), physicalData);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, lightProp, GetUnanimatedModel("Models\\Levels\\Props\\01-lightFixture"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            lightProp.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            rooms.Add(lightProp);
+        }
+
+        private void CreateSmallObject(Vector3 pos)
+        {
+            GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, 1, 1, 1);
+            prop.AddSharedData(typeof(Entity), physicalData);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            rooms.Add(prop);
+        }
+
+        private void CreateMediumObject(Vector3 pos)
+        {
+            GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, 1, 1, 1);
+            prop.AddSharedData(typeof(Entity), physicalData);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            rooms.Add(prop);
+        }
+
+        private void CreateLargeObect(Vector3 pos)
+        {
+            GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, 1, 1, 1);
+            prop.AddSharedData(typeof(Entity), physicalData);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            rooms.Add(prop);
+        }
+
+        private void CreateMobSpawner(Vector3 pos)
+        {
+            GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
+
+
+            ISet<Vector3> spawnLocs = new HashSet<Vector3>();
+            for(int i=-2; i<2; ++i){
+                for(int j=-2; j<2; ++j)
+                {
+                    spawnLocs.Add(new Vector3(pos.X + i * BLOCK_SIZE / 8, LEVEL_Y, pos.Z + j * BLOCK_SIZE / 8));
+                }
+            }
+            EnemyProximitySpawner e = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 2);
+        }
+
+        private void AddPlayerSpawn(Vector3 pos)
+        {
+            pos.Y = MOB_SPAWN_Y;
+            currentLevel.spawnLocs.Add(pos);
+        }
+
+        // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240
+        // TODO Set these based on a difficulty level???
+        private static readonly float PROXIMITY = 60;
+        // Spawn every 3 seconds
+        private static readonly float DELAY = 3000;
+        #endregion
+
         #region Graph Building
         private void BuildAndAddPathing(Chunk chunk, ChunkInfo chunkInfo, int i, int j, ISet<Vector3> doors)
         {
@@ -424,14 +591,6 @@ namespace KazgarsRevenge
                 if (block.IsDoor())
                 {
                     doors.Add(blockCenter);
-                }
-
-                // If it's a player spawn, we need to know that we can spawn players here
-                if (block.IsPlayerSpawn())
-                {
-                    // Set him a little higher
-                    blockCenter.Y = MOB_SPAWN_Y;
-                    currentLevel.spawnLocs.Add(blockCenter);
                 }
             }
 

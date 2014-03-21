@@ -8,10 +8,16 @@ namespace SkinnedModelLib
 {
     public class LevelTagData
     {
-        public List<Vector3> lightLocations = null;
-        public List<Vector3[]> physicsVertices = null;
-        public List<int[]> physicsIndices = null;
-        public List<Matrix> physicsTransforms = null;
+        public List<Vector3> soulLocations = new List<Vector3>();
+        public List<Vector3> ewdoorLocations = new List<Vector3>();
+        public List<Vector3> nsdoorLocations = new List<Vector3>();
+        public List<Vector3> hangingLightLocations = new List<Vector3>();
+        public List<Vector3> lightLocations = new List<Vector3>();
+        public List<Vector3> mobSpawnLocations = new List<Vector3>();
+        public List<Vector3> playerSpawnLocations = new List<Vector3>();
+        public List<Vector3> smallObjLocations = new List<Vector3>();
+        public List<Vector3> mediumObjLocations = new List<Vector3>();
+        public List<Vector3> largeObjLocations = new List<Vector3>();
 
         public LevelTagData()
         {
