@@ -35,6 +35,14 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
         }
 
+        public void Reflect(FactionType toHit)
+        {
+            //flip faction to hit and direction
+            this.factionToHit = toHit;
+            Entity.ChangeFaction(toHit);
+            physicalData.LinearVelocity = new Vector3(-physicalData.LinearVelocity.X, 0, -physicalData.LinearVelocity.Z);
+        }
+
         bool lifesteal = false;
         float amountStolen = 0;
         public void ReturnLife(float percentReturned)
@@ -129,13 +137,19 @@ namespace KazgarsRevenge
         {
             if (t != null)
             {
-                int d = t.DamageDodgeable(debuff, (int)damage, creator.Entity);
+                int toDeal = GetDamage();
+                int d = t.DamageDodgeable(debuff, toDeal, creator.Entity);
                 damageDealt += d;
                 if (lifesteal)
                 {
                     creator.LifeSteal((int)Math.Ceiling(d * amountStolen));
                 }
             }
+        }
+
+        protected virtual int GetDamage()
+        {
+            return (int)damage;
         }
 
         public override void End()

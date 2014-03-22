@@ -17,6 +17,7 @@ namespace KazgarsRevenge
         CooldownReduction,
         CritChance,
         Health,
+        Armor,
     }
     public enum DeBuff
     {
@@ -27,9 +28,12 @@ namespace KazgarsRevenge
         FlashBomb,
         Tar,
         Stunned,//hide this from gui (just show description for flashbomb or forceful throw or w/e)
+        Headbutt,
+        Garrote,
         ForcefulThrow,
         Burning,
         Frozen,
+        Execute,
     }
     public enum Buff
     {
@@ -41,6 +45,10 @@ namespace KazgarsRevenge
         Homing,
         SerratedBleeding,
         Elusiveness,
+        SadisticFrenzy,
+        Berserk,
+        Berserk2,
+        Berserk3,
     }
     public enum BuffState
     {
@@ -155,6 +163,7 @@ namespace KazgarsRevenge
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
             {StatType.Health, 100},
+            {StatType.Armor, 0},
         };
 
         protected Dictionary<StatType, float> originalBaseStats = new Dictionary<StatType, float>()
@@ -167,6 +176,7 @@ namespace KazgarsRevenge
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
             {StatType.Health, 100},
+            {StatType.Armor, 0}
         };
         protected Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>()
         {
@@ -178,6 +188,7 @@ namespace KazgarsRevenge
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
             {StatType.Health, 100},
+            {StatType.Armor, 0}
         };
 
         private Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
@@ -299,10 +310,13 @@ namespace KazgarsRevenge
         /// <summary>
         /// calculates the actual amount of damage and then returns what was subtracted
         /// </summary>
-        protected int Damage(int d, GameEntity from)
+        protected int Damage(int d, GameEntity from, bool trueDamage)
         {
-            //TODO: armor and resistance calculations
             int actualDamage = d;
+            if (!trueDamage)
+            {
+                actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * level));
+            }
             if (!Dead)
             {
                 if (activeDebuffs.ContainsKey(DeBuff.MagneticImplant))
@@ -372,8 +386,12 @@ namespace KazgarsRevenge
                 d *= 4;
                 attacks.SpawnFireExplosionParticles(physicalData.Position, .5f);
             }
+            else if (db == DeBuff.Execute && Health < MaxHealth * .2f)
+            {
+                d *= 15;
+            }
 
-            int actualDamage = Damage(d, from);
+            int actualDamage = Damage(d, from, false);
             TakeDamage(actualDamage, from);
 
             //handle negative effect
@@ -502,6 +520,18 @@ namespace KazgarsRevenge
                         RecalculateStats();
                     }
                     break;
+                case Buff.SadisticFrenzy:
+                    if (state == BuffState.Starting)
+                    {
+                        baseStats[StatType.AttackSpeed] += originalBaseStats[StatType.AttackSpeed] * .2f;
+                        RecalculateStats();
+                    }
+                    else if (state == BuffState.Ending)
+                    {
+                        baseStats[StatType.AttackSpeed] -= originalBaseStats[StatType.AttackSpeed] * .2f * stacks;
+                        RecalculateStats();
+                    }
+                    break;
             }
             return true;
         }
@@ -516,7 +546,7 @@ namespace KazgarsRevenge
                 case DeBuff.Burning:
                     if (state == BuffState.Ticking)
                     {
-                        Damage((int)Math.Ceiling(MaxHealth * .035f * stacks), from);
+                        Damage((int)Math.Ceiling(MaxHealth * .035f * stacks), from, true);
                         attacks.SpawnLittleBloodSpurt(physicalData.Position);
                     }
                     break;
@@ -545,7 +575,14 @@ namespace KazgarsRevenge
                 case DeBuff.SerratedBleeding:
                     if (state == BuffState.Ticking)
                     {
-                        Damage((int)Math.Ceiling(MaxHealth * .02f * stacks), from);
+                        Damage((int)Math.Ceiling(MaxHealth * .02f * stacks), from, true);
+                        attacks.SpawnLittleBloodSpurt(physicalData.Position);
+                    }
+                    break;
+                case DeBuff.Garrote:
+                    if (state == BuffState.Ticking)
+                    {
+                        Damage((int)Math.Ceiling(MaxHealth * .05f * stacks), from, true);
                         attacks.SpawnLittleBloodSpurt(physicalData.Position);
                     }
                     break;
@@ -553,6 +590,12 @@ namespace KazgarsRevenge
                     if (state == BuffState.Starting)
                     {
                         AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.FlashBomb], null);
+                    }
+                    break;
+                case DeBuff.Headbutt:
+                    if (state == BuffState.Starting)
+                    {
+                        AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.Stunned], null);
                     }
                     break;
                 case DeBuff.Tar:
@@ -583,8 +626,10 @@ namespace KazgarsRevenge
         Dictionary<DeBuff, double> debuffLengths = new Dictionary<DeBuff, double>()
         {
             {DeBuff.SerratedBleeding, 5000},
+            {DeBuff.Garrote, 2000},
             {DeBuff.Frost, 1500},
             {DeBuff.FlashBomb, 3000},
+            {DeBuff.Headbutt, 5000},
             {DeBuff.Tar, 6000},
             {DeBuff.MagneticImplant, 2000},
             {DeBuff.ForcefulThrow, 3000},
@@ -594,12 +639,14 @@ namespace KazgarsRevenge
         Dictionary<DeBuff, double> debuffTickLengths = new Dictionary<DeBuff, double>()
         {
             {DeBuff.SerratedBleeding, 1000},
+            {DeBuff.Garrote, 1000},
             {DeBuff.Burning, 1500}
         };
 
         Dictionary<Buff, double> buffLengths = new Dictionary<Buff, double>()
         {
             {Buff.AdrenalineRush, 6000},
+            {Buff.SadisticFrenzy, 4000},
             {Buff.Homing, 6000},
             {Buff.SerratedBleeding, 6000},
             {Buff.Elusiveness, 6000},

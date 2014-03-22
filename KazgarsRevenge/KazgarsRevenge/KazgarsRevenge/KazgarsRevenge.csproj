@@ -129,6 +129,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\Attacks\ChainSpearController.cs" />
+    <Compile Include="Controllers\Attacks\CleaveController.cs" />
     <Compile Include="Controllers\Attacks\FlamethrowerController.cs" />
     <Compile Include="Controllers\Attacks\GrapplingHookController.cs" />
     <Compile Include="Controllers\Attacks\LooseCannonController.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Controllers\Attacks\Projectiles\DragonFrostbolt.cs" />
     <Compile Include="Controllers\Attacks\Projectiles\SnipeController.cs" />
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
+    <Compile Include="Controllers\Attacks\ReflectController.cs" />
     <Compile Include="Controllers\Misc\DebrisController.cs" />
     <Compile Include="Controllers\Misc\FallingArrowController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />

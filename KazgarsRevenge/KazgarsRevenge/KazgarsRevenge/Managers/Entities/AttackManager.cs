@@ -104,6 +104,10 @@ namespace KazgarsRevenge
 
         public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator)
         {
+            CreateMeleeAttack(position, damage, creator, 0);
+        }
+        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, float lifesteal)
+        {
             GameEntity newAttack = new GameEntity("melee", creator.Entity.Faction, EntityType.Misc);
             newAttack.id = IdentificationFactory.getId(EntityType.Misc, players.myId.id);
 
@@ -118,6 +122,10 @@ namespace KazgarsRevenge
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
             AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            if (lifesteal != 0)
+            {
+                attackAI.ReturnLife(lifesteal);
+            }
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             genComponentManager.AddComponent(attackPhysics);
@@ -518,7 +526,7 @@ namespace KazgarsRevenge
 
 
 
-        public void CreateCleave(Vector3 position, float yaw, int damage, AliveComponent creator)
+        public void CreateCleave(Vector3 position, float yaw, int damage, AliveComponent creator, bool decap, bool invig)
         {
             position.Y = 20;
             GameEntity cleave = new GameEntity("att", FactionType.Neutral, EntityType.None);
@@ -532,14 +540,134 @@ namespace KazgarsRevenge
             cleave.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            AttackController controller = new AttackController(mainGame, cleave, damage, GetHitFaction(creator), creator);
-            controller.HitMultipleTargets();
+            CleaveController controller = new CleaveController(mainGame, cleave, damage, GetHitFaction(creator), creator, decap, invig);
             cleave.AddComponent(typeof(AttackController), controller);
             genComponentManager.AddComponent(controller);
 
             attacks.Add(cleave);
+        }
 
-            //TODO: spawn particles or w/e
+        public void DevastingStrike(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool reach)
+        {
+            GameEntity newAttack = new GameEntity("melee", creator.Entity.Faction, EntityType.Misc);
+            newAttack.id = IdentificationFactory.getId(EntityType.Misc, players.myId.id);
+
+            if (reach)
+            {
+                position += dir * 100;
+            }
+            else
+            {
+                position += dir * 35;
+            }
+            Entity attackData = new Box(position, 35, 47, reach? 200 : 35, .01f);
+            attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
+            attackData.LinearVelocity = Vector3.Zero;
+            attackData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
+            newAttack.AddSharedData(typeof(Entity), attackData);
+
+            PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+
+            newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
+            genComponentManager.AddComponent(attackPhysics);
+
+            newAttack.AddComponent(typeof(AttackController), attackAI);
+            genComponentManager.AddComponent(attackAI);
+
+            attacks.Add(newAttack);
+            soundEffects.playMeleeSound();
+        }
+
+        public void CreateReflect(Vector3 position, float yaw, AliveComponent creator)
+        {
+            position.Y = 20;
+            GameEntity cleave = new GameEntity("att", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(position, 40, 40, 100);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            cleave.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, cleave);
+            cleave.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            ReflectController controller = new ReflectController(mainGame, cleave, GetHitFaction(creator));
+            cleave.AddComponent(typeof(AttackController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(cleave);
+        }
+        
+        public void CreateHeadbutt(Vector3 position, float yaw, AliveComponent creator)
+        {
+            position.Y = 20;
+            GameEntity entity = new GameEntity("att", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(position, 40, 40, 100);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            entity.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
+            entity.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            AttackController controller = new AttackController(mainGame, entity, 0, GetHitFaction(creator), creator);
+            controller.AddDebuff(DeBuff.Headbutt);
+            entity.AddComponent(typeof(AttackController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(entity);
+        }
+        
+        public void CreateGarrote(Vector3 position, float yaw, AliveComponent creator, bool twist)
+        {
+            position.Y = 20;
+            GameEntity entity = new GameEntity("att", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(position, 40, 40, 100);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            entity.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
+            entity.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            AttackController controller = new AttackController(mainGame, entity, 0, GetHitFaction(creator), creator);
+            if (twist)
+            {
+                controller.AddDebuff(DeBuff.Garrote);
+            }
+
+            entity.AddComponent(typeof(AttackController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(entity);
+        }
+
+        public void CreateExecute(Vector3 position, int damage, AliveComponent creator)
+        {
+            position.Y = 20;
+            GameEntity entity = new GameEntity("att", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(position, 40, 40, 100);
+            physicalData.IsAffectedByGravity = false;
+            entity.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
+            entity.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            AttackController controller = new AttackController(mainGame, entity, damage, GetHitFaction(creator), creator);
+            controller.AddDebuff(DeBuff.Execute);
+            entity.AddComponent(typeof(AttackController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(entity);
         }
         #endregion
 

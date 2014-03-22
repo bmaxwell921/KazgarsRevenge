@@ -179,7 +179,7 @@ namespace KazgarsRevenge
                 rooms.Add(CreateRoom(room, chunkInfo.rotation, chunkLocation));
             }
 
-            //ProcessObjectMap(chunkInfo.ChunkName + "-objmap", chunkInfo.rotation.ToRadians(), chunkLocation);
+            //ProcessObjectMap(chunkInfo.ChunkName + "-objmap", chunkInfo.rotation.ToRadians(), chunkLocation * BLOCK_SIZE* 3 / 2);
 
             return rooms;
         }
@@ -312,9 +312,6 @@ namespace KazgarsRevenge
         string objectMapDir = "Models\\Levels\\RoomObjectMaps\\";
         private void ProcessObjectMap(string objectMapName, float yaw, Vector3 position)
         {
-            //object maps were a chunk and a half off of the chunk's location. not sure why.
-            //something to do with our translations and the origin andy picked
-            position += new Vector3(CHUNK_SIZE, 0, CHUNK_SIZE) * BLOCK_SIZE * 3 / 2;
             Matrix chunkTransform = Matrix.CreateScale(roomScale)
                 * Matrix.CreateFromYawPitchRoll(yaw, 0, 0)
                 * Matrix.CreateTranslation(position);

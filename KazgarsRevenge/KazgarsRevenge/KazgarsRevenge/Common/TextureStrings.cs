@@ -113,6 +113,32 @@ namespace KazgarsRevenge
                     public static readonly string TUMBLE = @"Textures\UI\Abilities\tumble";
                     public static readonly string ELUSIVENESS = @"Textures\UI\Abilities\evasion";
                 }
+
+                public class Melee
+                {
+                    public static readonly string CLEAVE = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Decapitation = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Invigoration = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string ObsidianCoagulation = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string DevastatingStrike = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string DevastatingReach = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Reflect = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Charge = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Garrote = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string ExcruciatingTwist = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string SadisticFrenzy = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Bash = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Berserk = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string SecondWind = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string RiskyRegeneration = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string RejuvenatingStrikes = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Headbutt = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string ChainSpear = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string ForcefulThrow = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Execute = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string Swordnado = @"Textures\UI\Abilities\Melee\BN";
+
+                }
             }
 
             public class Frames
