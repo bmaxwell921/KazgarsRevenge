@@ -526,14 +526,13 @@ namespace KazgarsRevenge
 
 
 
-        public void CreateCleave(Vector3 position, float yaw, int damage, AliveComponent creator, bool decap, bool invig)
+        public void CreateCleave(Vector3 position, int damage, AliveComponent creator, bool decap, bool invig)
         {
             position.Y = 20;
             GameEntity cleave = new GameEntity("att", FactionType.Neutral, EntityType.None);
 
-            Entity physicalData = new Box(position, 40, 40, 100);
+            Entity physicalData = new Box(position, 100, 40, 100);
             physicalData.IsAffectedByGravity = false;
-            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
             cleave.AddSharedData(typeof(Entity), physicalData);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, cleave);
@@ -577,7 +576,6 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(attackAI);
 
             attacks.Add(newAttack);
-            soundEffects.playMeleeSound();
         }
 
         public void CreateReflect(Vector3 position, float yaw, AliveComponent creator)
@@ -586,6 +584,7 @@ namespace KazgarsRevenge
             GameEntity cleave = new GameEntity("att", FactionType.Neutral, EntityType.None);
 
             Entity physicalData = new Box(position, 40, 40, 100);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             physicalData.IsAffectedByGravity = false;
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
             cleave.AddSharedData(typeof(Entity), physicalData);
@@ -595,6 +594,27 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(physics);
 
             ReflectController controller = new ReflectController(mainGame, cleave, GetHitFaction(creator));
+            cleave.AddComponent(typeof(AttackController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(cleave);
+        }
+
+        public void CreateBladenado(Vector3 position, double duration, int damage, AliveComponent creator)
+        {
+            position.Y = 20;
+            GameEntity cleave = new GameEntity("att", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(position, 100, 40, 100);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            physicalData.IsAffectedByGravity = false;
+            cleave.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, cleave);
+            cleave.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            SwordnadoController controller = new SwordnadoController(mainGame, cleave, damage, creator, duration, GetHitFaction(creator));
             cleave.AddComponent(typeof(AttackController), controller);
             genComponentManager.AddComponent(controller);
 
@@ -707,6 +727,28 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(boltAI);
 
             attacks.Add(bolt);
+        }
+
+        public void CreateDragonCleave(Vector3 position, float yaw, int damage, AliveComponent creator)
+        {
+            position.Y = 20;
+            GameEntity cleave = new GameEntity("att", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(position, 40, 40, 100);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            cleave.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, cleave);
+            cleave.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            AttackController controller = new AttackController(mainGame, cleave, damage, GetHitFaction(creator), creator);
+            controller.HitMultipleTargets();
+            cleave.AddComponent(typeof(AttackController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(cleave);
         }
 
         public void CreateDragonFrostbolt(Vector3 position, Vector3 dir, int damage, AliveComponent creator)

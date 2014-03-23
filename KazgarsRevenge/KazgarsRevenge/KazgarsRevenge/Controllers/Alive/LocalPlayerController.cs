@@ -181,7 +181,7 @@ namespace KazgarsRevenge
             millisRunningCounter += elapsed;
             stateResetCounter += elapsed;
 
-            if (attState == AttackState.Locked && canInterrupt && stateResetCounter >= stateResetLength)
+            if ((attState == AttackState.Locked || attState == AttackState.LockedMoving) && canInterrupt && stateResetCounter >= stateResetLength)
             {
                 attState = AttackState.None;
             }
@@ -266,7 +266,8 @@ namespace KazgarsRevenge
                     ResetTargettedEntity();
                 }
 
-                if ((attState != AttackState.Locked || usingPrimary) && !looting)
+                if ((   (attState != AttackState.Locked && attState != AttackState.LockedMoving)   || usingPrimary) 
+                    && !looting)
                 {
                     CheckAbilities(move, mouseOnGui);
                 }
@@ -314,7 +315,7 @@ namespace KazgarsRevenge
                     CancelFinishSequence();
                     MoveCharacter(groundMove, closeEnough);
                 }
-                else if (attState == AttackState.None)
+                else if (attState == AttackState.None || attState == AttackState.LockedMoving)
                 {
                     MoveCharacter(groundMove, closeEnough);
                 }
@@ -737,8 +738,30 @@ namespace KazgarsRevenge
                     {
                         if (!boundAbilities[i].Value.onCooldown)
                         {
-                            useAbility = true;
-                            abilityToUse = boundAbilities[i].Value;
+                            if (boundAbilities[i].Value.PrimaryType == AttackType.None || GetMainhandType() == boundAbilities[i].Value.PrimaryType)
+                            {
+                                if ((gear[GearSlot.Righthand] as Weapon).TwoHanded)
+                                {
+                                    aniSuffix = "_twohand";
+                                }
+                                else
+                                {
+                                    aniSuffix = "_r";
+                                }
+                                useAbility = true;
+                                abilityToUse = boundAbilities[i].Value;
+                            }
+                            else if (GetOffhandType() == boundAbilities[i].Value.PrimaryType)
+                            {
+                                aniSuffix = "_l";
+                                useAbility = true;
+                                abilityToUse = boundAbilities[i].Value;
+                            }
+                            else
+                            {
+                                (Game as MainGame).AddAlert("You don't have a " + boundAbilities[i].Value.PrimaryType.ToString() + " weapon equipped");
+                                return;
+                            }
                             abilityToUseString = null;
                         }
                     }
@@ -912,36 +935,57 @@ namespace KazgarsRevenge
             {
                 if (!closeEnough)
                 {
-                    //just started running
-                    if (currentAniName != "k_run")
+                    if (attState == AttackState.LockedMoving)
                     {
-                        PlayAnimationInterrupt("k_run", MixType.None);
+                        ChangeVelocity(moveVec);
                     }
+                    else
+                    {
+                        //just started running
+                        if (currentAniName != "k_run")
+                        {
+                            PlayAnimationInterrupt("k_run", MixType.None);
+                        }
 
-                    ChangeVelocity(moveVec);
+                        ChangeVelocity(moveVec);
 
-                    UpdateRotation(move);
+                        UpdateRotation(move);
+                    }
                 }
             }
             else if (closeEnough || millisRunningCounter >= millisRunTime)
             {
-                //stop if within stopRadius of targetted ground location
-                ChangeVelocity(Vector3.Zero);
-                //just stopped moving
-                if (currentAniName == "k_run")
+                if (attState == AttackState.LockedMoving)
                 {
-                    StartSequence("fightingstance");
+                    ChangeVelocity(moveVec);
+                }
+                else
+                {
+                    //stop if within stopRadius of targetted ground location
+                    ChangeVelocity(Vector3.Zero);
+                    //just stopped moving
+                    if (currentAniName == "k_run")
+                    {
+                        StartSequence("fightingstance");
+                    }
                 }
             }
             else
             {
-                //just started running
-                if (currentAniName != "k_run")
+                if (attState == AttackState.LockedMoving)
                 {
-                    PlayAnimationInterrupt("k_run", MixType.None);
+                    ChangeVelocity(moveVec);
                 }
-                ChangeVelocity(moveVec);
-                UpdateRotation(move);
+                else
+                {
+                    //just started running
+                    if (currentAniName != "k_run" && attState != AttackState.LockedMoving)
+                    {
+                        PlayAnimationInterrupt("k_run", MixType.None);
+                    }
+                    ChangeVelocity(moveVec);
+                    UpdateRotation(move);
+                }
             }
         }
 

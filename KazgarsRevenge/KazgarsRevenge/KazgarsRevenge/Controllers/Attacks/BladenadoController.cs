@@ -14,24 +14,29 @@ using BEPUphysics.Collidables.MobileCollidables;
 
 namespace KazgarsRevenge
 {
-    public class ReflectController : Component
+    public class SwordnadoController : AOEController
     {
-        FactionType factionToReflect;
-        double life = 1000;
-        public ReflectController(KazgarsRevengeGame game, GameEntity entity, FactionType factionToReflect)
-            : base(game, entity)
+        public SwordnadoController(KazgarsRevengeGame game, GameEntity entity, int damage, AliveComponent creator, double duration, FactionType factionToHit)
+            : base(game, entity, 250, damage, DeBuff.None, creator, duration, factionToHit)
         {
-            this.factionToReflect = factionToReflect;
-            (this.Entity.GetSharedData(typeof(Entity)) as Entity).CollisionInformation.Events.InitialCollisionDetected += HandleCollision;
+            followData = creator.Entity.GetSharedData(typeof(Entity)) as Entity;
+            physicalData.CollisionInformation.Events.InitialCollisionDetected += HandleCollision;
         }
 
+        Entity followData;
         public override void Update(GameTime gameTime)
         {
-            life -= gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (life <= 0)
+            if (creator.Dead)
             {
                 Entity.KillEntity();
             }
+
+            if (followData != null)
+            {
+                physicalData.Position = followData.Position;
+            }
+
+            base.Update(gameTime);
         }
 
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
@@ -40,12 +45,11 @@ namespace KazgarsRevenge
             if (hitEntity != null)
             {
                 AttackController possAttack = hitEntity.GetComponent(typeof(AttackController)) as AttackController;
-                if (possAttack != null && hitEntity.Faction == factionToReflect)
+                if (possAttack != null && hitEntity.Faction == factionToHit)
                 {
-                    possAttack.Reflect(factionToReflect);
+                    possAttack.Reflect(factionToHit);
                 }
             }
         }
-
     }
 }

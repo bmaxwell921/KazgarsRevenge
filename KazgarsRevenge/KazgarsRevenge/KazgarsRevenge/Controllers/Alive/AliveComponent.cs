@@ -49,6 +49,9 @@ namespace KazgarsRevenge
         Berserk,
         Berserk2,
         Berserk3,
+        Invincibility,
+        Unstoppable,
+        Swordnado,
     }
     public enum BuffState
     {
@@ -485,9 +488,10 @@ namespace KazgarsRevenge
 
         }
 
-        public virtual void HandleStun()
+        public virtual void HandleStun(double length)
         {
-
+            model.AddEmitter(typeof(StunnedParticleSystem), "stun", 5, 5, Vector3.Up * 15);
+            model.AddParticleTimer("stun", length);
         }
 
         private bool HandleBuff(Buff b, BuffState state, int stacks, GameEntity from)
@@ -664,12 +668,16 @@ namespace KazgarsRevenge
         protected void AddBuff(Buff b, GameEntity from)
         {
             double length = 0;
-            double tickLength = double.MaxValue;
-
             if (buffLengths.ContainsKey(b))
             {
                 length = buffLengths[b];
             }
+            AddBuff(b, length, from);
+        }
+
+        protected void AddBuff(Buff b, double length, GameEntity from)
+        {
+            double tickLength = double.MaxValue;
 
             if (buffTickLengths.ContainsKey(b))
             {
@@ -693,7 +701,6 @@ namespace KazgarsRevenge
 
         protected void AddDebuff(DeBuff b, GameEntity from)
         {
-
             double length = 0;
             if (debuffLengths.ContainsKey(b))
             {
@@ -706,9 +713,11 @@ namespace KazgarsRevenge
         {
             if (b == DeBuff.Stunned)
             {
-                HandleStun();
-                model.AddEmitter(typeof(StunnedParticleSystem), "stun", 5, 5, Vector3.Up * 15);
-                model.AddParticleTimer("stun", length);
+                if (activeBuffs.ContainsKey(Buff.Unstoppable))
+                {
+                    return;
+                }
+                HandleStun(length);
             }
 
             double tickLength = double.MaxValue;

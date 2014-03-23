@@ -139,6 +139,7 @@
     <Compile Include="Controllers\Attacks\Projectiles\SnipeController.cs" />
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
     <Compile Include="Controllers\Attacks\ReflectController.cs" />
+    <Compile Include="Controllers\Attacks\BladenadoController.cs" />
     <Compile Include="Controllers\Misc\DebrisController.cs" />
     <Compile Include="Controllers\Misc\FallingArrowController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />

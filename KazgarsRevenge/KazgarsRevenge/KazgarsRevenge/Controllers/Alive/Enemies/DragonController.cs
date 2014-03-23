@@ -309,7 +309,7 @@ namespace KazgarsRevenge
                             attacks.SpawnSpitSparks(model.GetBonePosition("d_mouth_emittor_R") + off);
                             attacks.SpawnSpitSparks(model.GetBonePosition("d_mouth_emittor_L") + off);
                         }
-                        attacks.CreateCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetPhysicsYaw(dir), damage, this as AliveComponent, false, false);
+                        attacks.CreateDragonCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetPhysicsYaw(dir), damage, this as AliveComponent);
                     }
                     break;
             }

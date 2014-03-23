@@ -369,9 +369,13 @@ namespace KazgarsRevenge
 
             InitNewPlayer();
 
-            //adding sword and bow for demo
-            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Righthand);
+            //adding weapons for testing
             EquipGear((Equippable)lewtz.AllItems[3202], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3001], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3001], GearSlot.Righthand);
+
+            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Lefthand);
         }
 
         public override void Start()
@@ -418,10 +422,10 @@ namespace KazgarsRevenge
             #region ability initialization
             //create initial abilities
 
-            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.None));
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.None));
-            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.None));
-            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.None));
+            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.DevastatingStrike));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.Execute));
+            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Garrote));
+            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.Bladenado));
             boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.None));
             boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.None));
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.None));
@@ -435,7 +439,7 @@ namespace KazgarsRevenge
             mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(ButtonState.Pressed, GetAbility(AbilityName.None));
             for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
             {
-                abilityLearnedFlags[(AbilityName)i] = false;
+                abilityLearnedFlags[(AbilityName)i] = true;
             }
 
             #endregion
@@ -551,16 +555,6 @@ namespace KazgarsRevenge
                 currentSequence = null;
             }
         }
-        private void TriggerCooldown()
-        {
-            for (int i = 0; i < boundAbilities.Length; ++i)
-            {
-                if (boundAbilities[i].Value.ActionName == currentActionName)
-                {
-                    boundAbilities[i].Value.Use();
-                }
-            }
-        }
         private void SetUpHelperActions()
         {
             abilityFinishedAction = () =>
@@ -617,7 +611,7 @@ namespace KazgarsRevenge
             actionSequences.Add("headbutt", HeadbuttActions());
             actionSequences.Add("execute", ExecuteActions());
             actionSequences.Add("chainspear", ChainSpearActions());
-            actionSequences.Add("swordnado", SwordnadoActions());
+            actionSequences.Add("swordnado", BladenadoActions());
 
             //magic
 
@@ -961,10 +955,6 @@ namespace KazgarsRevenge
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
                 millisActionLength = 350;
-                if (aniSuffix == "_twohand")
-                {
-                    millisActionLength *= 2;
-                }
 
                 usingPrimary = true;
             });
@@ -975,7 +965,10 @@ namespace KazgarsRevenge
                 attacks.CreateMeleeAttack(pos, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, abilityLearnedFlags[AbilityName.RejuvenatingStrikes]? .1f : 0);
 
                 pos.Y = 3;
-                attacks.SpawnWeaponSparks(pos);
+                if (aniSuffix != "_twohand")
+                {
+                    attacks.SpawnWeaponSparks(pos);
+                }
                 millisActionLength = animations.GetAniMillis("k_swing" + aniSuffix) - millisActionLength;
                 needInterruptAction = false;
             });
@@ -1456,26 +1449,28 @@ namespace KazgarsRevenge
         }
 
         //Melee abilities
-        double spinCreateMillis = 300;
+        double spinCreateMillis = 100;
         private List<Action> CleaveActions()
         {
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
-                PlayAnimation("k_whirlwind", MixType.None);
+                PlayAnimation("k_spin", MixType.None);
                 attState = AttackState.Locked;
                 millisActionLength = spinCreateMillis;
-                model.AddEmitter(typeof(FireSwipeSystem), "cleavetrail", 85, 0, Vector3.Zero);
+
+                model.AddEmitter(typeof(FireSwipeSystem), "cleavetrail", 150, 0, Vector3.Zero, GearSlotToBoneName(GearSlot.Righthand));
                 model.SetEmitterUp("cleavetrail", -4);
+                model.AddParticleTimer("cleavetrail", animations.GetAniMillis("k_spin"));
             });
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateCleave(physicalData.Position + forward * 35, GetPhysicsYaw(forward), GeneratePrimaryDamage(StatType.Strength), this as AliveComponent,
+                attacks.CreateCleave(physicalData.Position, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent,
                     abilityLearnedFlags[AbilityName.Decapitation],
                     abilityLearnedFlags[AbilityName.Invigoration]);
 
-                millisActionLength = animations.GetAniMillis("k_whirlwind") - spinCreateMillis;
+                millisActionLength = animations.GetAniMillis("k_spin") - spinCreateMillis;
             });
             sequence.Add(abilityFinishedAction);
 
@@ -1486,19 +1481,24 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
-                PlayAnimation("k_whirlwind", MixType.None);
+                PlayAnimation("k_spin", MixType.None);
                 attState = AttackState.Locked;
                 millisActionLength = spinCreateMillis;
-                model.AddEmitter(typeof(FrostSwipeSystem), "cleavetrail", 85, 0, Vector3.Zero);
-                model.SetEmitterUp("cleavetrail", -4);
-                model.AddParticleTimer("cleavetrail", animations.GetAniMillis("k_whirlwind"));
             });
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
                 attacks.CreateReflect(physicalData.Position + forward * 35, GetPhysicsYaw(forward), this as AliveComponent);
 
-                millisActionLength = animations.GetAniMillis("k_whirlwind") - spinCreateMillis;
+                millisActionLength = 300;
+            });
+            sequence.Add(() =>
+            {
+                model.AddEmitter(typeof(FrostSwipeSystem), "cleavetrail", 150, 0, Vector3.Zero, GearSlotToBoneName(GearSlot.Righthand));
+                model.SetEmitterUp("cleavetrail", -4);
+                model.AddParticleTimer("cleavetrail", 100);
+
+                millisActionLength = animations.GetAniMillis("k_spin") - spinCreateMillis - millisActionLength;
             });
             sequence.Add(abilityFinishedAction);
 
@@ -1617,23 +1617,24 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
-                //TODO: replace with k_spin
-                PlayAnimation("k_whirlwind", MixType.None);
+                stateResetCounter = 0;
+                PlayAnimation("k_swing" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
-                millisActionLength = spinCreateMillis;
+                stateResetCounter = 0;
+                millisActionLength = 350;
             });
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateExecute(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
-                millisActionLength = animations.GetAniMillis("k_whirlwind") - spinCreateMillis;
+                Vector3 pos = physicalData.Position + forward * 35;
+                attacks.CreateExecute(pos, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
+                millisActionLength = animations.GetAniMillis("k_swing" + aniSuffix) - millisActionLength;
             });
             sequence.Add(() =>
             {
-                attState = AttackState.None;
                 StartSequence("fightingstance");
+                attState = AttackState.None;
             });
-
             return sequence;
         }
         private List<Action> ChainSpearActions()
@@ -1660,10 +1661,24 @@ namespace KazgarsRevenge
 
             return sequence;
         }
-        private List<Action> SwordnadoActions()
+        private List<Action> BladenadoActions()
         {
             List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                attState = AttackState.LockedMoving;
+                PlayAnimation("k_whirlwind", MixType.None, 1.5f);
+                millisActionLength = animations.GetAniMillis("k_whirlwind") * 6 * .75f;
 
+                model.AddEmitter(typeof(FrostSwipeSystem), "cleavetrail", 100, 0, Vector3.Zero, GearSlotToBoneName(GearSlot.Righthand));
+                model.SetEmitterUp("cleavetrail", -3);
+                model.AddParticleTimer("cleavetrail", millisActionLength);
+
+                AddBuff(Buff.Unstoppable, millisActionLength, Entity);
+                attacks.CreateBladenado(physicalData.Position, millisActionLength, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
+            });
+
+            sequence.Add(abilityFinishedAction);
 
 
             return sequence;
@@ -1724,6 +1739,7 @@ namespace KazgarsRevenge
         {
             None,
             Locked,
+            LockedMoving,
             Charging,
             CastingSpell,
         }
@@ -1747,6 +1763,13 @@ namespace KazgarsRevenge
         }
         double aniCounter = 0;
         double aniLength = 0;
+        private void PlayAnimation(string animationName, MixType t, float playbackRate)
+        {
+            animations.StartClip(animationName, t, playbackRate);
+            currentAniName = animationName;
+            aniCounter = 0;
+            aniLength = animations.GetAniMillis(animationName);
+        }
         private void PlayAnimation(string animationName, MixType t)
         {
             animations.StartClip(animationName, t);
@@ -1978,7 +2001,7 @@ namespace KazgarsRevenge
                     return GetHeadbutt();
                 case AbilityName.Execute:
                     return GetExecute();
-                case AbilityName.Swordnado:
+                case AbilityName.Bladenado:
                     return GetSwordnado();
                 case AbilityName.ChainSpear:
                     return GetChainSpear();
@@ -2191,7 +2214,7 @@ namespace KazgarsRevenge
         protected Ability GetDevastatingStrike()
         {
             return new Ability(AbilityName.DevastatingStrike, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.DevastatingStrike),
-                5000, AttackType.Melee, "", AbilityType.Instant,
+                5000, AttackType.Melee, "devastatingstrike", AbilityType.Instant,
                 5);
         }
         protected Ability GetDevastatingReach()
@@ -2203,19 +2226,19 @@ namespace KazgarsRevenge
         protected Ability GetReflect()
         {
             return new Ability(AbilityName.Reflect, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Reflect),
-                0, AttackType.Melee, "", AbilityType.Instant,
-                7000);
+                7000, AttackType.Melee, "reflect", AbilityType.Instant,
+                0);
         }
         protected Ability GetCharge()
         {
             return new Ability(AbilityName.Charge, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Charge),
-                3, AttackType.Melee, "", AbilityType.Instant,
+                3, AttackType.Melee, "charge", AbilityType.Instant,
                 4000);
         }
         protected Ability GetGarrote()
         {
             return new Ability(AbilityName.Garrote, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Garrote),
-                3000, AttackType.Melee, "", AbilityType.Instant,
+                3000, AttackType.Melee, "garrote", AbilityType.Instant,
                 2);
         }
         protected Ability GetExcruciatingTwist()
@@ -2239,7 +2262,7 @@ namespace KazgarsRevenge
         protected Ability GetBerserk()
         {
             return new Ability(AbilityName.Berserk, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Berserk),
-                10000, AttackType.Melee, "", AbilityType.Instant,
+                10000, AttackType.Melee, "berserk", AbilityType.Instant,
                 10);
         }
         protected Ability GetSecondWind()
@@ -2263,13 +2286,13 @@ namespace KazgarsRevenge
         protected Ability GetHeadbutt()
         {
             return new Ability(AbilityName.Headbutt, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Headbutt),
-                0, AttackType.Melee, "", AbilityType.Instant,
+                0, AttackType.Melee, "headbutt", AbilityType.Instant,
                 0);
         }
         protected Ability GetChainSpear()
         {
             return new Ability(AbilityName.ChainSpear, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.ChainSpear),
-                4000, AttackType.Melee, "", AbilityType.Instant,
+                4000, AttackType.Melee, "chainspear", AbilityType.Instant,
                 1);
         }
         protected Ability GetForcefulThrow()
@@ -2281,14 +2304,14 @@ namespace KazgarsRevenge
         protected Ability GetExecute()
         {
             return new Ability(AbilityName.Execute, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Execute),
-                500, AttackType.Melee, "", AbilityType.Instant,
+                500, AttackType.Melee, "execute", AbilityType.Instant,
                 3);
         }
         protected Ability GetSwordnado()
         {
-            return new Ability(AbilityName.Swordnado, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Swordnado),
-                10000, AttackType.Melee, "", AbilityType.Instant,
-                8);
+            return new Ability(AbilityName.Bladenado, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Swordnado),
+                0, AttackType.Melee, "swordnado", AbilityType.Instant,
+                0);
         }
 
 
@@ -2373,7 +2396,7 @@ namespace KazgarsRevenge
         ChainSpear,
         ForcefulThrow,
         Execute,
-        Swordnado,
+        Bladenado,
 
 
 

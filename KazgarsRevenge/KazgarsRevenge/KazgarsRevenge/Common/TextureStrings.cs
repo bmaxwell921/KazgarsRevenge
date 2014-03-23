@@ -116,27 +116,27 @@ namespace KazgarsRevenge
 
                 public class Melee
                 {
-                    public static readonly string CLEAVE = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Decapitation = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Invigoration = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string ObsidianCoagulation = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string DevastatingStrike = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string DevastatingReach = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Reflect = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Charge = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Garrote = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string ExcruciatingTwist = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string SadisticFrenzy = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Bash = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Berserk = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string SecondWind = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string RiskyRegeneration = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string RejuvenatingStrikes = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Headbutt = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string ChainSpear = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string ForcefulThrow = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Execute = @"Textures\UI\Abilities\Melee\BN";
-                    public static readonly string Swordnado = @"Textures\UI\Abilities\Melee\BN";
+                    public static readonly string CLEAVE = @"Textures\UI\Abilities\Melee\cleave";
+                    public static readonly string Decapitation = @"Textures\UI\Abilities\Melee\decapitation";
+                    public static readonly string Invigoration = @"Textures\UI\Abilities\Melee\invigoration";
+                    public static readonly string ObsidianCoagulation = @"Textures\UI\Abilities\Melee\obsidian";
+                    public static readonly string DevastatingStrike = @"Textures\UI\Abilities\Melee\devastate";
+                    public static readonly string DevastatingReach = @"Textures\UI\Abilities\Melee\reach";
+                    public static readonly string Reflect = @"Textures\UI\Abilities\Melee\reflect";
+                    public static readonly string Charge = @"Textures\UI\Abilities\Melee\charge";
+                    public static readonly string Garrote = @"Textures\UI\Abilities\Melee\garrote";
+                    public static readonly string ExcruciatingTwist = @"Textures\UI\Abilities\Melee\twist";
+                    public static readonly string SadisticFrenzy = @"Textures\UI\Abilities\Melee\sadistic";
+                    public static readonly string Bash = @"Textures\UI\Abilities\Melee\bash";
+                    public static readonly string Berserk = @"Textures\UI\Abilities\Melee\berserk";
+                    public static readonly string SecondWind = @"Textures\UI\Abilities\Melee\secondwind";
+                    public static readonly string RiskyRegeneration = @"Textures\UI\Abilities\Melee\regen";
+                    public static readonly string RejuvenatingStrikes = @"Textures\UI\Abilities\Melee\rejuv";
+                    public static readonly string Headbutt = @"Textures\UI\Abilities\Melee\headbutt";
+                    public static readonly string ChainSpear = @"Textures\UI\Abilities\Melee\chainspear";
+                    public static readonly string ForcefulThrow = @"Textures\UI\Abilities\Melee\throw";
+                    public static readonly string Execute = @"Textures\UI\Abilities\Melee\execute";
+                    public static readonly string Swordnado = @"Textures\UI\Abilities\Melee\swordnado";
 
                 }
             }

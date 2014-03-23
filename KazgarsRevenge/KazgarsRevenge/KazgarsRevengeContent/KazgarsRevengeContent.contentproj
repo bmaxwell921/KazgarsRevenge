@@ -35,6 +35,16 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Models\Player\k_spin.fbx">
+      <Name>k_spin</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Player\k_whirlwind.fbx">
+      <Name>k_whirlwind</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <Compile Include="Models\Projectiles\arrow.fbx">
       <Name>arrow</Name>
       <Importer>FbxImporter</Importer>
@@ -63,7 +73,7 @@
       <Name>k_idle1</Name>
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3bModels\\Player\\k_whirlwind.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3bModels\\Player\\k_whirlwind.fbx%3bModels\\Player\\k_spin.fbx%3b</ProcessorParameters_MergeAnimations>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\spikes.fbx">
@@ -1249,8 +1259,134 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\UI\Abilities\Melee\BN.png">
-      <Name>BN</Name>
+    <Compile Include="Textures\UI\Abilities\Melee\cleave.jpg">
+      <Name>cleave</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\decapitation.jpg">
+      <Name>decapitation</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\devastate.jpg">
+      <Name>devastate</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\obsidian.jpg">
+      <Name>obsidian</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\reach.png">
+      <Name>reach</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\reflect.jpg">
+      <Name>reflect</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\charge.jpg">
+      <Name>charge</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\garrote.jpg">
+      <Name>garrote</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\twist.png">
+      <Name>twist</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\sadistic.jpg">
+      <Name>sadistic</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\bash.jpg">
+      <Name>bash</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\berserk.jpg">
+      <Name>berserk</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\secondwind.jpg">
+      <Name>secondwind</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\rejuv.jpg">
+      <Name>rejuv</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\headbutt.jpg">
+      <Name>headbutt</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\chainspear.jpg">
+      <Name>chainspear</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\throw.jpg">
+      <Name>throw</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\execute.jpg">
+      <Name>execute</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\swordnado.png">
+      <Name>swordnado</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

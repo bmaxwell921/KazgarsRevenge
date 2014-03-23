@@ -523,7 +523,7 @@ namespace KazgarsRevenge
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Health, .75f } },
                 GetUnanimatedModel(weaponDir + "sword01"),
                 AttackType.Melee,
-                true,
+                false,
                 id));
             id = 3003;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_RHINO),

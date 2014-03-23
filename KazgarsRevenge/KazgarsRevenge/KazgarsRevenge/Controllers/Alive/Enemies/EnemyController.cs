@@ -462,7 +462,10 @@ namespace KazgarsRevenge
                 {
                     DoDamagedGraphics();
                 }
-                CalculateThreat(d, from);
+                if (from.Faction != Entity.Faction)
+                {
+                    CalculateThreat(d, from);
+                }
                 minChaseCounter = 0;
             }
         }
@@ -512,7 +515,7 @@ namespace KazgarsRevenge
             base.KillAlive();
         }
 
-        public override void HandleStun()
+        public override void HandleStun(double length)
         {
             PlayAnimation(settings.aniPrefix + settings.idleAniName);
             attackCreateCounter = 0;
@@ -520,6 +523,8 @@ namespace KazgarsRevenge
             attackCounter = settings.attackLength;
             minChaseCounter = 0;
             physicalData.LinearVelocity = Vector3.Zero;
+
+            base.HandleStun(length);
         }
 
         public override void StopPull()

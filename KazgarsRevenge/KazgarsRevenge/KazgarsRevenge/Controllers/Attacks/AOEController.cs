@@ -14,9 +14,9 @@ namespace KazgarsRevenge
         double lifeLength = 5000;
         int damage = 0;
         DeBuff debuff = DeBuff.None;
-        Entity physicalData;
+        protected Entity physicalData;
         protected AliveComponent creator;
-        FactionType factionToHit;
+        protected FactionType factionToHit;
         public AOEController(KazgarsRevengeGame game, GameEntity entity, double tickLength, int damage, DeBuff d, AliveComponent creator, double duration, FactionType factionToHit)
             : base(game, entity)
         {
@@ -26,10 +26,6 @@ namespace KazgarsRevenge
             this.creator = creator;
             this.lifeLength = duration;
             this.factionToHit = factionToHit;
-        }
-
-        public override void Start()
-        {
             this.physicalData = Entity.GetSharedData(typeof(Entity)) as Entity;
         }
 
@@ -44,6 +40,7 @@ namespace KazgarsRevenge
             {
                 Entity.KillEntity();
             }
+
 
             tickCounter += millis;
             if (tickCounter >= tickLength)
