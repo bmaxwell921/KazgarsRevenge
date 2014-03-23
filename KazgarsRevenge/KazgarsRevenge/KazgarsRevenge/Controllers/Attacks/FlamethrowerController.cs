@@ -24,7 +24,6 @@ namespace KazgarsRevenge
             base.Start();
         }
 
-        Entity physicalData;
         Entity dragonData;
         public override void Update(GameTime gameTime)
         {

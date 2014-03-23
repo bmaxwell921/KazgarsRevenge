@@ -309,7 +309,7 @@ namespace KazgarsRevenge
         {
             GameEntity newAttack = new GameEntity("explosion", creator.Entity.Faction, EntityType.Misc);
 
-            Entity attackData = new Box(position, 120, 47, 120, .01f);
+            Entity attackData = new Box(position, 120, 47, 120);
             attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             attackData.LinearVelocity = Vector3.Zero;
@@ -553,21 +553,25 @@ namespace KazgarsRevenge
 
             if (reach)
             {
-                position += dir * 100;
+                position += dir * 50;
             }
             else
             {
                 position += dir * 35;
             }
-            Entity attackData = new Box(position, 35, 47, reach? 200 : 35, .01f);
+
+            Entity attackData = new Box(position, 35, 47, reach? 100 : 35);
             attackData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             attackData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            attackData.LinearVelocity = Vector3.Zero;
             attackData.Orientation = Quaternion.CreateFromRotationMatrix(CreateRotationFromForward(dir));
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
             AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            if (reach)
+            {
+                attackAI.HitMultipleTargets();
+            }
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             genComponentManager.AddComponent(attackPhysics);
@@ -576,6 +580,25 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(attackAI);
 
             attacks.Add(newAttack);
+
+
+            position.Y = 2;
+            if (reach)
+            {
+                camera.ShakeCamera(4);
+                for (int i = -5; i < 5; ++i)
+                {
+                    SpawnWeaponSparks(position + dir * i * 8);
+                }
+            }
+            else
+            {
+                camera.ShakeCamera(1.75f);
+                for (int i = -1; i < 1; ++i)
+                {
+                    SpawnWeaponSparks(position + dir * i * 5);
+                }
+            }
         }
 
         public void CreateReflect(Vector3 position, float yaw, AliveComponent creator)
@@ -600,7 +623,7 @@ namespace KazgarsRevenge
             attacks.Add(cleave);
         }
 
-        public void CreateBladenado(Vector3 position, double duration, int damage, AliveComponent creator)
+        public void CreateSwordnado(Vector3 position, double duration, int damage, AliveComponent creator)
         {
             position.Y = 20;
             GameEntity cleave = new GameEntity("att", FactionType.Neutral, EntityType.None);
@@ -1255,7 +1278,7 @@ namespace KazgarsRevenge
         public void SpawnWeaponSparks(Vector3 position)
         {
             ParticleSystem explosions = particles.GetSystem(typeof(WeaponSparksSystem));
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 10; ++i)
             {
                 explosions.AddParticle(position, Vector3.Zero);
             }

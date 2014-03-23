@@ -70,6 +70,8 @@ namespace KazgarsRevenge
                 lightPositions[i] = inactiveLightPos;
                 lightColors[i] = Color.White.ToVector3();
             }
+
+            rand = RandSingleton.U_Instance;
         }
 
         public override void Initialize()
@@ -88,7 +90,15 @@ namespace KazgarsRevenge
             LastLightUpdate = int.MinValue;
         }
 
+        double shakeTimer = -1;
+        float shakeMagnitude = 1;
+        public void ShakeCamera(float magnitude)
+        {
+            shakeMagnitude = magnitude;
+            shakeTimer = 500;
+        }
 
+        Random rand;
         MouseState curMouse = Mouse.GetState();
         MouseState prevMouse = Mouse.GetState();
 
@@ -195,6 +205,14 @@ namespace KazgarsRevenge
             {
                 target = physicalData.Position + headOffset;
             }
+
+            //camera shake
+            shakeTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (shakeTimer > 0)
+            {
+                target += new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()) * shakeMagnitude;
+            }
+
             position = target + rot.Backward * distanceFromTarget;
             view = Matrix.CreateLookAt(position, target, rotatedUpVector);
 

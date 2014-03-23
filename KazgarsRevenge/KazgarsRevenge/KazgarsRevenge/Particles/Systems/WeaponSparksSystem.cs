@@ -32,16 +32,15 @@ namespace KazgarsRevenge
 
             settings.MaxParticles = 1000;
 
-            settings.Duration = TimeSpan.FromSeconds(.5);
+            settings.Duration = TimeSpan.FromSeconds(.35);
             settings.DurationRandomness = 1;
 
-            settings.MinHorizontalVelocity = -60;
-            settings.MaxHorizontalVelocity = 60;
+            settings.MinHorizontalVelocity = -100;
+            settings.MaxHorizontalVelocity = 100;
 
-            settings.MinVerticalVelocity = 60;
-            settings.MaxVerticalVelocity = 80;
+            settings.MinVerticalVelocity = 70;
+            settings.MaxVerticalVelocity = 100;
 
-            settings.Gravity = new Vector3(0, -45, 0);
             settings.EndVelocity = 0;
 
             settings.MinRotateSpeed = -1;
