@@ -11,7 +11,6 @@ using BEPUphysics.MathExtensions;
 using BEPUphysics.Collidables;
 using BEPUphysics.DataStructures;
 using SkinnedModelLib;
-using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
@@ -599,6 +598,8 @@ namespace KazgarsRevenge
                     SpawnWeaponSparks(position + dir * i * 5);
                 }
             }
+
+            soundEffects.PlayAbilitySound(AbilityName.DevastatingStrike);
         }
 
         public void CreateReflect(Vector3 position, float yaw, AliveComponent creator)

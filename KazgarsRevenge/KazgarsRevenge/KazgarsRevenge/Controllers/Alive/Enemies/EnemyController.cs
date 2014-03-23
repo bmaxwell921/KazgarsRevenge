@@ -493,6 +493,7 @@ namespace KazgarsRevenge
 
         protected override void KillAlive()
         {
+            (Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary).playEnemyDeath(settings.aniPrefix);
             state = EnemyState.Dying;
             timerLength = animations.GetAniMillis(settings.aniPrefix + settings.deathAniName) - 100;
             timerCounter = 0;

@@ -14,7 +14,6 @@ using BEPUphysics.ResourceManagement;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.Collidables;
 using SkinnedModelLib;
-using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
@@ -2223,8 +2222,8 @@ namespace KazgarsRevenge
         protected Ability GetDevastatingStrike()
         {
             return new Ability(AbilityName.DevastatingStrike, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.DevastatingStrike),
-                0, AttackType.Melee, "devastatingstrike", AbilityType.Instant,//5000
-                0);//5
+                5000, AttackType.Melee, "devastatingstrike", AbilityType.Instant,//5000
+                5);
         }
         protected Ability GetDevastatingReach()
         {

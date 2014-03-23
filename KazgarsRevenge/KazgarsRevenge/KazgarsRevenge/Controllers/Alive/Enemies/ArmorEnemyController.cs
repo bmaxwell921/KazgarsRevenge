@@ -18,6 +18,7 @@ namespace KazgarsRevenge
             settings.hitAniName = "idle1";
             settings.walkSpeed = 120;
             settings.attackLength = 1100;
+            settings.attackCreateMillis = 350;
         }
 
         protected override void SpawnHitParticles()

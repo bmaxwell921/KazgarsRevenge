@@ -16,7 +16,6 @@ using BEPUphysics.CollisionRuleManagement;
 
 using BEPUphysicsDrawer;
 using BEPUphysicsDrawer.Lines;
-using KazgarsRevenge.Libraries;
 using System.Threading;
 using EventInput;
 

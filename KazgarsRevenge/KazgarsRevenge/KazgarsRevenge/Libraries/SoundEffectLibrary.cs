@@ -4,41 +4,71 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Audio;
 
-namespace KazgarsRevenge.Libraries
+namespace KazgarsRevenge
 {
     public class SoundEffectLibrary
     {
         Dictionary<string, SoundEffect> soundEffects;
-        Random rnd;
-        const int numRangedSounds = 4;
+        Random rand;
 
         public SoundEffectLibrary(MainGame game)
         {
             soundEffects = new Dictionary<string, SoundEffect>();
-            rnd = new Random();
+            rand = RandSingleton.U_Instance;
             loadSounds(game);
         }
 
         public void loadSounds(MainGame game)
         {
-            for (int i = 0; i < numRangedSounds; i++)
+            for (int i = 0; i < numBowSounds; i++)
             {
                 soundEffects.Add("bowshoot" + i, game.Content.Load<SoundEffect>("Sound\\bowshoot" + i));
             }
+
+            for (int i = 0; i < numSwordSounds; ++i)
+            {
+                soundEffects.Add("sword_hit" + i, game.Content.Load<SoundEffect>("Sound\\Melee\\sword_hit" + i));
+            }
+
+
+            soundEffects.Add("devastate", game.Content.Load<SoundEffect>("Sound\\Melee\\devastate"));
+
+            soundEffects.Add("pig_death", game.Content.Load<SoundEffect>("Sound\\Enemies\\pigdeath"));
+            soundEffects.Add("s_death", game.Content.Load<SoundEffect>("Sound\\Enemies\\s_death"));
         }
 
+        #region attacks
+
+
+        #region melee
+        const int numSwordSounds = 5;
+        public void playMeleeSound()
+        {
+            soundEffects["sword_hit" + rand.Next(numBowSounds)].Play();
+        }
+        public void PlayAbilitySound(AbilityName ability)
+        {
+            switch (ability)
+            {
+                case AbilityName.DevastatingStrike:
+                    soundEffects["devastate"].Play();
+                    break;
+            }
+        }
+        #endregion
+
+
+        #region Ranged
+        const int numBowSounds = 4;
         public void playRangedSound()
         {
-            int effectNum = rnd.Next(numRangedSounds);
-            soundEffects[("bowshoot" + effectNum)].Play();
+            soundEffects["bowshoot" + rand.Next(numBowSounds)].Play();
         }
+        #endregion
 
+
+        #region Magic
         public void FrostboltSound()
-        {
-
-        }
-
-        public void playMeleeSound()
         {
 
         }
@@ -47,21 +77,25 @@ namespace KazgarsRevenge.Libraries
         {
 
         }
+        #endregion
 
-        public void playKazgarDying()
+        #endregion
+
+        #region Deaths
+        public void playDeathKazgar()
         {
 
         }
 
-        public void bruteDeath()
+        public void playEnemyDeath(string enemyPrefix)
         {
-
+            string key = enemyPrefix + "death";
+            if (soundEffects.ContainsKey(key))
+            {
+                soundEffects[key].Play();
+            }
         }
-
-        public void skeletonDeath()
-        {
-
-        }
+        #endregion
 
     }
 }
