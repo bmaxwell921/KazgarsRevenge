@@ -151,6 +151,7 @@ namespace KazgarsRevenge
         bool selectedEquipSlot = false;
         bool dragging = false;
         String draggingSource;
+        Tooltip currentTooltip = null;
 
         enum TalentTrees
         {
@@ -1509,7 +1510,129 @@ namespace KazgarsRevenge
 
         private void CheckMouseHover(string outerCollides, string innerCollides)
         {
+            switch (outerCollides)
+            {
+                #region inventory
+                case "inventory":
+                    if (innerCollides != null && innerCollides.Contains("inventory"))  //hover over inventory slot
+                    {
+                        for (int i = 0; i <= maxInventorySlots; i++)
+                        {
+                            if (innerCollides == "inventory" + i && inventory[i] != null)
+                            {
+                                //TODO set currentTooltip = inventory[i].Tooltip
+                            }
+                        }
+                    }
+                    break;
+                #endregion
+                #region loot
+                case "loot":
+                    if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
+                    if (innerCollides == null) break;
+                    //Loot All
+                    else if (innerCollides.Equals("lootAll"))
+                    {
+                        //TODO Loot All Tooltip
+                    }
+                    else
+                    {//Normal Loot
+                        for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
+                        {
+                            if (innerCollides.Equals("loot" + i))
+                            {
+                                //TODO set currentTooltip = lootingSoul.GetLoot(i).tooltip
+                            }
+                        }
+                    }
+                    break;
+                #endregion
+                #region equipment
+                case "equipment":
+                    //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate  D:<
+                    if (innerCollides == "equipWrist") //wrist
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Wrist].tooltip;
+                    }
+                    else if (innerCollides == "equipBling")  //bling
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Bling].tooltip;
+                    }
+                    else if (innerCollides == "equipLWep")  //LWep
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Lefthand].tooltip;
+                    }
 
+                    else if (innerCollides == "equipHead")  //head
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Head].tooltip;
+                    }
+                    else if (innerCollides == "equipChest")  //chest
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Chest].tooltip;
+                    }
+                    else if (innerCollides == "equipLegs")  //legs
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Legs].tooltip;
+                    }
+                    else if (innerCollides == "equipFeet")  //feet
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Feet].tooltip;
+                    }
+
+                    else if (innerCollides == "equipShoulder")  //shoulder
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Shoulders].tooltip;
+                    }
+                    else if (innerCollides == "equipCod")  //Cod
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Codpiece].tooltip;
+                    }
+                    else if (innerCollides == "equipRWep")  //RWep
+                    {
+                        //TODO currentTooltip = gear[GearSlot.Righthand].tooltip;
+                    }
+                    break;
+                #endregion
+                #region abilities
+                case "abilities":
+                    if (innerCollides != null)
+                    {
+                        int check = Convert.ToInt32(innerCollides.Remove(0, 7));
+                        if (check == 12)
+                        {
+                            //TODO currentTooltip = mouseBoundAbility[0].Value.tooltip;
+                        }
+                        else
+                        {
+                            //TODOboundAbilities[check].Value.tooltip;
+                        }
+                    }
+                    break;
+                #endregion
+                #region talents
+                case "talents":
+                    if (innerCollides != null)
+                    {
+                        //TODO if we add any more innerFrames in abilities make sure we check those first
+                        int check = Convert.ToInt32(innerCollides.Remove(0, 6));
+                        if (currentTalentTree == TalentTrees.ranged)
+                        {
+                            //TODO currentToolTip = GetAbility(rangedAbilities[(int)check / 4, check % 4].name).tooltip;
+                        }
+                        else if (currentTalentTree == TalentTrees.melee)
+                        {
+                            //TODO currentToolTip = GetAbility(meleeAbilities[(int)check / 4, check % 4].name).tooltip;
+                        }
+                        else if (currentTalentTree == TalentTrees.magic)
+                        {
+                            //TODO currentToolTip = GetAbility(magicAbilities[(int)check / 4, check % 4].name).tooltip;
+                        }
+
+                    }
+                    break;
+                #endregion
+            }
         }
         #endregion
 
@@ -2016,6 +2139,10 @@ namespace KazgarsRevenge
                 //Draw Talent Points
                 s.DrawString(font, (totalTalentPoints - spentTalentPoints) + "/" + totalTalentPoints, vecName, Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
             }
+            #endregion
+
+            #region tooltip
+            if (currentTooltip != null) currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, 1.0f, 50f);       //#Jared drawing tooltip here
             #endregion
             #endregion
 
