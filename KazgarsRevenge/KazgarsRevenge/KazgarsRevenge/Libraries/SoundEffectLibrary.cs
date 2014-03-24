@@ -31,7 +31,7 @@ namespace KazgarsRevenge
             }
 
 
-            soundEffects.Add("devastate", game.Content.Load<SoundEffect>("Sound\\Melee\\devastate"));
+            soundEffects.Add("devastate", game.Content.Load<SoundEffect>("Sound\\Melee\\devastate3"));
 
             soundEffects.Add("pig_death", game.Content.Load<SoundEffect>("Sound\\Enemies\\pigdeath"));
             soundEffects.Add("s_death", game.Content.Load<SoundEffect>("Sound\\Enemies\\s_death"));
