@@ -428,8 +428,8 @@ namespace KazgarsRevenge
             boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.Execute));
             boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Garrote));
             boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.Swordnado));
-            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.None));
-            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.None));
+            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.Cleave));
+            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.Reflect));
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.None));
             boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.None));
             //added item slot abilities
@@ -1675,8 +1675,8 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 attState = AttackState.LockedMoving;
-                PlayAnimation("k_whirlwind", MixType.None, 1.5f);
-                millisActionLength = animations.GetAniMillis("k_whirlwind") * 10 * .75f;
+                PlayAnimation("k_whirlwind", MixType.None, 2f);
+                millisActionLength = animations.GetAniMillis("k_whirlwind") * 20 * .5f;
 
                 model.AddEmitter(typeof(FrostSwipeSystem), "cleavetrail", 100, 0, Vector3.Zero, GearSlotToBoneName(GearSlot.Righthand));
                 model.SetEmitterUp("cleavetrail", -3);

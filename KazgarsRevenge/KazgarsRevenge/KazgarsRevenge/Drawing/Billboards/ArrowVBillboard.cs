@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using BEPUphysics;
 using BEPUphysics.Entities;
 
@@ -12,9 +13,10 @@ namespace KazgarsRevenge
     {
         Entity followData;
         public ArrowVBillboard(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity, Vector3.Up, Vector3.Forward, new Vector2(25, 25))
+            : base(game, entity, Vector3.Up, Vector3.Forward, new Vector2(15, 55))
         {
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).ArrowVEffect;
+            blend = BlendState.Additive;
         }
         public override void Start()
         {

@@ -23,6 +23,7 @@ namespace KazgarsRevenge
         public Texture2D Icon { get; protected set; }
         public string Name { get; protected set; }
         public int ItemID { get; private set; }
+        public Tooltip Tooltip { get; private set; }
 
         /// <summary>
         /// creates a stackable item
@@ -47,6 +48,34 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
+        /// creates a stackable item
+        /// </summary>
+        public Item(ItemType type, Texture2D icon, string name, int quantity, int id, Tooltip tooltip)
+        {
+            this.Icon = icon;
+            this.Name = name;
+            this.Type = type;
+            if (type == ItemType.Gold || type == ItemType.Essence || type == ItemType.Potion)
+            {
+                this.Stackable = true;
+                this.Quantity = quantity;
+            }
+            else
+            {
+                this.Stackable = false;
+                this.Quantity = 1;
+            }
+
+            this.ItemID = id;
+            this.Tooltip = tooltip;
+        }
+
+        protected void SetTooltip(Tooltip t)
+        {
+            this.Tooltip = t;
+        }
+
+        /// <summary>
         /// use this to stack the same type of item with itself
         /// </summary>
         /// <param name="quantity"></param>
@@ -63,7 +92,7 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public virtual object Clone()
         {
-            return new Item(this.Type, this.Icon, this.Name, this.Quantity, this.ItemID);
+            return new Item(this.Type, this.Icon, this.Name, this.Quantity, this.ItemID, this.Tooltip);
         }
     }
 }
