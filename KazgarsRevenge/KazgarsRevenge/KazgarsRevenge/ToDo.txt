@@ -1,19 +1,12 @@
 ﻿art needed
 ===========
 make soul_loot_smash animation end up in the air again
-1h punch animation
 
 change pigman death animation such that the weapon doesn't stick in the the ground (rotate the attachment point)
 change pigman hand attach point
-kazgar death animation
-
-change k_fire_arrow so that his wrist bone is oriented straight towards the bow when he releases
 
 buff particles
 
-bomb model (tar / flash bomb)
-
-put lines on model textures for cartoon effect (took out normal edge detection)
 get mouse texture
 
 
@@ -26,7 +19,6 @@ scrollable loot (or clickable arrows to see next/previous items)
 
 Abilities
 ===========
-grappling shot / chain spear: attach quad rope/chain to hand
 tar bomb: get new particles / finish particle system
 
 
@@ -35,7 +27,6 @@ Floating Text
 combat text for heals and damage
 
 
-Dragon
-========
-balance time multiplier
-adjust bomb velocity to make it land correctly
+Tooltips
+==========
+things that need tooltips: items (on hotbar, inventory, and loot), abilities(on hotbar and talent tree)

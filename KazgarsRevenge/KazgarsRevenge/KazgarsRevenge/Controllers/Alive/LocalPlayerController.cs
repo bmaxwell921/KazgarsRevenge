@@ -1790,6 +1790,7 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, xpRect, Color.Brown * 0.5f);
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
             //Damage Tracker
+            
             s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Green * 0.5f);
             //Mini Map (square for now)
             s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Orange * 0.5f);

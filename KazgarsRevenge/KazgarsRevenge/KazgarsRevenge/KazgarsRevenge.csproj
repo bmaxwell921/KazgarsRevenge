@@ -140,11 +140,11 @@
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
     <Compile Include="Controllers\Attacks\ReflectController.cs" />
     <Compile Include="Controllers\Attacks\BladenadoController.cs" />
-    <Compile Include="Controllers\Misc\DebrisController.cs" />
-    <Compile Include="Controllers\Misc\FallingArrowController.cs" />
+    <Compile Include="Controllers\DebrisController.cs" />
+    <Compile Include="Controllers\FallingArrowController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
-    <Compile Include="Controllers\Misc\PillarController.cs" />
+    <Compile Include="Controllers\PillarController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
     <Compile Include="Drawing\Billboards\ArrowVBillboard.cs" />
     <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
@@ -213,7 +213,7 @@
     <Compile Include="Common\Networking\Handlers\BaseHandler.cs" />
     <Compile Include="Controllers\AIComponent.cs" />
     <Compile Include="Controllers\Alive\Enemies\EnemyController.cs" />
-    <Compile Include="Controllers\Misc\CursorSpikeController.cs" />
+    <Compile Include="Controllers\CursorSpikeController.cs" />
     <Compile Include="Drawing\AttachableModel.cs" />
     <Compile Include="Drawing\AnimatedModelComponent.cs" />
     <Compile Include="Drawing\CameraComponent.cs" />
@@ -241,6 +241,7 @@
     <Compile Include="Managers\Entities\PlayerManager.cs" />
     <Compile Include="Managers\Entities\AttackManager.cs" />
     <Compile Include="Non-Component\Potion.cs" />
+    <Compile Include="Non-Component\Tooltip.cs" />
     <Compile Include="Non-Component\Weapon.cs" />
     <Compile Include="Managers\ParticleManager.cs" />
     <Compile Include="Particles\Base Classes\ParticleEmitter.cs" />

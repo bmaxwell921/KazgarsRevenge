@@ -283,7 +283,7 @@ namespace KazgarsRevenge
 
         protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
-            if (soulState != LootSoulState.Dying)
+            if (soulState != LootSoulState.Dying && soulState != LootSoulState.BeingLooted)
             {
                 GameEntity hitEntity = other.Tag as GameEntity;
                 if (hitEntity != null)
@@ -292,7 +292,7 @@ namespace KazgarsRevenge
                     if (hitEntity.Name == "loot")
                     {
                         LootSoulController otherSoul = hitEntity.GetComponent(typeof(AIComponent)) as LootSoulController;
-                        if (otherSoul != null && otherSoul.soulState != LootSoulState.Dying)
+                        if (otherSoul != null && otherSoul.soulState != LootSoulState.Dying && otherSoul.soulState != LootSoulState.BeingLooted)
                         {
                             List<Item> toAdd = otherSoul.Unite();
 

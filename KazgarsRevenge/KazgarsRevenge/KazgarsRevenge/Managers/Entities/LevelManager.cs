@@ -213,16 +213,20 @@ namespace KazgarsRevenge
             return Vector3.Transform(location - rotationPoint, Matrix.CreateRotationY(rotationAmt.ToRadians())) + rotationPoint;
         }
 
-        //bool addlight = false;
+        int addlight = 0;
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
-        {/*
-            if (addlight)
+        {
+            if (addlight == 0)
             {
                 Vector3 pos = position;
                 pos.Y = 50;
-                CreatePointLight(pos);
+                CreatePointLight(pos, Color.White);
             }
-            addlight = !addlight;*/
+            ++addlight;
+            if (addlight > 3)
+            {
+                addlight = 0;
+            }
 
             position.Y = LEVEL_Y;
 
