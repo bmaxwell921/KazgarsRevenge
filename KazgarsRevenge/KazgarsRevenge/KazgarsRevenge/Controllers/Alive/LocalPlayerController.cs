@@ -235,12 +235,12 @@ namespace KazgarsRevenge
                 bool newTarget = curMouse.LeftButton == ButtonState.Released || prevMouse.LeftButton == ButtonState.Released || (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released);
                 newTarget = CheckGUIButtons() || newTarget || mouseHoveredHealth == null;
 
-                string collides = CollidingGuiFrame();
-                bool mouseOnGui = collides != null || selectedItemSlot != -1 || selectedEquipSlot;
+                string outerCollides = CollidingGuiFrame();
+                bool mouseOnGui = outerCollides != null || selectedItemSlot != -1 || selectedEquipSlot;
                 CheckMouseRay(newTarget, mouseOnGui);
 
                 //if icon is removed from the inventory area
-                if (collides == null && (selectedItemSlot != -1 || selectedEquipSlot || selectedTalentSlot != -1) && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
+                if (outerCollides == null && (selectedItemSlot != -1 || selectedEquipSlot || selectedTalentSlot != -1) && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
                     //Trash item here?
                     selectedItemSlot = -1;
@@ -248,7 +248,9 @@ namespace KazgarsRevenge
                     selectedEquipSlot = false;
                 }
 
-                CheckButtonClicks(collides);
+                string innerCollides = CollidingInnerFrame(outerCollides);
+                CheckButtonClicks(outerCollides, innerCollides);
+                CheckMouseHover(outerCollides, innerCollides);
 
                 Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
                 if (targetedPhysicalData != null)
@@ -1135,7 +1137,10 @@ namespace KazgarsRevenge
         /// <returns></returns>
         private string CollidingInnerFrame(string outsideRec)
         {
-
+            if (outsideRec == null)
+            {
+                return null;
+            }
             foreach (KeyValuePair<string, Rectangle> k in guiInsideRects[outsideRec])
             {
                 if (RectContains(k.Value, curMouse.X, curMouse.Y))
@@ -1147,33 +1152,32 @@ namespace KazgarsRevenge
             return null;
         }
 
-        private void CheckButtonClicks(string collides)
+        private void CheckButtonClicks(string outerCollides, string innerCollides)
         {
             //appropriate action for gui element collided with
             //happens on left mouse released
             //#Nate
             #region left click check
-            if (collides != null && ((prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released) || (curMouse.LeftButton == ButtonState.Pressed && !dragging) || (curMouse.LeftButton == ButtonState.Released && dragging)))
+            if (outerCollides != null && ((prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released) || (curMouse.LeftButton == ButtonState.Pressed && !dragging) || (curMouse.LeftButton == ButtonState.Released && dragging)))
             {
-                string innerClicked = CollidingInnerFrame(collides);
                 //Set dragging to true if draggin mouse
-                if (curMouse.LeftButton == ButtonState.Pressed && innerClicked != null && !dragging)
+                if (curMouse.LeftButton == ButtonState.Pressed && innerCollides != null && !dragging)
                 {
-                    draggingSource = innerClicked;
+                    draggingSource = innerCollides;
                     dragging = true;
                 }
                 else
                 {
                     dragging = false;
                 }
-                if ((!dragging && draggingSource != innerClicked) || dragging)
+                if ((!dragging && draggingSource != innerCollides) || dragging)
                 {
-                    switch (collides)
+                    switch (outerCollides)
                     {
                         #region inventory
                         case "inventory":
                             //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate y u do dis
-                            if (innerClicked == "equipArrow")
+                            if (innerCollides == "equipArrow")
                             {
                                 showEquipment = !showEquipment;
                                 if (showEquipment)
@@ -1191,11 +1195,11 @@ namespace KazgarsRevenge
                                     }
                                 }
                             }
-                            if (innerClicked != null && innerClicked.Contains("inventory"))
+                            if (innerCollides != null && innerCollides.Contains("inventory"))
                             {
                                 for (int i = 0; i <= maxInventorySlots; i++)
                                 {
-                                    if (innerClicked == "inventory" + i && (inventory[i] != null || inventory[i] == null && selectedItemSlot != -1 || selectedEquipSlot))
+                                    if (innerCollides == "inventory" + i && (inventory[i] != null || inventory[i] == null && selectedItemSlot != -1 || selectedEquipSlot))
                                     {
                                         if (selectedEquipSlot)           //bringing equipment into inventory
                                         {
@@ -1239,9 +1243,9 @@ namespace KazgarsRevenge
                         #region loot
                         case "loot":
                             if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
-                            if (innerClicked == null) break;
+                            if (innerCollides == null) break;
                             //Loot All
-                            else if (innerClicked.Equals("lootAll"))
+                            else if (innerCollides.Equals("lootAll"))
                             {
                                 if (lootingSoul != null)
                                 {
@@ -1258,12 +1262,12 @@ namespace KazgarsRevenge
                                 }
                             }
                             //Scroll Up
-                            else if (innerClicked.Equals("upArrow") && lootingSoul.Loot.Count > NUM_LOOT_SHOWN)
+                            else if (innerCollides.Equals("upArrow") && lootingSoul.Loot.Count > NUM_LOOT_SHOWN)
                             {
                                 lootScroll++;
                             }
                             //Scroll Down
-                            else if (innerClicked.Equals("downArrow") && lootScroll > 0)
+                            else if (innerCollides.Equals("downArrow") && lootScroll > 0)
                             {
                                 lootScroll--;
                             }
@@ -1287,45 +1291,45 @@ namespace KazgarsRevenge
                         #region equipment
                         case "equipment":
                             //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate  D:<
-                            if (innerClicked == "equipWrist") //wrist
+                            if (innerCollides == "equipWrist") //wrist
                             {
                                 equipHelp(GearSlot.Wrist);
                             }
-                            else if (innerClicked == "equipBling")  //bling
+                            else if (innerCollides == "equipBling")  //bling
                             {
                                 equipHelp(GearSlot.Bling);
                             }
-                            else if (innerClicked == "equipLWep")  //LWep
+                            else if (innerCollides == "equipLWep")  //LWep
                             {
                                 equipHelp(GearSlot.Lefthand);
                             }
 
-                            else if (innerClicked == "equipHead")  //head
+                            else if (innerCollides == "equipHead")  //head
                             {
                                 equipHelp(GearSlot.Head);
                             }
-                            else if (innerClicked == "equipChest")  //chest
+                            else if (innerCollides == "equipChest")  //chest
                             {
                                 equipHelp(GearSlot.Chest);
                             }
-                            else if (innerClicked == "equipLegs")  //legs
+                            else if (innerCollides == "equipLegs")  //legs
                             {
                                 equipHelp(GearSlot.Legs);
                             }
-                            else if (innerClicked == "equipFeet")  //feet
+                            else if (innerCollides == "equipFeet")  //feet
                             {
                                 equipHelp(GearSlot.Feet);
                             }
 
-                            else if (innerClicked == "equipShoulder")  //shoulder
+                            else if (innerCollides == "equipShoulder")  //shoulder
                             {
                                 equipHelp(GearSlot.Shoulders);
                             }
-                            else if (innerClicked == "equipCod")  //Cod
+                            else if (innerCollides == "equipCod")  //Cod
                             {
                                 equipHelp(GearSlot.Codpiece);
                             }
-                            else if (innerClicked == "equipRWep")  //RWep
+                            else if (innerCollides == "equipRWep")  //RWep
                             {
                                 equipHelp(GearSlot.Righthand);
                             }
@@ -1333,9 +1337,9 @@ namespace KazgarsRevenge
                         #endregion
                         #region abilities
                         case "abilities":
-                            if (innerClicked != null && selectedTalentSlot != -1)
+                            if (innerCollides != null && selectedTalentSlot != -1)
                             {
-                                int check = Convert.ToInt32(innerClicked.Remove(0, 7));
+                                int check = Convert.ToInt32(innerCollides.Remove(0, 7));
 
                                 if (currentTalentTree == TalentTrees.ranged)
                                 {
@@ -1355,16 +1359,16 @@ namespace KazgarsRevenge
                             }
                             else
                             {
-                                abilityToUseString = innerClicked;
+                                abilityToUseString = innerCollides;
                             }
                             break;
                         #endregion
                         #region talents
                         case "talents":
-                            if (innerClicked != null)
+                            if (innerCollides != null)
                             {
                                 //TODO if we add any more innerFrames in abilities make sure we check those first
-                                int check = Convert.ToInt32(innerClicked.Remove(0, 6));
+                                int check = Convert.ToInt32(innerCollides.Remove(0, 6));
                                 if (currentTalentTree == TalentTrees.ranged)
                                 {
                                     talentHelp(check, rangedAbilities, false);
@@ -1386,18 +1390,17 @@ namespace KazgarsRevenge
             #endregion
 
             #region right click check
-            if (collides != null && prevMouse.RightButton == ButtonState.Pressed && curMouse.RightButton == ButtonState.Released)
+            if (outerCollides != null && prevMouse.RightButton == ButtonState.Pressed && curMouse.RightButton == ButtonState.Released)
             {
-                string innerClicked = CollidingInnerFrame(collides);
-                switch (collides)
+                switch (outerCollides)
                 {
                     #region inventory
                     case "inventory":
-                        if (innerClicked != null && innerClicked.Contains("inventory") && selectedItemSlot == -1)  //equip item right clicked on
+                        if (innerCollides != null && innerCollides.Contains("inventory") && selectedItemSlot == -1)  //equip item right clicked on
                         {
                             for (int i = 0; i <= maxInventorySlots; i++)
                             {
-                                if (innerClicked == "inventory" + i && inventory[i] != null)
+                                if (innerCollides == "inventory" + i && inventory[i] != null)
                                 {
                                     selectedItemSlot = i;
                                     Equippable e = inventory[i] as Equippable;        //set selectedEquipPiece as inventory[i]
@@ -1433,45 +1436,45 @@ namespace KazgarsRevenge
                     #endregion
                     #region equipment
                     case "equipment":
-                        if (innerClicked == "equipWrist") //wrist
+                        if (innerCollides == "equipWrist") //wrist
                         {
                             UnequipGear(GearSlot.Wrist);
                         }
-                        else if (innerClicked == "equipBling")  //bling
+                        else if (innerCollides == "equipBling")  //bling
                         {
                             UnequipGear(GearSlot.Bling);
                         }
-                        else if (innerClicked == "equipLWep")  //LWep
+                        else if (innerCollides == "equipLWep")  //LWep
                         {
                             UnequipGear(GearSlot.Lefthand);
                         }
 
-                        else if (innerClicked == "equipHead")  //head
+                        else if (innerCollides == "equipHead")  //head
                         {
                             UnequipGear(GearSlot.Head);
                         }
-                        else if (innerClicked == "equipChest")  //chest
+                        else if (innerCollides == "equipChest")  //chest
                         {
                             UnequipGear(GearSlot.Chest);
                         }
-                        else if (innerClicked == "equipLegs")  //legs
+                        else if (innerCollides == "equipLegs")  //legs
                         {
                             UnequipGear(GearSlot.Legs); ;
                         }
-                        else if (innerClicked == "equipFeet")  //feet
+                        else if (innerCollides == "equipFeet")  //feet
                         {
                             UnequipGear(GearSlot.Feet);
                         }
 
-                        else if (innerClicked == "equipShoulder")  //shoulder
+                        else if (innerCollides == "equipShoulder")  //shoulder
                         {
                             UnequipGear(GearSlot.Shoulders);
                         }
-                        else if (innerClicked == "equipCod")  //Cod
+                        else if (innerCollides == "equipCod")  //Cod
                         {
                             UnequipGear(GearSlot.Codpiece);
                         }
-                        else if (innerClicked == "equipRWep")  //RWep
+                        else if (innerCollides == "equipRWep")  //RWep
                         {
                             UnequipGear(GearSlot.Righthand);
                         }
@@ -1479,10 +1482,10 @@ namespace KazgarsRevenge
                     #endregion
                     #region talents
                     case "talents":
-                        if (innerClicked != null)
+                        if (innerCollides != null)
                         {
                             //TODO if we add any more innerFrames in abilities make sure we check those first
-                            int check = Convert.ToInt32(innerClicked.Remove(0, 6));
+                            int check = Convert.ToInt32(innerCollides.Remove(0, 6));
                             if (currentTalentTree == TalentTrees.ranged)
                             {
                                 talentHelp(check, rangedAbilities, true);
@@ -1502,6 +1505,11 @@ namespace KazgarsRevenge
 
             }
             #endregion
+        }
+
+        private void CheckMouseHover(string outerCollides, string innerCollides)
+        {
+
         }
         #endregion
 
