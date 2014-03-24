@@ -22,7 +22,7 @@ namespace KazgarsRevenge
         {
             for (int i = 0; i < numBowSounds; i++)
             {
-                soundEffects.Add("bowshoot" + i, game.Content.Load<SoundEffect>("Sound\\bowshoot" + i));
+                soundEffects.Add("bowshoot" + i, game.Content.Load<SoundEffect>("Sound\\Ranged\\bowshoot" + i));
             }
 
             for (int i = 0; i < numSwordSounds; ++i)
@@ -41,7 +41,7 @@ namespace KazgarsRevenge
 
 
         #region melee
-        const int numSwordSounds = 5;
+        const int numSwordSounds = 4;
         public void playMeleeSound()
         {
             soundEffects["sword_hit" + rand.Next(numBowSounds)].Play();
@@ -59,7 +59,7 @@ namespace KazgarsRevenge
 
 
         #region Ranged
-        const int numBowSounds = 4;
+        const int numBowSounds = 3;
         public void playRangedSound()
         {
             soundEffects["bowshoot" + rand.Next(numBowSounds)].Play();

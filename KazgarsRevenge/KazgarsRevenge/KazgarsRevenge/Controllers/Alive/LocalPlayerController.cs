@@ -878,7 +878,7 @@ namespace KazgarsRevenge
                 {
                     aniDecidingType = offHandType;
                 }
-                switch (mainHandType)
+                switch (aniDecidingType)
                 {
                     case AttackType.None:
                         if (distance < meleeRange)
