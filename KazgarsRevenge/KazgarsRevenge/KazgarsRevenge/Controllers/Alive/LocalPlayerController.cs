@@ -1338,7 +1338,7 @@ namespace KazgarsRevenge
                         #endregion
                         #region abilities
                         case "abilities":
-                            if (innerCollides != null && selectedTalentSlot != -1)
+                            if (innerCollides != null && selectedTalentSlot != -1 && !innerCollides.Equals("primary"))
                             {
                                 int check = Convert.ToInt32(innerCollides.Remove(0, 7));
 
@@ -1596,7 +1596,7 @@ namespace KazgarsRevenge
                 #endregion
                 #region abilities
                 case "abilities":
-                    if (innerCollides != null)
+                    if (innerCollides != null && !innerCollides.Equals("primary"))
                     {
                         int check = Convert.ToInt32(innerCollides.Remove(0, 7));
                         if (check == 12)
