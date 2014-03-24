@@ -1510,6 +1510,7 @@ namespace KazgarsRevenge
 
         private void CheckMouseHover(string outerCollides, string innerCollides)
         {
+            if (innerCollides == null) currentTooltip = null;
             switch (outerCollides)
             {
                 #region inventory
@@ -1520,7 +1521,7 @@ namespace KazgarsRevenge
                         {
                             if (innerCollides == "inventory" + i && inventory[i] != null)
                             {
-                                //TODO set currentTooltip = inventory[i].Tooltip
+                                currentTooltip = inventory[i].Tooltip;
                             }
                         }
                     }
@@ -1539,9 +1540,9 @@ namespace KazgarsRevenge
                     {//Normal Loot
                         for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
                         {
-                            if (innerCollides.Equals("loot" + i))
+                            if (innerCollides.Equals("loot" + i) && lootingSoul.GetLoot(i) != null)
                             {
-                                //TODO set currentTooltip = lootingSoul.GetLoot(i).tooltip
+                                currentTooltip = lootingSoul.GetLoot(i).Tooltip;
                             }
                         }
                     }
@@ -1550,47 +1551,47 @@ namespace KazgarsRevenge
                 #region equipment
                 case "equipment":
                     //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate  D:<
-                    if (innerCollides == "equipWrist") //wrist
+                    if (innerCollides == "equipWrist" && gear[GearSlot.Wrist] != null) //wrist
                     {
-                        //TODO currentTooltip = gear[GearSlot.Wrist].tooltip;
+                        currentTooltip = gear[GearSlot.Wrist].Tooltip;
                     }
-                    else if (innerCollides == "equipBling")  //bling
+                    else if (innerCollides == "equipBling" && gear[GearSlot.Bling] != null)  //bling
                     {
-                        //TODO currentTooltip = gear[GearSlot.Bling].tooltip;
+                        currentTooltip = gear[GearSlot.Bling].Tooltip;
                     }
-                    else if (innerCollides == "equipLWep")  //LWep
+                    else if (innerCollides == "equipLWep" && gear[GearSlot.Lefthand] != null)  //LWep
                     {
-                        //TODO currentTooltip = gear[GearSlot.Lefthand].tooltip;
-                    }
-
-                    else if (innerCollides == "equipHead")  //head
-                    {
-                        //TODO currentTooltip = gear[GearSlot.Head].tooltip;
-                    }
-                    else if (innerCollides == "equipChest")  //chest
-                    {
-                        //TODO currentTooltip = gear[GearSlot.Chest].tooltip;
-                    }
-                    else if (innerCollides == "equipLegs")  //legs
-                    {
-                        //TODO currentTooltip = gear[GearSlot.Legs].tooltip;
-                    }
-                    else if (innerCollides == "equipFeet")  //feet
-                    {
-                        //TODO currentTooltip = gear[GearSlot.Feet].tooltip;
+                        currentTooltip = gear[GearSlot.Lefthand].Tooltip;
                     }
 
-                    else if (innerCollides == "equipShoulder")  //shoulder
+                    else if (innerCollides == "equipHead" && gear[GearSlot.Head] != null)  //head
                     {
-                        //TODO currentTooltip = gear[GearSlot.Shoulders].tooltip;
+                        currentTooltip = gear[GearSlot.Head].Tooltip;
                     }
-                    else if (innerCollides == "equipCod")  //Cod
+                    else if (innerCollides == "equipChest" && gear[GearSlot.Chest] != null)  //chest
                     {
-                        //TODO currentTooltip = gear[GearSlot.Codpiece].tooltip;
+                        currentTooltip = gear[GearSlot.Chest].Tooltip;
                     }
-                    else if (innerCollides == "equipRWep")  //RWep
+                    else if (innerCollides == "equipLegs" && gear[GearSlot.Legs] != null)  //legs
                     {
-                        //TODO currentTooltip = gear[GearSlot.Righthand].tooltip;
+                        currentTooltip = gear[GearSlot.Legs].Tooltip;
+                    }
+                    else if (innerCollides == "equipFeet" && gear[GearSlot.Feet] != null)  //feet
+                    {
+                        currentTooltip = gear[GearSlot.Feet].Tooltip;
+                    }
+
+                    else if (innerCollides == "equipShoulder" && gear[GearSlot.Shoulders] != null)  //shoulder
+                    {
+                        currentTooltip = gear[GearSlot.Shoulders].Tooltip;
+                    }
+                    else if (innerCollides == "equipCod" && gear[GearSlot.Codpiece] != null)  //Cod
+                    {
+                        currentTooltip = gear[GearSlot.Codpiece].Tooltip;
+                    }
+                    else if (innerCollides == "equipRWep" && gear[GearSlot.Righthand] != null)  //RWep
+                    {
+                        currentTooltip = gear[GearSlot.Righthand].Tooltip;
                     }
                     break;
                 #endregion
@@ -1601,11 +1602,11 @@ namespace KazgarsRevenge
                         int check = Convert.ToInt32(innerCollides.Remove(0, 7));
                         if (check == 12)
                         {
-                            //TODO currentTooltip = mouseBoundAbility[0].Value.tooltip;
+                            currentTooltip = mouseBoundAbility[0].Value.Tooltip;
                         }
                         else
                         {
-                            //TODOboundAbilities[check].Value.tooltip;
+                            currentTooltip = boundAbilities[check].Value.Tooltip;
                         }
                     }
                     break;
@@ -1616,15 +1617,15 @@ namespace KazgarsRevenge
                     {
                         //TODO if we add any more innerFrames in abilities make sure we check those first
                         int check = Convert.ToInt32(innerCollides.Remove(0, 6));
-                        if (currentTalentTree == TalentTrees.ranged)
+                        if (currentTalentTree == TalentTrees.ranged && rangedAbilities[(int)check / 4, check % 4] != null)
                         {
-                            //TODO currentToolTip = GetAbility(rangedAbilities[(int)check / 4, check % 4].name).tooltip;
+                            currentTooltip = GetAbility(rangedAbilities[(int)check / 4, check % 4].name).Tooltip;
                         }
-                        else if (currentTalentTree == TalentTrees.melee)
+                        else if (currentTalentTree == TalentTrees.melee)  //TODO add check as above
                         {
-                            //TODO currentToolTip = GetAbility(meleeAbilities[(int)check / 4, check % 4].name).tooltip;
+                            //TODO currentTooltip = GetAbility(meleeAbilities[(int)check / 4, check % 4].name).tooltip;
                         }
-                        else if (currentTalentTree == TalentTrees.magic)
+                        else if (currentTalentTree == TalentTrees.magic)  //TODO add check as above
                         {
                             //TODO currentToolTip = GetAbility(magicAbilities[(int)check / 4, check % 4].name).tooltip;
                         }
@@ -1632,6 +1633,9 @@ namespace KazgarsRevenge
                     }
                     break;
                 #endregion
+                default:
+                    currentTooltip = null;
+                    break;
             }
         }
         #endregion
