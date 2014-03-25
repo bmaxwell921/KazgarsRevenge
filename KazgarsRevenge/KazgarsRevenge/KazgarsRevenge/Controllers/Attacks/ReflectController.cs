@@ -18,11 +18,13 @@ namespace KazgarsRevenge
     {
         FactionType factionToReflect;
         double life = 1000;
-        public ReflectController(KazgarsRevengeGame game, GameEntity entity, FactionType factionToReflect)
+        AliveComponent creator;
+        public ReflectController(KazgarsRevengeGame game, GameEntity entity, FactionType factionToReflect, AliveComponent creator)
             : base(game, entity)
         {
             this.factionToReflect = factionToReflect;
             (this.Entity.GetSharedData(typeof(Entity)) as Entity).CollisionInformation.Events.InitialCollisionDetected += HandleCollision;
+            this.creator = creator;
         }
 
         public override void Update(GameTime gameTime)
@@ -43,6 +45,7 @@ namespace KazgarsRevenge
                 if (possAttack != null && hitEntity.Faction == factionToReflect)
                 {
                     possAttack.Reflect(factionToReflect);
+                    creator.AddPower(1);
                 }
             }
         }

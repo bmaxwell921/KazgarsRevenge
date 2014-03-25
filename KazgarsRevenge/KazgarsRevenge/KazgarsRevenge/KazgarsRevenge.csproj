@@ -227,8 +227,8 @@
     <Compile Include="Networking\Handlers\ConnectedHandler.cs" />
     <Compile Include="Networking\Handlers\DiscoveryResponseHandler.cs" />
     <Compile Include="Networking\Misc\ServerInfo.cs" />
-    <Compile Include="Non-Component\Equippable.cs" />
-    <Compile Include="Non-Component\Item.cs" />
+    <Compile Include="Non-Component\Items\Equippable.cs" />
+    <Compile Include="Non-Component\Items\Item.cs" />
     <Compile Include="Libraries\SoundEffectLibrary.cs" />
     <Compile Include="Managers\Entities\EnemyManager.cs" />
     <Compile Include="Controllers\Alive\AliveComponent.cs" />
@@ -240,9 +240,9 @@
     <Compile Include="Controllers\Attacks\AttackController.cs" />
     <Compile Include="Managers\Entities\PlayerManager.cs" />
     <Compile Include="Managers\Entities\AttackManager.cs" />
-    <Compile Include="Non-Component\Potion.cs" />
+    <Compile Include="Non-Component\Items\Potion.cs" />
     <Compile Include="Non-Component\Tooltip.cs" />
-    <Compile Include="Non-Component\Weapon.cs" />
+    <Compile Include="Non-Component\Items\Weapon.cs" />
     <Compile Include="Managers\ParticleManager.cs" />
     <Compile Include="Particles\Base Classes\ParticleEmitter.cs" />
     <Compile Include="Particles\Base Classes\ParticleSettings.cs" />

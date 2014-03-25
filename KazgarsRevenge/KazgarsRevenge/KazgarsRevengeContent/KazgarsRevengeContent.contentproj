@@ -126,11 +126,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\whiteCursor.png">
-      <Name>whiteCursor</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Textures\whitePixel.png">
       <Name>whitePixel</Name>
       <Importer>TextureImporter</Importer>
@@ -1446,6 +1441,11 @@
       <Name>08-1-K-ES-objMap</Name>
       <Importer>FbxImporter</Importer>
       <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\cursor.png">
+      <Name>cursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

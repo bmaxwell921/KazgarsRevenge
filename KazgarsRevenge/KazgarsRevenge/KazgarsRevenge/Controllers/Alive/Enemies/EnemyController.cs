@@ -482,11 +482,7 @@ namespace KazgarsRevenge
         {
             if (Killer != null)
             {
-                AliveComponent killersController = Killer.GetComponent(typeof(AliveComponent)) as AliveComponent;
-                if (killersController != null)
-                {
-                    killersController.AddEXP(level, Entity.Type);
-                }
+                Killer.AddEXP(level, Entity.Type);
             }
             base.DealWithKiller();
         }

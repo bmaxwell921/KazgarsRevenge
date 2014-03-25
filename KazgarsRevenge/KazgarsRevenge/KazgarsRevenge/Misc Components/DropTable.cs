@@ -83,13 +83,13 @@ namespace KazgarsRevenge
         /// Gets drops from this drop table.
         /// </summary>
         /// <param name="floor">The floor the owning entity was killed on</param>
-        /// <param name="killingEntity">The entity that killed the owning entity</param>
+        /// <param name="killer">The entity that killed the owning entity</param>
         /// <returns></returns>
-        public IList<Item> GetDrops(FloorName floor, GameEntity killingEntity)
+        public IList<Item> GetDrops(FloorName floor, AliveComponent killer)
         {
             IList<Item> drops = new List<Item>();
             GetGoldDrops(drops, floor);
-            GetGearDrops(drops, floor, killingEntity);
+            GetGearDrops(drops, floor, killer);
             GetPotionDrops(drops, floor);
             GetEssenceDrops(drops, floor);
             GetRecipeDrops(drops, floor);
@@ -124,7 +124,7 @@ namespace KazgarsRevenge
 
         #region Gear
         // Gets the gear dropped
-        private void GetGearDrops(IList<Item> drops, FloorName floor, GameEntity killingEntity)
+        private void GetGearDrops(IList<Item> drops, FloorName floor, AliveComponent killingEntity)
         {
             // No drops :(
             if (!this.drops.ContainsKey(ItemType.Equippable))
@@ -140,16 +140,49 @@ namespace KazgarsRevenge
         }
 
         // Sets the dropped gear's stats
-        private void SetGearStats(Equippable dropped, FloorName floor, GameEntity killingEntity)
+        private void SetGearStats(Equippable dropped, FloorName floor, AliveComponent killingEntity)
         {
-            int baseStat = (floor.ToInt() - 1) * 10;
+            int itemLevel = (floor.ToInt() - 1) * 10;
             
             // Delegates!
-            baseStat += this.addedStatFunc();
+            itemLevel += this.addedStatFunc();
+
+            GearQuality q = GearQuality.Standard;
+            Random rand = RandSingleton.U_Instance;
+            if (Entity.Type == EntityType.Boss)
+            {
+                q = GearQuality.Good;
+                if (rand.Next(2) == 0)
+                {
+                    q = GearQuality.Epic;
+                }
+            }
+            else if (Entity.Type == EntityType.EliteEnemy)
+            {
+                int r = rand.Next(4);
+                q = GearQuality.Good;
+                if (r == 0)
+                {
+                    q = GearQuality.Epic;
+                }
+                else if (r < 2)
+                {
+                    q = GearQuality.Good;
+                }
+            }
+            else
+            {
+                if (rand.Next(4) == 0)
+                {
+                    q = GearQuality.Good;
+                }
+            }
+
+            dropped.SetStats(q, itemLevel);
 
             // TODO do we need additional stats here?
             Dictionary<StatType, float> itemStats = new Dictionary<StatType, float>();
-            itemStats[StatType.Strength] = baseStat;
+            itemStats[StatType.Strength] = itemLevel;
         }
         #endregion
 

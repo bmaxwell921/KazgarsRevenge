@@ -617,7 +617,7 @@ namespace KazgarsRevenge
             cleave.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            ReflectController controller = new ReflectController(mainGame, cleave, GetHitFaction(creator));
+            ReflectController controller = new ReflectController(mainGame, cleave, GetHitFaction(creator), creator);
             cleave.AddComponent(typeof(AttackController), controller);
             genComponentManager.AddComponent(controller);
 
@@ -650,7 +650,7 @@ namespace KazgarsRevenge
             position.Y = 20;
             GameEntity entity = new GameEntity("att", FactionType.Neutral, EntityType.None);
 
-            Entity physicalData = new Box(position, 40, 40, 100);
+            Entity physicalData = new Box(position, 40, 40, 40);
             physicalData.IsAffectedByGravity = false;
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
             entity.AddSharedData(typeof(Entity), physicalData);
@@ -672,7 +672,7 @@ namespace KazgarsRevenge
             position.Y = 20;
             GameEntity entity = new GameEntity("att", FactionType.Neutral, EntityType.None);
 
-            Entity physicalData = new Box(position, 40, 40, 100);
+            Entity physicalData = new Box(position, 40, 40, 40);
             physicalData.IsAffectedByGravity = false;
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
             entity.AddSharedData(typeof(Entity), physicalData);
@@ -698,7 +698,7 @@ namespace KazgarsRevenge
             position.Y = 20;
             GameEntity entity = new GameEntity("att", FactionType.Neutral, EntityType.None);
 
-            Entity physicalData = new Box(position, 40, 40, 100);
+            Entity physicalData = new Box(position, 40, 40, 40);
             physicalData.IsAffectedByGravity = false;
             entity.AddSharedData(typeof(Entity), physicalData);
 

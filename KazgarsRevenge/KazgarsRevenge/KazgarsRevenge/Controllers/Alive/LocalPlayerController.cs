@@ -151,6 +151,7 @@ namespace KazgarsRevenge
         bool selectedEquipSlot = false;
         bool dragging = false;
         String draggingSource;
+        Tooltip currentTooltip = null;
 
         enum TalentTrees
         {
@@ -513,7 +514,7 @@ namespace KazgarsRevenge
                 }
             }
             //Equipment
-            if (curKeys.IsKeyDown(Keys.U) && prevKeys.IsKeyUp(Keys.U))
+            if ((curKeys.IsKeyDown(Keys.U) && prevKeys.IsKeyUp(Keys.U)) || (curKeys.IsKeyDown(Keys.C) && prevKeys.IsKeyUp(Keys.C)))
             {
                 showEquipment = !showEquipment;
                 showInventory = showEquipment;
@@ -1262,12 +1263,12 @@ namespace KazgarsRevenge
                                 }
                             }
                             //Scroll Up
-                            else if (innerCollides.Equals("upArrow") && lootingSoul.Loot.Count > NUM_LOOT_SHOWN)
+                            else if (innerCollides.Equals("downArrow")&& lootingSoul.Loot.Count > NUM_LOOT_SHOWN*(lootScroll+1))
                             {
                                 lootScroll++;
                             }
                             //Scroll Down
-                            else if (innerCollides.Equals("downArrow") && lootScroll > 0)
+                            else if (innerCollides.Equals("upArrow") && lootScroll > 0)
                             {
                                 lootScroll--;
                             }
@@ -1337,7 +1338,7 @@ namespace KazgarsRevenge
                         #endregion
                         #region abilities
                         case "abilities":
-                            if (innerCollides != null && selectedTalentSlot != -1)
+                            if (innerCollides != null && selectedTalentSlot != -1 && !innerCollides.Equals("primary"))
                             {
                                 int check = Convert.ToInt32(innerCollides.Remove(0, 7));
 
@@ -1509,7 +1510,133 @@ namespace KazgarsRevenge
 
         private void CheckMouseHover(string outerCollides, string innerCollides)
         {
+            if (innerCollides == null) currentTooltip = null;
+            switch (outerCollides)
+            {
+                #region inventory
+                case "inventory":
+                    if (innerCollides != null && innerCollides.Contains("inventory"))  //hover over inventory slot
+                    {
+                        for (int i = 0; i <= maxInventorySlots; i++)
+                        {
+                            if (innerCollides == "inventory" + i && inventory[i] != null)
+                            {
+                                currentTooltip = inventory[i].Tooltip;
+                            }
+                        }
+                    }
+                    break;
+                #endregion
+                #region loot
+                case "loot":
+                    if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
+                    if (innerCollides == null) break;
+                    //Loot All
+                    else if (innerCollides.Equals("lootAll"))
+                    {
+                        //TODO Loot All Tooltip
+                    }
+                    else
+                    {//Normal Loot
+                        for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
+                        {
+                            if (innerCollides.Equals("loot" + i) && lootingSoul.GetLoot(i) != null)
+                            {
+                                currentTooltip = lootingSoul.GetLoot(i).Tooltip;
+                            }
+                        }
+                    }
+                    break;
+                #endregion
+                #region equipment
+                case "equipment":
+                    //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate  D:<
+                    if (innerCollides == "equipWrist" && gear[GearSlot.Wrist] != null) //wrist
+                    {
+                        currentTooltip = gear[GearSlot.Wrist].Tooltip;
+                    }
+                    else if (innerCollides == "equipBling" && gear[GearSlot.Bling] != null)  //bling
+                    {
+                        currentTooltip = gear[GearSlot.Bling].Tooltip;
+                    }
+                    else if (innerCollides == "equipLWep" && gear[GearSlot.Lefthand] != null)  //LWep
+                    {
+                        currentTooltip = gear[GearSlot.Lefthand].Tooltip;
+                    }
 
+                    else if (innerCollides == "equipHead" && gear[GearSlot.Head] != null)  //head
+                    {
+                        currentTooltip = gear[GearSlot.Head].Tooltip;
+                    }
+                    else if (innerCollides == "equipChest" && gear[GearSlot.Chest] != null)  //chest
+                    {
+                        currentTooltip = gear[GearSlot.Chest].Tooltip;
+                    }
+                    else if (innerCollides == "equipLegs" && gear[GearSlot.Legs] != null)  //legs
+                    {
+                        currentTooltip = gear[GearSlot.Legs].Tooltip;
+                    }
+                    else if (innerCollides == "equipFeet" && gear[GearSlot.Feet] != null)  //feet
+                    {
+                        currentTooltip = gear[GearSlot.Feet].Tooltip;
+                    }
+
+                    else if (innerCollides == "equipShoulder" && gear[GearSlot.Shoulders] != null)  //shoulder
+                    {
+                        currentTooltip = gear[GearSlot.Shoulders].Tooltip;
+                    }
+                    else if (innerCollides == "equipCod" && gear[GearSlot.Codpiece] != null)  //Cod
+                    {
+                        currentTooltip = gear[GearSlot.Codpiece].Tooltip;
+                    }
+                    else if (innerCollides == "equipRWep" && gear[GearSlot.Righthand] != null)  //RWep
+                    {
+                        currentTooltip = gear[GearSlot.Righthand].Tooltip;
+                    }
+                    break;
+                #endregion
+                #region abilities
+                case "abilities":
+                    if (innerCollides != null && !innerCollides.Equals("primary"))
+                    {
+                        int check = Convert.ToInt32(innerCollides.Remove(0, 7));
+                        if (check == 12)
+                        {
+                            currentTooltip = mouseBoundAbility[0].Value.Tooltip;
+                        }
+                        else
+                        {
+                            currentTooltip = boundAbilities[check].Value.Tooltip;
+                        }
+                    }
+                    break;
+                #endregion
+                #region talents
+                case "talents":
+                    if (innerCollides != null)
+                    {
+                        //TODO if we add any more innerFrames in abilities make sure we check those first
+                        int check = Convert.ToInt32(innerCollides.Remove(0, 6));
+                        if (currentTalentTree == TalentTrees.ranged && rangedAbilities[(int)check / 4, check % 4] != null)
+                        {
+                            currentTooltip = GetAbility(rangedAbilities[(int)check / 4, check % 4].name).Tooltip;
+                        }
+                        else if (currentTalentTree == TalentTrees.melee)  //TODO add check as above
+                        {
+                            //TODO currentTooltip = GetAbility(meleeAbilities[(int)check / 4, check % 4].name).tooltip;
+                        }
+                        else if (currentTalentTree == TalentTrees.magic)  //TODO add check as above
+                        {
+                            //TODO currentToolTip = GetAbility(magicAbilities[(int)check / 4, check % 4].name).tooltip;
+                        }
+
+                    }
+                    break;
+                #endregion
+                default:
+                    currentTooltip = null;
+                    break;
+            }
         }
         #endregion
 
@@ -1799,7 +1926,7 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
             //Damage Tracker
             
-            s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Green * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Black * 0.5f);
             //Mini Map (square for now)
             s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Orange * 0.5f);
 
@@ -2017,6 +2144,11 @@ namespace KazgarsRevenge
                 s.DrawString(font, (totalTalentPoints - spentTalentPoints) + "/" + totalTalentPoints, vecName, Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
             }
             #endregion
+
+            #region tooltip
+            if (currentTooltip != null) 
+                currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, 1.0f, 50f);       //#Jared drawing tooltip here
+            #endregion
             #endregion
 
             #region mouse
@@ -2054,8 +2186,8 @@ namespace KazgarsRevenge
             }
             else
             {
-                rectMouse.Width = 25;
-                rectMouse.Height = 25;
+                rectMouse.Width = 40;
+                rectMouse.Height = 40;
                 s.Draw(texCursor, rectMouse, Color.White);
             }
             #endregion mouse

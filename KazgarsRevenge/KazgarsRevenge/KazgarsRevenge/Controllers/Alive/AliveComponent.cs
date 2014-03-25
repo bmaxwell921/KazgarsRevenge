@@ -143,7 +143,7 @@ namespace KazgarsRevenge
         }
         public bool Dead { get; private set; }
 
-        public GameEntity Killer { get; protected set; }
+        public AliveComponent Killer { get; protected set; }
 
         public void ReviveAlive()
         {
@@ -333,7 +333,7 @@ namespace KazgarsRevenge
                     KillAlive();
                     if (Dead)
                     {
-                        Killer = from;
+                        Killer = from.GetComponent(typeof(AliveComponent)) as AliveComponent;
                         DealWithKiller();
                     }
                 }

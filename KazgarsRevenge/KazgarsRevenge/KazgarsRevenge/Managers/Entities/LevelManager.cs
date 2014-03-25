@@ -425,11 +425,11 @@ namespace KazgarsRevenge
                     CreateProp(Vector3.Transform(v, chunkTransform));
                 }
 
-                //List<Vector3> mobSpawnLocations = levelInfo.mobSpawnLocations;
-                //foreach (Vector3 v in mobSpawnLocations)
-                //{
-                //    CreateMobSpawner(Vector3.Transform(v, chunkTransform));
-                //}
+                List<Vector3> mobSpawnLocations = levelInfo.mobSpawnLocations;
+                foreach (Vector3 v in mobSpawnLocations)
+                {
+                    CreateMobSpawner(Vector3.Transform(v, chunkTransform));
+                }
 
                 List<Vector3> playerspawns = levelInfo.playerSpawnLocations;
                 foreach (Vector3 v in playerspawns)
@@ -532,7 +532,7 @@ namespace KazgarsRevenge
 
         private void CreateMobSpawner(Vector3 pos)
         {
-            if (RandSingleton.U_Instance.Next(10) < 20)
+            if (RandSingleton.U_Instance.Next(100) < 10)
             {
                 (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Spawning at location: {0}", pos));
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);

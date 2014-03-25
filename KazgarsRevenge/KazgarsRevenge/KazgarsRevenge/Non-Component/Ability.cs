@@ -22,13 +22,13 @@ namespace KazgarsRevenge
         public AbilityType AbilityType { get; private set; }
         public AbilityName AbilityName { get; private set; }
         public int PowerCost { get; private set; }
+        public Tooltip Tooltip { get; private set; }
 
         public double cooldownMillisLength;
         public double cooldownMillisRemaining;
         public bool onCooldown { get; private set; }
-        String tooltip = "N/A";
 
-        public Ability(AbilityName abilityName, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType, int powerCost)
+        public Ability(AbilityName abilityName, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType, int powerCost, string descriptionText)
         {   
             icon = iconIn;
             cooldownMillisLength = cooldownMillis;
@@ -39,11 +39,25 @@ namespace KazgarsRevenge
             this.AbilityType = abilityType;
             this.AbilityName = abilityName;
             this.PowerCost = powerCost;
-        }
 
-        public void setToolTip(String toolTipString)
-        {
-            tooltip = toolTipString;
+
+            List<TooltipLine> ttlines = new List<TooltipLine>();
+            ttlines.Add(new TooltipLine(Color.White, abilityName.ToString(), 1));
+            if (PowerCost > 0)
+            {
+                ttlines.Add(new TooltipLine(Color.White, PowerCost + " Power", .75f));
+            }
+            if (cooldownMillisLength > 0)
+            {
+                ttlines.Add(new TooltipLine(Color.White, Math.Round(cooldownMillisLength / 1000.0f, 2) + " sec. cooldown", .75f));
+            }
+            if (PrimaryType != AttackType.None)
+            {
+                ttlines.Add(new TooltipLine(Color.White, "Requires " + PrimaryType.ToString() + " Weapon", .75f));
+            }
+            ttlines.Add(new TooltipLine(Color.Gold, descriptionText, .5f));
+
+            this.Tooltip = new Tooltip(ttlines);
         }
 
         public void ResetCooldown()
