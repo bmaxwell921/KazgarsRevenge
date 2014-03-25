@@ -89,7 +89,7 @@ namespace KazgarsRevenge
         // Put mobs a little bit above the ground so they don't sink down
         public static readonly float MOB_SPAWN_Y = 20;
 
-        public static readonly string ROOM_PATH = @"Models\Levels\";
+        public static readonly string ROOM_PATH = @"Models\NewTileLevels\Rooms\";
 
         //public FloorName CurrentFloor = FloorName.Dungeon;
 
@@ -135,22 +135,6 @@ namespace KazgarsRevenge
                     this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j));
                 }
             }
-
-            /*
-             * This is a set of all the locations of doors in the entire map. After we're done connecting
-             * each room's internal blocks together we'll go thru all these door locations and add edges
-             * between doors that are adjacent
-             */ 
-            ISet<Vector3> doors = new HashSet<Vector3>();
-            for (int i = 0; i < levelWidth; ++i)
-            {
-                for (int j = 0; j < levelHeight; ++j)
-                {
-                    BuildAndAddPathing(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j, doors);
-                }
-            }
-
-            ConnectDoors(doors);
         }
 
         /// <summary>
@@ -179,7 +163,7 @@ namespace KazgarsRevenge
                 rooms.Add(CreateRoom(room, chunkInfo.rotation, chunkLocation));
             }
 
-            //ProcessObjectMap(chunkInfo.ChunkName + "-objmap", chunkInfo.rotation.ToRadians(), chunkLocation * BLOCK_SIZE* 3 / 2);
+            ProcessObjectMap(chunkInfo.ChunkName + "-objMap", chunkInfo.rotation.ToRadians(), chunkLocation * BLOCK_SIZE* 3 / 2);
 
             return rooms;
         }
@@ -202,8 +186,6 @@ namespace KazgarsRevenge
             
             // Here for convenience
             Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y); 
-            
-            AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, room.rotation, chunkLocation, chunkRotation, room.UnRotWidth, room.UnRotHeight);
             return roomGE;
         }
 
@@ -216,18 +198,6 @@ namespace KazgarsRevenge
         int addlight = 0;
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {
-            if (addlight == 0)
-            {
-                Vector3 pos = position;
-                pos.Y = 50;
-                CreatePointLight(pos, Color.White);
-            }
-            ++addlight;
-            if (addlight > 3)
-            {
-                addlight = 0;
-            }
-
             position.Y = LEVEL_Y;
 
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
@@ -313,7 +283,7 @@ namespace KazgarsRevenge
 
         #region Object Map Processing
 
-        string objectMapDir = "Models\\Levels\\RoomObjectMaps\\";
+        string objectMapDir = "Models\\NewTileLevels\\RoomObjectMaps\\";
         private void ProcessObjectMap(string objectMapName, float yaw, Vector3 position)
         {
             Matrix chunkTransform = Matrix.CreateScale(roomScale)
@@ -327,6 +297,7 @@ namespace KazgarsRevenge
             catch (Exception)
             {
                 //squelching the exception for testing (dont have all object maps yet)
+                Console.WriteLine("Didn't have object map for: {0}", objectMapDir + objectMapName);
                 return;
             }
 
@@ -419,7 +390,7 @@ namespace KazgarsRevenge
             prop.AddSharedData(typeof(Entity), physicalData);
 
             //TODO: emitters and effects
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\NewTileLevels\\Props\\soulevator"), new Vector3(10), Vector3.Zero, 0, 0, 0);
             graphics.SetAlpha(.5f);
             prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
@@ -439,7 +410,7 @@ namespace KazgarsRevenge
             door.AddComponent(typeof(PhysicsComponent), doorPhysics);
             genComponentManager.AddComponent(doorPhysics);
 
-            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-nsdoor"), roomScale, Vector3.Zero, yaw, 0, 0);
+            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-nsdoor"), roomScale, Vector3.Zero, yaw, 0, 0);
             door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
             modelManager.AddComponent(doorGraphics);
 
@@ -453,7 +424,7 @@ namespace KazgarsRevenge
             Entity physicalData = new Box(pos, 1, 1, 1);
             lightProp.AddSharedData(typeof(Entity), physicalData);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, lightProp, GetUnanimatedModel("Models\\Levels\\Props\\01-lightFixture"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, lightProp, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-lightFixture"), new Vector3(10), Vector3.Zero, 0, 0, 0);
             lightProp.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
@@ -467,12 +438,18 @@ namespace KazgarsRevenge
             Entity physicalData = new Box(pos, 1, 1, 1);
             prop.AddSharedData(typeof(Entity), physicalData);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
             prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
             rooms.Add(prop);
         }
+
+        // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240
+        // TODO Set these based on a difficulty level???
+        private static readonly float PROXIMITY = 60;
+        // Spawn every 3 seconds
+        private static readonly float DELAY = 3000;
 
         private void CreateMobSpawner(Vector3 pos)
         {
@@ -481,13 +458,8 @@ namespace KazgarsRevenge
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
                 ISet<Vector3> spawnLocs = new HashSet<Vector3>();
-                for (int i = -1; i < 1; ++i)
-                {
-                    for (int j = -1; j < 1; ++j)
-                    {
-                        spawnLocs.Add(new Vector3(pos.X + i * BLOCK_SIZE / 8, LEVEL_Y, pos.Z + j * BLOCK_SIZE / 8));
-                    }
-                }
+                spawnLocs.Add(pos);
+
                 EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
                 spawner.AddComponent(typeof(EnemyProximitySpawner), eps);
                 genComponentManager.AddComponent(eps);
@@ -500,26 +472,6 @@ namespace KazgarsRevenge
         {
             pos.Y = MOB_SPAWN_Y;
             currentLevel.spawnLocs.Add(pos);
-        }
-
-        // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240
-        // TODO Set these based on a difficulty level???
-        private static readonly float PROXIMITY = 60;
-        // Spawn every 3 seconds
-        private static readonly float DELAY = 3000;
-
-        // Adds the necessary spawning components to the roomGE
-        private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
-        {
-            ISet<Vector3> spawnLocs = new HashSet<Vector3>();
-            foreach (RoomBlock spawner in enemySpawners)
-            {
-                Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
-                spawnLocs.Add(spawnCenter);
-            }
-            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
-            roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
-            genComponentManager.AddComponent(eps);
         }
 
         #endregion

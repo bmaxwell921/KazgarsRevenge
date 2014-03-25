@@ -83,6 +83,11 @@ namespace KazgarsRevenge
             {
                 foreach (Vector3 loc in spawnLocations)
                 {
+                    // This doesn't seem to affect anything....
+                    if (RandSingleton.U_Instance.Next(1000) > 1)
+                    {
+                        return;
+                    }
                     // TODO actual level
                     int r = RandSingleton.U_Instance.Next(4);
                     if (r == 0)

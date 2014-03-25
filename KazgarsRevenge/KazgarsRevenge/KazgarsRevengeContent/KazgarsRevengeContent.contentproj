@@ -958,13 +958,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\NewTileLevels\RoomObjectMaps\01-1-S-NSEW-objmap.fbx">
-      <Name>01-1-S-NSEW-objmap</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>LevelModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Models\NewTileLevels\Props\01-chair.fbx">
       <Name>01-chair</Name>
       <Importer>FbxImporter</Importer>
@@ -1426,6 +1419,33 @@
       <Name>devastate3</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\NewTileLevels\RoomObjectMaps\01-1-S-NSEW-objMap.fbx">
+      <Name>01-1-S-NSEW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\NewTileLevels\RoomObjectMaps\02-1-S-NSEW-objMap.fbx">
+      <Name>02-1-S-NSEW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\NewTileLevels\RoomObjectMaps\04-1-K-ESW-objMap.fbx">
+      <Name>04-1-K-ESW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\NewTileLevels\RoomObjectMaps\06-1-N-ESW-objMap.fbx">
+      <Name>06-1-N-ESW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\NewTileLevels\RoomObjectMaps\08-1-K-ES-objMap.fbx">
+      <Name>08-1-K-ES-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
