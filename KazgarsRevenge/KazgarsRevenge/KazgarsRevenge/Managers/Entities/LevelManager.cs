@@ -100,10 +100,22 @@ namespace KazgarsRevenge
         private List<GameEntity> rooms;
         private List<GameEntity> lights = new List<GameEntity>();
 
+        private IDictionary<char, Vector3> pathConnections;
+
         public LevelManager(KazgarsRevengeGame game)
             : base(game)
         {
             rooms = new List<GameEntity>();
+            SetUpPathConnections();
+        }
+
+        private void SetUpPathConnections()
+        {
+            pathConnections = new Dictionary<char, Vector3>();
+            pathConnections['N'] = new Vector3(0, 0, -1);
+            pathConnections['S'] = new Vector3(0, 0, 1);
+            pathConnections['E'] = new Vector3(1, 0, 0);
+            pathConnections['W'] = new Vector3(-1, 0, 0);
         }
 
         /// <summary>
@@ -178,15 +190,83 @@ namespace KazgarsRevenge
 
             // Rotates the center of the room as needed by the chunk rotation
             Vector3 rotatedCenter = GetRotatedLocation(roomCenter + chunkLocation, chunkCenter, chunkRotation);
+
             // The yaw for a room should just be the room's rotation plus the chunk's rotation
             float yaw = room.rotation.ToRadians() + chunkRotation.ToRadians();
 
             // Create the actual entity
             GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, rotatedCenter * BLOCK_SIZE, yaw);
+            AddRoomGraph(room, roomCenter, chunkLocation, chunkCenter, chunkRotation);
             
             // Here for convenience
             Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y); 
             return roomGE;
+        }
+
+        // Adds this room's stuff to the path graph.
+        // roomCenter hasn't been transformed to the chunkLocation or rotation
+        private void AddRoomGraph(Room room, Vector3 roomCenter, Vector3 chunkLocation, Vector3 chunkCenter, Rotation chunkRotation)
+        {
+            IList<Vector3> nodes = new List<Vector3>();
+            Vector3 rotatedCenter = GetRotatedLocation(roomCenter + chunkLocation, chunkCenter, chunkRotation);
+
+            IList<char> connections = ReadConnections(room.name);
+            if (connections == null)
+            {
+                return;
+            }
+            foreach (char connection in connections)
+            {
+                nodes.Add(GetRotatedLocation(roomCenter + chunkLocation + pathConnections[connection], chunkCenter, chunkRotation));
+            }
+
+            foreach (Vector3 node in nodes)
+            {
+                this.AddEdge(new Edge<Vector3>(rotatedCenter * BLOCK_SIZE, node * BLOCK_SIZE));
+            }
+        }
+
+        private IList<char> ReadConnections(string roomName)
+        {
+            /*
+             * Format:
+             *  <ID>-<CONNECTION_LOCS>-<NAME>
+             * Example:
+             *  0-NSEW-Soulevator
+             *  
+             * A 0 for the <CONNECTION_LOCS> means there are no connections
+             */ 
+            char delim = '-';
+            string[] splat = roomName.Split(delim);
+
+            if (splat.Count() != 3)
+            {
+                return null;
+            }
+
+            IList<char> connections = new List<char>();
+            try
+            {
+                for (int i = 0; i < splat[1].Count(); ++i)
+                {
+                    char cur = splat[1][i];
+                    if (cur.Equals('0'))
+                    {
+                        return null;
+                    }
+                    if (pathConnections.ContainsKey(cur))
+                    {
+                        connections.Add(cur);
+                    }
+                }
+
+                return connections;
+            }
+            catch (Exception e)
+            {
+                (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Problem parsing roomName: {0}", roomName));
+                return null;
+            }
         }
 
         private Vector3 GetRotatedLocation(Vector3 location, Vector3 rotationPoint, Rotation rotationAmt)
@@ -195,7 +275,6 @@ namespace KazgarsRevenge
             return Vector3.Transform(location - rotationPoint, Matrix.CreateRotationY(rotationAmt.ToRadians())) + rotationPoint;
         }
 
-        int addlight = 0;
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {
             position.Y = LEVEL_Y;
