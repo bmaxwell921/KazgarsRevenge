@@ -15,7 +15,7 @@ namespace KazgarsRevenge
         private static readonly int START_CHAR_LEVEL = 1;
 
         // Start with 0 unlocked floors (have to play tutorial first)
-        private static readonly int START_UNLOCKED_FLOORS = 0;
+        private static readonly int START_UNLOCKED_FLOORS = 1;
 
         // TODO how many?
         private static readonly int START_TALENT_POINTS = 0;
