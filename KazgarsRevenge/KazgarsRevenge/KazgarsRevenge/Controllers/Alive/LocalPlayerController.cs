@@ -738,6 +738,13 @@ namespace KazgarsRevenge
                 {
                     if (abilityToUseString == "ability" + i)
                     {
+                        if (boundAbilities[i].Value.AbilityName == AbilityName.None)
+                        {
+                            abilityToUse = null;
+                            abilityToUseString = null;
+                            useAbility = false;
+                            return;
+                        }
                         if (!boundAbilities[i].Value.onCooldown)
                         {
                             if (boundAbilities[i].Value.PrimaryType == AttackType.None || GetMainhandType() == boundAbilities[i].Value.PrimaryType)
@@ -769,7 +776,7 @@ namespace KazgarsRevenge
                     }
                 }
                 //rm check
-                if (abilityToUseString == "ability12")
+                if (abilityToUseString == "ability12" && mouseBoundAbility[0].Value.AbilityName != AbilityName.None)
                 {
                     if (!mouseBoundAbility[0].Value.onCooldown)
                     {
@@ -1058,7 +1065,7 @@ namespace KazgarsRevenge
                 }
                 else        //if talent is already learned
                 {   //equip in first open slot
-                    if (GetAbility(talents[(int)check / 4, check % 4].name).AbilityType == AbilityType.Passive)
+                    if (GetCachedAbility(talents[(int)check / 4, check % 4].name).AbilityType == AbilityType.Passive)
                     {
                         //Trying to put a passive on the bar.  Tell them no?
                         ((MainGame)Game).AddAlert("I can't use a passive ability!");
@@ -1074,8 +1081,8 @@ namespace KazgarsRevenge
                                 {
                                     selectedTalentSlot = check;
                                     checkTalentOnBar(talents);
-                                    if (i == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    else boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    if (i == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    else boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetCachedAbility(talents[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                     placed = true;
                                     selectedTalentSlot = -1;
                                     break;
@@ -1095,13 +1102,13 @@ namespace KazgarsRevenge
             {   //if ability is already on bar
                 if (boundAbilities[i].Value.AbilityName.Equals(curentTalentTree[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
                 {   //set that slot to empty
-                    boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetAbility(AbilityName.None));
+                    boundAbilities[i] = new KeyValuePair<Keys, Ability>(boundAbilities[i].Key, GetCachedAbility(AbilityName.None));
                 }
             }
             //if ability is already on right mouse
             if (mouseBoundAbility[0].Value.AbilityName.Equals(curentTalentTree[selectedTalentSlot / 4, selectedTalentSlot % 4].name))
             {   //set that slot to empty
-                mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(AbilityName.None));
+                mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(AbilityName.None));
             }
         }
 
@@ -1345,8 +1352,8 @@ namespace KazgarsRevenge
                                 if (currentTalentTree == TalentTrees.ranged)
                                 {
                                     checkTalentOnBar(rangedAbilities);
-                                    if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    else boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    else boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 }
                                 else if (currentTalentTree == TalentTrees.melee)
                                 {
@@ -1619,7 +1626,7 @@ namespace KazgarsRevenge
                         int check = Convert.ToInt32(innerCollides.Remove(0, 6));
                         if (currentTalentTree == TalentTrees.ranged && rangedAbilities[(int)check / 4, check % 4] != null)
                         {
-                            currentTooltip = GetAbility(rangedAbilities[(int)check / 4, check % 4].name).Tooltip;
+                            currentTooltip = GetCachedAbility(rangedAbilities[(int)check / 4, check % 4].name).Tooltip;
                         }
                         else if (currentTalentTree == TalentTrees.melee)  //TODO add check as above
                         {
@@ -2086,7 +2093,7 @@ namespace KazgarsRevenge
                     {
                         if (rangedAbilities[j, i] != null)
                         {       //Draw active frames around active items
-                            if (GetAbility(rangedAbilities[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[rangedAbilities[j, i].name])
+                            if (GetCachedAbility(rangedAbilities[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[rangedAbilities[j, i].name])
                             {
                                 Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
                                 temp.X = temp.X - 4;
@@ -2096,7 +2103,7 @@ namespace KazgarsRevenge
                                 s.Draw(texWhitePixel, temp, Color.Red * .8f);
                             }
                             //Draw Icon
-                            s.Draw(GetAbility(rangedAbilities[j, i].name).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
+                            s.Draw(GetCachedAbility(rangedAbilities[j, i].name).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
                             //Draw shadow over locked abilities
                             if (!abilityLearnedFlags[rangedAbilities[j, i].name])
                             {   //can be unlocked
@@ -2172,7 +2179,7 @@ namespace KazgarsRevenge
                 rectMouse.Height = (int)(60 * average);
                 if (currentTalentTree == TalentTrees.ranged)
                 {
-                    s.Draw(GetAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name).icon, rectMouse, Color.White);
+                    s.Draw(GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name).icon, rectMouse, Color.White);
                 }
                 else if (currentTalentTree == TalentTrees.melee)
                 {

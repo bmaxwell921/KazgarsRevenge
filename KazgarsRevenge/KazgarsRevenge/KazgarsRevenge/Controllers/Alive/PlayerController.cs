@@ -424,21 +424,21 @@ namespace KazgarsRevenge
             #region ability initialization
             //create initial abilities
 
-            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetAbility(AbilityName.DevastatingStrike));
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetAbility(AbilityName.Execute));
-            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetAbility(AbilityName.Garrote));
-            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetAbility(AbilityName.Swordnado));
-            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetAbility(AbilityName.Cleave));
-            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetAbility(AbilityName.Reflect));
-            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetAbility(AbilityName.None));
-            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetAbility(AbilityName.None));
+            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetCachedAbility(AbilityName.DevastatingStrike));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetCachedAbility(AbilityName.Execute));
+            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetCachedAbility(AbilityName.Garrote));
+            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetCachedAbility(AbilityName.Swordnado));
+            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetCachedAbility(AbilityName.Cleave));
+            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetCachedAbility(AbilityName.Reflect));
+            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetCachedAbility(AbilityName.None));
+            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetCachedAbility(AbilityName.None));
             //added item slot abilities
-            boundAbilities[8] = new KeyValuePair<Keys, Ability>(Keys.D1, GetAbility(AbilityName.None));
-            boundAbilities[9] = new KeyValuePair<Keys, Ability>(Keys.D2, GetAbility(AbilityName.None));
-            boundAbilities[10] = new KeyValuePair<Keys, Ability>(Keys.D3, GetAbility(AbilityName.None));
-            boundAbilities[11] = new KeyValuePair<Keys, Ability>(Keys.D4, GetAbility(AbilityName.None));
+            boundAbilities[8] = new KeyValuePair<Keys, Ability>(Keys.D1, GetCachedAbility(AbilityName.None));
+            boundAbilities[9] = new KeyValuePair<Keys, Ability>(Keys.D2, GetCachedAbility(AbilityName.None));
+            boundAbilities[10] = new KeyValuePair<Keys, Ability>(Keys.D3, GetCachedAbility(AbilityName.None));
+            boundAbilities[11] = new KeyValuePair<Keys, Ability>(Keys.D4, GetCachedAbility(AbilityName.None));
 
-            mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(ButtonState.Pressed, GetAbility(AbilityName.None));
+            mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(ButtonState.Pressed, GetCachedAbility(AbilityName.None));
             for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
             {
                 abilityLearnedFlags[(AbilityName)i] = true;
@@ -1942,14 +1942,23 @@ namespace KazgarsRevenge
         #endregion
 
         #region Ability Definitions
-        
-        protected Ability GetAbility(AbilityName ability)
+        private Dictionary<AbilityName, Ability> cachedAbilities = new Dictionary<AbilityName, Ability>();
+
+        protected Ability GetCachedAbility(AbilityName ability)
+        {
+            if (cachedAbilities.ContainsKey(ability))
+            {
+                return cachedAbilities[ability];
+            }
+
+            return GetAbility(ability);
+        }
+        private Ability GetAbility(AbilityName ability)
         {
             switch (ability)
             {
                 case AbilityName.None:
                     return GetNone();
-
                 case AbilityName.Snipe://ranged actives
                     return GetSnipe();
                 case AbilityName.Omnishot:
@@ -2040,7 +2049,6 @@ namespace KazgarsRevenge
                     return GetIceClawPrison();
                 default:
                     return GetNone();
-                    //throw new Exception("That ability hasn't been implemented.");
             }
         }
 
