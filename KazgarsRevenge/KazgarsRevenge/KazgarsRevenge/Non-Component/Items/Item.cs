@@ -45,6 +45,11 @@ namespace KazgarsRevenge
             }
 
             this.ItemID = id;
+
+            if (this.ItemID == 0)
+            {
+                SetTooltip(GetGoldTooltip());
+            }
         }
 
         /// <summary>
@@ -75,6 +80,16 @@ namespace KazgarsRevenge
             this.Tooltip = t;
         }
 
+        private Tooltip GetGoldTooltip()
+        {
+            return new Tooltip(
+                new List<TooltipLine>
+                {
+                    new TooltipLine(Color.White, "Gold", 1),
+                    new TooltipLine(Color.Gold, "" + Quantity, .75f)
+                });
+        }
+
         /// <summary>
         /// use this to stack the same type of item with itself
         /// </summary>
@@ -83,6 +98,11 @@ namespace KazgarsRevenge
         {
             this.Quantity += quantity;
             this.Stackable = true;
+
+            if (this.ItemID == 0)
+            {
+                SetTooltip(GetGoldTooltip());
+            }
         }
 
         /// <summary>

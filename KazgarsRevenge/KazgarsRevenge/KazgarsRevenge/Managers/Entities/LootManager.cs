@@ -148,7 +148,13 @@ namespace KazgarsRevenge
 
             // TODO we need to pass in the entity that killed it so we can properly
             // apply some of the boosts. Ie Potion of Luck
-            return table.GetDrops(floor, null);
+            AliveComponent killer = null;
+            AliveComponent deadguy = deadEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+            if (deadguy != null)
+            {
+                killer = deadguy.Killer;
+            }
+            return table.GetDrops(floor, killer);
         }
 
         public DropTable CreateNormalDropTableFor(GameEntity enemy, AttackType type1, AttackType type2)
@@ -186,7 +192,7 @@ namespace KazgarsRevenge
                     AddMagicDrops(dt, currentFloor);
                     break;
             }
-            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), "Health Potion", 0, 1), 24, 5);
+            dt.AddDrop(ItemType.Potion, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, 1), 24, 5);
             return dt;
         }
 

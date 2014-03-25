@@ -1926,7 +1926,7 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
             //Damage Tracker
             
-            s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Green * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Black * 0.5f);
             //Mini Map (square for now)
             s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Orange * 0.5f);
 
@@ -2146,7 +2146,8 @@ namespace KazgarsRevenge
             #endregion
 
             #region tooltip
-            if (currentTooltip != null) currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, 1.0f, 50f);       //#Jared drawing tooltip here
+            if (currentTooltip != null) 
+                currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, 1.0f, 50f);       //#Jared drawing tooltip here
             #endregion
             #endregion
 
@@ -2185,8 +2186,8 @@ namespace KazgarsRevenge
             }
             else
             {
-                rectMouse.Width = 25;
-                rectMouse.Height = 25;
+                rectMouse.Width = 40;
+                rectMouse.Height = 40;
                 s.Draw(texCursor, rectMouse, Color.White);
             }
             #endregion mouse

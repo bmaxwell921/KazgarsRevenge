@@ -617,7 +617,7 @@ namespace KazgarsRevenge
             cleave.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            ReflectController controller = new ReflectController(mainGame, cleave, GetHitFaction(creator));
+            ReflectController controller = new ReflectController(mainGame, cleave, GetHitFaction(creator), creator);
             cleave.AddComponent(typeof(AttackController), controller);
             genComponentManager.AddComponent(controller);
 

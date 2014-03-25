@@ -9,8 +9,8 @@ namespace KazgarsRevenge
 {
     class Potion : Item
     {
-        public Potion(ItemType type, Texture2D icon, int quantity, int id)
-            : base(type, icon, "potion", quantity, id)
+        public Potion(Texture2D icon, int quantity, int id)
+            : base(ItemType.Potion, icon, "potion", quantity, id)
         {
             switch (id)
             {
@@ -39,13 +39,13 @@ namespace KazgarsRevenge
             switch (this.ItemID)
             {
                 case 1:
-                    return "Heals for 20% health over 5 seconds";
+                    return "Heals for 20% health\nover 5 seconds";
                 case 2:
-                    return "Heals for 40% health over 5 seconds";
+                    return "Heals for 40% health\nover 5 seconds";
                 case 3:
-                    return "Heals for 30% health instantly";
+                    return "Heals for 30% health\ninstantly";
                 case 4:
-                    return "Increases the quality of loot\n"
+                    return "Increases the quality\nof loot\n"
                         + "dropped for 2 minutes";
                 case 5:
                     return "Makes you undetectable by \n"
@@ -60,7 +60,7 @@ namespace KazgarsRevenge
             return new Tooltip(
                 new List<TooltipLine>{
                     new TooltipLine(Color.White, name, 1), 
-                    new TooltipLine(Color.Gold, description, .75f)});
+                    new TooltipLine(Color.Gold, description, .5f)});
         }
     }
 }

@@ -41,14 +41,23 @@ namespace KazgarsRevenge
             this.PowerCost = powerCost;
 
 
-            this.Tooltip = new Tooltip(
-                new List<TooltipLine> { 
-                    new TooltipLine(Color.White, abilityName.ToString(), 1),
-                    new TooltipLine(Color.White, PowerCost + " Power", .75f),
-                    new TooltipLine(Color.White, Math.Round(cooldownMillisLength / 1000.0f, 2) + " sec. cooldown", .75f),
-                    new TooltipLine(Color.White, "Requires " + PrimaryType.ToString() +" Weapon", .75f),
-                    new TooltipLine(Color.Gold, descriptionText, .5f)
-                });
+            List<TooltipLine> ttlines = new List<TooltipLine>();
+            ttlines.Add(new TooltipLine(Color.White, abilityName.ToString(), 1));
+            if (PowerCost > 0)
+            {
+                ttlines.Add(new TooltipLine(Color.White, PowerCost + " Power", .75f));
+            }
+            if (cooldownMillisLength > 0)
+            {
+                ttlines.Add(new TooltipLine(Color.White, Math.Round(cooldownMillisLength / 1000.0f, 2) + " sec. cooldown", .75f));
+            }
+            if (PrimaryType != AttackType.None)
+            {
+                ttlines.Add(new TooltipLine(Color.White, "Requires " + PrimaryType.ToString() + " Weapon", .75f));
+            }
+            ttlines.Add(new TooltipLine(Color.Gold, descriptionText, .5f));
+
+            this.Tooltip = new Tooltip(ttlines);
         }
 
         public void ResetCooldown()

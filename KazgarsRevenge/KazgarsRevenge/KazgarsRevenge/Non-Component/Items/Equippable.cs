@@ -9,38 +9,58 @@ namespace KazgarsRevenge
 {
     public enum GearQuality
     {
-        Undecided,
-        Standard,
-        Good,
-        Epic,
-        Legendary,
+        Standard = 1,
+        Good = 3,
+        Epic = 6,
+        Legendary = 16,
     }
 
     public class Equippable : Item
     {
+        public int ItemLevel { get; protected set; }
         public GearQuality Quality { get; protected set; }
         public Dictionary<StatType, float> StatEffects { get; protected set; }
         public Model GearModel { get; private set; }
         public GearSlot Slot { get; private set; }
         public GearSlot Slot2 { get; private set; }
-        public Equippable(Texture2D icon, string name, Dictionary<StatType, float> statEffects, Model gearModel, GearSlot slot, GearSlot secondSlot, int id)
+        protected Dictionary<StatType, float> statAllocatements { get; set; }
+        public Equippable(Texture2D icon, string name, Dictionary<StatType, float> statAllocatements, Model gearModel, GearSlot slot, GearSlot secondSlot, int id)
             : base(ItemType.Equippable, icon, name, 1, id)
         {
-            this.StatEffects = statEffects;
+            this.statAllocatements = statAllocatements;
+            this.StatEffects = new Dictionary<StatType, float>();
             this.GearModel = gearModel;
             this.Slot = slot;
             this.Slot2 = secondSlot;
-            this.Quality = GearQuality.Undecided;
+            this.Quality = GearQuality.Standard;
             SetTooltip(new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "default tooltip", 1) }));
         }
 
         /// <summary>
         /// must be called before gear is available to character (sets quality, and the tooltip based on that)
+        /// should only be called on a cloned copy, also. don't alter the entry in AllItems or doom will ensue
         /// </summary>
         /// <param name="quality"></param>
-        public void SetQuality(GearQuality quality)
+        public void SetStats(GearQuality quality, int level)
         {
             this.Quality = quality;
+            this.ItemLevel = level;
+
+            float statStrength = level * (int)quality;
+
+            StatEffects = new Dictionary<StatType, float>();
+            foreach (KeyValuePair<StatType, float> k in statAllocatements)
+            {
+                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance)
+                {
+                    StatEffects.Add(k.Key, (float)Math.Round(k.Value * statStrength, 3));
+                }
+                else
+                {
+                    StatEffects.Add(k.Key, (float)Math.Ceiling(k.Value * statStrength));
+                }
+            }
+
             SetTooltip(GetEquippableTooltip());
         }
 
@@ -48,20 +68,27 @@ namespace KazgarsRevenge
         {
             // This is the only thing that needs to be deep copied.
             Dictionary<StatType, float> statsClone = null;
-            if (this.StatEffects != null)
+            if (this.statAllocatements != null)
             {
-                statsClone = new Dictionary<StatType, float>(this.StatEffects);
+                statsClone = new Dictionary<StatType, float>(this.statAllocatements);
             }
             return new Equippable(this.Icon, this.Name, statsClone, this.GearModel, this.Slot, this.Slot2, this.ItemID);
         }
 
-        private Tooltip GetEquippableTooltip()
+        protected virtual Tooltip GetEquippableTooltip()
         {
-            return new Tooltip(
-                new List<TooltipLine>{
+            List<TooltipLine> tiplines = new List<TooltipLine>
+            {
                 new TooltipLine(GetQualityColor(Quality), Name, 1),
-                //new TooltipLine(Color.White,
-                });
+                new TooltipLine(Color.White, Slot.ToString(), .75f)
+            };
+
+            foreach (KeyValuePair<StatType, float> k in StatEffects)
+            {
+                tiplines.Add(new TooltipLine(Color.Green, "+" + k.Value + " " + k.Key.ToString(), .5f));
+            }
+
+            return new Tooltip(tiplines);
         }
 
         public static Color GetQualityColor(GearQuality quality)

@@ -30,9 +30,11 @@ namespace KazgarsRevenge
 
         public void Draw(SpriteBatch s, Vector2 topLeft, SpriteFont font, float scale, float lineHeight)
         {
+            float y = 0;
             for (int i = 0; i < lines.Count; ++i)
             {
-                s.DrawString(font, lines[i].text, topLeft + new Vector2(lineHeight) * i, lines[i].color, 0, Vector2.Zero, scale * lines[i].scale, SpriteEffects.None, 0);
+                s.DrawString(font, lines[i].text, topLeft + new Vector2(0, y), lines[i].color, 0, Vector2.Zero, scale * lines[i].scale, SpriteEffects.None, 0);
+                y += lines[i].scale * lineHeight;
             }
         }
     }

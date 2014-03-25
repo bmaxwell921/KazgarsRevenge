@@ -21,11 +21,29 @@ namespace KazgarsRevenge
         public override object Clone()
         {
             Dictionary<StatType, float> statsClone = null;
-            if (this.StatEffects != null)
+            if (this.statAllocatements != null)
             {
-                statsClone = new Dictionary<StatType, float>(this.StatEffects);
+                statsClone = new Dictionary<StatType, float>(this.statAllocatements);
             }
             return new Weapon(this.Icon, this.Name, statsClone, this.GearModel, this.PrimaryAttackType, this.TwoHanded, this.ItemID);
+        }
+
+        protected override Tooltip GetEquippableTooltip()
+        {
+            List<TooltipLine> tiplines = new List<TooltipLine>
+            {
+                new TooltipLine(GetQualityColor(Quality), Name, 1),
+                new TooltipLine(Color.White, Slot.ToString(), .75f),
+                new TooltipLine(Color.White, TwoHanded? "Twohand" : "Onehand", .75f),
+                new TooltipLine(Color.White, PrimaryAttackType.ToString()+" Weapon", .75f),
+            };
+
+            foreach (KeyValuePair<StatType, float> k in StatEffects)
+            {
+                tiplines.Add(new TooltipLine(Color.Green, "+" + k.Value + " " + k.Key.ToString(), .5f));
+            }
+
+            return new Tooltip(tiplines);
         }
     }
 }

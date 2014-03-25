@@ -2237,8 +2237,8 @@ namespace KazgarsRevenge
         protected Ability GetReflect()
         {
             return new Ability(AbilityName.Reflect, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Reflect),
-                7000, AttackType.Melee, "reflect", AbilityType.Instant,
-                0, "");
+                500, AttackType.Melee, "reflect", AbilityType.Instant,
+                1, "");
         }
         protected Ability GetCharge()
         {
@@ -2340,19 +2340,19 @@ namespace KazgarsRevenge
         #region Potion Definitions
         protected Ability GetHealthPotion()
         {
-            return new Ability(AbilityName.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, AttackType.None, "healthpot", AbilityType.Instant, 0, "");
+            return new Ability(AbilityName.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, AttackType.None, "healthpot", AbilityType.Instant, 0, "Heals for 20% health over 5 seconds");
         }
         protected Ability GetSuperHealthPotion()
         {
-            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.SUPER_HEALTH), 0, AttackType.None, "superhealthpot", AbilityType.Instant, 0, "");
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.SUPER_HEALTH), 0, AttackType.None, "superhealthpot", AbilityType.Instant, 0, "Heals for 40% health over 5 seconds");
         }
         protected Ability GetPotionOfLuck()
         {
-            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.LUCK), 0, AttackType.None, "luckpot", AbilityType.Instant, 0, "");
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.LUCK), 0, AttackType.None, "luckpot", AbilityType.Instant, 0, "Increases the quality of loot\ndropped for 2 minutes");
         }
         protected Ability GetInstaHealthPotion()
         {
-            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.INSTA_HEALTH), 0, AttackType.None, "instahealthpot", AbilityType.Instant, 0, "");
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.INSTA_HEALTH), 0, AttackType.None, "instahealthpot", AbilityType.Instant, 0, "Heals for 30% health instantly");
         }
 
         #endregion
