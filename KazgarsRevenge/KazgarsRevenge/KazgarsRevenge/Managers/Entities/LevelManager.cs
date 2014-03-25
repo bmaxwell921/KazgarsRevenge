@@ -112,10 +112,10 @@ namespace KazgarsRevenge
         private void SetUpPathConnections()
         {
             pathConnections = new Dictionary<char, Vector3>();
-            pathConnections['N'] = new Vector3(0, 0, -1);
-            pathConnections['S'] = new Vector3(0, 0, 1);
-            pathConnections['E'] = new Vector3(1, 0, 0);
-            pathConnections['W'] = new Vector3(-1, 0, 0);
+            pathConnections['N'] = new Vector3(0, 0, -0.5f);
+            pathConnections['S'] = new Vector3(0, 0, 0.5f);
+            pathConnections['E'] = new Vector3(0.5f, 0, 0);
+            pathConnections['W'] = new Vector3(-0.5f, 0, 0);
         }
 
         /// <summary>
@@ -425,11 +425,11 @@ namespace KazgarsRevenge
                     CreateProp(Vector3.Transform(v, chunkTransform));
                 }
 
-                List<Vector3> mobSpawnLocations = levelInfo.mobSpawnLocations;
-                foreach (Vector3 v in mobSpawnLocations)
-                {
-                    CreateMobSpawner(Vector3.Transform(v, chunkTransform));
-                }
+                //List<Vector3> mobSpawnLocations = levelInfo.mobSpawnLocations;
+                //foreach (Vector3 v in mobSpawnLocations)
+                //{
+                //    CreateMobSpawner(Vector3.Transform(v, chunkTransform));
+                //}
 
                 List<Vector3> playerspawns = levelInfo.playerSpawnLocations;
                 foreach (Vector3 v in playerspawns)
@@ -532,8 +532,9 @@ namespace KazgarsRevenge
 
         private void CreateMobSpawner(Vector3 pos)
         {
-            if (RandSingleton.U_Instance.Next(10) < 5)
+            if (RandSingleton.U_Instance.Next(10) < 20)
             {
+                (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Spawning at location: {0}", pos));
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
                 ISet<Vector3> spawnLocs = new HashSet<Vector3>();
@@ -555,139 +556,6 @@ namespace KazgarsRevenge
 
         #endregion
 
-        #region Graph Building
-        private void BuildAndAddPathing(Chunk chunk, ChunkInfo chunkInfo, int i, int j, ISet<Vector3> doors)
-        {
-            Vector3 chunkLocation = new Vector3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE);
-            foreach (Room room in chunk.rooms)
-            {
-                BuildRoomGraph(room, chunkLocation, chunk.rotation, doors);
-            }
-        }
-
-        /*
-         * Arrays for what to add to a location to get a nonDiagonal location, or diagonal location
-         *  [ ][z][ ]                       [z][z][z]
-         *  [z][x][z]   as opposed to       [z][x][z]
-         *  [ ][z][ ]                       [z][z][z]
-         */
-        private readonly Vector3[] nonDiags = { new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1) };
-        private readonly Vector3[] allAdj = { new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1), 
-                                                new Vector3(-1, 0, -1), new Vector3(1, 0, -1), new Vector3(-1, 0, 1), new Vector3(1, 0, 1) };
-
-        // Builds the graph for a single room, adding any doorBlocks to the doors param
-        private void BuildRoomGraph(Room room, Vector3 chunkLocation, Rotation chunkRotation, ISet<Vector3> doors)
-        {
-            // Holds the center of each block
-            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2;
-            Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
-            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
-            IDictionary<Vector3, RoomBlock> blockCenters = new Dictionary<Vector3, RoomBlock>();
-            foreach (RoomBlock block in room.blocks)
-            {
-                // Soulevator shouldn't be connected bc enemies can't go in it
-                if (block.IsSoulevator())
-                {
-                    continue;
-                }
-
-                Vector3 blockCenter = GetRotatedBlock(chunkLocation, roomTopLeft, new Vector3(block.location.x, LEVEL_Y, block.location.y), chunkRotation, room.rotation, room.UnRotWidth, room.UnRotHeight);
-                // For the graph the y should probs be 0, I'll make it ignore the Y when checking for closeness tho
-                blockCenter.Y = LEVEL_Y;
-
-                blockCenters[blockCenter] = block;
-
-                // If this block is a door we need to hold onto it so we can attach it to the other doors
-                if (block.IsDoor())
-                {
-                    doors.Add(blockCenter);
-                }
-
-                // If it's a player spawn, we need to know that we can spawn players here
-                if (block.IsPlayerSpawn())
-                {
-                    // Set him a little higher
-                    blockCenter.Y = MOB_SPAWN_Y;
-                    currentLevel.spawnLocs.Add(blockCenter);
-                }
-
-            }
-
-            /*
-             * Now that we have the center of each block, we can put them in the graph.
-             *  For each block, check if any of it's adjacent neighbors are in the set, if so
-             *  then add an edge
-             */
-            foreach (Vector3 blockCenter in blockCenters.Keys)
-            {
-                // If this isn't in the middle of a room we shouldn't allow the diagonals cause 
-                // enemies get caught on the walls
-                foreach (Vector3 add in (allowDiag(blockCenters, blockCenter)) ? allAdj : nonDiags)
-                {
-                    Vector3 testBlock = blockCenter + add * BLOCK_SIZE;
-                    if (!testBlock.Equals(blockCenter) && blockCenters.ContainsKey(testBlock))
-                    {
-                        this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
-                    }
-                }
-            }
-        }
-
-        // Enemies have problems moving diagonally
-        private bool isDiagWall(IDictionary<Vector3, RoomBlock> blockLoc, Vector3 test, int i, int j) 
-        {
-            if (!blockLoc.ContainsKey(test))
-            {
-                return false;
-            }
-            if (i == 1 || j == 1)
-            {
-                return false;
-            }
-            return blockLoc[test].IsWall();
-        }
-
-        // Check so they don't get caught on walls
-        private bool allowDiag(IDictionary<Vector3, RoomBlock> blocks, Vector3 block)
-        {
-            foreach (Vector3 adj in nonDiags)
-            {
-                // If anything to your left, right, top, or bottom isn't in the room or is a wall
-                if (!blocks.ContainsKey(block + adj * BLOCK_SIZE) || blocks[block + adj * BLOCK_SIZE].IsWall())
-                {
-                    // Then we don't allow the diagonal connections
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // Connects all adjacent doors to each other
-        private void ConnectDoors(ISet<Vector3> doors)
-        {
-            /*
-             * If the door we're looking at is x, then possible doors to connect to are the z locations
-
-             */ 
-            /*
-             * Same idea as connecting all roomBlocks, iterate over all the doors and then iterate over the
-             * 4 non-diagonal adjacent blocks. If a block is in the doors set, then add an edge
-             */ 
-            foreach (Vector3 door in doors)
-            {
-                foreach (Vector3 adj in nonDiags)
-                {
-                    Vector3 testDoor = door + adj * BLOCK_SIZE;
-                    // If the adjacent is one of the doors, add the edge
-                    if (doors.Contains(testDoor))
-                    {
-                        // Doors next to each other in a room have already been connected
-                        this.AddEdge(new Edge<Vector3>(door, testDoor));
-                    }
-                }
-            }
-        }
-
         // Method used to safely add an edge to the pathGraph
         private void AddEdge(Edge<Vector3> edge)
         {
@@ -703,8 +571,12 @@ namespace KazgarsRevenge
             {
                 currentLevel.pathGraph.AddEdge(edge);
             }
+            Edge<Vector3> reverse = new Edge<Vector3>(edge.Target, edge.Source);
+            if (!currentLevel.pathGraph.ContainsEdge(reverse))
+            {
+                currentLevel.pathGraph.AddEdge(reverse);
+            }
         }
-        #endregion
 
         #region Path Finding
         /// <summary>
