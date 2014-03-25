@@ -534,7 +534,6 @@ namespace KazgarsRevenge
         {
             if (RandSingleton.U_Instance.Next(100) < 10)
             {
-                (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Spawning at location: {0}", pos));
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
                 ISet<Vector3> spawnLocs = new HashSet<Vector3>();
