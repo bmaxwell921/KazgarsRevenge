@@ -1403,7 +1403,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-  <ItemGroup>
     <Compile Include="Models\NewTileLevels\RoomObjectMaps\01-1-S-NSEW-objMap.fbx">
       <Name>01-1-S-NSEW-objMap</Name>
       <Importer>FbxImporter</Importer>
