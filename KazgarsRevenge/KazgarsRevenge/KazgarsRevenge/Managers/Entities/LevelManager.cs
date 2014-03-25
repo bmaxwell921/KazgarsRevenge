@@ -89,7 +89,7 @@ namespace KazgarsRevenge
         // Put mobs a little bit above the ground so they don't sink down
         public static readonly float MOB_SPAWN_Y = 20;
 
-        public static readonly string ROOM_PATH = @"Models\Levels\";
+        public static readonly string ROOM_PATH = @"Models\NewTileLevels\Rooms\";
 
         //public FloorName CurrentFloor = FloorName.Dungeon;
 
@@ -100,10 +100,22 @@ namespace KazgarsRevenge
         private List<GameEntity> rooms;
         private List<GameEntity> lights = new List<GameEntity>();
 
+        private IDictionary<char, Vector3> pathConnections;
+
         public LevelManager(KazgarsRevengeGame game)
             : base(game)
         {
             rooms = new List<GameEntity>();
+            SetUpPathConnections();
+        }
+
+        private void SetUpPathConnections()
+        {
+            pathConnections = new Dictionary<char, Vector3>();
+            pathConnections['N'] = new Vector3(0, 0, -0.5f);
+            pathConnections['S'] = new Vector3(0, 0, 0.5f);
+            pathConnections['E'] = new Vector3(0.5f, 0, 0);
+            pathConnections['W'] = new Vector3(-0.5f, 0, 0);
         }
 
         /// <summary>
@@ -135,22 +147,6 @@ namespace KazgarsRevenge
                     this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j));
                 }
             }
-
-            /*
-             * This is a set of all the locations of doors in the entire map. After we're done connecting
-             * each room's internal blocks together we'll go thru all these door locations and add edges
-             * between doors that are adjacent
-             */ 
-            ISet<Vector3> doors = new HashSet<Vector3>();
-            for (int i = 0; i < levelWidth; ++i)
-            {
-                for (int j = 0; j < levelHeight; ++j)
-                {
-                    BuildAndAddPathing(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j, doors);
-                }
-            }
-
-            ConnectDoors(doors);
         }
 
         /// <summary>
@@ -179,7 +175,7 @@ namespace KazgarsRevenge
                 rooms.Add(CreateRoom(room, chunkInfo.rotation, chunkLocation));
             }
 
-            //ProcessObjectMap(chunkInfo.ChunkName + "-objmap", chunkInfo.rotation.ToRadians(), chunkLocation * BLOCK_SIZE* 3 / 2);
+            ProcessObjectMap(chunkInfo.ChunkName + "-objMap", chunkInfo.rotation.ToRadians(), chunkLocation * BLOCK_SIZE* 3 / 2);
 
             return rooms;
         }
@@ -194,17 +190,83 @@ namespace KazgarsRevenge
 
             // Rotates the center of the room as needed by the chunk rotation
             Vector3 rotatedCenter = GetRotatedLocation(roomCenter + chunkLocation, chunkCenter, chunkRotation);
+
             // The yaw for a room should just be the room's rotation plus the chunk's rotation
             float yaw = room.rotation.ToRadians() + chunkRotation.ToRadians();
 
             // Create the actual entity
             GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, rotatedCenter * BLOCK_SIZE, yaw);
+            AddRoomGraph(room, roomCenter, chunkLocation, chunkCenter, chunkRotation);
             
             // Here for convenience
             Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y); 
-            
-            AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, room.rotation, chunkLocation, chunkRotation, room.UnRotWidth, room.UnRotHeight);
             return roomGE;
+        }
+
+        // Adds this room's stuff to the path graph.
+        // roomCenter hasn't been transformed to the chunkLocation or rotation
+        private void AddRoomGraph(Room room, Vector3 roomCenter, Vector3 chunkLocation, Vector3 chunkCenter, Rotation chunkRotation)
+        {
+            IList<Vector3> nodes = new List<Vector3>();
+            Vector3 rotatedCenter = GetRotatedLocation(roomCenter + chunkLocation, chunkCenter, chunkRotation);
+
+            IList<char> connections = ReadConnections(room.name);
+            if (connections == null)
+            {
+                return;
+            }
+            foreach (char connection in connections)
+            {
+                nodes.Add(GetRotatedLocation(roomCenter + chunkLocation + pathConnections[connection], chunkCenter, chunkRotation));
+            }
+
+            foreach (Vector3 node in nodes)
+            {
+                this.AddEdge(new Edge<Vector3>(rotatedCenter * BLOCK_SIZE, node * BLOCK_SIZE));
+            }
+        }
+
+        private IList<char> ReadConnections(string roomName)
+        {
+            /*
+             * Format:
+             *  <ID>-<CONNECTION_LOCS>-<NAME>
+             * Example:
+             *  0-NSEW-Soulevator
+             *  
+             * A 0 for the <CONNECTION_LOCS> means there are no connections
+             */ 
+            char delim = '-';
+            string[] splat = roomName.Split(delim);
+
+            if (splat.Count() != 3)
+            {
+                return null;
+            }
+
+            IList<char> connections = new List<char>();
+            try
+            {
+                for (int i = 0; i < splat[1].Count(); ++i)
+                {
+                    char cur = splat[1][i];
+                    if (cur.Equals('0'))
+                    {
+                        return null;
+                    }
+                    if (pathConnections.ContainsKey(cur))
+                    {
+                        connections.Add(cur);
+                    }
+                }
+
+                return connections;
+            }
+            catch (Exception e)
+            {
+                (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Problem parsing roomName: {0}", roomName));
+                return null;
+            }
         }
 
         private Vector3 GetRotatedLocation(Vector3 location, Vector3 rotationPoint, Rotation rotationAmt)
@@ -213,21 +275,8 @@ namespace KazgarsRevenge
             return Vector3.Transform(location - rotationPoint, Matrix.CreateRotationY(rotationAmt.ToRadians())) + rotationPoint;
         }
 
-        int addlight = 0;
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {
-            if (addlight == 0)
-            {
-                Vector3 pos = position;
-                pos.Y = 50;
-                CreatePointLight(pos, Color.White);
-            }
-            ++addlight;
-            if (addlight > 3)
-            {
-                addlight = 0;
-            }
-
             position.Y = LEVEL_Y;
 
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
@@ -313,7 +362,7 @@ namespace KazgarsRevenge
 
         #region Object Map Processing
 
-        string objectMapDir = "Models\\Levels\\RoomObjectMaps\\";
+        string objectMapDir = "Models\\NewTileLevels\\RoomObjectMaps\\";
         private void ProcessObjectMap(string objectMapName, float yaw, Vector3 position)
         {
             Matrix chunkTransform = Matrix.CreateScale(roomScale)
@@ -327,6 +376,7 @@ namespace KazgarsRevenge
             catch (Exception)
             {
                 //squelching the exception for testing (dont have all object maps yet)
+                Console.WriteLine("Didn't have object map for: {0}", objectMapDir + objectMapName);
                 return;
             }
 
@@ -419,7 +469,7 @@ namespace KazgarsRevenge
             prop.AddSharedData(typeof(Entity), physicalData);
 
             //TODO: emitters and effects
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\NewTileLevels\\Props\\soulevator"), new Vector3(10), Vector3.Zero, 0, 0, 0);
             graphics.SetAlpha(.5f);
             prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
@@ -439,7 +489,7 @@ namespace KazgarsRevenge
             door.AddComponent(typeof(PhysicsComponent), doorPhysics);
             genComponentManager.AddComponent(doorPhysics);
 
-            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-nsdoor"), roomScale, Vector3.Zero, yaw, 0, 0);
+            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-nsdoor"), roomScale, Vector3.Zero, yaw, 0, 0);
             door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
             modelManager.AddComponent(doorGraphics);
 
@@ -453,7 +503,7 @@ namespace KazgarsRevenge
             Entity physicalData = new Box(pos, 1, 1, 1);
             lightProp.AddSharedData(typeof(Entity), physicalData);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, lightProp, GetUnanimatedModel("Models\\Levels\\Props\\01-lightFixture"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, lightProp, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-lightFixture"), new Vector3(10), Vector3.Zero, 0, 0, 0);
             lightProp.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
@@ -467,27 +517,28 @@ namespace KazgarsRevenge
             Entity physicalData = new Box(pos, 1, 1, 1);
             prop.AddSharedData(typeof(Entity), physicalData);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
             prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
             rooms.Add(prop);
         }
 
+        // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240
+        // TODO Set these based on a difficulty level???
+        private static readonly float PROXIMITY = 60;
+        // Spawn every 3 seconds
+        private static readonly float DELAY = 3000;
+
         private void CreateMobSpawner(Vector3 pos)
         {
-            if (RandSingleton.U_Instance.Next(10) < 5)
+            if (RandSingleton.U_Instance.Next(100) < 10)
             {
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
                 ISet<Vector3> spawnLocs = new HashSet<Vector3>();
-                for (int i = -1; i < 1; ++i)
-                {
-                    for (int j = -1; j < 1; ++j)
-                    {
-                        spawnLocs.Add(new Vector3(pos.X + i * BLOCK_SIZE / 8, LEVEL_Y, pos.Z + j * BLOCK_SIZE / 8));
-                    }
-                }
+                spawnLocs.Add(pos);
+
                 EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
                 spawner.AddComponent(typeof(EnemyProximitySpawner), eps);
                 genComponentManager.AddComponent(eps);
@@ -502,160 +553,7 @@ namespace KazgarsRevenge
             currentLevel.spawnLocs.Add(pos);
         }
 
-        // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240
-        // TODO Set these based on a difficulty level???
-        private static readonly float PROXIMITY = 60;
-        // Spawn every 3 seconds
-        private static readonly float DELAY = 3000;
-
-        // Adds the necessary spawning components to the roomGE
-        private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
-        {
-            ISet<Vector3> spawnLocs = new HashSet<Vector3>();
-            foreach (RoomBlock spawner in enemySpawners)
-            {
-                Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
-                spawnLocs.Add(spawnCenter);
-            }
-            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
-            roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
-            genComponentManager.AddComponent(eps);
-        }
-
         #endregion
-
-        #region Graph Building
-        private void BuildAndAddPathing(Chunk chunk, ChunkInfo chunkInfo, int i, int j, ISet<Vector3> doors)
-        {
-            Vector3 chunkLocation = new Vector3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE);
-            foreach (Room room in chunk.rooms)
-            {
-                BuildRoomGraph(room, chunkLocation, chunk.rotation, doors);
-            }
-        }
-
-        /*
-         * Arrays for what to add to a location to get a nonDiagonal location, or diagonal location
-         *  [ ][z][ ]                       [z][z][z]
-         *  [z][x][z]   as opposed to       [z][x][z]
-         *  [ ][z][ ]                       [z][z][z]
-         */
-        private readonly Vector3[] nonDiags = { new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1) };
-        private readonly Vector3[] allAdj = { new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1), 
-                                                new Vector3(-1, 0, -1), new Vector3(1, 0, -1), new Vector3(-1, 0, 1), new Vector3(1, 0, 1) };
-
-        // Builds the graph for a single room, adding any doorBlocks to the doors param
-        private void BuildRoomGraph(Room room, Vector3 chunkLocation, Rotation chunkRotation, ISet<Vector3> doors)
-        {
-            // Holds the center of each block
-            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2;
-            Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
-            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
-            IDictionary<Vector3, RoomBlock> blockCenters = new Dictionary<Vector3, RoomBlock>();
-            foreach (RoomBlock block in room.blocks)
-            {
-                // Soulevator shouldn't be connected bc enemies can't go in it
-                if (block.IsSoulevator())
-                {
-                    continue;
-                }
-
-                Vector3 blockCenter = GetRotatedBlock(chunkLocation, roomTopLeft, new Vector3(block.location.x, LEVEL_Y, block.location.y), chunkRotation, room.rotation, room.UnRotWidth, room.UnRotHeight);
-                // For the graph the y should probs be 0, I'll make it ignore the Y when checking for closeness tho
-                blockCenter.Y = LEVEL_Y;
-
-                blockCenters[blockCenter] = block;
-
-                // If this block is a door we need to hold onto it so we can attach it to the other doors
-                if (block.IsDoor())
-                {
-                    doors.Add(blockCenter);
-                }
-
-                // If it's a player spawn, we need to know that we can spawn players here
-                if (block.IsPlayerSpawn())
-                {
-                    // Set him a little higher
-                    blockCenter.Y = MOB_SPAWN_Y;
-                    currentLevel.spawnLocs.Add(blockCenter);
-                }
-
-            }
-
-            /*
-             * Now that we have the center of each block, we can put them in the graph.
-             *  For each block, check if any of it's adjacent neighbors are in the set, if so
-             *  then add an edge
-             */
-            foreach (Vector3 blockCenter in blockCenters.Keys)
-            {
-                // If this isn't in the middle of a room we shouldn't allow the diagonals cause 
-                // enemies get caught on the walls
-                foreach (Vector3 add in (allowDiag(blockCenters, blockCenter)) ? allAdj : nonDiags)
-                {
-                    Vector3 testBlock = blockCenter + add * BLOCK_SIZE;
-                    if (!testBlock.Equals(blockCenter) && blockCenters.ContainsKey(testBlock))
-                    {
-                        this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
-                    }
-                }
-            }
-        }
-
-        // Enemies have problems moving diagonally
-        private bool isDiagWall(IDictionary<Vector3, RoomBlock> blockLoc, Vector3 test, int i, int j) 
-        {
-            if (!blockLoc.ContainsKey(test))
-            {
-                return false;
-            }
-            if (i == 1 || j == 1)
-            {
-                return false;
-            }
-            return blockLoc[test].IsWall();
-        }
-
-        // Check so they don't get caught on walls
-        private bool allowDiag(IDictionary<Vector3, RoomBlock> blocks, Vector3 block)
-        {
-            foreach (Vector3 adj in nonDiags)
-            {
-                // If anything to your left, right, top, or bottom isn't in the room or is a wall
-                if (!blocks.ContainsKey(block + adj * BLOCK_SIZE) || blocks[block + adj * BLOCK_SIZE].IsWall())
-                {
-                    // Then we don't allow the diagonal connections
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // Connects all adjacent doors to each other
-        private void ConnectDoors(ISet<Vector3> doors)
-        {
-            /*
-             * If the door we're looking at is x, then possible doors to connect to are the z locations
-
-             */ 
-            /*
-             * Same idea as connecting all roomBlocks, iterate over all the doors and then iterate over the
-             * 4 non-diagonal adjacent blocks. If a block is in the doors set, then add an edge
-             */ 
-            foreach (Vector3 door in doors)
-            {
-                foreach (Vector3 adj in nonDiags)
-                {
-                    Vector3 testDoor = door + adj * BLOCK_SIZE;
-                    // If the adjacent is one of the doors, add the edge
-                    if (doors.Contains(testDoor))
-                    {
-                        // Doors next to each other in a room have already been connected
-                        this.AddEdge(new Edge<Vector3>(door, testDoor));
-                    }
-                }
-            }
-        }
 
         // Method used to safely add an edge to the pathGraph
         private void AddEdge(Edge<Vector3> edge)
@@ -672,8 +570,12 @@ namespace KazgarsRevenge
             {
                 currentLevel.pathGraph.AddEdge(edge);
             }
+            Edge<Vector3> reverse = new Edge<Vector3>(edge.Target, edge.Source);
+            if (!currentLevel.pathGraph.ContainsEdge(reverse))
+            {
+                currentLevel.pathGraph.AddEdge(reverse);
+            }
         }
-        #endregion
 
         #region Path Finding
         /// <summary>
