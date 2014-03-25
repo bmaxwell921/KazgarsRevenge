@@ -22,6 +22,7 @@ namespace KazgarsRevenge
     public class Tooltip
     {
         private List<TooltipLine> lines;
+        public int LineCount { get { return lines == null? 0 : lines.Count;} }
         public Tooltip(List<TooltipLine> lines)
         {
             this.lines = lines;

@@ -28,7 +28,7 @@ namespace KazgarsRevenge
         public double cooldownMillisRemaining;
         public bool onCooldown { get; private set; }
 
-        public Ability(AbilityName abilityName, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType, int powerCost)
+        public Ability(AbilityName abilityName, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType, int powerCost, string descriptionText)
         {   
             icon = iconIn;
             cooldownMillisLength = cooldownMillis;
@@ -40,7 +40,15 @@ namespace KazgarsRevenge
             this.AbilityName = abilityName;
             this.PowerCost = powerCost;
 
-            this.Tooltip = new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "default ability tooltip", 1) });
+
+            this.Tooltip = new Tooltip(
+                new List<TooltipLine> { 
+                    new TooltipLine(Color.White, abilityName.ToString(), 1),
+                    new TooltipLine(Color.White, PowerCost + " Power", .75f),
+                    new TooltipLine(Color.White, Math.Round(cooldownMillisLength / 1000.0f, 2) + " sec. cooldown", .75f),
+                    new TooltipLine(Color.White, "Requires " + PrimaryType.ToString() +" Weapon", .75f),
+                    new TooltipLine(Color.Gold, descriptionText, .5f)
+                });
         }
 
         public void ResetCooldown()
