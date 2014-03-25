@@ -850,7 +850,7 @@ namespace KazgarsRevenge
             {
                 //used to differentiate between left hand, right hand, and two hand animations
                 aniSuffix = "_r";
-
+                
                 //figure out what kind of weapon is in the main hand
                 AttackType mainHandType = GetMainhandType();
                 AttackType offHandType = GetOffhandType();
@@ -879,43 +879,46 @@ namespace KazgarsRevenge
                     aniSuffix = "_r";
                 }
 
-                //remove this once we get more animations
-                //aniSuffix = "";
-
-                //attack if in range
                 AttackType aniDecidingType = mainHandType;
                 if (aniSuffix == "_l")
                 {
-                    aniDecidingType = offHandType;
+                    if (offHandType == AttackType.Melee && distance > meleeRange && (mainHandType == AttackType.Magic || mainHandType == AttackType.Ranged))
+                    {
+                        aniSuffix = "_r";
+                    }
+                    else
+                    {
+                        aniDecidingType = offHandType;
+                    }
                 }
+
+                //attack if in range
                 switch (aniDecidingType)
                 {
                     case AttackType.None:
-                        if (distance < meleeRange)
+                        if (distance <= meleeRange)
                         {
-                            //need punch animation
                             StartSequence("punch");
                             UpdateRotation(dir);
                         }
                         break;
                     case AttackType.Melee:
-                        if (distance < meleeRange)
+                        if (distance <= meleeRange)
                         {
                             StartSequence("swing");
                             UpdateRotation(dir);
                         }
                         break;
                     case AttackType.Ranged:
-                        if (distance < bowRange)
+                        if (distance <= bowRange)
                         {
                             StartSequence("shoot");
                             UpdateRotation(dir);
                         }
                         break;
                     case AttackType.Magic:
-                        if (distance < bowRange)
+                        if (distance <= bowRange)
                         {
-                            //need magic item animation here
                             StartSequence("magic");
                             UpdateRotation(dir);
                         }
@@ -1845,7 +1848,13 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Red * 0.5f);
             for (int i = 0; i < 12; ++i)
             {
-                s.Draw(boundAbilities[i].Value.icon, guiInsideRects["abilities"]["ability" + i], Color.White);
+                Rectangle temprect = guiInsideRects["abilities"]["ability" + i];
+                s.Draw(boundAbilities[i].Value.icon, temprect, Color.White);
+                /*
+                if (boundAbilities[i].Value.PowerCost > 0)
+                {
+                    s.DrawString(font, "" + boundAbilities[i].Value.PowerCost, new Vector2(rect.X, rect.Y + rect.Height - 50 * average * .4f), Color.Yellow, 0, Vector2.Zero, average * .4f, SpriteEffects.None, 0);
+                }*/
             }
 
             //LM
@@ -2044,7 +2053,12 @@ namespace KazgarsRevenge
                 {
                     if (inventory[i] != null)
                     {
-                        s.Draw(inventory[i].Icon, guiInsideRects["inventory"]["inventory" + i], Color.White);
+                        Rectangle rect = guiInsideRects["inventory"]["inventory" + i];
+                        s.Draw(inventory[i].Icon, rect, Color.White);
+                        if (inventory[i].Quantity > 1)
+                        {
+                            s.DrawString(font, "x" + inventory[i].Quantity, new Vector2(rect.X, rect.Y + rect.Height - 50 * average * .5f), Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
+                        }
                     }
 
                 }
@@ -2057,7 +2071,13 @@ namespace KazgarsRevenge
                 List<Item> loot = lootingSoul.Loot;
                 for (int i = 0; i + lootScroll * NUM_LOOT_SHOWN < loot.Count && i < NUM_LOOT_SHOWN; ++i)
                 {
-                    s.Draw(loot[i + lootScroll*NUM_LOOT_SHOWN].Icon, guiInsideRects["loot"]["loot" + i], Color.White);
+                    Rectangle rect = guiInsideRects["loot"]["loot" + i];
+                    Item ltemp = loot[i + lootScroll * NUM_LOOT_SHOWN];
+                    s.Draw(ltemp.Icon, rect, Color.White);
+                    if (ltemp.Quantity > 1)
+                    {
+                        s.DrawString(font, "x" + ltemp.Quantity, new Vector2(rect.X, rect.Y + rect.Height - 50 * average * .5f), Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
+                    }
                 }
                 if (lootingSoul.Loot.Count() > NUM_LOOT_SHOWN + NUM_LOOT_SHOWN * lootScroll)
                 {
