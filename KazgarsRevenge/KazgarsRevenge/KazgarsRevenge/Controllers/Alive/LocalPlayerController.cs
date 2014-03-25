@@ -514,7 +514,7 @@ namespace KazgarsRevenge
                 }
             }
             //Equipment
-            if (curKeys.IsKeyDown(Keys.U) && prevKeys.IsKeyUp(Keys.U))
+            if ((curKeys.IsKeyDown(Keys.U) && prevKeys.IsKeyUp(Keys.U)) || (curKeys.IsKeyDown(Keys.C) && prevKeys.IsKeyUp(Keys.C)))
             {
                 showEquipment = !showEquipment;
                 showInventory = showEquipment;
@@ -1263,12 +1263,12 @@ namespace KazgarsRevenge
                                 }
                             }
                             //Scroll Up
-                            else if (innerCollides.Equals("upArrow") && lootingSoul.Loot.Count > NUM_LOOT_SHOWN)
+                            else if (innerCollides.Equals("downArrow")&& lootingSoul.Loot.Count > NUM_LOOT_SHOWN*(lootScroll+1))
                             {
                                 lootScroll++;
                             }
                             //Scroll Down
-                            else if (innerCollides.Equals("downArrow") && lootScroll > 0)
+                            else if (innerCollides.Equals("upArrow") && lootScroll > 0)
                             {
                                 lootScroll--;
                             }
