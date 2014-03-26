@@ -794,6 +794,7 @@ namespace KazgarsRevenge
                 physicalData.Position = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
                 ReviveAlive();
                 StartSequence("fightingstance");
+                AddBuff(Buff.Invincibility, Entity);
             });
 
             return sequence;

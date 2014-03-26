@@ -512,16 +512,19 @@ namespace KazgarsRevenge
 
         private void CreateProp(Vector3 pos)
         {
-            GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
+            if (RandSingleton.U_Instance.Next(100) < 5)
+            {
+                GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
 
-            Entity physicalData = new Box(pos, 1, 1, 1);
-            prop.AddSharedData(typeof(Entity), physicalData);
+                Entity physicalData = new Box(pos, 1, 1, 1);
+                prop.AddSharedData(typeof(Entity), physicalData);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
-            prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
-            modelManager.AddComponent(graphics);
+                UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+                prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
+                modelManager.AddComponent(graphics);
 
-            rooms.Add(prop);
+                rooms.Add(prop);
+            }
         }
 
         // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240

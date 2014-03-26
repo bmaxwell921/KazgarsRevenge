@@ -56,6 +56,11 @@ namespace KazgarsRevenge
             }
         }
 
+        public void KillAllEmitters()
+        {
+            emitters.Clear();
+        }
+
         public void AddEmitterSizeIncrementExponential(string emitterKey, float incrementPerSecond, float incrementIncrementPerSecond)
         {
             if (emitters.ContainsKey(emitterKey))

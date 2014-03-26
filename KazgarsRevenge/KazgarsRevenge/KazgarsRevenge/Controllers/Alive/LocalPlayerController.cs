@@ -2223,6 +2223,7 @@ namespace KazgarsRevenge
 
         protected override void KillAlive()
         {
+            model.KillAllEmitters();
             currentPower = 0;
             if (currentActionName != "death")
             {

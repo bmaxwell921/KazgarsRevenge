@@ -315,26 +315,30 @@ namespace KazgarsRevenge
         /// </summary>
         protected int Damage(int d, GameEntity from, bool trueDamage)
         {
-            int actualDamage = d;
-            if (!trueDamage)
+            int actualDamage = 0;
+            if (!activeBuffs.ContainsKey(Buff.Invincibility))
             {
-                actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * level));
-            }
-            if (!Dead)
-            {
-                if (activeDebuffs.ContainsKey(DeBuff.MagneticImplant))
+                actualDamage = d;
+                if (!trueDamage)
                 {
-                    actualDamage *= 2;
+                    actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * level));
                 }
-                Health -= actualDamage;
-                if (Health <= 0)
+                if (!Dead)
                 {
-                    Health = 0;
-                    KillAlive();
-                    if (Dead)
+                    if (activeDebuffs.ContainsKey(DeBuff.MagneticImplant))
                     {
-                        Killer = from.GetComponent(typeof(AliveComponent)) as AliveComponent;
-                        DealWithKiller();
+                        actualDamage *= 2;
+                    }
+                    Health -= actualDamage;
+                    if (Health <= 0)
+                    {
+                        Health = 0;
+                        KillAlive();
+                        if (Dead)
+                        {
+                            Killer = from.GetComponent(typeof(AliveComponent)) as AliveComponent;
+                            DealWithKiller();
+                        }
                     }
                 }
             }
@@ -656,7 +660,8 @@ namespace KazgarsRevenge
             {Buff.Elusiveness, 6000},
             {Buff.HealthPotion, 5000},
             {Buff.SuperHealthPotion, 5000},
-            {Buff.LuckPotion, 120000}
+            {Buff.LuckPotion, 120000},
+            {Buff.Invincibility, 5000},
         };
 
         Dictionary<Buff, double> buffTickLengths = new Dictionary<Buff, double>()
