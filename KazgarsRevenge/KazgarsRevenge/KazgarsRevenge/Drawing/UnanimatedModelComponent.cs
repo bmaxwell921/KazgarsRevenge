@@ -66,6 +66,7 @@ namespace KazgarsRevenge
             }
         }
 
+        float yawPerFrame = 0;
         float rollPerFrame = 0;
 
         float yaw;
@@ -74,6 +75,11 @@ namespace KazgarsRevenge
         public void AddRollSpeed(float roll)
         {
             this.rollPerFrame = roll;
+        }
+
+        public void AddYawSpeed(float yaw)
+        {
+            this.yawPerFrame = yaw;
         }
 
         public void SetAlpha(float alpha)
@@ -91,6 +97,7 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             roll += rollPerFrame;
+            yaw += yawPerFrame;
 
             this.currentRot = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
 

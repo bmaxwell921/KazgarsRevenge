@@ -469,10 +469,14 @@ namespace KazgarsRevenge
             prop.AddSharedData(typeof(Entity), physicalData);
 
             //TODO: emitters and effects
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10, 100 ,10), Vector3.Down * 60, 0, 0, 0);
+            graphics.TurnOffOutline();
             graphics.SetAlpha(.5f);
+            graphics.AddYawSpeed(.01f);
+            graphics.AddEmitter(typeof(SoulevatorMistSystem), "mist", 65, 85, 0, Vector3.Zero);
+            
             prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
-            modelManager.AddComponent(graphics);
+            levelModelManager.AddComponent(graphics);
 
             rooms.Add(prop);
         }
