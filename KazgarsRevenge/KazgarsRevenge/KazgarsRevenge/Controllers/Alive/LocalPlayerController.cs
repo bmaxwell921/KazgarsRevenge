@@ -92,6 +92,36 @@ namespace KazgarsRevenge
             rangedAbilities[6, 0] = new AbilityNode(AbilityName.Omnishot, new AbilityName[] { AbilityName.MakeItHail }, false, 10, abilityLearnedFlags);
             rangedAbilities[6, 1] = new AbilityNode(AbilityName.StrongWinds, new AbilityName[] { AbilityName.MakeItHail }, false, 3, abilityLearnedFlags);
             #endregion
+
+            #region melee ability array
+            meleeAbilities[0, 1] = new AbilityNode(AbilityName.Cleave, null, true, 3, abilityLearnedFlags);
+            meleeAbilities[0, 2] = new AbilityNode(AbilityName.Garrote, null, true, 3, abilityLearnedFlags);
+
+            meleeAbilities[1, 1] = new AbilityNode(AbilityName.Decapitation, new AbilityName[] { AbilityName.Cleave }, false, 2, abilityLearnedFlags);
+            meleeAbilities[1, 2] = new AbilityNode(AbilityName.ExcruciatingTwist, new AbilityName[] { AbilityName.Garrote }, false, 2, abilityLearnedFlags);
+
+            meleeAbilities[2, 1] = new AbilityNode(AbilityName.Invigoration, new AbilityName[] { AbilityName.Decapitation }, false, 2, abilityLearnedFlags);
+            meleeAbilities[2, 2] = new AbilityNode(AbilityName.SadisticFrenzy, new AbilityName[] { AbilityName.ExcruciatingTwist }, false, 2, abilityLearnedFlags);
+
+            meleeAbilities[3, 0] = new AbilityNode(AbilityName.Berserk, new AbilityName[] { AbilityName.ObsidianCoagulation}, false, 2, abilityLearnedFlags);
+            meleeAbilities[3, 1] = new AbilityNode(AbilityName.ObsidianCoagulation, new AbilityName[] { AbilityName.Invigoration, AbilityName.SadisticFrenzy, AbilityName.Bash }, false, 4, abilityLearnedFlags);
+            meleeAbilities[3, 2] = new AbilityNode(AbilityName.Bash, new AbilityName[] { AbilityName.Charge }, false, 3, abilityLearnedFlags);
+
+            meleeAbilities[4, 0] = new AbilityNode(AbilityName.SecondWind, new AbilityName[] { AbilityName.Berserk }, false, 1, abilityLearnedFlags);
+            meleeAbilities[4, 1] = new AbilityNode(AbilityName.DevastatingStrike, new AbilityName[] { AbilityName.ObsidianCoagulation }, false, 5, abilityLearnedFlags);
+            meleeAbilities[4, 2] = new AbilityNode(AbilityName.DevastatingReach, new AbilityName[] { AbilityName.DevastatingStrike }, false, 3, abilityLearnedFlags);
+            meleeAbilities[4, 3] = new AbilityNode(AbilityName.Charge, null, true, 4, abilityLearnedFlags);
+
+            meleeAbilities[5, 0] = new AbilityNode(AbilityName.RiskyRegeneration, new AbilityName[] { AbilityName.SecondWind }, false, 1, abilityLearnedFlags);
+            meleeAbilities[5, 1] = new AbilityNode(AbilityName.Execute, new AbilityName[] { AbilityName.DevastatingStrike }, false, 4, abilityLearnedFlags);
+            meleeAbilities[5, 2] = new AbilityNode(AbilityName.Reflect, new AbilityName[] { AbilityName.DevastatingStrike, AbilityName.Headbutt }, false, 2, abilityLearnedFlags);
+            meleeAbilities[5, 3] = new AbilityNode(AbilityName.Headbutt, null, true, 3, abilityLearnedFlags);
+
+            meleeAbilities[6, 0] = new AbilityNode(AbilityName.RejuvenatingStrikes, new AbilityName[] { AbilityName.RiskyRegeneration }, false, 1, abilityLearnedFlags);
+            meleeAbilities[6, 1] = new AbilityNode(AbilityName.Swordnado, new AbilityName[] { AbilityName.Execute }, false, 10, abilityLearnedFlags);
+            meleeAbilities[6, 2] = new AbilityNode(AbilityName.ForcefulThrow, new AbilityName[] { AbilityName.ChainSpear }, false, 1, abilityLearnedFlags);
+            meleeAbilities[6, 3] = new AbilityNode(AbilityName.ChainSpear, new AbilityName[] { AbilityName.Headbutt }, false, 2, abilityLearnedFlags);
+            #endregion
         }
 
         AbilityTargetDecal groundIndicator;
@@ -160,10 +190,11 @@ namespace KazgarsRevenge
             magic
         }
 
-        TalentTrees currentTalentTree = TalentTrees.ranged;
+        TalentTrees currentTalentTree = TalentTrees.melee;
 
 
         AbilityNode[,] rangedAbilities = new AbilityNode[7, 4];
+        AbilityNode[,] meleeAbilities = new AbilityNode[7, 4];
 
 
         #endregion
@@ -1360,7 +1391,9 @@ namespace KazgarsRevenge
                                 }
                                 else if (currentTalentTree == TalentTrees.melee)
                                 {
-
+                                    checkTalentOnBar(meleeAbilities);
+                                    if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    else boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 }
                                 else if (currentTalentTree == TalentTrees.magic)
                                 {
@@ -1378,6 +1411,21 @@ namespace KazgarsRevenge
                         case "talents":
                             if (innerCollides != null)
                             {
+                                if (innerCollides.Equals("Ranged"))
+                                {
+                                    currentTalentTree = TalentTrees.ranged;
+                                    break;
+                                }
+                                else if (innerCollides.Equals("Melee"))
+                                {
+                                    currentTalentTree = TalentTrees.melee;
+                                    break;
+                                }
+                                else if (innerCollides.Equals("Magic"))
+                                {
+                                    currentTalentTree = TalentTrees.magic;
+                                    break;
+                                }
                                 //TODO if we add any more innerFrames in abilities make sure we check those first
                                 int check = Convert.ToInt32(innerCollides.Remove(0, 6));
                                 if (currentTalentTree == TalentTrees.ranged)
@@ -1386,7 +1434,7 @@ namespace KazgarsRevenge
                                 }
                                 else if (currentTalentTree == TalentTrees.melee)
                                 {
-                                    //talentHelp(check, meleeAbilities);
+                                    talentHelp(check, meleeAbilities, false);
                                 }
                                 else if (currentTalentTree == TalentTrees.magic)
                                 {
@@ -1503,7 +1551,7 @@ namespace KazgarsRevenge
                             }
                             else if (currentTalentTree == TalentTrees.melee)
                             {
-                                //talentHelp(check, meleeAbilities);
+                                talentHelp(check, meleeAbilities, true);
                             }
                             else if (currentTalentTree == TalentTrees.magic)
                             {
@@ -1625,15 +1673,16 @@ namespace KazgarsRevenge
                 case "talents":
                     if (innerCollides != null)
                     {
+                        if (innerCollides.Equals("Ranged") || innerCollides.Equals("Melee") || innerCollides.Equals("Magic")) break;
                         //TODO if we add any more innerFrames in abilities make sure we check those first
                         int check = Convert.ToInt32(innerCollides.Remove(0, 6));
                         if (currentTalentTree == TalentTrees.ranged && rangedAbilities[(int)check / 4, check % 4] != null)
                         {
                             currentTooltip = GetCachedAbility(rangedAbilities[(int)check / 4, check % 4].name).Tooltip;
                         }
-                        else if (currentTalentTree == TalentTrees.melee)  //TODO add check as above
+                        else if (currentTalentTree == TalentTrees.melee && meleeAbilities[(int)check / 4, check % 4] != null)
                         {
-                            //TODO currentTooltip = GetAbility(meleeAbilities[(int)check / 4, check % 4].name).tooltip;
+                            currentTooltip = GetCachedAbility(meleeAbilities[(int)check / 4, check % 4].name).Tooltip;
                         }
                         else if (currentTalentTree == TalentTrees.magic)  //TODO add check as above
                         {
@@ -1648,6 +1697,44 @@ namespace KazgarsRevenge
                     break;
             }
         }
+
+        private void drawTalentHelper(SpriteBatch s, AbilityNode[,] currentTree)
+        {
+            //Draw Talent Icons
+            for (int i = 0; i < 4; ++i)
+            {
+                for (int j = 0; j < 7; j++)
+                {
+                    if (currentTree[j, i] != null)
+                    {       //Draw active frames around active items
+                        if (GetCachedAbility(currentTree[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[currentTree[j, i].name])
+                        {
+                            Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
+                            temp.X = temp.X - 4;
+                            temp.Y = temp.Y - 4;
+                            temp.Width = temp.Width + 8;
+                            temp.Height = temp.Height + 8;
+                            s.Draw(texWhitePixel, temp, Color.Red * .8f);
+                        }
+                        //Draw Icon
+                        s.Draw(GetCachedAbility(currentTree[j, i].name).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
+                        //Draw shadow over locked abilities
+                        if (!abilityLearnedFlags[currentTree[j, i].name])
+                        {   //can be unlocked
+                            if (currentTree[j, i].canUnlock())
+                            {
+                                s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White * .5f);
+                                s.DrawString(font, currentTree[j, i].cost.ToString(), new Vector2(guiInsideRects["talents"]["talent" + (i + j * 4)].X, guiInsideRects["talents"]["talent" + (i + j * 4)].Y), Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                            }
+                            //locked
+                            else s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black * .8f);
+                        }
+                    }
+                }
+            }
+
+        }
+
         #endregion
 
         SpriteFont font;
@@ -1797,6 +1884,9 @@ namespace KazgarsRevenge
                     talentArrowsDict.Add("arrowR" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
                 }
             }
+            talentDict.Add("Ranged", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
+            talentDict.Add("Melee", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 1 * 94 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
+            talentDict.Add("Magic", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 2 * 94 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
 
             //Loot
             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
@@ -1940,9 +2030,7 @@ namespace KazgarsRevenge
             Rectangle xpRect = guiOutsideRects["xp"];
             s.Draw(texWhitePixel, xpRect, Color.Brown * 0.5f);
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
-            //Damage Tracker
             
-            s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Black * 0.5f);
             //Mini Map (square for now)
             s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Orange * 0.5f);
 
@@ -2105,67 +2193,47 @@ namespace KazgarsRevenge
             if (showTalents)
             {
                 s.Draw(texWhitePixel, guiOutsideRects["talents"], Color.Pink * .5f);
-
-                //Draw Talent Icons
-                for (int i = 0; i < 4; ++i)
+                if (currentTalentTree == TalentTrees.ranged)
                 {
-                    for (int j = 0; j < 7; j++)
-                    {
-                        if (rangedAbilities[j, i] != null)
-                        {       //Draw active frames around active items
-                            if (GetCachedAbility(rangedAbilities[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[rangedAbilities[j, i].name])
-                            {
-                                Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
-                                temp.X = temp.X - 4;
-                                temp.Y = temp.Y - 4;
-                                temp.Width = temp.Width + 8;
-                                temp.Height = temp.Height + 8;
-                                s.Draw(texWhitePixel, temp, Color.Red * .8f);
-                            }
-                            //Draw Icon
-                            s.Draw(GetCachedAbility(rangedAbilities[j, i].name).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
-                            //Draw shadow over locked abilities
-                            if (!abilityLearnedFlags[rangedAbilities[j, i].name])
-                            {   //can be unlocked
-                                if (rangedAbilities[j, i].canUnlock())
-                                {
-                                    s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White * .5f);
-                                    s.DrawString(font, rangedAbilities[j, i].cost.ToString(), new Vector2(guiInsideRects["talents"]["talent" + (i + j * 4)].X, guiInsideRects["talents"]["talent" + (i + j * 4)].Y), Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
-                                }
-                                //locked
-                                else s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black * .8f);
-                            }
-                        }
-                    }
+                    drawTalentHelper(s, rangedAbilities);
+
+                    #region draw ranged arrows
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB0"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB1"], Color.White);
+
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB4"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB5"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB6"], Color.White);
+
+                    s.Draw(talentArrowDownRight, talentArrowsDict["arrowQ8"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB9"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB10"], Color.White);
+                    s.Draw(talentArrowUp, talentArrowsDict["arrowB11"], Color.White);
+
+                    s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW13"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB13"], Color.White);
+                    s.Draw(talentArrowRight, talentArrowsDict["arrowR13"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB14"], Color.White);
+                    s.Draw(talentArrowDownRight, talentArrowsDict["arrowQ14"], Color.White);
+                    s.Draw(talentArrowLeft, talentArrowsDict["arrowL15"], Color.White);
+
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB16"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB17"], Color.White);
+                    s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW19"], Color.White);
+
+                    s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW21"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB21"], Color.White);
+                    #endregion
                 }
-                //Draw Ranged arrows
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB0"], Color.White);
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB1"], Color.White);
+                else if (currentTalentTree == TalentTrees.melee)
+                {
+                    drawTalentHelper(s, meleeAbilities);
+                }
 
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB4"], Color.White);
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB5"], Color.White);
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB6"], Color.White);
-
-                s.Draw(talentArrowDownRight, talentArrowsDict["arrowQ8"], Color.White);
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB9"], Color.White);
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB10"], Color.White);
-                s.Draw(talentArrowUp, talentArrowsDict["arrowB11"], Color.White);
-
-                s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW13"], Color.White);
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB13"], Color.White);
-                s.Draw(talentArrowRight, talentArrowsDict["arrowR13"], Color.White);
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB14"], Color.White);
-                s.Draw(talentArrowDownRight, talentArrowsDict["arrowQ14"], Color.White);
-                s.Draw(talentArrowLeft, talentArrowsDict["arrowL15"], Color.White);
-
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB16"], Color.White);
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB17"], Color.White);
-                s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW19"], Color.White);
-
-                s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW21"], Color.White);
-                s.Draw(talentArrowDown, talentArrowsDict["arrowB21"], Color.White);
-
-
+                //Draw Tree Selectors
+                s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.RangedBanner), guiInsideRects["talents"]["Ranged"], Color.White);
+                s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MeleeBanner), guiInsideRects["talents"]["Melee"], Color.White);
+                s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MagicBanner), guiInsideRects["talents"]["Magic"], Color.White);
 
                 //Draw Talent Points
                 s.DrawString(font, (totalTalentPoints - spentTalentPoints) + "/" + totalTalentPoints, vecName, Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
@@ -2173,8 +2241,11 @@ namespace KazgarsRevenge
             #endregion
 
             #region tooltip
-            if (currentTooltip != null) 
+            if (currentTooltip != null)
+            {
                 currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, 1.0f, 50f);       //#Jared drawing tooltip here
+                s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Black * 0.5f);
+            }
             #endregion
             #endregion
 
@@ -2203,7 +2274,7 @@ namespace KazgarsRevenge
                 }
                 else if (currentTalentTree == TalentTrees.melee)
                 {
-
+                    s.Draw(GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name).icon, rectMouse, Color.White);
                 }
                 else
                 {

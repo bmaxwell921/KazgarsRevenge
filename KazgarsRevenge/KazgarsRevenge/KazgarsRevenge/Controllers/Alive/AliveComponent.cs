@@ -603,7 +603,7 @@ namespace KazgarsRevenge
                 case DeBuff.Headbutt:
                     if (state == BuffState.Starting)
                     {
-                        AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.Stunned], null);
+                        AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.Headbutt], null);
                     }
                     break;
                 case DeBuff.Tar:

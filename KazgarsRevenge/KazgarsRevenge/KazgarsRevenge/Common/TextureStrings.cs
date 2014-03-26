@@ -28,6 +28,10 @@ namespace KazgarsRevenge
             public static readonly string Talent_Arrow_R = @"Textures\\UI\\Frames\\TTArrow6";
             public static readonly string Talent_Arrow_UR = @"Textures\\UI\\Frames\\TTArrow7";
 
+            public static readonly string MeleeBanner = @"Textures\\UI\\Frames\\meleeBanner";
+            public static readonly string RangedBanner = @"Textures\\UI\\Frames\\rangedBanner";
+            public static readonly string MagicBanner = @"Textures\\UI\\Frames\\magicBanner";
+
 
             public class Items
             {
@@ -118,7 +122,7 @@ namespace KazgarsRevenge
                 {
                     public static readonly string CLEAVE = @"Textures\UI\Abilities\Melee\cleave";
                     public static readonly string Decapitation = @"Textures\UI\Abilities\Melee\decapitation";
-                    public static readonly string Invigoration = @"Textures\UI\Abilities\Melee\invigoration";
+                    public static readonly string Invigoration = @"Textures\UI\Abilities\Melee\headbutt";
                     public static readonly string ObsidianCoagulation = @"Textures\UI\Abilities\Melee\obsidian";
                     public static readonly string DevastatingStrike = @"Textures\UI\Abilities\Melee\devastate";
                     public static readonly string DevastatingReach = @"Textures\UI\Abilities\Melee\reach";
@@ -137,6 +141,7 @@ namespace KazgarsRevenge
                     public static readonly string ForcefulThrow = @"Textures\UI\Abilities\Melee\throw";
                     public static readonly string Execute = @"Textures\UI\Abilities\Melee\execute";
                     public static readonly string Swordnado = @"Textures\UI\Abilities\Melee\swordnado";
+                    public static readonly string regen = @"Textures\UI\Abilities\Melee\headbutt";
 
                 }
             }
