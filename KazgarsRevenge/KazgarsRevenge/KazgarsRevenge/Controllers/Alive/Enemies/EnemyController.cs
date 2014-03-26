@@ -695,7 +695,7 @@ namespace KazgarsRevenge
                 || pos.Z > cameraBox.Max.Z);
         }
 
-        bool debuggingPaths = true;
+        bool debuggingPaths = false;
         List<GameEntity> currentPathMarkers = new List<GameEntity>();
         protected void GetNewPath()
         {

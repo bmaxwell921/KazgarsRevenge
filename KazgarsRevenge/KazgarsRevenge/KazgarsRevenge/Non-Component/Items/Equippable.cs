@@ -33,7 +33,7 @@ namespace KazgarsRevenge
             this.Slot = slot;
             this.Slot2 = secondSlot;
             this.Quality = GearQuality.Standard;
-            SetTooltip(new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "default tooltip", 1) }));
+            SetTooltip(new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "", 1) }));
         }
 
         /// <summary>
@@ -79,13 +79,13 @@ namespace KazgarsRevenge
         {
             List<TooltipLine> tiplines = new List<TooltipLine>
             {
-                new TooltipLine(GetQualityColor(Quality), Name, 1),
-                new TooltipLine(Color.White, Slot.ToString(), .75f)
+                new TooltipLine(GetQualityColor(Quality), Name, .75f),
+                new TooltipLine(Color.White, Slot.ToString(), .5f)
             };
 
             foreach (KeyValuePair<StatType, float> k in StatEffects)
             {
-                tiplines.Add(new TooltipLine(Color.Green, "+" + k.Value + " " + k.Key.ToString(), .5f));
+                tiplines.Add(new TooltipLine(Color.Green, "+" + k.Value + " " + k.Key.ToString(), .4f));
             }
 
             return new Tooltip(tiplines);

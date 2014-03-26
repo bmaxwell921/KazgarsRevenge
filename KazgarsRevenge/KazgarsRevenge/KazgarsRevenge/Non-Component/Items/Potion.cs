@@ -59,8 +59,8 @@ namespace KazgarsRevenge
         {
             return new Tooltip(
                 new List<TooltipLine>{
-                    new TooltipLine(Color.White, name, 1), 
-                    new TooltipLine(Color.Gold, description, .5f)});
+                    new TooltipLine(Color.White, name, .75f), 
+                    new TooltipLine(Color.Gold, description, .4f)});
         }
     }
 }

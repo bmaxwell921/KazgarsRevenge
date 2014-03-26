@@ -40,24 +40,35 @@ namespace KazgarsRevenge
             this.AbilityName = abilityName;
             this.PowerCost = powerCost;
 
+            if (abilityName != KazgarsRevenge.AbilityName.None)
+            {
+                List<TooltipLine> ttlines = new List<TooltipLine>();
+                string n = abilityName.ToString();
+                for (int i = 0; i < n.Length; ++i)
+                {
+                    if (i > 0 && char.IsUpper(n[i]))
+                    {
+                        n = n.Insert(i, " ");
+                        ++i;
+                    }
+                }
+                ttlines.Add(new TooltipLine(Color.White, n, .75f));
+                if (PowerCost > 0)
+                {
+                    ttlines.Add(new TooltipLine(Color.White, PowerCost + " Power", .5f));
+                }
+                if (cooldownMillisLength > 0)
+                {
+                    ttlines.Add(new TooltipLine(Color.White, Math.Round(cooldownMillisLength / 1000.0f, 2) + " sec. cooldown", .4f));
+                }
+                if (PrimaryType != AttackType.None)
+                {
+                    ttlines.Add(new TooltipLine(Color.White, "Requires " + PrimaryType.ToString() + " Weapon", .4f));
+                }
+                ttlines.Add(new TooltipLine(Color.Gold, descriptionText, .4f));
 
-            List<TooltipLine> ttlines = new List<TooltipLine>();
-            ttlines.Add(new TooltipLine(Color.White, abilityName.ToString(), 1));
-            if (PowerCost > 0)
-            {
-                ttlines.Add(new TooltipLine(Color.White, PowerCost + " Power", .75f));
+                this.Tooltip = new Tooltip(ttlines);
             }
-            if (cooldownMillisLength > 0)
-            {
-                ttlines.Add(new TooltipLine(Color.White, Math.Round(cooldownMillisLength / 1000.0f, 2) + " sec. cooldown", .75f));
-            }
-            if (PrimaryType != AttackType.None)
-            {
-                ttlines.Add(new TooltipLine(Color.White, "Requires " + PrimaryType.ToString() + " Weapon", .75f));
-            }
-            ttlines.Add(new TooltipLine(Color.Gold, descriptionText, .5f));
-
-            this.Tooltip = new Tooltip(ttlines);
         }
 
         public void ResetCooldown()

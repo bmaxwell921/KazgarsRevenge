@@ -1054,11 +1054,13 @@ namespace KazgarsRevenge
                 }
                 Vector3 forward = GetForward();
                 int damage = GeneratePrimaryDamage(StatType.Agility);
-                if (abilityLearnedFlags[AbilityName.Headshot] && rand.Next(0, 101) < 25)
+                bool headshot = false;
+                if (abilityLearnedFlags[AbilityName.Headshot] && rand.Next(0, 100) < 25)
                 {
                     damage *= 2;
+                    headshot = true;
                 }
-                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this as AliveComponent, abilityLearnedFlags[AbilityName.MagneticImplant]);
+                attacks.CreateSnipe(physicalData.Position + forward * 10, forward, damage, this as AliveComponent, abilityLearnedFlags[AbilityName.MagneticImplant] && headshot);
 
                 millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - arrowReleaseMillis - arrowDrawMillis;
 
@@ -1232,7 +1234,7 @@ namespace KazgarsRevenge
                     targetedGroundSize = makeItRainSize;
                     if (abilityLearnedFlags[AbilityName.StrongWinds])
                     {
-                        targetedGroundSize *= 5;
+                        targetedGroundSize *= 4f;
                     }
                     //skip other actions
                     actionIndex = 10;
@@ -1429,6 +1431,13 @@ namespace KazgarsRevenge
                 velDir = GetForward() * 500;
                 ChangeVelocity(velDir);
                 millisActionLength = 600;
+                double elusiveLength = 600;
+                if (abilityLearnedFlags[AbilityName.Elusiveness])
+                {
+                    elusiveLength += 3000;
+                }
+                AddBuff(Buff.Elusiveness, elusiveLength, Entity);
+
             });
 
             sequence.Add(() =>
@@ -1438,11 +1447,6 @@ namespace KazgarsRevenge
                 ChangeVelocity(Vector3.Zero);
                 millisActionLength = 0;
                 groundTargetLocation = physicalData.Position;
-
-                if (abilityLearnedFlags[AbilityName.Elusiveness])
-                {
-                    AddBuff(Buff.Elusiveness, Entity);
-                }
             });
 
             sequence.Add(abilityFinishedAction);
@@ -1557,12 +1561,25 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
-
+                physicalData.CollisionInformation.CollisionRules.Group = Game.UntouchableCollisionGroup;
+                canInterrupt = false;
+                PlayAnimation("k_tumble", MixType.None);
+                attState = AttackState.Locked;
+                stateResetCounter = 0;
+                velDir = GetForward() * 500;
+                ChangeVelocity(velDir);
+                millisActionLength = 600;
             });
+
             sequence.Add(() =>
             {
-
+                physicalData.CollisionInformation.CollisionRules.Group = Game.PlayerCollisionGroup;
+                velDir = Vector3.Zero;
+                ChangeVelocity(Vector3.Zero);
+                millisActionLength = 0;
+                groundTargetLocation = physicalData.Position;
             });
+
             sequence.Add(abilityFinishedAction);
 
             return sequence;
@@ -1653,19 +1670,27 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
+                attState = AttackState.Locked;
+                PlayAnimation("k_throw", MixType.PauseAtEnd);
+                millisActionLength = 300;
+                stateResetCounter = 0;
+            });
+
+            sequence.Add(() =>
+            {
+                attState = AttackState.None;
                 float speed = grapplingHookSpeed;
-                if (abilityLearnedFlags[AbilityName.SpeedyGrapple])
+                if (abilityLearnedFlags[AbilityName.ForcefulThrow])
                 {
-                    speed *= 2.5f;
+                    speed *= 2f;
                 }
 
                 Vector3 forward = GetForward();
                 attacks.CreateChainSpear(physicalData.Position + forward * 10, forward, this as AliveComponent, speed, abilityLearnedFlags[AbilityName.ForcefulThrow]);
 
-                millisActionLength = 3000;
+                millisActionLength = animations.GetAniMillis("k_throw") - 300;
 
             });
-
             sequence.Add(abilityFinishedAction);
 
             return sequence;
@@ -2082,127 +2107,160 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.Snipe, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SNIPE), 
                 500, AttackType.Ranged, "snipe", AbilityType.Instant,
-                4, "Fire a killshot that gains increased damage with range.");
+                4, "Fire a killshot that gains\n"
+                    +"increased damage with range.");
         }
         protected Ability GetOmniShot()
         {
             return new Ability(AbilityName.Omnishot, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.OMNI_SHOT), 
                 4000, AttackType.Ranged, "omnishot", AbilityType.Instant,
-                10, "Fire an arrow that splits into 20 arrows (which gain all other ranged primary bonuses).");
+                10, "Fire an arrow that splits into\n"
+                    +"20 arrows (which gain all other\n"
+                    +"ranged primary attack bonuses).");
         }
         protected Ability GetAdrenalineRush()
         {
             return new Ability(AbilityName.AdrenalineRush, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ADREN_RUSH), 
                 10000, AttackType.Ranged, "buffrush", AbilityType.Instant,
-                2, "Increases attack speed and run speed for 3 seconds.");
+                2, "Increases attack speed for 60%\n"
+                    +"and run speed by 75% for 3sec.");
         }
         protected Ability GetLeechingArrows()
         {
             return new Ability(AbilityName.Leeching, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LEECH_ARROWS), 
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "Kazgar's primary ranged attacks heal for 10% of the damage done.");
+                0, "Kazgar's primary ranged attacks\n"
+                    +"heal for 10% of their damage.");
         }
         protected Ability GetLooseCannon()
         {
             return new Ability(AbilityName.LooseCannon, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.LOOSE_CANNON), 
                 6000, AttackType.Ranged, "loosecannon", AbilityType.Charge,
-                5, "Charge and release an aimed shot that explodes on impact that deals up to 500% damage.");
+                5, "Charge and release an aimed\n"
+                    +"shot that explodes on impact,\n"
+                    +"dealing up to 500% damage.");
         }
         protected Ability GetMakeItRain()
         {
             return new Ability(AbilityName.MakeItRain, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_RAIN), 
                 500, AttackType.Ranged, "makeitrain", AbilityType.GroundTarget,
-                5, "fire bolts into the air, causing a rain of projectiles at target location.");
+                5, "Fire bolts into the air, causing a\n"
+                    +"Rain of projectiles at target\n"
+                    +"location.");
         }
         protected Ability GetFlashBomb()
         {
             return new Ability(AbilityName.FlashBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.FLASH_BOMB), 
                 10000, AttackType.Ranged, "flashbomb", AbilityType.GroundTarget,
-                2, "Toss a bomb to the target location, exploding and stunning nearby enemies for 3 seconds.");
+                2, "Toss a bomb to the target location,\n"
+                    +"exploding and stunning nearby\n"
+                    +"enemies for 3 seconds.");
         }
         protected Ability GetTarBomb()
         {
             return new Ability(AbilityName.TarBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TAR_BOMB), 
                 0, AttackType.Ranged, "tarbomb", AbilityType.Passive, 
-                0, "Add a slow effect to Flash Bomb.");
+                0, "Slows enemies hit by Flash Bomb\n"
+                    +"by 75%  for 9sec.");
         }
         protected Ability GetGrapplingHook()
         {
             return new Ability(AbilityName.GrapplingHook, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.GRAP_HOOK), 
                 8000, AttackType.Ranged, "grapplinghook", AbilityType.Instant,
-                0, "throw a harpoon that pulls to the first wall it collides with.");
+                0, "Throw a harpoon that will pull to\n"
+                    +"the first wall it collides with.");
         }
         protected Ability GetMoltenBolt()
         {
             return new Ability(AbilityName.MoltenBolt, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MOLT_BOLT), 
                 3000, AttackType.Ranged, "moltenbolt", AbilityType.Instant,
-                1, "Fire an enflamed, piercing arrow. Enemies hit will burn for 7% of their life over 3 seconds.");
+                1, "Pierces. Enemies hit will burn\n"
+                    +"for 7% of their life over 3sec.\n"
+                    +"Tarred enemies will combust for\n"
+                    +"4x normal damage.");
         }
         protected Ability GetTumble()
         {
             return new Ability(AbilityName.Tumble, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.TUMBLE), 
                 4000, AttackType.Ranged, "tumble", AbilityType.Instant,
-                0, "Quickly dodge toward the targeted direction.");
+                0, "Quickly dodge toward the targeted\n"
+                    +"direction.");
         }
         protected Ability GetPenetrating()
         {
             return new Ability(AbilityName.Penetrating, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.PENETRATING), 
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "When Adrenaline Rush is active, ranged primary attacks pierce through targets.");
+                0, "When Adrenaline Rush is active,\n"
+                    +"ranged primary attacks pierce\n"
+                    +"through targets.");
         }
         protected Ability GetHoming()
         {
             return new Ability(AbilityName.Homing, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HOMING), 
                 0, AttackType.Ranged, "", AbilityType.Passive, 
-                0, "When Adrenaline Rush is active, ranged primary attacks home to the nearest target.");
+                0, "When Adrenaline Rush is active,\n"
+                    +"ranged primary attacks home to\n"
+                    +"the nearest target.");
         }
         protected Ability GetSerrated()
         {
             return new Ability(AbilityName.Serrated, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SERRATED), 
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "Your ranged primary attacks make enemies bleed for .5% of their life over 5 seconds. Stacks.");
+                0, "Your ranged primary attacks make\n"
+                    +"enemies bleed for .5% of their\n"
+                    +"life over 5 seconds. Stacks.");
         }
         protected Ability GetHeadshot()
         {
             return new Ability(AbilityName.Headshot, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.HEADSHOT), 
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "");
+                0, "Gives Snipe a 25% chance to hit\n"
+                    +"the target in the head, dealing\n"
+                    +"100% increased damage.");
         }
         protected Ability GetMagneticImplant()
         {
-            return new Ability(AbilityName.MagneticImplant, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAGNETIC_IMPLANT), 
+            return new Ability(AbilityName.MagneticImplant, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAGNETIC_IMPLANT),
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "");
+                0, "When Snipe headshots a target,\n"
+                    + "Increases damage dealt to that\n"
+                    + "target by 100% for 2 seconds.");
         }
         protected Ability GetMakeItHail()
         {
             return new Ability(AbilityName.MakeItHail, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.MAKE_IT_HAIL), 
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "");
+                0, "Increases the damage of\n"
+                    +"Make it Rain by 150%");
         }
         protected Ability GetStrongWinds()
         {
             return new Ability(AbilityName.StrongWinds, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.STRONG_WINDS), 
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "");
+                0, "Increases Make it Rain's area\n"
+                    +"of effect by 400%.");
         }
         protected Ability GetSpeedyGrapple()
         {
             return new Ability(AbilityName.SpeedyGrapple, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.SPEEDY_GRAPPLE), 
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "");
+                0, "Increases the projectile speed of\n"
+                    +"Grappling Hook by 150%.");
         }
         protected Ability GetBiggerBombs()
         {
             return new Ability(AbilityName.BiggerBombs, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.BIGGER_BOMBS), 
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "");
+                0, "Increases Flash Bomb's area of\n"
+                    +"effect by 150%.");
         }
         protected Ability GetElusiveness()
         {
             return new Ability(AbilityName.Elusiveness, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.ELUSIVENESS), 
                 0, AttackType.Ranged, "", AbilityType.Passive,
-                0, "");
+                0, "Makes Kazgar invulnerable to\n"
+                    +"projectiles and attacks for\n"
+                    +"3sec after using Tumble.");
         }
 
 
@@ -2211,127 +2269,160 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.Cleave, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.CLEAVE),
                 500, AttackType.Melee, "cleave", AbilityType.Instant,
-                3, "");
+                3, "Swing a wide arc with your weapon,\n"
+                    +"dealing normal damage to all\n"
+                    +"enemies around you.");
         }
         protected Ability GetDecapitation()
         {
             return new Ability(AbilityName.Decapitation, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Decapitation),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "Gives Cleave a 30% chance for each\n"
+                    +"enemy hit to deal 4x damage");
         }
         protected Ability GetInvigoration()
         {
             return new Ability(AbilityName.Decapitation, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Invigoration),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "20% of Cleave's damage is\n"
+                    +"returned as health.");
         }
         protected Ability GetObsidianCoagulation()
         {
             return new Ability(AbilityName.ObsidianCoagulation, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.ObsidianCoagulation),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "Each time you are hit, you take 2%"
+                    +"less damage for 5 seconds. Stacks\n"
+                    +"up to 25 times.");
         }
         protected Ability GetDevastatingStrike()
         {
             return new Ability(AbilityName.DevastatingStrike, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.DevastatingStrike),
-                5000, AttackType.Melee, "devastatingstrike", AbilityType.Instant,//5000
-                5, "");
+                5000, AttackType.Melee, "devastatingstrike", AbilityType.Instant,
+                5, "Bring your sword crashing to the\n"
+                    +"ground, dealing 10x damage to one\n"
+                    +"enemy in front of you.");
         }
         protected Ability GetDevastatingReach()
         {
             return new Ability(AbilityName.DevastatingReach, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.DevastatingReach),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "Extends the reach of Devastating\n"
+                    +"Strike and allows it to hit\n"
+                    +"multiple enemies.");
         }
         protected Ability GetReflect()
         {
             return new Ability(AbilityName.Reflect, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Reflect),
                 500, AttackType.Melee, "reflect", AbilityType.Instant,
-                1, "");
+                1, "Swing a weapon to bounce any\n"
+                    +"projectiles back at your enemies.\n"
+                    +"Generates one power for each\n"
+                    +"projectile reflected.");
         }
         protected Ability GetCharge()
         {
             return new Ability(AbilityName.Charge, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Charge),
                 3, AttackType.Melee, "charge", AbilityType.Instant,
-                4000, "");
+                4000, "Rush forward to the target\n"
+                        +"location, knocking back\n"
+                        +"enemies along the way.");
         }
         protected Ability GetGarrote()
         {
             return new Ability(AbilityName.Garrote, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Garrote),
                 3000, AttackType.Melee, "garrote", AbilityType.Instant,
-                2, "");
+                2, "Deal 5x normal damage to a\n"
+                    +"single target.");
         }
         protected Ability GetExcruciatingTwist()
         {
             return new Ability(AbilityName.ExcruciatingTwist, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.ExcruciatingTwist),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "Garrote makes enemies bleed for 10%\n"
+                    +"of their health over 2sec.");
         }
         protected Ability GetSadisticFrenzy()
         {
             return new Ability(AbilityName.SadisticFrenzy, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.SadisticFrenzy),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "Gain 20% atack speed for\n"
+                    +"4sec after using Garrote.");
         }
         protected Ability GetBash()
         {
             return new Ability(AbilityName.Bash, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Bash),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "Gives your melee primary atacks\n"
+                    +"a 15% chance to stun for 1sec.");
         }
         protected Ability GetBerserk()
         {
             return new Ability(AbilityName.Berserk, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Berserk),
                 10000, AttackType.Melee, "berserk", AbilityType.Instant,
-                10, "");
+                10, "Gain +70% attack speed for 10sec\n"
+                    +"and deal 5% of your max health in\n"
+                    +"damage to yourself ever second.");
         }
         protected Ability GetSecondWind()
         {
             return new Ability(AbilityName.SecondWind, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.SecondWind),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "when Berserk ends, gain 40% of\n"
+                    +"your life back over 10sec.");
         }
         protected Ability GetRiskyRegeneration()
         {
             return new Ability(AbilityName.RiskyRegeneration, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.RiskyRegeneration),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "Increases Berserk's self damage\n"
+                    +"to 7% per second, but increases\n"
+                    +"Second Wind's healing to 80%.");
         }
         protected Ability GetRejuvenatingStrikes()
         {
             return new Ability(AbilityName.RejuvenatingStrikes, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.RejuvenatingStrikes),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "Basic attacks heal for 10% of\n"
+                    +"the damage they deal.");
         }
         protected Ability GetHeadbutt()
         {
             return new Ability(AbilityName.Headbutt, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Headbutt),
                 0, AttackType.Melee, "headbutt", AbilityType.Instant,
-                0, "");
+                0, "Headbutt enemies in front of you,\n"
+                    +"stunning them for 5sec.");
         }
         protected Ability GetChainSpear()
         {
             return new Ability(AbilityName.ChainSpear, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.ChainSpear),
                 4000, AttackType.Melee, "chainspear", AbilityType.Instant,
-                1, "");
+                1, "Hurl a spear with a chain attached,\n"
+                    +"pulling back the first enemy hit.");
         }
         protected Ability GetForcefulThrow()
         {
             return new Ability(AbilityName.ForcefulThrow, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.ForcefulThrow),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "");
+                0, "Increases the projectile speed of Chain\n"
+                    +"Spear by 100%, and stuns enemies hit\n"
+                    +"by it for 3 seconds.");
         }
         protected Ability GetExecute()
         {
             return new Ability(AbilityName.Execute, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Execute),
                 500, AttackType.Melee, "execute", AbilityType.Instant,
-                3, "");
+                3, "Hits a single target for 15x\n"
+                    +"damage if they are below 20% hp");
         }
         protected Ability GetSwordnado()
         {
             return new Ability(AbilityName.Swordnado, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Swordnado),
                 15000, AttackType.Melee, "swordnado", AbilityType.Instant,
-                10, "");
+                10, "Spin your weapons around in a\n"
+                    +"whirlwind, constantly damaging all\n"
+                    +"nearby enemies and reflecting all\n"
+                    +"projectiles.");
         }
 
 
@@ -2349,19 +2440,23 @@ namespace KazgarsRevenge
         #region Potion Definitions
         protected Ability GetHealthPotion()
         {
-            return new Ability(AbilityName.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, AttackType.None, "healthpot", AbilityType.Instant, 0, "Heals for 20% health over 5 seconds");
+            return new Ability(AbilityName.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, AttackType.None, "healthpot", AbilityType.Instant, 0, 
+                "Heals for 20% health over 5 seconds");
         }
         protected Ability GetSuperHealthPotion()
         {
-            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.SUPER_HEALTH), 0, AttackType.None, "superhealthpot", AbilityType.Instant, 0, "Heals for 40% health over 5 seconds");
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.SUPER_HEALTH), 0, AttackType.None, "superhealthpot", AbilityType.Instant, 0, 
+                "Heals for 40% health over 5 seconds");
         }
         protected Ability GetPotionOfLuck()
         {
-            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.LUCK), 0, AttackType.None, "luckpot", AbilityType.Instant, 0, "Increases the quality of loot\ndropped for 2 minutes");
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.LUCK), 0, AttackType.None, "luckpot", AbilityType.Instant, 0, 
+                "Increases the quality of loot\ndropped for 2 minutes");
         }
         protected Ability GetInstaHealthPotion()
         {
-            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.INSTA_HEALTH), 0, AttackType.None, "instahealthpot", AbilityType.Instant, 0, "Heals for 30% health instantly");
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.INSTA_HEALTH), 0, AttackType.None, "instahealthpot", AbilityType.Instant, 0, 
+                "Heals for 30% health instantly");
         }
 
         #endregion

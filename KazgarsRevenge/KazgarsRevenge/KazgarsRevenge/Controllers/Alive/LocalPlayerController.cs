@@ -2277,7 +2277,7 @@ namespace KazgarsRevenge
             #region tooltip
             if (currentTooltip != null)
             {
-                currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, 1.0f, 50f);       //#Jared drawing tooltip here
+                currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, average, 50f);
                 s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Black * 0.5f);
             }
             #endregion

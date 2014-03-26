@@ -661,6 +661,7 @@ namespace KazgarsRevenge
 
             AttackController controller = new AttackController(mainGame, entity, 0, GetHitFaction(creator), creator);
             controller.AddDebuff(DeBuff.Headbutt);
+            controller.HitMultipleTargets();
             entity.AddComponent(typeof(AttackController), controller);
             genComponentManager.AddComponent(controller);
 
