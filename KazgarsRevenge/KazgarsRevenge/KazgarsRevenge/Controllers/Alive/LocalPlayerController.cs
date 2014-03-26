@@ -2228,6 +2228,40 @@ namespace KazgarsRevenge
                 else if (currentTalentTree == TalentTrees.melee)
                 {
                     drawTalentHelper(s, meleeAbilities);
+
+                    #region draw melee arrows
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB1"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB2"], Color.White);
+
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB5"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB6"], Color.White);
+
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB9"], Color.White);
+                    s.Draw(talentArrowDownLeft, talentArrowsDict["arrowW10"], Color.White);
+
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB12"], Color.White);
+                    s.Draw(talentArrowLeft, talentArrowsDict["arrowL13"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB13"], Color.White);
+                    s.Draw(talentArrowLeft, talentArrowsDict["arrowL14"], Color.White);
+                    s.Draw(talentArrowUpLeft, talentArrowsDict["arrowQ14"], Color.White);
+
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB16"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB17"], Color.White);
+                    s.Draw(talentArrowDownRight, talentArrowsDict["arrowQ17"], Color.White);
+                    s.Draw(talentArrowRight, talentArrowsDict["arrowR17"], Color.White);
+
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB20"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB21"], Color.White);
+                    s.Draw(talentArrowDown, talentArrowsDict["arrowB23"], Color.White);
+                    s.Draw(talentArrowLeft, talentArrowsDict["arrowL23"], Color.White);
+
+                    s.Draw(talentArrowLeft, talentArrowsDict["arrowL27"], Color.White);
+
+                    #endregion
+                }
+                else if (currentTalentTree == TalentTrees.magic)
+                {
+                    //drawTalentHelper(s, magicAbilities);
                 }
 
                 //Draw Tree Selectors
