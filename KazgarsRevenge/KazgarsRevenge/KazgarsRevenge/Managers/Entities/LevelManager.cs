@@ -89,7 +89,7 @@ namespace KazgarsRevenge
         // Put mobs a little bit above the ground so they don't sink down
         public static readonly float MOB_SPAWN_Y = 20;
 
-        public static readonly string ROOM_PATH = @"Models\NewTileLevels\Rooms\";
+        public static readonly string ROOM_PATH = @"Models\Levels\Rooms\";
 
         //public FloorName CurrentFloor = FloorName.Dungeon;
 
@@ -362,7 +362,7 @@ namespace KazgarsRevenge
 
         #region Object Map Processing
 
-        string objectMapDir = "Models\\NewTileLevels\\RoomObjectMaps\\";
+        string objectMapDir = "Models\\Levels\\RoomObjectMaps\\";
         private void ProcessObjectMap(string objectMapName, float yaw, Vector3 position)
         {
             Matrix chunkTransform = Matrix.CreateScale(roomScale)
@@ -469,7 +469,7 @@ namespace KazgarsRevenge
             prop.AddSharedData(typeof(Entity), physicalData);
 
             //TODO: emitters and effects
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\NewTileLevels\\Props\\soulevator"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10), Vector3.Zero, 0, 0, 0);
             graphics.SetAlpha(.5f);
             prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
@@ -489,7 +489,7 @@ namespace KazgarsRevenge
             door.AddComponent(typeof(PhysicsComponent), doorPhysics);
             genComponentManager.AddComponent(doorPhysics);
 
-            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-nsdoor"), roomScale, Vector3.Zero, yaw, 0, 0);
+            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-nsdoor"), roomScale, Vector3.Zero, yaw, 0, 0);
             door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
             modelManager.AddComponent(doorGraphics);
 
@@ -503,7 +503,7 @@ namespace KazgarsRevenge
             Entity physicalData = new Box(pos, 1, 1, 1);
             lightProp.AddSharedData(typeof(Entity), physicalData);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, lightProp, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-lightFixture"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, lightProp, GetUnanimatedModel("Models\\Levels\\Props\\01-lightFixture"), new Vector3(10), Vector3.Zero, 0, 0, 0);
             lightProp.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
@@ -519,7 +519,7 @@ namespace KazgarsRevenge
                 Entity physicalData = new Box(pos, 1, 1, 1);
                 prop.AddSharedData(typeof(Entity), physicalData);
 
-                UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\NewTileLevels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+                UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
                 prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
                 modelManager.AddComponent(graphics);
 

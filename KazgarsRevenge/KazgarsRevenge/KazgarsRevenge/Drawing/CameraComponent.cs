@@ -18,7 +18,7 @@ namespace KazgarsRevenge
         #region Camera Fields
         private float fov = MathHelper.PiOver4;
         private float nearPlane = 10f;
-        private float farPlane = 1000;
+        private float farPlane = 8000;
 
         private Entity physicalData;
 
