@@ -2073,7 +2073,7 @@ namespace KazgarsRevenge
         //Placeholder Ability
         protected Ability GetNone()
         {
-            return new Ability(AbilityName.None, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder), 0, AttackType.Ranged, "PlaceHolder", AbilityType.Instant, 0, "");
+            return new Ability(AbilityName.None, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder), 0, AttackType.None, "PlaceHolder", AbilityType.Instant, 0, "");
         }
 
 
