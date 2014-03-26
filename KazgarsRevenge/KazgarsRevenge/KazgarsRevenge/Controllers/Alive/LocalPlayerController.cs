@@ -453,7 +453,7 @@ namespace KazgarsRevenge
             }
 
             //loot nearby soul
-            if (!looting && attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
+            if (!inCombat && !looting && attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
             {
                 OpenLoot();
                 if (!guiOutsideRects.ContainsKey("loot"))
@@ -2223,6 +2223,7 @@ namespace KazgarsRevenge
 
         protected override void KillAlive()
         {
+            looting = false;
             model.KillAllEmitters();
             currentPower = 0;
             if (currentActionName != "death")

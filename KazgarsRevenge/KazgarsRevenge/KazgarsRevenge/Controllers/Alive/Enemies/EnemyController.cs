@@ -119,7 +119,7 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case EnemyState.Normal:
-                    if (!activeDebuffs.ContainsKey(DeBuff.Stunned) && InsideCameraBox(camera.CameraBox))
+                    if (!activeDebuffs.ContainsKey(DeBuff.Stunned) && InsideCameraBox(camera.AIBox))
                     {
                         currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
                     }
@@ -343,7 +343,7 @@ namespace KazgarsRevenge
                         }
                         else
                         {
-                            beeline = (Math.Abs(diff.X) > LevelManager.BLOCK_SIZE / 2 || Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE / 2) && nothingWasBetween;
+                            beeline = nothingWasBetween;
                         }
                     }
 

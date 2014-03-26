@@ -1,10 +1,10 @@
 float alpha = 1;
 float lineIntensity = 1;
 
-float3 lightPositions[20];
+float3 lightPositions[30];
 float LightAttenuation = 300;
 float LightFalloff = 2;
-float3 lightColors[20];
+float3 lightColors[30];
 
 float3 colorTint = float3(1,1,1);
 
@@ -70,7 +70,7 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 	float amt;
 	float att;
 	float tmp;
-	for(int i=0; i<20; ++i)
+	for(int i=0; i<30; ++i)
 	{
 		if(lightPositions[i].x != -10000)
 		{

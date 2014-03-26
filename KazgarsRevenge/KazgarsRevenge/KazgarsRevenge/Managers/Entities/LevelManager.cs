@@ -262,7 +262,7 @@ namespace KazgarsRevenge
 
                 return connections;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Problem parsing roomName: {0}", roomName));
                 return null;
@@ -293,7 +293,7 @@ namespace KazgarsRevenge
 
             //holds the position so the model is drawn correctly (not added to physics)
             //size is related to how far away this will start being rendered
-            Entity roomLocation = new Box(position, 1100, 1100, 1100);
+            Entity roomLocation = new Box(position, BLOCK_SIZE, 2, BLOCK_SIZE);
             room.AddSharedData(typeof(Entity), roomLocation);
 
             UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, roomScale, Vector3.Zero, yaw, 0, 0);

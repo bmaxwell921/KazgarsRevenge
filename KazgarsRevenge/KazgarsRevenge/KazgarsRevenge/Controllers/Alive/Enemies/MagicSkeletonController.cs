@@ -14,7 +14,6 @@ namespace KazgarsRevenge
             settings.aniPrefix = "s_";
             settings.attackAniName = "magic";
             settings.attackRange = 300;
-            settings.noticePlayerRange = 400;
             settings.stopChasingRange = 350;
             settings.attackLength = 1667;
             settings.attackCreateMillis = settings.attackLength / 2;
