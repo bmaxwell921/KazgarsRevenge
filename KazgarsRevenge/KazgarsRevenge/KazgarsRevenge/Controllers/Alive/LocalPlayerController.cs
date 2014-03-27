@@ -1417,6 +1417,10 @@ namespace KazgarsRevenge
                                     currentTalentTree = TalentTrees.magic;
                                     break;
                                 }
+                                else if (innerCollides.Equals("Points"))
+                                {
+                                    break;
+                                }
                                 //TODO if we add any more innerFrames in abilities make sure we check those first
                                 int check = Convert.ToInt32(innerCollides.Remove(0, 6));
                                 if (currentTalentTree == TalentTrees.ranged)
@@ -1508,6 +1512,10 @@ namespace KazgarsRevenge
                     case "talents":
                         if (innerCollides != null)
                         {
+                            if (innerCollides.Equals("Ranged") || innerCollides.Equals("Melee") || innerCollides.Equals("Magic") || innerCollides.Equals("Points"))
+                                {
+                                    break;
+                                }
                             //TODO if we add any more innerFrames in abilities make sure we check those first
                             int check = Convert.ToInt32(innerCollides.Remove(0, 6));
                             if (currentTalentTree == TalentTrees.ranged)
@@ -1616,6 +1624,11 @@ namespace KazgarsRevenge
                     if (innerCollides != null)
                     {
                         if (innerCollides.Equals("Ranged") || innerCollides.Equals("Melee") || innerCollides.Equals("Magic")) break;
+                        else if (innerCollides.Equals("Points"))
+                        {
+                            currentTooltip = new Tooltip(new List<TooltipLine> {new TooltipLine(Color.White, "Talent Points", .65f) , new TooltipLine(Color.Gold, "Spend these on talents!", .4f)});
+                            break;
+                        }
                         //TODO if we add any more innerFrames in abilities make sure we check those first
                         int check = Convert.ToInt32(innerCollides.Remove(0, 6));
                         if (currentTalentTree == TalentTrees.ranged && rangedAbilities[(int)check / 4, check % 4] != null)
@@ -1833,6 +1846,7 @@ namespace KazgarsRevenge
             talentDict.Add("Ranged", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
             talentDict.Add("Melee", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 1 * 94 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
             talentDict.Add("Magic", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 2 * 94 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
+            talentDict.Add("Points", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 3 * 94 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
 
             //Loot
             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
@@ -2190,7 +2204,7 @@ namespace KazgarsRevenge
                 s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MagicBanner), guiInsideRects["talents"]["Magic"], Color.White);
 
                 //Draw Talent Points
-                s.DrawString(font, (totalTalentPoints - spentTalentPoints) + "/" + totalTalentPoints, vecName, Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                s.DrawString(font, (totalTalentPoints - spentTalentPoints) + "/" + totalTalentPoints, new Vector2(guiInsideRects["talents"]["Points"].X, guiInsideRects["talents"]["Points"].Y), Color.White, 0, Vector2.Zero, 0.5f * average, SpriteEffects.None, 0);
             }
             #endregion
 
