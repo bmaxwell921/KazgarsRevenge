@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace KazgarsRevenge
 {
@@ -11,12 +12,15 @@ namespace KazgarsRevenge
         Dictionary<string, SoundEffect> soundEffects;
         Random rand;
 
-        
+        MediaLibrary media;
         public SoundEffectLibrary(MainGame game)
         {
+            media = new MediaLibrary();
+
             soundEffects = new Dictionary<string, SoundEffect>();
             rand = RandSingleton.U_Instance;
             loadSounds(game);
+
         }
 
         public void loadSounds(MainGame game)
