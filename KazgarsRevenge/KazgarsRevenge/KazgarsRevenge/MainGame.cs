@@ -275,14 +275,14 @@ namespace KazgarsRevenge
             alertSourceX = normalFont.MeasureString(alertMessage).X / 4;
         }
 
-        public void AddFloatingText(string text, Color color)
+        public void AddFloatingText(Vector3 pos, string text, Color color)
         {
-            floatingText.Add(new FloatingText(new Vector2(maxX / 2 - normalFont.MeasureString(text).X / 2, maxY / 2), text, color));
+            floatingText.Add(new FloatingText(pos, text, color));
         }
 
-        public void AddFloatingText(string text, Color color, float scale)
+        public void AddFloatingText(Vector3 pos, string text, Color color, float scale)
         {
-            floatingText.Add(new FloatingText(new Vector2(maxX / 2 - normalFont.MeasureString(text).X * scale / 2, maxY / 2), text, color, scale));
+            floatingText.Add(new FloatingText(pos, text, color, scale));
         }
 
         //public void AddAlert(string 
@@ -296,10 +296,14 @@ namespace KazgarsRevenge
                 {
                     alertTimeLeft -= gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
-                for (int i = floatingText.Count - 1; i >= 0; ++i)
+                for (int i = floatingText.Count - 1; i >= 0; --i)
                 {
                     floatingText[i].alpha -= .01f;
-                    floatingText[i].position.Y -= 1;
+                    floatingText[i].position.Y += 1;
+                    if (floatingText[i].alpha <= 0)
+                    {
+                        floatingText.RemoveAt(i);
+                    }
                 }
             }
 
@@ -415,10 +419,12 @@ namespace KazgarsRevenge
                 spriteManager.Draw(spriteBatch);
                 //debug strings
                 //spriteBatch.DrawString(normalFont, ""+camera.zoom, new Vector2(50, 100), Color.Red);
-                spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
+                //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
                 foreach (FloatingText f in floatingText)
                 {
-                    spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, f.scale, SpriteEffects.None, 0);
+                    Vector3 pos = GraphicsDevice.Viewport.Project(f.position, camera.Projection, camera.View, Matrix.Identity);
+                    Vector2 screenPos = new Vector2(pos.X, pos.Y);
+                    spriteBatch.DrawString(normalFont, f.text, screenPos, f.color * f.alpha, 0, Vector2.Zero, f.scale, SpriteEffects.None, 0);
                 }
 
                 if (alertTimeLeft > 0)

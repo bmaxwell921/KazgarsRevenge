@@ -521,6 +521,8 @@ namespace KazgarsRevenge
                     CalculateThreat(d, from);
                 }
                 minChaseCounter = 0;
+
+                (Game as MainGame).AddFloatingText(physicalData.Position, "" + d, Color.Yellow);
             }
         }
         protected virtual void DoDamagedGraphics()

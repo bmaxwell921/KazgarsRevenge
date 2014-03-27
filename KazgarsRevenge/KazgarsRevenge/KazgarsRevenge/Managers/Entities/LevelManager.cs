@@ -430,13 +430,13 @@ namespace KazgarsRevenge
                 List<Vector3> bossSpawns = levelInfo.bossSpawnLocations;
                 if (bossSpawns.Count > 0)
                 {
-                    (Game.Services.GetService(typeof(EnemyManager)) as EnemyManager).CreateBoss(IdentificationFactory.getId(EntityType.Boss, Identification.NO_CLIENT), Vector3.Transform(bossSpawns[0], chunkTransform));
+                    (Game.Services.GetService(typeof(EnemyManager)) as EnemyManager).CreateBoss(IdentificationFactory.getId(EntityType.Boss, Identification.NO_CLIENT), Vector3.Transform(bossSpawns[RandSingleton.U_Instance.Next(bossSpawns.Count)], chunkTransform));
                 }
 
                 List<Vector3> keyLocations = levelInfo.keyLocations;
                 if (keyLocations.Count > 0)
                 {
-                    CreateKey(Vector3.Transform(keyLocations[0], chunkTransform));
+                    CreateKey(Vector3.Transform(keyLocations[RandSingleton.U_Instance.Next(keyLocations.Count)], chunkTransform));
                 }
 
             }

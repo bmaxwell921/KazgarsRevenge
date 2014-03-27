@@ -11,17 +11,17 @@ namespace KazgarsRevenge
     {
         public float scale = 1;
         public Color color = Color.White;
-        public Vector2 position;
+        public Vector3 position;
         public float alpha;
         public string text;
-        public FloatingText(Vector2 position, string text)
+        public FloatingText(Vector3 position, string text)
         {
             this.alpha = 1;
             this.position = position;
             this.text = text;
         }
 
-        public FloatingText(Vector2 position, string text, Color color)
+        public FloatingText(Vector3 position, string text, Color color)
         {
             this.alpha = 1;
             this.position = position;
@@ -29,7 +29,7 @@ namespace KazgarsRevenge
             this.color = color;
         }
 
-        public FloatingText(Vector2 position, string text, Color color, float scale)
+        public FloatingText(Vector3 position, string text, Color color, float scale)
         {
             this.alpha = 1;
             this.position = position;
