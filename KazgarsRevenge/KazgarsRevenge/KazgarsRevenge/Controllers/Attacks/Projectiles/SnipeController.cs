@@ -13,7 +13,7 @@ namespace KazgarsRevenge
     {
         int initialDamage;
         public SnipeController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator, bool magnetic)
-            : base(game, entity, damage, factionToHit, creator)
+            : base(game, entity, damage, factionToHit, creator, AttackType.Ranged)
         {
             this.lifeLength = 1000;
             this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);

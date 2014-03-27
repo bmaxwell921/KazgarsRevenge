@@ -101,11 +101,11 @@ namespace KazgarsRevenge
             soundEffects.playRangedSound();
         }
 
-        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator)
+        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, bool twohanded)
         {
-            CreateMeleeAttack(position, damage, creator, 0);
+            CreateMeleeAttack(position, damage, creator, 0, twohanded);
         }
-        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, float lifesteal)
+        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, float lifesteal, bool twohanded)
         {
             GameEntity newAttack = new GameEntity("melee", creator.Entity.Faction, EntityType.Misc);
             newAttack.id = IdentificationFactory.getId(EntityType.Misc, players.myId.id);
@@ -120,7 +120,7 @@ namespace KazgarsRevenge
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, AttackType.Melee);
             if (lifesteal != 0)
             {
                 attackAI.ReturnLife(lifesteal);
@@ -133,13 +133,18 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(attackAI);
 
             attacks.Add(newAttack);
-            soundEffects.playMeleeSound();
+
+            soundEffects.playMeleeMissSound();
+            if (!twohanded)
+            {
+                soundEffects.playMeleeHitFloorSound();
+            }
         }
 
         /// <summary>
         /// Called from a network message to create a Melee Attack
         /// </summary>
-        public void CreateMeleeAttack(int creatorId, int attackId, FactionType assocFact, Vector3 position, int damage)
+        public void CreateMeleeAttack(int creatorId, int attackId, FactionType assocFact, Vector3 position, int damage, bool twoHanded)
         {
             GameEntity newAttack = new GameEntity("melee", assocFact, EntityType.Misc);
             newAttack.id = new Identification(attackId, players.myId.id);
@@ -156,7 +161,7 @@ namespace KazgarsRevenge
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
 
             AttackController attackAI = new AttackController(mainGame, newAttack, damage, assocFact == FactionType.Players ? FactionType.Enemies : FactionType.Players, 
-                (AliveComponent)creator.GetComponent(typeof(AliveComponent)));
+                (AliveComponent)creator.GetComponent(typeof(AliveComponent)), AttackType.Melee);
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
             genComponentManager.AddComponent(attackPhysics);
@@ -165,7 +170,11 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(attackAI);
 
             attacks.Add(newAttack);
-            soundEffects.playMeleeSound();
+            soundEffects.playMeleeMissSound();
+            if (!twoHanded)
+            {
+                soundEffects.playMeleeHitFloorSound();
+            }
 
             SpawnWeaponSparks(position + Vector3.Down * 18);
         }
@@ -315,7 +324,7 @@ namespace KazgarsRevenge
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, AttackType.None);
             attackAI.HitMultipleTargets();
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
@@ -340,7 +349,7 @@ namespace KazgarsRevenge
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, AttackType.Ranged);
             attackAI.HitMultipleTargets();
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
@@ -523,7 +532,26 @@ namespace KazgarsRevenge
         }
 
 
+        public void CreateCharge(Vector3 pos, AliveComponent creator, double duration)
+        {
+            GameEntity entity = new GameEntity("attack", FactionType.Neutral, EntityType.None);
 
+            Entity box = new Box(pos, 55, 20, 55);
+            box.IsAffectedByGravity = false;
+            box.LocalInertiaTensorInverse = new Matrix3X3();
+            box.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            entity.AddSharedData(typeof(Entity), box);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
+            entity.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            ChargeController controller = new ChargeController(mainGame, entity, duration, GetHitFaction(creator), creator);
+            entity.AddComponent(typeof(ChargeController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(entity);
+        }
 
         public void CreateCleave(Vector3 position, int damage, AliveComponent creator, bool decap, bool invig)
         {
@@ -532,6 +560,7 @@ namespace KazgarsRevenge
 
             Entity physicalData = new Box(position, 100, 40, 100);
             physicalData.IsAffectedByGravity = false;
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             cleave.AddSharedData(typeof(Entity), physicalData);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, cleave);
@@ -566,7 +595,7 @@ namespace KazgarsRevenge
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, AttackType.Melee);
             if (reach)
             {
                 attackAI.HitMultipleTargets();
@@ -652,14 +681,14 @@ namespace KazgarsRevenge
 
             Entity physicalData = new Box(position, 40, 40, 40);
             physicalData.IsAffectedByGravity = false;
-            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             entity.AddSharedData(typeof(Entity), physicalData);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
             entity.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            AttackController controller = new AttackController(mainGame, entity, 0, GetHitFaction(creator), creator);
+            AttackController controller = new AttackController(mainGame, entity, 0, GetHitFaction(creator), creator, AttackType.Melee);
             controller.AddDebuff(DeBuff.Headbutt);
             controller.HitMultipleTargets();
             entity.AddComponent(typeof(AttackController), controller);
@@ -668,21 +697,21 @@ namespace KazgarsRevenge
             attacks.Add(entity);
         }
         
-        public void CreateGarrote(Vector3 position, float yaw, AliveComponent creator, bool twist)
+        public void CreateGarrote(Vector3 position, float yaw, AliveComponent creator, int damage, bool twist)
         {
             position.Y = 20;
             GameEntity entity = new GameEntity("att", FactionType.Neutral, EntityType.None);
 
             Entity physicalData = new Box(position, 40, 40, 40);
             physicalData.IsAffectedByGravity = false;
-            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             entity.AddSharedData(typeof(Entity), physicalData);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
             entity.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            AttackController controller = new AttackController(mainGame, entity, 0, GetHitFaction(creator), creator);
+            AttackController controller = new AttackController(mainGame, entity, damage, GetHitFaction(creator), creator, AttackType.Melee);
             if (twist)
             {
                 controller.AddDebuff(DeBuff.Garrote);
@@ -701,13 +730,14 @@ namespace KazgarsRevenge
 
             Entity physicalData = new Box(position, 40, 40, 40);
             physicalData.IsAffectedByGravity = false;
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             entity.AddSharedData(typeof(Entity), physicalData);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
             entity.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            AttackController controller = new AttackController(mainGame, entity, damage, GetHitFaction(creator), creator);
+            AttackController controller = new AttackController(mainGame, entity, damage, GetHitFaction(creator), creator, AttackType.Melee);
             controller.AddDebuff(DeBuff.Execute);
             entity.AddComponent(typeof(AttackController), controller);
             genComponentManager.AddComponent(controller);
@@ -768,7 +798,7 @@ namespace KazgarsRevenge
             cleave.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            AttackController controller = new AttackController(mainGame, cleave, damage, GetHitFaction(creator), creator);
+            AttackController controller = new AttackController(mainGame, cleave, damage, GetHitFaction(creator), creator, AttackType.Melee);
             controller.HitMultipleTargets();
             cleave.AddComponent(typeof(AttackController), controller);
             genComponentManager.AddComponent(controller);
@@ -949,7 +979,7 @@ namespace KazgarsRevenge
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, damage, GetHitFaction(creator), creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, GetHitFaction(creator), creator, AttackType.None);
             attackAI.HitMultipleTargets();
             
 
@@ -1005,7 +1035,7 @@ namespace KazgarsRevenge
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, damage, GetHitFaction(creator), creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, damage, GetHitFaction(creator), creator, AttackType.None);
             attackAI.HitMultipleTargets();
 
             newAttack.AddComponent(typeof(PhysicsComponent), attackPhysics);
@@ -1064,7 +1094,7 @@ namespace KazgarsRevenge
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, 0, GetHitFaction(creator), creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, 0, GetHitFaction(creator), creator, AttackType.None);
             attackAI.HitMultipleTargets();
             attackAI.AddDebuff(DeBuff.FlashBomb);
 
@@ -1090,7 +1120,7 @@ namespace KazgarsRevenge
             newAttack.AddSharedData(typeof(Entity), attackData);
 
             PhysicsComponent attackPhysics = new PhysicsComponent(mainGame, newAttack);
-            AttackController attackAI = new AttackController(mainGame, newAttack, 0, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
+            AttackController attackAI = new AttackController(mainGame, newAttack, 0, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator, AttackType.None);
             attackAI.HitMultipleTargets();
             attackAI.AddDebuff(DeBuff.Tar);
 

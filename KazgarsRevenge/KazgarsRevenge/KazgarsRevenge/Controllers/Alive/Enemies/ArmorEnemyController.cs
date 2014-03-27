@@ -19,6 +19,7 @@ namespace KazgarsRevenge
             settings.walkSpeed = 120;
             settings.attackLength = 1100;
             settings.attackCreateMillis = 350;
+            settings.usesTwoHander = false;
         }
 
         protected override void SpawnHitParticles()

@@ -25,5 +25,10 @@ namespace KazgarsRevenge
             Vector3 forward = physicalData.OrientationMatrix.Forward;
             attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this, false, false, false, false);
         }
+
+        protected override void SpawnHitParticles()
+        {
+
+        }
     }
 }

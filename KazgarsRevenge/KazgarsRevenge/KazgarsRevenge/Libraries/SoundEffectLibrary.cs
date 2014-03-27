@@ -28,6 +28,8 @@ namespace KazgarsRevenge
             for (int i = 0; i < numSwordSounds; ++i)
             {
                 soundEffects.Add("sword_hit" + i, game.Content.Load<SoundEffect>("Sound\\Melee\\sword_hit" + i));
+                soundEffects.Add("sword_miss" + i, game.Content.Load<SoundEffect>("Sound\\Melee\\whoosh" + i));
+                soundEffects.Add("sword_clang" + i, game.Content.Load<SoundEffect>("Sound\\Melee\\clang" + i));
             }
 
 
@@ -42,10 +44,19 @@ namespace KazgarsRevenge
 
         #region melee
         const int numSwordSounds = 4;
-        public void playMeleeSound()
+        public void playMeleeHitSound()
         {
             soundEffects["sword_hit" + rand.Next(numBowSounds)].Play();
         }
+        public void playMeleeMissSound()
+        {
+            soundEffects["sword_miss" + rand.Next(numBowSounds)].Play();
+        }
+        public void playMeleeHitFloorSound()
+        {
+            soundEffects["sword_clang" + rand.Next(numBowSounds)].Play();
+        }
+
         public void PlayAbilitySound(AbilityName ability)
         {
             switch (ability)

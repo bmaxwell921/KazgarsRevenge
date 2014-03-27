@@ -11,7 +11,6 @@ using BEPUphysics.CollisionTests;
 using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.Collidables;
 using BEPUphysics.Collidables.MobileCollidables;
-using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
@@ -23,13 +22,15 @@ namespace KazgarsRevenge
         //either "good" or "bad", for now
         protected FactionType factionToHit;
         protected DeBuff debuff = DeBuff.None;
-        public AttackController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
+        protected AttackType type;
+        public AttackController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator, AttackType type)
             : base(game, entity)
         {
             this.damage = damage;
             this.factionToHit = factionToHit;
             this.creator = creator;
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
+            this.type = type;
             physicalData.IsAffectedByGravity = false;
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
         }
@@ -137,7 +138,7 @@ namespace KazgarsRevenge
             if (t != null)
             {
                 int toDeal = GetDamage();
-                int d = t.DamageDodgeable(debuff, toDeal, creator.Entity);
+                int d = t.DamageDodgeable(debuff, toDeal, creator.Entity, type);
                 damageDealt += d;
                 if (lifesteal)
                 {

@@ -1419,6 +1419,7 @@ namespace KazgarsRevenge
                                     {
                                         boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(p.PotionAbility));
                                     }
+                                    selectedItemSlot = -1;
                                 }
                                 else
                                 {
@@ -1516,15 +1517,6 @@ namespace KazgarsRevenge
                                         if (p != null)
                                         {
                                             UseSequenceParallel(p.PotionAbility.ToString());
-                                            inventory[i].Quantity--;
-                                            if (inventory[i].Quantity <= 0)
-                                            {
-                                                inventory[i] = null;
-                                                if (selectedItemSlot == i)
-                                                {
-                                                    selectedItemSlot = -1;
-                                                }
-                                            }
                                         }
                                         else
                                         {

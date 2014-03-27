@@ -34,6 +34,7 @@ namespace KazgarsRevenge
         Burning,
         Frozen,
         Execute,
+        Charge,
     }
     public enum Buff
     {
@@ -217,6 +218,7 @@ namespace KazgarsRevenge
             }
         }
 
+        protected float statsPerLevelMultiplier = 1;
         protected virtual void RecalculateStats()
         {
             if (stats.Count == 0)
@@ -234,7 +236,7 @@ namespace KazgarsRevenge
 
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
             {
-                stats[(StatType)i] += statsPerLevel[(StatType)i] * level;
+                stats[(StatType)i] += statsPerLevel[(StatType)i] * level * statsPerLevelMultiplier;
             }
         }
 
@@ -268,6 +270,7 @@ namespace KazgarsRevenge
         public override void Start()
         {
             model = (AnimatedModelComponent)Entity.GetComponent(typeof(AnimatedModelComponent));
+            sounds = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
             base.Start();
         }
 
@@ -373,7 +376,17 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.Normal;
         }
 
-        public int DamageDodgeable(DeBuff db, int d, GameEntity from)
+        public void KnockBack(Vector3 origin, float impulse)
+        {
+            Vector3 newVel = physicalData.Position - origin;
+            if (newVel != Vector3.Zero)
+            {
+                newVel.Normalize();
+            }
+            this.physicalData.LinearVelocity = newVel * impulse;
+        }
+
+        public int DamageDodgeable(DeBuff db, int d, GameEntity from, AttackType type)
         {
             if (activeBuffs.ContainsKey(Buff.Elusiveness))
             {
@@ -382,11 +395,11 @@ namespace KazgarsRevenge
             }
             else
             {
-                return Damage(db, d, from);
+                return Damage(db, d, from, type);
             }
         }
 
-        public int Damage(DeBuff db, int d, GameEntity from)
+        public int Damage(DeBuff db, int d, GameEntity from, AttackType type)
         {
             if (db == DeBuff.Burning && activeDebuffs.ContainsKey(DeBuff.Tar))
             {
@@ -407,7 +420,18 @@ namespace KazgarsRevenge
                 AddDebuff(db, from);
             }
 
+            PlayHitSound(type);
+
             return actualDamage;
+        }
+
+        SoundEffectLibrary sounds;
+        protected virtual void PlayHitSound(AttackType t)
+        {
+            if (t == AttackType.Melee)
+            {
+                sounds.playMeleeHitSound();
+            }
         }
 
         protected void Heal(int h)
@@ -626,6 +650,17 @@ namespace KazgarsRevenge
                         AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.ForcefulThrow], null);
                     }
                     break;
+                case DeBuff.Charge:
+                    if (state == BuffState.Starting)
+                    {
+                        pulling = true;
+                    }
+                    else if (state == BuffState.Ending)
+                    {
+                        pulling = false;
+                        physicalData.LinearVelocity = Vector3.Zero;
+                    }
+                    break;
             }
 
             return true;
@@ -642,7 +677,8 @@ namespace KazgarsRevenge
             {DeBuff.MagneticImplant, 2000},
             {DeBuff.ForcefulThrow, 3000},
             {DeBuff.Burning, 0},
-            {DeBuff.Frozen, 1500}
+            {DeBuff.Frozen, 1500},
+            {DeBuff.Charge, 100}
         };
         Dictionary<DeBuff, double> debuffTickLengths = new Dictionary<DeBuff, double>()
         {

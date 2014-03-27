@@ -12,7 +12,7 @@ namespace KazgarsRevenge
     public class ProjectileController : AttackController
     {
         public ProjectileController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
-            : base(game, entity, damage, factionToHit, creator)
+            : base(game, entity, damage, factionToHit, creator, AttackType.Ranged)
         {
             this.lifeLength = 2000;
 

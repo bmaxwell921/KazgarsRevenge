@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     {
         bool decapitation = false;
         public CleaveController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator, bool decap, bool invig)
-            : base(game, entity, damage, factionToHit, creator)
+            : base(game, entity, damage, factionToHit, creator, AttackType.Melee)
         {
             HitMultipleTargets();
             this.decapitation = decap;

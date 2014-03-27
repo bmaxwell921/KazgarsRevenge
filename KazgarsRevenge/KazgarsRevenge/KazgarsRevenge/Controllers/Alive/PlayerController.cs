@@ -293,20 +293,21 @@ namespace KazgarsRevenge
             //awkward if it does
             return false;
         }
-        protected void RemoveOneFromInventory(int itemID)
+        protected bool RemoveOneFromInventory(int itemID)
         {
             for (int i = 0; i < inventory.Length; ++i)
             {
-                if (inventory[i].ItemID == itemID)
+                if (inventory[i] != null && inventory[i].ItemID == itemID)
                 {
                     inventory[i].Quantity--;
                     if (inventory[i].Quantity <= 0)
                     {
                         inventory[i] = null;
                     }
-                    break;
+                    return true;
                 }
             }
+            return false;
         }
         protected override void RecalculateStats()
         {
@@ -375,6 +376,7 @@ namespace KazgarsRevenge
         public PlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
             : base(game, entity, account.CharacterLevel)
         {
+            statsPerLevelMultiplier = 3;
             //shared data
             this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
             this.syncedModels = Entity.GetSharedData(typeof(Dictionary<string, Model>)) as Dictionary<string, Model>;
@@ -439,12 +441,12 @@ namespace KazgarsRevenge
             #region ability initialization
             //create initial abilities
 
-            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetCachedAbility(AbilityName.DevastatingStrike));
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetCachedAbility(AbilityName.Execute));
-            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetCachedAbility(AbilityName.Garrote));
-            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetCachedAbility(AbilityName.Swordnado));
-            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetCachedAbility(AbilityName.Cleave));
-            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetCachedAbility(AbilityName.Reflect));
+            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetCachedAbility(AbilityName.None));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetCachedAbility(AbilityName.None));
+            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetCachedAbility(AbilityName.None));
+            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetCachedAbility(AbilityName.None));
+            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetCachedAbility(AbilityName.None));
+            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetCachedAbility(AbilityName.None));
             boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetCachedAbility(AbilityName.None));
             boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetCachedAbility(AbilityName.None));
             //added item slot abilities
@@ -832,8 +834,17 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-                RemoveOneFromInventory(1);
-                AddBuff(Buff.HealthPotion, Entity);
+                if (RemoveOneFromInventory(1))
+                {
+                    model.AddEmitter(typeof(LifestealParticleSystem), "potion", 10, 15, Vector3.Zero);
+                    model.AddParticleTimer("potion", 5000);
+                    AddBuff(Buff.HealthPotion, Entity);
+                }
+                else
+                {
+                    (Game as MainGame).AddAlert("No potions left!");
+                }
+                abilityFinishedAction();
             });
 
             return sequence;
@@ -844,8 +855,17 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-                RemoveOneFromInventory(2);
-                AddBuff(Buff.SuperHealthPotion, Entity);
+                if (RemoveOneFromInventory(2))
+                {
+                    model.AddEmitter(typeof(LifestealParticleSystem), "potion", 10, 15, Vector3.Zero);
+                    model.AddParticleTimer("potion", 5000);
+                    AddBuff(Buff.SuperHealthPotion, Entity);
+                }
+                else
+                {
+                    (Game as MainGame).AddAlert("No potions left!");
+                }
+                abilityFinishedAction();
             });
 
             return sequence;
@@ -856,8 +876,16 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-                RemoveOneFromInventory(4);
-                AddBuff(Buff.LuckPotion, Entity);
+                if (RemoveOneFromInventory(4))
+                {
+                    AddBuff(Buff.LuckPotion, Entity);
+                    //attacks.SpawnLuckyParticles(physicalData.Position);
+                }
+                else
+                {
+                    (Game as MainGame).AddAlert("No potions left!");
+                }
+                abilityFinishedAction();
             });
 
             return sequence;
@@ -868,8 +896,15 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-                RemoveOneFromInventory(3);
-                Heal((int)(MaxHealth * .3f));
+                if (RemoveOneFromInventory(3))
+                {
+                    LifeSteal((int)Math.Ceiling(MaxHealth * .3f));
+                }
+                else
+                {
+                    (Game as MainGame).AddAlert("No potions left!");
+                }
+                abilityFinishedAction();
             });
 
             return sequence;
@@ -893,7 +928,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, false);
                 millisActionLength = animations.GetAniMillis("k_punch") - millisActionLength;
                 needInterruptAction = false;
             });
@@ -906,7 +941,7 @@ namespace KazgarsRevenge
             interruptActions.Add("k_punch", () =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, false);
             });
 
             return sequence;
@@ -993,7 +1028,7 @@ namespace KazgarsRevenge
             {
                 Vector3 forward = GetForward();
                 Vector3 pos = physicalData.Position + forward * 35;
-                attacks.CreateMeleeAttack(pos, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, abilityLearnedFlags[AbilityName.RejuvenatingStrikes]? .1f : 0);
+                attacks.CreateMeleeAttack(pos, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, abilityLearnedFlags[AbilityName.RejuvenatingStrikes]? .1f : 0, aniSuffix == "_twohand");
 
                 pos.Y = 3;
                 if (aniSuffix != "_twohand")
@@ -1013,7 +1048,7 @@ namespace KazgarsRevenge
             interruptActions.Add("swing", () =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, abilityLearnedFlags[AbilityName.RejuvenatingStrikes] ? .1f : 0);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, abilityLearnedFlags[AbilityName.RejuvenatingStrikes] ? .1f : 0, aniSuffix == "_twohand");
             });
 
             return sequence;
@@ -1570,7 +1605,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 //TODO: replace with k_headbutt
-                PlayAnimation("k_buff", MixType.None);
+                PlayAnimation("k_headbutt", MixType.None);
                 attState = AttackState.Locked;
                 millisActionLength = 200;
             });
@@ -1579,7 +1614,7 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 attacks.CreateHeadbutt(physicalData.Position + forward * 35, GetPhysicsYaw(forward), this as AliveComponent);
 
-                millisActionLength = animations.GetAniMillis("k_whirlwind") - 150;
+                millisActionLength = animations.GetAniMillis("k_headbutt") - 200;
             });
             sequence.Add(abilityFinishedAction);
 
@@ -1592,12 +1627,14 @@ namespace KazgarsRevenge
             {
                 physicalData.CollisionInformation.CollisionRules.Group = Game.UntouchableCollisionGroup;
                 canInterrupt = false;
-                PlayAnimation("k_tumble", MixType.None);
+                PlayAnimation("k_charge", MixType.None);
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
-                velDir = GetForward() * 500;
+                velDir = GetForward() * 400;
                 ChangeVelocity(velDir);
-                millisActionLength = 600;
+                millisActionLength = 800;
+                AddBuff(Buff.Unstoppable, 800, Entity);
+                attacks.CreateCharge(physicalData.Position, this as AliveComponent, millisActionLength);
             });
 
             sequence.Add(() =>
@@ -1618,20 +1655,25 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
-                PlayAnimation("k_swing" + aniSuffix, MixType.None);
+                if (aniSuffix == "_twohand")
+                {
+                    aniSuffix = "_r";
+                }
+                PlayAnimation("k_thrust" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
                 millisActionLength = 350;
+                stateResetCounter = 0;
             });
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateGarrote(physicalData.Position + forward * 35, GetPhysicsYaw(forward), this as AliveComponent, abilityLearnedFlags[AbilityName.ExcruciatingTwist]);
+                attacks.CreateGarrote(physicalData.Position + forward * 35, GetPhysicsYaw(forward), this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) * 5, abilityLearnedFlags[AbilityName.ExcruciatingTwist]);
 
                 if (abilityLearnedFlags[AbilityName.SadisticFrenzy])
                 {
                     AddBuff(Buff.SadisticFrenzy, Entity);
                 }
-                millisActionLength = animations.GetAniMillis("k_swing" + aniSuffix) - 150;
+                millisActionLength = animations.GetAniMillis("k_thrust" + aniSuffix) - 350;
             });
             sequence.Add(abilityFinishedAction);
 
@@ -1672,8 +1714,11 @@ namespace KazgarsRevenge
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
-                stateResetCounter = 0;
-                PlayAnimation("k_swing" + aniSuffix, MixType.None);
+                if (aniSuffix == "_twohand")
+                {
+                    aniSuffix = "_r";
+                }
+                PlayAnimation("k_thrust" + aniSuffix, MixType.None);
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
                 millisActionLength = 350;
@@ -1683,13 +1728,9 @@ namespace KazgarsRevenge
                 Vector3 forward = GetForward();
                 Vector3 pos = physicalData.Position + forward * 35;
                 attacks.CreateExecute(pos, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent);
-                millisActionLength = animations.GetAniMillis("k_swing" + aniSuffix) - millisActionLength;
+                millisActionLength = animations.GetAniMillis("k_thrust" + aniSuffix) - millisActionLength;
             });
-            sequence.Add(() =>
-            {
-                StartSequence("fightingstance");
-                attState = AttackState.None;
-            });
+            sequence.Add(abilityFinishedAction);
             return sequence;
         }
         private List<Action> ChainSpearActions()
@@ -2001,12 +2042,12 @@ namespace KazgarsRevenge
 
         protected Ability GetCachedAbility(AbilityName ability)
         {
-            if (cachedAbilities.ContainsKey(ability))
+            if (!cachedAbilities.ContainsKey(ability))
             {
-                return cachedAbilities[ability];
+                cachedAbilities[ability] = GetAbility(ability);
             }
 
-            return GetAbility(ability);
+            return cachedAbilities[ability];
         }
         private Ability GetAbility(AbilityName ability)
         {
@@ -2300,8 +2341,8 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.Decapitation, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Decapitation),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "Gives Cleave a 30% chance for each\n"
-                    +"enemy hit to deal 4x damage");
+                0, "Gives Cleave a 30% chance to deal\n"
+                    +"4x damage to each enemy hit");
         }
         protected Ability GetInvigoration()
         {
@@ -2314,7 +2355,7 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.ObsidianCoagulation, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.ObsidianCoagulation),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "Each time you are hit, you take 2%"
+                0, "Each time you are hit, you take 2%\n"
                     +"less damage for 5 seconds. Stacks\n"
                     +"up to 25 times.");
         }
@@ -2346,8 +2387,8 @@ namespace KazgarsRevenge
         protected Ability GetCharge()
         {
             return new Ability(AbilityName.Charge, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Charge),
-                3, AttackType.Melee, "charge", AbilityType.Instant,
-                4000, "Rush forward to the target\n"
+                4000, AttackType.Melee, "charge", AbilityType.Instant,
+                0, "Rush forward to the target\n"
                         +"location, knocking back\n"
                         +"enemies along the way.");
         }
@@ -2355,15 +2396,15 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.Garrote, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Garrote),
                 3000, AttackType.Melee, "garrote", AbilityType.Instant,
-                2, "Deal 5x normal damage to a\n"
-                    +"single target.");
+                2, "Deal 5x normal damage to a single\n"
+                    +"target.");
         }
         protected Ability GetExcruciatingTwist()
         {
             return new Ability(AbilityName.ExcruciatingTwist, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.ExcruciatingTwist),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "Garrote makes enemies bleed for 10%\n"
-                    +"of their health over 2sec.");
+                0, "Garrote makes enemies bleed for\n"
+                    + "10% of their health over 2sec.");
         }
         protected Ability GetSadisticFrenzy()
         {
@@ -2427,9 +2468,9 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.ForcefulThrow, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.ForcefulThrow),
                 0, AttackType.Melee, "", AbilityType.Passive,
-                0, "Increases the projectile speed of Chain\n"
-                    +"Spear by 100%, and stuns enemies hit\n"
-                    +"by it for 3 seconds.");
+                0, "Increases the projectile speed of\n"
+                    + "Chain Spear by 100%, and stuns\n"
+                    + "enemies hit by it for 3 seconds.");
         }
         protected Ability GetExecute()
         {

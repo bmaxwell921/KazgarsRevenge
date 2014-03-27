@@ -67,7 +67,7 @@ namespace KazgarsRevenge
                                 lifeLength = 8000;
                                 if (target != null)
                                 {
-                                    target.DamageDodgeable(DeBuff.ForcefulThrow, 0, creator.Entity);
+                                    target.DamageDodgeable(DeBuff.ForcefulThrow, 0, creator.Entity, AttackType.None);
                                 }
                             }
                         }

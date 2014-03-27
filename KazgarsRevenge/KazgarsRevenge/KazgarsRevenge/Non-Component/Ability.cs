@@ -52,7 +52,7 @@ namespace KazgarsRevenge
                         ++i;
                     }
                 }
-                ttlines.Add(new TooltipLine(Color.White, n, .75f));
+                ttlines.Add(new TooltipLine(Color.White, n, .65f));
                 if (PowerCost > 0)
                 {
                     ttlines.Add(new TooltipLine(Color.White, PowerCost + " Power", .5f));

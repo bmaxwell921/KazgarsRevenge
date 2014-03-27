@@ -44,6 +44,8 @@ namespace KazgarsRevenge
         public float noticePlayerRange;
         public float stopChasingRange;
         public float walkSpeed;
+
+        public bool usesTwoHander;
     }
     public class EnemyController : AliveComponent
     {
@@ -76,6 +78,7 @@ namespace KazgarsRevenge
             settings.attackLength = 1417;
             settings.attackCreateMillis = settings.attackLength / 2;
             settings.walkSpeed = GetStat(StatType.RunSpeed) / 2;
+            settings.usesTwoHander = true;
 
 
             lewts = (LootManager)game.Services.GetService(typeof(LootManager));
@@ -480,7 +483,7 @@ namespace KazgarsRevenge
         #region attack helpers
         protected virtual void CreateAttack()
         {
-            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 25, GeneratePrimaryDamage(StatType.Strength), this);
+            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 25, GeneratePrimaryDamage(StatType.Strength), this, settings.usesTwoHander);
         }
 
         protected virtual void StartAttack()
