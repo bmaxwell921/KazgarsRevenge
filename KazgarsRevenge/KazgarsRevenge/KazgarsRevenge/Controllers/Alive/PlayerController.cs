@@ -1904,7 +1904,7 @@ namespace KazgarsRevenge
                 StartSequence("fightingstance");
             }
 
-            (Game as MainGame).AddFloatingText(physicalData.Position, "" + damage, Color.Red);
+            (Game as MainGame).AddFloatingText(physicalData.Position, "" + damage, Color.Red, .5f);
         }
         #endregion
 

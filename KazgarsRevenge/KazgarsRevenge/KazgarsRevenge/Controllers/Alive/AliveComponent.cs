@@ -736,7 +736,7 @@ namespace KazgarsRevenge
                 if (activeBuffs.ContainsKey(b))
                 {
                     activeBuffs[b].stacks += 1;
-                    activeBuffs[b].nextTick = activeBuffs[b].timeLeft - activeBuffs[b].nextTick;
+                    activeBuffs[b].nextTick = length - (activeBuffs[b].timeLeft - activeBuffs[b].nextTick);
                     activeBuffs[b].timeLeft = length;
                 }
                 else
@@ -780,7 +780,7 @@ namespace KazgarsRevenge
                 if (HandleDeBuff(b, BuffState.Starting, activeDebuffs[b].stacks, from))
                 {
                     activeDebuffs[b].stacks += 1;
-                    activeDebuffs[b].nextTick = activeDebuffs[b].timeLeft - activeDebuffs[b].nextTick;
+                    activeDebuffs[b].nextTick = length - (activeDebuffs[b].timeLeft - activeDebuffs[b].nextTick);
                     activeDebuffs[b].timeLeft = length;
                 }
             }

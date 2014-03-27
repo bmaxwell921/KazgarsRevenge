@@ -476,7 +476,7 @@ namespace KazgarsRevenge
             entity.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, entity, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"), new Vector3(15), Vector3.Zero, 0, MathHelper.PiOver2, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, entity, GetUnanimatedModel("Models\\key_1"), new Vector3(15), Vector3.Zero, 0, MathHelper.PiOver2, 0);
             graphics.AddYawSpeed(.05f);
             entity.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);

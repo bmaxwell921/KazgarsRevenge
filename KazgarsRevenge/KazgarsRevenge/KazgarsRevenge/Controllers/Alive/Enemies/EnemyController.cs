@@ -522,7 +522,7 @@ namespace KazgarsRevenge
                 }
                 minChaseCounter = 0;
 
-                (Game as MainGame).AddFloatingText(physicalData.Position, "" + d, Color.Yellow);
+                (Game as MainGame).AddFloatingText(physicalData.Position, "" + d, Color.Yellow, .5f);
             }
         }
         protected virtual void DoDamagedGraphics()

@@ -285,8 +285,6 @@ namespace KazgarsRevenge
             floatingText.Add(new FloatingText(pos, text, color, scale));
         }
 
-        //public void AddAlert(string 
-
         protected override void Update(GameTime gameTime)
         {
             if (gameState == GameState.Playing)
@@ -299,7 +297,7 @@ namespace KazgarsRevenge
                 for (int i = floatingText.Count - 1; i >= 0; --i)
                 {
                     floatingText[i].alpha -= .01f;
-                    floatingText[i].position.Y += 1;
+                    floatingText[i].position.Y += .5f;
                     if (floatingText[i].alpha <= 0)
                     {
                         floatingText.RemoveAt(i);
