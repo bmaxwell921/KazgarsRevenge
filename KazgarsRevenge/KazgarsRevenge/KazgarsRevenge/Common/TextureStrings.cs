@@ -14,6 +14,7 @@ namespace KazgarsRevenge
         public static readonly string WHITE = @"white";
         public static readonly string WHITE_PIX = @"Textures\whitePixel";
         public static readonly string WHITE_CURSOR = @"Textures\cursor";
+        public static readonly string HOVER = @"Textures\hover";
         public class UI
         {
             public static readonly string INPUT_TEXTURE = @"Textures\UI\TextBox";

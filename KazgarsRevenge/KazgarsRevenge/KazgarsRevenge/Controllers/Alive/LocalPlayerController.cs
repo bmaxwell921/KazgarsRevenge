@@ -32,6 +32,7 @@ namespace KazgarsRevenge
             InitDrawingParams();
             font = game.Content.Load<SpriteFont>("Verdana");
             texWhitePixel = Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE);
+            texHover = Texture2DUtil.Instance.GetTexture(TextureStrings.HOVER);
             texChargeBarFront = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.CHARGE_BAR_FRONT);
 
             #region UI Frame Load
@@ -182,6 +183,7 @@ namespace KazgarsRevenge
         bool dragging = false;
         String draggingSource;
         Tooltip currentTooltip = null;
+        bool hovering = false;
 
         enum TalentTrees
         {
@@ -1218,7 +1220,6 @@ namespace KazgarsRevenge
                     {
                         #region inventory
                         case "inventory":
-                            //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate y u do dis
                             if (innerCollides == "equipArrow")
                             {
                                 showEquipment = !showEquipment;
@@ -1332,48 +1333,12 @@ namespace KazgarsRevenge
                         #endregion
                         #region equipment
                         case "equipment":
-                            //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate  D:<
-                            if (innerCollides == "equipWrist") //wrist
+                            for (int i = 1; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
                             {
-                                equipHelp(GearSlot.Wrist);
-                            }
-                            else if (innerCollides == "equipBling")  //bling
-                            {
-                                equipHelp(GearSlot.Bling);
-                            }
-                            else if (innerCollides == "equipLWep")  //LWep
-                            {
-                                equipHelp(GearSlot.Lefthand);
-                            }
-
-                            else if (innerCollides == "equipHead")  //head
-                            {
-                                equipHelp(GearSlot.Head);
-                            }
-                            else if (innerCollides == "equipChest")  //chest
-                            {
-                                equipHelp(GearSlot.Chest);
-                            }
-                            else if (innerCollides == "equipLegs")  //legs
-                            {
-                                equipHelp(GearSlot.Legs);
-                            }
-                            else if (innerCollides == "equipFeet")  //feet
-                            {
-                                equipHelp(GearSlot.Feet);
-                            }
-
-                            else if (innerCollides == "equipShoulder")  //shoulder
-                            {
-                                equipHelp(GearSlot.Shoulders);
-                            }
-                            else if (innerCollides == "equipCod")  //Cod
-                            {
-                                equipHelp(GearSlot.Codpiece);
-                            }
-                            else if (innerCollides == "equipRWep")  //RWep
-                            {
-                                equipHelp(GearSlot.Righthand);
+                                if (innerCollides == ((GearSlot)i).ToString())
+                                {
+                                    equipHelp((GearSlot)i);
+                                }
                             }
                             break;
                         #endregion
@@ -1530,47 +1495,12 @@ namespace KazgarsRevenge
                     #endregion
                     #region equipment
                     case "equipment":
-                        if (innerCollides == "equipWrist") //wrist
+                        for (int i = 1; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
                         {
-                            UnequipGear(GearSlot.Wrist);
-                        }
-                        else if (innerCollides == "equipBling")  //bling
-                        {
-                            UnequipGear(GearSlot.Bling);
-                        }
-                        else if (innerCollides == "equipLWep")  //LWep
-                        {
-                            UnequipGear(GearSlot.Lefthand);
-                        }
-
-                        else if (innerCollides == "equipHead")  //head
-                        {
-                            UnequipGear(GearSlot.Head);
-                        }
-                        else if (innerCollides == "equipChest")  //chest
-                        {
-                            UnequipGear(GearSlot.Chest);
-                        }
-                        else if (innerCollides == "equipLegs")  //legs
-                        {
-                            UnequipGear(GearSlot.Legs); ;
-                        }
-                        else if (innerCollides == "equipFeet")  //feet
-                        {
-                            UnequipGear(GearSlot.Feet);
-                        }
-
-                        else if (innerCollides == "equipShoulder")  //shoulder
-                        {
-                            UnequipGear(GearSlot.Shoulders);
-                        }
-                        else if (innerCollides == "equipCod")  //Cod
-                        {
-                            UnequipGear(GearSlot.Codpiece);
-                        }
-                        else if (innerCollides == "equipRWep")  //RWep
-                        {
-                            UnequipGear(GearSlot.Righthand);
+                            if (innerCollides == ((GearSlot)i).ToString())
+                            {
+                                UnequipGear((GearSlot)i);
+                            }
                         }
                         break;
                     #endregion
@@ -1603,7 +1533,11 @@ namespace KazgarsRevenge
 
         private void CheckMouseHover(string outerCollides, string innerCollides)
         {
-            if (innerCollides == null) currentTooltip = null;
+            if (innerCollides == null)
+            {
+                hovering = false;
+                currentTooltip = null;
+            }
             switch (outerCollides)
             {
                 #region inventory
@@ -1615,6 +1549,9 @@ namespace KazgarsRevenge
                             if (innerCollides == "inventory" + i && inventory[i] != null)
                             {
                                 currentTooltip = inventory[i].Tooltip;
+                                hovering = true;
+                                hoverRect = guiInsideRects["inventory"]["inventory" + i];
+                                break;
                             }
                         }
                     }
@@ -1636,6 +1573,7 @@ namespace KazgarsRevenge
                             if (innerCollides.Equals("loot" + i) && lootingSoul.GetLoot(i) != null)
                             {
                                 currentTooltip = lootingSoul.GetLoot(i).Tooltip;
+                                hoverRect = guiInsideRects["loot"]["loot" + i];
                             }
                         }
                     }
@@ -1643,48 +1581,15 @@ namespace KazgarsRevenge
                 #endregion
                 #region equipment
                 case "equipment":
-                    //if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot; #Nate  D:<
-                    if (innerCollides == "equipWrist" && gear[GearSlot.Wrist] != null) //wrist
+                    for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
                     {
-                        currentTooltip = gear[GearSlot.Wrist].Tooltip;
-                    }
-                    else if (innerCollides == "equipBling" && gear[GearSlot.Bling] != null)  //bling
-                    {
-                        currentTooltip = gear[GearSlot.Bling].Tooltip;
-                    }
-                    else if (innerCollides == "equipLWep" && gear[GearSlot.Lefthand] != null)  //LWep
-                    {
-                        currentTooltip = gear[GearSlot.Lefthand].Tooltip;
-                    }
-
-                    else if (innerCollides == "equipHead" && gear[GearSlot.Head] != null)  //head
-                    {
-                        currentTooltip = gear[GearSlot.Head].Tooltip;
-                    }
-                    else if (innerCollides == "equipChest" && gear[GearSlot.Chest] != null)  //chest
-                    {
-                        currentTooltip = gear[GearSlot.Chest].Tooltip;
-                    }
-                    else if (innerCollides == "equipLegs" && gear[GearSlot.Legs] != null)  //legs
-                    {
-                        currentTooltip = gear[GearSlot.Legs].Tooltip;
-                    }
-                    else if (innerCollides == "equipFeet" && gear[GearSlot.Feet] != null)  //feet
-                    {
-                        currentTooltip = gear[GearSlot.Feet].Tooltip;
-                    }
-
-                    else if (innerCollides == "equipShoulder" && gear[GearSlot.Shoulders] != null)  //shoulder
-                    {
-                        currentTooltip = gear[GearSlot.Shoulders].Tooltip;
-                    }
-                    else if (innerCollides == "equipCod" && gear[GearSlot.Codpiece] != null)  //Cod
-                    {
-                        currentTooltip = gear[GearSlot.Codpiece].Tooltip;
-                    }
-                    else if (innerCollides == "equipRWep" && gear[GearSlot.Righthand] != null)  //RWep
-                    {
-                        currentTooltip = gear[GearSlot.Righthand].Tooltip;
+                        if (innerCollides == ((GearSlot)i).ToString() && gear[(GearSlot)i] != null)
+                        {
+                            currentTooltip = gear[(GearSlot)i].Tooltip;
+                            hovering = true;
+                            hoverRect = guiInsideRects["equipment"][((GearSlot)i).ToString()];
+                            break;
+                        }
                     }
                     break;
                 #endregion
@@ -1701,6 +1606,8 @@ namespace KazgarsRevenge
                         {
                             currentTooltip = boundAbilities[check].Value.Tooltip;
                         }
+                        hovering = true;
+                        hoverRect = guiInsideRects["abilities"]["ability"+check];
                     }
                     break;
                 #endregion
@@ -1714,6 +1621,7 @@ namespace KazgarsRevenge
                         if (currentTalentTree == TalentTrees.ranged && rangedAbilities[(int)check / 4, check % 4] != null)
                         {
                             currentTooltip = GetCachedAbility(rangedAbilities[(int)check / 4, check % 4].name).Tooltip;
+                            
                         }
                         else if (currentTalentTree == TalentTrees.melee && meleeAbilities[(int)check / 4, check % 4] != null)
                         {
@@ -1774,6 +1682,7 @@ namespace KazgarsRevenge
 
         SpriteFont font;
         Texture2D texWhitePixel;
+        Texture2D texHover;
         Texture2D texChargeBarFront;
         Rectangle rectEnemyHealthBar;
         Rectangle rectCharged;
@@ -1811,6 +1720,8 @@ namespace KazgarsRevenge
         Rectangle playerHPRect;
         Rectangle powerBackRect;
         Vector2 powerTextPos;
+
+        Rectangle hoverRect;
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
@@ -1869,18 +1780,18 @@ namespace KazgarsRevenge
             guiInsideRects.Add("talents", talentDict);
 
             //Equipment inner
-            equipmentDict.Add("equipWrist", new Rectangle((int)(maxX - 694 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipBling", new Rectangle((int)(maxX - 694 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipLWep", new Rectangle((int)(maxX - 694 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Wrist.ToString(), new Rectangle((int)(maxX - 694 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Bling.ToString(), new Rectangle((int)(maxX - 694 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Lefthand.ToString(), new Rectangle((int)(maxX - 694 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
 
-            equipmentDict.Add("equipHead", new Rectangle((int)(maxX - 596 * average), (int)(409 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipChest", new Rectangle((int)(maxX - 596 * average), (int)(507 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipLegs", new Rectangle((int)(maxX - 596 * average), (int)(605 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipFeet", new Rectangle((int)(maxX - 596 * average), (int)(703 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Head.ToString(), new Rectangle((int)(maxX - 596 * average), (int)(409 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Chest.ToString(), new Rectangle((int)(maxX - 596 * average), (int)(507 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Legs.ToString(), new Rectangle((int)(maxX - 596 * average), (int)(605 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Feet.ToString(), new Rectangle((int)(maxX - 596 * average), (int)(703 * average), (int)(88 * average), (int)(88 * average)));
 
-            equipmentDict.Add("equipShoulder", new Rectangle((int)(maxX - 498 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipCod", new Rectangle((int)(maxX - 498 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add("equipRWep", new Rectangle((int)(maxX - 498 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Shoulders.ToString(), new Rectangle((int)(maxX - 498 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Codpiece.ToString(), new Rectangle((int)(maxX - 498 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Righthand.ToString(), new Rectangle((int)(maxX - 498 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
             //Inventory inner
             for (int i = 0; i < 4; ++i)
             {
@@ -2128,37 +2039,11 @@ namespace KazgarsRevenge
                     s.Draw(rightArrow, guiInsideRects["inventory"]["equipArrow"], Color.White);
 
                     //Equip icons
-                    if (gear[GearSlot.Wrist] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipWrist"], Color.White);
-                    else s.Draw(gear[GearSlot.Wrist].Icon, guiInsideRects["equipment"]["equipWrist"], Color.White);
-
-                    if (gear[GearSlot.Bling] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipBling"], Color.White);
-                    else s.Draw(gear[GearSlot.Bling].Icon, guiInsideRects["equipment"]["equipBling"], Color.White);
-
-                    if (gear[GearSlot.Lefthand] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipLWep"], Color.White);
-                    else s.Draw(gear[GearSlot.Lefthand].Icon, guiInsideRects["equipment"]["equipLWep"], Color.White);
-
-                    if (gear[GearSlot.Head] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipHead"], Color.White);
-                    else s.Draw(gear[GearSlot.Head].Icon, guiInsideRects["equipment"]["equipHead"], Color.White);
-
-                    if (gear[GearSlot.Chest] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipChest"], Color.White);
-                    else s.Draw(gear[GearSlot.Chest].Icon, guiInsideRects["equipment"]["equipChest"], Color.White);
-
-                    if (gear[GearSlot.Legs] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipLegs"], Color.White);
-                    else s.Draw(gear[GearSlot.Legs].Icon, guiInsideRects["equipment"]["equipLegs"], Color.White);
-
-                    if (gear[GearSlot.Feet] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipFeet"], Color.White);
-                    else s.Draw(gear[GearSlot.Feet].Icon, guiInsideRects["equipment"]["equipFeet"], Color.White);
-
-                    if (gear[GearSlot.Shoulders] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipShoulder"], Color.White);
-                    else s.Draw(gear[GearSlot.Shoulders].Icon, guiInsideRects["equipment"]["equipShoulder"], Color.White);
-
-                    if (gear[GearSlot.Codpiece] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipCod"], Color.White);
-                    else s.Draw(gear[GearSlot.Codpiece].Icon, guiInsideRects["equipment"]["equipCod"], Color.White);
-
-                    if (gear[GearSlot.Righthand] == null) s.Draw(texPlaceHolder, guiInsideRects["equipment"]["equipRWep"], Color.White);
-                    else s.Draw(gear[GearSlot.Righthand].Icon, guiInsideRects["equipment"]["equipRWep"], Color.White);
-
-
+                    for (int i = 1; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
+                    {
+                        Texture2D tempGearTex = gear[(GearSlot)i] == null ? texPlaceHolder : gear[(GearSlot)i].Icon;
+                        s.Draw(tempGearTex, guiInsideRects["equipment"][((GearSlot)i).ToString()], Color.White);
+                    }
                 }
                 else
                 {
@@ -2309,11 +2194,16 @@ namespace KazgarsRevenge
             }
             #endregion
 
-            #region tooltip
+            #region tooltip and hover
             if (currentTooltip != null)
             {
                 s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Black * 0.5f);
                 currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, average, 50f);
+            }
+
+            if (hovering)
+            {
+                s.Draw(texHover, hoverRect, new Color(255, 255, 166));
             }
             #endregion
             #endregion
