@@ -739,6 +739,14 @@ namespace KazgarsRevenge
 
             private LoggerManager lm;
 
+            /*
+             * Individual number of each chunk:
+             *  [0][1][2]
+             *  [3][4][5]
+             *  [6][7][8]
+             */ 
+            private IList<int> chunkNums;
+
             // Default uses the level width and height as defined in the Constants file
             public LevelBuilder(LoggerManager lm)
                 : this(lm, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT)
@@ -754,10 +762,24 @@ namespace KazgarsRevenge
             }
 
             // Sets the level bounds for level generation
-            public void SetLevelBounds(int levelWidth, int levelHeight)
+            private void SetLevelBounds(int levelWidth, int levelHeight)
             {
                 this.levelWidth = levelWidth;
                 this.levelHeight = levelHeight;
+            }
+
+            private void fillChunkNums()
+            {
+                chunkNums = new List<int>();
+                for (int i = 0; i < levelWidth * levelHeight; ++i)
+                {
+                    // Middle is reserved for the soulevator
+                    if (i == levelWidth * levelHeight / 2)
+                    {
+                        continue;
+                    }
+                    chunkNums.Add(i);
+                }
             }
 
             /// <summary>
@@ -768,6 +790,7 @@ namespace KazgarsRevenge
             /// <returns></returns>
             public LevelInfo BuildLevel(FloorName name)
             {
+                fillChunkNums();
                 ChunkInfo[,] chunkInfos = new ChunkInfo[levelWidth, levelHeight];
                 // First we gotta figure out what chunks to place
                 ChooseChunks(name, chunkInfos);
@@ -779,10 +802,9 @@ namespace KazgarsRevenge
             #region Choosing Chunks
             private void ChooseChunks(FloorName name, ChunkInfo[,] chunks)
             {
-                // TODO re-add these for full implementation
                 PlaceSoulevator(name, chunks);
-                //Vector2 bossLoc = PlaceBoss(name, chunks);
-                //PlaceKey(name, chunks, bossLoc);
+                Vector2 bossLoc = PlaceBoss(name, chunks);
+                PlaceKey(name, chunks, bossLoc);
                 PlaceTheRest(name, chunks);
             }
 
@@ -804,15 +826,54 @@ namespace KazgarsRevenge
             // Places the boss in a random location
             private Vector2 PlaceBoss(FloorName name, ChunkInfo[,] chunks)
             {
-                // Do nothing for now
-                // TODO choose random spot for the boss to go, return the location
-                return Vector2.Zero;
+                int chunkNum = chunkNums[RandSingleton.S_Instance.Next(0, chunkNums.Count)];
+                
+                // Convert from 1D to 2D
+                int xCoord = chunkNum % levelWidth;
+                int yCoord = chunkNum / levelWidth;
+
+                ISet<Direction> reqDirs = GetRequiredDirections(name, chunks, xCoord, yCoord);
+                chunks[xCoord, yCoord] = ChunkUtil.Instance.GetSatisfyingChunk(name, ChunkType.BOSS, reqDirs);
+                this.LogChunkChoice(xCoord, yCoord, chunks[xCoord, yCoord]);
+                return new Vector2(xCoord, yCoord);
             }
 
             private void PlaceKey(FloorName name, ChunkInfo[,] chunks, Vector2 bossLoc)
             {
-                // Do nothing for now
-                // TODO Place the key 'far enough' away from the boss
+                /*
+                 * Ok here's the idea: we've chose the bossLoc from the chunkNums array:
+                 *      [0, 1, 2, 3, 5, 6, 7, 8] - for a normal level. 
+                 * Let's say 8 was chosen. In this case we want the key to be pretty far from the boss
+                 * the farthest chunks from 8 are [0, 3]. So basically we figure out where the bossLoc
+                 * is in the chunkNums array, then choose a key location from the other half
+                 *  
+                 */ 
+
+                // Convert bossLoc back to 1D
+                int bossNum = (int)bossLoc.X + levelWidth * (int)bossLoc.Y;
+
+                int index = chunkNums.IndexOf(bossNum);
+
+                int min = 0;
+                int max = 0;
+
+                if (index >= chunkNums.Count / 2)
+                {
+                    max = chunkNums.Count / 2;
+                }
+                else
+                {
+                    min = chunkNums.Count / 2;
+                    max = chunkNums.Count;
+                }
+
+                int keyNum = chunkNums[RandSingleton.S_Instance.Next(min, max)];
+                int xCoord = keyNum % levelWidth;
+                int yCoord = keyNum / levelWidth;
+
+                ISet<Direction> reqDirs = GetRequiredDirections(name, chunks, xCoord, yCoord);
+                chunks[xCoord, yCoord] = ChunkUtil.Instance.GetSatisfyingChunk(name, ChunkType.KEY, reqDirs);
+                this.LogChunkChoice(xCoord, yCoord, chunks[xCoord, yCoord]);
             }
 
             private void PlaceTheRest(FloorName name, ChunkInfo[,] chunks)
