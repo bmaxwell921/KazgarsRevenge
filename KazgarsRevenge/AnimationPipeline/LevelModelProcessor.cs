@@ -21,14 +21,18 @@ namespace AnimationPipeline
             //System.Diagnostics.Debugger.Launch();
 
             LevelTagData tag = new LevelTagData();
-            
+
+            AddPointsTo(GetDataHolder(input, "key"), tag.keyLocations);
+            AddPointsTo(GetDataHolder(input, "bossSpawn"), tag.bossSpawnLocations);
             AddPointsTo(GetDataHolder(input, "soul"), tag.soulLocations);
-            AddPointsTo(GetDataHolder(input, "ewdoors"), tag.ewdoorLocations);
-            AddPointsTo(GetDataHolder(input, "nsdoors"), tag.nsdoorLocations);
+            AddPointsTo(GetDataHolder(input, "ewclosedDoors"), tag.ewdoorLocations);
+            AddPointsTo(GetDataHolder(input, "nscloseddDoors"), tag.nsdoorLocations);
             AddPointsTo(GetDataHolder(input, "hanginglights"), tag.hangingLightLocations);
+
             NodeContent lightHolder = GetDataHolder(input, "lights");
             AddPointsTo(lightHolder, tag.lightLocations);
             GetColorsFromNames(lightHolder, tag.lightColors);
+
             AddPointsTo(GetDataHolder(input, "mobspawn"), tag.mobSpawnLocations);
             AddPointsTo(GetDataHolder(input, "playerspawn"), tag.playerSpawnLocations);
             AddPointsTo(GetDataHolder(input, "groundobjs"), tag.groundPropLocations);

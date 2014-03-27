@@ -157,6 +157,12 @@ namespace KazgarsRevenge
             enemies.Add(id, enemy);
         }
 
+        public void CreateBoss(Identification id, Vector3 position)
+        {
+            //TODO: switch based on level
+            CreateDragon(id, position);
+        }
+
         public void CreateDragon(Identification id, Vector3 position)
         {
             position.Y = 42;

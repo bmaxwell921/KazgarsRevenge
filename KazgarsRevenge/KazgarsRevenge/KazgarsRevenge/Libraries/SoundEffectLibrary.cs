@@ -37,6 +37,8 @@ namespace KazgarsRevenge
 
             soundEffects.Add("pig_death", game.Content.Load<SoundEffect>("Sound\\Enemies\\pigdeath"));
             soundEffects.Add("s_death", game.Content.Load<SoundEffect>("Sound\\Enemies\\s_death"));
+
+            soundEffects.Add("unlockDoors", game.Content.Load<SoundEffect>("Sound\\keyUnlock"));
         }
 
         #region attacks
@@ -108,5 +110,11 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        #region Level Scripts
+        public void playUnlockSound()
+        {
+            soundEffects["unlockDoors"].Play();
+        }
+        #endregion
     }
 }

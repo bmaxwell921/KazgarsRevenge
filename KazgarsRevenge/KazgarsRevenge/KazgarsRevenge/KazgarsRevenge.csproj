@@ -145,7 +145,8 @@
     <Compile Include="Controllers\FallingArrowController.cs" />
     <Compile Include="Controllers\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
-    <Compile Include="Controllers\PillarController.cs" />
+    <Compile Include="Controllers\Objects\KeyController.cs" />
+    <Compile Include="Controllers\Objects\PillarController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
     <Compile Include="Drawing\Billboards\ArrowVBillboard.cs" />
     <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
@@ -261,6 +262,7 @@
     <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionDebrisSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionMainSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonFrostExplosionPoofSystem.cs" />
+    <Compile Include="Particles\Systems\KeyUnlockSystem.cs" />
     <Compile Include="Particles\Systems\SoulevatorMistSystem.cs" />
     <Compile Include="Particles\Systems\Trails\DevastateTrailSystem.cs" />
     <Compile Include="Particles\Systems\Trails\FireSwipeSystem.cs" />

@@ -8,6 +8,8 @@ namespace SkinnedModelLib
 {
     public class LevelTagData
     {
+        public List<Vector3> keyLocations = new List<Vector3>();
+        public List<Vector3> bossSpawnLocations = new List<Vector3>();
         public List<Vector3> soulLocations = new List<Vector3>();
         public List<Vector3> ewdoorLocations = new List<Vector3>();
         public List<Vector3> nsdoorLocations = new List<Vector3>();
@@ -17,6 +19,7 @@ namespace SkinnedModelLib
         public List<Vector3> mobSpawnLocations = new List<Vector3>();
         public List<Vector3> playerSpawnLocations = new List<Vector3>();
         public List<Vector3> groundPropLocations = new List<Vector3>();
+
 
         public LevelTagData()
         {

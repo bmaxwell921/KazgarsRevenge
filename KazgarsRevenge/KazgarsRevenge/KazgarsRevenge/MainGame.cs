@@ -415,7 +415,7 @@ namespace KazgarsRevenge
                 spriteManager.Draw(spriteBatch);
                 //debug strings
                 //spriteBatch.DrawString(normalFont, ""+camera.zoom, new Vector2(50, 100), Color.Red);
-                //spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
+                spriteBatch.DrawString(normalFont, players.GetDebugString(), new Vector2(200, 200), Color.Yellow);
                 foreach (FloatingText f in floatingText)
                 {
                     spriteBatch.DrawString(normalFont, f.text, f.position, Color.Red, 0, Vector2.Zero, f.scale, SpriteEffects.None, 0);

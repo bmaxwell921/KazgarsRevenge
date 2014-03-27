@@ -175,7 +175,7 @@ namespace KazgarsRevenge
                 rooms.Add(CreateRoom(room, chunkInfo.rotation, chunkLocation));
             }
 
-            ProcessObjectMap(chunkInfo.ChunkName + "-objMap", chunkInfo.rotation.ToRadians(), chunkLocation * BLOCK_SIZE* 3 / 2);
+            ProcessObjectMap(chunkInfo.ChunkName + "-objMap", chunkInfo.rotation.ToRadians(), new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) * BLOCK_SIZE / 2 + chunkLocation * BLOCK_SIZE);
 
             return rooms;
         }
@@ -368,17 +368,7 @@ namespace KazgarsRevenge
             Matrix chunkTransform = Matrix.CreateScale(roomScale)
                 * Matrix.CreateFromYawPitchRoll(yaw, 0, 0)
                 * Matrix.CreateTranslation(position);
-            Model objectMapModel;
-            try
-            {
-                 objectMapModel = Game.Content.Load<Model>(objectMapDir + objectMapName);
-            }
-            catch (Exception)
-            {
-                //squelching the exception for testing (dont have all object maps yet)
-                Console.WriteLine("Didn't have object map for: {0}", objectMapDir + objectMapName);
-                return;
-            }
+            Model objectMapModel = Game.Content.Load<Model>(objectMapDir + objectMapName);
 
             LevelTagData levelInfo = objectMapModel.Tag as LevelTagData;
             if (levelInfo != null)
@@ -437,6 +427,18 @@ namespace KazgarsRevenge
                     AddPlayerSpawn(Vector3.Transform(v, chunkTransform));
                 }
 
+                List<Vector3> bossSpawns = levelInfo.bossSpawnLocations;
+                if (bossSpawns.Count > 0)
+                {
+                    (Game.Services.GetService(typeof(EnemyManager)) as EnemyManager).CreateBoss(IdentificationFactory.getId(EntityType.Boss, Identification.NO_CLIENT), Vector3.Transform(bossSpawns[0], chunkTransform));
+                }
+
+                List<Vector3> keyLocations = levelInfo.keyLocations;
+                if (keyLocations.Count > 0)
+                {
+                    CreateKey(Vector3.Transform(keyLocations[0], chunkTransform));
+                }
+
             }
         }
 
@@ -459,6 +461,31 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(lightPhysics);
 
             lights.Add(light);
+        }
+
+        GameEntity key;
+        private void CreateKey(Vector3 pos)
+        {
+            GameEntity entity = new GameEntity("key", FactionType.Neutral, EntityType.Misc);
+
+            Entity physicalData = new Box(pos, 40, 40, 40);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            entity.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
+            entity.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, entity, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"), new Vector3(15), Vector3.Zero, 0, MathHelper.PiOver2, 0);
+            graphics.AddYawSpeed(.05f);
+            entity.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            KeyController controller = new KeyController(mainGame, entity);
+            entity.AddComponent(typeof(KeyController), controller);
+            genComponentManager.AddComponent(controller);
+
+            key = entity;
         }
 
         private void CreateSoulevator(Vector3 pos)
@@ -497,7 +524,7 @@ namespace KazgarsRevenge
             door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
             modelManager.AddComponent(doorGraphics);
 
-            rooms.Add(door);
+            doors.Add(door);
         }
 
         private void CreateHangingLightProp(Vector3 pos)
@@ -508,6 +535,7 @@ namespace KazgarsRevenge
             lightProp.AddSharedData(typeof(Entity), physicalData);
 
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, lightProp, GetUnanimatedModel("Models\\Levels\\Props\\01-lightFixture"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            graphics.TurnOffOutline();
             lightProp.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
@@ -539,7 +567,7 @@ namespace KazgarsRevenge
 
         private void CreateMobSpawner(Vector3 pos)
         {
-            if (RandSingleton.U_Instance.Next(100) < 10)
+            if (RandSingleton.U_Instance.Next(100) < 6)
             {
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
@@ -874,7 +902,7 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        #region Boss Script Stuff
+        #region Level Script Stuff
         public GameEntity CreateDragonFirePillar(Vector3 position)
         {
             GameEntity pillar = new GameEntity("firepillar", FactionType.Enemies, EntityType.Misc);
@@ -925,6 +953,15 @@ namespace KazgarsRevenge
             return pillar;
         }
 
+        private List<GameEntity> doors = new List<GameEntity>();
+        public void UnlockDoors()
+        {
+            for (int i = 0; i < doors.Count; ++i)
+            {
+                doors[i].KillEntity();
+            }
+            doors.Clear();
+        }
         #endregion
 
         public override void Update(GameTime gameTime)

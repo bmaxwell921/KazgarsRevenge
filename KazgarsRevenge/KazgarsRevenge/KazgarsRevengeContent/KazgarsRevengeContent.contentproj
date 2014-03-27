@@ -1278,6 +1278,65 @@
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\RoomObjectMaps\03-1-S-NSEW-objMap.fbx">
+      <Name>03-1-S-NSEW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\05-1-B-ESW-objMap.fbx">
+      <Name>05-1-B-ESW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\07-1-N-ESW-objMap.fbx">
+      <Name>07-1-N-ESW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\09-1-B-ES-objMap.fbx">
+      <Name>09-1-B-ES-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\10-1-N-ES-objMap.fbx">
+      <Name>10-1-N-ES-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\11-1-N-ES-objMap.fbx">
+      <Name>11-1-N-ES-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\12-1-K-E-objMap.fbx">
+      <Name>12-1-K-E-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\13-1-B-E-objMap.fbx">
+      <Name>13-1-B-E-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\14-1-N-E-objMap.fbx">
+      <Name>14-1-N-E-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\15-1-N-E-objMap.fbx">
+      <Name>15-1-N-E-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\keyUnlock.mp3">
+      <Name>keyUnlock</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

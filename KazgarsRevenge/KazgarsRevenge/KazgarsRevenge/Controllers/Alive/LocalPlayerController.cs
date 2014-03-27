@@ -2371,14 +2371,8 @@ namespace KazgarsRevenge
             looting = false;
             model.KillAllEmitters();
             currentPower = 0;
-            if (currentActionName != "death")
-            {
-                if (pulling)
-                {
-                    StopPull();
-                }
-                StartSequence("death");
-            }
+            StartSequence("death");
+            base.KillAlive();
         }
     }
 }
