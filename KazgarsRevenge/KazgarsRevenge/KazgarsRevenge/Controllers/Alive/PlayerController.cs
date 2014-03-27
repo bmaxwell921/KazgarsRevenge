@@ -293,6 +293,21 @@ namespace KazgarsRevenge
             //awkward if it does
             return false;
         }
+        protected void RemoveOneFromInventory(int itemID)
+        {
+            for (int i = 0; i < inventory.Length; ++i)
+            {
+                if (inventory[i].ItemID == itemID)
+                {
+                    inventory[i].Quantity--;
+                    if (inventory[i].Quantity <= 0)
+                    {
+                        inventory[i] = null;
+                    }
+                    break;
+                }
+            }
+        }
         protected override void RecalculateStats()
         {
             base.RecalculateStats();
@@ -443,6 +458,12 @@ namespace KazgarsRevenge
             {
                 abilityLearnedFlags[(AbilityName)i] = false;
             }
+
+            abilityLearnedFlags[AbilityName.HealthPotion] = true;
+            abilityLearnedFlags[AbilityName.SuperHealthPotion] = true;
+            abilityLearnedFlags[AbilityName.InstaHealthPotion] = true;
+            abilityLearnedFlags[AbilityName.PotionOfLuck] = true;
+            abilityLearnedFlags[AbilityName.InivisibilityPotion] = true;
             #endregion
         }
 
@@ -502,6 +523,10 @@ namespace KazgarsRevenge
                 StartSequence(ability.ActionName);
             }
             lastUsedAbility = ability;
+        }
+        protected void UseSequenceParallel(string name)
+        {
+            actionSequences[name][0]();
         }
 
         protected void StartSequence(string name)
@@ -580,10 +605,10 @@ namespace KazgarsRevenge
             actionSequences.Add("loot_smash", LootSmashActions());
             actionSequences.Add("death", DeathActions());
             //potions
-            actionSequences.Add("healthpot", HealthPotActions());
-            actionSequences.Add("superhealthpot", SuperHealthPotActions());
-            actionSequences.Add("luckpot", LuckPotActions());
-            actionSequences.Add("instahealthpot", InstaHealthPotActions());
+            actionSequences.Add(AbilityName.HealthPotion.ToString(), HealthPotActions());
+            actionSequences.Add(AbilityName.SuperHealthPotion.ToString(), SuperHealthPotActions());
+            actionSequences.Add(AbilityName.PotionOfLuck.ToString(), LuckPotActions());
+            actionSequences.Add(AbilityName.InstaHealthPotion.ToString(), InstaHealthPotActions());
 
             //primary attacks
             actionSequences.Add("swing", SwingActions());
@@ -807,6 +832,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
+                RemoveOneFromInventory(1);
                 AddBuff(Buff.HealthPotion, Entity);
             });
 
@@ -818,6 +844,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
+                RemoveOneFromInventory(2);
                 AddBuff(Buff.SuperHealthPotion, Entity);
             });
 
@@ -829,6 +856,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
+                RemoveOneFromInventory(4);
                 AddBuff(Buff.LuckPotion, Entity);
             });
 
@@ -840,6 +868,7 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
+                RemoveOneFromInventory(3);
                 Heal((int)(MaxHealth * .3f));
             });
 
@@ -2073,16 +2102,8 @@ namespace KazgarsRevenge
 
                 case AbilityName.IceClawPrison://magic actives
                     return GetIceClawPrison();
-                default:
-                    return GetNone();
-            }
-        }
 
-        protected Ability GetPotionAbility(AbilityName potionType)
-        {
-            switch (potionType)
-            {
-                case AbilityName.HealthPotion:
+                case AbilityName.HealthPotion://potions
                     return GetHealthPotion();
                 case AbilityName.SuperHealthPotion:
                     return GetSuperHealthPotion();
@@ -2090,8 +2111,10 @@ namespace KazgarsRevenge
                     return GetInstaHealthPotion();
                 case AbilityName.PotionOfLuck:
                     return GetPotionOfLuck();
+
+
                 default:
-                    throw new Exception("That ability hasn't been implemented.");
+                    return GetNone();
             }
         }
 
@@ -2440,22 +2463,22 @@ namespace KazgarsRevenge
         #region Potion Definitions
         protected Ability GetHealthPotion()
         {
-            return new Ability(AbilityName.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, AttackType.None, "healthpot", AbilityType.Instant, 0, 
+            return new Ability(AbilityName.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, AttackType.None, AbilityName.HealthPotion.ToString(), AbilityType.Instant, 0, 
                 "Heals for 20% health over 5 seconds");
         }
         protected Ability GetSuperHealthPotion()
         {
-            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.SUPER_HEALTH), 0, AttackType.None, "superhealthpot", AbilityType.Instant, 0, 
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.SUPER_HEALTH), 0, AttackType.None, AbilityName.SuperHealthPotion.ToString(), AbilityType.Instant, 0, 
                 "Heals for 40% health over 5 seconds");
         }
         protected Ability GetPotionOfLuck()
         {
-            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.LUCK), 0, AttackType.None, "luckpot", AbilityType.Instant, 0, 
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.LUCK), 0, AttackType.None, AbilityName.PotionOfLuck.ToString(), AbilityType.Instant, 0, 
                 "Increases the quality of loot\ndropped for 2 minutes");
         }
         protected Ability GetInstaHealthPotion()
         {
-            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.INSTA_HEALTH), 0, AttackType.None, "instahealthpot", AbilityType.Instant, 0, 
+            return new Ability(AbilityName.PotionOfLuck, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.INSTA_HEALTH), 0, AttackType.None, AbilityName.InstaHealthPotion.ToString(), AbilityType.Instant, 0, 
                 "Heals for 30% health instantly");
         }
 

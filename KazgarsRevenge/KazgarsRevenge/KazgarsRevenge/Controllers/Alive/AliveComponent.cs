@@ -92,7 +92,7 @@ namespace KazgarsRevenge
             {
                 this.type = type;
                 this.timeLeft = time;
-                this.nextTick = -10000;
+                this.nextTick = timeLeft - tickLength;
                 this.from = from;
                 this.tickLength = tickLength;
             }
@@ -505,13 +505,13 @@ namespace KazgarsRevenge
                 case Buff.HealthPotion:
                     if (state == BuffState.Ticking)
                     {
-                        Heal((int)(MaxHealth * .1f));
+                        Heal((int)Math.Ceiling(MaxHealth * .01f));
                     }
                     break;
                 case Buff.SuperHealthPotion:
                     if (state == BuffState.Ticking)
                     {
-                        Heal((int)(MaxHealth * .2f));
+                        Heal((int)Math.Ceiling(MaxHealth * .02f));
                     }
                     break;
                 case Buff.AdrenalineRush:

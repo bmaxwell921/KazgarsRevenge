@@ -9,6 +9,7 @@ namespace KazgarsRevenge
 {
     class Potion : Item
     {
+        public AbilityName PotionAbility = AbilityName.None;
         public Potion(Texture2D icon, int quantity, int id)
             : base(ItemType.Potion, icon, "potion", quantity, id)
         {
@@ -16,18 +17,23 @@ namespace KazgarsRevenge
             {
                 case 1:
                     this.Name = "Health Potion";
+                    this.PotionAbility = AbilityName.HealthPotion;
                     break;
                 case 2:
-                    this.Name = "Healthier Potion";
+                    this.Name = "Super Potion";
+                    this.PotionAbility = AbilityName.SuperHealthPotion;
                     break;
                 case 3:
                     this.Name = "Insta-Health";
+                    this.PotionAbility = AbilityName.InstaHealthPotion;
                     break;
                 case 4:
                     this.Name = "Potion of Luck";
+                    this.PotionAbility = AbilityName.PotionOfLuck;
                     break;
                 case 5:
                     this.Name = "Potion of Invisibility";
+                    this.PotionAbility = AbilityName.None;
                     break;
             }
 
@@ -61,6 +67,11 @@ namespace KazgarsRevenge
                 new List<TooltipLine>{
                     new TooltipLine(Color.White, name, .75f), 
                     new TooltipLine(Color.Gold, description, .4f)});
+        }
+
+        public override object Clone()
+        {
+            return new Potion(this.Icon, this.Quantity, this.ItemID);
         }
     }
 }

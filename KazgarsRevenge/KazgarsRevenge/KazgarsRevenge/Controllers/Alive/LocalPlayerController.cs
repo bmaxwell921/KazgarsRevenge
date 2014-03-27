@@ -1386,20 +1386,45 @@ namespace KazgarsRevenge
                                 if (currentTalentTree == TalentTrees.ranged)
                                 {
                                     checkTalentOnBar(rangedAbilities);
-                                    if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    else boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    if (check == 12) 
+                                        mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    else 
+                                        boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 }
                                 else if (currentTalentTree == TalentTrees.melee)
                                 {
                                     checkTalentOnBar(meleeAbilities);
-                                    if (check == 12) mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    else boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    if (check == 12) 
+                                        mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
+                                    else 
+                                        boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 }
                                 else if (currentTalentTree == TalentTrees.magic)
                                 {
 
                                 }
                                 selectedTalentSlot = -1;
+                            }
+                            else if (selectedItemSlot != -1) //Putting an item onto the ability bar
+                            {
+                                Potion p = inventory[selectedItemSlot] as Potion;
+                                if (p != null)
+                                {
+                                    int check = Convert.ToInt32(innerCollides.Remove(0, 7));
+                                    if (check == 12)
+                                    {
+                                        mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(p.PotionAbility));
+                                    }
+                                    else
+                                    {
+                                        boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(p.PotionAbility));
+                                    }
+                                }
+                                else
+                                {
+                                    //possible future implementation of other items on hotbar
+                                    selectedItemSlot = -1;
+                                }
                             }
                             else
                             {
@@ -1461,10 +1486,10 @@ namespace KazgarsRevenge
                             {
                                 if (innerCollides == "inventory" + i && inventory[i] != null)
                                 {
-                                    selectedItemSlot = i;
                                     Equippable e = inventory[i] as Equippable;        //set selectedEquipPiece as inventory[i]
                                     if (e != null)
                                     {
+                                        selectedItemSlot = i;
                                         if (e.Slot == GearSlot.Lefthand || e.Slot == GearSlot.Righthand)
                                         {
                                             if (gear[GearSlot.Righthand] == null) selectedEquipPiece = GearSlot.Righthand;      //no weapon in right hand.  Equip into right hand;
@@ -1486,7 +1511,25 @@ namespace KazgarsRevenge
                                     }
                                     else
                                     {
-                                        //floating text for not equipable
+                                        //check for potion use
+                                        Potion p = inventory[i] as Potion;
+                                        if (p != null)
+                                        {
+                                            UseSequenceParallel(p.PotionAbility.ToString());
+                                            inventory[i].Quantity--;
+                                            if (inventory[i].Quantity <= 0)
+                                            {
+                                                inventory[i] = null;
+                                                if (selectedItemSlot == i)
+                                                {
+                                                    selectedItemSlot = -1;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            (Game as MainGame).AddAlert("Can't use that");
+                                        }
                                     }
                                 }
                             }
@@ -2277,8 +2320,8 @@ namespace KazgarsRevenge
             #region tooltip
             if (currentTooltip != null)
             {
-                currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, average, 50f);
                 s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Black * 0.5f);
+                currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, average, 50f);
             }
             #endregion
             #endregion
@@ -2328,6 +2371,11 @@ namespace KazgarsRevenge
 
         protected override void KillAlive()
         {
+            if (looting)
+            {
+                CloseLoot();
+                lootScroll = 0;
+            }
             looting = false;
             model.KillAllEmitters();
             currentPower = 0;
