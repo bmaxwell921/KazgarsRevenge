@@ -65,6 +65,7 @@ namespace KazgarsRevenge
             systems.Add(typeof(DevastateTrailSystem), new DevastateTrailSystem(Game, Game.Content));
             systems.Add(typeof(SoulevatorMistSystem), new SoulevatorMistSystem(Game, Game.Content));
             systems.Add(typeof(KeyUnlockSystem), new KeyUnlockSystem(Game, Game.Content));
+            systems.Add(typeof(KeyGlowSystem), new KeyGlowSystem(Game, Game.Content));
             
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)

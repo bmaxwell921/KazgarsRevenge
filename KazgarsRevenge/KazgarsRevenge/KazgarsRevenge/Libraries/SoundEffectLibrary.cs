@@ -11,6 +11,7 @@ namespace KazgarsRevenge
         Dictionary<string, SoundEffect> soundEffects;
         Random rand;
 
+        
         public SoundEffectLibrary(MainGame game)
         {
             soundEffects = new Dictionary<string, SoundEffect>();
