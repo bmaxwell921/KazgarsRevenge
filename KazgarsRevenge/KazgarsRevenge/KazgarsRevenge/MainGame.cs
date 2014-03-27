@@ -147,6 +147,7 @@ namespace KazgarsRevenge
 
             soundEffectLibrary = new SoundEffectLibrary(this);
             Services.AddService(typeof(SoundEffectLibrary), soundEffectLibrary);
+            Components.Add(soundEffectLibrary);
 
             enemies = new EnemyManager(this);
             Components.Add(enemies);

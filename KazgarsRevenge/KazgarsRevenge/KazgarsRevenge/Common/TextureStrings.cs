@@ -13,10 +13,10 @@ namespace KazgarsRevenge
     {
         public static readonly string WHITE = @"white";
         public static readonly string WHITE_PIX = @"Textures\whitePixel";
-        public static readonly string WHITE_CURSOR = @"Textures\cursor";
-        public static readonly string HOVER = @"Textures\hover";
         public class UI
         {
+            public static readonly string WHITE_CURSOR = @"Textures\cursor";
+            public static readonly string HOVER = @"Textures\UI\hover";
             public static readonly string INPUT_TEXTURE = @"Textures\UI\TextBox";
             public static readonly string CHARGE_BAR_FRONT = @"Textures\UI\chargeBarFront";
             public static readonly string Place_Holder = @"Textures\\UI\\Abilities\\BN";

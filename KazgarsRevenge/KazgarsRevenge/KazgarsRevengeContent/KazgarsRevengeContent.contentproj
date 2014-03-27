@@ -1202,7 +1202,7 @@
       <Importer>FbxImporter</Importer>
       <Processor>LevelModelProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\cursor.png">
+    <Compile Include="Textures\UI\cursor.png">
       <Name>cursor</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -1345,7 +1345,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\hover.png">
+    <Compile Include="Textures\UI\hover.png">
       <Name>hover</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -1368,6 +1368,13 @@
       <Name>menuSong</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\active.png">
+      <Name>active</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

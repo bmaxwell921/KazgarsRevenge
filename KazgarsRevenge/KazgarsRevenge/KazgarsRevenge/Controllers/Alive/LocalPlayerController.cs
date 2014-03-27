@@ -32,11 +32,11 @@ namespace KazgarsRevenge
             InitDrawingParams();
             font = game.Content.Load<SpriteFont>("Verdana");
             texWhitePixel = Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE);
-            texHover = Texture2DUtil.Instance.GetTexture(TextureStrings.HOVER);
+            texHover = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.HOVER);
             texChargeBarFront = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.CHARGE_BAR_FRONT);
 
             #region UI Frame Load
-            texCursor = Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_CURSOR);
+            texCursor = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.WHITE_CURSOR);
             icon_selected = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.ICON_SEL);
             health_bar = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.HEALTH_BAR);
             rightArrow = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.RIGHT_ARROW);
@@ -1662,7 +1662,7 @@ namespace KazgarsRevenge
                 for (int j = 0; j < 7; j++)
                 {
                     if (currentTree[j, i] != null)
-                    {       //Draw active frames around active items
+                    {   //Draw active frames around active items
                         if (GetCachedAbility(currentTree[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[currentTree[j, i].name])
                         {
                             Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
