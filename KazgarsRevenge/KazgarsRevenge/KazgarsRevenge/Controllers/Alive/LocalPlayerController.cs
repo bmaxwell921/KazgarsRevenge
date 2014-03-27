@@ -1935,7 +1935,7 @@ namespace KazgarsRevenge
 
             #region Ability Bar
             //Ability Bar
-            s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Red * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Black * 0.5f);
             for (int i = 0; i < 12; ++i)
             {
                 Rectangle temprect = guiInsideRects["abilities"]["ability" + i];
@@ -2028,17 +2028,17 @@ namespace KazgarsRevenge
 
             //XP Area
             Rectangle xpRect = guiOutsideRects["xp"];
-            s.Draw(texWhitePixel, xpRect, Color.Brown * 0.5f);
+            s.Draw(texWhitePixel, xpRect, Color.Black * 0.5f);
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
             
             //Mini Map (square for now)
-            s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Orange * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Black * 0.5f);
 
             #region main player frame
             //Main Player Frame Pic
-            s.Draw(texWhitePixel, portraitRect, Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, portraitRect, Color.Black * 0.5f);
             //Main Player Frame Health
-            s.Draw(texWhitePixel, playerHPRect, Color.Blue * 0.5f);
+            s.Draw(texWhitePixel, playerHPRect, Color.Black * 0.5f);
             //power
             s.Draw(texWhitePixel, powerBackRect, Color.Black);
             s.Draw(texWhitePixel, new Rectangle(powerBackRect.X, powerBackRect.Y, powerBackRect.Width * currentPower / maxPower, powerBackRect.Height), Color.Yellow);
@@ -2192,7 +2192,7 @@ namespace KazgarsRevenge
             #region talents
             if (showTalents)
             {
-                s.Draw(texWhitePixel, guiOutsideRects["talents"], Color.Pink * .5f);
+                s.Draw(texWhitePixel, guiOutsideRects["talents"], Color.Black * .5f);
                 if (currentTalentTree == TalentTrees.ranged)
                 {
                     drawTalentHelper(s, rangedAbilities);
