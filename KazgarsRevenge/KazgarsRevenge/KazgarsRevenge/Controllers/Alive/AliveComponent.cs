@@ -218,6 +218,7 @@ namespace KazgarsRevenge
             }
         }
 
+        protected float baseStatsMultiplier = 1;
         protected float statsPerLevelMultiplier = 1;
         protected virtual void RecalculateStats()
         {
@@ -231,7 +232,12 @@ namespace KazgarsRevenge
             //add base stats, accounting for level
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
             {
-                stats[(StatType)i] = baseStats[(StatType)i];
+                StatType s = (StatType)i;
+                stats[s] = baseStats[(StatType)i];
+                if (s == StatType.Agility || s == StatType.Strength || s == StatType.Intellect)
+                {
+                    stats[s] *= baseStatsMultiplier;
+                }
             }
 
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
@@ -304,8 +310,8 @@ namespace KazgarsRevenge
 
         protected int GeneratePrimaryDamage(StatType s)
         {
-            float ret = stats[s] * 10;
-            if (rand.Next(0, 101) < stats[StatType.CritChance])
+            float ret = stats[s];
+            if ((float)rand.Next(0, 1000) / 10f < stats[StatType.CritChance] * 100)
             {
                 ret *= 1.25f;
             }

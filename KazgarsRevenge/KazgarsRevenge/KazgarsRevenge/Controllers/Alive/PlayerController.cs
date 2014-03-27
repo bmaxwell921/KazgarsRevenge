@@ -376,7 +376,8 @@ namespace KazgarsRevenge
         public PlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
             : base(game, entity, account.CharacterLevel)
         {
-            statsPerLevelMultiplier = 3;
+            statsPerLevelMultiplier = 2;
+            baseStatsMultiplier = 10;
             //shared data
             this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
             this.syncedModels = Entity.GetSharedData(typeof(Dictionary<string, Model>)) as Dictionary<string, Model>;
