@@ -22,7 +22,7 @@ namespace KazgarsRevenge
         DragonState state = DragonState.Phase1;
 
         public DragonController(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity, 1)
+            : base(game, entity, 10)
         {
             settings.aniPrefix = "d_";
             settings.attackAniName = "snap";
@@ -35,9 +35,9 @@ namespace KazgarsRevenge
 
             chargingBoneNames.Add("d_mouth_emittor_R");
             chargingBoneNames.Add("d_mouth_emittor_L");
-
+            rotateTimerLength = 0;
         }
-
+        
         public override void Update(GameTime gameTime)
         {
             if (targetHealth != null && targetHealth.Dead)
@@ -93,7 +93,7 @@ namespace KazgarsRevenge
             state = DragonState.Waiting;
             targetHealth = null;
             targetData = null;
-            enrageTimer = 120000;
+            enrageTimer = 12000;
             nextSpitBomb = 1000;
 
             //reset position here?

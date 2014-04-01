@@ -291,7 +291,7 @@ namespace KazgarsRevenge
         bool nothingWasBetween = true;
 
         double rotateTimerCounter;
-        double rotateTimerLength = 1000;
+        protected double rotateTimerLength = 1000;
         protected virtual void AIRunningToTarget(double millis)
         {
             raycastTimerCounter += millis;
@@ -522,7 +522,10 @@ namespace KazgarsRevenge
                 }
                 minChaseCounter = 0;
 
-                (Game as MainGame).AddFloatingText(physicalData.Position, "" + d, Color.Yellow, .5f);
+                if (d > 0)
+                {
+                    (Game as MainGame).AddFloatingText(physicalData.Position, "" + d, Color.Yellow, .5f);
+                }
             }
         }
         protected virtual void DoDamagedGraphics()

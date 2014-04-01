@@ -70,6 +70,13 @@ namespace KazgarsRevenge
                 arrowAI.Home();
                 arrowGraphics.AddEmitter(typeof(HomingTrailParticleSystem), "trail", 80, 0, Vector3.Forward * 6);
             }
+            else
+            {
+                ArrowVBillboard trail = new ArrowVBillboard(mainGame, arrow);
+                arrow.AddComponent(typeof(ArrowVBillboard), trail);
+                billboardManager.AddComponent(trail);
+            }
+
             if (penetrating)
             {
                 arrowAI.Penetrate();
@@ -83,9 +90,6 @@ namespace KazgarsRevenge
                 arrowAI.Bleed();
             }
 
-            ArrowVBillboard trail = new ArrowVBillboard(mainGame, arrow);
-            arrow.AddComponent(typeof(ArrowVBillboard), trail);
-            billboardManager.AddComponent(trail);
 
             arrow.AddComponent(typeof(PhysicsComponent), arrowPhysics);
             genComponentManager.AddComponent(arrowPhysics);

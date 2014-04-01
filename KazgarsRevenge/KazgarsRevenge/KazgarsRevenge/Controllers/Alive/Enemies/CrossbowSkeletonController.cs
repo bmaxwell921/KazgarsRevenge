@@ -14,7 +14,6 @@ namespace KazgarsRevenge
             settings.aniPrefix = "s_";
             settings.attackAniName = "shoot";
             settings.attackRange = 300;
-            settings.noticePlayerRange = 400;
             settings.stopChasingRange = 350;
             settings.attackLength = animations.GetAniMillis("s_shoot");
             settings.attackCreateMillis = 600;

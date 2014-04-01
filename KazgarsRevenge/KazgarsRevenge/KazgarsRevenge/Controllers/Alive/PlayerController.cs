@@ -84,7 +84,7 @@ namespace KazgarsRevenge
         }
         
         protected int spentTalentPoints = 0;
-        protected int totalTalentPoints = 100;
+        protected int totalTalentPoints = 1000;
         protected const float meleeRange = 50;
         protected const float bowRange = 1000;
         protected Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
@@ -739,9 +739,10 @@ namespace KazgarsRevenge
                 PlayAnimation("k_loot", MixType.PauseAtEnd);
                 millisActionLength = animations.GetAniMillis("k_loot");
 
-                if (attached[GearSlot.Righthand.ToString()] != null)
+                string attstr = GearSlot.Righthand.ToString();
+                if (attached.ContainsKey(attstr) && attached[attstr] != null)
                 {
-                    attached[GearSlot.Righthand.ToString()].Draw = false;
+                    attached[attstr].Draw = false;
                 }
             });
             sequence.Add(() =>
@@ -785,18 +786,20 @@ namespace KazgarsRevenge
             });
             sequence.Add(() =>
             {
-                if (attached[GearSlot.Righthand.ToString()] != null)
+                string attstr = GearSlot.Righthand.ToString();
+                if (attached.ContainsKey(attstr) && attached[attstr] != null)
                 {
-                    attached[GearSlot.Righthand.ToString()].Draw = true;
+                    attached[attstr].Draw = true;
                 }
                 PlayAnimation("k_fighting_stance", MixType.None);
             });
 
             interruptActions.Add("loot_smash", () =>
             {
-                if (attached[GearSlot.Righthand.ToString()] != null)
+                string attstr = GearSlot.Righthand.ToString();
+                if (attached.ContainsKey(attstr) && attached[attstr] != null)
                 {
-                    attached[GearSlot.Righthand.ToString()].Draw = true;
+                    attached[attstr].Draw = true;
                 }
                 PlayAnimation("k_fighting_stance", MixType.None);
             });
@@ -1904,7 +1907,10 @@ namespace KazgarsRevenge
                 StartSequence("fightingstance");
             }
 
-            (Game as MainGame).AddFloatingText(physicalData.Position, "" + damage, Color.Red, .5f);
+            if (damage > 0)
+            {
+                (Game as MainGame).AddFloatingText(physicalData.Position, "" + damage, Color.Red, .5f);
+            }
         }
         #endregion
 

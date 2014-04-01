@@ -283,8 +283,10 @@ namespace KazgarsRevenge
                 }
 
                 string innerCollides = CollidingInnerFrame(outerCollides);
+
                 CheckButtonClicks(outerCollides, innerCollides);
                 CheckMouseHover(outerCollides, innerCollides);
+                
 
                 Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
                 if (targetedPhysicalData != null)
@@ -933,6 +935,7 @@ namespace KazgarsRevenge
                         {
                             StartSequence("punch");
                             UpdateRotation(dir);
+                            lastAniSuffix = aniSuffix;
                         }
                         break;
                     case AttackType.Melee:
@@ -940,6 +943,7 @@ namespace KazgarsRevenge
                         {
                             StartSequence("swing");
                             UpdateRotation(dir);
+                            lastAniSuffix = aniSuffix;
                         }
                         break;
                     case AttackType.Ranged:
@@ -947,6 +951,7 @@ namespace KazgarsRevenge
                         {
                             StartSequence("shoot");
                             UpdateRotation(dir);
+                            lastAniSuffix = aniSuffix;
                         }
                         break;
                     case AttackType.Magic:
@@ -954,11 +959,11 @@ namespace KazgarsRevenge
                         {
                             StartSequence("magic");
                             UpdateRotation(dir);
+                            lastAniSuffix = aniSuffix;
                         }
                         break;
                 }
 
-                lastAniSuffix = aniSuffix;
             }
 
         }
@@ -1214,6 +1219,12 @@ namespace KazgarsRevenge
                 {
                     dragging = false;
                 }
+
+                if (innerCollides == null)
+                {
+                    return;
+                }
+
                 if ((!dragging && draggingSource != innerCollides) || dragging)
                 {
                     switch (outerCollides)
@@ -1545,6 +1556,7 @@ namespace KazgarsRevenge
             {
                 hovering = false;
                 currentTooltip = null;
+                return;
             }
             switch (outerCollides)
             {
@@ -2276,6 +2288,12 @@ namespace KazgarsRevenge
             model.KillAllEmitters();
             currentPower = 0;
             StartSequence("death");
+
+            string attstr = GearSlot.Righthand.ToString();
+            if (attached.ContainsKey(attstr) && attached[attstr] != null)
+            {
+                attached[attstr].Draw = true;
+            }
             base.KillAlive();
         }
     }

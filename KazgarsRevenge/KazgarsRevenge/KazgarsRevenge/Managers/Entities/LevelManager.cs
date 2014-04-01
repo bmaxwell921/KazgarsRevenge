@@ -466,6 +466,8 @@ namespace KazgarsRevenge
         GameEntity key;
         private void CreateKey(Vector3 pos)
         {
+            pos.Y = 40;
+
             GameEntity entity = new GameEntity("key", FactionType.Neutral, EntityType.Misc);
 
             Entity physicalData = new Box(pos, 40, 40, 40);

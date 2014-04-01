@@ -33,8 +33,8 @@ namespace KazgarsRevenge
         {
             GameState state = (Game as MainGame).gameState;
             if (state != prevState)
-            {
-                HandleStateChange(state);
+            { 
+                //HandleStateChange(state);
             }
 
             prevState = state;
