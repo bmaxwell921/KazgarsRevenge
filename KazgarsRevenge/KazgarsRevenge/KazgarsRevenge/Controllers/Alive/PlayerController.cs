@@ -1741,15 +1741,6 @@ namespace KazgarsRevenge
         {
             List<Action> sequence = new List<Action>();
             sequence.Add(actionSequences["grapplinghook"][0]);
-
-            sequence.Add(() =>
-            {
-                attState = AttackState.Locked;
-                PlayAnimation("k_throw", MixType.PauseAtEnd);
-                millisActionLength = 300;
-                stateResetCounter = 0;
-            });
-
             sequence.Add(() =>
             {
                 attState = AttackState.None;

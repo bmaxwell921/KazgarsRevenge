@@ -7,6 +7,8 @@ float lineIntensity = 1;
 float3 lineColor = float3(0,0,0);
 float3 colorTint = float3(1,1,1);
 
+float3 playerLightPosition = float3(0,0,0);
+float3 playerLightColor = float3(1,1,1);
 float3 lightPositions[30];
 float LightAttenuation = 300;
 float LightFalloff = 2;
@@ -62,6 +64,7 @@ float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
 	float amt;
 	float att;
 	float tmp;
+	/*
 	for(int i=0; i<30; ++i)
 	{
 		if(lightPositions[i].x != -10000)
@@ -83,7 +86,17 @@ float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
 
 			++curActiveLights;
 		}
-	}
+	}*/
+
+	//player light location
+	lightDir = normalize(playerLightPosition - pin.worldPos);
+	amt = saturate(dot(pin.normal, lightDir));
+	att = 1 - pow(saturate(distance(playerLightPosition, pin.worldPos) / LightAttenuation), LightFalloff);
+	tmp = amt * att;
+	light += tmp;
+	totalColor += playerLightColor;
+	++curActiveLights;
+
 	
 	totalColor /= curActiveLights;
 	

@@ -111,6 +111,7 @@ namespace KazgarsRevenge
             {
                 characterPos = physicalData.Position;
             }
+            PlayerLightPos = new Vector3(characterPos.X, 50, characterPos.Z);
 
             Vector3 min = new Vector3(characterPos.X - playerSightRadius, 0, characterPos.Z - playerSightRadius);
             Vector3 max = new Vector3(characterPos.X + playerSightRadius, 100, characterPos.Z + playerSightRadius);
@@ -237,6 +238,8 @@ namespace KazgarsRevenge
         }
 
         #region Lights
+        public Vector3 PlayerLightPos { get; private set; }
+
         public const int MAX_ACTIVE_LIGHTS = 30;
         public int LastLightUpdate { get; private set; }
         public Vector3[] lightPositions { get; private set; }

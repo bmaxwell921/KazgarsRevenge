@@ -197,6 +197,7 @@ namespace KazgarsRevenge
                     {
                         foreach (CustomSkinnedEffect effect in mesh.Effects)
                         {
+                            effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                             effect.Parameters["lineColor"].SetValue(modelParams.lineColor.ToVector3());
                             effect.Parameters["alpha"].SetValue(modelParams.alpha);
                             effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
@@ -227,6 +228,7 @@ namespace KazgarsRevenge
                             {
                                 foreach (CustomSkinnedEffect effect in mesh.Effects)
                                 {
+                                    effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                                     effect.Parameters["lineColor"].SetValue(modelParams.lineColor.ToVector3());
                                     effect.Parameters["alpha"].SetValue(modelParams.alpha);
                                     effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
@@ -263,6 +265,7 @@ namespace KazgarsRevenge
                             {
                                 foreach (Effect effect in mesh.Effects)
                                 {
+                                    effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                                     effect.Parameters["alpha"].SetValue(modelParams.alpha);
                                     effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                                     effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];

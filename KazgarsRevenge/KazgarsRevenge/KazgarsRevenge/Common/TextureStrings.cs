@@ -19,19 +19,19 @@ namespace KazgarsRevenge
             public static readonly string HOVER = @"Textures\UI\hover";
             public static readonly string INPUT_TEXTURE = @"Textures\UI\TextBox";
             public static readonly string CHARGE_BAR_FRONT = @"Textures\UI\chargeBarFront";
-            public static readonly string Place_Holder = @"Textures\\UI\\Abilities\\BN";
-            public static readonly string Talent_Arrow_U = @"Textures\\UI\\Frames\\TTArrow";
-            public static readonly string Talent_Arrow_UL = @"Textures\\UI\\Frames\\TTArrow1";
-            public static readonly string Talent_Arrow_L = @"Textures\\UI\\Frames\\TTArrow2";
-            public static readonly string Talent_Arrow_DL = @"Textures\\UI\\Frames\\TTArrow3";
-            public static readonly string Talent_Arrow_D = @"Textures\\UI\\Frames\\TTArrow4";
-            public static readonly string Talent_Arrow_DR = @"Textures\\UI\\Frames\\TTArrow5";
-            public static readonly string Talent_Arrow_R = @"Textures\\UI\\Frames\\TTArrow6";
-            public static readonly string Talent_Arrow_UR = @"Textures\\UI\\Frames\\TTArrow7";
+            public static readonly string Place_Holder = @"Textures\UI\Abilities\BN";
+            public static readonly string Talent_Arrow_U = @"Textures\UI\Frames\TTArrow";
+            public static readonly string Talent_Arrow_UL = @"Textures\UI\Frames\TTArrow1";
+            public static readonly string Talent_Arrow_L = @"Textures\UI\Frames\TTArrow2";
+            public static readonly string Talent_Arrow_DL = @"Textures\UI\Frames\TTArrow3";
+            public static readonly string Talent_Arrow_D = @"Textures\UI\\Frames\TTArrow4";
+            public static readonly string Talent_Arrow_DR = @"Textures\UI\Frames\TTArrow5";
+            public static readonly string Talent_Arrow_R = @"Textures\UI\Frames\TTArrow6";
+            public static readonly string Talent_Arrow_UR = @"Textures\UI\Frames\TTArrow7";
 
-            public static readonly string MeleeBanner = @"Textures\\UI\\Frames\\meleeBanner";
-            public static readonly string RangedBanner = @"Textures\\UI\\Frames\\rangedBanner";
-            public static readonly string MagicBanner = @"Textures\\UI\\Frames\\magicBanner";
+            public static readonly string MeleeBanner = @"Textures\UI\Frames\meleeBanner";
+            public static readonly string RangedBanner = @"Textures\UI\Frames\rangedBanner";
+            public static readonly string MagicBanner = @"Textures\UI\Frames\magicBanner";
 
 
             public class Items
