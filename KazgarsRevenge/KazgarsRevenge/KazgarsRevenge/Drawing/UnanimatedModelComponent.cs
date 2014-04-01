@@ -135,6 +135,7 @@ namespace KazgarsRevenge
                 {
                     foreach (Effect effect in mesh.Effects)
                     {
+                        effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                         effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                         Matrix world = transforms[mesh.ParentBone.Index]
                             * Matrix.CreateScale(drawScale)

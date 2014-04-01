@@ -73,7 +73,7 @@ namespace KazgarsRevenge
             settings.hitAniName = "hit";
             settings.deathAniName = "death";
             settings.attackRange = 30;
-            settings.noticePlayerRange = 150;
+            settings.noticePlayerRange = 275;
             settings.stopChasingRange = 400;
             settings.attackLength = 1417;
             settings.attackCreateMillis = settings.attackLength / 2;

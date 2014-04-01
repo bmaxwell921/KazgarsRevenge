@@ -477,7 +477,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
             UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook,
-                GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(50), Vector3.Zero, 0, 0, 0);
+                GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(30), Vector3.Zero, 0, 0, 0);
             ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator);
             ChainSpearController hookController = new ChainSpearController(mainGame, hook, creator, forceful);
 

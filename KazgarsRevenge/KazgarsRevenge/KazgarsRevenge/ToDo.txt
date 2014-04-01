@@ -2,19 +2,18 @@
 ===========
 make soul_loot_smash animation end up in the air again
 
-change pigman death animation such that the weapon doesn't stick in the the ground (rotate the attachment point)
-change pigman hand attach point
-
 buff particles
 
-get mouse texture
+-talent tree backgrounds (ranged, like a bow/melee, like a hammer)
+-inventory
+	-
+-ability icons (all ranged and melee)
+-item icons
+	-plate/leather/cloth
+		-head/shoulders/chest/legs/wrist/feet/bling
+			-green/blue
+			-blue/epic
 
-
-gui work needed
-=================
-inventory
-	-mouse interaction (hover and mouse down, along with click and drag equipping)
-scrollable loot (or clickable arrows to see next/previous items)
 
 
 Abilities
@@ -22,11 +21,4 @@ Abilities
 tar bomb: get new particles / finish particle system
 
 
-Floating Text
-===============
-combat text for heals and damage
 
-
-Tooltips
-==========
-things that need tooltips: items (on hotbar, inventory, and loot), abilities(on hotbar and talent tree)

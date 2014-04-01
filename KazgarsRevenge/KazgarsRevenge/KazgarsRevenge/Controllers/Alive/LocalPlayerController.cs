@@ -1762,7 +1762,7 @@ namespace KazgarsRevenge
 
             inventoryRect = new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average));
             equipmentRect = new Rectangle((int)(maxX - 704 * average), (int)(380 * average), (int)(304 * average), (int)(440 * average));
-            talentRect = new Rectangle((int)(maxX / 2 - 203 * average), (int)(75 * average), (int)(406 * average), (int)(738 * average));
+            talentRect = new Rectangle((int)(maxX / 2 - 203 * average), (int)(75 * average), (int)(406 * average), (int)(812 * average));
             lootRect = new Rectangle((int)(160 * average), (int)(160 * average), (int)(150 * average), (int)(300 * average));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
