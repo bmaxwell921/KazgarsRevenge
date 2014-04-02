@@ -1,4 +1,4 @@
-﻿prototype 1 features
+prototype 1 features 
 ====================
 entity-component architecture
 running / colliding physics
