@@ -1772,10 +1772,15 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
 
-            inventoryRect = new Rectangle((int)(maxX - 400 * average), (int)(380 * average), (int)(402 * average), (int)(440 * average));
-            equipmentRect = new Rectangle((int)(maxX - 704 * average), (int)(380 * average), (int)(304 * average), (int)(440 * average));
-            talentRect = new Rectangle((int)(maxX / 2 - 203 * average), (int)(75 * average), (int)(406 * average), (int)(812 * average));
-            lootRect = new Rectangle((int)(160 * average), (int)(160 * average), (int)(150 * average), (int)(300 * average));
+            Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
+            Vector2 equipmentUR = new Vector2((int)(maxX - 744 * average), (int)(296 * average));
+            Vector2 talentUR = new Vector2((int)(maxX / 2 - 203 * average), (int)(75 * average));
+            Vector2 lootUR = new Vector2((int)(160 * average), (int)(160 * average));
+
+            inventoryRect = new Rectangle((int)inventoryUR.X, (int)inventoryUR.Y, (int)(440 * average), (int)(440 * average));
+            equipmentRect = new Rectangle((int)equipmentUR.X, (int)equipmentUR.Y, (int)(304 * average), (int)(608 * average));
+            talentRect = new Rectangle((int)talentUR.X, (int)talentUR.Y, (int)(406 * average), (int)(812 * average));
+            lootRect = new Rectangle((int)lootUR.X, (int)lootUR.Y, (int)(150 * average), (int)(300 * average));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
@@ -1804,28 +1809,33 @@ namespace KazgarsRevenge
             guiInsideRects.Add("player", playerDict);
             guiInsideRects.Add("talents", talentDict);
 
+            /*
+            Vector2 equipmentUR = new Vector2((int)(maxX - 744 * average), (int)(296 * average));
+             */
+
+
             //Equipment inner
-            equipmentDict.Add(GearSlot.Wrist.ToString(), new Rectangle((int)(maxX - 694 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add(GearSlot.Bling.ToString(), new Rectangle((int)(maxX - 694 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add(GearSlot.Lefthand.ToString(), new Rectangle((int)(maxX - 694 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Wrist.ToString(), new Rectangle((int)(equipmentUR.X + 8 * average), (int)(equipmentUR.Y + 78 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Bling.ToString(), new Rectangle((int)(equipmentUR.X + 8 * average), (int)(equipmentUR.Y + 176 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Lefthand.ToString(), new Rectangle((int)(equipmentUR.X + 8 * average), (int)(equipmentUR.Y + 274 * average), (int)(88 * average), (int)(88 * average)));
 
-            equipmentDict.Add(GearSlot.Head.ToString(), new Rectangle((int)(maxX - 596 * average), (int)(409 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add(GearSlot.Chest.ToString(), new Rectangle((int)(maxX - 596 * average), (int)(507 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add(GearSlot.Legs.ToString(), new Rectangle((int)(maxX - 596 * average), (int)(605 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add(GearSlot.Feet.ToString(), new Rectangle((int)(maxX - 596 * average), (int)(703 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Head.ToString(), new Rectangle((int)(equipmentUR.X + 108 * average), (int)(equipmentUR.Y + 29 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Chest.ToString(), new Rectangle((int)(equipmentUR.X + 108 * average), (int)(equipmentUR.Y + 127 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Legs.ToString(), new Rectangle((int)(equipmentUR.X + 108 * average), (int)(equipmentUR.Y + 225 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Feet.ToString(), new Rectangle((int)(equipmentUR.X + 108 * average), (int)(equipmentUR.Y + 323 * average), (int)(88 * average), (int)(88 * average)));
 
-            equipmentDict.Add(GearSlot.Shoulders.ToString(), new Rectangle((int)(maxX - 498 * average), (int)(458 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add(GearSlot.Codpiece.ToString(), new Rectangle((int)(maxX - 498 * average), (int)(556 * average), (int)(88 * average), (int)(88 * average)));
-            equipmentDict.Add(GearSlot.Righthand.ToString(), new Rectangle((int)(maxX - 498 * average), (int)(654 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Shoulders.ToString(), new Rectangle((int)(equipmentUR.X + 206 * average), (int)(equipmentUR.Y + 78 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Codpiece.ToString(), new Rectangle((int)(equipmentUR.X + 206 * average), (int)(equipmentUR.Y + 176 * average), (int)(88 * average), (int)(88 * average)));
+            equipmentDict.Add(GearSlot.Righthand.ToString(), new Rectangle((int)(equipmentUR.X + 206 * average), (int)(equipmentUR.Y + 274 * average), (int)(88 * average), (int)(88 * average)));
             //Inventory inner
             for (int i = 0; i < 4; ++i)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    inventoryDict.Add("inventory" + (i + j * 4), new Rectangle((int)(maxX - 390 * average + i * 98 * average), (int)(430 * average + j * 98 * average), (int)(88 * average), (int)(88 * average)));
+                    inventoryDict.Add("inventory" + (i + j * 4), new Rectangle((int)(inventoryUR.X + 10 * average + i * 98 * average), (int)(inventoryUR.Y + 50 * average + j * 98 * average), (int)(88 * average), (int)(88 * average)));
                 }
             }
-            inventoryDict.Add("equipArrow", new Rectangle((int)(maxX - 380 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)));
+            inventoryDict.Add("equipArrow", new Rectangle((int)(inventoryUR.X + 20 * average), (int)(inventoryUR.Y + 5 * average), (int)(40 * average), (int)(40 * average)));
 
             //ability
             abilityDict.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
@@ -1855,10 +1865,12 @@ namespace KazgarsRevenge
                     talentArrowsDict.Add("arrowR" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
                 }
             }
-            talentDict.Add("Ranged", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
-            talentDict.Add("Melee", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 1 * 94 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
-            talentDict.Add("Magic", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 2 * 94 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
-            talentDict.Add("Points", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 3 * 94 * average), (int)(768 * average), (int)(64 * average), (int)(40 * average)));
+            talentDict.Add("Ranged", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average), (int)(768 * average), (int)(95 * average), (int)(40 * average)));
+            talentDict.Add("Melee", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 1.25 * 94 * average), (int)(768 * average), (int)(95 * average), (int)(40 * average)));
+            talentDict.Add("Magic", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 2.5 * 94 * average), (int)(768 * average), (int)(95 * average), (int)(40 * average)));
+            talentDict.Add("Points", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 94 * average), (int)(830 * average), (int)(64 * average), (int)(40 * average)));
+
+
 
             //Loot
             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
@@ -1875,9 +1887,9 @@ namespace KazgarsRevenge
 
 
             portraitRect = new Rectangle(0, 0, (int)(160 * average), (int)(160 * average));
-            playerHPRect = new Rectangle((int)(160 * average), 0, (int)(310 * average), (int)(52 * average));
+            playerHPRect = new Rectangle((int)(160 * average), 0, (int)(256 * average), (int)(32 * average));
             powerBackRect = new Rectangle(playerHPRect.X, playerHPRect.Y + playerHPRect.Height, playerHPRect.Width, playerHPRect.Height);
-            powerTextPos = new Vector2((int)(265 * average), powerBackRect.Y + 15);
+            powerTextPos = new Vector2((int)(170 * average), (int)(35 * average));
         }
 
         public void Draw(SpriteBatch s)
@@ -2018,7 +2030,7 @@ namespace KazgarsRevenge
             s.DrawString(font, currentPower + "", powerTextPos, Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
             s.DrawString(font, "    /" + maxPower, powerTextPos, Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
             //main player health
-            s.Draw(health_bar, new Rectangle((int)(163 * average), 3, (int)(304 * HealthPercent * average), (int)(46 * average)), new Rectangle(0, 0, (int)(health_bar.Width * HealthPercent * average), (int)health_bar.Height), Color.White);
+            s.Draw(health_bar, new Rectangle(playerHPRect.X, playerHPRect.Y, (int)(playerHPRect.Width * HealthPercent * average), (int)(playerHPRect.Height)), new Rectangle(0, 0, (int)(health_bar.Width * HealthPercent * average), (int)health_bar.Height), Color.White);
             #endregion
 
             #region extra player frames
