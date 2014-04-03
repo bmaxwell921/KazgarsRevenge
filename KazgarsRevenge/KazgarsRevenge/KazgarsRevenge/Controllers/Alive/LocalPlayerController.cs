@@ -1795,7 +1795,7 @@ namespace KazgarsRevenge
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
             Vector2 equipmentUR = new Vector2((int)(maxX - 744 * average), (int)(296 * average));
             Vector2 talentUR = new Vector2(5 * average, 180 * average);
-            Vector2 lootUR = new Vector2((int)(160 * average), (int)(160 * average));
+            Vector2 lootUR = new Vector2((int)(420 * average), (int)(180 * average));
 
             inventoryRect = new Rectangle((int)inventoryUR.X, (int)inventoryUR.Y, (int)(440 * average), (int)(440 * average));
             equipmentRect = new Rectangle((int)equipmentUR.X, (int)equipmentUR.Y, (int)(304 * average), (int)(608 * average));
@@ -1829,10 +1829,6 @@ namespace KazgarsRevenge
             guiInsideRects.Add("player", playerDict);
             guiInsideRects.Add("talents", talentDict);
 
-            /*
-            Vector2 equipmentUR = new Vector2((int)(maxX - 744 * average), (int)(296 * average));
-             */
-
 
             //Equipment inner
             equipmentDict.Add(GearSlot.Wrist.ToString(), new Rectangle((int)(equipmentUR.X + 8 * average), (int)(equipmentUR.Y + 78 * average), (int)(88 * average), (int)(88 * average)));
@@ -1847,6 +1843,7 @@ namespace KazgarsRevenge
             equipmentDict.Add(GearSlot.Shoulders.ToString(), new Rectangle((int)(equipmentUR.X + 206 * average), (int)(equipmentUR.Y + 78 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add(GearSlot.Codpiece.ToString(), new Rectangle((int)(equipmentUR.X + 206 * average), (int)(equipmentUR.Y + 176 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add(GearSlot.Righthand.ToString(), new Rectangle((int)(equipmentUR.X + 206 * average), (int)(equipmentUR.Y + 274 * average), (int)(88 * average), (int)(88 * average)));
+
             //Inventory inner
             for (int i = 0; i < 4; ++i)
             {
@@ -1871,8 +1868,6 @@ namespace KazgarsRevenge
             abilityDict.Add("ability10", new Rectangle((int)(abilitiesUR.X + 474 * average), (int)(abilitiesUR.Y + 84 * average), (int)(64 * average), (int)(64 * average)));
             abilityDict.Add("ability11", new Rectangle((int)(abilitiesUR.X + 548 * average), (int)(abilitiesUR.Y + 84 * average), (int)(64 * average), (int)(64 * average)));
 
-            //Vector2 talentUR = new Vector2((int)(maxX / 2 - 203 * average), (int)(75 * average));
-
             //Talents
             for (int i = 0; i < 4; ++i)
             {
@@ -1894,18 +1889,17 @@ namespace KazgarsRevenge
             talentDict.Add("Points", new Rectangle((int)(talentUR.X + 30 * average + 94 * average), (int)(talentUR.Y + 755 * average), (int)(64 * average), (int)(40 * average)));
 
 
-
             //Loot
             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
             {
-                lootDict.Add("loot" + i, new Rectangle((int)(175 * average), (int)(175 * average + i * 65), (int)(50 * average), (int)(50 * average)));
+                lootDict.Add("loot" + i, new Rectangle((int)(lootUR.X + 15 * average), (int)(lootUR.Y + 15 * average + i * 65 * average), (int)(50 * average), (int)(50 * average)));
             }
             //up arrow
-            lootDict.Add("upArrow", new Rectangle((int)(280 * average), (int)(400 * average), (int)(25 * average), (int)(25 * average)));
+            lootDict.Add("upArrow", new Rectangle((int)(lootUR.X + 120 * average), (int)(lootUR.Y + 240 * average), (int)(25 * average), (int)(25 * average)));
             //down arrow
-            lootDict.Add("downArrow", new Rectangle((int)(280 * average), (int)(430 * average), (int)(25 * average), (int)(25 * average)));
+            lootDict.Add("downArrow", new Rectangle((int)(lootUR.X + 120 * average), (int)(lootUR.Y + 270 * average), (int)(25 * average), (int)(25 * average)));
             //loot all button
-            lootDict.Add("lootAll", new Rectangle((int)(265 * average), (int)(165 * average), (int)(40 * average), (int)(40 * average)));
+            lootDict.Add("lootAll", new Rectangle((int)(lootUR.X + 105 * average), (int)(lootUR.Y + 5 * average), (int)(40 * average), (int)(40 * average)));
 
 
 

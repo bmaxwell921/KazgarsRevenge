@@ -2346,7 +2346,7 @@ namespace KazgarsRevenge
         }
         protected Ability GetInvigoration()
         {
-            return new Ability(AbilityName.Decapitation, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Invigoration),
+            return new Ability(AbilityName.Invigoration, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Melee.Invigoration),
                 0, AttackType.Melee, "", AbilityType.Passive,
                 0, "20% of Cleave's damage is\n"
                     +"returned as health.");
