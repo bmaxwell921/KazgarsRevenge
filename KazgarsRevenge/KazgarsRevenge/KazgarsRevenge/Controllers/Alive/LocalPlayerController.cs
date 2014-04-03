@@ -1765,8 +1765,10 @@ namespace KazgarsRevenge
             rectMouse = new Rectangle(0, 0, 25, 25);
 
             //Outside Rectangles
+            Vector2 abilitiesUR = new Vector2((int)((maxX / 2 - 311 * average)), (int)((maxY - 158 * average)));
+
             guiOutsideRects = new Dictionary<string, Rectangle>();
-            guiOutsideRects.Add("abilities", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 158 * average)), (int)(622 * average), (int)(158 * average)));
+            guiOutsideRects.Add("abilities", new Rectangle((int)abilitiesUR.X, (int)abilitiesUR.Y, (int)(622 * average), (int)(158 * average)));
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
             guiOutsideRects.Add("tooltip", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
@@ -1774,7 +1776,7 @@ namespace KazgarsRevenge
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
             Vector2 equipmentUR = new Vector2((int)(maxX - 744 * average), (int)(296 * average));
-            Vector2 talentUR = new Vector2((int)(maxX / 2 - 203 * average), (int)(75 * average));
+            Vector2 talentUR = new Vector2(5 * average, 180 * average);
             Vector2 lootUR = new Vector2((int)(160 * average), (int)(160 * average));
 
             inventoryRect = new Rectangle((int)inventoryUR.X, (int)inventoryUR.Y, (int)(440 * average), (int)(440 * average));
@@ -1838,18 +1840,20 @@ namespace KazgarsRevenge
             inventoryDict.Add("equipArrow", new Rectangle((int)(inventoryUR.X + 20 * average), (int)(inventoryUR.Y + 5 * average), (int)(40 * average), (int)(40 * average)));
 
             //ability
-            abilityDict.Add("primary", new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability12", new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("primary", new Rectangle((int)(abilitiesUR.X + 316 * average), (int)(abilitiesUR.Y + 47 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability12", new Rectangle((int)(abilitiesUR.X + 390 * average), (int)(abilitiesUR.Y + 47 * average), (int)(64 * average), (int)(64 * average)));
             //abilities 0-7
             for (int i = 0; i < 4; ++i)
             {
-                abilityDict.Add("ability" + i, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-                abilityDict.Add("ability" + (i + 4), new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+                abilityDict.Add("ability" + i, new Rectangle((int)(abilitiesUR.X + (10 + 74 * i) * average), (int)abilitiesUR.Y + 10, (int)(64 * average), (int)(64 * average)));
+                abilityDict.Add("ability" + (i + 4), new Rectangle((int)(abilitiesUR.X + (10 + 74 * i) * average), (int)abilitiesUR.Y + 84, (int)(64 * average), (int)(64 * average)));
             }
-            abilityDict.Add("ability8", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability9", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability10", new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability11", new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability8", new Rectangle((int)(abilitiesUR.X + 474 * average), (int)(abilitiesUR.Y + 10 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability9", new Rectangle((int)(abilitiesUR.X + 548 * average), (int)(abilitiesUR.Y + 10 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability10", new Rectangle((int)(abilitiesUR.X + 474 * average), (int)(abilitiesUR.Y + 84 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability11", new Rectangle((int)(abilitiesUR.X + 548 * average), (int)(abilitiesUR.Y + 84 * average), (int)(64 * average), (int)(64 * average)));
+
+            //Vector2 talentUR = new Vector2((int)(maxX / 2 - 203 * average), (int)(75 * average));
 
             //Talents
             for (int i = 0; i < 4; ++i)
@@ -1857,18 +1861,19 @@ namespace KazgarsRevenge
                 for (int j = 0; j < 7; j++)
                 {
                     //"q" is bottomright, "w" is bottomleft ("br" and "bl" made string too long)
-                    talentDict.Add("talent" + (i + j * 4), new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + i * 94 * average), (int)(75 * average + 30 * average + j * 94 * average), (int)(64 * average), (int)(64 * average)));
-                    talentArrowsDict.Add("arrowL" + (i + j * 4), new Rectangle((int)(maxX / 2 - 233 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
-                    talentArrowsDict.Add("arrowW" + (i + j * 4), new Rectangle((int)(maxX / 2 - 233 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
-                    talentArrowsDict.Add("arrowB" + (i + j * 4), new Rectangle((int)(maxX / 2 - 186 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
-                    talentArrowsDict.Add("arrowQ" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(139 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
-                    talentArrowsDict.Add("arrowR" + (i + j * 4), new Rectangle((int)(maxX / 2 - 139 * average + 30 * average + i * 94 * average), (int)(92 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentDict.Add("talent" + (i + j * 4), new Rectangle((int)(talentUR.X + 30 * average + i * 94 * average), (int)(talentUR.Y + 30 * average + j * 94 * average), (int)(64 * average), (int)(64 * average)));
+                    talentArrowsDict.Add("arrowL" + (i + j * 4), new Rectangle((int)(talentUR.X + i * 94 * average), (int)(talentUR.Y + 17 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentArrowsDict.Add("arrowW" + (i + j * 4), new Rectangle((int)(talentUR.X + i * 94 * average), (int)(talentUR.Y + 64 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentArrowsDict.Add("arrowB" + (i + j * 4), new Rectangle((int)(talentUR.X + 47 * average + i * 94 * average), (int)(talentUR.Y + 64 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentArrowsDict.Add("arrowQ" + (i + j * 4), new Rectangle((int)(talentUR.X + 94 * average + i * 94 * average), (int)(talentUR.Y + 64 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
+                    talentArrowsDict.Add("arrowR" + (i + j * 4), new Rectangle((int)(talentUR.X + 94 * average + i * 94 * average), (int)(talentUR.Y + 17 * average + 30 * average + j * 94 * average), (int)(30 * average), (int)(30 * average)));
                 }
             }
-            talentDict.Add("Ranged", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average), (int)(768 * average), (int)(95 * average), (int)(40 * average)));
-            talentDict.Add("Melee", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 1.25 * 94 * average), (int)(768 * average), (int)(95 * average), (int)(40 * average)));
-            talentDict.Add("Magic", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 2.5 * 94 * average), (int)(768 * average), (int)(95 * average), (int)(40 * average)));
-            talentDict.Add("Points", new Rectangle((int)(maxX / 2 - 203 * average + 30 * average + 94 * average), (int)(830 * average), (int)(64 * average), (int)(40 * average)));
+
+            talentDict.Add("Ranged", new Rectangle((int)(talentUR.X + 30 * average), (int)(talentUR.Y + 693 * average), (int)(95 * average), (int)(40 * average)));
+            talentDict.Add("Melee", new Rectangle((int)(talentUR.X + 30 * average + 1.25 * 94 * average), (int)(talentUR.Y + 693 * average), (int)(95 * average), (int)(40 * average)));
+            talentDict.Add("Magic", new Rectangle((int)(talentUR.X + 30 * average + 2.5 * 94 * average), (int)(talentUR.Y + 693 * average), (int)(95 * average), (int)(40 * average)));
+            talentDict.Add("Points", new Rectangle((int)(talentUR.X + 30 * average + 94 * average), (int)(talentUR.Y + 755 * average), (int)(64 * average), (int)(40 * average)));
 
 
 
