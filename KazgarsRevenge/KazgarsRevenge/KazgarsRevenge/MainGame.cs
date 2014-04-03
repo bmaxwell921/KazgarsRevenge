@@ -383,10 +383,8 @@ namespace KazgarsRevenge
                 GraphicsDevice.SetRenderTarget(null);
                 GraphicsDevice.Clear(Color.Black);
                 spriteBatch.Begin();
-                if (alertTimeLeft > 0)
-                {
-                    spriteBatch.DrawString(normalFont, "LOADING", new Vector2(50, 50), Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-                }
+                spriteBatch.DrawString(normalFont, "LOADING", new Vector2(50, 50), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                
                 spriteBatch.End();
             }
             else if (gameState == GameState.Playing)

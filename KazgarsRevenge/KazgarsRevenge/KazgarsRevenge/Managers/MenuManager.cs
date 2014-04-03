@@ -239,7 +239,7 @@ namespace KazgarsRevenge
             //// TODO how does this manager act when we go to playing?
             //this.menuQ.Clear();
             //currentMenu = menus[GAME_TITLE];
-            (Game as MainGame).TransitionToPlaying();
+            //(Game as MainGame).TransitionToPlaying();
         }
 
         #endregion
