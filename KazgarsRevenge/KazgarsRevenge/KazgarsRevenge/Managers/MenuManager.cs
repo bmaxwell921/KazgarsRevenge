@@ -205,7 +205,7 @@ namespace KazgarsRevenge
             {
                 if (loadingState == LoadingState.COMPLETE)
                 {
-                    (Game as MainGame).TransitionToPlaying();
+                    //(Game as MainGame).TransitionToPlaying();
                 }
             }
         }

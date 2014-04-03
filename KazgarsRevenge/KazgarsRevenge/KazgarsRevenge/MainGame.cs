@@ -286,6 +286,7 @@ namespace KazgarsRevenge
             floatingText.Add(new FloatingText(pos, text, color, scale));
         }
 
+        int loadInt = 0;
         protected override void Update(GameTime gameTime)
         {
             if (gameState == GameState.Playing)
@@ -303,6 +304,16 @@ namespace KazgarsRevenge
                     {
                         floatingText.RemoveAt(i);
                     }
+                }
+            }
+
+            if (gameState == GameState.Loading)
+            {
+                ++loadInt;
+                if (loadInt > 3)
+                {
+                    ActuallyLoadLevel(FloorName.Dungeon);
+                    TransitionToPlaying();
                 }
             }
 
@@ -328,6 +339,11 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void LoadLevel(FloorName name)
         {
+            gameState = GameState.Loading;
+        }
+
+        public void ActuallyLoadLevel(FloorName name)
+        {
             //genComponentManager.Enabled = false;
 
             // Testing version
@@ -338,7 +354,7 @@ namespace KazgarsRevenge
             // Down here is the final version of this method
             levels.CreateLevel(name);
             players.CreateMainPlayerInLevel(DUMMY_ID);
-            
+
             //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), levels.GetPlayerSpawnLocation() + Vector3.Right * 200);
         }
 
@@ -362,8 +378,18 @@ namespace KazgarsRevenge
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
-            if (gameState == GameState.Playing)
+            if (gameState == GameState.Loading)
+            {
+                GraphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.Clear(Color.Black);
+                spriteBatch.Begin();
+                if (alertTimeLeft > 0)
+                {
+                    spriteBatch.DrawString(normalFont, "LOADING", new Vector2(50, 50), Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                }
+                spriteBatch.End();
+            }
+            else if (gameState == GameState.Playing)
             {
                 //draw depth render target
                 GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
