@@ -1635,10 +1635,27 @@ namespace KazgarsRevenge
                 case "talents":
                     if (innerCollides != null)
                     {
-                        if (innerCollides.Equals("Ranged") || innerCollides.Equals("Melee") || innerCollides.Equals("Magic")) break;
+                        if (innerCollides.Equals("Ranged"))
+                        {
+                            hovering = true;
+                            hoverRect = guiInsideRects["talents"]["Ranged"];
+                            return;
+                        }
+                        else if (innerCollides.Equals("Melee"))
+                        {
+                            hovering = true;
+                            hoverRect = guiInsideRects["talents"]["Melee"];
+                            return;
+                        }
+                        else if (innerCollides.Equals("Magic"))
+                        {
+                            hovering = true;
+                            hoverRect = guiInsideRects["talents"]["Magic"];
+                            return;
+                        }
                         else if (innerCollides.Equals("Points"))
                         {
-                            currentTooltip = new Tooltip(new List<TooltipLine> {new TooltipLine(Color.White, "Talent Points", .65f) , new TooltipLine(Color.Gold, "Spend these on talents!", .4f)});
+                            currentTooltip = new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Talent Points", .65f), new TooltipLine(Color.Gold, "Spend these on talents!", .4f) });
                             break;
                         }
                         //TODO if we add any more innerFrames in abilities make sure we check those first
@@ -1646,7 +1663,6 @@ namespace KazgarsRevenge
                         if (currentTalentTree == TalentTrees.ranged && rangedAbilities[(int)check / 4, check % 4] != null)
                         {
                             currentTooltip = GetCachedAbility(rangedAbilities[(int)check / 4, check % 4].name).Tooltip;
-                            
                         }
                         else if (currentTalentTree == TalentTrees.melee && meleeAbilities[(int)check / 4, check % 4] != null)
                         {
@@ -1657,6 +1673,8 @@ namespace KazgarsRevenge
                             //TODO currentToolTip = GetAbility(magicAbilities[(int)check / 4, check % 4].name).tooltip;
                         }
 
+                        hovering = true;
+                        hoverRect = guiInsideRects["talents"][innerCollides];
                     }
                     break;
                 #endregion
