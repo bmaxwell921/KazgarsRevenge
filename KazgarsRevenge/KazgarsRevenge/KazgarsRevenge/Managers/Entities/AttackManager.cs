@@ -617,7 +617,7 @@ namespace KazgarsRevenge
             position.Y = 2;
             if (reach)
             {
-                camera.ShakeCamera(4);
+                camera.ShakeCamera(25);
                 for (int i = -5; i < 5; ++i)
                 {
                     SpawnWeaponSparks(position + dir * i * 8);
@@ -625,7 +625,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                camera.ShakeCamera(1.75f);
+                camera.ShakeCamera(4);
                 for (int i = -1; i < 1; ++i)
                 {
                     SpawnWeaponSparks(position + dir * i * 5);
