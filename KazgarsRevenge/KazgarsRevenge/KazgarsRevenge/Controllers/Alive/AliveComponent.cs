@@ -16,7 +16,7 @@ namespace KazgarsRevenge
         Intellect,
         CooldownReduction,
         CritChance,
-        Health,
+        Vitality,
         Armor,
     }
     public enum DeBuff
@@ -132,7 +132,7 @@ namespace KazgarsRevenge
         {
             get
             {
-                if (MaxHealth != 0)
+                if (MaxHealth > 0)
                 {
                     return (float)Health / (float)MaxHealth;
                 }
@@ -166,7 +166,7 @@ namespace KazgarsRevenge
             {StatType.Intellect, 1},
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
-            {StatType.Health, 100},
+            {StatType.Vitality, 100},
             {StatType.Armor, 0},
         };
 
@@ -179,7 +179,7 @@ namespace KazgarsRevenge
             {StatType.Intellect, 1},
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
-            {StatType.Health, 100},
+            {StatType.Vitality, 10},
             {StatType.Armor, 0}
         };
         protected Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>()
@@ -191,7 +191,7 @@ namespace KazgarsRevenge
             {StatType.Intellect, 1},
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
-            {StatType.Health, 100},
+            {StatType.Vitality, 100},
             {StatType.Armor, 0}
         };
 
@@ -244,6 +244,11 @@ namespace KazgarsRevenge
             {
                 stats[(StatType)i] += statsPerLevel[(StatType)i] * level * statsPerLevelMultiplier;
             }
+
+            //keep same health percentage when you change gear
+            float curHealthPerc = HealthPercent;
+            MaxHealth = (int)(stats[StatType.Vitality] * 10);
+            Health = (int)(MaxHealth * curHealthPerc);
         }
 
         public void LevelUp()
@@ -263,14 +268,13 @@ namespace KazgarsRevenge
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             rand = game.rand;
 
-            this.MaxHealth = 100 * level;
-            this.Health = MaxHealth;
             this.level = level;
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
-            
+
             RecalculateStats();
+            this.Health = MaxHealth;
         }
 
         public override void Start()

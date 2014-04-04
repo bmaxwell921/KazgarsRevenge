@@ -176,6 +176,7 @@ namespace KazgarsRevenge
                 {
                     syncedModels.Remove(slot.ToString());
                 }
+                RecalculateStats();
                 return true;
             }
             else
@@ -202,7 +203,9 @@ namespace KazgarsRevenge
                 else
                 {
                     syncedModels.Remove(slot.ToString());
+
                 }
+                RecalculateStats();
                 return true;
             }
             else
@@ -396,6 +399,10 @@ namespace KazgarsRevenge
 
             EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Righthand);
             EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Lefthand);
+            
+            Equippable boots = (Equippable)lewtz.AllItems[9900];
+            boots.SetStats(GearQuality.Legendary, 50);
+            EquipGear(boots, GearSlot.Feet);
         }
 
         public override void Start()
