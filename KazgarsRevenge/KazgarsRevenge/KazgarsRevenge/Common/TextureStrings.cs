@@ -155,6 +155,44 @@ namespace KazgarsRevenge
                 public static readonly string LEFT_ARROW = @"Textures\UI\Frames\leftArrow";
                 public static readonly string HELMET = @"Textures\UI\Frames\helmetIcon";
             }
+
+            public class Buffs
+            {
+                public static readonly string AdrenalineRush = @"Textures\UI\Abilities\AdrenR";
+                public static readonly string Berserk = @"Textures\UI\Abilities\BN";
+                public static readonly string Berserk2 = @"Textures\UI\Abilities\BN";
+                public static readonly string Berserk3 = @"Textures\UI\Abilities\BN";
+                public static readonly string Elusiveness = @"Textures\UI\Abilities\BN";
+                public static readonly string HealthPotion = @"Textures\UI\Abilities\BN";
+                public static readonly string Homing = @"Textures\UI\Abilities\BN";
+                public static readonly string Invincibility = @"Textures\UI\Abilities\BN";
+                public static readonly string LuckPotion = @"Textures\UI\Abilities\BN";
+                public static readonly string None = @"Textures\UI\Abilities\BN";
+                public static readonly string SadistivFrenzy = @"Textures\UI\Abilities\BN";
+                public static readonly string SerratedBleeding = @"Textures\UI\Abilities\BN";
+                public static readonly string SuperHealthPotion = @"Textures\UI\Abilities\BN";
+                public static readonly string Swordnado = @"Textures\UI\Abilities\BN";
+                public static readonly string Unstoppable = @"Textures\UI\Abilities\BN";
+            }
+
+            public class DeBuffs
+            {
+                public static readonly string Burning = @"Textures\UI\Abilities\BN";
+                public static readonly string Charge = @"Textures\UI\Abilities\BN";
+                public static readonly string Execute = @"Textures\UI\Abilities\BN";
+                public static readonly string FlashBomb = @"Textures\UI\Abilities\BN";
+                public static readonly string ForcefulThrow = @"Textures\UI\Abilities\BN";
+                public static readonly string Frost = @"Textures\UI\Abilities\BN";
+                public static readonly string Frozen = @"Textures\UI\Abilities\BN";
+                public static readonly string Garrote = @"Textures\UI\Abilities\BN";
+                public static readonly string Headbutt = @"Textures\UI\Abilities\BN";
+                public static readonly string MagneticImplant = @"Textures\UI\Abilities\BN";
+                public static readonly string None = @"Textures\UI\Abilities\BN";
+                public static readonly string SerratedBleeding = @"Textures\UI\Abilities\BN";
+                public static readonly string Stunned = @"Textures\UI\Abilities\BN";
+                public static readonly string Tar = @"Textures\UI\Abilities\BN";
+
+            }
         }
 
         public class BillBoards

@@ -185,6 +185,9 @@ namespace KazgarsRevenge
         Tooltip currentTooltip = null;
         bool hovering = false;
 
+        List<Buff> buffs = new List<Buff>();
+        List<DeBuff> debuffs = new List<DeBuff>();
+
         enum TalentTrees
         {
             ranged,
@@ -247,6 +250,7 @@ namespace KazgarsRevenge
             {
                 if (k.Value != null) k.Value.update(elapsed);
             }
+
             #endregion
 
             if (curMouse.LeftButton == ButtonState.Pressed)
@@ -283,6 +287,20 @@ namespace KazgarsRevenge
                 }
 
                 string innerCollides = CollidingInnerFrame(outerCollides);
+
+                //Buff stuff
+                buffs.Clear();
+                debuffs.Clear();
+
+                foreach (KeyValuePair<Buff, PositiveEffect> k in activeBuffs)
+                {
+                    buffs.Add(k.Key);
+                }
+
+                foreach (KeyValuePair<DeBuff, NegativeEffect> k in activeDebuffs)
+                {
+                    debuffs.Add(k.Key);
+                }
 
                 CheckButtonClicks(outerCollides, innerCollides);
                 CheckMouseHover(outerCollides, innerCollides);
@@ -1058,7 +1076,6 @@ namespace KazgarsRevenge
                     selectedEquipSlot = false;
                     if (selectedEquipPiece != slot)
                     {
-                        //TODO floating text saying that can't be equipped in that slot. #Jared teach me your ways
                         ((MainGame)Game).AddAlert("I can't equip that there!");
                     }
                 }
@@ -1083,7 +1100,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    //TODO floating text saying that can't be equipped! #Jared
+                    ((MainGame)Game).AddAlert("I can't equip that!");
                 }
             }
         }
@@ -1297,7 +1314,7 @@ namespace KazgarsRevenge
                         #region loot
                         case "loot":
                             if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
-                            if (innerCollides == null) break;
+                            if (innerCollides == null || !looting) break;
                             //Loot All
                             else if (innerCollides.Equals("lootAll"))
                             {
@@ -1544,6 +1561,28 @@ namespace KazgarsRevenge
                         }
                         break;
                     #endregion
+                    #region player frame
+                    case "player":
+                        if (innerCollides != null)
+                        {                           
+                            for (int i = 0; i < 6; i++)
+                            {
+                                if (innerCollides.Equals("buff" + i) && i < buffs.Count) //&& buffs i is not null
+                                {
+                                    //remove buff
+                                    activeBuffs.Remove(buffs[i]);
+                                    buffs.RemoveAt(i);
+                                    break;
+                                }
+                                else
+                                {
+                                    //do nothing / future implementation
+                                }
+                            }
+                        }
+                        break;
+                    #endregion
+
                 }
 
             }
@@ -1580,7 +1619,7 @@ namespace KazgarsRevenge
                 #region loot
                 case "loot":
                     if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
-                    if (innerCollides == null) break;
+                    if (innerCollides == null || !looting) break;
                     //Loot All
                     else if (innerCollides.Equals("lootAll"))
                     {
@@ -1628,6 +1667,31 @@ namespace KazgarsRevenge
                         }
                         hovering = true;
                         hoverRect = guiInsideRects["abilities"]["ability"+check];
+                    }
+                    break;
+                #endregion
+                #region player frame
+                case "player":
+                    if (innerCollides != null)
+                    {
+                        for (int i = 0; i < 6; i++)
+                        {
+                            if(innerCollides.Equals("buff"+i) && i < buffs.Count()) //&& buffs i is not null
+                            {
+                                currentTooltip = buffTooltips[buffs[i]];
+                                hovering = true;
+                                hoverRect = guiInsideRects["player"]["buff" + i];
+                            }
+                            else if (innerCollides.Equals("debuff" + i) && i < debuffs.Count()) //&& debuffs i is not null
+                            {
+                                currentTooltip = debuffTooltips[debuffs[i]];
+                                hovering = true;
+                                hoverRect = guiInsideRects["player"]["debuff" + i];
+                            }
+                            else{
+                                //do nothing / future implementation
+                            }
+                        }
                     }
                     break;
                 #endregion
@@ -1901,8 +1965,15 @@ namespace KazgarsRevenge
             //loot all button
             lootDict.Add("lootAll", new Rectangle((int)(lootUR.X + 105 * average), (int)(lootUR.Y + 5 * average), (int)(40 * average), (int)(40 * average)));
 
+            //Buffs and Debuffs
+            for (int i = 0; i < 6; i++)
+            {
+                playerDict.Add("buff" + i, new Rectangle((int)((164 + (i * 40)) * average), (int)(68 * average), (int)(35 * average), (int)(35 * average)));
+                playerDict.Add("timebuff" + i, new Rectangle((int)((164 + (i * 40)) * average), (int)(103 * average), (int)(1 * average), (int)(1 * average)));
 
-
+                playerDict.Add("debuff" + i, new Rectangle((int)((164 + (i * 40)) * average), (int)(125 * average), (int)(35 * average), (int)(35 * average)));
+                playerDict.Add("timedebuff" + i, new Rectangle((int)((164 + (i * 40)) * average), (int)(160 * average), (int)(1 * average), (int)(1 * average)));
+            }
             portraitRect = new Rectangle(0, 0, (int)(160 * average), (int)(160 * average));
             playerHPRect = new Rectangle((int)(160 * average), 0, (int)(256 * average), (int)(32 * average));
             powerBackRect = new Rectangle(playerHPRect.X, playerHPRect.Y + playerHPRect.Height, playerHPRect.Width, playerHPRect.Height);
@@ -2048,6 +2119,21 @@ namespace KazgarsRevenge
             s.DrawString(font, "    /" + maxPower, powerTextPos, Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
             //main player health
             s.Draw(health_bar, new Rectangle(playerHPRect.X, playerHPRect.Y, (int)(playerHPRect.Width * HealthPercent * average), (int)(playerHPRect.Height)), new Rectangle(0, 0, (int)(health_bar.Width * HealthPercent * average), (int)health_bar.Height), Color.White);
+
+            for (int i = 0; i < 6; i++)
+            {
+                if (i < buffs.Count() && activeBuffs.ContainsKey(buffs[i]))
+                {
+                    s.Draw(buffIcons[buffs[i]], guiInsideRects["player"]["buff" + i], Color.White);
+                    s.DrawString(font, (int)activeBuffs[buffs[i]].timeLeft/1000 + "s", new Vector2(guiInsideRects["player"]["timebuff" + i].X, guiInsideRects["player"]["timebuff" + i].Y), Color.Gold, 0, Vector2.Zero, 0.4f * average, SpriteEffects.None, 0);
+                }
+                if (i < debuffs.Count() && activeDebuffs.ContainsKey(debuffs[i]))
+                {
+                    s.Draw(debuffIcons[debuffs[i]], guiInsideRects["player"]["debuff" + i], Color.Red);
+                    s.DrawString(font, (int)activeDebuffs[debuffs[i]].timeLeft / 1000 + "s", new Vector2(guiInsideRects["player"]["timedebuff" + i].X, guiInsideRects["player"]["timedebuff" + i].Y), Color.Gold, 0, Vector2.Zero, 0.4f * average, SpriteEffects.None, 0);
+                }
+            }
+                            
             #endregion
 
             #region extra player frames

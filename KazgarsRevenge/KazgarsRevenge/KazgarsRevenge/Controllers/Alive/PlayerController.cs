@@ -54,7 +54,6 @@ namespace KazgarsRevenge
         protected Dictionary<string, AttachableModel> attached;
         protected Dictionary<string, Model> syncedModels;
 
-
         //variables for movement
         protected float stopRadius = 10;
         protected const float targetResetDistance = 1000;
@@ -92,6 +91,14 @@ namespace KazgarsRevenge
         protected KeyValuePair<Keys, Ability>[] boundAbilities = new KeyValuePair<Keys, Ability>[12];
         protected KeyValuePair<ButtonState, Ability>[] mouseBoundAbility = new KeyValuePair<ButtonState, Ability>[1];
         protected Dictionary<AbilityName, bool> abilityLearnedFlags = new Dictionary<AbilityName, bool>();
+
+        //Buffs 
+        protected Dictionary<Buff, Texture2D> buffIcons = new Dictionary<Buff,Texture2D>();
+        protected Dictionary<Buff, Tooltip> buffTooltips = new Dictionary<Buff,Tooltip>();
+
+        //debuffs
+        protected Dictionary<DeBuff, Texture2D> debuffIcons = new Dictionary<DeBuff, Texture2D>();
+        protected Dictionary<DeBuff, Tooltip> debuffTooltips = new Dictionary<DeBuff, Tooltip>();
         #endregion
 
         #region inventory and gear
@@ -474,6 +481,72 @@ namespace KazgarsRevenge
             abilityLearnedFlags[AbilityName.InstaHealthPotion] = true;
             abilityLearnedFlags[AbilityName.PotionOfLuck] = true;
             abilityLearnedFlags[AbilityName.InivisibilityPotion] = true;
+            #endregion
+            
+            #region de/buff definitions
+
+            buffIcons.Add(Buff.AdrenalineRush, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.AdrenalineRush));
+            buffIcons.Add(Buff.Berserk, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.Berserk));
+            buffIcons.Add(Buff.Berserk2, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.Berserk2));
+            buffIcons.Add(Buff.Berserk3, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.Berserk3));
+            buffIcons.Add(Buff.Elusiveness, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.Elusiveness));
+            buffIcons.Add(Buff.HealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.HealthPotion));
+            buffIcons.Add(Buff.Homing, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.Homing));
+            buffIcons.Add(Buff.Invincibility, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.Invincibility));
+            buffIcons.Add(Buff.LuckPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.LuckPotion));
+            buffIcons.Add(Buff.None, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.None));
+            buffIcons.Add(Buff.SadisticFrenzy, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.SadistivFrenzy));
+            buffIcons.Add(Buff.SerratedBleeding, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.SerratedBleeding));
+            buffIcons.Add(Buff.SuperHealthPotion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.SuperHealthPotion));
+            buffIcons.Add(Buff.Swordnado, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.Swordnado));
+            buffIcons.Add(Buff.Unstoppable, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.Unstoppable));
+
+            buffTooltips.Add(Buff.AdrenalineRush, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Adrenaline Rush", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.Berserk, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Berserk", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.Berserk2, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Berserk", .65f), new TooltipLine(Color.Gold, "todo2", .4f) }));
+            buffTooltips.Add(Buff.Berserk3, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Berserk", .65f), new TooltipLine(Color.Gold, "todo3", .4f) }));
+            buffTooltips.Add(Buff.Elusiveness, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Elusiveness", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.HealthPotion, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Health Potion", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.Homing, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Homing", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.Invincibility, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Invincibility", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.LuckPotion, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Luck Potion", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.None, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "None", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.SadisticFrenzy, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Sadistic Frenzy", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.SerratedBleeding, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Serrated Bleeding", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.SuperHealthPotion, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Super Health Potion", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.Swordnado, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Swordnado", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            buffTooltips.Add(Buff.Unstoppable, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Unstoppable", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+
+            debuffIcons.Add(DeBuff.Burning, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.Burning));
+            debuffIcons.Add(DeBuff.Charge, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.Charge));
+            debuffIcons.Add(DeBuff.Execute, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.Execute));
+            debuffIcons.Add(DeBuff.FlashBomb, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.FlashBomb));
+            debuffIcons.Add(DeBuff.ForcefulThrow, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.ForcefulThrow));
+            debuffIcons.Add(DeBuff.Frost, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.Frost));
+            debuffIcons.Add(DeBuff.Frozen, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.Frozen));
+            debuffIcons.Add(DeBuff.Garrote, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.Garrote));
+            debuffIcons.Add(DeBuff.Headbutt, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.Headbutt));
+            debuffIcons.Add(DeBuff.MagneticImplant, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.MagneticImplant));
+            debuffIcons.Add(DeBuff.None, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.None));
+            debuffIcons.Add(DeBuff.SerratedBleeding, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.SerratedBleeding));
+            debuffIcons.Add(DeBuff.Stunned, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.Stunned));
+            debuffIcons.Add(DeBuff.Tar, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.DeBuffs.Tar));
+
+            debuffTooltips.Add(DeBuff.Burning, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Burning", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.Charge, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Charge", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.Execute, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Execute", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.FlashBomb, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Flash Bomb", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.ForcefulThrow, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Forceful Throw", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.Frost, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Frost", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.Frozen, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Frozen", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.Garrote, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Garrote", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.Headbutt, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Headbutt", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.MagneticImplant, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Magnetic Implant", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.None, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "None", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.SerratedBleeding, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Serrated Bleeding", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.Stunned, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Stunned", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+            debuffTooltips.Add(DeBuff.Tar, new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Tar", .65f), new TooltipLine(Color.Gold, "todo", .4f) }));
+
             #endregion
         }
 
@@ -2531,6 +2604,8 @@ namespace KazgarsRevenge
         }
 
         #endregion
+
+
 
 
     }
