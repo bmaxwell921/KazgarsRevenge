@@ -510,7 +510,7 @@ namespace KazgarsRevenge
                 if (cur.timeLeft <= 0 || Dead)
                 {
                     HandleBuff(cur.type, BuffState.Ending, cur.stacks, cur.from);
-                    toRemoveBuffs.Add(cur.type);
+                           toRemoveBuffs.Add(cur.type);
                 }
             }
             for (int i = toRemoveBuffs.Count - 1; i >= 0; --i)
