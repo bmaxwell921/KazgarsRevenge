@@ -25,8 +25,10 @@ namespace AnimationPipeline
             AddPointsTo(GetDataHolder(input, "key"), tag.keyLocations);
             AddPointsTo(GetDataHolder(input, "bossSpawn"), tag.bossSpawnLocations);
             AddPointsTo(GetDataHolder(input, "soul"), tag.soulLocations);
-            AddPointsTo(GetDataHolder(input, "ewclosedDoors"), tag.ewdoorLocations);
-            AddPointsTo(GetDataHolder(input, "nscloseddDoors"), tag.nsdoorLocations);
+            AddPointsTo(GetDataHolder(input, "ewclosedDoors"), tag.ewLockedDoorLocations);
+            AddPointsTo(GetDataHolder(input, "nsclosedDoors"), tag.nsLockedDoorLocations);
+            AddPointsTo(GetDataHolder(input, "ewDoors"), tag.ewOpenDoorLocations);
+            AddPointsTo(GetDataHolder(input, "nsDoors"), tag.nsOpenDoorLocations);
             AddPointsTo(GetDataHolder(input, "hanginglights"), tag.hangingLightLocations);
 
             NodeContent lightHolder = GetDataHolder(input, "lights");

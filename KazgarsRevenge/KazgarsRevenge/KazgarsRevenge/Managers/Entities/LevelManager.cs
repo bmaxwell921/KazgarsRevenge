@@ -362,6 +362,10 @@ namespace KazgarsRevenge
 
         #region Object Map Processing
 
+        GameEntity key;
+        List<GameEntity> lockedDoors = new List<GameEntity>();
+        List<GameEntity> props = new List<GameEntity>();
+
         string objectMapDir = "Models\\Levels\\RoomObjectMaps\\";
         private void ProcessObjectMap(string objectMapName, float yaw, Vector3 position)
         {
@@ -391,17 +395,33 @@ namespace KazgarsRevenge
                     CreateSoulevator(Vector3.Transform(soulpos[0], chunkTransform));
                 }
 
-                List<Vector3> ewDoors = levelInfo.ewdoorLocations;
-                foreach (Vector3 v in ewDoors)
+                List<Vector3> ewLockedDoors = levelInfo.ewLockedDoorLocations;
+                foreach (Vector3 v in ewLockedDoors)
                 {
-                    CreateDoor(Vector3.Transform(v, chunkTransform), yaw);
+                    CreateLockedDoor(Vector3.Transform(v, chunkTransform), yaw + MathHelper.PiOver2);
                 }
 
-                List<Vector3> nsDoors = levelInfo.nsdoorLocations;
-                foreach (Vector3 v in nsDoors)
+                List<Vector3> nsLockedDoors = levelInfo.nsLockedDoorLocations;
+                foreach (Vector3 v in nsLockedDoors)
                 {
-                    CreateDoor(Vector3.Transform(v, chunkTransform), yaw + MathHelper.PiOver2);
+                    CreateLockedDoor(Vector3.Transform(v, chunkTransform), yaw);
                 }
+
+
+
+                List<Vector3> ewOpenDoors = levelInfo.ewOpenDoorLocations;
+                foreach (Vector3 v in ewLockedDoors)
+                {
+                    CreateOpenDoor(Vector3.Transform(v, chunkTransform), yaw + MathHelper.PiOver2);
+                }
+
+                List<Vector3> nsOpenDoors = levelInfo.nsOpenDoorLocations;
+                foreach (Vector3 v in nsLockedDoors)
+                {
+                    CreateOpenDoor(Vector3.Transform(v, chunkTransform), yaw);
+                }
+
+
 
                 List<Vector3> hangingLightProps = levelInfo.hangingLightLocations;
                 foreach (Vector3 v in hangingLightProps)
@@ -463,7 +483,6 @@ namespace KazgarsRevenge
             lights.Add(light);
         }
 
-        GameEntity key;
         private void CreateKey(Vector3 pos)
         {
             pos.Y = 40;
@@ -511,11 +530,28 @@ namespace KazgarsRevenge
             rooms.Add(prop);
         }
 
-        private void CreateDoor(Vector3 pos, float yaw)
+        private void CreateOpenDoor(Vector3 pos, float yaw)
         {
+            pos.Y += 20;
             GameEntity door = new GameEntity("room", FactionType.Neutral, EntityType.None);
 
-            Entity physicalData = new Box(pos, BLOCK_SIZE * .25f, 40, 5);
+            Entity physicalData = new Box(pos, BLOCK_SIZE * .4f, 30, 5);
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            door.AddSharedData(typeof(Entity), physicalData);
+
+            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-opendoor"), roomScale, Vector3.Down * 20, 0, 0, 0);
+            door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
+            modelManager.AddComponent(doorGraphics);
+
+            props.Add(door);
+        }
+
+        private void CreateLockedDoor(Vector3 pos, float yaw)
+        {
+            pos.Y += 20;
+            GameEntity door = new GameEntity("room", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, BLOCK_SIZE * .4f, 30, 5);
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
             door.AddSharedData(typeof(Entity), physicalData);
 
@@ -523,11 +559,11 @@ namespace KazgarsRevenge
             door.AddComponent(typeof(PhysicsComponent), doorPhysics);
             genComponentManager.AddComponent(doorPhysics);
 
-            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-nsdoor"), roomScale, Vector3.Zero, yaw, 0, 0);
+            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-closedDoor"), roomScale, Vector3.Down * 20, 0, 0, 0);
             door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
             modelManager.AddComponent(doorGraphics);
 
-            doors.Add(door);
+            lockedDoors.Add(door);
         }
 
         private void CreateHangingLightProp(Vector3 pos)
@@ -542,7 +578,7 @@ namespace KazgarsRevenge
             lightProp.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
-            rooms.Add(lightProp);
+            props.Add(lightProp);
         }
 
         private void CreateProp(Vector3 pos)
@@ -558,7 +594,7 @@ namespace KazgarsRevenge
                 prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
                 modelManager.AddComponent(graphics);
 
-                rooms.Add(prop);
+                props.Add(prop);
             }
         }
 
@@ -969,9 +1005,10 @@ namespace KazgarsRevenge
         #region Level Script Stuff
         public GameEntity CreateDragonFirePillar(Vector3 position)
         {
+            position.Y = 20;
             GameEntity pillar = new GameEntity("firepillar", FactionType.Enemies, EntityType.Misc);
 
-            Entity physicalData = new Box(position, 50, 50, 50, 50000);
+            Entity physicalData = new Box(position, 50, 50, 50);
             physicalData.LocalInertiaTensorInverse = new Matrix3X3();
             pillar.AddSharedData(typeof(Entity), physicalData);
 
@@ -979,7 +1016,7 @@ namespace KazgarsRevenge
             pillar.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\fire_column"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\fire_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
             pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
@@ -994,9 +1031,10 @@ namespace KazgarsRevenge
 
         public GameEntity CreateDragonFrostPillar(Vector3 position)
         {
+            position.Y = 20;
             GameEntity pillar = new GameEntity("frostpillar", FactionType.Enemies, EntityType.Misc);
 
-            Entity physicalData = new Box(position, 50, 50, 50, 50000);
+            Entity physicalData = new Box(position, 50, 50, 50);
             physicalData.LocalInertiaTensorInverse = new Matrix3X3();
             pillar.AddSharedData(typeof(Entity), physicalData);
 
@@ -1004,7 +1042,7 @@ namespace KazgarsRevenge
             pillar.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\ice_column"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\ice_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
             pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
@@ -1017,14 +1055,13 @@ namespace KazgarsRevenge
             return pillar;
         }
 
-        private List<GameEntity> doors = new List<GameEntity>();
         public void UnlockDoors()
         {
-            for (int i = 0; i < doors.Count; ++i)
+            for (int i = 0; i < lockedDoors.Count; ++i)
             {
-                doors[i].KillEntity();
+                lockedDoors[i].KillEntity();
             }
-            doors.Clear();
+            lockedDoors.Clear();
         }
         #endregion
 

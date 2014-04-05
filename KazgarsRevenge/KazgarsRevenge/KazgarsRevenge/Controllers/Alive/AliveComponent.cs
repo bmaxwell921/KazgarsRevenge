@@ -166,7 +166,7 @@ namespace KazgarsRevenge
             {StatType.Intellect, 1},
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
-            {StatType.Vitality, 100},
+            {StatType.Vitality, 1},
             {StatType.Armor, 0},
         };
 
@@ -191,7 +191,7 @@ namespace KazgarsRevenge
             {StatType.Intellect, 1},
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
-            {StatType.Vitality, 100},
+            {StatType.Vitality, 10},
             {StatType.Armor, 0}
         };
 

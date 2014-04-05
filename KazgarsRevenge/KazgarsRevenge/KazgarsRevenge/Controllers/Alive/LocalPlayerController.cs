@@ -2272,7 +2272,7 @@ namespace KazgarsRevenge
                 rectMouse.Height = (int)(60 * average);
                 s.Draw(inventory[selectedItemSlot].Icon, rectMouse, Color.White);
             }
-            else if (selectedEquipSlot)
+            else if (selectedEquipSlot && gear[selectedEquipPiece] != null)
             {
                 rectMouse.Width = (int)(60 * average);
                 rectMouse.Height = (int)(60 * average);
