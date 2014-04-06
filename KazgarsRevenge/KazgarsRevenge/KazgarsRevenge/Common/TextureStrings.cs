@@ -197,6 +197,7 @@ namespace KazgarsRevenge
 
         public class BillBoards
         {
+            public static readonly string Beam = @"Textures\Billboards\laserbillboard";
             public static readonly string BLOB = @"Textures\Billboards\blob";
             public static readonly string GRND_IND = @"Textures\Billboards\groundIndicator";
             public static readonly string CHAIN = @"Textures\Billboards\chain";

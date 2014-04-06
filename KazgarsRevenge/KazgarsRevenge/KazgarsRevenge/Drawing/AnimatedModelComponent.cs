@@ -17,12 +17,12 @@ namespace KazgarsRevenge
         public float alpha;
         public float lineIntensity;
         public Color lineColor;
-        public float size;
+        public Vector3 size;
         public SharedGraphicsParams()
         {
             alpha = 1f;
             lineIntensity = 1f;
-            size = 1;
+            size = new Vector3(1);
             lineColor = Color.Black;
         }
     }
@@ -53,7 +53,7 @@ namespace KazgarsRevenge
             animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips.Keys.First(), MixType.None);
 
             modelParams = new SharedGraphicsParams();
-            modelParams.size = drawScale;
+            modelParams.size = new Vector3(drawScale);
             entity.AddSharedData(typeof(SharedGraphicsParams), modelParams);
 
         }
@@ -143,7 +143,7 @@ namespace KazgarsRevenge
             rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
             rot *= yawOffset;
 
-            Matrix conglomeration = Matrix.CreateScale(new Vector3(modelParams.size));
+            Matrix conglomeration = Matrix.CreateScale(modelParams.size);
             conglomeration *= Matrix.CreateTranslation(localOffset);
             conglomeration *= rot;
             conglomeration *= Matrix.CreateTranslation(physicalData.Position);

@@ -13,10 +13,15 @@ namespace KazgarsRevenge
     class UnanimatedModelComponent : DrawableComponent3D
     {
         private Model model;
-        private Vector3 drawScale;
         private Vector3 localOffset;
 
         private Matrix currentRot = Matrix.Identity;
+
+
+        protected SharedGraphicsParams modelParams;
+
+
+
         /// <summary>
         /// constructs a new model component for rendering models without animations
         /// </summary>
@@ -24,8 +29,11 @@ namespace KazgarsRevenge
             : base(game, entity)
         {
             this.model = model;
-            this.drawScale = drawScale;
             this.localOffset = localOffset;
+
+            modelParams = new SharedGraphicsParams();
+            modelParams.size = drawScale;
+            entity.AddSharedData(typeof(SharedGraphicsParams), modelParams);
 
             this.yaw = yaw;
             this.pitch = pitch;
@@ -138,7 +146,7 @@ namespace KazgarsRevenge
                         effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                         effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                         Matrix world = transforms[mesh.ParentBone.Index]
-                            * Matrix.CreateScale(drawScale)
+                            * Matrix.CreateScale(modelParams.size)
                             * Matrix.CreateTranslation(localOffset)
                             * currentRot
                             * rotation

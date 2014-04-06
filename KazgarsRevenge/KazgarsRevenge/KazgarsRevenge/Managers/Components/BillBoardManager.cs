@@ -17,8 +17,13 @@ namespace KazgarsRevenge
             this.UpdateOrder = 3;
         }
 
-        private Effect billboardEffect;
+        float currentTime = 0;
 
+        private Effect billboardEffect;
+        private Effect slidingBillboardEffect;
+
+        public Effect LevelUpCircleEffect { get; private set; }
+        public Effect PillarBeamEffect { get; private set; }
         public Effect CircleBlueEffect { get; private set; }
         public Effect CircleEffect { get; private set; }
         public Effect ArrowVEffect { get; private set; }
@@ -32,6 +37,16 @@ namespace KazgarsRevenge
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
 
             billboardEffect = Game.Content.Load<Effect>("Shaders\\BillboardEffect");
+            slidingBillboardEffect = Game.Content.Load<Effect>("Shaders\\SlidingBillboardEffect");
+
+            PillarBeamEffect = slidingBillboardEffect.Clone();
+            PillarBeamEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.Beam));
+            PillarBeamEffect.Parameters["World"].SetValue(Matrix.Identity);
+
+            LevelUpCircleEffect = billboardEffect.Clone();
+            LevelUpCircleEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.CIRCLE));
+            LevelUpCircleEffect.Parameters["World"].SetValue(Matrix.Identity);
+            LevelUpCircleEffect.Parameters["colorTint"].SetValue(Color.Blue.ToVector3());
 
             CircleBlueEffect = billboardEffect.Clone();
             CircleBlueEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.CIRCLE));
@@ -69,6 +84,7 @@ namespace KazgarsRevenge
 
         public override void Update(GameTime gameTime)
         {
+            currentTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
             for (int i = components.Count - 1; i >= 0; --i)
             {
                 components[i].Update(gameTime);
@@ -92,6 +108,7 @@ namespace KazgarsRevenge
             Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             Game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
+            PillarBeamEffect.Parameters["CurrentTime"].SetValue(currentTime);
 
             for (int i = 0; i < components.Count; ++i)
             {

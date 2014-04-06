@@ -1003,9 +1003,10 @@ namespace KazgarsRevenge
         #endregion
 
         #region Level Script Stuff
-        public GameEntity CreateDragonFirePillar(Vector3 position)
+        public GameEntity CreateDragonFirePillar(AliveComponent dragon)
         {
-            position.Y = 20;
+            Entity data = dragon.Entity.GetSharedData(typeof(Entity)) as Entity;
+            Vector3 position = data.Position + Vector3.Right * 150 + Vector3.Up * 20;
             GameEntity pillar = new GameEntity("firepillar", FactionType.Enemies, EntityType.Misc);
 
             Entity physicalData = new Box(position, 50, 50, 50);
@@ -1019,6 +1020,12 @@ namespace KazgarsRevenge
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\fire_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
             pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
+            graphics.AddEmitter(typeof(FirePillarMistSystem), "firemist", 40, 25, Vector3.Down * 17);
+            graphics.AddEmitter(typeof(FirePillarSystem), "fire", 10, 25, Vector3.Down * 25);
+
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon);
+            pillar.AddComponent(typeof(PillarBeamBillboard), beam);
+            billboardManager.AddComponent(beam);
 
             PillarController AI = new PillarController(mainGame, pillar);
             pillar.AddComponent(typeof(PillarController), AI);
@@ -1029,9 +1036,10 @@ namespace KazgarsRevenge
             return pillar;
         }
 
-        public GameEntity CreateDragonFrostPillar(Vector3 position)
+        public GameEntity CreateDragonFrostPillar(AliveComponent dragon)
         {
-            position.Y = 20;
+            Entity data = dragon.Entity.GetSharedData(typeof(Entity)) as Entity;
+            Vector3 position = data.Position + Vector3.Left * 150 + Vector3.Up * 20;
             GameEntity pillar = new GameEntity("frostpillar", FactionType.Enemies, EntityType.Misc);
 
             Entity physicalData = new Box(position, 50, 50, 50);
@@ -1045,6 +1053,11 @@ namespace KazgarsRevenge
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\ice_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
             pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
+            graphics.AddEmitter(typeof(FrostAOEMistSystem), "mist", 40, 25, Vector3.Down * 17);
+
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon);
+            pillar.AddComponent(typeof(PillarBeamBillboard), beam);
+            billboardManager.AddComponent(beam);
 
             PillarController AI = new PillarController(mainGame, pillar);
             pillar.AddComponent(typeof(PillarController), AI);

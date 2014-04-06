@@ -16,8 +16,8 @@ namespace KazgarsRevenge
             origin = position;
         }
 
-        float maxRadius = 18;
-        float increasePerSec = 80;
+        protected float maxRadius = 18;
+        protected float increasePerSec = 80;
         public override void Update(GameTime gameTime)
         {
             float add = (float)(increasePerSec * gameTime.ElapsedGameTime.TotalMilliseconds / 1000);

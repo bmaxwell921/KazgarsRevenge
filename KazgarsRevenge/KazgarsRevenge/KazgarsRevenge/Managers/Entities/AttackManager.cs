@@ -971,6 +971,34 @@ namespace KazgarsRevenge
         #endregion
 
         #region Misc
+        public void CreateLevelUpGraphics(Entity playerEntity)
+        {
+            GameEntity levelUp = new GameEntity("levelup", FactionType.Neutral, EntityType.None);
+
+            Entity data = new Box(playerEntity.Position, 1, 1, 1);
+            levelUp.AddSharedData(typeof(Entity), data);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, levelUp, GetUnanimatedModel("Models\\sphere"), new Vector3(500), Vector3.Zero, 0, 0, 0);
+            graphics.AddColorTint(Color.Blue);
+            graphics.SetAlpha(.25f);
+            graphics.TurnOffOutline();
+            levelUp.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            LevelUpController controller = new LevelUpController(mainGame, levelUp, playerEntity);
+            levelUp.AddComponent(typeof(LevelUpController), controller);
+            genComponentManager.AddComponent(controller);
+
+
+        }
+
+        public void AddLevelUpBillboard(GameEntity levelUp, Vector3 pos)
+        {
+            ExpandingCircleBillboard circle = new ExpandingCircleBillboard(mainGame, levelUp, pos);
+            levelUp.AddComponent(typeof(ExpandingCircleBillboard), circle);
+            billboardManager.AddComponent(circle);
+        }
+
         public void CreateFireSpitExplosion(Vector3 position, float radius, int damage, AliveComponent creator)
         {
             position.Y = 10;
@@ -1297,6 +1325,7 @@ namespace KazgarsRevenge
         {
             return creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players;
         }
+
         #endregion
 
         #region Particles

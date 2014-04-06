@@ -3,6 +3,12 @@ float4x4 View;
 float4x4 Projection;
 float3 colorTint = float3(1,1,1);
 
+int pixelsPerSecond = 256;
+int totalPixels = 768;
+int cols = 4;
+
+float CurrentTime;
+
 texture Texture;
 
 sampler Sampler = sampler_state
@@ -22,7 +28,6 @@ struct VSIn
     float4 Position : SV_Position;
     float3 Normal   : NORMAL;
     float2 TexCoord : TEXCOORD0;
-    float Time : TEXCOORD1;
 };
 
 struct VSOut
@@ -40,6 +45,9 @@ VSOut VS(VSIn input)
     output.Position = mul(viewPosition, Projection);
 
 	output.TexCoord = input.TexCoord;
+	output.TexCoord.x /= cols;
+	float pixelStart = floor((CurrentTime - 0) * pixelsPerSecond) % totalPixels;
+	output.TexCoord.x += pixelStart;
 
     return output;
 }

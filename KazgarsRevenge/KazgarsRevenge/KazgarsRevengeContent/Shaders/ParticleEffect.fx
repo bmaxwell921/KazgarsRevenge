@@ -200,30 +200,6 @@ VertexShaderOutput ParticleVertexShader(VertexShaderInput input)
     return output;
 }
 
-/*
-VSOut SpriteSheetVS(VSIn IN)
-{
-    VSOut OUT = (VSOut) 0;
-    
-    OUT.Position = mul(IN.Position, WorldViewProjection);
-    
-	float frame = floor((CurrentTime - input.Time) * framesPerSecond) % totalFrames;
-
-    // the global UV coordinate of the current frame's upper-left corner on the texture map
-    float cellU = (frame % cols) / (float)cols;
-    float cellV = floor(frame / cols) / (float)rows;
-    
-    // the local UV offset inside the current frame
-    float cellDU = IN.UV.x / (float)SpritesPerRow;
-    float cellDV = IN.UV.y / (float)SpritesPerCol;
-    
-    OUT.UV.x = cellU + cellDU;
-    OUT.UV.y = cellV + cellDV;
-    
-    return OUT;
-}*/
-
-
 // Pixel shader for drawing particles.
 float4 ParticlePixelShader(VertexShaderOutput input) : COLOR0
 {

@@ -175,7 +175,8 @@ namespace KazgarsRevenge
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             dragon.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
             AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 10, Vector3.Down * 9);
-
+            //enemyGraphics.AddEmitter(typeof(FireDragonHeadSystem), "firehead", 150, 0, Vector3.Zero, "d_head_emittor_L");
+            //enemyGraphics.AddEmitter(typeof(FrostDragonHeadSystem), "frosthead", 150, 0, Vector3.Zero, "d_head_emittor_R");
             dragon.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);
 

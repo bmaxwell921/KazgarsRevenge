@@ -195,23 +195,26 @@ namespace KazgarsRevenge
 
         private void AdjustSizeTo(float size)
         {
-            float rate = .05f + Math.Abs(modelParams.size - size) / 10.0f;
-            if (modelParams.size < size)
+            float rate = .05f + Math.Abs(modelParams.size.X - size) / 10.0f;
+            if (modelParams.size.X < size)
             {
-                modelParams.size += rate;
-                if (modelParams.size > size)
+                modelParams.size.X += rate;
+                if (modelParams.size.X > size)
                 {
-                    modelParams.size = size;
+                    modelParams.size.X = size;
                 }
             }
-            else if (modelParams.size > size)
+            else if (modelParams.size.X > size)
             {
-                modelParams.size -= rate;
-                if (modelParams.size < size)
+                modelParams.size.X -= rate;
+                if (modelParams.size.X < size)
                 {
-                    modelParams.size = size;
+                    modelParams.size.X = size;
                 }
             }
+
+            modelParams.size.Y = modelParams.size.X;
+            modelParams.size.Z = modelParams.size.X;
         }
 
         string currentAni = "";

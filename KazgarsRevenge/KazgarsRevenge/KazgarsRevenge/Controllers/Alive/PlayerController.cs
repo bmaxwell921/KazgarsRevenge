@@ -397,7 +397,9 @@ namespace KazgarsRevenge
             InitNewPlayer();
 
             //adding weapons for testing
-            EquipGear((Equippable)lewtz.AllItems[3202], GearSlot.Righthand);
+            Equippable wep = (Equippable)lewtz.AllItems[3202];
+            wep.SetStats(GearQuality.Legendary, 70);
+            EquipGear(wep, GearSlot.Righthand);
             EquipGear((Equippable)lewtz.AllItems[3001], GearSlot.Righthand);
             EquipGear((Equippable)lewtz.AllItems[3001], GearSlot.Righthand);
 
@@ -408,7 +410,7 @@ namespace KazgarsRevenge
             EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Lefthand);
             
             Equippable boots = (Equippable)lewtz.AllItems[9900];
-            boots.SetStats(GearQuality.Legendary, 50);
+            boots.SetStats(GearQuality.Legendary, 70);
             EquipGear(boots, GearSlot.Feet);
         }
 

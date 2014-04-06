@@ -104,11 +104,12 @@ namespace KazgarsRevenge
 
         }
 
+        protected float expMultiplier = 4;
         protected int experience = 0;
         public int NextLevelXP { get { return 100 * level * level; } }
         public void AddEXP(int level, EntityType entityType)
         {
-            int exp = level * 25;
+            int exp = (int)(level * 25 * expMultiplier);
             if (entityType == EntityType.EliteEnemy)
             {
                 exp *= 2;
@@ -255,6 +256,8 @@ namespace KazgarsRevenge
         {
             ++level;
             RecalculateStats();
+
+            attacks.CreateLevelUpGraphics(physicalData);
         }
         #endregion
 
