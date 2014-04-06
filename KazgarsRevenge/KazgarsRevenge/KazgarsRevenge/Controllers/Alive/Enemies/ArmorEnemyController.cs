@@ -13,7 +13,7 @@ namespace KazgarsRevenge
             settings.aniPrefix = "k_";
             settings.attackAniName = "swing_r";
             settings.idleAniName = "fighting_stance";
-            settings.moveAniName = "run";
+            settings.moveAniName = "walk";
             settings.deathAniName = "death";
             settings.hitAniName = "idle1";
             settings.walkSpeed = 120;

@@ -1386,6 +1386,15 @@ namespace KazgarsRevenge
             }
         }
 
+        public void SpawnLevelUpParticles(Vector3 position)
+        {
+            ParticleSystem expl = particles.GetSystem(typeof(LevelUpExplosionSystem));
+            for (int i = 0; i < 40; ++i)
+            {
+                expl.AddParticle(position, Vector3.Zero);
+            }
+        }
+
         public void SpawnBuffParticles(Vector3 position)
         {
             ParticleSystem poof = particles.GetSystem(typeof(Buff1ParticleSystem));

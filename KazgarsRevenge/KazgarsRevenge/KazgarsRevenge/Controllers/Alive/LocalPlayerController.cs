@@ -1010,9 +1010,9 @@ namespace KazgarsRevenge
                     else
                     {
                         //just started running
-                        if (currentAniName != "k_run")
+                        if (currentAniName != "k_walk")
                         {
-                            PlayAnimationInterrupt("k_run", MixType.None);
+                            PlayAnimationInterrupt("k_walk", MixType.None);
                         }
 
                         ChangeVelocity(moveVec);
@@ -1032,7 +1032,7 @@ namespace KazgarsRevenge
                     //stop if within stopRadius of targetted ground location
                     ChangeVelocity(Vector3.Zero);
                     //just stopped moving
-                    if (currentAniName == "k_run")
+                    if (currentAniName == "k_walk")
                     {
                         StartSequence("fightingstance");
                     }
@@ -1047,9 +1047,9 @@ namespace KazgarsRevenge
                 else
                 {
                     //just started running
-                    if (currentAniName != "k_run" && attState != AttackState.LockedMoving)
+                    if (currentAniName != "k_walk" && attState != AttackState.LockedMoving)
                     {
-                        PlayAnimationInterrupt("k_run", MixType.None);
+                        PlayAnimationInterrupt("k_walk", MixType.None);
                     }
                     ChangeVelocity(moveVec);
                     UpdateRotation(move);

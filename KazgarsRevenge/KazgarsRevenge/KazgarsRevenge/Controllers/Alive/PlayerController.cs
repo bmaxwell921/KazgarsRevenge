@@ -146,19 +146,26 @@ namespace KazgarsRevenge
             }
 
             //otherwise, carry on
-            if (UnequipGear(slot))
+            if (equipMe.Slot == slot || equipMe.Slot2 == slot)
             {
-                gear[slot] = equipMe;
-                RecalculateStats();
+                if (UnequipGear(slot))
+                {
+                    gear[slot] = equipMe;
+                    RecalculateStats();
 
-                if (weapon)
-                {
-                    attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot, 0));
+                    if (weapon)
+                    {
+                        attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot, 0));
+                    }
+                    else
+                    {
+                        syncedModels.Add(slot.ToString(), equipMe.GearModel);
+                    }
                 }
-                else
-                {
-                    syncedModels.Add(slot.ToString(), equipMe.GearModel);
-                }
+            }
+            else
+            {
+                AddToInventory(equipMe);
             }
         }
         /// <summary>
@@ -408,6 +415,13 @@ namespace KazgarsRevenge
 
             EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Righthand);
             EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Lefthand);
+
+            EquipGear((Equippable)lewtz.AllItems[3203], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3204], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3205], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3206], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3207], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3208], GearSlot.Righthand);
             
             Equippable boots = (Equippable)lewtz.AllItems[9900];
             boots.SetStats(GearQuality.Legendary, 70);

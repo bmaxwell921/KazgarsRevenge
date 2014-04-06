@@ -58,7 +58,7 @@
       <Name>k_idle1</Name>
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3bModels\\Player\\k_whirlwind.fbx%3bModels\\Player\\k_spin.fbx%3bModels\\Player\\k_headbutt.fbx%3bModels\\Player\\k_thrust_l.fbx%3bModels\\Player\\k_thrust_r.fbx%3bModels\\Player\\k_charge.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_walk.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3bModels\\Player\\k_whirlwind.fbx%3bModels\\Player\\k_spin.fbx%3bModels\\Player\\k_headbutt.fbx%3bModels\\Player\\k_thrust_l.fbx%3bModels\\Player\\k_thrust_r.fbx%3bModels\\Player\\k_charge.fbx%3b</ProcessorParameters_MergeAnimations>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\spikes.fbx">
@@ -1406,32 +1406,77 @@
     <Compile Include="Models\Armor\Cardinal\armor_boots_cardinal.fbx">
       <Name>armor_boots_cardinal</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\Armor\Cardinal\armor_chest_cardinal.fbx">
       <Name>armor_chest_cardinal</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\Armor\Cardinal\armor_head_cardinal.fbx">
       <Name>armor_head_cardinal</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\Armor\Cardinal\armor_legs_cardinal.fbx">
       <Name>armor_legs_cardinal</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\Armor\Cardinal\armor_shoulders_cardinal.fbx">
       <Name>armor_shoulders_cardinal</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\Armor\Cardinal\armor_wrist_cardinal.fbx">
       <Name>armor_wrist_cardinal</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Models\Armor\Barrel\armor_boots_barrel.fbx">
+      <Name>armor_boots_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_chest_barrel.fbx">
+      <Name>armor_chest_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_head_barrel.fbx">
+      <Name>armor_head_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_legs_barrel.fbx">
+      <Name>armor_legs_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_shoulders_barrel.fbx">
+      <Name>armor_shoulders_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_wrist_barrel.fbx">
+      <Name>armor_wrist_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

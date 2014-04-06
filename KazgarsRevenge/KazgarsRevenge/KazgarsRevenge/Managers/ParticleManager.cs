@@ -70,6 +70,7 @@ namespace KazgarsRevenge
             systems.Add(typeof(FireDragonHeadSystem), new FireDragonHeadSystem(Game, Game.Content));
             systems.Add(typeof(FrostDragonHeadSystem), new FrostDragonHeadSystem(Game, Game.Content));
             systems.Add(typeof(FirePillarSystem), new FirePillarSystem(Game, Game.Content));
+            systems.Add(typeof(LevelUpExplosionSystem), new LevelUpExplosionSystem(Game, Game.Content));
             
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)

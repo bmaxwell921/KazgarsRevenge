@@ -515,8 +515,14 @@ namespace KazgarsRevenge
             /*
              * 9900-10000: test gear
              * 
+             * 9001 - 9300: shared epic drops
+             * 
              * 3001 - 3100: dungeon melee gear
+             * 
+             * 
              * 3101-3200: dungeon ranged gear
+             * 
+             * 
              * 3201-3300: dungeon magic gear
              * 
              * 
@@ -529,6 +535,183 @@ namespace KazgarsRevenge
                 new Dictionary<StatType, float>() { { StatType.RunSpeed, .3f }, { StatType.Vitality, 3 } },
                 GetAnimatedModel(armorDir + "armor_boots_rino"),
                 GearSlot.Feet,
+                GearSlot.None,
+                id));
+            #endregion
+
+            #region Shared Epic Drops
+            //rhino set
+            id = 9001;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_RHINO),
+                "Rhino Helm",
+                new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "armor_head_rino"),
+                GearSlot.Head,
+                GearSlot.None,
+                id));
+            id = 9002;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_RHINO),
+                "Rhino Chestpiece",
+                new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "armor_chest_rino"),
+                GearSlot.Chest,
+                GearSlot.None,
+                id));
+            id = 9003;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_RHINO),
+                "Rhino Legguards",
+                new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "armor_legs_rino"),
+                GearSlot.Legs,
+                GearSlot.None,
+                id));
+            id = 9004;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
+                "Rhino Boots",
+                new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "armor_boots_rino"),
+                GearSlot.Feet,
+                GearSlot.None,
+                id));
+            id = 9005;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_RHINO),
+                "Rhino Shoulderpads",
+                new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "armor_shoulders_rino"),
+                GearSlot.Shoulders,
+                GearSlot.None,
+                id));
+            id = 9006;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_RHINO),
+                "Rhino Wristguards",
+                new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "armor_wrist_rino"),
+                GearSlot.Wrist,
+                GearSlot.None,
+                id));
+            id = 9007;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING),
+                "Rhino Ring",
+                new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
+                null,
+                GearSlot.Bling,
+                GearSlot.None,
+                id));
+
+            //ranged set?
+            id = 9011;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_HEAD_SKELETON),
+                "Balking Helm",
+                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
+                GetAnimatedModel(armorDir + "armor_head_rino"),
+                GearSlot.Head,
+                GearSlot.None,
+                id));
+            id = 9012;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_CHEST_SKELETON),
+                "Balking Chestpiece",
+                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
+                GetAnimatedModel(armorDir + "armor_chest_rino"),
+                GearSlot.Chest,
+                GearSlot.None,
+                id));
+            id = 9013;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_LEGS_SKELETON),
+                "Balking Legguards",
+                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
+                GetAnimatedModel(armorDir + "armor_legs_rino"),
+                GearSlot.Legs,
+                GearSlot.None,
+                id));
+            id = 9014;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_FEET_SKELETON),
+                "Balking Boots",
+                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
+                GetAnimatedModel(armorDir + "armor_boots_rino"),
+                GearSlot.Feet,
+                GearSlot.None,
+                id));
+            id = 9015;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_SHOULDERS_SKELETON),
+                "Balking Shoulderpads",
+                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
+                GetAnimatedModel(armorDir + "armor_shoulders_rino"),
+                GearSlot.Shoulders,
+                GearSlot.None,
+                id));
+            id = 9016;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_WRIST_SKELETON),
+                "Balking Wristguards",
+                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
+                GetAnimatedModel(armorDir + "armor_wrist_rino"),
+                GearSlot.Wrist,
+                GearSlot.None,
+                id));
+            id = 9017;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_BLING),
+                "Balking Ring",
+                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
+                null,
+                GearSlot.Bling,
+                GearSlot.None,
+                id));
+
+
+            //cardinal set
+            id = 9021;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_RHINO),
+                "Cardinal Helm",
+                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "Cardinal\\armor_head_cardinal"),
+                GearSlot.Head,
+                GearSlot.None,
+                id));
+            id = 9022;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_RHINO),
+                "Cardinal Chestpiece",
+                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "Cardinal\\armor_chest_cardinal"),
+                GearSlot.Chest,
+                GearSlot.None,
+                id));
+            id = 9023;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_RHINO),
+                "Cardinal Legguards",
+                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "Cardinal\\armor_legs_cardinal"),
+                GearSlot.Legs,
+                GearSlot.None,
+                id));
+            id = 9024;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
+                "Cardinal Boots",
+                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "Cardinal\\armor_boots_cardinal"),
+                GearSlot.Feet,
+                GearSlot.None,
+                id));
+            id = 9025;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_RHINO),
+                "Cardinal Shoulderpads",
+                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "Cardinal\\armor_shoulders_cardinal"),
+                GearSlot.Shoulders,
+                GearSlot.None,
+                id));
+            id = 9026;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_RHINO),
+                "Cardinal Wristguards",
+                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
+                GetAnimatedModel(armorDir + "Cardinal\\armor_wrist_cardinal"),
+                GearSlot.Wrist,
+                GearSlot.None,
+                id));
+            id = 9027;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING),
+                "Cardinal Ring",
+                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
+                null,
+                GearSlot.Bling,
                 GearSlot.None,
                 id));
             #endregion
@@ -553,7 +736,7 @@ namespace KazgarsRevenge
                 id));
             id = 3003;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_RHINO),
-                "Rhino Helm",
+                "Underwhelming Helm",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_head_rino"),
                 GearSlot.Head,
@@ -561,7 +744,7 @@ namespace KazgarsRevenge
                 id));
             id = 3004;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_RHINO),
-                "Rhino Chestpiece",
+                "Underwhelming Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_chest_rino"),
                 GearSlot.Chest,
@@ -569,7 +752,7 @@ namespace KazgarsRevenge
                 id));
             id = 3005;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_RHINO),
-                "Rhino Legguards",
+                "Underwhelming Legguards",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_legs_rino"),
                 GearSlot.Legs,
@@ -577,7 +760,7 @@ namespace KazgarsRevenge
                 id));
             id = 3006;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
-                "Rhino Boots",
+                "Underwhelming Boots",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_boots_rino"),
                 GearSlot.Feet,
@@ -585,7 +768,7 @@ namespace KazgarsRevenge
                 id));
             id = 3007;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_RHINO),
-                "Rhino Shoulderpads",
+                "Underwhelming Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_shoulders_rino"),
                 GearSlot.Shoulders,
@@ -593,7 +776,7 @@ namespace KazgarsRevenge
                 id));
             id = 3008;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_RHINO),
-                "Rhino Wristguards",
+                "Underwhelming Wristguards",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_wrist_rino"),
                 GearSlot.Wrist,
@@ -601,7 +784,7 @@ namespace KazgarsRevenge
                 id));
             id = 3009;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING),
-                "Rhino Ring",
+                "Underwhelming Ring",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 null,
                 GearSlot.Bling,
@@ -620,55 +803,55 @@ namespace KazgarsRevenge
                 id));
             id = 3103;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_HEAD_SKELETON),
-                "Skeleton Helm",
+                "Balking Helm",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "armor_head_rino"),
+                GetAnimatedModel(armorDir + "Barrel\\armor_head_barrel"),
                 GearSlot.Head,
                 GearSlot.None, 
                 id));
             id = 3104;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_CHEST_SKELETON),
-                "Skeleton Chestpiece",
+                "Balking Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "armor_chest_rino"),
+                GetAnimatedModel(armorDir + "Barrel\\armor_chest_barrel"),
                 GearSlot.Chest,
                 GearSlot.None, 
                 id));
             id = 3105;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_LEGS_SKELETON),
-                "Skeleton Legguards",
+                "Balking Legguards",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "armor_legs_rino"),
+                GetAnimatedModel(armorDir + "Barrel\\armor_legs_barrel"),
                 GearSlot.Legs,
                 GearSlot.None, 
                 id));
             id = 3106;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_FEET_SKELETON),
-                "Skeleton Boots",
+                "Balking Boots",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "armor_boots_rino"),
+                GetAnimatedModel(armorDir + "Barrel\\armor_boots_barrel"),
                 GearSlot.Feet,
                 GearSlot.None, 
                 id));
             id = 3107;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_SHOULDERS_SKELETON),
-                "Skeleton Shoulderpads",
+                "Balking Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "armor_shoulders_rino"),
+                GetAnimatedModel(armorDir + "Barrel\\armor_shoulders_barrel"),
                 GearSlot.Shoulders,
                 GearSlot.None, 
                 id));
             id = 3108;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_WRIST_SKELETON),
-                "Skeleton Wristguards",
+                "Balking Wristguards",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "armor_wrist_rino"),
+                GetAnimatedModel(armorDir + "Barrel\\armor_wrist_barrel"),
                 GearSlot.Wrist,
                 GearSlot.None, 
                 id));
             id = 3109;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_BLING),
-                "Skeleton Ring",
+                "Balking Ring",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
                 null,
                 GearSlot.Bling,
@@ -687,55 +870,55 @@ namespace KazgarsRevenge
                 id));
             id = 3203;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_HEAD_SMART),
-                "Wimpy Helm",
+                "Depreciating Helm",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
-                GetAnimatedModel(armorDir + "armor_head_rino"),
+                GetAnimatedModel(armorDir + "Cardinal\\armor_head_cardinal"),
                 GearSlot.Head,
                 GearSlot.None, 
                 id));
             id = 3204;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_CHEST_SMART),
-                "Wimpy Chestpiece",
+                "Depreciating Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
-                GetAnimatedModel(armorDir + "armor_chest_rino"),
+                GetAnimatedModel(armorDir + "Cardinal\\armor_chest_cardinal"),
                 GearSlot.Chest,
                 GearSlot.None, 
                 id));
             id = 3205;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_LEGS_SMART),
-                "Wimpy Legguards",
+                "Depreciating Legguards",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
-                GetAnimatedModel(armorDir + "armor_legs_rino"),
+                GetAnimatedModel(armorDir + "Cardinal\\armor_legs_cardinal"),
                 GearSlot.Legs,
                 GearSlot.None, 
                 id));
             id = 3206;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_FEET_SMART),
-                "Wimpy Boots",
+                "Depreciating Boots",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
-                GetAnimatedModel(armorDir + "armor_boots_rino"),
+                GetAnimatedModel(armorDir + "Cardinal\\armor_boots_cardinal"),
                 GearSlot.Feet,
                 GearSlot.None, 
                 id));
             id = 3207;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_SHOULDERS_SMART),
-                "Wimpy Shoulderpads",
+                "Depreciating Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
-                GetAnimatedModel(armorDir + "armor_shoulders_rino"),
+                GetAnimatedModel(armorDir + "Cardinal\\armor_shoulders_cardinal"),
                 GearSlot.Shoulders,
                 GearSlot.None, 
                 id));
             id = 3208;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_WRIST_SMART),
-                "Wimpy Wristguards",
+                "Depreciating Wristguards",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
-                GetAnimatedModel(armorDir + "armor_wrist_rino"),
+                GetAnimatedModel(armorDir + "Cardinal\\armor_wrist_cardinal"),
                 GearSlot.Wrist,
                 GearSlot.None, 
                 id));
             id = 3209;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_BLING),
-                "Wimpy Ring",
+                "Depreciating Ring",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
                 null,
                 GearSlot.Bling,
