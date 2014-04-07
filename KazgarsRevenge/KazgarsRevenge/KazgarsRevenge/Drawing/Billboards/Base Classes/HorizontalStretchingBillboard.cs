@@ -33,9 +33,9 @@ namespace KazgarsRevenge
             followPos += followData.OrientationMatrix.Right * followOffsetRight;
 
             Vector3 diff = followPos - creatorPos;
-            origin.X = (followData.Position.X + creatorPos.X) / 2;
+            origin.X = (followPos.X + creatorPos.X) / 2;
             origin.Y = 20;
-            origin.Z = (followData.Position.Z + creatorPos.Z) / 2;
+            origin.Z = (followPos.Z + creatorPos.Z) / 2;
             diff.Y = 0;
             size.X = diff.Length();
             source.X = size.X / maxSize;

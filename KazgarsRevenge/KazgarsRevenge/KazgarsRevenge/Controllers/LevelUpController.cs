@@ -32,9 +32,9 @@ namespace KazgarsRevenge
         double explodeLength = 2500;
         public override void Update(GameTime gameTime)
         {
+            myData.Position = followData.Position;
             if (!exploding)
             {
-                myData.Position = followData.Position;
                 increase += 10;
                 rate += increase;
                 modelParams.size.X -= (float)((gameTime.ElapsedGameTime.TotalMilliseconds / 1500) * (rate));
@@ -44,13 +44,13 @@ namespace KazgarsRevenge
                 {
                     AttackManager att = (Game.Services.GetService(typeof(AttackManager)) as AttackManager);
                     att.SpawnLevelUpParticles(myData.Position);
-                    att.AddLevelUpBillboard(Entity, myData.Position);
+                    att.AddLevelUpCircleBillboard(Entity, myData.Position);
+                    model.KillComponent();
                     exploding = true;
                 }
             }
             else
             {
-                model.KillComponent();
                 explodeLength -= gameTime.ElapsedGameTime.TotalMilliseconds;
                 if (explodeLength <= 0)
                 {

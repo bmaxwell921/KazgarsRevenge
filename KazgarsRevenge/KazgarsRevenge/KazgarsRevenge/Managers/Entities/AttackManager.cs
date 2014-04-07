@@ -979,7 +979,7 @@ namespace KazgarsRevenge
             levelUp.AddSharedData(typeof(Entity), data);
 
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, levelUp, GetUnanimatedModel("Models\\sphere"), new Vector3(500), Vector3.Zero, 0, 0, 0);
-            graphics.AddColorTint(Color.Blue);
+            graphics.AddColorTint(Color.Gold);
             graphics.SetAlpha(.25f);
             graphics.TurnOffOutline();
             levelUp.AddComponent(typeof(UnanimatedModelComponent), graphics);
@@ -996,7 +996,7 @@ namespace KazgarsRevenge
 
         }
 
-        public void AddLevelUpBillboard(GameEntity levelUp, Vector3 pos)
+        public void AddLevelUpCircleBillboard(GameEntity levelUp, Vector3 pos)
         {
             LevelUpBillboard circle = new LevelUpBillboard(mainGame, levelUp, pos);
             levelUp.AddComponent(typeof(LevelUpBillboard), circle);

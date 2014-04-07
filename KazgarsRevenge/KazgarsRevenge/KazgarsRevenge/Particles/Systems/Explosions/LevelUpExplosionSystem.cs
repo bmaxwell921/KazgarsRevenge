@@ -18,7 +18,7 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "smoketoon";
+            settings.TextureName = "plus";
 
             settings.MaxParticles = 100;
 
