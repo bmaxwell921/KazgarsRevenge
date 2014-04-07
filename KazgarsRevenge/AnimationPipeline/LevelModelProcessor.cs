@@ -22,6 +22,7 @@ namespace AnimationPipeline
 
             LevelTagData tag = new LevelTagData();
 
+            AddPointsTo(GetDataHolder(input, "particles"), tag.emitterLocations);
             AddPointsTo(GetDataHolder(input, "key"), tag.keyLocations);
             AddPointsTo(GetDataHolder(input, "bossSpawn"), tag.bossSpawnLocations);
             AddPointsTo(GetDataHolder(input, "soul"), tag.soulLocations);

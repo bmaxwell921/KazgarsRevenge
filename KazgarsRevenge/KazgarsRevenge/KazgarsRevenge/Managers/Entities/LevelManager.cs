@@ -459,6 +459,12 @@ namespace KazgarsRevenge
                     CreateKey(Vector3.Transform(keyLocations[RandSingleton.U_Instance.Next(keyLocations.Count)], chunkTransform));
                 }
 
+                List<Vector3> emitterLocations = levelInfo.emitterLocations;
+                foreach (Vector3 v in emitterLocations)
+                {
+                    CreateTorchEmitter(Vector3.Transform(v, chunkTransform));
+                }
+
             }
         }
 
@@ -627,6 +633,18 @@ namespace KazgarsRevenge
             currentLevel.spawnLocs.Add(pos);
         }
 
+        private void CreateTorchEmitter(Vector3 pos)
+        {
+            GameEntity torch = new GameEntity("", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, 1, 1, 1);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, torch);
+            torch.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+            
+            props.Add(torch);
+        }
         #endregion
 
         // Method used to safely add an edge to the pathGraph
@@ -1006,7 +1024,7 @@ namespace KazgarsRevenge
         public GameEntity CreateDragonFirePillar(AliveComponent dragon)
         {
             Entity data = dragon.Entity.GetSharedData(typeof(Entity)) as Entity;
-            Vector3 position = data.Position + Vector3.Right * 150 + Vector3.Up * 20;
+            Vector3 position = data.Position + Vector3.Right * 200 + Vector3.Up * 20;
             GameEntity pillar = new GameEntity("firepillar", FactionType.Enemies, EntityType.Misc);
 
             Entity physicalData = new Box(position, 50, 50, 50);
@@ -1023,7 +1041,7 @@ namespace KazgarsRevenge
             graphics.AddEmitter(typeof(FirePillarMistSystem), "firemist", 40, 25, Vector3.Down * 17);
             graphics.AddEmitter(typeof(FirePillarSystem), "fire", 10, 25, Vector3.Down * 25);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, true);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 
@@ -1039,7 +1057,7 @@ namespace KazgarsRevenge
         public GameEntity CreateDragonFrostPillar(AliveComponent dragon)
         {
             Entity data = dragon.Entity.GetSharedData(typeof(Entity)) as Entity;
-            Vector3 position = data.Position + Vector3.Left * 150 + Vector3.Up * 20;
+            Vector3 position = data.Position + Vector3.Left * 200 + Vector3.Up * 20;
             GameEntity pillar = new GameEntity("frostpillar", FactionType.Enemies, EntityType.Misc);
 
             Entity physicalData = new Box(position, 50, 50, 50);
@@ -1055,7 +1073,7 @@ namespace KazgarsRevenge
             modelManager.AddComponent(graphics);
             graphics.AddEmitter(typeof(FrostAOEMistSystem), "mist", 40, 25, Vector3.Down * 17);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, true);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 

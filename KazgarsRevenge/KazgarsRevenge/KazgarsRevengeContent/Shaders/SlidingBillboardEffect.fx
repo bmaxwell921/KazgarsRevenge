@@ -4,7 +4,8 @@ float4x4 Projection;
 float3 colorTint = float3(1,1,1);
 
 int pixelsPerSecond = 256;
-int totalPixels = 768;
+int totalPixels = 1024;
+int traversedPixels = 768;
 int cols = 4;
 
 float CurrentTime;
@@ -46,8 +47,8 @@ VSOut VS(VSIn input)
 
 	output.TexCoord = input.TexCoord;
 	output.TexCoord.x /= cols;
-	float pixelStart = floor((CurrentTime - 0) * pixelsPerSecond) % totalPixels;
-	output.TexCoord.x += pixelStart;
+	float pixelStart = floor((CurrentTime - 0) * pixelsPerSecond) % traversedPixels;
+	output.TexCoord.x += pixelStart / totalPixels;
 
     return output;
 }
