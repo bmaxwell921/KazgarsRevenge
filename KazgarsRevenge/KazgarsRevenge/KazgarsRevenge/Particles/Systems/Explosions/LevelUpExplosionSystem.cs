@@ -37,11 +37,11 @@ namespace KazgarsRevenge
 
             settings.Gravity = new Vector3(0, 0, 0);
 
-            settings.MinStartSize = 50;
-            settings.MaxStartSize = 50;
+            settings.MinStartSize = 25;
+            settings.MaxStartSize = 35;
 
-            settings.MinEndSize = 5;
-            settings.MaxEndSize = 10;
+            settings.MinEndSize = 1;
+            settings.MaxEndSize = 5;
         }
     }
 }

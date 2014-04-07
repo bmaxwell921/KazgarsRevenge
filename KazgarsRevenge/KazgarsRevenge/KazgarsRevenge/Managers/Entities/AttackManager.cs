@@ -449,7 +449,7 @@ namespace KazgarsRevenge
             PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
             UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook,
                 GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(20), Vector3.Zero, 0, 0, 0);
-            RopeBillboard chainComponent = new RopeBillboard(mainGame, hook, creator);
+            RopeBillboard chainComponent = new RopeBillboard(mainGame, hook, creator.Entity.GetSharedData(typeof(Entity)) as Entity);
             GrapplingHookController hookController = new GrapplingHookController(mainGame, hook, creator);
 
 
@@ -459,7 +459,7 @@ namespace KazgarsRevenge
             hook.AddComponent(typeof(UnanimatedModelComponent), hookGraphics);
             modelManager.AddComponent(hookGraphics);
 
-            hook.AddComponent(typeof(StretchingBillboard), chainComponent);
+            hook.AddComponent(typeof(HorizontalStretchingBillboard), chainComponent);
             billboardManager.AddComponent(chainComponent);
 
             hook.AddComponent(typeof(GrapplingHookController), hookController);
@@ -482,7 +482,7 @@ namespace KazgarsRevenge
             PhysicsComponent hookPhysics = new PhysicsComponent(mainGame, hook);
             UnanimatedModelComponent hookGraphics = new UnanimatedModelComponent(mainGame, hook,
                 GetUnanimatedModel("Models\\Projectiles\\Arrow"), new Vector3(30), Vector3.Zero, 0, 0, 0);
-            ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator);
+            ChainBillboard chainComponent = new ChainBillboard(mainGame, hook, creator.Entity.GetSharedData(typeof(Entity)) as Entity);
             ChainSpearController hookController = new ChainSpearController(mainGame, hook, creator, forceful);
 
 
@@ -492,7 +492,7 @@ namespace KazgarsRevenge
             hook.AddComponent(typeof(UnanimatedModelComponent), hookGraphics);
             modelManager.AddComponent(hookGraphics);
 
-            hook.AddComponent(typeof(StretchingBillboard), chainComponent);
+            hook.AddComponent(typeof(HorizontalStretchingBillboard), chainComponent);
             billboardManager.AddComponent(chainComponent);
 
             hook.AddComponent(typeof(ChainSpearController), hookController);
@@ -985,6 +985,10 @@ namespace KazgarsRevenge
             levelUp.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
+            LevelUpBeamBillboard beam = new LevelUpBeamBillboard(mainGame, levelUp, playerEntity);
+            levelUp.AddComponent(typeof(LevelUpBeamBillboard), beam);
+            billboardManager.AddComponent(beam);
+
             LevelUpController controller = new LevelUpController(mainGame, levelUp, playerEntity);
             levelUp.AddComponent(typeof(LevelUpController), controller);
             genComponentManager.AddComponent(controller);
@@ -994,8 +998,8 @@ namespace KazgarsRevenge
 
         public void AddLevelUpBillboard(GameEntity levelUp, Vector3 pos)
         {
-            ExpandingCircleBillboard circle = new ExpandingCircleBillboard(mainGame, levelUp, pos);
-            levelUp.AddComponent(typeof(ExpandingCircleBillboard), circle);
+            LevelUpBillboard circle = new LevelUpBillboard(mainGame, levelUp, pos);
+            levelUp.AddComponent(typeof(LevelUpBillboard), circle);
             billboardManager.AddComponent(circle);
         }
 
@@ -1389,7 +1393,7 @@ namespace KazgarsRevenge
         public void SpawnLevelUpParticles(Vector3 position)
         {
             ParticleSystem expl = particles.GetSystem(typeof(LevelUpExplosionSystem));
-            for (int i = 0; i < 40; ++i)
+            for (int i = 0; i < 20; ++i)
             {
                 expl.AddParticle(position, Vector3.Zero);
             }

@@ -150,14 +150,16 @@
     <Compile Include="Controllers\Objects\PillarController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
     <Compile Include="Drawing\Billboards\ArrowVBillboard.cs" />
+    <Compile Include="Drawing\Billboards\Base Classes\VerticalStretchingBillboard.cs" />
     <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
     <Compile Include="Drawing\Billboards\AbilityTargetDecal.cs" />
     <Compile Include="Drawing\Billboards\ChainBillboard.cs" />
     <Compile Include="Drawing\Billboards\Base Classes\ExpandingCircleBillboard.cs" />
+    <Compile Include="Drawing\Billboards\LevelUpBeamBillboard.cs" />
     <Compile Include="Drawing\Billboards\LevelUpBillboard.cs" />
     <Compile Include="Drawing\Billboards\RopeBillboard.cs" />
     <Compile Include="Drawing\Billboards\PillarBeamBillboard.cs" />
-    <Compile Include="Drawing\Billboards\Base Classes\StretchingBillboard.cs" />
+    <Compile Include="Drawing\Billboards\Base Classes\HorizontalStretchingBillboard.cs" />
     <Compile Include="Drawing\Billboards\Base Classes\DrawableComponentBillboard.cs" />
     <Compile Include="Drawing\Billboards\HealthBarBillboard.cs" />
     <Compile Include="Drawing\Effects\CustomCelShadedEffect.cs" />

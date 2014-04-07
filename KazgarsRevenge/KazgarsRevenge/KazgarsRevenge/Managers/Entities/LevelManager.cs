@@ -1023,7 +1023,7 @@ namespace KazgarsRevenge
             graphics.AddEmitter(typeof(FirePillarMistSystem), "firemist", 40, 25, Vector3.Down * 17);
             graphics.AddEmitter(typeof(FirePillarSystem), "fire", 10, 25, Vector3.Down * 25);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 
@@ -1055,7 +1055,7 @@ namespace KazgarsRevenge
             modelManager.AddComponent(graphics);
             graphics.AddEmitter(typeof(FrostAOEMistSystem), "mist", 40, 25, Vector3.Down * 17);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 
