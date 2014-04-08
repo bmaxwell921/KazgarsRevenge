@@ -140,12 +140,30 @@ namespace KazgarsRevenge
             return hash;
         }
 
-        public string miniMapImgName()
+        /// <summary>
+        /// Returns the name of the minimap image associated with this chunk.
+        /// If visited is false, then the player hasn't been to this chunk yet
+        /// so don't reveal any key or boss information
+        /// </summary>
+        /// <param name="visited"></param>
+        /// <returns></returns>
+        public string miniMapImgName(bool visited)
         {
             string miniMapDir = @"Textures\UI\MiniMap\";
             StringBuilder sb = new StringBuilder();
                                                            // We don't show the key chunks, just boss and normal
-            sb.Append(miniMapDir).Append(this.chunkType == ChunkType.BOSS ? "B" : (this.chunkType == ChunkType.SOULEVATOR) ? "S" : "N").Append("-");
+            string type = this.chunkType == ChunkType.SOULEVATOR ? "S" : "N";
+            if (visited)
+            {
+                if (this.chunkType == ChunkType.BOSS)
+                {
+                    type = "B";
+                }
+
+                // TODO I think we should show the Key once they've arrived
+                // TODO just have an unknown chunk image to use temporarily???
+            }
+            sb.Append(miniMapDir).Append(type).Append("-");
             List<Direction> sortedDirs = new List<Direction>(doorDirections);
 
             // Sorts the directions to the order: NSEW
