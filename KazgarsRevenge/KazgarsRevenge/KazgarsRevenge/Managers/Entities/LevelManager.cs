@@ -1179,5 +1179,12 @@ namespace KazgarsRevenge
             int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
             return @"Textures\UI\MegaMap\" + currentLevel.chunkInfos[xCoord, yCoord].ChunkName;
         }
+
+        public Rotation GetCurrentChunkRotation(Vector3 location)
+        {
+            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
+            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+            return currentLevel.chunkInfos[xCoord, yCoord].rotation;
+        }
     }
 }

@@ -2489,7 +2489,9 @@ namespace KazgarsRevenge
         {
             string currentChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkImgName(physicalData.Position);
             Rectangle chunkRect = guiInsideRects["megaMap"]["megaMap"];
-            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), chunkRect, Color.Gray);
+
+            Rotation rotation = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkRotation(physicalData.Position);
+            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), chunkRect, Color.White);
 
             // Scale the player location to the map
             Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];
