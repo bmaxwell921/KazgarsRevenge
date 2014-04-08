@@ -54,7 +54,6 @@ namespace KazgarsRevenge
             #endregion
 
             #region Ability Image Load
-            // TODO give these guys meaningful names in the TextureStrings class and follow the above convention
             texPlaceHolder = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder);
             #endregion
 
@@ -1810,6 +1809,7 @@ namespace KazgarsRevenge
         //Dictionary<string, Rectangle> chatDict;
         Dictionary<string, Rectangle> playerDict;
         Dictionary<string, Rectangle> mapDict;
+        IDictionary<string, string> mapImgDict;
         Dictionary<string, Rectangle> xpDict;
         Dictionary<string, Rectangle> inventoryDict;
         Dictionary<string, Rectangle> equipmentDict;
@@ -1908,6 +1908,24 @@ namespace KazgarsRevenge
             equipmentDict.Add(GearSlot.Codpiece.ToString(), new Rectangle((int)(equipmentUR.X + 206 * average), (int)(equipmentUR.Y + 176 * average), (int)(88 * average), (int)(88 * average)));
             equipmentDict.Add(GearSlot.Righthand.ToString(), new Rectangle((int)(equipmentUR.X + 206 * average), (int)(equipmentUR.Y + 274 * average), (int)(88 * average), (int)(88 * average)));
 
+            // Map inner Brandon
+            Rectangle totalMiniArea = guiOutsideRects["map"];
+            int miniInnerWidth = totalMiniArea.Width / 3;
+            int miniInnerHeight = totalMiniArea.Height / 3;
+            mapDict["Loc0"] = new Rectangle(totalMiniArea.X, totalMiniArea.Y, miniInnerWidth, miniInnerHeight);
+            mapDict["Loc1"] = new Rectangle(totalMiniArea.X + miniInnerWidth, totalMiniArea.Y, miniInnerWidth, miniInnerHeight);
+            mapDict["Loc2"] = new Rectangle(totalMiniArea.X + miniInnerWidth * 2, totalMiniArea.Y, miniInnerWidth, miniInnerHeight);
+
+            mapDict["Loc3"] = new Rectangle(totalMiniArea.X, totalMiniArea.Y + miniInnerHeight, miniInnerWidth, miniInnerHeight);
+            mapDict["Loc4"] = new Rectangle(totalMiniArea.X + miniInnerWidth, totalMiniArea.Y + miniInnerHeight, miniInnerWidth, miniInnerHeight);
+            mapDict["Loc5"] = new Rectangle(totalMiniArea.X + miniInnerWidth * 2, totalMiniArea.Y + miniInnerHeight, miniInnerWidth, miniInnerHeight);
+
+            mapDict["Loc6"] = new Rectangle(totalMiniArea.X, totalMiniArea.Y + miniInnerHeight * 2, miniInnerWidth, miniInnerHeight);
+            mapDict["Loc7"] = new Rectangle(totalMiniArea.X + miniInnerWidth, totalMiniArea.Y + miniInnerHeight * 2, miniInnerWidth, miniInnerHeight);
+            mapDict["Loc8"] = new Rectangle(totalMiniArea.X + miniInnerWidth * 2, totalMiniArea.Y + miniInnerHeight * 2, miniInnerWidth, miniInnerHeight);
+
+            //mapImgDict = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).getMiniImageMap();
+
             //Inventory inner
             for (int i = 0; i < 4; ++i)
             {
@@ -1951,7 +1969,6 @@ namespace KazgarsRevenge
             talentDict.Add("Melee", new Rectangle((int)(talentUR.X + 30 * average + 1.25 * 94 * average), (int)(talentUR.Y + 693 * average), (int)(95 * average), (int)(40 * average)));
             talentDict.Add("Magic", new Rectangle((int)(talentUR.X + 30 * average + 2.5 * 94 * average), (int)(talentUR.Y + 693 * average), (int)(95 * average), (int)(40 * average)));
             talentDict.Add("Points", new Rectangle((int)(talentUR.X + 30 * average + 94 * average), (int)(talentUR.Y + 755 * average), (int)(64 * average), (int)(40 * average)));
-
 
             //Loot
             for (int i = 0; i < NUM_LOOT_SHOWN; ++i)
@@ -2104,7 +2121,8 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
             
             //Mini Map (square for now)
-            s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Black * 0.5f); // TODO Brandon here
+            //s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Black * 0.5f); 
+            DrawMiniMap(s);
 
             #region main player frame
             //Main Player Frame Pic
@@ -2389,6 +2407,16 @@ namespace KazgarsRevenge
                 s.Draw(texCursor, rectMouse, Color.White);
             }
             #endregion mouse
+        }
+
+        private void DrawMiniMap(SpriteBatch s)
+        {
+            // TODO brandon
+            string keyPre = "Loc";
+            for (int i = 0; i < 9; ++i)
+            {
+                s.Draw(Texture2DUtil.Instance.GetTexture(@"Textures\UI\MiniMap\N-ESW"), guiInsideRects["map"][keyPre + i], Color.White);
+            }
         }
 
 
