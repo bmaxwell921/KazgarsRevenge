@@ -623,7 +623,6 @@ namespace KazgarsRevenge
 
                 if (showMegaMap)
                 {
-                    // TODO brandon
                     if (!guiOutsideRects.ContainsKey("megaMap"))
                     {
                         guiOutsideRects.Add("megaMap", megaMapRect);
@@ -2491,7 +2490,10 @@ namespace KazgarsRevenge
             Rectangle chunkRect = guiInsideRects["megaMap"]["megaMap"];
 
             Rotation rotation = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkRotation(physicalData.Position);
-            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), chunkRect, Color.White);
+            
+            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), new Rectangle(chunkRect.X + chunkRect.Width/ 2, chunkRect.Y + chunkRect.Height/2, chunkRect.Width, chunkRect.Height), 
+                null, Color.White, -rotation.ToRadians(), new Vector2(600, 600), SpriteEffects.None, 0);
+                                                         // Above: origin needs to be relative to original size of the image, which is about 1200x1200
 
             // Scale the player location to the map
             Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];
