@@ -616,7 +616,7 @@ namespace KazgarsRevenge
                 }
             }
 
-            // TODO brandon - here for m key press
+            // M brings up big map
             if (curKeys.IsKeyDown(Keys.M) && prevKeys.IsKeyUp(Keys.M))
             {
                 showMegaMap = !showMegaMap;
@@ -1864,7 +1864,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
             guiOutsideRects.Add("tooltip", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
-            guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO brandon. MegaMap rectangle
+            guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
@@ -2468,7 +2468,8 @@ namespace KazgarsRevenge
 
         private void DrawMegaMap(SpriteBatch s)
         {
-            s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), guiOutsideRects["megaMap"], Color.Gray);
+            string currentChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkImgName(physicalData.Position);
+            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), guiOutsideRects["megaMap"], Color.Gray);
         }
 
         protected override void KillAlive()
