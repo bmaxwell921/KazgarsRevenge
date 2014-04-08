@@ -620,6 +620,22 @@ namespace KazgarsRevenge
             if (curKeys.IsKeyDown(Keys.M) && prevKeys.IsKeyUp(Keys.M))
             {
                 showMegaMap = !showMegaMap;
+
+                if (showMegaMap)
+                {
+                    // TODO brandon
+                    if (!guiOutsideRects.ContainsKey("megaMap"))
+                    {
+                        guiOutsideRects.Add("megaMap", megaMapRect);
+                    }
+                }
+                else
+                {
+                    if (guiOutsideRects.ContainsKey("megaMap"))
+                    {
+                        guiOutsideRects.Remove("megaMap");
+                    }
+                }
             }
 
             //Esc closes all
@@ -1836,6 +1852,7 @@ namespace KazgarsRevenge
         Rectangle portraitRect;
         Rectangle playerHPRect;
         Rectangle powerBackRect;
+        Rectangle megaMapRect;
         Vector2 powerTextPos;
 
         Rectangle hoverRect;
@@ -1864,7 +1881,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
             guiOutsideRects.Add("tooltip", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
-            guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
+            //guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
@@ -1876,6 +1893,7 @@ namespace KazgarsRevenge
             equipmentRect = new Rectangle((int)equipmentUR.X, (int)equipmentUR.Y, (int)(304 * average), (int)(608 * average));
             talentRect = new Rectangle((int)talentUR.X, (int)talentUR.Y, (int)(406 * average), (int)(812 * average));
             lootRect = new Rectangle((int)lootUR.X, (int)lootUR.Y, (int)(150 * average), (int)(300 * average));
+            megaMapRect = new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int)(160 * average), (int)(622 * average), (int)(622 * average));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
@@ -1939,7 +1957,7 @@ namespace KazgarsRevenge
 
             mapImgDict = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).getMiniImageMap();
 
-            megaMapDict["megaMap"] = guiOutsideRects["megaMap"];
+            megaMapDict["megaMap"] = megaMapRect;
             megaMapDict["playerPos"] = new Rectangle(0, 0, (int) (5 * average), (int) (5 * average));
 
             //Inventory inner
