@@ -63,11 +63,16 @@ namespace KazgarsRevenge
 
             public IList<Vector3> spawnLocs;
 
+            // Keep track of which chunks the player has been in
+            public ISet<Vector2> visitedChunks;
+            // If they go to a new chunk, then the LocalPlayerController needs to know to update the minimap
+            public bool updatedVisited;
+
             // Convenient accessors for the height and width of the level
             public int width;
             public int height;
 
-            // The graph representing enemy pathing possibilities. this is gonna be connected as fuck
+            // The graph representing enemy pathing possibilities.
              public AdjacencyGraph<Vector3, Edge<Vector3>> pathGraph;
 
             public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos, int width, int height)
@@ -78,6 +83,8 @@ namespace KazgarsRevenge
                 this.spawnLocs = new List<Vector3>();
                 this.width = width;
                 this.height = height;
+                this.visitedChunks = new HashSet<Vector2>();
+                this.updatedVisited = false;
                 this.pathGraph = new AdjacencyGraph<Vector3, Edge<Vector3>>();
             }
         }
@@ -1156,11 +1163,33 @@ namespace KazgarsRevenge
                 for (int j = 0; j < currentLevel.height; ++j)
                 {
                     int num = i + j * currentLevel.width;
-                    map[keyPre + num] = currentLevel.chunkInfos[i, j].miniMapImgName();
+
+                    // If the chunk has been visited then show it, otherwise just a grey square
+                    if (currentLevel.visitedChunks.Contains(new Vector2(i, j)))
+                    {
+                        map[keyPre + num] = currentLevel.chunkInfos[i, j].miniMapImgName(true);
+                    }
+                    else
+                    {
+                        map[keyPre + num] = TextureStrings.UI.MiniMap.UNKNOWN;
+                    }
                 }
             }
 
             return map;
+        }
+
+        /// <summary>
+        /// Called by LocalPlayerController to see if it needs to update
+        /// the images for the miniMap
+        /// </summary>
+        /// <returns></returns>
+        public bool NeedsMiniMapUpdate()
+        {
+            bool ret = currentLevel.updatedVisited;
+            // Reset it so we aren't constantly updating the minimap
+            currentLevel.updatedVisited = false;
+            return ret;
         }
 
         // Returns the chunk number that the player is currently in
@@ -1169,6 +1198,13 @@ namespace KazgarsRevenge
             int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
             int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
 
+            // This method is always called (for drawing the minimap), so we only need to update the visited chunks here
+            Vector2 visited = new Vector2(xCoord, yCoord);
+            if (!currentLevel.visitedChunks.Contains(visited))
+            {
+                currentLevel.visitedChunks.Add(visited);
+                currentLevel.updatedVisited = true;
+            }
             return xCoord + yCoord * currentLevel.width;
         }
 
@@ -1180,6 +1216,7 @@ namespace KazgarsRevenge
             return @"Textures\UI\MegaMap\" + currentLevel.chunkInfos[xCoord, yCoord].ChunkName;
         }
 
+        // Gets rotation of the chunk the player is currently in
         public Rotation GetCurrentChunkRotation(Vector3 location)
         {
             int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);

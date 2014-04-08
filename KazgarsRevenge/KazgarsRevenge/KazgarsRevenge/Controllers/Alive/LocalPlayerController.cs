@@ -623,7 +623,6 @@ namespace KazgarsRevenge
 
                 if (showMegaMap)
                 {
-                    // TODO brandon
                     if (!guiOutsideRects.ContainsKey("megaMap"))
                     {
                         guiOutsideRects.Add("megaMap", megaMapRect);
@@ -2453,10 +2452,16 @@ namespace KazgarsRevenge
 
         private void DrawMiniMap(SpriteBatch s)
         {
+            LevelManager lm = (Game.Services.GetService(typeof(LevelManager)) as LevelManager);
+            // When the player goes to a new chunk we need to update the miniMap images
+            if (lm.NeedsMiniMapUpdate())
+            {
+                mapImgDict = lm.getMiniImageMap();
+            }
             string keyPre = "Loc";
 
             // The chunk we're currently in
-            int curChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunk(physicalData.Position);
+            int curChunk = lm.GetCurrentChunk(physicalData.Position);
 
             Color blendColor = Color.White;
             for (int i = 0; i < 9; ++i)
@@ -2491,7 +2496,12 @@ namespace KazgarsRevenge
             Rectangle chunkRect = guiInsideRects["megaMap"]["megaMap"];
 
             Rotation rotation = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkRotation(physicalData.Position);
-            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), chunkRect, Color.White);
+
+            // We need to rotate the image about its center
+            int originX = Texture2DUtil.Instance.GetTexture(currentChunk).Width / 2;
+            int originY = Texture2DUtil.Instance.GetTexture(currentChunk).Height / 2;
+            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), new Rectangle(chunkRect.X + chunkRect.Width/ 2, chunkRect.Y + chunkRect.Height/2, chunkRect.Width, chunkRect.Height), 
+                null, Color.White, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
 
             // Scale the player location to the map
             Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];
