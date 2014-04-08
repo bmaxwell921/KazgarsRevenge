@@ -36,6 +36,7 @@ namespace KazgarsRevenge
             public class MiniMap
             {
                 public static readonly string SELECTOR = @"Textures\UI\MiniMap\MiniMapLocation";
+                public static readonly string UNKNOWN = @"Textures\UI\MiniMap\UnknownMini";
             }
 
             public class Items
