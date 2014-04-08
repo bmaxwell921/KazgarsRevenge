@@ -2452,10 +2452,16 @@ namespace KazgarsRevenge
 
         private void DrawMiniMap(SpriteBatch s)
         {
+            LevelManager lm = (Game.Services.GetService(typeof(LevelManager)) as LevelManager);
+            // When the player goes to a new chunk we need to update the miniMap images
+            if (lm.NeedsMiniMapUpdate())
+            {
+                mapImgDict = lm.getMiniImageMap();
+            }
             string keyPre = "Loc";
 
             // The chunk we're currently in
-            int curChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunk(physicalData.Position);
+            int curChunk = lm.GetCurrentChunk(physicalData.Position);
 
             Color blendColor = Color.White;
             for (int i = 0; i < 9; ++i)
