@@ -1940,6 +1940,7 @@ namespace KazgarsRevenge
             mapImgDict = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).getMiniImageMap();
 
             megaMapDict["megaMap"] = guiOutsideRects["megaMap"];
+            megaMapDict["playerPos"] = new Rectangle(0, 0, (int) (5 * average), (int) (5 * average));
 
             //Inventory inner
             for (int i = 0; i < 4; ++i)
@@ -2469,7 +2470,19 @@ namespace KazgarsRevenge
         private void DrawMegaMap(SpriteBatch s)
         {
             string currentChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkImgName(physicalData.Position);
-            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), guiOutsideRects["megaMap"], Color.Gray);
+            Rectangle chunkRect = guiInsideRects["megaMap"]["megaMap"];
+            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), chunkRect, Color.Gray);
+
+            // Scale the player location to the map
+            Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];
+            playerRect.X = (int) ((physicalData.Position.X % (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE)) / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE) * chunkRect.Width * average) + chunkRect.X;
+            playerRect.Y = (int) ((physicalData.Position.Z % (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE)) / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE) * chunkRect.Height * average) + chunkRect.Y;
+            
+            // Center playerRect
+            playerRect.X -= playerRect.Width / 2;
+            playerRect.Y -= playerRect.Height / 2;
+
+            s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), playerRect, Color.Blue);
         }
 
         protected override void KillAlive()
