@@ -173,6 +173,7 @@ namespace KazgarsRevenge
         bool showInventory = false;
         bool showEquipment = false;
         bool showTalents = false;
+        bool showMegaMap = false;
         string abilityToUseString = null;
         int selectedItemSlot = -1;
         int selectedTalentSlot = -1;
@@ -614,6 +615,13 @@ namespace KazgarsRevenge
                     }
                 }
             }
+
+            // TODO brandon - here for m key press
+            if (curKeys.IsKeyDown(Keys.M) && prevKeys.IsKeyUp(Keys.M))
+            {
+                showMegaMap = !showMegaMap;
+            }
+
             //Esc closes all
             if (curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
             {
@@ -632,6 +640,7 @@ namespace KazgarsRevenge
                 {
                     guiOutsideRects.Remove("talents");
                 }
+                showMegaMap = false;
             }
 
 
@@ -1809,6 +1818,7 @@ namespace KazgarsRevenge
         //Dictionary<string, Rectangle> chatDict;
         Dictionary<string, Rectangle> playerDict;
         Dictionary<string, Rectangle> mapDict;
+        Dictionary<string, Rectangle> megaMapDict;
         IDictionary<string, string> mapImgDict;
         Dictionary<string, Rectangle> xpDict;
         Dictionary<string, Rectangle> inventoryDict;
@@ -1854,6 +1864,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
             guiOutsideRects.Add("tooltip", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
+            guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO brandon. MegaMap rectangle
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
@@ -1875,6 +1886,7 @@ namespace KazgarsRevenge
             //chatDict = new Dictionary<string, Rectangle>();
             playerDict = new Dictionary<string, Rectangle>();
             mapDict = new Dictionary<string, Rectangle>();
+            megaMapDict = new Dictionary<string, Rectangle>();
             xpDict = new Dictionary<string, Rectangle>();
             tooltipDict = new Dictionary<string, Rectangle>();
             talentDict = new Dictionary<string, Rectangle>();
@@ -1889,6 +1901,7 @@ namespace KazgarsRevenge
             guiInsideRects.Add("xp", xpDict);
             guiInsideRects.Add("tooltip", tooltipDict);
             guiInsideRects.Add("map", mapDict);
+            guiInsideRects.Add("megaMap", megaMapDict);
             //guiInsideRects.Add("chat", chatDict);
             guiInsideRects.Add("player", playerDict);
             guiInsideRects.Add("talents", talentDict);
@@ -1925,6 +1938,8 @@ namespace KazgarsRevenge
             mapDict["Loc8"] = new Rectangle(totalMiniArea.X + miniInnerWidth * 2, totalMiniArea.Y + miniInnerHeight * 2, miniInnerWidth, miniInnerHeight);
 
             mapImgDict = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).getMiniImageMap();
+
+            megaMapDict["megaMap"] = guiOutsideRects["megaMap"];
 
             //Inventory inner
             for (int i = 0; i < 4; ++i)
@@ -2123,6 +2138,11 @@ namespace KazgarsRevenge
             //Mini Map (square for now)
             //s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Black * 0.5f); 
             DrawMiniMap(s);
+
+            if (showMegaMap)
+            {
+                DrawMegaMap(s);
+            }
 
             #region main player frame
             //Main Player Frame Pic
@@ -2422,6 +2442,7 @@ namespace KazgarsRevenge
             Color blendColor = Color.White;
             for (int i = 0; i < 9; ++i)
             {
+                // Safety check in case they go outside the level somehow
                 if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && i == curChunk && drawSel)
                 {
                     blendColor = Color.Yellow;
@@ -2430,9 +2451,8 @@ namespace KazgarsRevenge
                 blendColor = Color.White;
             }
 
-            // TODO brandon
-            // Draw the current chunk
 
+            // TODO this is option 2, but I like the other way better I think
             // Safety check in case they go outside the level somehow
             //if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && drawSel)
             //{
@@ -2444,6 +2464,11 @@ namespace KazgarsRevenge
             {
                 drawSel = !drawSel;
             }
+        }
+
+        private void DrawMegaMap(SpriteBatch s)
+        {
+            s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), guiOutsideRects["megaMap"], Color.Gray);
         }
 
         protected override void KillAlive()
