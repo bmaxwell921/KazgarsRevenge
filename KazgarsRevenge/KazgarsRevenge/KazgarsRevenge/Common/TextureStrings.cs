@@ -33,6 +33,10 @@ namespace KazgarsRevenge
             public static readonly string RangedBanner = @"Textures\UI\Frames\rangedBanner";
             public static readonly string MagicBanner = @"Textures\UI\Frames\magicBanner";
 
+            public class MiniMap
+            {
+                public static readonly string SELECTOR = @"Textures\UI\MiniMap\MiniMapLocation";
+            }
 
             public class Items
             {

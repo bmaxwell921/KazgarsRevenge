@@ -2409,17 +2409,41 @@ namespace KazgarsRevenge
             #endregion mouse
         }
 
+        private bool drawSel = true;
+        private int selCount = 0;
+
         private void DrawMiniMap(SpriteBatch s)
         {
             string keyPre = "Loc";
+
+            // The chunk we're currently in
+            int curChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunk(physicalData.Position);
+
+            Color blendColor = Color.White;
             for (int i = 0; i < 9; ++i)
             {
-                s.Draw(Texture2DUtil.Instance.GetTexture(mapImgDict[keyPre +i]), guiInsideRects["map"][keyPre + i], Color.White);
+                if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && i == curChunk && drawSel)
+                {
+                    blendColor = Color.Yellow;
+                }
+                s.Draw(Texture2DUtil.Instance.GetTexture(mapImgDict[keyPre +i]), guiInsideRects["map"][keyPre + i], blendColor);
+                blendColor = Color.White;
             }
 
-            // TODO brandon, draw ring around current
-            int curChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunk(physicalData.Position);
-            s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), guiInsideRects["map"][keyPre + curChunk], Color.Yellow);
+            // TODO brandon
+            // Draw the current chunk
+
+            // Safety check in case they go outside the level somehow
+            //if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && drawSel)
+            //{
+            //    s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MiniMap.SELECTOR), guiInsideRects["map"][keyPre + curChunk], Color.Yellow);
+            //}
+
+            // Switch between highlighting and not every 1/3 of a second if running at 60fps
+            if (selCount++ % 20 == 0)
+            {
+                drawSel = !drawSel;
+            }
         }
 
         protected override void KillAlive()
