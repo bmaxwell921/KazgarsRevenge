@@ -109,9 +109,6 @@ namespace KazgarsRevenge
         public int NextLevelXP { get { return 100 * level * level; } }
         public void AddEXP(int level, EntityType entityType)
         {
-            LevelUp();
-            return;
-            
             int exp = (int)(level * 25 * expMultiplier);
             if (entityType == EntityType.EliteEnemy)
             {
