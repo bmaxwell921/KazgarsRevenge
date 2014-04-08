@@ -2490,10 +2490,12 @@ namespace KazgarsRevenge
             Rectangle chunkRect = guiInsideRects["megaMap"]["megaMap"];
 
             Rotation rotation = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkRotation(physicalData.Position);
-            
+
+            // We need to rotate the image about its center
+            int originX = Texture2DUtil.Instance.GetTexture(currentChunk).Width / 2;
+            int originY = Texture2DUtil.Instance.GetTexture(currentChunk).Height / 2;
             s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), new Rectangle(chunkRect.X + chunkRect.Width/ 2, chunkRect.Y + chunkRect.Height/2, chunkRect.Width, chunkRect.Height), 
-                null, Color.White, -rotation.ToRadians(), new Vector2(600, 600), SpriteEffects.None, 0);
-                                                         // Above: origin needs to be relative to original size of the image, which is about 1200x1200
+                null, Color.White, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
 
             // Scale the player location to the map
             Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];
