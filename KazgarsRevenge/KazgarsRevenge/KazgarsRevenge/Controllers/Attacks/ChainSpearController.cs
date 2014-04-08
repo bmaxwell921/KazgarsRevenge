@@ -12,7 +12,6 @@ using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.Collidables;
 using BEPUphysics.Collidables.MobileCollidables;
 using SkinnedModelLib;
-using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
@@ -68,7 +67,7 @@ namespace KazgarsRevenge
                                 lifeLength = 8000;
                                 if (target != null)
                                 {
-                                    target.DamageDodgeable(DeBuff.ForcefulThrow, 0, creator.Entity);
+                                    target.DamageDodgeable(stun ? DeBuff.ForcefulThrow : DeBuff.None, 0, creator.Entity, AttackType.None);
                                 }
                             }
                         }
@@ -79,8 +78,12 @@ namespace KazgarsRevenge
 
         private void EndPull()
         {
-            targetData.LinearVelocity = Vector3.Zero;
-            target.StopPull();
+            if (targetData != null)
+            {
+                targetData.LinearVelocity = Vector3.Zero;
+                target.StopPull();
+            }
+            creator.StopPull();
             Entity.KillEntity();
         }
 
@@ -109,14 +112,7 @@ namespace KazgarsRevenge
             lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (lifeCounter >= lifeLength)
             {
-                if (pulling)
-                {
-                    EndPull();
-                }
-                else
-                {
-                    Entity.KillEntity();
-                }
+                EndPull();
             }
             base.Update(gameTime);
         }

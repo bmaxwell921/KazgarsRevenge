@@ -12,10 +12,9 @@ namespace KazgarsRevenge
     public class ProjectileController : AttackController
     {
         public ProjectileController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
-            : base(game, entity, damage, factionToHit, creator)
+            : base(game, entity, damage, factionToHit, creator, AttackType.Ranged)
         {
             this.lifeLength = 2000;
-            this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);
 
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
         }
@@ -23,7 +22,7 @@ namespace KazgarsRevenge
 
         public void Penetrate()
         {
-            aoe = true;
+            hitMultiple = true;
             dieAfterContact = false;
         }
 
@@ -38,6 +37,7 @@ namespace KazgarsRevenge
         {
             homing = true;
             this.target = null;
+            this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);
         }
 
         public void Bleed()
@@ -58,6 +58,11 @@ namespace KazgarsRevenge
                 if (stickInWalls)
                 {
                     (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
+                    ArrowVBillboard possV = Entity.GetComponent(typeof(ArrowVBillboard)) as ArrowVBillboard;
+                    if (possV != null)
+                    {
+                        possV.KillComponent();
+                    }
                 }
                 else
                 {

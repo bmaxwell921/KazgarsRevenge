@@ -29,6 +29,10 @@ namespace KazgarsRevenge
         public EntityType Type { get; private set; }
         public string Name { get; private set; }
         public FactionType Faction { get; private set; }
+        public void ChangeFaction(FactionType t)
+        {
+            this.Faction = t;
+        }
         public bool Dead { get; private set; }
 
         private Dictionary<Type, Component> components = new Dictionary<Type, Component>();
@@ -73,6 +77,7 @@ namespace KazgarsRevenge
         {
             if (components.ContainsKey(t))
             {
+                components[t].KillComponent();
                 components.Remove(t);
             }
         }

@@ -16,37 +16,38 @@ namespace KazgarsRevenge
 {
     public class EnemyManager : EntityManager
     {
+        LootManager lm;
         IDictionary<Identification, GameEntity> enemies;
 
         public EnemyManager(KazgarsRevengeGame game)
             : base(game)
         {
             enemies = new Dictionary<Identification, GameEntity>();
+            
+        }
+        public override void Initialize()
+        {
+            lm = Game.Services.GetService(typeof(LootManager)) as LootManager;
+            base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
         {
-            
+            List<Identification> toRemove = new List<Identification>();
+            foreach (KeyValuePair<Identification, GameEntity> k in enemies)
+            {
+                if (k.Value.Dead)
+                {
+                    toRemove.Add(k.Key);
+                }
+            }
+            for (int i = toRemove.Count - 1; i >= 0; --i)
+            {
+                enemies.Remove(toRemove[i]);
+            }
         }
 
         #region entities
-
-        private DropTable CreateNormalDropTableFor(GameEntity enemy)
-        {
-            LootManager lm = Game.Services.GetService(typeof(LootManager)) as LootManager;
-            DropTable dt = new DropTable(Game as KazgarsRevengeGame, enemy, DropTable.GetNormalAddItemLevel);
-            // TODO what else?
-            dt.AddDrop(ItemType.Equippable, lm.GetBaseSword(), 5);
-            dt.AddDrop(ItemType.Equippable, null, 5);
-            dt.AddDrop(ItemType.Potion, new Item(ItemType.Potion, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), "Health Potion", 0), 24, 5);
-            return dt;
-        }
-
-        private void AddCommonDrops(DropTable dt)
-        {
-            //TODO any common drops
-        }
-
         const float meleeRange = 40;
         public void CreateBrute(Identification id, Vector3 position, int level)
         {
@@ -54,11 +55,11 @@ namespace KazgarsRevenge
             brute.id = id;
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
-            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\axe"), "pig_hand_R"));
+            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Weapons\\axe"), "pig_hand_R"));
             brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             SetupEntityPhysicsAndShadow(brute, position, new Vector3(20f, 37f, 20f), 100);
-            SetupEntityGraphics(brute, "Models\\Enemies\\Pigman\\pig_idle");
+            SetupEntityGraphics(brute, "Models\\Enemies\\Pigman\\pig_idle", 10);
 
             EnemyController bruteController = new EnemyController(mainGame, brute, level);
             brute.AddComponent(typeof(AliveComponent), bruteController);
@@ -66,7 +67,7 @@ namespace KazgarsRevenge
 
             AddHealthBarComponent(brute, 40);
 
-            brute.AddComponent(typeof(DropTable), CreateNormalDropTableFor(brute));
+            brute.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(brute, AttackType.Melee, AttackType.None));
 
             enemies.Add(id, brute);
         }
@@ -77,16 +78,38 @@ namespace KazgarsRevenge
             enemy.id = id;
 
             SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20f, 37f, 20f), 100);
-            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle");
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle", 15);
 
-
-            SkeletonController enemyController = new SkeletonController(mainGame, enemy, level);
+            MagicSkeletonController enemyController = new MagicSkeletonController(mainGame, enemy, level);
             enemy.AddComponent(typeof(AliveComponent), enemyController);
             genComponentManager.AddComponent(enemyController);
 
             AddHealthBarComponent(enemy, 40);
 
-            enemy.AddComponent(typeof(DropTable), CreateNormalDropTableFor(enemy));
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Magic, AttackType.None));
+
+            enemies.Add(id, enemy);
+        }
+
+        public void CreateCrossbowSkeleton(Identification id, Vector3 position, int level)
+        {
+            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, EntityType.NormalEnemy);
+            enemy.id = id;
+
+            Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
+            attached.Add("hand", new AttachableModel(GetUnanimatedModel("Models\\Weapons\\crossbow"), "s_hand_R"));
+            enemy.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
+
+            SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20f, 37f, 20f), 100);
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle", 15);
+
+            CrossbowSkeletonController enemyController = new CrossbowSkeletonController(mainGame, enemy, level);
+            enemy.AddComponent(typeof(AliveComponent), enemyController);
+            genComponentManager.AddComponent(enemyController);
+
+            AddHealthBarComponent(enemy, 40);
+
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Magic, AttackType.None));
 
             enemies.Add(id, enemy);
         }
@@ -103,7 +126,7 @@ namespace KazgarsRevenge
             enemy.AddSharedData(typeof(Dictionary<string, Model>), syncedModels);
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
-            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Attachables\\sword01"), "Hand_R", MathHelper.Pi, 0));
+            attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Weapons\\sword01"), "Hand_R", MathHelper.Pi, 0));
             enemy.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
             SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20, 37, 20), 100);
@@ -129,23 +152,31 @@ namespace KazgarsRevenge
 
             AddHealthBarComponent(enemy, 40);
 
-            enemy.AddComponent(typeof(DropTable), CreateNormalDropTableFor(enemy));
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Melee, AttackType.Magic));
 
             enemies.Add(id, enemy);
         }
 
+        public void CreateBoss(Identification id, Vector3 position)
+        {
+            //TODO: switch based on level
+            CreateDragon(id, position);
+        }
+
         public void CreateDragon(Identification id, Vector3 position)
         {
-            GameEntity dragon = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
+            position.Y = 42;
+            GameEntity dragon = new GameEntity("Chillinator", FactionType.Enemies, EntityType.NormalEnemy);
             dragon.id = id;
 
-            SetupEntityPhysicsAndShadow(dragon, position, new Vector3(100, 100, 100), 250);
+            SetupEntityPhysicsAndShadow(dragon, position, new Vector3(100, 40, 100), 250);
 
             Model enemyModel = GetAnimatedModel("Models\\Enemies\\Dragon\\d_idle");
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             dragon.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
-            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 10, Vector3.Down * 30);
-
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, dragon, enemyModel, 10, Vector3.Down * 9);
+            //enemyGraphics.AddEmitter(typeof(FireDragonHeadSystem), "firehead", 150, 0, Vector3.Zero, "d_head_emittor_L");
+            //enemyGraphics.AddEmitter(typeof(FrostDragonHeadSystem), "frosthead", 150, 0, Vector3.Zero, "d_head_emittor_R");
             dragon.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);
 
@@ -154,7 +185,7 @@ namespace KazgarsRevenge
             dragon.AddComponent(typeof(AliveComponent), dragonController);
             genComponentManager.AddComponent(dragonController);
 
-            dragon.AddComponent(typeof(DropTable), CreateNormalDropTableFor(dragon));
+            dragon.AddComponent(typeof(DropTable), lm.CreateBossDropTable(dragon, FloorName.Dungeon));
 
             enemies.Add(id, dragon);
         }
@@ -163,12 +194,12 @@ namespace KazgarsRevenge
         /// Creates an enemy with typical physics and animated graphics around the given entity.
         /// You still need to give it an AIController and add the entity to the entity list after calling this.
         /// </summary>
-        private void SetupEntityGraphics(GameEntity entity, string model)
+        private void SetupEntityGraphics(GameEntity entity, string model, float scale)
         {
             Model enemyModel = GetAnimatedModel(model);
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             entity.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
-            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, entity, enemyModel, 10, Vector3.Down * 18);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, entity, enemyModel, scale, Vector3.Down * 18);
 
             entity.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);
@@ -176,6 +207,7 @@ namespace KazgarsRevenge
 
         private void SetupEntityPhysicsAndShadow(GameEntity entity, Vector3 position, Vector3 dimensions, float mass)
         {
+            position.Y = LevelManager.MOB_SPAWN_Y;
             Entity enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z, mass);
             enemyPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
             enemyPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
@@ -193,10 +225,10 @@ namespace KazgarsRevenge
         }
 
         private void AddHealthBarComponent(GameEntity entity, float barHeight)
-        {
+        {/*
             HealthBarBillboard hp = new HealthBarBillboard(mainGame, entity, 5, barHeight);
             entity.AddComponent(typeof(HealthBarBillboard), hp);
-            billboardManager.AddComponent(hp);
+            billboardManager.AddComponent(hp);*/
         }
         #endregion
         

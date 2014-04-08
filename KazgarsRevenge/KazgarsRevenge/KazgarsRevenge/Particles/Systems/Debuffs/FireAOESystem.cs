@@ -21,7 +21,7 @@ namespace KazgarsRevenge
 
             settings.MaxParticles = 100;
 
-            settings.Duration = TimeSpan.FromSeconds(1);
+            settings.Duration = TimeSpan.FromSeconds(1.5);
 
             settings.MinHorizontalVelocity = 0;
             settings.MaxHorizontalVelocity = 0;
@@ -29,11 +29,13 @@ namespace KazgarsRevenge
             settings.MinVerticalVelocity = 8;
             settings.MaxVerticalVelocity = 15;
 
-            settings.MinStartSize = 15;
-            settings.MaxStartSize = 25;
+            settings.MinStartSize = 1;
+            settings.MaxStartSize = 5;
 
-            settings.MinEndSize = 1;
-            settings.MaxEndSize = 5;
+            settings.MinEndSize = 55;
+            settings.MaxEndSize = 65;
+
+            settings.BlendState = BlendState.Additive;
         }
     }
 }

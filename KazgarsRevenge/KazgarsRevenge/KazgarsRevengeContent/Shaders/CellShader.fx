@@ -1,10 +1,15 @@
 float alpha = 1;
 float lineIntensity = 1;
+float3 ambient = (.17, .17, .17);
 
+float3 playerLightPosition = float3(0,0,0);
+float3 playerLightColor = float3(.75,.75,.75);
 float3 lightPositions[30];
 float LightAttenuation = 300;
-float LightFalloff = 2;
+float LightFalloff = 1;
 float3 lightColors[30];
+
+float3 colorTint = float3(1,1,1);
 
 float ToonThresholds[2] = { 0.8, 0.4 };
 float ToonBrightnessLevels[3] = { 1.3, 0.9, 0.65 };
@@ -67,7 +72,7 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 	float3 lightDir;
 	float amt;
 	float att;
-	float tmp;
+	float tmp;/*
 	for(int i=0; i<30; ++i)
 	{
 		if(lightPositions[i].x != -10000)
@@ -89,8 +94,14 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 
 			++curActiveLights;
 		}
-	}
-	
+	}*/
+
+	//player light location
+	light += 1 - pow(saturate(distance(playerLightPosition, pin.worldPos) / LightAttenuation), LightFalloff);
+	totalColor += playerLightColor;
+	++curActiveLights;
+
+
 	totalColor /= curActiveLights;
 	
 	/*
@@ -108,9 +119,9 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
     }
 	*/
 
-	light += float3(.15f, .15f, .15f);//float3(.3, .3, .3);
+	light += ambient;
 
-    Color.rgb *= light * totalColor;
+    Color.rgb *= light * totalColor * colorTint;
     Color.a = min(alpha, Color.a);
 
     return Color;

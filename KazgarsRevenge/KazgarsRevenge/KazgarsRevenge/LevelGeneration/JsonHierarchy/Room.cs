@@ -12,7 +12,6 @@ namespace KazgarsRevenge
     public class Room : ChunkComponent
     {
         private static readonly string ENEMY_SPAWNER_NAME = "mobSpawn";
-
         public int Width
         {
             get;

@@ -16,7 +16,8 @@ namespace KazgarsRevenge
         Intellect,
         CooldownReduction,
         CritChance,
-        Health,
+        Vitality,
+        Armor,
     }
     public enum DeBuff
     {
@@ -27,16 +28,31 @@ namespace KazgarsRevenge
         FlashBomb,
         Tar,
         Stunned,//hide this from gui (just show description for flashbomb or forceful throw or w/e)
+        Headbutt,
+        Garrote,
         ForcefulThrow,
-        Igniting,
+        Burning,
+        Frozen,
+        Execute,
+        Charge,
     }
     public enum Buff
     {
         None,
+        HealthPotion,
+        SuperHealthPotion,
+        LuckPotion,
         AdrenalineRush,
         Homing,
         SerratedBleeding,
         Elusiveness,
+        SadisticFrenzy,
+        Berserk,
+        Berserk2,
+        Berserk3,
+        Invincibility,
+        Unstoppable,
+        Swordnado,
     }
     public enum BuffState
     {
@@ -53,7 +69,7 @@ namespace KazgarsRevenge
             public double timeLeft;
             public double nextTick;
             public double tickLength { get; private set; }
-            GameEntity from;
+            public GameEntity from { get; private set; }
             public int stacks = 1;
             public NegativeEffect(DeBuff type, double time, GameEntity from, double tickLength)
             {
@@ -71,18 +87,45 @@ namespace KazgarsRevenge
             public double timeLeft;
             public double nextTick;
             public double tickLength { get; private set; }
-            GameEntity from;
+            public GameEntity from { get; private set; }
             public int stacks = 1;
             public PositiveEffect(Buff type, double time, GameEntity from, double tickLength)
             {
                 this.type = type;
                 this.timeLeft = time;
-                this.nextTick = -10000;
+                this.nextTick = timeLeft - tickLength;
                 this.from = from;
                 this.tickLength = tickLength;
             }
         }
 
+        public virtual void AddPower(int power)
+        {
+
+        }
+
+        protected float expMultiplier = 1;
+        protected int experience = 0;
+        public int NextLevelXP { get { return 100 * level * level; } }
+        public void AddEXP(int level, EntityType entityType)
+        {
+            int exp = (int)(level * 25 * expMultiplier);
+            if (entityType == EntityType.EliteEnemy)
+            {
+                exp *= 2;
+            }
+            if (entityType == EntityType.Boss)
+            {
+                exp *= 10;
+            }
+
+            experience += exp;
+            while (experience >= NextLevelXP)
+            {
+                experience = experience - NextLevelXP;
+                LevelUp();
+            }
+        }
 
         public int Health { get; private set; }
         public int MaxHealth { get; private set; }
@@ -90,7 +133,7 @@ namespace KazgarsRevenge
         {
             get
             {
-                if (MaxHealth != 0)
+                if (MaxHealth > 0)
                 {
                     return (float)Health / (float)MaxHealth;
                 }
@@ -102,20 +145,30 @@ namespace KazgarsRevenge
         }
         public bool Dead { get; private set; }
 
+        public AliveComponent Killer { get; protected set; }
+
+        public void ReviveAlive()
+        {
+            Killer = null;
+            Dead = false;
+            Health = (int)(MaxHealth * .25f);
+        }
+
         #region stats
         protected int level = 0;
         protected bool pulling = false;
         
         private Dictionary<StatType, float> statsPerLevel = new Dictionary<StatType, float>()
         {
-            {StatType.RunSpeed, 0},
+            {StatType.RunSpeed, 2},
             {StatType.AttackSpeed, 0},
             {StatType.Strength, 1},
             {StatType.Agility, 1},
             {StatType.Intellect, 1},
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
-            {StatType.Health, 100},
+            {StatType.Vitality, 1},
+            {StatType.Armor, 0},
         };
 
         protected Dictionary<StatType, float> originalBaseStats = new Dictionary<StatType, float>()
@@ -127,7 +180,8 @@ namespace KazgarsRevenge
             {StatType.Intellect, 1},
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
-            {StatType.Health, 100},
+            {StatType.Vitality, 10},
+            {StatType.Armor, 0}
         };
         protected Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>()
         {
@@ -138,7 +192,8 @@ namespace KazgarsRevenge
             {StatType.Intellect, 1},
             {StatType.CooldownReduction, 0},
             {StatType.CritChance, 0},
-            {StatType.Health, 100},
+            {StatType.Vitality, 10},
+            {StatType.Armor, 0}
         };
 
         private Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
@@ -164,6 +219,8 @@ namespace KazgarsRevenge
             }
         }
 
+        protected float baseStatsMultiplier = 1;
+        protected float statsPerLevelMultiplier = 1;
         protected virtual void RecalculateStats()
         {
             if (stats.Count == 0)
@@ -176,13 +233,31 @@ namespace KazgarsRevenge
             //add base stats, accounting for level
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
             {
-                stats[(StatType)i] = baseStats[(StatType)i];
+                StatType s = (StatType)i;
+                stats[s] = baseStats[(StatType)i];
+                if (s == StatType.Agility || s == StatType.Strength || s == StatType.Intellect)
+                {
+                    stats[s] *= baseStatsMultiplier;
+                }
             }
 
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
             {
-                stats[(StatType)i] += statsPerLevel[(StatType)i] * level;
+                stats[(StatType)i] += statsPerLevel[(StatType)i] * level * statsPerLevelMultiplier;
             }
+
+            //keep same health percentage when you change gear
+            float curHealthPerc = HealthPercent;
+            MaxHealth = (int)(stats[StatType.Vitality] * 10);
+            Health = (int)(MaxHealth * curHealthPerc);
+        }
+
+        public void LevelUp()
+        {
+            ++level;
+            RecalculateStats();
+
+            attacks.CreateLevelUpGraphics(physicalData);
         }
         #endregion
 
@@ -196,19 +271,19 @@ namespace KazgarsRevenge
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             rand = game.rand;
 
-            this.MaxHealth = 100 * level;
-            this.Health = MaxHealth;
             this.level = level;
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
-            
+
             RecalculateStats();
+            this.Health = MaxHealth;
         }
 
         public override void Start()
         {
             model = (AnimatedModelComponent)Entity.GetComponent(typeof(AnimatedModelComponent));
+            sounds = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
             base.Start();
         }
 
@@ -242,8 +317,8 @@ namespace KazgarsRevenge
 
         protected int GeneratePrimaryDamage(StatType s)
         {
-            float ret = stats[s] * 10;
-            if (rand.Next(0, 101) < stats[StatType.CritChance])
+            float ret = stats[s];
+            if ((float)rand.Next(0, 1000) / 10f < stats[StatType.CritChance] * 100)
             {
                 ret *= 1.25f;
             }
@@ -254,21 +329,41 @@ namespace KazgarsRevenge
         /// <summary>
         /// calculates the actual amount of damage and then returns what was subtracted
         /// </summary>
-        protected int Damage(int d, bool truedamage)
+        protected int Damage(int d, GameEntity from, bool trueDamage)
         {
-            //TODO: armor and resistance calculations
-            int actualDamage = d;
-            if (activeDebuffs.ContainsKey(DeBuff.MagneticImplant))
+            int actualDamage = 0;
+            if (!activeBuffs.ContainsKey(Buff.Invincibility))
             {
-                actualDamage *= 2;
-            }
-            Health -= actualDamage;
-            if (Health <= 0)
-            {
-                Health = 0;
-                KillAlive();
+                actualDamage = d;
+                if (!trueDamage)
+                {
+                    actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * level));
+                }
+                if (!Dead)
+                {
+                    if (activeDebuffs.ContainsKey(DeBuff.MagneticImplant))
+                    {
+                        actualDamage *= 2;
+                    }
+                    Health -= actualDamage;
+                    if (Health <= 0)
+                    {
+                        Health = 0;
+                        KillAlive();
+                        if (Dead)
+                        {
+                            Killer = from.GetComponent(typeof(AliveComponent)) as AliveComponent;
+                            DealWithKiller();
+                        }
+                    }
+                }
             }
             return actualDamage;
+        }
+
+        protected virtual void DealWithKiller()
+        {
+
         }
 
         protected virtual void KillAlive()
@@ -294,7 +389,17 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.Normal;
         }
 
-        public int DamageDodgeable(DeBuff db, int d, GameEntity from)
+        public void KnockBack(Vector3 origin, float impulse)
+        {
+            Vector3 newVel = physicalData.Position - origin;
+            if (newVel != Vector3.Zero)
+            {
+                newVel.Normalize();
+            }
+            this.physicalData.LinearVelocity = newVel * impulse;
+        }
+
+        public int DamageDodgeable(DeBuff db, int d, GameEntity from, AttackType type)
         {
             if (activeBuffs.ContainsKey(Buff.Elusiveness))
             {
@@ -303,19 +408,23 @@ namespace KazgarsRevenge
             }
             else
             {
-                return Damage(db, d, from);
+                return Damage(db, d, from, type);
             }
         }
 
-        public int Damage(DeBuff db, int d, GameEntity from)
+        public int Damage(DeBuff db, int d, GameEntity from, AttackType type)
         {
-            if (db == DeBuff.Igniting && activeDebuffs.ContainsKey(DeBuff.Tar))
+            if (db == DeBuff.Burning && activeDebuffs.ContainsKey(DeBuff.Tar))
             {
                 d *= 4;
                 attacks.SpawnFireExplosionParticles(physicalData.Position, .5f);
             }
+            else if (db == DeBuff.Execute && Health < MaxHealth * .2f)
+            {
+                d *= 15;
+            }
 
-            int actualDamage = Damage(d, false);
+            int actualDamage = Damage(d, from, false);
             TakeDamage(actualDamage, from);
 
             //handle negative effect
@@ -324,7 +433,18 @@ namespace KazgarsRevenge
                 AddDebuff(db, from);
             }
 
+            PlayHitSound(type);
+
             return actualDamage;
+        }
+
+        SoundEffectLibrary sounds;
+        protected virtual void PlayHitSound(AttackType t)
+        {
+            if (t == AttackType.Melee)
+            {
+                sounds.playMeleeHitSound();
+            }
         }
 
         protected void Heal(int h)
@@ -366,12 +486,12 @@ namespace KazgarsRevenge
                 cur.timeLeft -= elapsed;
                 if (cur.timeLeft < cur.nextTick)
                 {
-                    HandleDeBuff(cur.type, BuffState.Ticking, cur.stacks);
+                    HandleDeBuff(cur.type, BuffState.Ticking, cur.stacks, cur.from);
                     cur.nextTick -= cur.tickLength;
                 }
                 if (cur.timeLeft <= 0 || Dead)
                 {
-                    HandleDeBuff(cur.type, BuffState.Ending, cur.stacks);
+                    HandleDeBuff(cur.type, BuffState.Ending, cur.stacks, cur.from);
                     toRemoveDebuffs.Add(cur.type);
                 }
             }
@@ -387,13 +507,13 @@ namespace KazgarsRevenge
                 cur.timeLeft -= elapsed;
                 if (cur.timeLeft < cur.nextTick)
                 {
-                    HandleBuff(cur.type, BuffState.Ticking, cur.stacks);
+                    HandleBuff(cur.type, BuffState.Ticking, cur.stacks, cur.from);
                     cur.nextTick -= cur.tickLength;
                 }
                 if (cur.timeLeft <= 0 || Dead)
                 {
-                    HandleBuff(cur.type, BuffState.Ending, cur.stacks);
-                    toRemoveBuffs.Add(cur.type);
+                    HandleBuff(cur.type, BuffState.Ending, cur.stacks, cur.from);
+                           toRemoveBuffs.Add(cur.type);
                 }
             }
             for (int i = toRemoveBuffs.Count - 1; i >= 0; --i)
@@ -409,54 +529,114 @@ namespace KazgarsRevenge
 
         }
 
-        public virtual void HandleStun()
+        public virtual void HandleStun(double length)
         {
-
+            model.AddEmitter(typeof(StunnedParticleSystem), "stun", 5, 5, Vector3.Up * 15);
+            model.AddParticleTimer("stun", length);
         }
 
-        private void HandleBuff(Buff b, BuffState state, int stacks)
+        private bool HandleBuff(Buff b, BuffState state, int stacks, GameEntity from)
         {
             switch (b)
             {
+                case Buff.HealthPotion:
+                    if (state == BuffState.Ticking)
+                    {
+                        Heal((int)Math.Ceiling(MaxHealth * .01f));
+                    }
+                    break;
+                case Buff.SuperHealthPotion:
+                    if (state == BuffState.Ticking)
+                    {
+                        Heal((int)Math.Ceiling(MaxHealth * .02f));
+                    }
+                    break;
                 case Buff.AdrenalineRush:
                     if (state == BuffState.Starting)
                     {
                         baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .75f;
                         baseStats[StatType.AttackSpeed] += .6f;
                         RecalculateStats();
+
+                        if(Entity.GetComponent(typeof(AdrenalineRushBillboard)) == null)
+                        {
+                            AdrenalineRushBillboard billboard = new AdrenalineRushBillboard(Game, Entity, physicalData);
+                            Entity.AddComponent(typeof(AdrenalineRushBillboard), billboard);
+                            (Game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).AddComponent(billboard);
+                        }
                     }
                     else if (state == BuffState.Ending)
                     {
                         baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .75f * stacks;
                         baseStats[StatType.AttackSpeed] -= .6f * stacks;
                         RecalculateStats();
+
+                        Entity.RemoveComponent(typeof(AdrenalineRushBillboard));
                     }
                     break;
-            }
-        }
-
-        private void HandleDeBuff(DeBuff d, BuffState state, int stacks)
-        {
-            switch (d)
-            {
-                case DeBuff.Frost:
+                case Buff.SadisticFrenzy:
                     if (state == BuffState.Starting)
                     {
-                        model.AddEmitter(typeof(FrostDebuffParticleSystem), "frosttrail", 10, 3, Vector3.Zero);
-                        model.AddParticleTimer("frosttrail", debuffLengths[DeBuff.Frost]);
-                        baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .2f;
+                        baseStats[StatType.AttackSpeed] += originalBaseStats[StatType.AttackSpeed] * .2f;
                         RecalculateStats();
                     }
                     else if (state == BuffState.Ending)
                     {
-                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .2f * stacks;
+                        baseStats[StatType.AttackSpeed] -= originalBaseStats[StatType.AttackSpeed] * .2f * stacks;
+                        RecalculateStats();
+                    }
+                    break;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// returns true if it applied the debuff, false if no (to limit certain debuffs, like slows)
+        /// </summary>
+        private bool HandleDeBuff(DeBuff d, BuffState state, int stacks, GameEntity from)
+        {
+            switch (d)
+            {
+                case DeBuff.Burning:
+                    if (state == BuffState.Ticking)
+                    {
+                        Damage((int)Math.Ceiling(MaxHealth * .035f * stacks), from, true);
+                        attacks.SpawnLittleBloodSpurt(physicalData.Position);
+                    }
+                    break;
+                case DeBuff.Frozen:
+
+                    break;
+                case DeBuff.Frost:
+                    if (state == BuffState.Starting)
+                    {
+                        if (activeDebuffs.ContainsKey(DeBuff.Frost) && activeDebuffs[DeBuff.Frost].stacks > 7)
+                        {
+                            AddDebuff(DeBuff.Frozen, null);
+                            return false;
+                        }
+                        model.AddEmitter(typeof(FrostDebuffParticleSystem), "frosttrail", 10, 3, Vector3.Zero);
+                        model.AddParticleTimer("frosttrail", debuffLengths[DeBuff.Frost]);
+                        baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .15f;
+                        RecalculateStats();
+                    }
+                    else if (state == BuffState.Ending)
+                    {
+                        baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .15f * stacks;
                         RecalculateStats();
                     }
                     break;
                 case DeBuff.SerratedBleeding:
                     if (state == BuffState.Ticking)
                     {
-                        Damage((int)Math.Ceiling(MaxHealth * .01f * stacks), true);
+                        Damage((int)Math.Ceiling(MaxHealth * .02f * stacks), from, true);
+                        attacks.SpawnLittleBloodSpurt(physicalData.Position);
+                    }
+                    break;
+                case DeBuff.Garrote:
+                    if (state == BuffState.Ticking)
+                    {
+                        Damage((int)Math.Ceiling(MaxHealth * .05f * stacks), from, true);
                         attacks.SpawnLittleBloodSpurt(physicalData.Position);
                     }
                     break;
@@ -464,6 +644,12 @@ namespace KazgarsRevenge
                     if (state == BuffState.Starting)
                     {
                         AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.FlashBomb], null);
+                    }
+                    break;
+                case DeBuff.Headbutt:
+                    if (state == BuffState.Starting)
+                    {
+                        AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.Headbutt], null);
                     }
                     break;
                 case DeBuff.Tar:
@@ -486,68 +672,98 @@ namespace KazgarsRevenge
                         AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.ForcefulThrow], null);
                     }
                     break;
+                case DeBuff.Charge:
+                    if (state == BuffState.Starting)
+                    {
+                        pulling = true;
+                    }
+                    else if (state == BuffState.Ending)
+                    {
+                        pulling = false;
+                        physicalData.LinearVelocity = Vector3.Zero;
+                    }
+                    break;
             }
+
+            return true;
         }
 
         Dictionary<DeBuff, double> debuffLengths = new Dictionary<DeBuff, double>()
         {
             {DeBuff.SerratedBleeding, 5000},
-            {DeBuff.Frost, 1000},
+            {DeBuff.Garrote, 2000},
+            {DeBuff.Frost, 1500},
             {DeBuff.FlashBomb, 3000},
-            {DeBuff.Tar, 6000},
+            {DeBuff.Headbutt, 5000},
+            {DeBuff.Tar, 9000},
             {DeBuff.MagneticImplant, 2000},
             {DeBuff.ForcefulThrow, 3000},
-            {DeBuff.Igniting, 0}
+            {DeBuff.Burning, 0},
+            {DeBuff.Frozen, 1500},
+            {DeBuff.Charge, 100}
         };
         Dictionary<DeBuff, double> debuffTickLengths = new Dictionary<DeBuff, double>()
         {
-            {DeBuff.SerratedBleeding, 1000}
+            {DeBuff.SerratedBleeding, 1000},
+            {DeBuff.Garrote, 1000},
+            {DeBuff.Burning, 1500}
         };
 
         Dictionary<Buff, double> buffLengths = new Dictionary<Buff, double>()
         {
             {Buff.AdrenalineRush, 6000},
+            {Buff.SadisticFrenzy, 4000},
             {Buff.Homing, 6000},
             {Buff.SerratedBleeding, 6000},
-            {Buff.Elusiveness, 6000},
+            {Buff.Elusiveness, 3000},
+            {Buff.HealthPotion, 5000},
+            {Buff.SuperHealthPotion, 5000},
+            {Buff.LuckPotion, 120000},
+            {Buff.Invincibility, 5000},
         };
 
         Dictionary<Buff, double> buffTickLengths = new Dictionary<Buff, double>()
         {
-
+            {Buff.HealthPotion, 250},
+            {Buff.SuperHealthPotion, 250}
         };
 
         protected void AddBuff(Buff b, GameEntity from)
         {
             double length = 0;
-            double tickLength = double.MaxValue;
-
             if (buffLengths.ContainsKey(b))
             {
                 length = buffLengths[b];
             }
+            AddBuff(b, length, from);
+        }
+
+        protected void AddBuff(Buff b, double length, GameEntity from)
+        {
+            double tickLength = double.MaxValue;
 
             if (buffTickLengths.ContainsKey(b))
             {
                 tickLength = buffTickLengths[b];
             }
 
-            HandleBuff(b, BuffState.Starting, 1);
-            if (activeBuffs.ContainsKey(b))
+            if (HandleBuff(b, BuffState.Starting, 1, from))
             {
-                activeBuffs[b].stacks += 1;
-                activeBuffs[b].nextTick = activeBuffs[b].timeLeft - activeBuffs[b].nextTick;
-                activeBuffs[b].timeLeft = length;
-            }
-            else
-            {
-                activeBuffs.Add(b, new PositiveEffect(b, length, from, tickLength));
+                if (activeBuffs.ContainsKey(b))
+                {
+                    activeBuffs[b].stacks += 1;
+                    activeBuffs[b].nextTick = length - (activeBuffs[b].timeLeft - activeBuffs[b].nextTick);
+                    activeBuffs[b].timeLeft = length;
+                }
+                else
+                {
+                    activeBuffs.Add(b, new PositiveEffect(b, length, from, tickLength));
+                }
             }
         }
 
         protected void AddDebuff(DeBuff b, GameEntity from)
         {
-
             double length = 0;
             if (debuffLengths.ContainsKey(b))
             {
@@ -560,9 +776,11 @@ namespace KazgarsRevenge
         {
             if (b == DeBuff.Stunned)
             {
-                HandleStun();
-                model.AddEmitter(typeof(StunnedParticleSystem), "stun", 5, 5, Vector3.Up * 15);
-                model.AddParticleTimer("stun", length);
+                if (activeBuffs.ContainsKey(Buff.Unstoppable))
+                {
+                    return;
+                }
+                HandleStun(length);
             }
 
             double tickLength = double.MaxValue;
@@ -572,18 +790,24 @@ namespace KazgarsRevenge
                 tickLength = debuffTickLengths[b];
             }
 
-            HandleDeBuff(b, BuffState.Starting, 1);
 
             if (activeDebuffs.ContainsKey(b))
             {
-                activeDebuffs[b].stacks += 1;
-                activeDebuffs[b].nextTick = activeDebuffs[b].timeLeft - activeDebuffs[b].nextTick;
-                activeDebuffs[b].timeLeft = length;
+                if (HandleDeBuff(b, BuffState.Starting, activeDebuffs[b].stacks, from))
+                {
+                    activeDebuffs[b].stacks += 1;
+                    activeDebuffs[b].nextTick = length - (activeDebuffs[b].timeLeft - activeDebuffs[b].nextTick);
+                    activeDebuffs[b].timeLeft = length;
+                }
             }
             else
             {
-                activeDebuffs.Add(b, new NegativeEffect(b, length, from, tickLength));
+                if (HandleDeBuff(b, BuffState.Starting, 1, from))
+                {
+                    activeDebuffs.Add(b, new NegativeEffect(b, length, from, tickLength));
+                }
             }
+
         }
 
     }

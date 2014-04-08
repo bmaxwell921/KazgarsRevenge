@@ -13,6 +13,9 @@ namespace KazgarsRevenge
         public static readonly int NAME_LENGTH_LIMIT = 12;
         private static readonly string BIG_CHARACTER = "m";
 
+        private static readonly string SAVE_STR = "Save";
+        private static readonly string BACK_STR = "Back";
+
         // Where they input the name
         private TextBox input;
         private Vector2 textBoxLoc;
@@ -32,8 +35,9 @@ namespace KazgarsRevenge
         public override void Load(object info)
         {
             base.Load(info);
-            base.AddSelection(new SelectionV2(base.mm, "Save", textBoxLoc + new Vector2(0, 60), true), base.mm.menus[MenuManager.ACCOUNTS]);
-            base.AddSelection(new SelectionV2(base.mm, "Back", textBoxLoc + new Vector2(0, 90), true), base.mm.menus[MenuManager.ACCOUNTS]);
+            float yOffset = mm.normalFont.MeasureString(SAVE_STR).Y * mm.guiScale.Y;
+            base.AddSelection(new SelectionV2(base.mm, SAVE_STR, textBoxLoc + new Vector2(0, yOffset * 2), true), base.mm.menus[MenuManager.ACCOUNTS]);
+            base.AddSelection(new SelectionV2(base.mm, BACK_STR, textBoxLoc + new Vector2(0, yOffset * 3), true), base.mm.menus[MenuManager.ACCOUNTS]);
         }
 
         public override object Unload()

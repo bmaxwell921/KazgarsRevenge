@@ -122,12 +122,6 @@ namespace SkinnedAnimationPipeline
                 animationClips.Add(animation.Key, processed);
             }
 
-            if (animationClips.Count == 0)
-            {
-                throw new InvalidContentException(
-                            "Input file does not contain any animations.");
-            }
-
             return animationClips;
         }
 

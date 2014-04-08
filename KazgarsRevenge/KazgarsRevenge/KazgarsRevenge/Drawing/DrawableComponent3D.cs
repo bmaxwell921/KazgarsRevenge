@@ -31,7 +31,7 @@ namespace KazgarsRevenge
         {
             if (!emitters.ContainsKey(systemName))
             {
-                ParticleEmitter toAdd = new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
+                ParticleEmitter toAdd = new ParticleEmitter((Game.Services.GetService(typeof(CameraComponent)) as CameraComponent), (Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType),
                     particlesPerSecond, physicalData.Position, offsetFromCenter);
                 toAdd.SetHorizontalOffset(maxHorizontalOffset);
                 toAdd.SetVerticalOffset(maxVerticalOffset);
@@ -54,6 +54,11 @@ namespace KazgarsRevenge
             {
                 emitters.Remove(systemName);
             }
+        }
+
+        public void KillAllEmitters()
+        {
+            emitters.Clear();
         }
 
         public void AddEmitterSizeIncrementExponential(string emitterKey, float incrementPerSecond, float incrementIncrementPerSecond)

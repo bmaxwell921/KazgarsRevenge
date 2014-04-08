@@ -38,11 +38,11 @@ namespace KazgarsRevenge
 
     public enum FloorName
     {
-        Dungeon=1,
-        Library=2,
-        TortureChamber=3,
-        Lab=4,
-        GrandHall=5,
+        Dungeon = 1,
+        Library = 2,
+        TortureChamber = 3,
+        Lab = 4,
+        GrandHall = 5,
     }
 
     public class LevelManager : EntityManager
@@ -63,16 +63,22 @@ namespace KazgarsRevenge
 
             public IList<Vector3> spawnLocs;
 
+            // Convenient accessors for the height and width of the level
+            public int width;
+            public int height;
+
             // The graph representing enemy pathing possibilities. this is gonna be connected as fuck
              public AdjacencyGraph<Vector3, Edge<Vector3>> pathGraph;
 
-            public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos)
+            public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos, int width, int height)
             {
                 this.currentFloor = currentFloor;
                 this.chunks = chunks;
                 this.chunkInfos = chunkInfos;
                 this.spawnLocs = new List<Vector3>();
-                pathGraph = new AdjacencyGraph<Vector3, Edge<Vector3>>();
+                this.width = width;
+                this.height = height;
+                this.pathGraph = new AdjacencyGraph<Vector3, Edge<Vector3>>();
             }
         }
 
@@ -80,7 +86,8 @@ namespace KazgarsRevenge
         public static readonly int CHUNK_SIZE = 24;
 
         // How large a block is in 3D space
-        public static readonly int BLOCK_SIZE = 200;
+        public static readonly int BLOCK_SIZE = 100;
+        Vector3 roomScale = new Vector3(10);
 
         // The y component of the room location
         public static readonly float LEVEL_Y = 0;
@@ -88,7 +95,7 @@ namespace KazgarsRevenge
         // Put mobs a little bit above the ground so they don't sink down
         public static readonly float MOB_SPAWN_Y = 20;
 
-        public static readonly string ROOM_PATH = @"Models\Rooms\";
+        public static readonly string ROOM_PATH = @"Models\Levels\Rooms\";
 
         //public FloorName CurrentFloor = FloorName.Dungeon;
 
@@ -99,23 +106,22 @@ namespace KazgarsRevenge
         private List<GameEntity> rooms;
         private List<GameEntity> lights = new List<GameEntity>();
 
+        private IDictionary<char, Vector3> pathConnections;
+
         public LevelManager(KazgarsRevengeGame game)
             : base(game)
         {
             rooms = new List<GameEntity>();
+            SetUpPathConnections();
         }
 
-        public void DemoLevel()
+        private void SetUpPathConnections()
         {
-            for (int i = 0; i < 10; ++i)
-            {
-                for (int j = 0; j < 10; ++j)
-                {
-                    CreatePointLight(new Vector3(-700 + i * 700, 0, -700 + j * 700));
-                }
-            }
-            rooms.Add(CreateRoom("Models\\Levels\\tempChunk3", new Vector3(200, 0, -200), MathHelper.PiOver2));
-            //CreateChunk("Dungeon1", new Vector3(120, 0, -200), 0);
+            pathConnections = new Dictionary<char, Vector3>();
+            pathConnections['N'] = new Vector3(0, 0, -0.5f);
+            pathConnections['S'] = new Vector3(0, 0, 0.5f);
+            pathConnections['E'] = new Vector3(0.5f, 0, 0);
+            pathConnections['W'] = new Vector3(-0.5f, 0, 0);
         }
 
         /// <summary>
@@ -147,22 +153,6 @@ namespace KazgarsRevenge
                     this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j));
                 }
             }
-
-            /*
-             * This is a set of all the locations of doors in the entire map. After we're done connecting
-             * each room's internal blocks together we'll go thru all these door locations and add edges
-             * between doors that are adjacent
-             */ 
-            ISet<Vector3> doors = new HashSet<Vector3>();
-            for (int i = 0; i < levelWidth; ++i)
-            {
-                for (int j = 0; j < levelHeight; ++j)
-                {
-                    BuildAndAddPathing(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j, doors);
-                }
-            }
-
-            ConnectDoors(doors);
         }
 
         /// <summary>
@@ -176,6 +166,7 @@ namespace KazgarsRevenge
         }
 
         #region Room Creation
+
         // Returns a list of all the rooms that belong to this chunk, in their proper locations
         private IList<GameEntity> CreateChunkRooms(Chunk chunk, ChunkInfo chunkInfo, int i, int j)
         {
@@ -190,6 +181,8 @@ namespace KazgarsRevenge
                 rooms.Add(CreateRoom(room, chunkInfo.rotation, chunkLocation));
             }
 
+            ProcessObjectMap(chunkInfo.ChunkName + "-objMap", chunkInfo.rotation.ToRadians(), new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) * BLOCK_SIZE / 2 + chunkLocation * BLOCK_SIZE);
+
             return rooms;
         }
 
@@ -203,17 +196,83 @@ namespace KazgarsRevenge
 
             // Rotates the center of the room as needed by the chunk rotation
             Vector3 rotatedCenter = GetRotatedLocation(roomCenter + chunkLocation, chunkCenter, chunkRotation);
+
             // The yaw for a room should just be the room's rotation plus the chunk's rotation
             float yaw = room.rotation.ToRadians() + chunkRotation.ToRadians();
 
             // Create the actual entity
             GameEntity roomGE = CreateRoom(ROOM_PATH + room.name, rotatedCenter * BLOCK_SIZE, yaw);
+            AddRoomGraph(room, roomCenter, chunkLocation, chunkCenter, chunkRotation);
             
             // Here for convenience
-            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
-            // Add all the spawners
-            AddSpawners(roomGE, room.GetEnemySpawners(), roomTopLeft, room.rotation, chunkLocation,  chunkRotation, room.UnRotWidth, room.UnRotHeight);
+            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y); 
             return roomGE;
+        }
+
+        // Adds this room's stuff to the path graph.
+        // roomCenter hasn't been transformed to the chunkLocation or rotation
+        private void AddRoomGraph(Room room, Vector3 roomCenter, Vector3 chunkLocation, Vector3 chunkCenter, Rotation chunkRotation)
+        {
+            IList<Vector3> nodes = new List<Vector3>();
+            Vector3 rotatedCenter = GetRotatedLocation(roomCenter + chunkLocation, chunkCenter, chunkRotation);
+
+            IList<char> connections = ReadConnections(room.name);
+            if (connections == null)
+            {
+                return;
+            }
+            foreach (char connection in connections)
+            {
+                nodes.Add(GetRotatedLocation(roomCenter + chunkLocation + pathConnections[connection], chunkCenter, chunkRotation));
+            }
+
+            foreach (Vector3 node in nodes)
+            {
+                this.AddEdge(new Edge<Vector3>(rotatedCenter * BLOCK_SIZE, node * BLOCK_SIZE));
+            }
+        }
+
+        private IList<char> ReadConnections(string roomName)
+        {
+            /*
+             * Format:
+             *  <ID>-<CONNECTION_LOCS>-<NAME>
+             * Example:
+             *  0-NSEW-Soulevator
+             *  
+             * A 0 for the <CONNECTION_LOCS> means there are no connections
+             */ 
+            char delim = '-';
+            string[] splat = roomName.Split(delim);
+
+            if (splat.Count() != 3)
+            {
+                return null;
+            }
+
+            IList<char> connections = new List<char>();
+            try
+            {
+                for (int i = 0; i < splat[1].Count(); ++i)
+                {
+                    char cur = splat[1][i];
+                    if (cur.Equals('0'))
+                    {
+                        return null;
+                    }
+                    if (pathConnections.ContainsKey(cur))
+                    {
+                        connections.Add(cur);
+                    }
+                }
+
+                return connections;
+            }
+            catch (Exception)
+            {
+                (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Problem parsing roomName: {0}", roomName));
+                return null;
+            }
         }
 
         private Vector3 GetRotatedLocation(Vector3 location, Vector3 rotationPoint, Rotation rotationAmt)
@@ -225,78 +284,27 @@ namespace KazgarsRevenge
         private GameEntity CreateRoom(string modelPath, Vector3 position, float yaw)
         {
             position.Y = LEVEL_Y;
-            float roomScale = 20;
 
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 
             Model roomModel = GetUnanimatedModel(modelPath);
 
-            List<StaticMesh> levelCollidables = new List<StaticMesh>();
-            LevelTagData levelInfo = roomModel.Tag as LevelTagData;
-            if (levelInfo != null)
-            {
-                List<Vector3> lightPositions = levelInfo.lightLocations;
-                if (lightPositions != null)
-                {
-                    Matrix roomTransform = Matrix.CreateScale(roomScale) * Matrix.CreateFromYawPitchRoll(yaw, 0, 0) * Matrix.CreateTranslation(position);
-                    foreach (Vector3 v in lightPositions)
-                    {
-                        Vector3 pos = Vector3.Transform(v, roomTransform);
-                        CreatePointLight(pos);
-                    }
-                }
-                
-                List<Vector3[]> allVertices = levelInfo.physicsVertices;
-                List<int[]> allIndices = levelInfo.physicsIndices;
-                List<Matrix> allTransforms = levelInfo.physicsTransforms;
+            Vector3[] vertices;
+            int[] indices;
+            TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
+            StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(roomScale, Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
+            room.AddSharedData(typeof(StaticMesh), roomMesh);
 
-                if (allVertices.Count > 0)
-                {
-                    for (int i = 0; i < allVertices.Count; ++i)
-                    {
-                        Matrix m = allTransforms[i] * Matrix.CreateScale(roomScale) * Matrix.CreateFromYawPitchRoll(yaw, 0, 0);
-                        Vector3 scale;
-                        Quaternion rot;
-                        Vector3 trans;
-                        m.Decompose(out scale, out rot, out trans);
-                        AffineTransform a = new AffineTransform(scale, rot, trans + position);
-                        StaticMesh roomMesh = new StaticMesh(allVertices[i], allIndices[i], a);
-                        roomMesh.CollisionRules.Group = mainGame.LevelCollisionGroup;
-                        levelCollidables.Add(roomMesh);
-                    }
-                }
-                else
-                {
-                    Vector3[] vertices;
-                    int[] indices;
-                    TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
-                    StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
-                    roomMesh.CollisionRules.Group = mainGame.LevelCollisionGroup;
-                    levelCollidables.Add(roomMesh);
-                }
-            }
-            else
-            {
-                Vector3[] vertices;
-                int[] indices;
-                TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
-                StaticMesh roomMesh = new StaticMesh(vertices, indices, new AffineTransform(new Vector3(roomScale), Quaternion.CreateFromYawPitchRoll(yaw, 0, 0), position));
-                levelCollidables.Add(roomMesh);
-            }
-            
-
-            room.AddSharedData(typeof(List<StaticMesh>), levelCollidables);
-
-            StaticMeshesComponent roomPhysics = new StaticMeshesComponent(mainGame, room);
+            StaticMeshComponent roomPhysics = new StaticMeshComponent(mainGame, room);
 
             //holds the position so the model is drawn correctly (not added to physics)
             //size is related to how far away this will start being rendered
-            Entity roomLocation = new Box(position, 1100, 1100, 1100);
+            Entity roomLocation = new Box(position, BLOCK_SIZE, 2, BLOCK_SIZE);
             room.AddSharedData(typeof(Entity), roomLocation);
 
-            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, new Vector3(roomScale), Vector3.Zero, yaw, 0, 0);
+            UnanimatedModelComponent roomGraphics = new UnanimatedModelComponent(mainGame, room, roomModel, roomScale, Vector3.Zero, yaw, 0, 0);
 
-            room.AddComponent(typeof(StaticMeshesComponent), roomPhysics);
+            room.AddComponent(typeof(StaticMeshComponent), roomPhysics);
             genComponentManager.AddComponent(roomPhysics);
 
             room.AddComponent(typeof(UnanimatedModelComponent), roomGraphics);
@@ -304,47 +312,6 @@ namespace KazgarsRevenge
 
 
             return room;
-        }
-
-        private void CreatePointLight(Vector3 position)
-        {
-            GameEntity light = new GameEntity("light", FactionType.Neutral, EntityType.None);
-
-            position.Y = 40;
-            Entity physicalData = new Box(position, .1f, .1f, .1f);
-            physicalData.IsAffectedByGravity = false;
-            physicalData.LocalInertiaTensorInverse = new Matrix3X3();
-            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoBroadPhase;
-            light.AddSharedData(typeof(Entity), physicalData);
-
-            light.AddSharedData(typeof(Color), Color.White);
-
-            PhysicsComponent lightPhysics = new PhysicsComponent(mainGame, light);
-
-            light.AddSharedData(typeof(PhysicsComponent), lightPhysics);
-            genComponentManager.AddComponent(lightPhysics);
-
-            lights.Add(light);
-        }
-
-        // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240
-        // TODO Set these based on a difficulty level???
-        private static readonly float PROXIMITY = 60;
-        // Spawn every 3 seconds
-        private static readonly float DELAY = 3000;
-
-        // Adds the necessary spawning components to the roomGE
-        private void AddSpawners(GameEntity roomGE, IList<RoomBlock> enemySpawners, Vector3 roomTopLeft, Rotation roomRotation, Vector3 chunkTopLeft, Rotation chunkRotation, int roomWidth, int roomHeight)
-        {
-            ISet<Vector3> spawnLocs = new HashSet<Vector3>();
-            foreach (RoomBlock spawner in enemySpawners)
-            {
-                Vector3 spawnCenter = GetRotatedBlock(chunkTopLeft, roomTopLeft, new Vector3(spawner.location.x, LEVEL_Y, spawner.location.y), chunkRotation, roomRotation, roomWidth, roomHeight);
-                spawnLocs.Add(spawnCenter);
-            }
-            EnemyProximitySpawner eps = new EnemyProximitySpawner((KazgarsRevengeGame)Game, roomGE, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
-            roomGE.AddComponent(typeof(EnemyProximitySpawner), eps);
-            genComponentManager.AddComponent(eps);
         }
 
         /// <summary>
@@ -399,137 +366,290 @@ namespace KazgarsRevenge
 
         #endregion
 
-        #region Graph Building
-        private void BuildAndAddPathing(Chunk chunk, ChunkInfo chunkInfo, int i, int j, ISet<Vector3> doors)
+        #region Object Map Processing
+
+        GameEntity key;
+        List<GameEntity> lockedDoors = new List<GameEntity>();
+        List<GameEntity> props = new List<GameEntity>();
+
+        string objectMapDir = "Models\\Levels\\RoomObjectMaps\\";
+        private void ProcessObjectMap(string objectMapName, float yaw, Vector3 position)
         {
-            Vector3 chunkLocation = new Vector3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE);
-            foreach (Room room in chunk.rooms)
+            Matrix chunkTransform = Matrix.CreateScale(roomScale)
+                * Matrix.CreateFromYawPitchRoll(yaw, 0, 0)
+                * Matrix.CreateTranslation(position);
+            Model objectMapModel = Game.Content.Load<Model>(objectMapDir + objectMapName);
+
+            LevelTagData levelInfo = objectMapModel.Tag as LevelTagData;
+            if (levelInfo != null)
             {
-                BuildRoomGraph(room, chunkLocation, chunk.rotation, doors);
-            }
-        }
-
-        /*
-         * Arrays for what to add to a location to get a nonDiagonal location, or diagonal location
-         *  [ ][z][ ]                       [z][z][z]
-         *  [z][x][z]   as opposed to       [z][x][z]
-         *  [ ][z][ ]                       [z][z][z]
-         */
-        private readonly Vector3[] nonDiags = { new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1) };
-        private readonly Vector3[] allAdj = { new Vector3(-1, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1), 
-                                                new Vector3(-1, 0, -1), new Vector3(1, 0, -1), new Vector3(-1, 0, 1), new Vector3(1, 0, 1) };
-
-        // Builds the graph for a single room, adding any doorBlocks to the doors param
-        private void BuildRoomGraph(Room room, Vector3 chunkLocation, Rotation chunkRotation, ISet<Vector3> doors)
-        {
-            // Holds the center of each block
-            Vector3 roomCenter = new Vector3(room.location.x, LEVEL_Y, room.location.y) + new Vector3(room.Width, LEVEL_Y, room.Height) / 2;
-            Vector3 chunkCenter = chunkLocation + new Vector3(CHUNK_SIZE, LEVEL_Y, CHUNK_SIZE) / 2;
-            Vector3 roomTopLeft = new Vector3(room.location.x, LEVEL_Y, room.location.y);
-            IDictionary<Vector3, RoomBlock> blockCenters = new Dictionary<Vector3, RoomBlock>();
-            foreach (RoomBlock block in room.blocks)
-            {
-                // Soulevator shouldn't be connected bc enemies can't go in it
-                if (block.IsSoulevator())
+                List<Vector3> lightPositions = levelInfo.lightLocations;
+                List<Color> lightColors = levelInfo.lightColors;
+                for (int i = 0; i < lightPositions.Count; ++i)
                 {
-                    continue;
-                }
-
-                Vector3 blockCenter = GetRotatedBlock(chunkLocation, roomTopLeft, new Vector3(block.location.x, LEVEL_Y, block.location.y), chunkRotation, room.rotation, room.UnRotWidth, room.UnRotHeight);
-                // For the graph the y should probs be 0, I'll make it ignore the Y when checking for closeness tho
-                blockCenter.Y = LEVEL_Y;
-
-                blockCenters[blockCenter] = block;
-
-                // If this block is a door we need to hold onto it so we can attach it to the other doors
-                if (block.IsDoor())
-                {
-                    doors.Add(blockCenter);
-                }
-
-                // If it's a player spawn, we need to know that we can spawn players here
-                if (block.IsPlayerSpawn())
-                {
-                    // Set him a little higher
-                    blockCenter.Y = MOB_SPAWN_Y;
-                    currentLevel.spawnLocs.Add(blockCenter);
-                }
-            }
-
-            /*
-             * Now that we have the center of each block, we can put them in the graph.
-             *  For each block, check if any of it's adjacent neighbors are in the set, if so
-             *  then add an edge
-             */
-            foreach (Vector3 blockCenter in blockCenters.Keys)
-            {
-                // If this isn't in the middle of a room we shouldn't allow the diagonals cause 
-                // enemies get caught on the walls
-                foreach (Vector3 add in (allowDiag(blockCenters, blockCenter)) ? allAdj : nonDiags)
-                {
-                    Vector3 testBlock = blockCenter + add * BLOCK_SIZE;
-                    if (!testBlock.Equals(blockCenter) && blockCenters.ContainsKey(testBlock))
+                    Color c = Color.White;
+                    if (i < lightColors.Count)
                     {
-                        this.AddEdge(new Edge<Vector3>(blockCenter, testBlock));
+                        c = lightColors[i];
                     }
+                    CreatePointLight(Vector3.Transform(lightPositions[i], chunkTransform), c);
                 }
-            }
-        }
 
-        // Enemies have problems moving diagonally
-        private bool isDiagWall(IDictionary<Vector3, RoomBlock> blockLoc, Vector3 test, int i, int j) 
-        {
-            if (!blockLoc.ContainsKey(test))
-            {
-                return false;
-            }
-            if (i == 1 || j == 1)
-            {
-                return false;
-            }
-            return blockLoc[test].IsWall();
-        }
-
-        // Check so they don't get caught on walls
-        private bool allowDiag(IDictionary<Vector3, RoomBlock> blocks, Vector3 block)
-        {
-            foreach (Vector3 adj in nonDiags)
-            {
-                // If anything to your left, right, top, or bottom isn't in the room or is a wall
-                if (!blocks.ContainsKey(block + adj * BLOCK_SIZE) || blocks[block + adj * BLOCK_SIZE].IsWall())
+                List<Vector3> soulpos = levelInfo.soulLocations;
+                if (soulpos.Count > 0)
                 {
-                    // Then we don't allow the diagonal connections
-                    return false;
+                    CreateSoulevator(Vector3.Transform(soulpos[0], chunkTransform));
                 }
-            }
-            return true;
-        }
 
-        // Connects all adjacent doors to each other
-        private void ConnectDoors(ISet<Vector3> doors)
-        {
-            /*
-             * If the door we're looking at is x, then possible doors to connect to are the z locations
-
-             */ 
-            /*
-             * Same idea as connecting all roomBlocks, iterate over all the doors and then iterate over the
-             * 4 non-diagonal adjacent blocks. If a block is in the doors set, then add an edge
-             */ 
-            foreach (Vector3 door in doors)
-            {
-                foreach (Vector3 adj in nonDiags)
+                List<Vector3> ewLockedDoors = levelInfo.ewLockedDoorLocations;
+                foreach (Vector3 v in ewLockedDoors)
                 {
-                    Vector3 testDoor = door + adj * BLOCK_SIZE;
-                    // If the adjacent is one of the doors, add the edge
-                    if (doors.Contains(testDoor))
-                    {
-                        // Doors next to each other in a room have already been connected
-                        this.AddEdge(new Edge<Vector3>(door, testDoor));
-                    }
+                    CreateLockedDoor(Vector3.Transform(v, chunkTransform), yaw + MathHelper.PiOver2);
                 }
+
+                List<Vector3> nsLockedDoors = levelInfo.nsLockedDoorLocations;
+                foreach (Vector3 v in nsLockedDoors)
+                {
+                    CreateLockedDoor(Vector3.Transform(v, chunkTransform), yaw);
+                }
+
+                List<Vector3> ewOpenDoors = levelInfo.ewOpenDoorLocations;
+                foreach (Vector3 v in ewLockedDoors)
+                {
+                    CreateOpenDoor(Vector3.Transform(v, chunkTransform), yaw + MathHelper.PiOver2);
+                }
+
+                List<Vector3> nsOpenDoors = levelInfo.nsOpenDoorLocations;
+                foreach (Vector3 v in nsLockedDoors)
+                {
+                    CreateOpenDoor(Vector3.Transform(v, chunkTransform), yaw);
+                }
+
+                List<Vector3> hangingLightProps = levelInfo.hangingLightLocations;
+                foreach (Vector3 v in hangingLightProps)
+                {
+                    CreateHangingLightProp(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> smallObjects = levelInfo.groundPropLocations;
+                foreach (Vector3 v in smallObjects)
+                {
+                    CreateProp(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> mobSpawnLocations = levelInfo.mobSpawnLocations;
+                foreach (Vector3 v in mobSpawnLocations)
+                {
+                    CreateMobSpawner(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> playerspawns = levelInfo.playerSpawnLocations;
+                foreach (Vector3 v in playerspawns)
+                {
+                    AddPlayerSpawn(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> bossSpawns = levelInfo.bossSpawnLocations;
+                if (bossSpawns.Count > 0)
+                {
+                    (Game.Services.GetService(typeof(EnemyManager)) as EnemyManager).CreateBoss(IdentificationFactory.getId(EntityType.Boss, Identification.NO_CLIENT), Vector3.Transform(bossSpawns[RandSingleton.U_Instance.Next(bossSpawns.Count)], chunkTransform));
+                }
+
+                List<Vector3> keyLocations = levelInfo.keyLocations;
+                if (keyLocations.Count > 0)
+                {
+                    CreateKey(Vector3.Transform(keyLocations[RandSingleton.U_Instance.Next(keyLocations.Count)], chunkTransform));
+                }
+
+                List<Vector3> emitterLocations = levelInfo.emitterLocations;
+                foreach (Vector3 v in emitterLocations)
+                {
+                    CreateTorchEmitter(Vector3.Transform(v, chunkTransform));
+                }
+
             }
         }
+
+        private void CreatePointLight(Vector3 position, Color color)
+        {
+            GameEntity light = new GameEntity("light", FactionType.Neutral, EntityType.None);
+
+            position.Y = 40;
+            Entity physicalData = new Box(position, .1f, .1f, .1f);
+            physicalData.IsAffectedByGravity = false;
+            physicalData.LocalInertiaTensorInverse = new Matrix3X3();
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoBroadPhase;
+            light.AddSharedData(typeof(Entity), physicalData);
+
+            light.AddSharedData(typeof(Color), color);
+
+            PhysicsComponent lightPhysics = new PhysicsComponent(mainGame, light);
+
+            light.AddSharedData(typeof(PhysicsComponent), lightPhysics);
+            genComponentManager.AddComponent(lightPhysics);
+
+            lights.Add(light);
+        }
+
+        private void CreateKey(Vector3 pos)
+        {
+            pos.Y = 40;
+
+            GameEntity entity = new GameEntity("key", FactionType.Neutral, EntityType.Misc);
+
+            Entity physicalData = new Box(pos, 40, 40, 40);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            entity.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
+            entity.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, entity, GetUnanimatedModel("Models\\key_1"), new Vector3(25), Vector3.Zero, 0, 0, 0);
+            graphics.AddYawSpeed(.05f);
+            graphics.AddEmitter(typeof(KeyGlowSystem), "glow", 25, 1, Vector3.Up * 20);
+            entity.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            KeyController controller = new KeyController(mainGame, entity);
+            entity.AddComponent(typeof(KeyController), controller);
+            genComponentManager.AddComponent(controller);
+
+            key = entity;
+        }
+
+        private void CreateSoulevator(Vector3 pos)
+        {
+            GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, 1, 1, 1);
+            prop.AddSharedData(typeof(Entity), physicalData);
+
+            //TODO: emitters and effects
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10, 100 ,10), Vector3.Down * 60, 0, 0, 0);
+            graphics.TurnOffOutline();
+            graphics.SetAlpha(.5f);
+            graphics.AddYawSpeed(.01f);
+            graphics.AddEmitter(typeof(SoulevatorMistSystem), "mist", 65, 85, 0, Vector3.Zero);
+            
+            prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            levelModelManager.AddComponent(graphics);
+
+            rooms.Add(prop);
+        }
+
+        private void CreateOpenDoor(Vector3 pos, float yaw)
+        {
+            pos.Y += 20;
+            GameEntity door = new GameEntity("room", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, BLOCK_SIZE * .4f, 30, 5);
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            door.AddSharedData(typeof(Entity), physicalData);
+
+            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-opendoor"), roomScale, Vector3.Down * 20, 0, 0, 0);
+            door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
+            modelManager.AddComponent(doorGraphics);
+
+            props.Add(door);
+        }
+
+        private void CreateLockedDoor(Vector3 pos, float yaw)
+        {
+            pos.Y += 20;
+            GameEntity door = new GameEntity("room", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, BLOCK_SIZE * .4f, 30, 5);
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+            door.AddSharedData(typeof(Entity), physicalData);
+
+            PhysicsComponent doorPhysics = new PhysicsComponent(mainGame, door);
+            door.AddComponent(typeof(PhysicsComponent), doorPhysics);
+            genComponentManager.AddComponent(doorPhysics);
+
+            UnanimatedModelComponent doorGraphics = new UnanimatedModelComponent(mainGame, door, GetUnanimatedModel("Models\\Levels\\Props\\01-closedDoor"), roomScale, Vector3.Down * 20, 0, 0, 0);
+            door.AddComponent(typeof(UnanimatedModelComponent), doorGraphics);
+            modelManager.AddComponent(doorGraphics);
+
+            lockedDoors.Add(door);
+        }
+
+        private void CreateHangingLightProp(Vector3 pos)
+        {
+            GameEntity lightProp = new GameEntity("prop", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, 1, 1, 1);
+            lightProp.AddSharedData(typeof(Entity), physicalData);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, lightProp, GetUnanimatedModel("Models\\Levels\\Props\\01-lightFixture"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            graphics.TurnOffOutline();
+            lightProp.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            props.Add(lightProp);
+        }
+
+        private void CreateProp(Vector3 pos)
+        {
+            if (RandSingleton.U_Instance.Next(100) < 5)
+            {
+                GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
+
+                Entity physicalData = new Box(pos, 1, 1, 1);
+                prop.AddSharedData(typeof(Entity), physicalData);
+
+                UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\01-chair"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+                prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
+                modelManager.AddComponent(graphics);
+
+                props.Add(prop);
+            }
+        }
+
+        // Players need to be within 60 units for the thing to spawn. Based on the fact that chunks are 240x240
+        // TODO Set these based on a difficulty level???
+        private static readonly float PROXIMITY = 60;
+        // Spawn every 3 seconds
+        private static readonly float DELAY = 3000;
+
+        private void CreateMobSpawner(Vector3 pos)
+        {
+            if (RandSingleton.U_Instance.Next(100) < 6)
+            {
+                GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
+
+                ISet<Vector3> spawnLocs = new HashSet<Vector3>();
+                spawnLocs.Add(pos);
+
+                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
+                spawner.AddComponent(typeof(EnemyProximitySpawner), eps);
+                genComponentManager.AddComponent(eps);
+
+                rooms.Add(spawner);
+            }
+        }
+
+        private void AddPlayerSpawn(Vector3 pos)
+        {
+            pos.Y = MOB_SPAWN_Y;
+            currentLevel.spawnLocs.Add(pos);
+        }
+
+        private void CreateTorchEmitter(Vector3 pos)
+        {
+            GameEntity torch = new GameEntity("", FactionType.Neutral, EntityType.None);
+
+            Entity physicalData = new Box(pos, 1, 1, 1);
+            torch.AddSharedData(typeof(Entity), physicalData);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, torch);
+            graphics.AddEmitter(typeof(TorchSystem), "", 1, 2, Vector3.Zero);
+            torch.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+            
+            props.Add(torch);
+        }
+        #endregion
 
         // Method used to safely add an edge to the pathGraph
         private void AddEdge(Edge<Vector3> edge)
@@ -546,8 +666,12 @@ namespace KazgarsRevenge
             {
                 currentLevel.pathGraph.AddEdge(edge);
             }
+            Edge<Vector3> reverse = new Edge<Vector3>(edge.Target, edge.Source);
+            if (!currentLevel.pathGraph.ContainsEdge(reverse))
+            {
+                currentLevel.pathGraph.AddEdge(reverse);
+            }
         }
-        #endregion
 
         #region Path Finding
         /// <summary>
@@ -676,6 +800,14 @@ namespace KazgarsRevenge
 
             private LoggerManager lm;
 
+            /*
+             * Individual number of each chunk:
+             *  [0][1][2]
+             *  [3][4][5]
+             *  [6][7][8]
+             */ 
+            private IList<int> chunkNums;
+
             // Default uses the level width and height as defined in the Constants file
             public LevelBuilder(LoggerManager lm)
                 : this(lm, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT)
@@ -691,10 +823,24 @@ namespace KazgarsRevenge
             }
 
             // Sets the level bounds for level generation
-            public void SetLevelBounds(int levelWidth, int levelHeight)
+            private void SetLevelBounds(int levelWidth, int levelHeight)
             {
                 this.levelWidth = levelWidth;
                 this.levelHeight = levelHeight;
+            }
+
+            private void fillChunkNums()
+            {
+                chunkNums = new List<int>();
+                for (int i = 0; i < levelWidth * levelHeight; ++i)
+                {
+                    // Middle is reserved for the soulevator
+                    if (i == levelWidth * levelHeight / 2)
+                    {
+                        continue;
+                    }
+                    chunkNums.Add(i);
+                }
             }
 
             /// <summary>
@@ -705,21 +851,21 @@ namespace KazgarsRevenge
             /// <returns></returns>
             public LevelInfo BuildLevel(FloorName name)
             {
+                fillChunkNums();
                 ChunkInfo[,] chunkInfos = new ChunkInfo[levelWidth, levelHeight];
                 // First we gotta figure out what chunks to place
                 ChooseChunks(name, chunkInfos);
 
                 Chunk[,] chunks = ReadChunks(name, chunkInfos);
-                return new LevelInfo(name, chunks, chunkInfos);
+                return new LevelInfo(name, chunks, chunkInfos, levelWidth, levelHeight);
             }
 
             #region Choosing Chunks
             private void ChooseChunks(FloorName name, ChunkInfo[,] chunks)
             {
-                // TODO re-add these for full implementation
                 PlaceSoulevator(name, chunks);
-                //Vector2 bossLoc = PlaceBoss(name, chunks);
-                //PlaceKey(name, chunks, bossLoc);
+                Vector2 bossLoc = PlaceBoss(name, chunks);
+                PlaceKey(name, chunks, bossLoc);
                 PlaceTheRest(name, chunks);
             }
 
@@ -741,15 +887,54 @@ namespace KazgarsRevenge
             // Places the boss in a random location
             private Vector2 PlaceBoss(FloorName name, ChunkInfo[,] chunks)
             {
-                // Do nothing for now
-                // TODO choose random spot for the boss to go, return the location
-                return Vector2.Zero;
+                int chunkNum = chunkNums[RandSingleton.S_Instance.Next(0, chunkNums.Count)];
+                
+                // Convert from 1D to 2D
+                int xCoord = chunkNum % levelWidth;
+                int yCoord = chunkNum / levelWidth;
+
+                ISet<Direction> reqDirs = GetRequiredDirections(name, chunks, xCoord, yCoord);
+                chunks[xCoord, yCoord] = ChunkUtil.Instance.GetSatisfyingChunk(name, ChunkType.BOSS, reqDirs);
+                this.LogChunkChoice(xCoord, yCoord, chunks[xCoord, yCoord]);
+                return new Vector2(xCoord, yCoord);
             }
 
             private void PlaceKey(FloorName name, ChunkInfo[,] chunks, Vector2 bossLoc)
             {
-                // Do nothing for now
-                // TODO Place the key 'far enough' away from the boss
+                /*
+                 * Ok here's the idea: we've chose the bossLoc from the chunkNums array:
+                 *      [0, 1, 2, 3, 5, 6, 7, 8] - for a normal level. 
+                 * Let's say 8 was chosen. In this case we want the key to be pretty far from the boss
+                 * the farthest chunks from 8 are [0, 3]. So basically we figure out where the bossLoc
+                 * is in the chunkNums array, then choose a key location from the other half
+                 *  
+                 */ 
+
+                // Convert bossLoc back to 1D
+                int bossNum = (int)bossLoc.X + levelWidth * (int)bossLoc.Y;
+
+                int index = chunkNums.IndexOf(bossNum);
+
+                int min = 0;
+                int max = 0;
+
+                if (index >= chunkNums.Count / 2)
+                {
+                    max = chunkNums.Count / 2;
+                }
+                else
+                {
+                    min = chunkNums.Count / 2;
+                    max = chunkNums.Count;
+                }
+
+                int keyNum = chunkNums[RandSingleton.S_Instance.Next(min, max)];
+                int xCoord = keyNum % levelWidth;
+                int yCoord = keyNum / levelWidth;
+
+                ISet<Direction> reqDirs = GetRequiredDirections(name, chunks, xCoord, yCoord);
+                chunks[xCoord, yCoord] = ChunkUtil.Instance.GetSatisfyingChunk(name, ChunkType.KEY, reqDirs);
+                this.LogChunkChoice(xCoord, yCoord, chunks[xCoord, yCoord]);
             }
 
             private void PlaceTheRest(FloorName name, ChunkInfo[,] chunks)
@@ -839,21 +1024,30 @@ namespace KazgarsRevenge
         }
         #endregion
 
-        #region Boss Script Stuff
-        public GameEntity CreateDragonFirePillar(Vector3 position)
+        #region Level Script Stuff
+        public GameEntity CreateDragonFirePillar(AliveComponent dragon)
         {
+            Entity data = dragon.Entity.GetSharedData(typeof(Entity)) as Entity;
+            Vector3 position = data.Position + Vector3.Right * 200 + Vector3.Up * 20;
             GameEntity pillar = new GameEntity("firepillar", FactionType.Enemies, EntityType.Misc);
 
-            Entity physicalData = new Box(position, 50, 50, 50, 50000);
+            Entity physicalData = new Box(position, 50, 50, 50);
+            physicalData.LocalInertiaTensorInverse = new Matrix3X3();
             pillar.AddSharedData(typeof(Entity), physicalData);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, pillar);
             pillar.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"), new Vector3(150), Vector3.Up * 20, 0, MathHelper.PiOver2, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\fire_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
             pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
+            graphics.AddEmitter(typeof(FirePillarMistSystem), "firemist", 40, 25, Vector3.Down * 17);
+            graphics.AddEmitter(typeof(FirePillarSystem), "fire", 10, 25, Vector3.Down * 25);
+
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, true);
+            pillar.AddComponent(typeof(PillarBeamBillboard), beam);
+            billboardManager.AddComponent(beam);
 
             PillarController AI = new PillarController(mainGame, pillar);
             pillar.AddComponent(typeof(PillarController), AI);
@@ -864,20 +1058,28 @@ namespace KazgarsRevenge
             return pillar;
         }
 
-        public GameEntity CreateDragonFrostPillar(Vector3 position)
+        public GameEntity CreateDragonFrostPillar(AliveComponent dragon)
         {
+            Entity data = dragon.Entity.GetSharedData(typeof(Entity)) as Entity;
+            Vector3 position = data.Position + Vector3.Left * 200 + Vector3.Up * 20;
             GameEntity pillar = new GameEntity("frostpillar", FactionType.Enemies, EntityType.Misc);
 
-            Entity physicalData = new Box(position, 50, 50, 50, 50000);
+            Entity physicalData = new Box(position, 50, 50, 50);
+            physicalData.LocalInertiaTensorInverse = new Matrix3X3();
             pillar.AddSharedData(typeof(Entity), physicalData);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, pillar);
             pillar.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Projectiles\\frost_bolt"), new Vector3(150), Vector3.Up * 20, 0, MathHelper.PiOver2, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\ice_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
             pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
+            graphics.AddEmitter(typeof(FrostAOEMistSystem), "mist", 40, 25, Vector3.Down * 17);
+
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, true);
+            pillar.AddComponent(typeof(PillarBeamBillboard), beam);
+            billboardManager.AddComponent(beam);
 
             PillarController AI = new PillarController(mainGame, pillar);
             pillar.AddComponent(typeof(PillarController), AI);
@@ -888,6 +1090,14 @@ namespace KazgarsRevenge
             return pillar;
         }
 
+        public void UnlockDoors()
+        {
+            for (int i = 0; i < lockedDoors.Count; ++i)
+            {
+                lockedDoors[i].KillEntity();
+            }
+            lockedDoors.Clear();
+        }
         #endregion
 
         public override void Update(GameTime gameTime)
@@ -914,13 +1124,13 @@ namespace KazgarsRevenge
             switch (name)
             {
                 case "Animated Armor":
-                    modelPath = "Models\\Attachables\\axe";
+                    modelPath = "Models\\Weapons\\axe";
                     break;
                 case "Skeleton":
-                    modelPath = "Models\\Attachables\\bow01";
+                    modelPath = "Models\\Weapons\\bow01";
                     break;
                 default:
-                    modelPath = "Models\\Attachables\\sword01";
+                    modelPath = "Models\\Weapons\\sword01";
                     break;
             }
             UnanimatedModelComponent markerGraphics = new UnanimatedModelComponent(mainGame, marker, GetUnanimatedModel(modelPath), new Vector3(10), Vector3.Zero, 0, 0, 0);
@@ -930,6 +1140,51 @@ namespace KazgarsRevenge
             misc.Add(marker);
 
             return marker;
+        }
+
+        public IDictionary<string, string> getMiniImageMap()
+        {
+            // Go thru all the current level's chunk infos and get the correct minimap image
+            IDictionary<string, string> map = new Dictionary<string, string>();
+            if (currentLevel == null)
+            {
+                throw new Exception("Tried to get miniMap before the level was generated!");
+            }
+            string keyPre = "Loc";
+            for (int i = 0; i < currentLevel.width; ++i)
+            {
+                for (int j = 0; j < currentLevel.height; ++j)
+                {
+                    int num = i + j * currentLevel.width;
+                    map[keyPre + num] = currentLevel.chunkInfos[i, j].miniMapImgName();
+                }
+            }
+
+            return map;
+        }
+
+        // Returns the chunk number that the player is currently in
+        public int GetCurrentChunk(Vector3 location)
+        {
+            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
+            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+
+            return xCoord + yCoord * currentLevel.width;
+        }
+
+        // Returns the image name of the chunk the player is currently in
+        public string GetCurrentChunkImgName(Vector3 location)
+        {
+            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
+            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+            return @"Textures\UI\MegaMap\" + currentLevel.chunkInfos[xCoord, yCoord].ChunkName;
+        }
+
+        public Rotation GetCurrentChunkRotation(Vector3 location)
+        {
+            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
+            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+            return currentLevel.chunkInfos[xCoord, yCoord].rotation;
         }
     }
 }

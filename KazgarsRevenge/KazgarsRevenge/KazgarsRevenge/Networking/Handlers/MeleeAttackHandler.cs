@@ -25,7 +25,7 @@ namespace KazgarsRevenge.Networking
         public override void Handle(NetIncomingMessage nim)
         {
             AttackManager am = (AttackManager)game.Services.GetService(typeof(AttackManager));
-            am.CreateMeleeAttack(nim.ReadInt32(), nim.ReadInt32(), (FactionType)nim.ReadByte(), new Microsoft.Xna.Framework.Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32()), nim.ReadInt32());
+            am.CreateMeleeAttack(nim.ReadInt32(), nim.ReadInt32(), (FactionType)nim.ReadByte(), new Microsoft.Xna.Framework.Vector3(nim.ReadInt32(), nim.ReadInt32(), nim.ReadInt32()), nim.ReadInt32(), false);
         }
     }
 }

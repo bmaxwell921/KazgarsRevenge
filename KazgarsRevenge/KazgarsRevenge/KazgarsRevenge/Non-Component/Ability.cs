@@ -21,13 +21,14 @@ namespace KazgarsRevenge
         public AttackType PrimaryType { get; private set; }
         public AbilityType AbilityType { get; private set; }
         public AbilityName AbilityName { get; private set; }
+        public int PowerCost { get; private set; }
+        public Tooltip Tooltip { get; private set; }
 
         public double cooldownMillisLength;
         public double cooldownMillisRemaining;
         public bool onCooldown { get; private set; }
-        String tooltip = "N/A";
 
-        public Ability(AbilityName abilityName, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType)
+        public Ability(AbilityName abilityName, Texture2D iconIn, float cooldownMillis, AttackType typeIn, string actionName, AbilityType abilityType, int powerCost, string descriptionText)
         {   
             icon = iconIn;
             cooldownMillisLength = cooldownMillis;
@@ -37,11 +38,37 @@ namespace KazgarsRevenge
             onCooldown = true;
             this.AbilityType = abilityType;
             this.AbilityName = abilityName;
-        }
+            this.PowerCost = powerCost;
 
-        public void setToolTip(String toolTipString)
-        {
-            tooltip = toolTipString;
+            if (abilityName != KazgarsRevenge.AbilityName.None)
+            {
+                List<TooltipLine> ttlines = new List<TooltipLine>();
+                string n = abilityName.ToString();
+                for (int i = 0; i < n.Length; ++i)
+                {
+                    if (i > 0 && char.IsUpper(n[i]))
+                    {
+                        n = n.Insert(i, " ");
+                        ++i;
+                    }
+                }
+                ttlines.Add(new TooltipLine(Color.White, n, .65f));
+                if (PowerCost > 0)
+                {
+                    ttlines.Add(new TooltipLine(Color.White, PowerCost + " Power", .5f));
+                }
+                if (cooldownMillisLength > 0)
+                {
+                    ttlines.Add(new TooltipLine(Color.White, Math.Round(cooldownMillisLength / 1000.0f, 2) + " sec. cooldown", .4f));
+                }
+                if (PrimaryType != AttackType.None)
+                {
+                    ttlines.Add(new TooltipLine(Color.White, "Requires " + PrimaryType.ToString() + " Weapon", .4f));
+                }
+                ttlines.Add(new TooltipLine(Color.Gold, descriptionText, .4f));
+
+                this.Tooltip = new Tooltip(ttlines);
+            }
         }
 
         public void ResetCooldown()

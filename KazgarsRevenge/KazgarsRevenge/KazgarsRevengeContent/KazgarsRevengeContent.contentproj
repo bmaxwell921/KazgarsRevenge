@@ -30,19 +30,24 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Attachables\arrow.fbx">
+    <Compile Include="Models\Levels\Rooms\1-NESW-southWestDoors.fbx">
+      <Name>1-NESW-southWestDoors</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Projectiles\arrow.fbx">
       <Name>arrow</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
       <ProcessorParameters_RotationY>90</ProcessorParameters_RotationY>
     </Compile>
-    <Compile Include="Models\Attachables\bow01.fbx">
+    <Compile Include="Models\Weapons\bow01.fbx">
       <Name>bow01</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
       <ProcessorParameters_RotationX>180</ProcessorParameters_RotationX>
     </Compile>
-    <Compile Include="Models\Attachables\sword01.fbx">
+    <Compile Include="Models\Weapons\sword01.fbx">
       <Name>sword01</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
@@ -54,21 +59,11 @@
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
       <ProcessorParameters_MergeAnimations>Models\\Enemies\\Pigman\\pig_attack.fbx%3bModels\\Enemies\\Pigman\\pig_hit.fbx%3bModels\\Enemies\\Pigman\\pig_walk.fbx%3bModels\\Enemies\\Pigman\\pig_death.fbx%3b</ProcessorParameters_MergeAnimations>
     </Compile>
-    <Compile Include="Models\Levels\4x4Final02.fbx">
-      <Name>4x4Final02</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Levels\4x4Final02Co.fbx">
-      <Name>4x4Final02Co</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="Models\Player\k_idle1.fbx">
       <Name>k_idle1</Name>
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_onehanded_swing.fbx%3bModels\\Player\\k_run.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fire_arrow.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_walk.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3bModels\\Player\\k_whirlwind.fbx%3bModels\\Player\\k_spin.fbx%3bModels\\Player\\k_headbutt.fbx%3bModels\\Player\\k_thrust_l.fbx%3bModels\\Player\\k_thrust_r.fbx%3bModels\\Player\\k_charge.fbx%3b</ProcessorParameters_MergeAnimations>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\spikes.fbx">
@@ -118,11 +113,6 @@
     </Compile>
     <Compile Include="Textures\UI\Items\HP.png">
       <Name>HP</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\whiteCursor.png">
-      <Name>whiteCursor</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -204,68 +194,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sound\bowshoot0.mp3">
-      <Name>bowshoot0</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Sound\bowshoot1.mp3">
-      <Name>bowshoot1</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Sound\bowshoot2.mp3">
-      <Name>bowshoot2</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Sound\bowshoot3.mp3">
-      <Name>bowshoot3</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Sound\hardsmack0.mp3">
-      <Name>hardsmack0</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Sound\hardsmack1.mp3">
-      <Name>hardsmack1</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Sound\hardsmack2.mp3">
-      <Name>hardsmack2</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Sound\iceclawdeath.mp3">
+    <Compile Include="Sound\Magic\iceclawdeath.mp3">
       <Name>iceclawdeath</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Sound\pigdeath.mp3">
-      <Name>pigdeath</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-    <Compile Include="Sound\piggrunt.mp3">
-      <Name>piggrunt</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-    <Compile Include="Sound\pighit0.mp3">
-      <Name>pighit0</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -275,13 +207,6 @@
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
       <ProcessorParameters_MergeAnimations>Models\\soul_loot_spin.fbx%3bModels\\soul_loot.fbx%3bModels\\soul_loot_smash.fbx</ProcessorParameters_MergeAnimations>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\Levels\1x1-4NESW.fbx">
-      <Name>1x1-4NESW</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -311,13 +236,6 @@
       <Name>smoke</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\Levels\1x1-1E.fbx">
-      <Name>1x1-1E</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -356,13 +274,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Levels\tempChunk3.fbx">
-      <Name>tempChunk3</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Particles\blood.png">
       <Name>blood</Name>
       <Importer>TextureImporter</Importer>
@@ -370,7 +281,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Attachables\axe.fbx">
+    <Compile Include="Models\Weapons\axe.fbx">
       <Name>axe</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
@@ -459,12 +370,6 @@
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
-    <Compile Include="Models\Armor\armor_legs_rino.fbx">
-      <Name>armor_legs_rino</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
-    </Compile>
     <Compile Include="Models\Armor\armor_shoulders_rino.fbx">
       <Name>armor_shoulders_rino</Name>
       <Importer>FbxImporter</Importer>
@@ -525,177 +430,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Rooms\1_5wideLRoomCorner.fbx">
-      <Name>1_5wideLRoomCorner</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>LevelModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\Rooms\1_1block2doorAdj.fbx">
-      <Name>1_1block2doorAdj</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_2boxSwitcher.fbx">
-      <Name>1_2boxSwitcher</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_2wideLRoom.fbx">
-      <Name>1_2wideLRoom</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_3boxSwitcher.fbx">
-      <Name>1_3boxSwitcher</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_3wideLRoom.fbx">
-      <Name>1_3wideLRoom</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_4doorConnector.fbx">
-      <Name>1_4doorConnector</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_4doorSingle.fbx">
-      <Name>1_4doorSingle</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_4doorTRoom.fbx">
-      <Name>1_4doorTRoom</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_4wayMixer.fbx">
-      <Name>1_4wayMixer</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_5by5KeyMixer.fbx">
-      <Name>1_5by5KeyMixer</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_6blockChestKeyRoom.fbx">
-      <Name>1_6blockChestKeyRoom</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_6by7SRoom.fbx">
-      <Name>1_6by7SRoom</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_6doorConnector.fbx">
-      <Name>1_6doorConnector</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_chestRoom.fbx">
-      <Name>1_chestRoom</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_corWithSideWalls.fbx">
-      <Name>1_corWithSideWalls</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_deadEndChest.fbx">
-      <Name>1_deadEndChest</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_firstFloorBossRoom.fbx">
-      <Name>1_firstFloorBossRoom</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_LDoorHallwayConnector.fbx">
-      <Name>1_LDoorHallwayConnector</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_playerSpawn.fbx">
-      <Name>1_playerSpawn</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>LevelModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_singleCap.fbx">
-      <Name>1_singleCap</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_singleDoorNS.fbx">
-      <Name>1_singleDoorNS</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_threeBlockHallway.fbx">
-      <Name>1_threeBlockHallway</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_threeBlockMobHallway.fbx">
-      <Name>1_threeBlockMobHallway</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_threeDoorBlock.fbx">
-      <Name>1_threeDoorBlock</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_threeDoorCor.fbx">
-      <Name>1_threeDoorCor</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\1_twoBlockHallway.fbx">
-      <Name>1_twoBlockHallway</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\Rooms\books1.png">
-      <Name>books1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\books2.png">
-      <Name>books2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\floorTest.png">
-      <Name>floorTest</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\lava.jpg">
-      <Name>lava</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\wallTest.png">
-      <Name>wallTest</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Rooms\wood.png">
-      <Name>wood</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\BillBoards\chain.png">
       <Name>chain</Name>
       <Importer>TextureImporter</Importer>
@@ -724,8 +458,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\Particles\arrow_particle.png">
-      <Name>arrow_particle</Name>
+    <Compile Include="Textures\BillBoards\arrowtrail.png">
+      <Name>arrowtrail</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -763,6 +497,1223 @@
   <ItemGroup>
     <Compile Include="Textures\UI\TextBox.png">
       <Name>TextBox</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\AdrenR.jpg">
+      <Name>AdrenR</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\biggerBombs.jpg">
+      <Name>biggerBombs</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\evasion.jpg">
+      <Name>evasion</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\flashBomb.jpg">
+      <Name>flashBomb</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\graple.jpg">
+      <Name>graple</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\headshot.png">
+      <Name>headshot</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\homingM.png">
+      <Name>homingM</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\leechingArrow.jpg">
+      <Name>leechingArrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\looseCan.jpg">
+      <Name>looseCan</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\magI.png">
+      <Name>magI</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\makeItHail.png">
+      <Name>makeItHail</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\makeItRain.jpg">
+      <Name>makeItRain</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\moltenBolt.jpg">
+      <Name>moltenBolt</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\OmniShot.png">
+      <Name>OmniShot</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\penetratingShot.png">
+      <Name>penetratingShot</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\seratedA.png">
+      <Name>seratedA</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\snipe.png">
+      <Name>snipe</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\speedy Graple.jpg">
+      <Name>speedy Graple</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\strongWinds.png">
+      <Name>strongWinds</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\tarBomb.jpg">
+      <Name>tarBomb</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Abilities\tumble.jpg">
+      <Name>tumble</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\TTArrow.png">
+      <Name>TTArrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\TTArrow1.png">
+      <Name>TTArrow1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\TTArrow2.png">
+      <Name>TTArrow2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\TTArrow3.png">
+      <Name>TTArrow3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\TTArrow4.png">
+      <Name>TTArrow4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\TTArrow5.png">
+      <Name>TTArrow5</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\TTArrow6.png">
+      <Name>TTArrow6</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\TTArrow7.png">
+      <Name>TTArrow7</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Projectiles\fireball.fbx">
+      <Name>fireball</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Projectiles\iceball.fbx">
+      <Name>iceball</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Armor\armor_legs_rino.fbx">
+      <Name>armor_legs_rino</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\BN.png">
+      <Name>BN</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\crossbow.fbx">
+      <Name>crossbow</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\helmetIcon.png">
+      <Name>helmetIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Projectiles\grenade.fbx">
+      <Name>grenade</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Shaders\BillboardEffect.fx">
+      <Name>BillboardEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\staff.fbx">
+      <Name>staff</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\LW.png">
+      <Name>LW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\BR.png">
+      <Name>BR</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\speedy Graple.jpg">
+      <Name>speedy Graple</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\I1.jpg">
+      <Name>I1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\I2.jpg">
+      <Name>I2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\I3.jpg">
+      <Name>I3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Particles\circle.png">
+      <Name>circle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\BillBoards\circle.png">
+      <Name>circle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\Rooms\1-0-ENMap.fbx">
+      <Name>1-0-ENMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-0-NESoul.fbx">
+      <Name>1-0-NESoul</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-0-NWSoul.fbx">
+      <Name>1-0-NWSoul</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-0-SESoul.fbx">
+      <Name>1-0-SESoul</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-0-SWSoul.fbx">
+      <Name>1-0-SWSoul</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-ES-westNorthWall.fbx">
+      <Name>1-ES-westNorthWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-ESW-northWall.fbx">
+      <Name>1-ESW-northWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-ESW-northWallEastDoor.fbx">
+      <Name>1-ESW-northWallEastDoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-ESW-westDoorNorthWall.fbx">
+      <Name>1-ESW-westDoorNorthWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NE-southWestWall.fbx">
+      <Name>1-NE-southWestWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NES-southDoorWestWall.fbx">
+      <Name>1-NES-southDoorWestWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NES-westWall.fbx">
+      <Name>1-NES-westWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NES-westWallNorthDoor.fbx">
+      <Name>1-NES-westWallNorthDoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-eastDoor.fbx">
+      <Name>1-NESW-eastDoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-eastSouthDoors.fbx">
+      <Name>1-NESW-eastSouthDoors</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-floor.fbx">
+      <Name>1-NESW-floor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-NECorner.fbx">
+      <Name>1-NESW-NECorner</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-northDoor.fbx">
+      <Name>1-NESW-northDoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-northEastDoors.fbx">
+      <Name>1-NESW-northEastDoors</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-NWCorner.fbx">
+      <Name>1-NESW-NWCorner</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-SECorner.fbx">
+      <Name>1-NESW-SECorner</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-southDoor.fbx">
+      <Name>1-NESW-southDoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-SWCorner.fbx">
+      <Name>1-NESW-SWCorner</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-westDoor.fbx">
+      <Name>1-NESW-westDoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NESW-westNorthDoors.fbx">
+      <Name>1-NESW-westNorthDoors</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NEW-eastDoorSouthWall.fbx">
+      <Name>1-NEW-eastDoorSouthWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NEW-southWall.fbx">
+      <Name>1-NEW-southWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NEW-southWallWestDoor.fbx">
+      <Name>1-NEW-southWallWestDoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NSW-eastWall.fbx">
+      <Name>1-NSW-eastWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NSW-eastWallSouthDoor.fbx">
+      <Name>1-NSW-eastWallSouthDoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NSW-northDoorEastWall.fbx">
+      <Name>1-NSW-northDoorEastWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-NW-eastSouthWall.fbx">
+      <Name>1-NW-eastSouthWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Rooms\1-SW-northEastWall.fbx">
+      <Name>1-SW-northEastWall</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\Props\01-chair.fbx">
+      <Name>01-chair</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Props\01-lightFixture.fbx">
+      <Name>01-lightFixture</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Props\01-opendoor.fbx">
+      <Name>01-opendoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Props\soulevator.fbx">
+      <Name>soulevator</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\cleave.jpg">
+      <Name>cleave</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\decapitation.jpg">
+      <Name>decapitation</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\devastate.jpg">
+      <Name>devastate</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\obsidian.jpg">
+      <Name>obsidian</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\reach.png">
+      <Name>reach</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\reflect.jpg">
+      <Name>reflect</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\charge.jpg">
+      <Name>charge</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\garrote.jpg">
+      <Name>garrote</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\twist.png">
+      <Name>twist</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\sadistic.jpg">
+      <Name>sadistic</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\bash.jpg">
+      <Name>bash</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\berserk.jpg">
+      <Name>berserk</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\secondwind.jpg">
+      <Name>secondwind</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\rejuv.jpg">
+      <Name>rejuv</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\headbutt.jpg">
+      <Name>headbutt</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\chainspear.jpg">
+      <Name>chainspear</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\throw.jpg">
+      <Name>throw</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\execute.jpg">
+      <Name>execute</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\swordnado.png">
+      <Name>swordnado</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Melee\devastate.mp3">
+      <Name>devastate</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Enemies\pigdeath.mp3">
+      <Name>pigdeath</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Enemies\pighit0.mp3">
+      <Name>pighit0</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Melee\sword_hit0.mp3">
+      <Name>sword_hit0</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Melee\sword_hit1.mp3">
+      <Name>sword_hit1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Melee\sword_hit2.mp3">
+      <Name>sword_hit2</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Melee\sword_hit3.mp3">
+      <Name>sword_hit3</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Ranged\explosion1.mp3">
+      <Name>explosion1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Ranged\bowshoot0.mp3">
+      <Name>bowshoot0</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Ranged\bowshoot1.mp3">
+      <Name>bowshoot1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Ranged\bowshoot2.mp3">
+      <Name>bowshoot2</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Enemies\s_death.mp3">
+      <Name>s_death</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\cursor.png">
+      <Name>cursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Abilities\Melee\regen.jpg">
+      <Name>regen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\meleeBanner.jpg">
+      <Name>meleeBanner</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\magicBanner.png">
+      <Name>magicBanner</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\rangedBanner.png">
+      <Name>rangedBanner</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Melee\whoosh0.mp3">
+      <Name>whoosh0</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Melee\whoosh1.mp3">
+      <Name>whoosh1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Melee\whoosh2.mp3">
+      <Name>whoosh2</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Melee\whoosh3.mp3">
+      <Name>whoosh3</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Melee\clang0.mp3">
+      <Name>clang0</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Melee\clang1.mp3">
+      <Name>clang1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Melee\clang2.mp3">
+      <Name>clang2</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Melee\clang3.mp3">
+      <Name>clang3</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\keyUnlock.mp3">
+      <Name>keyUnlock</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\key_1.fbx">
+      <Name>key_1</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\hover.png">
+      <Name>hover</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\Props\fire_column.fbx">
+      <Name>fire_column</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\Props\ice_column.fbx">
+      <Name>ice_column</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Music\menuSong.mp3">
+      <Name>menuSong</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\active.png">
+      <Name>active</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\Rooms\lava.jpg">
+      <Name>lava</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\RoomObjectMaps\01-1-S-NSEW-objMap.fbx">
+      <Name>01-1-S-NSEW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\02-1-S-NSEW-objMap.fbx">
+      <Name>02-1-S-NSEW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\03-1-S-NSEW-objMap.fbx">
+      <Name>03-1-S-NSEW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\04-1-K-ESW-objMap.fbx">
+      <Name>04-1-K-ESW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\05-1-B-ESW-objMap.fbx">
+      <Name>05-1-B-ESW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\06-1-N-ESW-objMap.fbx">
+      <Name>06-1-N-ESW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\07-1-N-ESW-objMap.fbx">
+      <Name>07-1-N-ESW-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\08-1-K-ES-objMap.fbx">
+      <Name>08-1-K-ES-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\09-1-B-ES-objMap.fbx">
+      <Name>09-1-B-ES-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\10-1-N-ES-objMap.fbx">
+      <Name>10-1-N-ES-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\11-1-N-ES-objMap.fbx">
+      <Name>11-1-N-ES-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\12-1-K-E-objMap.fbx">
+      <Name>12-1-K-E-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\13-1-B-E-objMap.fbx">
+      <Name>13-1-B-E-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\14-1-N-E-objMap.fbx">
+      <Name>14-1-N-E-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\Levels\RoomObjectMaps\15-1-N-E-objMap.fbx">
+      <Name>15-1-N-E-objMap</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>LevelModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\Props\01-closedDoor.fbx">
+      <Name>01-closedDoor</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\BillBoards\laserbillboard.png">
+      <Name>laserbillboard</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Shaders\SlidingBillboardEffect.fx">
+      <Name>SlidingBillboardEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\sphere.fbx">
+      <Name>sphere</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Armor\Cardinal\armor_boots_cardinal.fbx">
+      <Name>armor_boots_cardinal</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Cardinal\armor_chest_cardinal.fbx">
+      <Name>armor_chest_cardinal</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Cardinal\armor_head_cardinal.fbx">
+      <Name>armor_head_cardinal</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Cardinal\armor_legs_cardinal.fbx">
+      <Name>armor_legs_cardinal</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Cardinal\armor_shoulders_cardinal.fbx">
+      <Name>armor_shoulders_cardinal</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Cardinal\armor_wrist_cardinal.fbx">
+      <Name>armor_wrist_cardinal</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Shaders\AnimatedBillboardEffect.fx">
+      <Name>AnimatedBillboardEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Armor\Barrel\armor_boots_barrel.fbx">
+      <Name>armor_boots_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_chest_barrel.fbx">
+      <Name>armor_chest_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_head_barrel.fbx">
+      <Name>armor_head_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_legs_barrel.fbx">
+      <Name>armor_legs_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_shoulders_barrel.fbx">
+      <Name>armor_shoulders_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Barrel\armor_wrist_barrel.fbx">
+      <Name>armor_wrist_barrel</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\BillBoards\saiyan.png">
+      <Name>saiyan</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\BillBoards\rings.png">
+      <Name>rings</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\BillBoards\level_up.png">
+      <Name>level_up</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\MiniMap\B-E.png">
+      <Name>B-E</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-ES.png">
+      <Name>B-ES</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-ESW.png">
+      <Name>B-ESW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-NEW.png">
+      <Name>B-NEW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-N.png">
+      <Name>B-N</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-NE.png">
+      <Name>B-NE</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-NES.png">
+      <Name>B-NES</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-S.png">
+      <Name>B-S</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-SW.png">
+      <Name>B-SW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-W.png">
+      <Name>B-W</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\B-WN.png">
+      <Name>B-WN</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\S-NESW.png">
+      <Name>S-NESW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\MiniMap\N-E.png">
+      <Name>N-E</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\N-N.png">
+      <Name>N-N</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\N-S.png">
+      <Name>N-S</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\N-W.png">
+      <Name>N-W</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\MiniMap\N-ESW.png">
+      <Name>N-ESW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\N-NES.png">
+      <Name>N-NES</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\N-NEW.png">
+      <Name>N-NEW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\N-NSW.png">
+      <Name>N-NSW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\MiniMap\N-ES.png">
+      <Name>N-ES</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\N-NE.png">
+      <Name>N-NE</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\N-NW.png">
+      <Name>N-NW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MiniMap\N-SW.png">
+      <Name>N-SW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\MiniMap\MiniMapLocation.png">
+      <Name>MiniMapLocation</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\MegaMap\01-1-S-NSEW.png">
+      <Name>01-1-S-NSEW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\02-1-S-NSEW.png">
+      <Name>02-1-S-NSEW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\03-1-S-NSEW.png">
+      <Name>03-1-S-NSEW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\04-1-K-ESW.png">
+      <Name>04-1-K-ESW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\05-1-B-ESW.png">
+      <Name>05-1-B-ESW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\06-1-N-ESW.png">
+      <Name>06-1-N-ESW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\07-1-N-ESW.png">
+      <Name>07-1-N-ESW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\08-1-K-ES.png">
+      <Name>08-1-K-ES</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\09-1-B-ES.png">
+      <Name>09-1-B-ES</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\10-1-N-ES.png">
+      <Name>10-1-N-ES</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\11-1-N-ES.png">
+      <Name>11-1-N-ES</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\12-1-K-E.png">
+      <Name>12-1-K-E</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\13-1-B-E.png">
+      <Name>13-1-B-E</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\14-1-N-E.png">
+      <Name>14-1-N-E</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\MegaMap\15-1-N-E.png">
+      <Name>15-1-N-E</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

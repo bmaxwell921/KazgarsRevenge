@@ -95,6 +95,8 @@ namespace SkinnedModelLib
             this.PlaybackRate = playbackRate;
             pauseAtEnd = false;
             paused = false;
+            mixing = false;
+            secondClipValue = null;
             switch (t)
             {
                 case MixType.None:

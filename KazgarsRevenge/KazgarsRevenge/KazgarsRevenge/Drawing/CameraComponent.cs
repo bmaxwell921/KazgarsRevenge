@@ -18,7 +18,7 @@ namespace KazgarsRevenge
         #region Camera Fields
         private float fov = MathHelper.PiOver4;
         private float nearPlane = 10f;
-        private float farPlane = 10000;
+        private float farPlane = 8000;
 
         private Entity physicalData;
 
@@ -70,6 +70,8 @@ namespace KazgarsRevenge
                 lightPositions[i] = inactiveLightPos;
                 lightColors[i] = Color.White.ToVector3();
             }
+
+            rand = RandSingleton.U_Instance;
         }
 
         public override void Initialize()
@@ -88,7 +90,15 @@ namespace KazgarsRevenge
             LastLightUpdate = int.MinValue;
         }
 
+        double shakeTimer = -1;
+        float shakeMagnitude = 1;
+        public void ShakeCamera(float magnitude)
+        {
+            shakeMagnitude = magnitude;
+            shakeTimer = 500;
+        }
 
+        Random rand;
         MouseState curMouse = Mouse.GetState();
         MouseState prevMouse = Mouse.GetState();
 
@@ -101,11 +111,19 @@ namespace KazgarsRevenge
             {
                 characterPos = physicalData.Position;
             }
+            PlayerLightPos = new Vector3(characterPos.X, 50, characterPos.Z);
 
             Vector3 min = new Vector3(characterPos.X - playerSightRadius, 0, characterPos.Z - playerSightRadius);
             Vector3 max = new Vector3(characterPos.X + playerSightRadius, 100, characterPos.Z + playerSightRadius);
             this.CameraBox = new BoundingBox(min, max);
-            
+
+            min = new Vector3(characterPos.X - lightSensingRadius, 0, characterPos.Z - lightSensingRadius);
+            max = new Vector3(characterPos.X + lightSensingRadius, 100, characterPos.Z + lightSensingRadius);
+            this.LightSensingBox = new BoundingBox(min, max);
+
+            min = new Vector3(characterPos.X - aiUpdateRadius, 0, characterPos.Z - aiUpdateRadius);
+            max = new Vector3(characterPos.X + aiUpdateRadius, 100, characterPos.Z + aiUpdateRadius);
+            this.AIBox = new BoundingBox(min, max);
 
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
@@ -195,6 +213,14 @@ namespace KazgarsRevenge
             {
                 target = physicalData.Position + headOffset;
             }
+
+            //camera shake
+            shakeTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (shakeTimer > 0)
+            {
+                target += new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()) * shakeMagnitude;
+            }
+
             position = target + rot.Backward * distanceFromTarget;
             view = Matrix.CreateLookAt(position, target, rotatedUpVector);
 
@@ -212,21 +238,30 @@ namespace KazgarsRevenge
         }
 
         #region Lights
+        public Vector3 PlayerLightPos { get; private set; }
+
         public const int MAX_ACTIVE_LIGHTS = 30;
         public int LastLightUpdate { get; private set; }
-        public BoundingBox CameraBox { get; private set; }
         public Vector3[] lightPositions { get; private set; }
         public Vector3[] lightColors { get; private set; }
-        float playerSightRadius = 1000;
         Space physics;
         private Vector3 inactiveLightPos = new Vector3(-10000, 0, 0);
+
+        float aiUpdateRadius = 600;
+        public BoundingBox AIBox { get; private set; }
+
+        float playerSightRadius = 800;
+        public BoundingBox CameraBox { get; private set; }
+
+        float lightSensingRadius = 1000;
+        BoundingBox LightSensingBox;
         private void UpdateLights()
         {
             //check which lights are in camera cube, add to lights
             int i = 0;
             
             var entries = Resources.GetBroadPhaseEntryList();
-            physics.BroadPhase.QueryAccelerator.GetEntries(CameraBox, entries);
+            physics.BroadPhase.QueryAccelerator.GetEntries(LightSensingBox, entries);
             foreach (BroadPhaseEntry entry in entries)
             {
                 GameEntity other = entry.Tag as GameEntity;

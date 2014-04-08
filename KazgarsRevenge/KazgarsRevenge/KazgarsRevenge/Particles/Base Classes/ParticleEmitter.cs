@@ -27,6 +27,7 @@ namespace KazgarsRevenge
     public class ParticleEmitter
     {
         #region Fields
+        CameraComponent camera;
         public int BoneIndex { get; private set; }
 
         ParticleSystem particleSystem;
@@ -56,9 +57,10 @@ namespace KazgarsRevenge
         /// <summary>
         /// Constructs a new particle emitter object.
         /// </summary>
-        public ParticleEmitter(ParticleSystem particleSystem,
+        public ParticleEmitter(CameraComponent camera, ParticleSystem particleSystem,
                                float particlesPerSecond, Vector3 initialPosition, Vector3 offset)
         {
+            this.camera = camera;
             this.particleSystem = particleSystem;
 
             timeBetweenParticles = 1.0f / particlesPerSecond;
@@ -73,9 +75,10 @@ namespace KazgarsRevenge
             Timed = false;
             Dead = false;
         }
-        public ParticleEmitter(ParticleSystem particleSystem,
+        public ParticleEmitter(CameraComponent camera, ParticleSystem particleSystem,
                        float particlesPerSecond, Vector3 initialPosition, Vector3 offset, int attachIndex)
         {
+            this.camera = camera;
             this.particleSystem = particleSystem;
 
             timeBetweenParticles = 1.0f / particlesPerSecond;
@@ -110,10 +113,23 @@ namespace KazgarsRevenge
             this.sizeIncrementIncrement = sizeIncrementIncrement;
         }
 
+
         Vector3 extraVel = Vector3.Zero;
         public void SetVelocity(Vector3 vel)
         {
             extraVel = vel;
+        }
+
+        float alongUp = 0;
+        public void SetAlongUpAmount(float amount)
+        {
+            this.alongUp = amount;
+        }
+
+        Vector3 up = Vector3.Up;
+        public void SetUpTranslationVector(Vector3 up)
+        {
+            this.up = up;
         }
         /// <summary>
         /// Updates the emitter, creating the appropriate number of particles
@@ -161,22 +177,28 @@ namespace KazgarsRevenge
                 float currentTime = -timeLeftOver;
 
                 // Create particles as long as we have a big enough time interval.
+                bool canAdd = InsideCameraBox(camera.AIBox, newPosition);
+
                 while (timeToSpend > timeBetweenParticles)
                 {
                     currentTime += timeBetweenParticles;
                     timeToSpend -= timeBetweenParticles;
 
-                    // Work out the optimal position for this particle. This will produce
-                    // evenly spaced particles regardless of the object speed, particle
-                    // creation frequency, or game update rate.
-                    float mu = currentTime / elapsedTime;
+                    if (canAdd)
+                    {
+                        // Work out the optimal position for this particle. This will produce
+                        // evenly spaced particles regardless of the object speed, particle
+                        // creation frequency, or game update rate.
+                        float mu = currentTime / elapsedTime;
 
-                    Vector3 position = Vector3.Lerp(previousPosition, newPosition, mu);
+                        Vector3 position = Vector3.Lerp(previousPosition, newPosition, mu);
 
-                    // Create the particle.
-                    Vector3 finalpos = Vector3.Transform(offset, rotation);
-                    finalpos += position;
-                    particleSystem.AddParticle(finalpos + new Vector3(rand.Next(maxHorizontalOffset * 2) - maxHorizontalOffset, rand.Next(maxVerticalOffset * 2) - maxVerticalOffset, rand.Next(maxHorizontalOffset * 2) - maxHorizontalOffset), velocity, sizePercent);
+                        // Create the particle.
+                        Vector3 finalpos = Vector3.Transform(offset, rotation);
+                        finalpos += position + up * alongUp;
+
+                        particleSystem.AddParticle(finalpos + new Vector3(rand.Next(maxHorizontalOffset * 2) - maxHorizontalOffset, rand.Next(maxVerticalOffset * 2) - maxVerticalOffset, rand.Next(maxHorizontalOffset * 2) - maxHorizontalOffset), velocity, sizePercent);
+                    }
                 }
 
                 // Store any time we didn't use, so it can be part of the next update.
@@ -185,6 +207,16 @@ namespace KazgarsRevenge
 
             previousPosition = newPosition;
         }
+
+        protected bool InsideCameraBox(BoundingBox cameraBox, Vector3 position)
+        {
+            Vector3 pos = position;
+            return !(pos.X < cameraBox.Min.X
+                || pos.X > cameraBox.Max.X
+                || pos.Z < cameraBox.Min.Z
+                || pos.Z > cameraBox.Max.Z);
+        }
+
 
         public void SetDeathTimer(double timerLength)
         {

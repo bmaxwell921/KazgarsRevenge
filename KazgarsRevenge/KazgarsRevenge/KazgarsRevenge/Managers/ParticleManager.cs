@@ -57,6 +57,21 @@ namespace KazgarsRevenge
             systems.Add(typeof(FlameThrowerSystem), new FlameThrowerSystem(Game, Game.Content));
             systems.Add(typeof(FrostThrowerSystem), new FrostThrowerSystem(Game, Game.Content));
             systems.Add(typeof(DragonFireChargeSystem), new DragonFireChargeSystem(Game, Game.Content));
+            systems.Add(typeof(SmokeAOESystem), new SmokeAOESystem(Game, Game.Content));
+            systems.Add(typeof(SpitSparks), new SpitSparks(Game, Game.Content));
+            systems.Add(typeof(FireSwipeSystem), new FireSwipeSystem(Game, Game.Content));
+            systems.Add(typeof(FrostSwipeSystem), new FrostSwipeSystem(Game, Game.Content));
+            systems.Add(typeof(MagicPrimaryTrail), new MagicPrimaryTrail(Game, Game.Content));
+            systems.Add(typeof(DevastateTrailSystem), new DevastateTrailSystem(Game, Game.Content));
+            systems.Add(typeof(SoulevatorMistSystem), new SoulevatorMistSystem(Game, Game.Content));
+            systems.Add(typeof(KeyUnlockSystem), new KeyUnlockSystem(Game, Game.Content));
+            systems.Add(typeof(KeyGlowSystem), new KeyGlowSystem(Game, Game.Content));
+            systems.Add(typeof(FirePillarMistSystem), new FirePillarMistSystem(Game, Game.Content));
+            systems.Add(typeof(FireDragonHeadSystem), new FireDragonHeadSystem(Game, Game.Content));
+            systems.Add(typeof(FrostDragonHeadSystem), new FrostDragonHeadSystem(Game, Game.Content));
+            systems.Add(typeof(FirePillarSystem), new FirePillarSystem(Game, Game.Content));
+            systems.Add(typeof(LevelUpExplosionSystem), new LevelUpExplosionSystem(Game, Game.Content));
+            systems.Add(typeof(TorchSystem), new TorchSystem(Game, Game.Content));
             
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)

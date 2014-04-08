@@ -88,13 +88,7 @@ namespace KazgarsRevenge
 
             AccountMenu accountMenu = new AccountMenu(this, ACCOUNTS, titleLoc, background, backgroundBox, new Vector2(screenWidth / 2f, screenHeight * 0.47f));
 
-            LinkedMenu title = new LinkedMenu(this, GAME_TITLE, new Vector2(screenWidth / 2, screenHeight * .35f), background, backgroundBox);
-            title.AddSelection(new SelectionV2(this, PLAY, new Vector2(screenWidth / 2f, screenHeight * 0.47f)), accountMenu);
-            title.AddSelection(new SelectionV2(this, SETTINGS, new Vector2(screenWidth / 2f, screenHeight * 0.55f)), null);
-            this.currentMenu = title;
-            kd.Register(currentMenu);
-
-            //LoadingMenu loading = new LoadingMenu(sb, LOADING, titleFont, guiScale, new Vector2(screenWidth / 2, screenHeight * .35f));
+            TitleMenu title = new TitleMenu(this, GAME_TITLE, titleLoc, background, backgroundBox, new Vector2(screenWidth / 2f, screenHeight * 0.47f));
 
             menus[GAME_TITLE] = title;
             menus[SETTINGS] = null;
@@ -102,6 +96,8 @@ namespace KazgarsRevenge
             menus[LEVELS] = levelsMenu;
             menus[LOADING] = loading;
             menus[NEW_ACCOUNT] = newAcct;
+
+            this.TransitionTo(title);
         }
         #endregion
 
@@ -116,12 +112,20 @@ namespace KazgarsRevenge
             {
                 return;
             }
-            // Get rid of old
-            object info = currentMenu.Unload();
-            menuQ.Enqueue(new IMenuInfoBox(currentMenu, info));
+
+            object info = null;
+            
+            // Null if we just started
+            if (currentMenu != null)
+            {
+                // Get rid of old
+                info = currentMenu.Unload();
+                menuQ.Enqueue(new IMenuInfoBox(currentMenu, info));
+            }
 
             // Bring in new
             next.Load(info);
+            
             // Unregister the old current
             kd.Unregister(currentMenu);
             currentMenu = next;
@@ -201,7 +205,7 @@ namespace KazgarsRevenge
             {
                 if (loadingState == LoadingState.COMPLETE)
                 {
-                    (Game as MainGame).TransitionToPlaying();
+                    //(Game as MainGame).TransitionToPlaying();
                 }
             }
         }
@@ -235,7 +239,7 @@ namespace KazgarsRevenge
             //// TODO how does this manager act when we go to playing?
             //this.menuQ.Clear();
             //currentMenu = menus[GAME_TITLE];
-            (Game as MainGame).TransitionToPlaying();
+            //(Game as MainGame).TransitionToPlaying();
         }
 
         #endregion

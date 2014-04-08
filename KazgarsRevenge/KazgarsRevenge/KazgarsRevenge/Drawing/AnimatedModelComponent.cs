@@ -17,12 +17,12 @@ namespace KazgarsRevenge
         public float alpha;
         public float lineIntensity;
         public Color lineColor;
-        public float size;
+        public Vector3 size;
         public SharedGraphicsParams()
         {
             alpha = 1f;
             lineIntensity = 1f;
-            size = 1;
+            size = new Vector3(1);
             lineColor = Color.Black;
         }
     }
@@ -53,7 +53,7 @@ namespace KazgarsRevenge
             animationPlayer.StartClip(animationPlayer.skinningDataValue.AnimationClips.Keys.First(), MixType.None);
 
             modelParams = new SharedGraphicsParams();
-            modelParams.size = drawScale;
+            modelParams.size = new Vector3(drawScale);
             entity.AddSharedData(typeof(SharedGraphicsParams), modelParams);
 
         }
@@ -69,9 +69,28 @@ namespace KazgarsRevenge
             modelParams.lineIntensity = 0;
         }
 
+        public void AddColorTint(Color tint)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    effect.Parameters["colorTint"].SetValue(tint.ToVector3());
+                }
+            }
+        }
+
         public void SetAlpha(float alpha)
         {
             this.modelParams.alpha = alpha;
+        }
+
+        public void SetEmitterUp(string key, float amount)
+        {
+            if (emitters.ContainsKey(key))
+            {
+                emitters[key].SetAlongUpAmount(amount);
+            }
         }
 
         public void SetEmitterVel(string emitterName, float vel, string relativeBone, Vector3 offset)
@@ -98,7 +117,7 @@ namespace KazgarsRevenge
 
         public ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxHorizontalOffset, int maxVerticalOffset, Vector3 offsetFromCenter, int attachIndex)
         {
-            ParticleEmitter toAdd = new ParticleEmitter((Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType), particlesPerSecond, physicalData.Position, offsetFromCenter, attachIndex);
+            ParticleEmitter toAdd = new ParticleEmitter((Game.Services.GetService(typeof(CameraComponent)) as CameraComponent), (Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType), particlesPerSecond, physicalData.Position, offsetFromCenter, attachIndex);
             toAdd.SetHorizontalOffset(maxHorizontalOffset);
             toAdd.SetVerticalOffset(maxVerticalOffset);
             if (!emitters.ContainsKey(systemName))
@@ -124,7 +143,7 @@ namespace KazgarsRevenge
             rot = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
             rot *= yawOffset;
 
-            Matrix conglomeration = Matrix.CreateScale(new Vector3(modelParams.size));
+            Matrix conglomeration = Matrix.CreateScale(modelParams.size);
             conglomeration *= Matrix.CreateTranslation(localOffset);
             conglomeration *= rot;
             conglomeration *= Matrix.CreateTranslation(physicalData.Position);
@@ -144,6 +163,8 @@ namespace KazgarsRevenge
                 {
                     Vector3 bonePos = boneTransforms[k.Value.BoneIndex].Translation;
                     k.Value.Update(gameTime, bonePos, rot);
+
+                    k.Value.SetUpTranslationVector(boneTransforms[k.Value.BoneIndex].Up);
                 }
 
                 if (k.Value.Dead)
@@ -176,6 +197,7 @@ namespace KazgarsRevenge
                     {
                         foreach (CustomSkinnedEffect effect in mesh.Effects)
                         {
+                            effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                             effect.Parameters["lineColor"].SetValue(modelParams.lineColor.ToVector3());
                             effect.Parameters["alpha"].SetValue(modelParams.alpha);
                             effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
@@ -200,26 +222,30 @@ namespace KazgarsRevenge
                 {
                     foreach (Model m in syncedModels.Values)
                     {
-                        foreach (ModelMesh mesh in m.Meshes)
+                        if (m != null)
                         {
-                            foreach (CustomSkinnedEffect effect in mesh.Effects)
+                            foreach (ModelMesh mesh in m.Meshes)
                             {
-                                effect.Parameters["lineColor"].SetValue(modelParams.lineColor.ToVector3());
-                                effect.Parameters["alpha"].SetValue(modelParams.alpha);
-                                effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
-                                effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                                effect.SetBoneTransforms(bones);
-                                if (lastLightUpdate != currentLightUpdate)
+                                foreach (CustomSkinnedEffect effect in mesh.Effects)
                                 {
-                                    effect.LightPositions = camera.lightPositions;
-                                    effect.LightColors = camera.lightColors;
+                                    effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
+                                    effect.Parameters["lineColor"].SetValue(modelParams.lineColor.ToVector3());
+                                    effect.Parameters["alpha"].SetValue(modelParams.alpha);
+                                    effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
+                                    effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
+                                    effect.SetBoneTransforms(bones);
+                                    if (lastLightUpdate != currentLightUpdate)
+                                    {
+                                        effect.LightPositions = camera.lightPositions;
+                                        effect.LightColors = camera.lightColors;
+                                    }
+
+                                    effect.View = view;
+                                    effect.Projection = projection;
                                 }
 
-                                effect.View = view;
-                                effect.Projection = projection;
+                                mesh.Draw();
                             }
-
-                            mesh.Draw();
                         }
                     }
                 }
@@ -239,6 +265,7 @@ namespace KazgarsRevenge
                             {
                                 foreach (Effect effect in mesh.Effects)
                                 {
+                                    effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                                     effect.Parameters["alpha"].SetValue(modelParams.alpha);
                                     effect.Parameters["lineIntensity"].SetValue(modelParams.lineIntensity);
                                     effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];

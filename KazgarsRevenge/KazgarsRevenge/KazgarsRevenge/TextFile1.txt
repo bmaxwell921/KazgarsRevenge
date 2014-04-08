@@ -33,3 +33,42 @@ Inventory
 Networking (location and running animations for multiple players)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Leet hacks
+============
+-use an ability right after your primary to use it faster
+-spam your primary and a charged ability to bypass part of the attackspeed limiter
+-

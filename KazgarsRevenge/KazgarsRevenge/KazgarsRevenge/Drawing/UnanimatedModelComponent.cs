@@ -13,10 +13,15 @@ namespace KazgarsRevenge
     class UnanimatedModelComponent : DrawableComponent3D
     {
         private Model model;
-        private Vector3 drawScale;
         private Vector3 localOffset;
 
         private Matrix currentRot = Matrix.Identity;
+
+
+        protected SharedGraphicsParams modelParams;
+
+
+
         /// <summary>
         /// constructs a new model component for rendering models without animations
         /// </summary>
@@ -24,12 +29,18 @@ namespace KazgarsRevenge
             : base(game, entity)
         {
             this.model = model;
-            this.drawScale = drawScale;
             this.localOffset = localOffset;
+
+            modelParams = new SharedGraphicsParams();
+            modelParams.size = drawScale;
+            entity.AddSharedData(typeof(SharedGraphicsParams), modelParams);
 
             this.yaw = yaw;
             this.pitch = pitch;
             this.roll = roll;
+
+            Matrix3X3 bepurot = physicalData.OrientationMatrix;
+            rotation = new Matrix(bepurot.M11, bepurot.M12, bepurot.M13, 0, bepurot.M21, bepurot.M22, bepurot.M23, 0, bepurot.M31, bepurot.M32, bepurot.M33, 0, 0, 0, 0, 1);
         }
 
         /// <summary>
@@ -52,6 +63,18 @@ namespace KazgarsRevenge
             }
         }
 
+        public void AddColorTint(Color tint)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    effect.Parameters["colorTint"].SetValue(tint.ToVector3());
+                }
+            }
+        }
+
+        float yawPerFrame = 0;
         float rollPerFrame = 0;
 
         float yaw;
@@ -62,16 +85,27 @@ namespace KazgarsRevenge
             this.rollPerFrame = roll;
         }
 
-        float alpha = 1;
+        public void AddYawSpeed(float yaw)
+        {
+            this.yawPerFrame = yaw;
+        }
+
         public void SetAlpha(float alpha)
         {
-            this.alpha = alpha;
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    effect.Parameters["alpha"].SetValue(alpha);
+                }
+            }
         }
 
         Matrix rotation = Matrix.Identity;
         public override void Update(GameTime gameTime)
         {
             roll += rollPerFrame;
+            yaw += yawPerFrame;
 
             this.currentRot = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
 
@@ -109,10 +143,10 @@ namespace KazgarsRevenge
                 {
                     foreach (Effect effect in mesh.Effects)
                     {
+                        effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                         effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
-                        effect.Parameters["alpha"].SetValue(alpha);
                         Matrix world = transforms[mesh.ParentBone.Index]
-                            * Matrix.CreateScale(drawScale)
+                            * Matrix.CreateScale(modelParams.size)
                             * Matrix.CreateTranslation(localOffset)
                             * currentRot
                             * rotation

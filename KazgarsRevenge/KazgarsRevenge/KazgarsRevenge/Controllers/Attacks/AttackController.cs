@@ -11,8 +11,6 @@ using BEPUphysics.CollisionTests;
 using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.Collidables;
 using BEPUphysics.Collidables.MobileCollidables;
-using SkinnedModelLib;
-using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
@@ -24,15 +22,25 @@ namespace KazgarsRevenge
         //either "good" or "bad", for now
         protected FactionType factionToHit;
         protected DeBuff debuff = DeBuff.None;
-        public AttackController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
+        protected AttackType type;
+        public AttackController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator, AttackType type)
             : base(game, entity)
         {
             this.damage = damage;
             this.factionToHit = factionToHit;
             this.creator = creator;
             this.physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
+            this.type = type;
             physicalData.IsAffectedByGravity = false;
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
+        }
+
+        public void Reflect(FactionType toHit)
+        {
+            //flip faction to hit and direction
+            this.factionToHit = toHit;
+            Entity.ChangeFaction(toHit);
+            physicalData.LinearVelocity = new Vector3(-physicalData.LinearVelocity.X, 0, -physicalData.LinearVelocity.Z);
         }
 
         bool lifesteal = false;
@@ -59,7 +67,7 @@ namespace KazgarsRevenge
 
         public void HitMultipleTargets()
         {
-            aoe = true;
+            hitMultiple = true;
         }
 
         public void AddDebuff(DeBuff d)
@@ -67,7 +75,7 @@ namespace KazgarsRevenge
             this.debuff = d;
         }
 
-        protected bool aoe = false;
+        protected bool hitMultiple = false;
         protected bool dieAfterContact = true;
         /// <summary>
         /// called the first update after a collision is detected.
@@ -77,16 +85,18 @@ namespace KazgarsRevenge
         {
             if (hitData.Count > 0)
             {
-                if (aoe)
+                if (hitMultiple)
                 {
                     foreach (AliveComponent a in hitData)
                     {
                         DamageTarget(a);
+                        creator.AddPower(1);
                     }
                 }
                 else
                 {
                     DamageTarget(hitData[0]);
+                    creator.AddPower(1);
                 }
 
                 hitData.Clear();
@@ -127,13 +137,19 @@ namespace KazgarsRevenge
         {
             if (t != null)
             {
-                int d = t.DamageDodgeable(debuff, (int)damage, creator.Entity);
+                int toDeal = GetDamage();
+                int d = t.DamageDodgeable(debuff, toDeal, creator.Entity, type);
                 damageDealt += d;
                 if (lifesteal)
                 {
                     creator.LifeSteal((int)Math.Ceiling(d * amountStolen));
                 }
             }
+        }
+
+        protected virtual int GetDamage()
+        {
+            return (int)damage;
         }
 
         public override void End()

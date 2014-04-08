@@ -21,9 +21,24 @@ namespace AnimationPipeline
             //System.Diagnostics.Debugger.Launch();
 
             LevelTagData tag = new LevelTagData();
-            
-            AddLights(input, tag);
-            AddPhysics(input, tag);
+
+            AddPointsTo(GetDataHolder(input, "particles"), tag.emitterLocations);
+            AddPointsTo(GetDataHolder(input, "key"), tag.keyLocations);
+            AddPointsTo(GetDataHolder(input, "bossSpawn"), tag.bossSpawnLocations);
+            AddPointsTo(GetDataHolder(input, "soul"), tag.soulLocations);
+            AddPointsTo(GetDataHolder(input, "ewclosedDoors"), tag.ewLockedDoorLocations);
+            AddPointsTo(GetDataHolder(input, "nsclosedDoors"), tag.nsLockedDoorLocations);
+            AddPointsTo(GetDataHolder(input, "ewDoors"), tag.ewOpenDoorLocations);
+            AddPointsTo(GetDataHolder(input, "nsDoors"), tag.nsOpenDoorLocations);
+            AddPointsTo(GetDataHolder(input, "hanginglights"), tag.hangingLightLocations);
+
+            NodeContent lightHolder = GetDataHolder(input, "lights");
+            AddPointsTo(lightHolder, tag.lightLocations);
+            GetColorsFromNames(lightHolder, tag.lightColors);
+
+            AddPointsTo(GetDataHolder(input, "mobspawn"), tag.mobSpawnLocations);
+            AddPointsTo(GetDataHolder(input, "playerspawn"), tag.playerSpawnLocations);
+            AddPointsTo(GetDataHolder(input, "groundobjs"), tag.groundPropLocations);
 
             ModelContent retModel = base.Process(input, context);
             retModel.Tag = tag;
@@ -31,63 +46,77 @@ namespace AnimationPipeline
             return retModel;
         }
 
-        void AddLights(NodeContent input, LevelTagData tag)
+        void AddPointsTo(NodeContent dataHolder, List<Vector3> list)
         {
-            //get the object that has lights as children (should be named "lights")
-            NodeContent lightHolder = FindNodeNameBFS(input, "lights");
-
-            List<Vector3> lightLocations = new List<Vector3>();
             //iterate through and get positions
-            if (lightHolder != null)
+            if (dataHolder != null)
             {
-                for (int i = lightHolder.Children.Count - 1; i >= 0; --i)
+                for (int i = dataHolder.Children.Count - 1; i >= 0; --i)
                 {
-                    MeshContent light = lightHolder.Children[i] as MeshContent;
-                    if (light != null)
+                    MeshContent spherePoint = dataHolder.Children[i] as MeshContent;
+                    if (spherePoint != null)
                     {
-                        BoundingSphere sphere = BoundingSphere.CreateFromPoints(light.Positions);
-                        lightLocations.Add(Vector3.Transform(sphere.Center, light.AbsoluteTransform));
-
+                        BoundingSphere sphere = BoundingSphere.CreateFromPoints(spherePoint.Positions);
+                        list.Add(Vector3.Transform(sphere.Center, spherePoint.AbsoluteTransform));
                     }
-                    //remove from scene so that it isn't rendered
-                    light.Parent.Children.Remove(light);
                 }
-
-                lightHolder.Parent.Children.Remove(lightHolder);
             }
-            tag.lightLocations = lightLocations;
         }
-        
-        void AddPhysics(NodeContent input, LevelTagData tag)
+
+        void GetColorsFromNames(NodeContent dataHolder, List<Color> list)
         {
-            List<Vector3[]> allVerts = new List<Vector3[]>();
-            List<int[]> allInds = new List<int[]>();
-            List<Matrix> allTransforms = new List<Matrix>();
-
-            NodeContent physics = FindNodeNameBFS(input, "physics");
-
-            if (physics != null)
+            if (dataHolder != null)
             {
-                for (int i = physics.Children.Count - 1; i >= 0; --i)
+                for (int i = dataHolder.Children.Count - 1; i >= 0; --i)
                 {
-                    MeshContent box = physics.Children[i] as MeshContent;
-                    if (box != null)
+                    //interpreting name as color
+                    string[] name = dataHolder.Children[i].Name.Split(new char[] { '-' });
+                    if (name.Length >= 3)
                     {
-                        //assuming the collidables are all cubes and there is only one entry in Geometry
-                        allVerts.Add(box.Geometry[0].Vertices.Positions.ToArray());
-                        allInds.Add(box.Geometry[0].Indices.ToArray());
-                        allTransforms.Add(box.AbsoluteTransform);
+                        int r;
+                        if (!Int32.TryParse(name[0], out r))
+                        {
+                            list.Add(Color.White);
+                            continue;
+                        }
+                        int g;
+                        if (!Int32.TryParse(name[1], out g))
+                        {
+                            list.Add(Color.White);
+                            continue;
+                        }
+                        int b;
+                        if (!Int32.TryParse(name[2], out b))
+                        {
+                            list.Add(Color.White);
+                            continue;
+                        }
+                        list.Add(new Color(Int32.Parse(name[0]), Int32.Parse(name[1]), Int32.Parse(name[2])));
                     }
-                    box.Parent.Children.Remove(box);
+                    else
+                    {
+                        list.Add(Color.White);
+                    }
                 }
-                physics.Parent.Children.Remove(physics);
             }
-
-            tag.physicsVertices = allVerts;
-            tag.physicsIndices = allInds;
-            tag.physicsTransforms = allTransforms;
         }
 
+        NodeContent GetDataHolder(NodeContent input, string name)
+        {
+            NodeContentCollection children = input.Children;
+            for (int i = children.Count - 1; i >= 0; --i)
+            {
+                NodeContent n = children[i];
+
+                if (n.Name.ToLower() == name.ToLower())
+                {
+                    return n;
+                }
+            }
+            return null;
+        }
+
+        /*
         NodeContent FindNodeNameBFS(NodeContent node, string name)
         {
             List<NodeContent> toProcess = new List<NodeContent>();
@@ -100,7 +129,7 @@ namespace AnimationPipeline
                     NodeContent n = toProcess[i];
                     toProcess.RemoveAt(i);
 
-                    if (n.Name == name)
+                    if (n.Name.ToLower() == name.ToLower())
                     {
                         return n;
                     }
@@ -113,6 +142,6 @@ namespace AnimationPipeline
             }
 
             return null;
-        }
+        }*/
     }
 }

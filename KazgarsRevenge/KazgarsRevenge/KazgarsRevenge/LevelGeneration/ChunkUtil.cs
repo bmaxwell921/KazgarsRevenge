@@ -102,9 +102,9 @@ namespace KazgarsRevenge
 
         /* Converts the given chunkName into its ChunkInfo equivalent
          * ChunkNames have the form:
-         *      <id>:<type>:<doorLocations>
+         *      <id>-<type>-<doorLocations>
          * Example:
-         *      0:H:NSEW
+         *      0-H-NSEW
          */ 
             
         private IList<ChunkInfo> parseName(string chunkName, out string message)

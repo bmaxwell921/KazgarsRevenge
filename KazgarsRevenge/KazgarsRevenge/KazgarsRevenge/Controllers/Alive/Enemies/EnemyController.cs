@@ -44,6 +44,8 @@ namespace KazgarsRevenge
         public float noticePlayerRange;
         public float stopChasingRange;
         public float walkSpeed;
+
+        public bool usesTwoHander;
     }
     public class EnemyController : AliveComponent
     {
@@ -71,11 +73,12 @@ namespace KazgarsRevenge
             settings.hitAniName = "hit";
             settings.deathAniName = "death";
             settings.attackRange = 30;
-            settings.noticePlayerRange = 150;
+            settings.noticePlayerRange = 275;
             settings.stopChasingRange = 400;
             settings.attackLength = 1417;
             settings.attackCreateMillis = settings.attackLength / 2;
             settings.walkSpeed = GetStat(StatType.RunSpeed) / 2;
+            settings.usesTwoHander = true;
 
 
             lewts = (LootManager)game.Services.GetService(typeof(LootManager));
@@ -119,7 +122,7 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case EnemyState.Normal:
-                    if (!activeDebuffs.ContainsKey(DeBuff.Stunned) && InsideCameraBox(camera.CameraBox))
+                    if (!activeDebuffs.ContainsKey(DeBuff.Stunned) && InsideCameraBox(camera.AIBox))
                     {
                         currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
                     }
@@ -135,24 +138,30 @@ namespace KazgarsRevenge
             base.Update(gameTime);
         }
 
-
         #region State Definitions
 
         bool chillin = false;
+        double scanTimerCounter = 0;
+        double scanTimerLength = 2000;
         protected virtual void AIWanderingHostile(double millis)
         {
             threatLevels.Clear();
 
-            GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, settings.noticePlayerRange, false);
-            if (possTargetPlayer != null)
+            scanTimerCounter += millis;
+            if (scanTimerCounter > scanTimerLength)
             {
-                targetHealth = possTargetPlayer.GetComponent(typeof(AliveComponent)) as AliveComponent;
-                if (targetHealth != null && !targetHealth.Dead)
+                scanTimerCounter = 0;
+                GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, settings.noticePlayerRange, false);
+                if (possTargetPlayer != null)
                 {
-                    targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                    SwitchToAttacking();
-                    PlayAnimation(settings.aniPrefix + settings.moveAniName);
-                    return;
+                    targetHealth = possTargetPlayer.GetComponent(typeof(AliveComponent)) as AliveComponent;
+                    if (targetHealth != null && !targetHealth.Dead)
+                    {
+                        targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
+                        SwitchToAttacking();
+                        PlayAnimation(settings.aniPrefix + settings.moveAniName);
+                        return;
+                    }
                 }
             }
 
@@ -167,7 +176,7 @@ namespace KazgarsRevenge
                 if (timerCounter >= timerLength)
                 {
                     timerCounter = 0;
-                    timerLength = rand.Next(4000, 8000);
+                    timerLength = rand.Next(1000, 3000);
                     float newDir = rand.Next(1, 627) / 10.0f;
                     Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
                     physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
@@ -182,7 +191,7 @@ namespace KazgarsRevenge
             else
             {
                 //if it's already sitting still, play idle animation (just in case)
-                if (physicalData.LinearVelocity.Length() < .1f)
+                if (Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) < .1f)
                 {
                     PlayAnimation(settings.aniPrefix + settings.idleAniName);
                     chillin = true;
@@ -246,6 +255,7 @@ namespace KazgarsRevenge
                         if (raycastCheckTarget && settings.attackRange > LevelManager.BLOCK_SIZE && !RayCastCheckForRoom(diff))
                         {
                             currentUpdateFunction = new AIUpdateFunction(AIRunningToTarget);
+                            raycastTimerCounter = 100000;
                             maxPathRequestCounter = 10000;
                             attackCounter = double.MaxValue;
                             return;
@@ -275,8 +285,16 @@ namespace KazgarsRevenge
         double maxPathRequestLength = 1500;
         double minChaseCounter;
         double minChaseLength = 7000;
+
+        double raycastTimerCounter;
+        double raycastTimerLength = 1500;
+        bool nothingWasBetween = true;
+
+        double rotateTimerCounter;
+        protected double rotateTimerLength = 1000;
         protected virtual void AIRunningToTarget(double millis)
         {
+            raycastTimerCounter += millis;
             minChaseCounter += millis;
             maxPathRequestCounter += millis;
             if (targetHealth != null && targetData != null && !targetHealth.Dead)
@@ -284,9 +302,18 @@ namespace KazgarsRevenge
                 Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
                 bool nothingBetween = true;
                 //if we have a longer range on our attack, raycast to check if a wall is in the way
-                if (settings.attackRange > LevelManager.BLOCK_SIZE)
+                if (settings.attackRange > LevelManager.BLOCK_SIZE && raycastCheckTarget)
                 {
-                    nothingBetween = RayCastCheckForRoom(diff);
+                    if (raycastTimerCounter >= raycastTimerLength)
+                    {
+                        nothingBetween = !raycastCheckTarget || RayCastCheckForRoom(diff);
+                        nothingWasBetween = nothingBetween;
+                        raycastTimerCounter = 0;
+                    }
+                    else
+                    {
+                        nothingBetween = nothingWasBetween;
+                    }
                 }
 
                 //if the target is within attack radius,
@@ -305,17 +332,36 @@ namespace KazgarsRevenge
                 else
                 {//otherwise, run towards it
 
+                    bool updatedPath = false;
+
+                    //if not a ranged unit, but using pathfinding, do a raycast every so often to see if we can just run to the player
+                    bool beeline = false;
+                    if (usesPath)
+                    {
+                        if (raycastTimerCounter >= raycastTimerLength)
+                        {
+                            beeline = RayCastCheckForRoom(diff);
+                            nothingWasBetween = beeline;
+                            raycastTimerCounter = 0;
+                        }
+                        else
+                        {
+                            beeline = nothingWasBetween;
+                        }
+                    }
+
                     //if we're not in the same block as the target, run to next path point. otherwise, run straight towards it
                     if (!usesPath)
                     {
-
+                        //run straight to player if not using path
                     }
-                    else if (nothingBetween || Math.Abs(diff.X) > LevelManager.BLOCK_SIZE / 2 || Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE / 2)
+                    else if (!nothingBetween || !beeline)//can't run straight to player, so using pathing
                     {
                         //if we don't have a path, request one from levels
                         if ((currentPath == null || currentPath.Count == 0))
                         {
                             GetNewPath();
+                            updatedPath = true;
                         }
 
                         if (currentPath != null && currentPath.Count > 0)
@@ -325,6 +371,7 @@ namespace KazgarsRevenge
                             if (Math.Abs(diffTargetPath.X) > LevelManager.BLOCK_SIZE / 2 && Math.Abs(diffTargetPath.Z) > LevelManager.BLOCK_SIZE / 2)
                             {
                                 GetNewPath();
+                                updatedPath = true;
                             }
                         }
 
@@ -333,18 +380,19 @@ namespace KazgarsRevenge
                         if (Math.Abs(diff.X) < PATH_RADIUS_SATISFACTION && Math.Abs(diff.Z) < PATH_RADIUS_SATISFACTION)
                         {
                             GetNextPathPoint();
+                            updatedPath = true;
                             diff = new Vector3(currentPathPoint.X - physicalData.Position.X, 0, currentPathPoint.Z - physicalData.Position.Z);
                         }
                     }
                     else
                     {
-                        //if we're not in the same block and just running at the target, get rid of old path (so that the next point won't be backwards)
+                        updatedPath = true;
+                        //if we're not in the same block, and we're just running at the target, get rid of old path (so that the next point won't be backwards)
                         if (currentPath != null)
                         {
                             currentPath.Clear();
                             UpdatePathMarkers();
                         }
-
                     }
 
                     //run to the next point in the path
@@ -353,8 +401,14 @@ namespace KazgarsRevenge
                         diff.Normalize();
                     }
 
+                    rotateTimerCounter += millis;
                     ChangeVelocity(diff * GetStat(StatType.RunSpeed));
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                    if (updatedPath || rotateTimerCounter > rotateTimerLength)
+                    {
+                        rotateTimerCounter = 0;
+                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                    }
+
                     if (currentAniName != settings.aniPrefix + settings.moveAniName)
                     {
                         PlayAnimation(settings.aniPrefix + settings.moveAniName);
@@ -405,6 +459,7 @@ namespace KazgarsRevenge
 
         protected virtual void SwitchToAttacking()
         {
+            minChaseCounter = 0;
             if (currentPath != null)
             {
                 currentPath.Clear();
@@ -428,7 +483,7 @@ namespace KazgarsRevenge
         #region attack helpers
         protected virtual void CreateAttack()
         {
-            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 25, GeneratePrimaryDamage(StatType.Strength), false, this);
+            attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 25, GeneratePrimaryDamage(StatType.Strength), this, settings.usesTwoHander);
         }
 
         protected virtual void StartAttack()
@@ -461,8 +516,16 @@ namespace KazgarsRevenge
                 {
                     DoDamagedGraphics();
                 }
-                CalculateThreat(d, from);
+                if (from.Faction != Entity.Faction)
+                {
+                    CalculateThreat(d, from);
+                }
                 minChaseCounter = 0;
+
+                if (d > 0)
+                {
+                    (Game as MainGame).AddFloatingText(physicalData.Position, "" + d, Color.Yellow, .5f);
+                }
             }
         }
         protected virtual void DoDamagedGraphics()
@@ -474,8 +537,18 @@ namespace KazgarsRevenge
         #endregion
 
         #region overrides
+        protected override void DealWithKiller()
+        {
+            if (Killer != null)
+            {
+                Killer.AddEXP(level, Entity.Type);
+            }
+            base.DealWithKiller();
+        }
+
         protected override void KillAlive()
         {
+            (Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary).playEnemyDeath(settings.aniPrefix);
             state = EnemyState.Dying;
             timerLength = animations.GetAniMillis(settings.aniPrefix + settings.deathAniName) - 100;
             timerCounter = 0;
@@ -498,7 +571,7 @@ namespace KazgarsRevenge
             base.KillAlive();
         }
 
-        public override void HandleStun()
+        public override void HandleStun(double length)
         {
             PlayAnimation(settings.aniPrefix + settings.idleAniName);
             attackCreateCounter = 0;
@@ -506,6 +579,8 @@ namespace KazgarsRevenge
             attackCounter = settings.attackLength;
             minChaseCounter = 0;
             physicalData.LinearVelocity = Vector3.Zero;
+
+            base.HandleStun(length);
         }
 
         public override void StopPull()
@@ -597,9 +672,9 @@ namespace KazgarsRevenge
                 InsertThreatEntity(tempEnt);
             }
 
-            SwitchToAttacking();
             targetData = threatLevels[0].Entity.GetSharedData(typeof(Entity)) as Entity;
             targetHealth = threatLevels[0].Entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+            SwitchToAttacking();
         }
 
         private void InsertThreatEntity(EntityIntPair ent)

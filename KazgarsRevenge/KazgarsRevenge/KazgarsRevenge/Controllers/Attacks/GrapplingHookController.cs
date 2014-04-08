@@ -12,7 +12,6 @@ using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.Collidables;
 using BEPUphysics.Collidables.MobileCollidables;
 using SkinnedModelLib;
-using KazgarsRevenge.Libraries;
 
 namespace KazgarsRevenge
 {
@@ -87,14 +86,7 @@ namespace KazgarsRevenge
             lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (lifeCounter >= lifeLength)
             {
-                if (pulling)
-                {
-                    EndPull();
-                }
-                else
-                {
-                    Entity.KillEntity();
-                }
+                EndPull();
             }
             base.Update(gameTime);
         }

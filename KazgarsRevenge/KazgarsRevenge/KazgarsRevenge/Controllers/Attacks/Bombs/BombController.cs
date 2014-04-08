@@ -12,7 +12,6 @@ using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.Collidables;
 using BEPUphysics.Collidables.MobileCollidables;
 using SkinnedModelLib;
-using KazgarsRevenge.Libraries;
 
 
 namespace KazgarsRevenge

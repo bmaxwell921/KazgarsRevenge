@@ -36,6 +36,8 @@ namespace KazgarsRevenge
             }
         }
 
+        public string ChunkName { get { return _FileName; } }
+
         // Which 'directions' of this chunk have doors. Directions are post rotation directions
         // ie a chunk with doors at N and E with Rotation.Zero would have doorDirections of W and N after at Rotation.NINETY
         private ISet<Direction> doorDirections;
@@ -136,6 +138,24 @@ namespace KazgarsRevenge
             hash = hash * PRIME + doorDirections.GetHashCode();
 
             return hash;
+        }
+
+        public string miniMapImgName()
+        {
+            string miniMapDir = @"Textures\UI\MiniMap\";
+            StringBuilder sb = new StringBuilder();
+                                                           // We don't show the key chunks, just boss and normal
+            sb.Append(miniMapDir).Append(this.chunkType == ChunkType.BOSS ? "B" : (this.chunkType == ChunkType.SOULEVATOR) ? "S" : "N").Append("-");
+            List<Direction> sortedDirs = new List<Direction>(doorDirections);
+
+            // Sorts the directions to the order: NSEW
+            sortedDirs.Sort(delegate(Direction lhs, Direction rhs) {return lhs.CompareTo(rhs);});
+
+            foreach (Direction d in sortedDirs)
+            {
+                sb.Append(d.ToChar());
+            }
+            return sb.ToString();
         }
     }
 }

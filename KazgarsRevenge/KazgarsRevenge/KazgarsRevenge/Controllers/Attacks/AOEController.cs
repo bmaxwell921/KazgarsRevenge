@@ -14,9 +14,9 @@ namespace KazgarsRevenge
         double lifeLength = 5000;
         int damage = 0;
         DeBuff debuff = DeBuff.None;
-        Entity physicalData;
-        AliveComponent creator;
-        FactionType factionToHit;
+        protected Entity physicalData;
+        protected AliveComponent creator;
+        protected FactionType factionToHit;
         public AOEController(KazgarsRevengeGame game, GameEntity entity, double tickLength, int damage, DeBuff d, AliveComponent creator, double duration, FactionType factionToHit)
             : base(game, entity)
         {
@@ -26,10 +26,6 @@ namespace KazgarsRevenge
             this.creator = creator;
             this.lifeLength = duration;
             this.factionToHit = factionToHit;
-        }
-
-        public override void Start()
-        {
             this.physicalData = Entity.GetSharedData(typeof(Entity)) as Entity;
         }
 
@@ -45,10 +41,12 @@ namespace KazgarsRevenge
                 Entity.KillEntity();
             }
 
+
             tickCounter += millis;
             if (tickCounter >= tickLength)
             {
                 tickCounter = 0;
+                int damageDealt = 0;
                 //go through contacts and find what entities are colliding with this one
                 foreach (var c in physicalData.CollisionInformation.Pairs)
                 {
@@ -74,14 +72,17 @@ namespace KazgarsRevenge
                                 AliveComponent alive = entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
                                 if (alive != null)
                                 {
-                                    
-                                    int actualDamage = alive.Damage(debuff, damage, creator.Entity);
-                                    creator.HandleDamageDealt(actualDamage);
+                                    damageDealt += alive.Damage(debuff, damage, creator.Entity, AttackType.None);
                                 }
                             }
                         }
 
                     }
+                }
+                if (damageDealt > 0)
+                {
+                    creator.AddPower(1);
+                    creator.HandleDamageDealt(damageDealt);
                 }
             }
         }

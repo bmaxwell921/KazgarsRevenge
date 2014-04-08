@@ -10,7 +10,7 @@ namespace KazgarsRevenge
     {
         float chargedPercent = 0;
         public LooseCannonController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator, float chargedPercent)
-            : base(game, entity, damage, factionToHit, creator)
+            : base(game, entity, damage, factionToHit, creator, AttackType.None)
         {
             lifeLength = 4000;
             dieAfterContact = true;

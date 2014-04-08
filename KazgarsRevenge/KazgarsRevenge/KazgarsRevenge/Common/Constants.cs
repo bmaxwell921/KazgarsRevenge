@@ -49,7 +49,7 @@ namespace KazgarsRevenge
     // Used for locations of doors on chunks. North faces the top of the page, East faces to the right
     public enum Direction
     {      
-        NORTH, SOUTH, EAST, WEST
+        NORTH, EAST, SOUTH, WEST
     }
 
     public enum Rotation

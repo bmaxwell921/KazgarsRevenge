@@ -32,18 +32,19 @@ namespace KazgarsRevenge
             base.Load(info);
             // All the accounts are our selections
             accounts = AccountUtil.Instance.GetAccounts();
-            float yOffset = mm.normalFont.MeasureString(NEW_ACCT).Y;
+            float yOffset = mm.normalFont.MeasureString(NEW_ACCT).Y * mm.guiScale.Y;
             if (accounts.Count > 0)
             {
                 // Create a selection for each
                 for (int i = 0; i < accounts.Count; ++i)
                 {
                     Account account = accounts[i];
-                    base.AddSelection(new SelectionV2(base.mm, account.Name, acctsDrawLoc + new Vector2(0, yOffset * i)), (LinkedMenu)mm.menus[MenuManager.LEVELS]);
+                    base.AddSelection(new SelectionV2(base.mm, account.Name, acctsDrawLoc + new Vector2(0, yOffset * i)), mm.menus[MenuManager.LEVELS]);
                 }
             }
 
-            base.AddSelection(new SelectionV2(base.mm, NEW_ACCT, acctsDrawLoc + new Vector2(0, yOffset * accounts.Count)), (LinkedMenu)mm.menus[MenuManager.NEW_ACCOUNT]);
+            base.AddSelection(new SelectionV2(base.mm, NEW_ACCT, acctsDrawLoc + new Vector2(0, yOffset * (accounts.Count + 1))), mm.menus[MenuManager.NEW_ACCOUNT]);
+            base.AddSelection(new SelectionV2(base.mm, "Back", acctsDrawLoc + new Vector2(0, yOffset * (accounts.Count + 2))), mm.menus[MenuManager.GAME_TITLE]);
         }
 
         /// <summary>

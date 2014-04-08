@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     public class OmnishotController : AttackController
     {
         public OmnishotController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
-            : base(game, entity, damage, factionToHit, creator)
+            : base(game, entity, damage, factionToHit, creator, AttackType.Ranged)
         {
             this.lifeLength = 250;
         }

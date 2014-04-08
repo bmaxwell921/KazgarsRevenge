@@ -36,11 +36,19 @@ public class KeyboardDispatcher
 
     public void Register(IKeyboardSubscriber sub)
     {
+        if (sub == null)
+        {
+            return;
+        }
         subscribers.Add(sub);
     }
 
     public void Unregister(IKeyboardSubscriber sub)
     {
+        if (sub == null)
+        {
+            return;
+        }
         subscribers.Remove(sub);
     }
 
