@@ -1924,7 +1924,7 @@ namespace KazgarsRevenge
             mapDict["Loc7"] = new Rectangle(totalMiniArea.X + miniInnerWidth, totalMiniArea.Y + miniInnerHeight * 2, miniInnerWidth, miniInnerHeight);
             mapDict["Loc8"] = new Rectangle(totalMiniArea.X + miniInnerWidth * 2, totalMiniArea.Y + miniInnerHeight * 2, miniInnerWidth, miniInnerHeight);
 
-            //mapImgDict = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).getMiniImageMap();
+            mapImgDict = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).getMiniImageMap();
 
             //Inventory inner
             for (int i = 0; i < 4; ++i)
@@ -2411,12 +2411,13 @@ namespace KazgarsRevenge
 
         private void DrawMiniMap(SpriteBatch s)
         {
-            // TODO brandon
             string keyPre = "Loc";
             for (int i = 0; i < 9; ++i)
             {
-                s.Draw(Texture2DUtil.Instance.GetTexture(@"Textures\UI\MiniMap\N-ESW"), guiInsideRects["map"][keyPre + i], Color.White);
+                s.Draw(Texture2DUtil.Instance.GetTexture(mapImgDict[keyPre +i]), guiInsideRects["map"][keyPre + i], Color.White);
             }
+
+            // TODO brandon, draw ring around current
         }
 
 

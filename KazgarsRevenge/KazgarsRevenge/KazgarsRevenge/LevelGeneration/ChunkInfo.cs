@@ -139,5 +139,23 @@ namespace KazgarsRevenge
 
             return hash;
         }
+
+        public string miniMapImgName()
+        {
+            string miniMapDir = @"Textures\UI\MiniMap\";
+            StringBuilder sb = new StringBuilder();
+                                                           // We don't show the key chunks, just boss and normal
+            sb.Append(miniMapDir).Append(this.chunkType == ChunkType.BOSS ? "B" : (this.chunkType == ChunkType.SOULEVATOR) ? "S" : "N").Append("-");
+            List<Direction> sortedDirs = new List<Direction>(doorDirections);
+
+            // Sorts the directions to the order: NSEW
+            sortedDirs.Sort(delegate(Direction lhs, Direction rhs) {return lhs.CompareTo(rhs);});
+
+            foreach (Direction d in sortedDirs)
+            {
+                sb.Append(d.ToChar());
+            }
+            return sb.ToString();
+        }
     }
 }

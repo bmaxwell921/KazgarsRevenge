@@ -63,16 +63,22 @@ namespace KazgarsRevenge
 
             public IList<Vector3> spawnLocs;
 
+            // Convenient accessors for the height and width of the level
+            public int width;
+            public int height;
+
             // The graph representing enemy pathing possibilities. this is gonna be connected as fuck
              public AdjacencyGraph<Vector3, Edge<Vector3>> pathGraph;
 
-            public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos)
+            public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos, int width, int height)
             {
                 this.currentFloor = currentFloor;
                 this.chunks = chunks;
                 this.chunkInfos = chunkInfos;
                 this.spawnLocs = new List<Vector3>();
-                pathGraph = new AdjacencyGraph<Vector3, Edge<Vector3>>();
+                this.width = width;
+                this.height = height;
+                this.pathGraph = new AdjacencyGraph<Vector3, Edge<Vector3>>();
             }
         }
 
@@ -851,7 +857,7 @@ namespace KazgarsRevenge
                 ChooseChunks(name, chunkInfos);
 
                 Chunk[,] chunks = ReadChunks(name, chunkInfos);
-                return new LevelInfo(name, chunks, chunkInfos);
+                return new LevelInfo(name, chunks, chunkInfos, levelWidth, levelHeight);
             }
 
             #region Choosing Chunks
@@ -1134,6 +1140,27 @@ namespace KazgarsRevenge
             misc.Add(marker);
 
             return marker;
+        }
+
+        public IDictionary<string, string> getMiniImageMap()
+        {
+            // Go thru all the current level's chunk infos and get the correct minimap image
+            IDictionary<string, string> map = new Dictionary<string, string>();
+            if (currentLevel == null)
+            {
+                throw new Exception("Tried to get miniMap before the level was generated!");
+            }
+            string keyPre = "Loc";
+            for (int i = 0; i < currentLevel.width; ++i)
+            {
+                for (int j = 0; j < currentLevel.height; ++j)
+                {
+                    int num = i + j * currentLevel.width;
+                    map[keyPre + num] = currentLevel.chunkInfos[i, j].miniMapImgName();
+                }
+            }
+
+            return map;
         }
     }
 }
