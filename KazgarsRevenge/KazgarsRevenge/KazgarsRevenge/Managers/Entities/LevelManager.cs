@@ -1162,5 +1162,14 @@ namespace KazgarsRevenge
 
             return map;
         }
+
+        // Returns the chunk number that the player is currently in
+        public int GetCurrentChunk(Vector3 location)
+        {
+            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
+            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+
+            return xCoord + yCoord * currentLevel.width;
+        }
     }
 }

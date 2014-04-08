@@ -2418,8 +2418,9 @@ namespace KazgarsRevenge
             }
 
             // TODO brandon, draw ring around current
+            int curChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunk(physicalData.Position);
+            s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), guiInsideRects["map"][keyPre + curChunk], Color.Yellow);
         }
-
 
         protected override void KillAlive()
         {
