@@ -109,11 +109,9 @@ namespace KazgarsRevenge
         public int NextLevelXP { get { return 100 * level * level; } }
         public void AddEXP(int level, EntityType entityType)
         {
-            /*
             LevelUp();
             return;
-            */
-
+            
             int exp = (int)(level * 25 * expMultiplier);
             if (entityType == EntityType.EliteEnemy)
             {
@@ -562,12 +560,21 @@ namespace KazgarsRevenge
                         baseStats[StatType.RunSpeed] += originalBaseStats[StatType.RunSpeed] * .75f;
                         baseStats[StatType.AttackSpeed] += .6f;
                         RecalculateStats();
+
+                        if(Entity.GetComponent(typeof(AdrenalineRushBillboard)) == null)
+                        {
+                            AdrenalineRushBillboard billboard = new AdrenalineRushBillboard(Game, Entity, physicalData);
+                            Entity.AddComponent(typeof(AdrenalineRushBillboard), billboard);
+                            (Game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).AddComponent(billboard);
+                        }
                     }
                     else if (state == BuffState.Ending)
                     {
                         baseStats[StatType.RunSpeed] -= originalBaseStats[StatType.RunSpeed] * .75f * stacks;
                         baseStats[StatType.AttackSpeed] -= .6f * stacks;
                         RecalculateStats();
+
+                        Entity.RemoveComponent(typeof(AdrenalineRushBillboard));
                     }
                     break;
                 case Buff.SadisticFrenzy:

@@ -43,7 +43,7 @@ namespace KazgarsRevenge
                 if (modelParams.size.X <= 0)
                 {
                     AttackManager att = (Game.Services.GetService(typeof(AttackManager)) as AttackManager);
-                    att.SpawnLevelUpParticles(myData.Position);
+                    //att.SpawnLevelUpParticles(myData.Position);
                     att.AddLevelUpCircleBillboard(Entity, myData.Position);
                     model.KillComponent();
                     exploding = true;

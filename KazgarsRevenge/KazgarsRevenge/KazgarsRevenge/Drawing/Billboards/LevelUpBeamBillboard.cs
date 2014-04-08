@@ -13,7 +13,7 @@ namespace KazgarsRevenge
         public LevelUpBeamBillboard(KazgarsRevengeGame game, GameEntity entity, Entity creatorData)
             : base(game, entity, creatorData, new Vector2(10, 35))
         {
-            effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).LevelUpBeamEffect;
+            effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).LevelUpBeamEffect.Clone();
             creatorOffsetUp = 1000;
             followOffsetUp = 999;
             maxSize = 1000;
@@ -33,7 +33,8 @@ namespace KazgarsRevenge
             }
             else
             {
-                creatorOffsetUp -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds);
+                creatorOffsetUp -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 2.5f);
+
                 if (creatorOffsetUp <= 0)
                 {
                     KillComponent();

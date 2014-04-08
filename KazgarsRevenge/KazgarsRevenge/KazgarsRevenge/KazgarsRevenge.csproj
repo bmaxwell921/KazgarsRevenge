@@ -149,6 +149,7 @@
     <Compile Include="Controllers\Objects\KeyController.cs" />
     <Compile Include="Controllers\Objects\PillarController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
+    <Compile Include="Drawing\Billboards\AdrenalineRushBillboard.cs" />
     <Compile Include="Drawing\Billboards\ArrowVBillboard.cs" />
     <Compile Include="Drawing\Billboards\Base Classes\VerticalStretchingBillboard.cs" />
     <Compile Include="Drawing\Billboards\BlobShadowDecal.cs" />
@@ -262,6 +263,7 @@
     <Compile Include="Particles\Systems\Charge\DragonFireChargeSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\SmokeAOESystem.cs" />
     <Compile Include="Particles\Systems\Entities\FirePillarSystem.cs" />
+    <Compile Include="Particles\Systems\Entities\TorchSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Explosions\LevelUpExplosionSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\ToonExplosionDebrisSystem.cs" />
@@ -303,7 +305,7 @@
     <Compile Include="Particles\Systems\WeaponSparksSystem.cs" />
     <Compile Include="Particles\Systems\Entities\SoulCreationParticleSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\Buff1ParticleSystem.cs" />
-    <Compile Include="Particles\Systems\Entities\SoulTrailParticleSystem.cs" />
+    <Compile Include="Particles\Systems\Trails\SoulTrailParticleSystem.cs" />
     <Compile Include="Particles\Systems\Hit\BloodParticleSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

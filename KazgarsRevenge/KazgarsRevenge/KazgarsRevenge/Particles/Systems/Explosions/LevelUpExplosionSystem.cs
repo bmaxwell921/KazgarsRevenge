@@ -18,30 +18,31 @@ namespace KazgarsRevenge
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
-            settings.TextureName = "plus";
+            settings.TextureName = "smoketoon";
 
-            settings.MaxParticles = 100;
+            settings.MaxParticles = 200;
 
-            settings.Duration = TimeSpan.FromSeconds(1);
-
-            settings.DurationRandomness = 1;
+            settings.Duration = TimeSpan.FromSeconds(.75f);
+            settings.DurationRandomness = .5f;
 
             settings.StartColor = Color.Gold;
             settings.EndColor = Color.Gold;
 
-            settings.MinHorizontalVelocity = -150;
-            settings.MaxHorizontalVelocity = 150;
+            settings.MinHorizontalVelocity = -200;
+            settings.MaxHorizontalVelocity = 200;
+            settings.EndVelocity = .2f;
 
             settings.MinVerticalVelocity = 0;
-            settings.MaxVerticalVelocity = 150;
+            settings.MaxVerticalVelocity = 30;
 
-            settings.Gravity = new Vector3(0, 0, 0);
+            settings.MinRotateSpeed = 4;
+            settings.MaxRotateSpeed = 8;
 
-            settings.MinStartSize = 25;
-            settings.MaxStartSize = 35;
+            settings.MinStartSize = 10;
+            settings.MaxStartSize = 10;
 
-            settings.MinEndSize = 1;
-            settings.MaxEndSize = 5;
+            settings.MinEndSize = 45;
+            settings.MaxEndSize = 55;
         }
     }
 }

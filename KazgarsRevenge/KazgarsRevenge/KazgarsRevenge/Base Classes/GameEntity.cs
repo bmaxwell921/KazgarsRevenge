@@ -77,6 +77,7 @@ namespace KazgarsRevenge
         {
             if (components.ContainsKey(t))
             {
+                components[t].KillComponent();
                 components.Remove(t);
             }
         }

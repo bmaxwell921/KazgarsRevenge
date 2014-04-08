@@ -204,6 +204,9 @@ namespace KazgarsRevenge
             public static readonly string ROPE = @"Textures\Billboards\rope";
             public static readonly string ARROWV = @"Textures\Billboards\arrowtrail";
             public static readonly string CIRCLE = @"Textures\Billboards\circle";
+            public static readonly string Rings = @"Textures\Billboards\rings";
+            public static readonly string Saiyan = @"Textures\Billboards\saiyan";
+            public static readonly string LevelUpBeam = @"Textures\Billboards\level_up";
         }
 
         public class Menu

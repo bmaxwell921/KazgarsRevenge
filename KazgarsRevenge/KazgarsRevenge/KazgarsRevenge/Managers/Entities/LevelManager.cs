@@ -407,8 +407,6 @@ namespace KazgarsRevenge
                     CreateLockedDoor(Vector3.Transform(v, chunkTransform), yaw);
                 }
 
-
-
                 List<Vector3> ewOpenDoors = levelInfo.ewOpenDoorLocations;
                 foreach (Vector3 v in ewLockedDoors)
                 {
@@ -420,8 +418,6 @@ namespace KazgarsRevenge
                 {
                     CreateOpenDoor(Vector3.Transform(v, chunkTransform), yaw);
                 }
-
-
 
                 List<Vector3> hangingLightProps = levelInfo.hangingLightLocations;
                 foreach (Vector3 v in hangingLightProps)
@@ -638,8 +634,10 @@ namespace KazgarsRevenge
             GameEntity torch = new GameEntity("", FactionType.Neutral, EntityType.None);
 
             Entity physicalData = new Box(pos, 1, 1, 1);
+            torch.AddSharedData(typeof(Entity), physicalData);
 
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, torch);
+            graphics.AddEmitter(typeof(TorchSystem), "", 1, 2, Vector3.Zero);
             torch.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
             

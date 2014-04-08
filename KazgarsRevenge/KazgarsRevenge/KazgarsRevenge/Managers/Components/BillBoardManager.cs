@@ -21,7 +21,9 @@ namespace KazgarsRevenge
 
         private Effect billboardEffect;
         private Effect slidingBillboardEffect;
+        private Effect animatedBillboardEffect;
 
+        public Effect AdrenalineRushEffect { get; private set; }
         public Effect LevelUpBeamEffect { get; private set; }
         public Effect LevelUpCircleEffect { get; private set; }
         public Effect PillarBeamEffect { get; private set; }
@@ -39,9 +41,18 @@ namespace KazgarsRevenge
 
             billboardEffect = Game.Content.Load<Effect>("Shaders\\BillboardEffect");
             slidingBillboardEffect = Game.Content.Load<Effect>("Shaders\\SlidingBillboardEffect");
+            animatedBillboardEffect = Game.Content.Load<Effect>("Shaders\\AnimatedBillboardEffect");
+
+            AdrenalineRushEffect = animatedBillboardEffect.Clone();
+            AdrenalineRushEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.Saiyan));
+            AdrenalineRushEffect.Parameters["World"].SetValue(Matrix.Identity);
+            AdrenalineRushEffect.Parameters["rows"].SetValue(2);
+            AdrenalineRushEffect.Parameters["cols"].SetValue(2);
+            AdrenalineRushEffect.Parameters["totalFrames"].SetValue(4);
+            AdrenalineRushEffect.Parameters["framesPerSecond"].SetValue(14);
 
             LevelUpBeamEffect = billboardEffect.Clone();
-            LevelUpBeamEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX));
+            LevelUpBeamEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.LevelUpBeam));
             LevelUpBeamEffect.Parameters["World"].SetValue(Matrix.Identity);
             LevelUpBeamEffect.Parameters["colorTint"].SetValue(Color.Gold.ToVector3());
             LevelUpBeamEffect.Parameters["alpha"].SetValue(.75f);
@@ -51,7 +62,7 @@ namespace KazgarsRevenge
             PillarBeamEffect.Parameters["World"].SetValue(Matrix.Identity);
 
             LevelUpCircleEffect = billboardEffect.Clone();
-            LevelUpCircleEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.CIRCLE));
+            LevelUpCircleEffect.Parameters["Texture"].SetValue(Texture2DUtil.Instance.GetTexture(TextureStrings.BillBoards.Rings));
             LevelUpCircleEffect.Parameters["World"].SetValue(Matrix.Identity);
             LevelUpCircleEffect.Parameters["colorTint"].SetValue(Color.Gold.ToVector3());
 
@@ -116,6 +127,7 @@ namespace KazgarsRevenge
             Game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
             PillarBeamEffect.Parameters["CurrentTime"].SetValue(currentTime);
+            AdrenalineRushEffect.Parameters["CurrentTime"].SetValue(currentTime);
 
             for (int i = 0; i < components.Count; ++i)
             {
