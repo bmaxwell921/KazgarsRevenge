@@ -55,7 +55,7 @@ namespace KazgarsRevenge
                 {
                     alive.Damage(DeBuff.Charge, 0, creator.Entity, AttackType.None);
                     alive.KnockBack(physicalData.Position, 900);
-                    (Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).ShakeCamera(4);
+                    //(Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).ShakeCamera(.5f);
                 }
             }
         }

@@ -11,7 +11,7 @@ namespace KazgarsRevenge
     {
         Entity followData;
         public AdrenalineRushBillboard(KazgarsRevengeGame game, GameEntity entity, Entity followData)
-            : base(game, entity, Vector3.Forward, Vector3.Up, new Vector2(100, 100))
+            : base(game, entity, Vector3.Forward, Vector3.Up, new Vector2(110, 110))
         {
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).AdrenalineRushEffect;
             this.followData = followData;
@@ -22,7 +22,7 @@ namespace KazgarsRevenge
         float originalSize;
         public override void Update(GameTime gameTime)
         {
-            origin = followData.Position + Vector3.Up * 20;
+            origin = followData.Position + Vector3.Up * 30;
             /*
             if (expanding)
             {
