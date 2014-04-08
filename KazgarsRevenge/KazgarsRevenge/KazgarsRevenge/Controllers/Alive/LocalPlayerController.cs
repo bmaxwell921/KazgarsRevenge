@@ -2104,7 +2104,7 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
             
             //Mini Map (square for now)
-            s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Black * 0.5f);
+            s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Black * 0.5f); // TODO Brandon here
 
             #region main player frame
             //Main Player Frame Pic
