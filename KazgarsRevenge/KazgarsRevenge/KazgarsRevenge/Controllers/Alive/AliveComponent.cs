@@ -106,7 +106,7 @@ namespace KazgarsRevenge
 
         protected float expMultiplier = 1;
         protected int experience = 0;
-        public int NextLevelXP { get { return 100 * level * level; } }
+        public int NextLevelXP { get { return 100 * Level * Level; } }
         public void AddEXP(int level, EntityType entityType)
         {
             int exp = (int)(level * 25 * expMultiplier);
@@ -127,7 +127,7 @@ namespace KazgarsRevenge
             }
         }
 
-        public int Health { get; private set; }
+        public long Health { get; private set; }
         public int MaxHealth { get; private set; }
         public float HealthPercent
         {
@@ -155,7 +155,7 @@ namespace KazgarsRevenge
         }
 
         #region stats
-        protected int level = 0;
+        public int Level { get; protected set; }
         protected bool pulling = false;
         
         private Dictionary<StatType, float> statsPerLevel = new Dictionary<StatType, float>()
@@ -243,7 +243,7 @@ namespace KazgarsRevenge
 
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
             {
-                stats[(StatType)i] += statsPerLevel[(StatType)i] * level * statsPerLevelMultiplier;
+                stats[(StatType)i] += statsPerLevel[(StatType)i] * Level * statsPerLevelMultiplier;
             }
 
             //keep same health percentage when you change gear
@@ -254,7 +254,7 @@ namespace KazgarsRevenge
 
         public void LevelUp()
         {
-            ++level;
+            ++Level;
             RecalculateStats();
 
             attacks.CreateLevelUpGraphics(physicalData);
@@ -271,7 +271,7 @@ namespace KazgarsRevenge
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             rand = game.rand;
 
-            this.level = level;
+            this.Level = level;
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
@@ -337,7 +337,7 @@ namespace KazgarsRevenge
                 actualDamage = d;
                 if (!trueDamage)
                 {
-                    actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * level));
+                    actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * Level));
                 }
                 if (!Dead)
                 {

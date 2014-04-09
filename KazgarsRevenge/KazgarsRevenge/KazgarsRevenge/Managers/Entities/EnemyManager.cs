@@ -48,75 +48,187 @@ namespace KazgarsRevenge
         }
 
         #region entities
-        const float meleeRange = 40;
-        public void CreateBrute(Identification id, Vector3 position, int level)
+        public void CreateEliteEnemy(Vector3 loc)
         {
-            GameEntity brute = new GameEntity("Brute", FactionType.Enemies, EntityType.NormalEnemy);
-            brute.id = id;
+            int r;
+            int enemyLevel = players.GetHighestLevel() + (RandSingleton.U_Instance.Next(5) - 1);
+            switch (levelManager.currentLevel.currentFloor)
+            {
+                case FloorName.Dungeon:
+                    r = RandSingleton.U_Instance.Next(3);
+                    if (r == 0)
+                    {
+                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, true);
+                    }
+                    else if (r == 1)
+                    {
+                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateCrossbowSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, true);
+                    }
+                    else
+                    {
+                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateMagicSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, true);
+                    }
+                    break;
+            }
+        }
+
+        public void CreateNormalEnemy(Vector3 loc)
+        {
+            int r;
+            int enemyLevel = players.GetHighestLevel() + (RandSingleton.U_Instance.Next(5) - 2);
+            switch (levelManager.currentLevel.currentFloor)
+            {
+                case FloorName.Dungeon:
+                    r = RandSingleton.U_Instance.Next(4);
+                    if (r == 0)
+                    {
+                        CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
+                    }
+                    else if (r == 1)
+                    {
+                        CreateArmorEnemy(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
+                    }
+                    else if (r == 2)
+                    {
+                        CreateCrossbowSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
+                    }
+                    else
+                    {
+                        CreateMagicSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
+                    }
+                    break;
+            }
+        }
+
+        const float meleeRange = 40;
+        public void CreateBrute(Identification id, Vector3 position, int level, bool elite)
+        {
+            EntityType enemyType = EntityType.NormalEnemy;
+            if (elite)
+            {
+                enemyType = EntityType.EliteEnemy;
+            }
+
+            GameEntity enemy = new GameEntity("Brute", FactionType.Enemies, enemyType);
+            enemy.id = id;
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
             attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Weapons\\axe"), "pig_hand_R"));
-            brute.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
+            enemy.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
-            SetupEntityPhysicsAndShadow(brute, position, new Vector3(20f, 37f, 20f), 100);
-            SetupEntityGraphics(brute, "Models\\Enemies\\Pigman\\pig_idle", 10);
+            Vector3 boxSize = new Vector3(20f, 37f, 20f);
+            if(elite)
+            {
+                boxSize.X = 30;
+                boxSize.Z = 30;
+            }
+            SetupEntityPhysicsAndShadow(enemy, position, boxSize, 100);
+            float modelScale = 10;
+            if (elite)
+            {
+                modelScale = 15;
+            }
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Pigman\\pig_idle", modelScale);
 
-            EnemyController bruteController = new EnemyController(mainGame, brute, level);
-            brute.AddComponent(typeof(AliveComponent), bruteController);
-            genComponentManager.AddComponent(bruteController);
-
-            AddHealthBarComponent(brute, 40);
-
-            brute.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(brute, AttackType.Melee, AttackType.None));
-
-            enemies.Add(id, brute);
-        }
-
-        public void CreateMagicSkeleton(Identification id, Vector3 position, int level)
-        {
-            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, EntityType.NormalEnemy);
-            enemy.id = id;
-
-            SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20f, 37f, 20f), 100);
-            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle", 15);
-
-            MagicSkeletonController enemyController = new MagicSkeletonController(mainGame, enemy, level);
+            EnemyController enemyController = new EnemyController(mainGame, enemy, level);
+            if (elite)
+            {
+                enemyController.MakeElite();
+            }
             enemy.AddComponent(typeof(AliveComponent), enemyController);
             genComponentManager.AddComponent(enemyController);
 
-            AddHealthBarComponent(enemy, 40);
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Melee, AttackType.None));
+
+            enemies.Add(id, enemy);
+        }
+
+        public void CreateMagicSkeleton(Identification id, Vector3 position, int level, bool elite)
+        {
+            EntityType enemyType = EntityType.NormalEnemy;
+            if (elite)
+            {
+                enemyType = EntityType.EliteEnemy;
+            }
+            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, enemyType);
+            enemy.id = id;
+
+            Vector3 boxSize = new Vector3(20f, 37f, 20f);
+            if (elite)
+            {
+                boxSize.X = 30;
+                boxSize.Z = 30;
+            }
+            SetupEntityPhysicsAndShadow(enemy, position, boxSize, 100);
+            float modelScale = 10;
+            if (elite)
+            {
+                modelScale = 15;
+            }
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle", modelScale);
+
+            MagicSkeletonController enemyController = new MagicSkeletonController(mainGame, enemy, level);
+            if (elite)
+            {
+                enemyController.MakeElite();
+            }
+            enemy.AddComponent(typeof(AliveComponent), enemyController);
+            genComponentManager.AddComponent(enemyController);
 
             enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Magic, AttackType.None));
 
             enemies.Add(id, enemy);
         }
 
-        public void CreateCrossbowSkeleton(Identification id, Vector3 position, int level)
+        public void CreateCrossbowSkeleton(Identification id, Vector3 position, int level, bool elite)
         {
-            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, EntityType.NormalEnemy);
+            EntityType enemyType = EntityType.NormalEnemy;
+            if (elite)
+            {
+                enemyType = EntityType.EliteEnemy;
+            }
+            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
             attached.Add("hand", new AttachableModel(GetUnanimatedModel("Models\\Weapons\\crossbow"), "s_hand_R"));
             enemy.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
-            SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20f, 37f, 20f), 100);
-            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle", 15);
+            Vector3 boxSize = new Vector3(20f, 37f, 20f);
+            if (elite)
+            {
+                boxSize.X = 30;
+                boxSize.Z = 30;
+            }
+            SetupEntityPhysicsAndShadow(enemy, position, boxSize, 100);
+            float modelScale = 10;
+            if (elite)
+            {
+                modelScale = 15;
+            }
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Skeleton\\s_idle", modelScale);
 
             CrossbowSkeletonController enemyController = new CrossbowSkeletonController(mainGame, enemy, level);
+            if (elite)
+            {
+                enemyController.MakeElite();
+            }
             enemy.AddComponent(typeof(AliveComponent), enemyController);
             genComponentManager.AddComponent(enemyController);
 
-            AddHealthBarComponent(enemy, 40);
-
-            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Magic, AttackType.None));
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Ranged, AttackType.None));
 
             enemies.Add(id, enemy);
         }
 
-        public void CreateArmorEnemy(Identification id, Vector3 position, int level)
+        public void CreateArmorEnemy(Identification id, Vector3 position, int level, bool elite)
         {
-            GameEntity enemy = new GameEntity("Animated Armor", FactionType.Enemies, EntityType.NormalEnemy);
+            EntityType enemyType = EntityType.NormalEnemy;
+            if (elite)
+            {
+                enemyType = EntityType.EliteEnemy;
+            }
+            GameEntity enemy = new GameEntity("Animated Armor", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Dictionary<string, Model> syncedModels = new Dictionary<string, Model>();
@@ -129,13 +241,24 @@ namespace KazgarsRevenge
             attached.Add("sword", new AttachableModel(GetUnanimatedModel("Models\\Weapons\\sword01"), "Hand_R", MathHelper.Pi, 0));
             enemy.AddSharedData(typeof(Dictionary<string, AttachableModel>), attached);
 
-            SetupEntityPhysicsAndShadow(enemy, position, new Vector3(20, 37, 20), 100);
+            Vector3 boxSize = new Vector3(20f, 37f, 20f);
+            if (elite)
+            {
+                boxSize.X = 30;
+                boxSize.Z = 30;
+            }
+            SetupEntityPhysicsAndShadow(enemy, position, boxSize, 100);
+            float modelScale = 10;
+            if (elite)
+            {
+                modelScale = 15;
+            }
 
             //get kazgar's animations, but don't add his model
             Model enemyModel = GetAnimatedModel("Models\\Player\\k_idle1");
             AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
             enemy.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
-            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, enemy, enemyModel, 10, Vector3.Down * 18);
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, enemy, enemyModel, modelScale, Vector3.Down * 18);
 
             if ((mainGame as MainGame).ParticlesSetting == MainGame.SettingAmount.High)
             {
@@ -146,11 +269,13 @@ namespace KazgarsRevenge
             enemy.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
             modelManager.AddComponent(enemyGraphics);
 
-            ArmorEnemyController controller = new ArmorEnemyController(mainGame, enemy, level);
-            enemy.AddComponent(typeof(AliveComponent), controller);
-            genComponentManager.AddComponent(controller);
-
-            AddHealthBarComponent(enemy, 40);
+            ArmorEnemyController enemyController = new ArmorEnemyController(mainGame, enemy, level);
+            if (elite)
+            {
+                enemyController.MakeElite();
+            }
+            enemy.AddComponent(typeof(AliveComponent), enemyController);
+            genComponentManager.AddComponent(enemyController);
 
             enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Melee, AttackType.Magic));
 
@@ -215,7 +340,7 @@ namespace KazgarsRevenge
             entity.AddSharedData(typeof(Entity), enemyPhysicalData);
 
             PhysicsComponent enemyPhysics = new PhysicsComponent(mainGame, entity);
-            BlobShadowDecal enemyShadow = new BlobShadowDecal(mainGame, entity, dimensions.X);
+            BlobShadowDecal enemyShadow = new BlobShadowDecal(mainGame, entity, (dimensions.X + dimensions.Z) / 2);
 
             entity.AddComponent(typeof(PhysicsComponent), enemyPhysics);
             genComponentManager.AddComponent(enemyPhysics);
@@ -224,12 +349,6 @@ namespace KazgarsRevenge
             billboardManager.AddComponent(enemyShadow);
         }
 
-        private void AddHealthBarComponent(GameEntity entity, float barHeight)
-        {/*
-            HealthBarBillboard hp = new HealthBarBillboard(mainGame, entity, 5, barHeight);
-            entity.AddComponent(typeof(HealthBarBillboard), hp);
-            billboardManager.AddComponent(hp);*/
-        }
         #endregion
         
         /// <summary>

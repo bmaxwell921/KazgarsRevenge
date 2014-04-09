@@ -204,6 +204,33 @@ namespace KazgarsRevenge
             }
             return playerMap[id];
         }
+
+        public int GetHighestLevel()
+        {
+            int retLev = 1;
+            foreach (KeyValuePair<Identification, GameEntity> k in playerMap)
+            {
+                int tempLevel = (k.Value.GetComponent(typeof(AliveComponent)) as AliveComponent).Level;
+                if (tempLevel > retLev)
+                {
+                    retLev = tempLevel;
+                }
+            }
+            return retLev;
+        }
+
+        public bool IsPlayerNear(Vector3 loc, float proximity)
+        {
+            foreach (KeyValuePair<Identification, GameEntity> k in playerMap)
+            {
+                Vector3 playerPos = (k.Value.GetSharedData(typeof(Entity)) as Entity).Position;
+                if (Math.Abs(playerPos.X - loc.X) < proximity && Math.Abs(playerPos.Z - loc.Z) < proximity)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         
         public string GetDebugString()
         {

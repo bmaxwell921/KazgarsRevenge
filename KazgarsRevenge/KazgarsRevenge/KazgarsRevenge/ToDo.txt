@@ -22,3 +22,12 @@ tar bomb: get new particles / finish particle system
 
 
 
+
+far off goals
+=============
+-add minion capturing / subordinate system
+-add local multiplayer
+-add networked multiplayer
+-add other bosses
+-take torches out of level model
+-do level physics more sensibly

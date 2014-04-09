@@ -219,7 +219,10 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    diff.Normalize();
+                    if (diff != Vector3.Zero)
+                    {
+                        diff.Normalize();
+                    }
                     physicalData.LinearVelocity = diff * (GetStat(StatType.RunSpeed) + 80);
                 }
             }

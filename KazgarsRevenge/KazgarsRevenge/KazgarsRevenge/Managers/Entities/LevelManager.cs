@@ -621,14 +621,29 @@ namespace KazgarsRevenge
 
         private void CreateMobSpawner(Vector3 pos)
         {
-            if (RandSingleton.U_Instance.Next(100) < 6)
+            if (RandSingleton.U_Instance.Next(1000) < 20)
             {
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
-                ISet<Vector3> spawnLocs = new HashSet<Vector3>();
+                List<Vector3> spawnLocs = new List<Vector3>();
                 spawnLocs.Add(pos);
 
-                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
+                EnemySpawnerType spawnerType = EnemySpawnerType.NormalSingle;
+                int r = RandSingleton.U_Instance.Next(100);
+                if (r < 25)
+                {
+                    spawnerType = EnemySpawnerType.NormalCluster;
+                }
+                else if (r < 50)
+                {
+                    spawnerType = EnemySpawnerType.EliteSingleWithNormals;
+                }
+                else if (r < 75)
+                {
+                    spawnerType = EnemySpawnerType.EliteCluster;
+                }
+
+                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY * CHUNK_SIZE, DELAY, spawnerType, 1);
                 spawner.AddComponent(typeof(EnemyProximitySpawner), eps);
                 genComponentManager.AddComponent(eps);
 
@@ -1052,7 +1067,7 @@ namespace KazgarsRevenge
             graphics.AddEmitter(typeof(FirePillarMistSystem), "firemist", 40, 25, Vector3.Down * 17);
             graphics.AddEmitter(typeof(FirePillarSystem), "fire", 10, 25, Vector3.Down * 25);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, true);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, false);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 

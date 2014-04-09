@@ -95,7 +95,10 @@ namespace KazgarsRevenge
             {
                 Vector3 dir = creatorData.Position - physicalData.Position;
                 dir.Y = 0;
-                dir.Normalize();
+                if (dir != Vector3.Zero)
+                {
+                    dir.Normalize();
+                }
                 targetData.LinearVelocity = dir * 800;
                 physicalData.LinearVelocity = dir * 800;
 

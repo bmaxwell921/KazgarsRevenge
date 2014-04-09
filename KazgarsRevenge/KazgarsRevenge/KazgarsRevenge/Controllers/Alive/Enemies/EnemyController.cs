@@ -80,7 +80,6 @@ namespace KazgarsRevenge
             settings.walkSpeed = GetStat(StatType.RunSpeed) / 2;
             settings.usesTwoHander = true;
 
-
             lewts = (LootManager)game.Services.GetService(typeof(LootManager));
             levels = (LevelManager)game.Services.GetService(typeof(LevelManager));
             physics = (Space)game.Services.GetService(typeof(Space));
@@ -92,6 +91,11 @@ namespace KazgarsRevenge
             rayCastFilter = RayCastFilter;
         }
 
+        public void MakeElite()
+        {
+            baseStatsMultiplier = 4;
+            statsPerLevelMultiplier = 2;
+        }
 
         protected string currentAniName { get; private set; }
         public void PlayAnimation(string animationName)
@@ -140,7 +144,7 @@ namespace KazgarsRevenge
 
         #region State Definitions
 
-        bool chillin = false;
+        bool chillin = true;
         double scanTimerCounter = 0;
         double scanTimerLength = 2000;
         protected virtual void AIWanderingHostile(double millis)
@@ -541,7 +545,7 @@ namespace KazgarsRevenge
         {
             if (Killer != null)
             {
-                Killer.AddEXP(level, Entity.Type);
+                Killer.AddEXP(Level, Entity.Type);
             }
             base.DealWithKiller();
         }

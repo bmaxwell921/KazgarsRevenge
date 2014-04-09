@@ -403,29 +403,18 @@ namespace KazgarsRevenge
 
             InitNewPlayer();
 
-            //adding weapons for testing
-            Equippable wep = (Equippable)lewtz.AllItems[3202];
+            //adding gear for testing
+            Equippable wep = (Equippable)lewtz.AllItems[9901];
             wep.SetStats(GearQuality.Legendary, 70);
             EquipGear(wep, GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3001], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3001], GearSlot.Righthand);
-
-            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Lefthand);
-
-            EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Lefthand);
-
-            EquipGear((Equippable)lewtz.AllItems[3203], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3204], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3205], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3206], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3207], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3208], GearSlot.Righthand);
             
             Equippable boots = (Equippable)lewtz.AllItems[9900];
             boots.SetStats(GearQuality.Legendary, 70);
             EquipGear(boots, GearSlot.Feet);
+
+
+            EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Righthand);
         }
 
         public override void Start()
@@ -1361,7 +1350,7 @@ namespace KazgarsRevenge
                 needInterruptAction = false;
                 attState = AttackState.None;
 
-                lastUsedAbility.Use();
+                lastUsedAbility.Use(GetStat(StatType.CooldownReduction));
             });
 
             sequence.Add(abilityFinishedAction);
