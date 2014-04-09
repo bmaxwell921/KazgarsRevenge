@@ -147,32 +147,26 @@ namespace KazgarsRevenge
             // Delegates!
             itemLevel += this.addedStatFunc();
 
+            //Normal enemies drop standard, 10% chance to drop Good quality
+            //Elites drop Good, 1% chance to drop epic
+            //Bosses drop epic gear
             GearQuality q = GearQuality.Standard;
             Random rand = RandSingleton.U_Instance;
             if (Entity.Type == EntityType.Boss)
             {
-                q = GearQuality.Good;
-                if (rand.Next(2) == 0)
-                {
-                    q = GearQuality.Epic;
-                }
+                q = GearQuality.Epic;
             }
             else if (Entity.Type == EntityType.EliteEnemy)
             {
-                int r = rand.Next(4);
                 q = GearQuality.Good;
-                if (r == 0)
+                if (rand.Next(100) <= 1)
                 {
                     q = GearQuality.Epic;
                 }
-                else if (r < 2)
-                {
-                    q = GearQuality.Good;
-                }
             }
-            else
+            else if(Entity.Type == EntityType.NormalEnemy)
             {
-                if (rand.Next(4) == 0)
+                if (rand.Next(100) <= 10)
                 {
                     q = GearQuality.Good;
                 }
