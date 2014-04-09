@@ -418,7 +418,10 @@ namespace KazgarsRevenge
             //creating ray from mouse location
             Vector3 castOrigin = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 0), camera.Projection, camera.View, Matrix.Identity);
             Vector3 castdir = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 1), camera.Projection, camera.View, Matrix.Identity) - castOrigin;
-            castdir.Normalize();
+            if (castdir != Vector3.Zero)
+            {
+                castdir.Normalize();
+            }
             Ray r = new Ray(castOrigin, castdir);
 
             //check where on the zero plane the ray hits, to guide the character by the mouse
@@ -710,7 +713,10 @@ namespace KazgarsRevenge
                 dir = targetedPhysicalData.Position - physicalData.Position;
                 dir.Y = 0;
                 distance = (dir).Length();
-                dir.Normalize();
+                if (dir != Vector3.Zero)
+                {
+                    dir.Normalize();
+                }
             }
 
             //check for click when aiming ground target ability
@@ -719,7 +725,7 @@ namespace KazgarsRevenge
                 if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
                 {
                     UpdateRotation(dir);
-                    lastUsedAbility.Use();
+                    lastUsedAbility.Use(GetStat(StatType.CooldownReduction));
                     UsePower(lastUsedAbility.PowerCost);
                     StartAbilitySequence(lastUsedAbility);
                     return;
@@ -873,7 +879,7 @@ namespace KazgarsRevenge
                 }
                 if (attState == AttackState.Charging && abilityToUse.ActionName == currentActionName)
                 {
-                    abilityToUse.Use();
+                    abilityToUse.Use(GetStat(StatType.CooldownReduction));
                     UsePower(abilityToUse.PowerCost);
                     InterruptCurrentSequence();
                     CancelFinishSequence();
@@ -884,7 +890,7 @@ namespace KazgarsRevenge
                     CancelFinishSequence();
                     if (abilityToUse.AbilityType == AbilityType.Instant)
                     {
-                        abilityToUse.Use();
+                        abilityToUse.Use(GetStat(StatType.CooldownReduction));
                         UsePower(abilityToUse.PowerCost);
                     }
                     UpdateRotation(dir);
@@ -894,7 +900,7 @@ namespace KazgarsRevenge
                 }
                 else if (abilityToUse.AbilityType == AbilityType.Instant)
                 {
-                    abilityToUse.Use();
+                    abilityToUse.Use(GetStat(StatType.CooldownReduction));
                     UsePower(abilityToUse.PowerCost);
                     UpdateRotation(dir);
                     StartAbilitySequence(abilityToUse);
@@ -905,7 +911,7 @@ namespace KazgarsRevenge
                     if (targetingGroundLocation && lastUsedAbility == abilityToUse)
                     {
                         UpdateRotation(dir);
-                        abilityToUse.Use();
+                        abilityToUse.Use(GetStat(StatType.CooldownReduction));
                         UsePower(abilityToUse.PowerCost);
                     }
                     StartAbilitySequence(abilityToUse);
