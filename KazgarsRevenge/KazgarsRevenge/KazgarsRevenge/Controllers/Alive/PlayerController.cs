@@ -2009,12 +2009,19 @@ namespace KazgarsRevenge
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
             if (possLoot != null)
             {
-                StartSequence("loot");
                 lootingSoul = (possLoot.GetComponent(typeof(AIComponent)) as LootSoulController);
-                lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);
-                looting = true;
+                if (lootingSoul.soulState != LootSoulController.LootSoulState.BeingLooted && lootingSoul.soulState != LootSoulController.LootSoulState.Dying)
+                {
+                    StartSequence("loot");
+                    lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);
+                    looting = true;
 
-                groundTargetLocation = physicalData.Position;
+                    groundTargetLocation = physicalData.Position;
+                }
+                else
+                {
+                    lootingSoul = null;
+                }
             }
         }
         protected void SwapWeapons()
