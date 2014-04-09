@@ -148,6 +148,7 @@
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Controllers\Objects\KeyController.cs" />
     <Compile Include="Controllers\Objects\PillarController.cs" />
+    <Compile Include="Controllers\Objects\SoulevatorController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
     <Compile Include="Drawing\Billboards\AdrenalineRushBillboard.cs" />
     <Compile Include="Drawing\Billboards\ArrowVBillboard.cs" />

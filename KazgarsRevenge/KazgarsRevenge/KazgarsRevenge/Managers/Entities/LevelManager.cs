@@ -529,18 +529,25 @@ namespace KazgarsRevenge
         {
             GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
 
-            Entity physicalData = new Box(pos, 1, 1, 1);
+            Entity physicalData = new Box(pos, 60, 5, 60);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             prop.AddSharedData(typeof(Entity), physicalData);
 
-            //TODO: emitters and effects
+            PhysicsComponent physics = new PhysicsComponent(mainGame, prop);
+            prop.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10, 100 ,10), Vector3.Down * 60, 0, 0, 0);
             graphics.TurnOffOutline();
             graphics.SetAlpha(.5f);
             graphics.AddYawSpeed(.01f);
             graphics.AddEmitter(typeof(SoulevatorMistSystem), "mist", 65, 85, 0, Vector3.Zero);
-            
             prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
             levelModelManager.AddComponent(graphics);
+
+            SoulevatorController controller = new SoulevatorController(mainGame, prop);
+            prop.AddComponent(typeof(SoulevatorController), controller);
+            genComponentManager.AddComponent(controller);
 
             rooms.Add(prop);
         }

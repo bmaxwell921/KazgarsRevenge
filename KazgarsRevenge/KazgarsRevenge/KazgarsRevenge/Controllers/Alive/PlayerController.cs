@@ -2002,6 +2002,18 @@ namespace KazgarsRevenge
         #endregion
 
         #region helpers
+        protected bool inSoulevator = false;
+        public void EnterSoulevator()
+        {
+            StartSequence("idle");
+            attState = AttackState.Locked;
+            inSoulevator = true;
+        }
+        protected void ExitSoulevator()
+        {
+            attState = AttackState.None;
+            inSoulevator = false;
+        }
         protected void CloseLoot()
         {
             looting = false;

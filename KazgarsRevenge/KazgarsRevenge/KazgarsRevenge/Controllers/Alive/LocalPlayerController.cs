@@ -640,6 +640,8 @@ namespace KazgarsRevenge
                 }
             }
 
+            
+
             //Esc closes all
             if (curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
             {
@@ -659,6 +661,10 @@ namespace KazgarsRevenge
                     guiOutsideRects.Remove("talents");
                 }
                 showMegaMap = false;
+                if (inSoulevator)
+                {
+                    ExitSoulevator();
+                }
             }
 
 
@@ -2409,7 +2415,17 @@ namespace KazgarsRevenge
                 s.Draw(texHover, hoverRect, new Color(255, 255, 166));
             }
             #endregion
+
+            #region soulevator
+            if (inSoulevator)
+            {
+                s.Draw(texWhitePixel, new Rectangle(50, 50, 500, 500), Color.Black * .5f);
+                s.DrawString(font, "Soulevator Menu", new Vector2(100, 100), Color.White);
+            }
             #endregion
+            
+            #endregion
+
 
             #region mouse
             rectMouse.X = curMouse.X;
