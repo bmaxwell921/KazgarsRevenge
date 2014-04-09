@@ -2622,8 +2622,6 @@ namespace KazgarsRevenge
         #endregion
 
 
-
-
     }
     public enum AbilityName
     {

@@ -51,7 +51,7 @@ namespace KazgarsRevenge
         public void CreateEliteEnemy(Vector3 loc)
         {
             int r;
-            int enemyLevel = players.GetHighestLevel() + (RandSingleton.U_Instance.Next(5) - 1);
+            int enemyLevel = Math.Max(1, players.GetHighestLevel() + (RandSingleton.U_Instance.Next(5) - 1));
             switch (levelManager.currentLevel.currentFloor)
             {
                 case FloorName.Dungeon:
@@ -75,7 +75,7 @@ namespace KazgarsRevenge
         public void CreateNormalEnemy(Vector3 loc)
         {
             int r;
-            int enemyLevel = players.GetHighestLevel() + (RandSingleton.U_Instance.Next(5) - 2);
+            int enemyLevel = Math.Max(1, players.GetHighestLevel() + (RandSingleton.U_Instance.Next(5) - 2));
             switch (levelManager.currentLevel.currentFloor)
             {
                 case FloorName.Dungeon:

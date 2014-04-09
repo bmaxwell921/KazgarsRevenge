@@ -271,6 +271,10 @@ namespace KazgarsRevenge
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             rand = game.rand;
 
+            if (level <= 0)
+            {
+                level = 1;
+            }
             this.Level = level;
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
@@ -358,6 +362,7 @@ namespace KazgarsRevenge
                     }
                 }
             }
+
             return actualDamage;
         }
 
