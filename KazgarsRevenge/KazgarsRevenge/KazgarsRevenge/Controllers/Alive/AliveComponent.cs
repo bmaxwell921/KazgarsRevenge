@@ -318,9 +318,9 @@ namespace KazgarsRevenge
         protected int GeneratePrimaryDamage(StatType s)
         {
             float ret = stats[s];
-            if ((float)rand.Next(0, 1000) / 10f < stats[StatType.CritChance] * 100)
+            if ((float)rand.Next(0, 1000) / 10f < stats[StatType.CritChance] * 100.0f)
             {
-                ret *= 1.25f;
+                ret *= 1.35f;
             }
 
             return (int)ret;

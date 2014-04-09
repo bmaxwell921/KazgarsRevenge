@@ -415,6 +415,10 @@ namespace KazgarsRevenge
 
             EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Righthand);
             EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Righthand);
+
+            Equippable g = (Equippable)lewtz.AllItems[3107];
+            g.SetStats(GearQuality.Standard, 2);
+            EquipGear(g, GearSlot.Righthand);
         }
 
         public override void Start()
