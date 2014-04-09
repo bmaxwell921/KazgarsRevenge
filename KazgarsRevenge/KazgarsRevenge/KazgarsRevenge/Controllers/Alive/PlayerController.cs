@@ -112,6 +112,13 @@ namespace KazgarsRevenge
         //#Nate
         protected virtual void EquipGear(Equippable equipMe, GearSlot slot)
         {
+            if (equipMe.ItemLevel > Level)
+            {
+                AddToInventory(equipMe);
+                (Game as MainGame).AddAlert("That item's level is too high");
+                return;
+            }
+
             float xRot = 0;
             bool weapon = false;
             //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand

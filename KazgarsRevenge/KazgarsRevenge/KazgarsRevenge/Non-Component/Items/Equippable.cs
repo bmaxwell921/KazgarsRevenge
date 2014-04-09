@@ -80,7 +80,8 @@ namespace KazgarsRevenge
             List<TooltipLine> tiplines = new List<TooltipLine>
             {
                 new TooltipLine(GetQualityColor(Quality), Name, .65f),
-                new TooltipLine(Color.White, Slot.ToString(), .45f)
+                new TooltipLine(Color.White, Slot.ToString(), .45f),
+                new TooltipLine(Color.Gold, "Requires Level " + ItemLevel, .35f)
             };
 
             foreach (KeyValuePair<StatType, float> k in StatEffects)

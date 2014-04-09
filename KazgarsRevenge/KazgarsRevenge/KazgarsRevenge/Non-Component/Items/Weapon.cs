@@ -32,14 +32,14 @@ namespace KazgarsRevenge
         {
             List<TooltipLine> tiplines = new List<TooltipLine>
             {
-                new TooltipLine(GetQualityColor(Quality), Name, .75f),
-                new TooltipLine(Color.White, TwoHanded? "Twohand" : "Onehand", .5f),
-                new TooltipLine(Color.White, PrimaryAttackType.ToString()+" Weapon", .5f)
+                new TooltipLine(GetQualityColor(Quality), Name, .65f),
+                new TooltipLine(Color.White, (TwoHanded? "Twohand " : "Onehand ") + PrimaryAttackType.ToString()+" Weapon", .45f),
+                new TooltipLine(Color.Gold, "Requires Level " + ItemLevel, .35f)
             };
 
             foreach (KeyValuePair<StatType, float> k in StatEffects)
             {
-                tiplines.Add(new TooltipLine(Color.Green, "+" + k.Value + " " + k.Key.ToString(), .4f));
+                tiplines.Add(new TooltipLine(Color.Green, "+" + k.Value + " " + k.Key.ToString(), .35f));
             }
 
             return new Tooltip(tiplines);
