@@ -104,28 +104,6 @@ namespace KazgarsRevenge
 
         }
 
-        protected float expMultiplier = 1;
-        protected int experience = 0;
-        public int NextLevelXP { get { return 100 * Level * Level; } }
-        public void AddEXP(int level, EntityType entityType)
-        {
-            int exp = (int)(level * 25 * expMultiplier);
-            if (entityType == EntityType.EliteEnemy)
-            {
-                exp *= 2;
-            }
-            if (entityType == EntityType.Boss)
-            {
-                exp *= 10;
-            }
-
-            experience += exp;
-            while (experience >= NextLevelXP)
-            {
-                experience = experience - NextLevelXP;
-                LevelUp();
-            }
-        }
 
         public long Health { get; private set; }
         public int MaxHealth { get; private set; }
@@ -153,6 +131,41 @@ namespace KazgarsRevenge
             Dead = false;
             Health = (int)(MaxHealth * .25f);
         }
+
+        #region Experience
+        protected float expMultiplier = 1;
+        protected int experience = 0;
+        public int NextLevelXP { get { return 100 * Level * Level; } }
+        public void AddEXP(int level, EntityType entityType)
+        {
+            int exp = (int)(level * 25 * expMultiplier);
+            if (entityType == EntityType.EliteEnemy)
+            {
+                exp *= 2;
+            }
+            if (entityType == EntityType.Boss)
+            {
+                exp *= 10;
+            }
+
+            experience += exp;
+            while (experience >= NextLevelXP)
+            {
+                experience = experience - NextLevelXP;
+                LevelUp();
+            }
+        }
+
+        public void LevelUp()
+        {
+            ++Level;
+            RecalculateStats();
+
+            attacks.CreateLevelUpGraphics(physicalData);
+
+            sounds.PlaySound("levelup");
+        }
+        #endregion
 
         #region stats
         public int Level { get; protected set; }
@@ -254,14 +267,6 @@ namespace KazgarsRevenge
             float curHealthPerc = HealthPercent;
             MaxHealth = (int)(stats[StatType.Vitality] * 10);
             Health = (int)(MaxHealth * curHealthPerc);
-        }
-
-        public void LevelUp()
-        {
-            ++Level;
-            RecalculateStats();
-
-            attacks.CreateLevelUpGraphics(physicalData);
         }
         #endregion
 
