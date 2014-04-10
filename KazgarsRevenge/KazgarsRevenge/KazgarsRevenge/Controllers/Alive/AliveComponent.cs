@@ -133,13 +133,12 @@ namespace KazgarsRevenge
         }
 
         #region Experience
+        public int Level { get; protected set; }
         protected float expMultiplier = 1;
         protected int experience = 0;
         public int NextLevelXP { get { return 100 * Level * Level; } }
         public void AddEXP(int level, EntityType entityType)
         {
-            LevelUp();
-            return;
             int exp = (int)(level * 25 * expMultiplier);
             if (entityType == EntityType.EliteEnemy)
             {
@@ -172,7 +171,6 @@ namespace KazgarsRevenge
         #endregion
 
         #region stats
-        public int Level { get; protected set; }
         protected bool pulling = false;
         
         private Dictionary<StatType, float> statsPerLevel = new Dictionary<StatType, float>()
@@ -191,7 +189,7 @@ namespace KazgarsRevenge
         protected Dictionary<StatType, float> originalBaseStats = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 120},
-            {StatType.AttackSpeed, .05f},
+            {StatType.AttackSpeed, .0f},
             {StatType.Strength, 1},
             {StatType.Agility, 1},
             {StatType.Intellect, 1},
@@ -203,7 +201,7 @@ namespace KazgarsRevenge
         protected Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 120},
-            {StatType.AttackSpeed, .05f},
+            {StatType.AttackSpeed, .0f},
             {StatType.Strength, 1},
             {StatType.Agility, 1},
             {StatType.Intellect, 1},

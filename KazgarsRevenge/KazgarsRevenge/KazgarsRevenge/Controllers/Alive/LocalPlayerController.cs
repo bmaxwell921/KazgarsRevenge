@@ -220,6 +220,7 @@ namespace KazgarsRevenge
             if ((attState == AttackState.Locked || attState == AttackState.LockedMoving) && canInterrupt && stateResetCounter >= stateResetLength)
             {
                 attState = AttackState.None;
+                usingPrimary = false;
             }
 
             UpdateActionSequences(elapsed);
@@ -321,7 +322,7 @@ namespace KazgarsRevenge
                     ResetTargettedEntity();
                 }
 
-                if ((   (attState != AttackState.Locked && attState != AttackState.LockedMoving)   || usingPrimary) 
+                if (((attState != AttackState.Locked && attState != AttackState.LockedMoving) || usingPrimary) 
                     && !looting)
                 {
                     CheckAbilities(move, mouseOnGui);
@@ -1822,6 +1823,7 @@ namespace KazgarsRevenge
 
         #endregion
 
+        #region Draw Parameter Setup
         SpriteFont font;
         Texture2D texWhitePixel;
         Texture2D texHover;
@@ -1867,6 +1869,7 @@ namespace KazgarsRevenge
         Vector2 powerTextPos;
 
         Rectangle hoverRect;
+        Rectangle tooltipRect;
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
@@ -1890,7 +1893,6 @@ namespace KazgarsRevenge
             guiOutsideRects = new Dictionary<string, Rectangle>();
             guiOutsideRects.Add("abilities", new Rectangle((int)abilitiesUR.X, (int)abilitiesUR.Y, (int)(622 * average), (int)(158 * average)));
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
-            guiOutsideRects.Add("tooltip", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             //guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
@@ -1905,6 +1907,7 @@ namespace KazgarsRevenge
             talentRect = new Rectangle((int)talentUR.X, (int)talentUR.Y, (int)(406 * average), (int)(812 * average));
             lootRect = new Rectangle((int)lootUR.X, (int)lootUR.Y, (int)(150 * average), (int)(300 * average));
             megaMapRect = new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int)(160 * average), (int)(622 * average), (int)(622 * average));
+            tooltipRect = new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
@@ -2041,6 +2044,7 @@ namespace KazgarsRevenge
             powerBackRect = new Rectangle(playerHPRect.X, playerHPRect.Y + playerHPRect.Height, playerHPRect.Width, playerHPRect.Height);
             powerTextPos = new Vector2((int)(170 * average), (int)(35 * average));
         }
+        #endregion
 
         public void Draw(SpriteBatch s)
         {
@@ -2406,8 +2410,8 @@ namespace KazgarsRevenge
             #region tooltip and hover
             if (currentTooltip != null)
             {
-                s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Black * 0.5f);
-                currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, average, 50f);
+                s.Draw(texWhitePixel, tooltipRect, Color.Black * 0.5f);
+                currentTooltip.Draw(s, new Vector2(tooltipRect.X, tooltipRect.Y), font, average, 50f);
             }
 
             if (hovering)
