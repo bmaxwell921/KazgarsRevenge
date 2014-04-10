@@ -339,18 +339,8 @@ namespace KazgarsRevenge
 
         public void ActuallyLoadLevel(FloorName name)
         {
-            //genComponentManager.Enabled = false;
-
-            // Testing version
-            //levels.DemoLevel();
-            //players.CreateMainPlayer(new Vector3(900, 20, 1400), DUMMY_ID);
-            //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(120, 20, 400));
-
-            // Down here is the final version of this method
             levels.CreateLevel(name);
             players.CreateMainPlayerInLevel(DUMMY_ID);
-
-            //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), levels.GetPlayerSpawnLocation() + Vector3.Right * 200);
         }
 
         Vector2 vecLoadingText;
