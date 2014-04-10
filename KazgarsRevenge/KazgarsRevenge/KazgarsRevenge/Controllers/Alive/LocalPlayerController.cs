@@ -626,21 +626,6 @@ namespace KazgarsRevenge
             if (curKeys.IsKeyDown(Keys.M) && prevKeys.IsKeyUp(Keys.M))
             {
                 showMegaMap = !showMegaMap;
-
-                if (showMegaMap)
-                {
-                    if (!guiOutsideRects.ContainsKey("megaMap"))
-                    {
-                        guiOutsideRects.Add("megaMap", megaMapRect);
-                    }
-                }
-                else
-                {
-                    if (guiOutsideRects.ContainsKey("megaMap"))
-                    {
-                        guiOutsideRects.Remove("megaMap");
-                    }
-                }
             }
 
             
@@ -2536,6 +2521,11 @@ namespace KazgarsRevenge
 
         private void DrawMegaMap(SpriteBatch s)
         {
+            float alpha = .5f;
+            /*if (Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) < .01f)
+            {
+                alpha = .9f;
+            }*/
             string currentChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkImgName(physicalData.Position);
             Rectangle chunkRect = guiInsideRects["megaMap"]["megaMap"];
 
@@ -2545,7 +2535,7 @@ namespace KazgarsRevenge
             int originX = Texture2DUtil.Instance.GetTexture(currentChunk).Width / 2;
             int originY = Texture2DUtil.Instance.GetTexture(currentChunk).Height / 2;
             s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), new Rectangle(chunkRect.X + chunkRect.Width/ 2, chunkRect.Y + chunkRect.Height/2, chunkRect.Width, chunkRect.Height), 
-                null, Color.White, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
+                null, Color.White * alpha, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
 
             // Scale the player location to the map
             Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];
