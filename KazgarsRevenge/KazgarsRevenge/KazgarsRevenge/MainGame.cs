@@ -276,14 +276,9 @@ namespace KazgarsRevenge
             alertSourceX = normalFont.MeasureString(alertMessage).X / 4;
         }
 
-        public void AddFloatingText(Vector3 pos, string text, Color color)
+        public void AddFloatingText(FloatingText floater)
         {
-            floatingText.Add(new FloatingText(pos, text, color));
-        }
-
-        public void AddFloatingText(Vector3 pos, string text, Color color, float scale)
-        {
-            floatingText.Add(new FloatingText(pos, text, color, scale));
+            floatingText.Add(floater);
         }
 
         int loadInt = 0;
@@ -292,15 +287,15 @@ namespace KazgarsRevenge
             if (gameState == GameState.Playing)
             {
                 physics.Update();
+                double millis = gameTime.ElapsedGameTime.TotalMilliseconds;
                 if (alertTimeLeft > 0)
                 {
-                    alertTimeLeft -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                    alertTimeLeft -= millis;
                 }
                 for (int i = floatingText.Count - 1; i >= 0; --i)
                 {
-                    floatingText[i].alpha -= .01f;
-                    floatingText[i].position.Y += .5f;
-                    if (floatingText[i].alpha <= 0)
+                    floatingText[i].Update(millis);
+                    if (floatingText[i].Dead)
                     {
                         floatingText.RemoveAt(i);
                     }

@@ -1996,7 +1996,7 @@ namespace KazgarsRevenge
 
             if (damage > 0)
             {
-                (Game as MainGame).AddFloatingText(physicalData.Position, "" + damage, Color.Red, .5f);
+                (Game as MainGame).AddFloatingText(new FloatingText(physicalData.Position, "" + damage, Color.Red, .5f));
             }
         }
         #endregion

@@ -138,6 +138,8 @@ namespace KazgarsRevenge
         public int NextLevelXP { get { return 100 * Level * Level; } }
         public void AddEXP(int level, EntityType entityType)
         {
+            LevelUp();
+            return;
             int exp = (int)(level * 25 * expMultiplier);
             if (entityType == EntityType.EliteEnemy)
             {
@@ -164,6 +166,8 @@ namespace KazgarsRevenge
             attacks.CreateLevelUpGraphics(physicalData);
 
             sounds.PlaySound("levelup");
+
+            (Game as MainGame).AddFloatingText(new FloatingText(physicalData.Position + Vector3.Left * 200, "Level Up", Color.Gold, 4, 90, .45f));
         }
         #endregion
 

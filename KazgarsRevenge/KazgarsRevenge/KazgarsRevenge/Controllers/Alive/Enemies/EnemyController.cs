@@ -528,7 +528,7 @@ namespace KazgarsRevenge
 
                 if (d > 0)
                 {
-                    (Game as MainGame).AddFloatingText(physicalData.Position, "" + d, Color.Yellow, .5f);
+                    (Game as MainGame).AddFloatingText(new FloatingText(physicalData.Position, "" + d, Color.Yellow, .5f));
                 }
             }
         }
