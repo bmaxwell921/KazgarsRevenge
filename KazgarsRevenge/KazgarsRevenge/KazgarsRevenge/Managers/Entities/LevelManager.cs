@@ -38,6 +38,7 @@ namespace KazgarsRevenge
 
     public enum FloorName
     {
+        Ground = 0,
         Dungeon = 1,
         Library = 2,
         TortureChamber = 3,
@@ -129,6 +130,15 @@ namespace KazgarsRevenge
             pathConnections['S'] = new Vector3(0, 0, 0.5f);
             pathConnections['E'] = new Vector3(0.5f, 0, 0);
             pathConnections['W'] = new Vector3(-0.5f, 0, 0);
+        }
+
+        public void CreateGround()
+        {
+            this.rooms = new List<GameEntity>();
+            LevelBuilder lb = new LevelBuilder(Game.Services.GetService(typeof(LoggerManager)) as LoggerManager, 1, 1);
+            this.currentLevel = lb.BuildGround();
+            // TODO hopefully this works
+            this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[0, 0], currentLevel.chunkInfos[0, 0], 0, 0));            
         }
 
         /// <summary>
@@ -872,6 +882,18 @@ namespace KazgarsRevenge
                     }
                     chunkNums.Add(i);
                 }
+            }
+
+            /// <summary>
+            /// Builds the Level 0 floor
+            /// </summary>
+            /// <returns></returns>
+            public LevelInfo BuildGround()
+            {
+                ChunkInfo[,] chunkInfos = new ChunkInfo[1, 1];
+                chunkInfos[0, 0] = ChunkUtil.Instance.GetGround();
+                Chunk[,] chunks = ReadChunks(FloorName.Ground, chunkInfos);
+                return new LevelInfo(FloorName.Ground, chunks, chunkInfos, 1, 1);
             }
 
             /// <summary>

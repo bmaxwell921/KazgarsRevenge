@@ -2493,7 +2493,11 @@ namespace KazgarsRevenge
             int curChunk = lm.GetCurrentChunk(physicalData.Position);
 
             Color blendColor = Color.White;
-            for (int i = 0; i < 9; ++i)
+            if (lm.currentLevel.width * lm.currentLevel.height == 1)
+            {
+                return;
+            }
+            for (int i = 0; i < lm.currentLevel.width * lm.currentLevel.height; ++i)
             {
                 // Safety check in case they go outside the level somehow
                 if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && i == curChunk && drawSel)

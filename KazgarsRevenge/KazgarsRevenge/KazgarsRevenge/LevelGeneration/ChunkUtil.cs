@@ -137,6 +137,10 @@ namespace KazgarsRevenge
                 ISet<Direction> dirs = new HashSet<Direction>();
                 foreach (char c in parts[3])
                 {
+                    if (c == '0')
+                    {
+                        continue;
+                    }
                     dirs.Add(Extenders.FromChar(c));
                 }
 
@@ -200,6 +204,12 @@ namespace KazgarsRevenge
             allDirs.Add(Direction.EAST);
             allDirs.Add(Direction.WEST);
             return GetSatisfyingChunk(name, ChunkType.SOULEVATOR, allDirs);
+        }
+
+        public ChunkInfo GetGround()
+        {
+            // 0 doors
+            return chunkDefs[ChunkType.GROUND][0].First();
         }
 
         /// <summary>

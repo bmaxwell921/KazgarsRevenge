@@ -9,7 +9,7 @@ namespace KazgarsRevenge
     public enum ChunkType
     {
         // Home is the 'home' area at the base of the tower, soulevator is the middle chunk, etc
-        HOME, SOULEVATOR, KEY, BOSS, NORMAL
+        HOME, SOULEVATOR, KEY, BOSS, NORMAL, GROUND
     }
 
     /// <summary>

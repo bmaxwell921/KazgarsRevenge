@@ -372,6 +372,7 @@
     <Content Include="Chunks\15-1-N-E.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Chunks\00-0-G-0.json" />
     <None Include="TextFile1.txt" />
     <None Include="Things to Cite.txt" />
     <None Include="ToDo.txt" />
