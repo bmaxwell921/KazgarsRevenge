@@ -137,8 +137,8 @@ namespace KazgarsRevenge
             this.rooms = new List<GameEntity>();
             LevelBuilder lb = new LevelBuilder(Game.Services.GetService(typeof(LoggerManager)) as LoggerManager, 1, 1);
             this.currentLevel = lb.BuildGround();
-            // TODO hopefully this works
-            this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[0, 0], currentLevel.chunkInfos[0, 0], 0, 0));            
+            this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[0, 0], currentLevel.chunkInfos[0, 0], 0, 0));
+            Texture2DUtil.Instance.GetTexture(@"Textures\UI\MegaMap\" + currentLevel.chunkInfos[0, 0].ChunkName);
         }
 
         /// <summary>
@@ -168,6 +168,11 @@ namespace KazgarsRevenge
                 for (int j = 0; j < levelHeight; ++j)
                 {
                     this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j));
+                    
+                    // Load the map images here so it doesn't lag in game
+                    Texture2DUtil.Instance.GetTexture(currentLevel.chunkInfos[i, j].miniMapImgName(true));
+                    Texture2DUtil.Instance.GetTexture(currentLevel.chunkInfos[i, j].miniMapImgName(false));
+                    Texture2DUtil.Instance.GetTexture(@"Textures\UI\MegaMap\" + currentLevel.chunkInfos[i, j].ChunkName);
                 }
             }
         }
