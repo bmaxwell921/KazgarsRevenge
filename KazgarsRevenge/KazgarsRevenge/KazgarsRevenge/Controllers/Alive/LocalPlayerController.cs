@@ -547,7 +547,7 @@ namespace KazgarsRevenge
 
 
             //Inventory
-            if (curKeys.IsKeyDown(Keys.I) && prevKeys.IsKeyUp(Keys.I))
+            if ((curKeys.IsKeyDown(Keys.I) && prevKeys.IsKeyUp(Keys.I)) || (curKeys.IsKeyDown(Keys.B) && prevKeys.IsKeyUp(Keys.B)))
             {
                 showInventory = !showInventory;
                 showEquipment = false;
@@ -1613,8 +1613,27 @@ namespace KazgarsRevenge
         }
 
         private void CheckMouseHover(string outerCollides, string innerCollides)
-        {
-            if (innerCollides == null)
+        {   //Holding an item.  Set hover over slot to equip
+            if (showEquipment && selectedItemSlot != -1)
+            {
+                Equippable e = inventory[selectedItemSlot] as Equippable;
+                if (e != null)
+                {
+                    hovering = true;
+                    hoverRect = guiInsideRects["equipment"][e.Slot.ToString()];
+                    return;
+                }
+                else
+                {
+                    if (innerCollides == null)
+                    {
+                        hovering = false;
+                        currentTooltip = null;
+                        return;
+                    }
+                }
+            }
+            else if (innerCollides == null)
             {
                 hovering = false;
                 currentTooltip = null;
