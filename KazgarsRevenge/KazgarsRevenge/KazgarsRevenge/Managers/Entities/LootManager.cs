@@ -601,7 +601,7 @@ namespace KazgarsRevenge
                 "Staff of Testing",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
                 GetUnanimatedModel(weaponDir + "staff"),
-                AttackType.Ranged,
+                AttackType.Magic,
                 true,
                 id));
             #endregion

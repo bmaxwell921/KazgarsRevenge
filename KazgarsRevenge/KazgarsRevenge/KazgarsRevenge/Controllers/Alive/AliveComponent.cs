@@ -63,47 +63,10 @@ namespace KazgarsRevenge
     public class AliveComponent : AIComponent
     {
 
-        protected class NegativeEffect
-        {
-            public DeBuff type { get; private set; }
-            public double timeLeft;
-            public double nextTick;
-            public double tickLength { get; private set; }
-            public GameEntity from { get; private set; }
-            public int stacks = 1;
-            public NegativeEffect(DeBuff type, double time, GameEntity from, double tickLength)
-            {
-                this.type = type;
-                this.timeLeft = time;
-                this.nextTick = time - tickLength;
-                this.from = from;
-                this.tickLength = tickLength;
-            }
-        }
-
-        protected class PositiveEffect
-        {
-            public Buff type { get; private set; }
-            public double timeLeft;
-            public double nextTick;
-            public double tickLength { get; private set; }
-            public GameEntity from { get; private set; }
-            public int stacks = 1;
-            public PositiveEffect(Buff type, double time, GameEntity from, double tickLength)
-            {
-                this.type = type;
-                this.timeLeft = time;
-                this.nextTick = timeLeft - tickLength;
-                this.from = from;
-                this.tickLength = tickLength;
-            }
-        }
-
         public virtual void AddPower(int power)
         {
 
         }
-
 
         public long Health { get; private set; }
         public int MaxHealth { get; private set; }
@@ -122,15 +85,6 @@ namespace KazgarsRevenge
             }
         }
         public bool Dead { get; private set; }
-
-        public AliveComponent Killer { get; protected set; }
-
-        public void ReviveAlive()
-        {
-            Killer = null;
-            Dead = false;
-            Health = (int)(MaxHealth * .25f);
-        }
 
         #region Experience
         public int Level { get; protected set; }
@@ -167,6 +121,8 @@ namespace KazgarsRevenge
             sounds.PlaySound("levelup");
 
             (Game as MainGame).AddFloatingText(new FloatingText(physicalData.Position + Vector3.Left * 200, "Level Up", Color.Gold, 4, 90, .45f));
+
+            Health = MaxHealth;
         }
         #endregion
 
@@ -175,7 +131,7 @@ namespace KazgarsRevenge
         protected float percentRegenPer5 = 0;
         private Dictionary<StatType, float> statsPerLevel = new Dictionary<StatType, float>()
         {
-            {StatType.RunSpeed, 2},
+            {StatType.RunSpeed, 0},
             {StatType.AttackSpeed, 0},
             {StatType.Strength, 1},
             {StatType.Agility, 1},
@@ -189,7 +145,7 @@ namespace KazgarsRevenge
         protected Dictionary<StatType, float> originalBaseStats = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 120},
-            {StatType.AttackSpeed, .0f},
+            {StatType.AttackSpeed, 0f},
             {StatType.Strength, 1},
             {StatType.Agility, 1},
             {StatType.Intellect, 1},
@@ -201,7 +157,7 @@ namespace KazgarsRevenge
         protected Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 120},
-            {StatType.AttackSpeed, .0f},
+            {StatType.AttackSpeed, 0f},
             {StatType.Strength, 1},
             {StatType.Agility, 1},
             {StatType.Intellect, 1},
@@ -302,6 +258,15 @@ namespace KazgarsRevenge
             base.Start();
         }
 
+        #region Inter-Controller
+        public AliveComponent Killer { get; protected set; }
+
+        public void ReviveAlive()
+        {
+            Killer = null;
+            Dead = false;
+            Health = (int)(MaxHealth * .25f);
+        }
         public void Target()
         {
             if (showHealthWithOutline)
@@ -329,6 +294,46 @@ namespace KazgarsRevenge
         {
 
         }
+
+        protected virtual void DealWithKiller()
+        {
+
+        }
+
+        protected virtual void KillAlive()
+        {
+            Dead = true;
+            if (pulling)
+            {
+                StopPull();
+            }
+        }
+
+        public void Pull()
+        {
+            pulling = true;
+            physicalData.IsAffectedByGravity = false;
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+        }
+
+        public virtual void StopPull()
+        {
+            pulling = false;
+            physicalData.IsAffectedByGravity = true;
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.Normal;
+        }
+        public void KnockBack(Vector3 origin, float impulse)
+        {
+            Vector3 newVel = physicalData.Position - origin;
+            if (newVel != Vector3.Zero)
+            {
+                newVel.Normalize();
+            }
+            this.physicalData.LinearVelocity = newVel * impulse;
+        }
+        #endregion
+
+        #region Damage and Health
 
         protected int GeneratePrimaryDamage(StatType s)
         {
@@ -379,44 +384,6 @@ namespace KazgarsRevenge
             }
 
             return actualDamage;
-        }
-
-        protected virtual void DealWithKiller()
-        {
-
-        }
-
-        protected virtual void KillAlive()
-        {
-            Dead = true;
-            if (pulling)
-            {
-                StopPull();
-            }
-        }
-
-        public void Pull()
-        {
-            pulling = true;
-            physicalData.IsAffectedByGravity = false;
-            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
-        }
-
-        public virtual void StopPull()
-        {
-            pulling = false;
-            physicalData.IsAffectedByGravity = true;
-            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.Normal;
-        }
-
-        public void KnockBack(Vector3 origin, float impulse)
-        {
-            Vector3 newVel = physicalData.Position - origin;
-            if (newVel != Vector3.Zero)
-            {
-                newVel.Normalize();
-            }
-            this.physicalData.LinearVelocity = newVel * impulse;
         }
 
         public int DamageDodgeable(DeBuff db, int d, GameEntity from, AttackType type)
@@ -486,6 +453,11 @@ namespace KazgarsRevenge
             model.AddEmitter(typeof(LifestealParticleSystem), "lifesteal", 10, 15, Vector3.Zero);
             model.AddParticleTimer("lifesteal", 1000);
         }
+        public virtual void HandleDamageDealt(int damageDealt)
+        {
+
+        }
+        #endregion
 
         private double regenTimer;
         protected bool showHealthWithOutline = true;
@@ -550,11 +522,42 @@ namespace KazgarsRevenge
             }
         }
 
-        public virtual void HandleDamageDealt(int damageDealt)
+        #region Buffs and Debuffs
+        protected class NegativeEffect
         {
-
+            public DeBuff type { get; private set; }
+            public double timeLeft;
+            public double nextTick;
+            public double tickLength { get; private set; }
+            public GameEntity from { get; private set; }
+            public int stacks = 1;
+            public NegativeEffect(DeBuff type, double time, GameEntity from, double tickLength)
+            {
+                this.type = type;
+                this.timeLeft = time;
+                this.nextTick = time - tickLength;
+                this.from = from;
+                this.tickLength = tickLength;
+            }
         }
 
+        protected class PositiveEffect
+        {
+            public Buff type { get; private set; }
+            public double timeLeft;
+            public double nextTick;
+            public double tickLength { get; private set; }
+            public GameEntity from { get; private set; }
+            public int stacks = 1;
+            public PositiveEffect(Buff type, double time, GameEntity from, double tickLength)
+            {
+                this.type = type;
+                this.timeLeft = time;
+                this.nextTick = timeLeft - tickLength;
+                this.from = from;
+                this.tickLength = tickLength;
+            }
+        }
         public virtual void HandleStun(double length)
         {
             model.AddEmitter(typeof(StunnedParticleSystem), "stun", 5, 5, Vector3.Up * 15);
@@ -631,7 +634,11 @@ namespace KazgarsRevenge
                     }
                     break;
                 case DeBuff.Frozen:
-
+                    if (state == BuffState.Starting)
+                    {
+                        AddDebuff(DeBuff.Stunned, debuffLengths[DeBuff.Frozen], from);
+                        attacks.CreateIceBlock(physicalData.Position, debuffLengths[DeBuff.Frozen]);
+                    }
                     break;
                 case DeBuff.Frost:
                     if (state == BuffState.Starting)
@@ -838,6 +845,6 @@ namespace KazgarsRevenge
             }
 
         }
-
+        #endregion
     }
 }

@@ -971,6 +971,25 @@ namespace KazgarsRevenge
         #endregion
 
         #region Misc
+        public void CreateIceBlock(Vector3 position, double duration)
+        {
+            position.Y = 0;
+            GameEntity entity = new GameEntity("", FactionType.Neutral, EntityType.None);
+
+            Entity box = new Box(position, 1, 1, 1);
+            entity.AddSharedData(typeof(Entity), box);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, entity, GetUnanimatedModel("Models\\ice_block"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            entity.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            DeathTimerController controller = new DeathTimerController(mainGame, entity, duration);
+            entity.AddComponent(typeof(DeathTimerController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(entity);
+        }
+
         public void CreateLevelUpGraphics(Entity playerEntity)
         {
             GameEntity levelUp = new GameEntity("levelup", FactionType.Neutral, EntityType.None);

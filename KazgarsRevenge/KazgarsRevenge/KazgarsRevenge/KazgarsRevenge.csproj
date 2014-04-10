@@ -141,6 +141,7 @@
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
     <Compile Include="Controllers\Attacks\ReflectController.cs" />
     <Compile Include="Controllers\Attacks\BladenadoController.cs" />
+    <Compile Include="Controllers\DeathTimerController.cs" />
     <Compile Include="Controllers\DebrisController.cs" />
     <Compile Include="Controllers\FallingArrowController.cs" />
     <Compile Include="Controllers\LevelUpController.cs" />

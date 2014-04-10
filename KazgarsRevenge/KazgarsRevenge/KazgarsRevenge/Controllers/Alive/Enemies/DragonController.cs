@@ -49,10 +49,6 @@ namespace KazgarsRevenge
 
         private void StartPhase1()
         {
-            if (activeBuffs.ContainsKey(Buff.Invincibility))
-            {
-                activeBuffs.Remove(Buff.Invincibility);
-            }
             state = DragonState.Phase1;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase1);
             timerCounter = 0;
@@ -66,6 +62,10 @@ namespace KazgarsRevenge
 
         private void StartPhase2()
         {
+            if (activeBuffs.ContainsKey(Buff.Invincibility))
+            {
+                activeBuffs.Remove(Buff.Invincibility);
+            }
             raycastCheckTarget = false;
             state = DragonState.Phase2;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase2);
@@ -151,6 +151,7 @@ namespace KazgarsRevenge
 
             //launch ice or fire attacks (alternating)
             AIAutoAttackingTarget(millis);
+            AddBuff(Buff.Invincibility, 1000, Entity);
         }
 
         double nextSpitBomb = 1000;

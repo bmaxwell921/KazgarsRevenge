@@ -400,7 +400,7 @@ namespace KazgarsRevenge
         public PlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
             : base(game, entity, account.CharacterLevel)
         {
-            percentRegenPer5 = .01f;
+            percentRegenPer5 = .03f;
             statsPerLevelMultiplier = 2;
             baseStatsMultiplier = 10;
             //shared data
@@ -2150,6 +2150,14 @@ namespace KazgarsRevenge
             abilityFinishedAction();
             attState = AttackState.None;
             base.StopPull();
+        }
+        public override void HandleStun(double length)
+        {
+            physicalData.LinearVelocity = Vector3.Zero;
+            attState = AttackState.Locked;
+            stateResetCounter = length;
+            canInterrupt = true;
+            base.HandleStun(length);
         }
         #endregion
 
