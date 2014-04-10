@@ -172,7 +172,7 @@ namespace KazgarsRevenge
 
         #region stats
         protected bool pulling = false;
-        
+        protected float percentRegenPer5 = 0;
         private Dictionary<StatType, float> statsPerLevel = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 2},
@@ -487,6 +487,7 @@ namespace KazgarsRevenge
             model.AddParticleTimer("lifesteal", 1000);
         }
 
+        private double regenTimer;
         protected bool showHealthWithOutline = true;
         protected Dictionary<DeBuff, NegativeEffect> activeDebuffs = new Dictionary<DeBuff, NegativeEffect>();
         protected Dictionary<Buff, PositiveEffect> activeBuffs = new Dictionary<Buff, PositiveEffect>();
@@ -541,7 +542,12 @@ namespace KazgarsRevenge
                 activeBuffs.Remove(toRemoveBuffs[i]);
             }
 
-
+            regenTimer -= elapsed;
+            if (regenTimer <= 0)
+            {
+                Heal((int)Math.Ceiling(MaxHealth * percentRegenPer5));
+                regenTimer = 5000;
+            }
         }
 
         public virtual void HandleDamageDealt(int damageDealt)
@@ -771,7 +777,10 @@ namespace KazgarsRevenge
             {
                 if (activeBuffs.ContainsKey(b))
                 {
-                    activeBuffs[b].stacks += 1;
+                    if (b != Buff.Invincibility)
+                    {
+                        activeBuffs[b].stacks += 1;
+                    }
                     activeBuffs[b].nextTick = length - (activeBuffs[b].timeLeft - activeBuffs[b].nextTick);
                     activeBuffs[b].timeLeft = length;
                 }
