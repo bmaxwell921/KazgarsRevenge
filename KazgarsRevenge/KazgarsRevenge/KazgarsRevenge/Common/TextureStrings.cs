@@ -28,6 +28,7 @@ namespace KazgarsRevenge
             public static readonly string Talent_Arrow_DR = @"Textures\UI\Frames\TTArrow5";
             public static readonly string Talent_Arrow_R = @"Textures\UI\Frames\TTArrow6";
             public static readonly string Talent_Arrow_UR = @"Textures\UI\Frames\TTArrow7";
+            public static readonly string ActiveTalent = @"Textures\UI\active";
 
             public static readonly string MeleeBanner = @"Textures\UI\Frames\meleeBanner";
             public static readonly string RangedBanner = @"Textures\UI\Frames\rangedBanner";

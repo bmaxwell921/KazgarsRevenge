@@ -54,6 +54,7 @@ namespace KazgarsRevenge
             #endregion
 
             #region Ability Image Load
+            texActiveTalent = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.ActiveTalent);
             texPlaceHolder = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder);
             #endregion
 
@@ -159,6 +160,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region Ability Icons
+        Texture2D texActiveTalent;
         Texture2D texPlaceHolder;
         #endregion
 
@@ -1760,21 +1762,27 @@ namespace KazgarsRevenge
                         }
                         //TODO if we add any more innerFrames in abilities make sure we check those first
                         int check = Convert.ToInt32(innerCollides.Remove(0, 6));
-                        if (currentTalentTree == TalentTrees.ranged && rangedAbilities[(int)check / 4, check % 4] != null)
+                        int i = check / 4;
+                        int j = check % 4;
+                        if (currentTalentTree == TalentTrees.ranged && rangedAbilities[i, j] != null && rangedAbilities[i, j].name != AbilityName.None)
                         {
-                            currentTooltip = GetCachedAbility(rangedAbilities[(int)check / 4, check % 4].name).Tooltip;
+                            currentTooltip = GetCachedAbility(rangedAbilities[i, j].name).Tooltip;
+                            hovering = true;
+                            hoverRect = guiInsideRects["talents"][innerCollides];
                         }
-                        else if (currentTalentTree == TalentTrees.melee && meleeAbilities[(int)check / 4, check % 4] != null)
+                        else if (currentTalentTree == TalentTrees.melee && meleeAbilities[i, j] != null && meleeAbilities[i, j].name != AbilityName.None)
                         {
-                            currentTooltip = GetCachedAbility(meleeAbilities[(int)check / 4, check % 4].name).Tooltip;
+                            currentTooltip = GetCachedAbility(meleeAbilities[i, j].name).Tooltip;
+                            hovering = true;
+                            hoverRect = guiInsideRects["talents"][innerCollides];
                         }
                         else if (currentTalentTree == TalentTrees.magic)  //TODO add check as above
                         {
                             //TODO currentToolTip = GetAbility(magicAbilities[(int)check / 4, check % 4].name).tooltip;
+                            //hovering = true;
+                            //hoverRect = guiInsideRects["talents"][innerCollides];
                         }
 
-                        hovering = true;
-                        hoverRect = guiInsideRects["talents"][innerCollides];
                     }
                     break;
                 #endregion
@@ -1792,16 +1800,7 @@ namespace KazgarsRevenge
                 for (int j = 0; j < 7; j++)
                 {
                     if (currentTree[j, i] != null)
-                    {   //Draw active frames around active items
-                        if (GetCachedAbility(currentTree[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[currentTree[j, i].name])
-                        {
-                            Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
-                            temp.X = temp.X - 4;
-                            temp.Y = temp.Y - 4;
-                            temp.Width = temp.Width + 8;
-                            temp.Height = temp.Height + 8;
-                            s.Draw(texWhitePixel, temp, Color.Red * .8f);
-                        }
+                    {
                         //Draw Icon
                         s.Draw(GetCachedAbility(currentTree[j, i].name).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
                         //Draw shadow over locked abilities
@@ -1814,6 +1813,17 @@ namespace KazgarsRevenge
                             }
                             //locked
                             else s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black * .8f);
+                        }   
+                        
+                        //Draw active frames around active items
+                        if (GetCachedAbility(currentTree[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[currentTree[j, i].name])
+                        {
+                            Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
+                            temp.X = (int)(temp.X - 6 * average);
+                            temp.Y = (int)(temp.Y - 6 * average);
+                            temp.Width = (int)(temp.Width + 12 * average);
+                            temp.Height = (int)(temp.Height + 12 * average);
+                            s.Draw(texActiveTalent, temp, Color.Red * .8f);
                         }
                     }
                 }
