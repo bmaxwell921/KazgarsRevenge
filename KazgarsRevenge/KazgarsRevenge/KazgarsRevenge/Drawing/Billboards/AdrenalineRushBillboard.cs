@@ -11,37 +11,15 @@ namespace KazgarsRevenge
     {
         Entity followData;
         public AdrenalineRushBillboard(KazgarsRevengeGame game, GameEntity entity, Entity followData)
-            : base(game, entity, Vector3.Forward, Vector3.Up, new Vector2(100, 100))
+            : base(game, entity, Vector3.Forward, Vector3.Up, new Vector2(110, 110))
         {
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).AdrenalineRushEffect;
             this.followData = followData;
-            originalSize = size.X;
         }
 
-        bool expanding = true;
-        float originalSize;
         public override void Update(GameTime gameTime)
         {
-            origin = followData.Position + Vector3.Up * 20;
-            /*
-            if (expanding)
-            {
-                size.X += (float)(gameTime.ElapsedGameTime.TotalMilliseconds / 100.0f);
-                size.Y = size.X;
-                if (size.X > originalSize + 10)
-                {
-                    expanding = false;
-                }
-            }
-            else
-            {
-                size.X -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds / 100.0f);
-                size.Y = size.X;
-                if (size.X < originalSize - 10)
-                {
-                    expanding = true;
-                }
-            }*/
+            origin = followData.Position + Vector3.Up * 30;
             base.Update(gameTime);
         }
 

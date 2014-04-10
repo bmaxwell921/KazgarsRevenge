@@ -104,30 +104,8 @@ namespace KazgarsRevenge
 
         }
 
-        protected float expMultiplier = 1;
-        protected int experience = 0;
-        public int NextLevelXP { get { return 100 * level * level; } }
-        public void AddEXP(int level, EntityType entityType)
-        {
-            int exp = (int)(level * 25 * expMultiplier);
-            if (entityType == EntityType.EliteEnemy)
-            {
-                exp *= 2;
-            }
-            if (entityType == EntityType.Boss)
-            {
-                exp *= 10;
-            }
 
-            experience += exp;
-            while (experience >= NextLevelXP)
-            {
-                experience = experience - NextLevelXP;
-                LevelUp();
-            }
-        }
-
-        public int Health { get; private set; }
+        public long Health { get; private set; }
         public int MaxHealth { get; private set; }
         public float HealthPercent
         {
@@ -154,8 +132,45 @@ namespace KazgarsRevenge
             Health = (int)(MaxHealth * .25f);
         }
 
+        #region Experience
+        public int Level { get; protected set; }
+        protected float expMultiplier = 1;
+        protected int experience = 0;
+        public int NextLevelXP { get { return 100 * Level * Level; } }
+        public void AddEXP(int level, EntityType entityType)
+        {
+            int exp = (int)(level * 25 * expMultiplier);
+            if (entityType == EntityType.EliteEnemy)
+            {
+                exp *= 2;
+            }
+            if (entityType == EntityType.Boss)
+            {
+                exp *= 10;
+            }
+
+            experience += exp;
+            while (experience >= NextLevelXP)
+            {
+                experience = experience - NextLevelXP;
+                LevelUp();
+            }
+        }
+
+        public void LevelUp()
+        {
+            ++Level;
+            RecalculateStats();
+
+            attacks.CreateLevelUpGraphics(physicalData);
+
+            sounds.PlaySound("levelup");
+
+            (Game as MainGame).AddFloatingText(new FloatingText(physicalData.Position + Vector3.Left * 200, "Level Up", Color.Gold, 4, 90, .45f));
+        }
+        #endregion
+
         #region stats
-        protected int level = 0;
         protected bool pulling = false;
         
         private Dictionary<StatType, float> statsPerLevel = new Dictionary<StatType, float>()
@@ -174,7 +189,7 @@ namespace KazgarsRevenge
         protected Dictionary<StatType, float> originalBaseStats = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 120},
-            {StatType.AttackSpeed, .05f},
+            {StatType.AttackSpeed, .0f},
             {StatType.Strength, 1},
             {StatType.Agility, 1},
             {StatType.Intellect, 1},
@@ -186,7 +201,7 @@ namespace KazgarsRevenge
         protected Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 120},
-            {StatType.AttackSpeed, .05f},
+            {StatType.AttackSpeed, .0f},
             {StatType.Strength, 1},
             {StatType.Agility, 1},
             {StatType.Intellect, 1},
@@ -217,6 +232,10 @@ namespace KazgarsRevenge
                     stats[k.Key] += k.Value;
                 }
             }
+            if (gear.AppliedEssence != null)
+            {
+                stats[gear.AppliedEssence.BoostedStat] += gear.AppliedEssence.StatIncrease;
+            }
         }
 
         protected float baseStatsMultiplier = 1;
@@ -243,21 +262,13 @@ namespace KazgarsRevenge
 
             for (int i = 0; i < Enum.GetNames(typeof(StatType)).Length; ++i)
             {
-                stats[(StatType)i] += statsPerLevel[(StatType)i] * level * statsPerLevelMultiplier;
+                stats[(StatType)i] += statsPerLevel[(StatType)i] * Level * statsPerLevelMultiplier;
             }
 
             //keep same health percentage when you change gear
             float curHealthPerc = HealthPercent;
             MaxHealth = (int)(stats[StatType.Vitality] * 10);
             Health = (int)(MaxHealth * curHealthPerc);
-        }
-
-        public void LevelUp()
-        {
-            ++level;
-            RecalculateStats();
-
-            attacks.CreateLevelUpGraphics(physicalData);
         }
         #endregion
 
@@ -271,7 +282,11 @@ namespace KazgarsRevenge
             this.animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             rand = game.rand;
 
-            this.level = level;
+            if (level <= 0)
+            {
+                level = 1;
+            }
+            this.Level = level;
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
@@ -318,9 +333,9 @@ namespace KazgarsRevenge
         protected int GeneratePrimaryDamage(StatType s)
         {
             float ret = stats[s];
-            if ((float)rand.Next(0, 1000) / 10f < stats[StatType.CritChance] * 100)
+            if ((float)rand.Next(0, 1000) / 10f < stats[StatType.CritChance] * 100.0f)
             {
-                ret *= 1.25f;
+                ret *= 1.35f;
             }
 
             return (int)ret;
@@ -337,7 +352,11 @@ namespace KazgarsRevenge
                 actualDamage = d;
                 if (!trueDamage)
                 {
-                    actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * level));
+                    actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * Level));
+                    if (actualDamage < 0)
+                    {
+                        actualDamage = 0;
+                    }
                 }
                 if (!Dead)
                 {
@@ -358,6 +377,7 @@ namespace KazgarsRevenge
                     }
                 }
             }
+
             return actualDamage;
         }
 

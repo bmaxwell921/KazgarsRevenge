@@ -529,18 +529,25 @@ namespace KazgarsRevenge
         {
             GameEntity prop = new GameEntity("prop", FactionType.Neutral, EntityType.None);
 
-            Entity physicalData = new Box(pos, 1, 1, 1);
+            Entity physicalData = new Box(pos, 60, 5, 60);
+            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             prop.AddSharedData(typeof(Entity), physicalData);
 
-            //TODO: emitters and effects
+            PhysicsComponent physics = new PhysicsComponent(mainGame, prop);
+            prop.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, prop, GetUnanimatedModel("Models\\Levels\\Props\\soulevator"), new Vector3(10, 100 ,10), Vector3.Down * 60, 0, 0, 0);
             graphics.TurnOffOutline();
             graphics.SetAlpha(.5f);
             graphics.AddYawSpeed(.01f);
             graphics.AddEmitter(typeof(SoulevatorMistSystem), "mist", 65, 85, 0, Vector3.Zero);
-            
             prop.AddComponent(typeof(UnanimatedModelComponent), graphics);
             levelModelManager.AddComponent(graphics);
+
+            SoulevatorController controller = new SoulevatorController(mainGame, prop);
+            prop.AddComponent(typeof(SoulevatorController), controller);
+            genComponentManager.AddComponent(controller);
 
             rooms.Add(prop);
         }
@@ -621,14 +628,31 @@ namespace KazgarsRevenge
 
         private void CreateMobSpawner(Vector3 pos)
         {
-            if (RandSingleton.U_Instance.Next(100) < 6)
+            if (RandSingleton.U_Instance.Next(1000) < 20)
             {
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
-                ISet<Vector3> spawnLocs = new HashSet<Vector3>();
+                List<Vector3> spawnLocs = new List<Vector3>();
                 spawnLocs.Add(pos);
 
-                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY, DELAY, 1);
+                EntityType type = EntityType.NormalEnemy;
+                int num = 1;
+                int r = RandSingleton.U_Instance.Next(100);
+                if (r < 50)
+                {//normal cluster
+                    num = RandSingleton.U_Instance.Next(3, 7);
+                }
+                else if (r < 64)
+                {//elite single
+                    type = EntityType.EliteEnemy;
+                }
+                else if (r < 75)
+                {//elite cluster
+                    type = EntityType.EliteEnemy;
+                    num = RandSingleton.U_Instance.Next(3, 7);
+                }
+
+                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, type, spawnLocs, PROXIMITY * CHUNK_SIZE, DELAY, num);
                 spawner.AddComponent(typeof(EnemyProximitySpawner), eps);
                 genComponentManager.AddComponent(eps);
 
@@ -1052,7 +1076,7 @@ namespace KazgarsRevenge
             graphics.AddEmitter(typeof(FirePillarMistSystem), "firemist", 40, 25, Vector3.Down * 17);
             graphics.AddEmitter(typeof(FirePillarSystem), "fire", 10, 25, Vector3.Down * 25);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, true);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, false);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 

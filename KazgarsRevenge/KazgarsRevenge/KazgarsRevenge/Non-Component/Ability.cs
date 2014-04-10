@@ -76,9 +76,9 @@ namespace KazgarsRevenge
             onCooldown = false;
         }
 
-        public void Use()
+        public void Use(float cdReduc)
         {
-            cooldownMillisRemaining = cooldownMillisLength;
+            cooldownMillisRemaining = cooldownMillisLength * (1 - cdReduc);
             onCooldown = true;
         }
 

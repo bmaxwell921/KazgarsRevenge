@@ -112,6 +112,13 @@ namespace KazgarsRevenge
         //#Nate
         protected virtual void EquipGear(Equippable equipMe, GearSlot slot)
         {
+            if (equipMe.ItemLevel > Level)
+            {
+                AddToInventory(equipMe);
+                (Game as MainGame).AddAlert("That item's level is too high");
+                return;
+            }
+
             float xRot = 0;
             bool weapon = false;
             //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand
@@ -403,29 +410,22 @@ namespace KazgarsRevenge
 
             InitNewPlayer();
 
-            //adding weapons for testing
-            Equippable wep = (Equippable)lewtz.AllItems[3202];
+            //adding gear for testing
+            Equippable wep = (Equippable)lewtz.GetItem(9901);
             wep.SetStats(GearQuality.Legendary, 70);
             EquipGear(wep, GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3001], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3001], GearSlot.Righthand);
-
-            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Lefthand);
-
-            EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Lefthand);
-
-            EquipGear((Equippable)lewtz.AllItems[3203], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3204], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3205], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3206], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3207], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3208], GearSlot.Righthand);
             
-            Equippable boots = (Equippable)lewtz.AllItems[9900];
+            Equippable boots = (Equippable)lewtz.GetItem(9900);
             boots.SetStats(GearQuality.Legendary, 70);
             EquipGear(boots, GearSlot.Feet);
+
+
+            EquipGear((Equippable)lewtz.GetItem(3002), GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.GetItem(3102), GearSlot.Righthand);
+
+            Equippable g = (Equippable)lewtz.GetItem(3107);
+            g.SetStats(GearQuality.Standard, 2);
+            EquipGear(g, GearSlot.Righthand);
         }
 
         public override void Start()
@@ -1361,7 +1361,7 @@ namespace KazgarsRevenge
                 needInterruptAction = false;
                 attState = AttackState.None;
 
-                lastUsedAbility.Use();
+                lastUsedAbility.Use(GetStat(StatType.CooldownReduction));
             });
 
             sequence.Add(abilityFinishedAction);
@@ -1996,12 +1996,24 @@ namespace KazgarsRevenge
 
             if (damage > 0)
             {
-                (Game as MainGame).AddFloatingText(physicalData.Position, "" + damage, Color.Red, .5f);
+                (Game as MainGame).AddFloatingText(new FloatingText(physicalData.Position, "" + damage, Color.Red, .5f));
             }
         }
         #endregion
 
         #region helpers
+        protected bool inSoulevator = false;
+        public void EnterSoulevator()
+        {
+            StartSequence("idle");
+            attState = AttackState.Locked;
+            inSoulevator = true;
+        }
+        protected void ExitSoulevator()
+        {
+            attState = AttackState.None;
+            inSoulevator = false;
+        }
         protected void CloseLoot()
         {
             looting = false;
@@ -2016,12 +2028,19 @@ namespace KazgarsRevenge
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
             if (possLoot != null)
             {
-                StartSequence("loot");
                 lootingSoul = (possLoot.GetComponent(typeof(AIComponent)) as LootSoulController);
-                lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);
-                looting = true;
+                if (lootingSoul.soulState != LootSoulController.LootSoulState.BeingLooted && lootingSoul.soulState != LootSoulController.LootSoulState.Dying)
+                {
+                    StartSequence("loot");
+                    lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);
+                    looting = true;
 
-                groundTargetLocation = physicalData.Position;
+                    groundTargetLocation = physicalData.Position;
+                }
+                else
+                {
+                    lootingSoul = null;
+                }
             }
         }
         protected void SwapWeapons()
@@ -2620,8 +2639,6 @@ namespace KazgarsRevenge
         }
 
         #endregion
-
-
 
 
     }

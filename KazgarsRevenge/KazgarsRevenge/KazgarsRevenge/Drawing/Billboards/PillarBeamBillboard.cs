@@ -11,18 +11,18 @@ namespace KazgarsRevenge
     public class PillarBeamBillboard : HorizontalStretchingBillboard
     {
         public PillarBeamBillboard(KazgarsRevengeGame game, GameEntity entity, Entity creator, bool right)
-            :base(game, entity, creator, new Vector2(0, 250))
+            :base(game, entity, creator, new Vector2(0, 100))
         {
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).PillarBeamEffect;
             maxSize = 250;
 
             if (right)
             {
-                followOffsetRight = 50;
+                creatorOffsetRight = 80;
             }
             else
             {
-                followOffsetRight = -50;
+                creatorOffsetRight = -80;
             }
         }
     }

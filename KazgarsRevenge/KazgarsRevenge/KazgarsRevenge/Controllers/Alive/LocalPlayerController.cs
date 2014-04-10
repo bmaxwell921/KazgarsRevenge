@@ -54,6 +54,7 @@ namespace KazgarsRevenge
             #endregion
 
             #region Ability Image Load
+            texActiveTalent = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.ActiveTalent);
             texPlaceHolder = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Place_Holder);
             #endregion
 
@@ -159,6 +160,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region Ability Icons
+        Texture2D texActiveTalent;
         Texture2D texPlaceHolder;
         #endregion
 
@@ -220,6 +222,7 @@ namespace KazgarsRevenge
             if ((attState == AttackState.Locked || attState == AttackState.LockedMoving) && canInterrupt && stateResetCounter >= stateResetLength)
             {
                 attState = AttackState.None;
+                usingPrimary = false;
             }
 
             UpdateActionSequences(elapsed);
@@ -321,7 +324,7 @@ namespace KazgarsRevenge
                     ResetTargettedEntity();
                 }
 
-                if ((   (attState != AttackState.Locked && attState != AttackState.LockedMoving)   || usingPrimary) 
+                if (((attState != AttackState.Locked && attState != AttackState.LockedMoving) || usingPrimary) 
                     && !looting)
                 {
                     CheckAbilities(move, mouseOnGui);
@@ -418,7 +421,10 @@ namespace KazgarsRevenge
             //creating ray from mouse location
             Vector3 castOrigin = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 0), camera.Projection, camera.View, Matrix.Identity);
             Vector3 castdir = Game.GraphicsDevice.Viewport.Unproject(new Vector3(curMouse.X, curMouse.Y, 1), camera.Projection, camera.View, Matrix.Identity) - castOrigin;
-            castdir.Normalize();
+            if (castdir != Vector3.Zero)
+            {
+                castdir.Normalize();
+            }
             Ray r = new Ray(castOrigin, castdir);
 
             //check where on the zero plane the ray hits, to guide the character by the mouse
@@ -620,22 +626,9 @@ namespace KazgarsRevenge
             if (curKeys.IsKeyDown(Keys.M) && prevKeys.IsKeyUp(Keys.M))
             {
                 showMegaMap = !showMegaMap;
-
-                if (showMegaMap)
-                {
-                    if (!guiOutsideRects.ContainsKey("megaMap"))
-                    {
-                        guiOutsideRects.Add("megaMap", megaMapRect);
-                    }
-                }
-                else
-                {
-                    if (guiOutsideRects.ContainsKey("megaMap"))
-                    {
-                        guiOutsideRects.Remove("megaMap");
-                    }
-                }
             }
+
+            
 
             //Esc closes all
             if (curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
@@ -656,6 +649,10 @@ namespace KazgarsRevenge
                     guiOutsideRects.Remove("talents");
                 }
                 showMegaMap = false;
+                if (inSoulevator)
+                {
+                    ExitSoulevator();
+                }
             }
 
 
@@ -710,7 +707,10 @@ namespace KazgarsRevenge
                 dir = targetedPhysicalData.Position - physicalData.Position;
                 dir.Y = 0;
                 distance = (dir).Length();
-                dir.Normalize();
+                if (dir != Vector3.Zero)
+                {
+                    dir.Normalize();
+                }
             }
 
             //check for click when aiming ground target ability
@@ -719,7 +719,7 @@ namespace KazgarsRevenge
                 if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
                 {
                     UpdateRotation(dir);
-                    lastUsedAbility.Use();
+                    lastUsedAbility.Use(GetStat(StatType.CooldownReduction));
                     UsePower(lastUsedAbility.PowerCost);
                     StartAbilitySequence(lastUsedAbility);
                     return;
@@ -873,7 +873,7 @@ namespace KazgarsRevenge
                 }
                 if (attState == AttackState.Charging && abilityToUse.ActionName == currentActionName)
                 {
-                    abilityToUse.Use();
+                    abilityToUse.Use(GetStat(StatType.CooldownReduction));
                     UsePower(abilityToUse.PowerCost);
                     InterruptCurrentSequence();
                     CancelFinishSequence();
@@ -884,7 +884,7 @@ namespace KazgarsRevenge
                     CancelFinishSequence();
                     if (abilityToUse.AbilityType == AbilityType.Instant)
                     {
-                        abilityToUse.Use();
+                        abilityToUse.Use(GetStat(StatType.CooldownReduction));
                         UsePower(abilityToUse.PowerCost);
                     }
                     UpdateRotation(dir);
@@ -894,7 +894,7 @@ namespace KazgarsRevenge
                 }
                 else if (abilityToUse.AbilityType == AbilityType.Instant)
                 {
-                    abilityToUse.Use();
+                    abilityToUse.Use(GetStat(StatType.CooldownReduction));
                     UsePower(abilityToUse.PowerCost);
                     UpdateRotation(dir);
                     StartAbilitySequence(abilityToUse);
@@ -905,7 +905,7 @@ namespace KazgarsRevenge
                     if (targetingGroundLocation && lastUsedAbility == abilityToUse)
                     {
                         UpdateRotation(dir);
-                        abilityToUse.Use();
+                        abilityToUse.Use(GetStat(StatType.CooldownReduction));
                         UsePower(abilityToUse.PowerCost);
                     }
                     StartAbilitySequence(abilityToUse);
@@ -1747,21 +1747,27 @@ namespace KazgarsRevenge
                         }
                         //TODO if we add any more innerFrames in abilities make sure we check those first
                         int check = Convert.ToInt32(innerCollides.Remove(0, 6));
-                        if (currentTalentTree == TalentTrees.ranged && rangedAbilities[(int)check / 4, check % 4] != null)
+                        int i = check / 4;
+                        int j = check % 4;
+                        if (currentTalentTree == TalentTrees.ranged && rangedAbilities[i, j] != null && rangedAbilities[i, j].name != AbilityName.None)
                         {
-                            currentTooltip = GetCachedAbility(rangedAbilities[(int)check / 4, check % 4].name).Tooltip;
+                            currentTooltip = GetCachedAbility(rangedAbilities[i, j].name).Tooltip;
+                            hovering = true;
+                            hoverRect = guiInsideRects["talents"][innerCollides];
                         }
-                        else if (currentTalentTree == TalentTrees.melee && meleeAbilities[(int)check / 4, check % 4] != null)
+                        else if (currentTalentTree == TalentTrees.melee && meleeAbilities[i, j] != null && meleeAbilities[i, j].name != AbilityName.None)
                         {
-                            currentTooltip = GetCachedAbility(meleeAbilities[(int)check / 4, check % 4].name).Tooltip;
+                            currentTooltip = GetCachedAbility(meleeAbilities[i, j].name).Tooltip;
+                            hovering = true;
+                            hoverRect = guiInsideRects["talents"][innerCollides];
                         }
                         else if (currentTalentTree == TalentTrees.magic)  //TODO add check as above
                         {
                             //TODO currentToolTip = GetAbility(magicAbilities[(int)check / 4, check % 4].name).tooltip;
+                            //hovering = true;
+                            //hoverRect = guiInsideRects["talents"][innerCollides];
                         }
 
-                        hovering = true;
-                        hoverRect = guiInsideRects["talents"][innerCollides];
                     }
                     break;
                 #endregion
@@ -1779,16 +1785,7 @@ namespace KazgarsRevenge
                 for (int j = 0; j < 7; j++)
                 {
                     if (currentTree[j, i] != null)
-                    {   //Draw active frames around active items
-                        if (GetCachedAbility(currentTree[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[currentTree[j, i].name])
-                        {
-                            Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
-                            temp.X = temp.X - 4;
-                            temp.Y = temp.Y - 4;
-                            temp.Width = temp.Width + 8;
-                            temp.Height = temp.Height + 8;
-                            s.Draw(texWhitePixel, temp, Color.Red * .8f);
-                        }
+                    {
                         //Draw Icon
                         s.Draw(GetCachedAbility(currentTree[j, i].name).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
                         //Draw shadow over locked abilities
@@ -1801,6 +1798,17 @@ namespace KazgarsRevenge
                             }
                             //locked
                             else s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black * .8f);
+                        }   
+                        
+                        //Draw active frames around active items
+                        if (GetCachedAbility(currentTree[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[currentTree[j, i].name])
+                        {
+                            Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
+                            temp.X = (int)(temp.X - 6 * average);
+                            temp.Y = (int)(temp.Y - 6 * average);
+                            temp.Width = (int)(temp.Width + 12 * average);
+                            temp.Height = (int)(temp.Height + 12 * average);
+                            s.Draw(texActiveTalent, temp, Color.Red * .8f);
                         }
                     }
                 }
@@ -1810,6 +1818,7 @@ namespace KazgarsRevenge
 
         #endregion
 
+        #region Draw Parameter Setup
         SpriteFont font;
         Texture2D texWhitePixel;
         Texture2D texHover;
@@ -1855,6 +1864,7 @@ namespace KazgarsRevenge
         Vector2 powerTextPos;
 
         Rectangle hoverRect;
+        Rectangle tooltipRect;
         private void InitDrawingParams()
         {
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
@@ -1867,7 +1877,7 @@ namespace KazgarsRevenge
             rectEnemyHealthBar = new Rectangle((int)(mid.X - 75 * average), (int)(53 * average), (int)(200 * average), (int)(40 * average));
             float chargeBarLength = 400 * average;
             rectCharged = new Rectangle((int)(mid.X - chargeBarLength / 2), (int)(maxY * 3 / 4), (int)(chargeBarLength), (int)(30 * average));
-            vecName = new Vector2(rectEnemyHealthBar.X, 5);
+            vecName = new Vector2(rectEnemyHealthBar.X + rectEnemyHealthBar.Width / 2, 5);
 
             //mouse
             rectMouse = new Rectangle(0, 0, 25, 25);
@@ -1878,7 +1888,6 @@ namespace KazgarsRevenge
             guiOutsideRects = new Dictionary<string, Rectangle>();
             guiOutsideRects.Add("abilities", new Rectangle((int)abilitiesUR.X, (int)abilitiesUR.Y, (int)(622 * average), (int)(158 * average)));
             guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 311 * average)), (int)((maxY - 178 * average)), (int)(622 * average), (int)(20 * average)));
-            guiOutsideRects.Add("tooltip", new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             //guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
@@ -1893,6 +1902,7 @@ namespace KazgarsRevenge
             talentRect = new Rectangle((int)talentUR.X, (int)talentUR.Y, (int)(406 * average), (int)(812 * average));
             lootRect = new Rectangle((int)lootUR.X, (int)lootUR.Y, (int)(150 * average), (int)(300 * average));
             megaMapRect = new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int)(160 * average), (int)(622 * average), (int)(622 * average));
+            tooltipRect = new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
@@ -2029,14 +2039,23 @@ namespace KazgarsRevenge
             powerBackRect = new Rectangle(playerHPRect.X, playerHPRect.Y + playerHPRect.Height, playerHPRect.Width, playerHPRect.Height);
             powerTextPos = new Vector2((int)(170 * average), (int)(35 * average));
         }
+        #endregion
 
         public void Draw(SpriteBatch s)
         {
-
-
             if (mouseHoveredEntity != null)
             {
-                s.DrawString(font, mouseHoveredEntity.Name, vecName, Color.Red, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                Color enemyColor = Color.White;
+                if (mouseHoveredEntity.Type == EntityType.EliteEnemy)
+                {
+                    enemyColor = new Color(0, 3, 204);
+                }
+                else if (mouseHoveredEntity.Type == EntityType.Boss)
+                {
+                    enemyColor = Color.Purple;
+                }
+                s.DrawString(font, mouseHoveredEntity.Name, vecName, enemyColor, 0, new Vector2(font.MeasureString(mouseHoveredEntity.Name).X * average / 2, 0), average, SpriteEffects.None, 0);
+               
             }
             if (mouseHoveredHealth != null)
             {
@@ -2394,8 +2413,8 @@ namespace KazgarsRevenge
             #region tooltip and hover
             if (currentTooltip != null)
             {
-                s.Draw(texWhitePixel, guiOutsideRects["tooltip"], Color.Black * 0.5f);
-                currentTooltip.Draw(s, new Vector2(guiOutsideRects["tooltip"].X, guiOutsideRects["tooltip"].Y), font, average, 50f);
+                s.Draw(texWhitePixel, tooltipRect, Color.Black * 0.5f);
+                currentTooltip.Draw(s, new Vector2(tooltipRect.X, tooltipRect.Y), font, average, 50f);
             }
 
             if (hovering)
@@ -2403,7 +2422,17 @@ namespace KazgarsRevenge
                 s.Draw(texHover, hoverRect, new Color(255, 255, 166));
             }
             #endregion
+
+            #region soulevator
+            if (inSoulevator)
+            {
+                s.Draw(texWhitePixel, new Rectangle(50, 50, 500, 500), Color.Black * .5f);
+                s.DrawString(font, "Soulevator Menu", new Vector2(100, 100), Color.White);
+            }
             #endregion
+            
+            #endregion
+
 
             #region mouse
             rectMouse.X = curMouse.X;
@@ -2492,6 +2521,11 @@ namespace KazgarsRevenge
 
         private void DrawMegaMap(SpriteBatch s)
         {
+            float alpha = .5f;
+            /*if (Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) < .01f)
+            {
+                alpha = .9f;
+            }*/
             string currentChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkImgName(physicalData.Position);
             Rectangle chunkRect = guiInsideRects["megaMap"]["megaMap"];
 
@@ -2501,7 +2535,7 @@ namespace KazgarsRevenge
             int originX = Texture2DUtil.Instance.GetTexture(currentChunk).Width / 2;
             int originY = Texture2DUtil.Instance.GetTexture(currentChunk).Height / 2;
             s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), new Rectangle(chunkRect.X + chunkRect.Width/ 2, chunkRect.Y + chunkRect.Height/2, chunkRect.Width, chunkRect.Height), 
-                null, Color.White, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
+                null, Color.White * alpha, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
 
             // Scale the player location to the map
             Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];

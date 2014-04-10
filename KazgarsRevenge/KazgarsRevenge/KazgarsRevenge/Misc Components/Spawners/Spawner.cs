@@ -9,15 +9,15 @@ namespace KazgarsRevenge
     /// <summary>
     /// Component used to Spawn entities. 
     /// </summary>
-    public abstract class Spawner : QueryComponent
+    public abstract class Spawner : Component
     {
         // Where to spawn stuff
-        protected ISet<Vector3> spawnLocations;
+        protected List<Vector3> spawnLocations;
 
         // The type to spawn
         protected EntityType type;
 
-        public Spawner(KazgarsRevengeGame game, GameEntity entity, EntityType type, ISet<Vector3> spawnLocations)
+        public Spawner(KazgarsRevengeGame game, GameEntity entity, EntityType type, List<Vector3> spawnLocations)
             : base(game, entity)
         {
             this.type = type;

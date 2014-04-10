@@ -46,7 +46,10 @@ namespace KazgarsRevenge
                         pulling = true;
                         Vector3 dir = physicalData.Position - creatorData.Position;
                         dir.Y = 0;
-                        dir.Normalize();
+                        if (dir != Vector3.Zero)
+                        {
+                            dir.Normalize();
+                        }
                         creatorData.LinearVelocity = dir * 800;
                         lifeLength = 8000;
                     }
@@ -69,7 +72,10 @@ namespace KazgarsRevenge
             {
                 Vector3 dir = physicalData.Position - creatorData.Position;
                 dir.Y = 0;
-                dir.Normalize();
+                if (dir != Vector3.Zero)
+                {
+                    dir.Normalize();
+                }
                 creatorData.LinearVelocity = dir * 800;
 
 

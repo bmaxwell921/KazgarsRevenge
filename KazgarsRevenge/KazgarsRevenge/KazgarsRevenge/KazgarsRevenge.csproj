@@ -148,6 +148,7 @@
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Controllers\Objects\KeyController.cs" />
     <Compile Include="Controllers\Objects\PillarController.cs" />
+    <Compile Include="Controllers\Objects\SoulevatorController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
     <Compile Include="Drawing\Billboards\AdrenalineRushBillboard.cs" />
     <Compile Include="Drawing\Billboards\ArrowVBillboard.cs" />
@@ -236,6 +237,7 @@
     <Compile Include="Networking\Handlers\DiscoveryResponseHandler.cs" />
     <Compile Include="Networking\Misc\ServerInfo.cs" />
     <Compile Include="Non-Component\Items\Equippable.cs" />
+    <Compile Include="Non-Component\Items\Essence.cs" />
     <Compile Include="Non-Component\Items\Item.cs" />
     <Compile Include="Libraries\SoundEffectLibrary.cs" />
     <Compile Include="Managers\Entities\EnemyManager.cs" />

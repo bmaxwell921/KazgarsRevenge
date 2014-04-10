@@ -17,6 +17,7 @@ namespace KazgarsRevenge
 
     public class Equippable : Item
     {
+        public Essence AppliedEssence { get; protected set; }
         public int ItemLevel { get; protected set; }
         public GearQuality Quality { get; protected set; }
         public Dictionary<StatType, float> StatEffects { get; protected set; }
@@ -46,18 +47,18 @@ namespace KazgarsRevenge
             this.Quality = quality;
             this.ItemLevel = level;
 
-            float statStrength = level * (int)quality;
+            float statAmount = level * (int)quality;
 
             StatEffects = new Dictionary<StatType, float>();
             foreach (KeyValuePair<StatType, float> k in statAllocatements)
             {
                 if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance)
                 {
-                    StatEffects.Add(k.Key, (float)Math.Round(k.Value * statStrength, 3));
+                    StatEffects.Add(k.Key, (float)Math.Round(k.Value * statAmount / 100, 3));
                 }
                 else
                 {
-                    StatEffects.Add(k.Key, (float)Math.Ceiling(k.Value * statStrength));
+                    StatEffects.Add(k.Key, (float)Math.Ceiling(k.Value * statAmount));
                 }
             }
 
@@ -79,13 +80,21 @@ namespace KazgarsRevenge
         {
             List<TooltipLine> tiplines = new List<TooltipLine>
             {
-                new TooltipLine(GetQualityColor(Quality), Name, .75f),
-                new TooltipLine(Color.White, Slot.ToString(), .5f)
+                new TooltipLine(GetQualityColor(Quality), Name, .65f),
+                new TooltipLine(Color.White, Slot.ToString(), .45f),
+                new TooltipLine(Color.Gold, "Requires Level " + ItemLevel, .35f)
             };
 
             foreach (KeyValuePair<StatType, float> k in StatEffects)
             {
-                tiplines.Add(new TooltipLine(Color.Green, "+" + k.Value + " " + k.Key.ToString(), .4f));
+                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance)
+                {
+                    tiplines.Add(new TooltipLine(Color.Green, "+" + Math.Ceiling(k.Value * 100) + "% " + k.Key.ToString(), .35f));
+                }
+                else
+                {
+                    tiplines.Add(new TooltipLine(Color.Green, "+" + k.Value + " " + k.Key.ToString(), .35f));
+                }
             }
 
             return new Tooltip(tiplines);

@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
+
     /// <summary>
     /// Spawner that spawns stuff when other stuff gets within a certain proximity.
     /// When spawn is called, enemies will be spawned at every location
@@ -28,6 +29,10 @@ namespace KazgarsRevenge
         // Number of enemies actually spawned
         private int numSpawned;
 
+        PlayerManager players;
+        LevelManager levels;
+        EnemyManager enemies;
+
         /// <summary>
         /// Creates a new spawner that spawns based on proximity to players
         /// </summary>
@@ -38,13 +43,17 @@ namespace KazgarsRevenge
         /// <param name="proximity">If the distance from the spawnLocation to the closest enemy is less than proximity, this spawns enemies</param>
         /// <param name="delay">The delay between each spawn</param>
         /// <param name="limit">Set this parameter if you wish to limit the number of enemies a spawner can spawn</param>
-        public EnemyProximitySpawner(KazgarsRevengeGame game, GameEntity entity, EntityType spawnType, ISet<Vector3> spawnLocations, float proximity, float delay, int limit = NO_LIMIT)
-            : base(game, entity, spawnType, spawnLocations)
+        public EnemyProximitySpawner(KazgarsRevengeGame game, GameEntity entity, EntityType type, List<Vector3> spawnLocations, float proximity, float delay, int limit = NO_LIMIT)
+            : base(game, entity, type, spawnLocations)
         {
             this.proximity = proximity;
             this.delay = delay;
             passedTime = delay;
             this.limit = limit;
+
+            this.players = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
+            this.levels = game.Services.GetService(typeof(LevelManager)) as LevelManager;
+            enemies = game.Services.GetService(typeof(EnemyManager)) as EnemyManager;
         }
 
         public override void Update(GameTime gameTime)
@@ -64,12 +73,21 @@ namespace KazgarsRevenge
             {
                 return false;
             }
-            // check if anything is close by
-            if (spawnLocations.Count() != 0)
+
+            if (passedTime >= delay)
             {
-                // TODO Just check one of them
-                //return QueryNearEntityFaction(FactionType.Players, spawnLocations.GetEnumerator().Current, 0, proximity, true) != null;
-                return true;
+                // check if anything is close by
+                if (spawnLocations.Count() != 0)
+                {
+                    // TODO Just check one of them
+                    //return QueryNearEntityFaction(FactionType.Players, spawnLocations.GetEnumerator().Current, 0, proximity, false) != null;
+
+
+                    //more efficient version
+                    Vector3 checkLoc = spawnLocations[0];//spawnLocations.GetEnumerator().Current;
+                    return players.IsPlayerNear(checkLoc, proximity);
+                }
+                passedTime = 0;
             }
             return false;
         }
@@ -79,32 +97,11 @@ namespace KazgarsRevenge
         /// </summary>
         public override void Spawn()
         {
-            if (passedTime >= delay)
+            foreach (Vector3 loc in spawnLocations)
             {
-                foreach (Vector3 loc in spawnLocations)
-                {
-                    // TODO actual level
-                    int r = RandSingleton.U_Instance.Next(4);
-                    if (r == 0)
-                    {
-                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
-                    }
-                    else if (r == 1)
-                    {
-                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateArmorEnemy(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
-                    }
-                    else if (r == 2)
-                    {
-                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateCrossbowSkeleton(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
-                    }
-                    else
-                    {
-                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateMagicSkeleton(IdentificationFactory.getId(type, Identification.NO_CLIENT), loc, 1);
-                    }
-                    // Make sure to limit as necessary
-                    ++numSpawned;
-                }
-                passedTime = 0;
+                ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateEnemy(type, loc);
+                // Make sure to limit as necessary
+                ++numSpawned;
             }
         }
     }

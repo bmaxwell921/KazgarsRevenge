@@ -28,6 +28,7 @@ namespace KazgarsRevenge
             public static readonly string Talent_Arrow_DR = @"Textures\UI\Frames\TTArrow5";
             public static readonly string Talent_Arrow_R = @"Textures\UI\Frames\TTArrow6";
             public static readonly string Talent_Arrow_UR = @"Textures\UI\Frames\TTArrow7";
+            public static readonly string ActiveTalent = @"Textures\UI\active";
 
             public static readonly string MeleeBanner = @"Textures\UI\Frames\meleeBanner";
             public static readonly string RangedBanner = @"Textures\UI\Frames\rangedBanner";
@@ -55,6 +56,15 @@ namespace KazgarsRevenge
                     public static readonly string INSTA_HEALTH = @"Textures\UI\Items\UNIMPLEMENTED";
                     public static readonly string LUCK = @"Textures\UI\Items\UNIMPLEMENTED";
                     public static readonly string INVISIBILITY = @"Textures\UI\Items\UNIMPLEMENTED";
+                }
+
+                public class Essence
+                {
+                    public static readonly string LesserEssence = @"Textures\UI\Items\Essence\LesserEssence";
+                    public static readonly string GreaterEssence = @"Textures\UI\Items\Essence\GreaterEssence";
+                    public static readonly string EssenceyEssence = @"Textures\UI\Items\Essence\Essence";
+                    public static readonly string PotentEssence = @"Textures\UI\Items\Essence\PotentEssence";
+                    public static readonly string IllustriousEssence = @"Textures\UI\Items\Essence\IllustriousEssence";
                 }
 
                 public class Armor

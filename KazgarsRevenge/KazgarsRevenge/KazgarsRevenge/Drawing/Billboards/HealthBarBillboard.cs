@@ -49,7 +49,10 @@ namespace KazgarsRevenge
             {
                 normal = camera.Position - ownerData.Position;
                 //normal.Y = 0;
-                normal.Normalize();
+                if (normal != Vector3.Zero)
+                {
+                    normal.Normalize();
+                }
                 this.left = Vector3.Cross(normal, up);
                 base.Draw(camera);
             }

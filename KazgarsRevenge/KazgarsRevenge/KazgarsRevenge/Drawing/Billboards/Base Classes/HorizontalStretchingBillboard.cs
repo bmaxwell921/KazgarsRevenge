@@ -41,7 +41,10 @@ namespace KazgarsRevenge
             source.X = size.X / maxSize;
             
             //get Up vector3 for billboard (normal crossed with direction towards followData)
-            diff.Normalize();
+            if (diff != Vector3.Zero)
+            {
+                diff.Normalize();
+            }
             up = Vector3.Cross(normal, diff);
 
             base.Update(gameTime);

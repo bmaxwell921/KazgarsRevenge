@@ -22,7 +22,7 @@ namespace KazgarsRevenge
             media = new MediaLibrary();
 
             soundEffects = new Dictionary<string, SoundEffect>();
-            loadSounds(game);
+            loadSoundEffects(game);
 
             songs = new Dictionary<string, Song>();
             loadSongs(game);
@@ -57,7 +57,7 @@ namespace KazgarsRevenge
             songs.Add("menu", game.Content.Load<Song>("Sound\\Music\\menuSong"));
         }
 
-        public void loadSounds(MainGame game)
+        public void loadSoundEffects(MainGame game)
         {
             for (int i = 0; i < numBowSounds; i++)
             {
@@ -78,9 +78,18 @@ namespace KazgarsRevenge
             soundEffects.Add("s_death", game.Content.Load<SoundEffect>("Sound\\Enemies\\s_death"));
 
             soundEffects.Add("unlockDoors", game.Content.Load<SoundEffect>("Sound\\keyUnlock"));
+            soundEffects.Add("levelup", game.Content.Load<SoundEffect>("Sound\\level_up"));
         }
 
-        #region attacks
+        public void PlaySound(string s)
+        {
+            if (soundEffects.ContainsKey(s))
+            {
+                soundEffects[s].Play();
+            }
+        }
+
+        #region Attacks
 
 
         #region melee
