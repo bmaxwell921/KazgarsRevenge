@@ -1892,7 +1892,7 @@ namespace KazgarsRevenge
             rectEnemyHealthBar = new Rectangle((int)(mid.X - 75 * average), (int)(53 * average), (int)(200 * average), (int)(40 * average));
             float chargeBarLength = 400 * average;
             rectCharged = new Rectangle((int)(mid.X - chargeBarLength / 2), (int)(maxY * 3 / 4), (int)(chargeBarLength), (int)(30 * average));
-            vecName = new Vector2(rectEnemyHealthBar.X, 5);
+            vecName = new Vector2(rectEnemyHealthBar.X + rectEnemyHealthBar.Width / 2, 5);
 
             //mouse
             rectMouse = new Rectangle(0, 0, 25, 25);
@@ -2058,11 +2058,19 @@ namespace KazgarsRevenge
 
         public void Draw(SpriteBatch s)
         {
-
-
             if (mouseHoveredEntity != null)
             {
-                s.DrawString(font, mouseHoveredEntity.Name, vecName, Color.Red, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                Color enemyColor = Color.White;
+                if (mouseHoveredEntity.Type == EntityType.EliteEnemy)
+                {
+                    enemyColor = new Color(0, 3, 204);
+                }
+                else if (mouseHoveredEntity.Type == EntityType.Boss)
+                {
+                    enemyColor = Color.Purple;
+                }
+                s.DrawString(font, mouseHoveredEntity.Name, vecName, enemyColor, 0, new Vector2(font.MeasureString(mouseHoveredEntity.Name).X * average / 2, 0), average, SpriteEffects.None, 0);
+               
             }
             if (mouseHoveredHealth != null)
             {

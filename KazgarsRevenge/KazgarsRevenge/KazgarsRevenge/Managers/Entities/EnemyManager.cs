@@ -60,6 +60,7 @@ namespace KazgarsRevenge
                     break;
             }
         }
+        
         public void CreateEliteEnemy(Vector3 loc)
         {
             int r;
@@ -70,7 +71,7 @@ namespace KazgarsRevenge
                     r = RandSingleton.U_Instance.Next(3);
                     if (r == 0)
                     {
-                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, true);
+                        ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreatePigman(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, true);
                     }
                     else if (r == 1)
                     {
@@ -91,16 +92,12 @@ namespace KazgarsRevenge
             switch (levelManager.currentLevel.currentFloor)
             {
                 case FloorName.Dungeon:
-                    r = RandSingleton.U_Instance.Next(4);
+                    r = RandSingleton.U_Instance.Next(3);
                     if (r == 0)
                     {
-                        CreateBrute(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
+                        CreatePigman(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
                     }
                     else if (r == 1)
-                    {
-                        CreateArmorEnemy(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
-                    }
-                    else if (r == 2)
                     {
                         CreateCrossbowSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
                     }
@@ -113,7 +110,7 @@ namespace KazgarsRevenge
         }
 
         const float meleeRange = 40;
-        public void CreateBrute(Identification id, Vector3 position, int level, bool elite)
+        public void CreatePigman(Identification id, Vector3 position, int level, bool elite)
         {
             EntityType enemyType = EntityType.NormalEnemy;
             if (elite)
@@ -121,7 +118,7 @@ namespace KazgarsRevenge
                 enemyType = EntityType.EliteEnemy;
             }
 
-            GameEntity enemy = new GameEntity("Brute", FactionType.Enemies, enemyType);
+            GameEntity enemy = new GameEntity("Pigman", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
@@ -135,7 +132,7 @@ namespace KazgarsRevenge
                 boxSize.Z = 30;
             }
             SetupEntityPhysicsAndShadow(enemy, position, boxSize, 100);
-            float modelScale = 10;
+            float modelScale = 8;
             if (elite)
             {
                 modelScale = 15;
@@ -352,7 +349,7 @@ namespace KazgarsRevenge
             entity.AddSharedData(typeof(Entity), enemyPhysicalData);
 
             PhysicsComponent enemyPhysics = new PhysicsComponent(mainGame, entity);
-            BlobShadowDecal enemyShadow = new BlobShadowDecal(mainGame, entity, (dimensions.X + dimensions.Z) / 2);
+            BlobShadowDecal enemyShadow = new BlobShadowDecal(mainGame, entity, (dimensions.X + dimensions.Z) / 3);
 
             entity.AddComponent(typeof(PhysicsComponent), enemyPhysics);
             genComponentManager.AddComponent(enemyPhysics);

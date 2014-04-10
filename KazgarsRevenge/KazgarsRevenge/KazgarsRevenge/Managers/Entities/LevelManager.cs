@@ -642,11 +642,11 @@ namespace KazgarsRevenge
                 {//normal cluster
                     num = RandSingleton.U_Instance.Next(3, 7);
                 }
-                else if (r < 14)
+                else if (r < 64)
                 {//elite single
                     type = EntityType.EliteEnemy;
                 }
-                else if (r < 11)
+                else if (r < 75)
                 {//elite cluster
                     type = EntityType.EliteEnemy;
                     num = RandSingleton.U_Instance.Next(3, 7);

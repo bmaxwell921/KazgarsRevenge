@@ -273,7 +273,7 @@ namespace KazgarsRevenge
         {
             alertMessage = text;
             alertTimeLeft = 2500;
-            alertSourceX = normalFont.MeasureString(alertMessage).X / 4;
+            alertSourceX = normalFont.MeasureString(alertMessage).X * average / 2;
         }
 
         public void AddFloatingText(FloatingText floater)
@@ -447,7 +447,7 @@ namespace KazgarsRevenge
 
                 if (alertTimeLeft > 0)
                 {
-                    spriteBatch.DrawString(normalFont, alertMessage, new Vector2(maxX / 2 - normalFont.MeasureString(alertMessage).X * average * .5f / 2, 172 * average), Color.Red * (float)(alertTimeLeft / 2500), 0, new Vector2(alertSourceX, 0), .5f * average, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(normalFont, alertMessage, new Vector2(maxX / 2, 172 * average), Color.Red * (float)(alertTimeLeft / 2500), 0, new Vector2(alertSourceX, 0), .5f * average, SpriteEffects.None, 0);
                 }
                 spriteBatch.End();
 
