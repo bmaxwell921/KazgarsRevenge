@@ -10,10 +10,11 @@ namespace KazgarsRevenge
     public enum ItemType
     {
         Gold,//id of 0
-        Potion,//ids from 1 to 1000
+        Potion,//ids from 1 to 900
+        Essence,//ids from 901 to 1000
         Recipe,//ids from 1001 to 2000
-        Essence,//ids from 2001 to 3000
         Equippable,//ids from 3001 to 10,000
+        Other,
     }
     public class Item : ICloneable
     {

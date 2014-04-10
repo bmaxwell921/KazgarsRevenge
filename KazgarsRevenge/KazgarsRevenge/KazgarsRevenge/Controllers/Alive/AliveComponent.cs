@@ -217,6 +217,10 @@ namespace KazgarsRevenge
                     stats[k.Key] += k.Value;
                 }
             }
+            if (gear.AppliedEssence != null)
+            {
+                stats[gear.AppliedEssence.BoostedStat] += gear.AppliedEssence.StatIncrease;
+            }
         }
 
         protected float baseStatsMultiplier = 1;
@@ -342,6 +346,10 @@ namespace KazgarsRevenge
                 if (!trueDamage)
                 {
                     actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * Level));
+                    if (actualDamage < 0)
+                    {
+                        actualDamage = 0;
+                    }
                 }
                 if (!Dead)
                 {

@@ -57,6 +57,15 @@ namespace KazgarsRevenge
                     public static readonly string INVISIBILITY = @"Textures\UI\Items\UNIMPLEMENTED";
                 }
 
+                public class Essence
+                {
+                    public static readonly string LesserEssence = @"Textures\UI\Items\Essence\LesserEssence";
+                    public static readonly string GreaterEssence = @"Textures\UI\Items\Essence\GreaterEssence";
+                    public static readonly string EssenceyEssence = @"Textures\UI\Items\Essence\Essence";
+                    public static readonly string PotentEssence = @"Textures\UI\Items\Essence\PotentEssence";
+                    public static readonly string IllustriousEssence = @"Textures\UI\Items\Essence\IllustriousEssence";
+                }
+
                 public class Armor
                 {
                     public static readonly string MELEE_HEAD_RHINO = @"Textures\UI\Items\Armor\helmetIcon";

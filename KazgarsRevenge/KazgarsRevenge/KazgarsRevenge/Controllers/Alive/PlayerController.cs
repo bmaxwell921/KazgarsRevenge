@@ -411,19 +411,19 @@ namespace KazgarsRevenge
             InitNewPlayer();
 
             //adding gear for testing
-            Equippable wep = (Equippable)lewtz.AllItems[9901];
+            Equippable wep = (Equippable)lewtz.GetItem(9901);
             wep.SetStats(GearQuality.Legendary, 70);
             EquipGear(wep, GearSlot.Righthand);
             
-            Equippable boots = (Equippable)lewtz.AllItems[9900];
+            Equippable boots = (Equippable)lewtz.GetItem(9900);
             boots.SetStats(GearQuality.Legendary, 70);
             EquipGear(boots, GearSlot.Feet);
 
 
-            EquipGear((Equippable)lewtz.AllItems[3002], GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.AllItems[3102], GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.GetItem(3002), GearSlot.Righthand);
+            EquipGear((Equippable)lewtz.GetItem(3102), GearSlot.Righthand);
 
-            Equippable g = (Equippable)lewtz.AllItems[3107];
+            Equippable g = (Equippable)lewtz.GetItem(3107);
             g.SetStats(GearQuality.Standard, 2);
             EquipGear(g, GearSlot.Righthand);
         }

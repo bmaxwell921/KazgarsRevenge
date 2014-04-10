@@ -136,7 +136,11 @@ namespace KazgarsRevenge
         }
 
         #region Loot
-        public Dictionary<int, Item> AllItems = new Dictionary<int, Item>();
+        private Dictionary<int, Item> AllItems = new Dictionary<int, Item>();
+        public Item GetItem(int id)
+        {
+            return (Item)AllItems[id].Clone();
+        }
 
         private IList<Item> GetLootFor(FloorName floor, GameEntity deadEntity)
         {
@@ -193,6 +197,7 @@ namespace KazgarsRevenge
                     break;
             }
             dt.AddDrop(ItemType.Potion, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, 1), 24, 5);
+            dt.AddDrop(ItemType.Potion, null, 76);
             return dt;
         }
 
@@ -227,8 +232,10 @@ namespace KazgarsRevenge
             dt.AddDrop(ItemType.Equippable, GetMeleeShoulders(currentFloor), 3);
             dt.AddDrop(ItemType.Equippable, GetMeleeWrist(currentFloor), 3);
             dt.AddDrop(ItemType.Equippable, GetMeleeBling(currentFloor), 3);
-
             dt.AddDrop(ItemType.Equippable, null, 75);
+
+            dt.AddDrop(ItemType.Essence, GetMeleeEssence(currentFloor), 5);
+            //dt.AddDrop(ItemType.Essence, null, 95);
         }
 
         public void AddRangedDrops(DropTable dt, FloorName currentFloor)
@@ -241,8 +248,10 @@ namespace KazgarsRevenge
             dt.AddDrop(ItemType.Equippable, GetRangedShoulders(currentFloor), 3);
             dt.AddDrop(ItemType.Equippable, GetRangedWrist(currentFloor), 3);
             dt.AddDrop(ItemType.Equippable, GetRangedBling(currentFloor), 3);
-
             dt.AddDrop(ItemType.Equippable, null, 75);
+
+            dt.AddDrop(ItemType.Essence, GetRangedEssence(currentFloor), 5);
+            dt.AddDrop(ItemType.Essence, null, 95);
         }
 
         public void AddMagicDrops(DropTable dt, FloorName currentFloor)
@@ -255,14 +264,49 @@ namespace KazgarsRevenge
             dt.AddDrop(ItemType.Equippable, GetMagicShoulders(currentFloor), 3);
             dt.AddDrop(ItemType.Equippable, GetMagicWrist(currentFloor), 3);
             dt.AddDrop(ItemType.Equippable, GetMagicBling(currentFloor), 3);
-
             dt.AddDrop(ItemType.Equippable, null, 75);
+
+            dt.AddDrop(ItemType.Essence, GetMagicEssence(currentFloor), 5);
+            dt.AddDrop(ItemType.Essence, null, 95);
         }
 
+        public void AddEpicDrops(DropTable dt)
+        {
+            int numEpics = 27;
+            for (int i = 1; i < 1 + numEpics; ++i)
+            {
+                int id = i + 9000;
+                dt.AddDrop(ItemType.Equippable, (Equippable)AllItems[id], 100 / numEpics);
+            }
+        }
+
+        public void AddDungeonBossDrops(DropTable dt)
+        {
+            //TODO
+        }
         #region Item IDs and Such
         string weaponDir = "Models\\Weapons\\";
         string armorDir = "Models\\Armor\\";
+
         #region Get Melee Items
+        public Essence GetMeleeEssence(FloorName currentFloor)
+        {
+            switch (currentFloor)
+            {
+                default:
+                case FloorName.Dungeon:
+                    return (Essence)AllItems[901];
+                case FloorName.Library:
+                    return (Essence)AllItems[904];
+                case FloorName.TortureChamber:
+                    return (Essence)AllItems[907];
+                case FloorName.Lab:
+                    return (Essence)AllItems[910];
+                case FloorName.GrandHall:
+                    return (Essence)AllItems[913];
+            }
+        }
+
         public Equippable GetMeleeWeapon(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -272,7 +316,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[RandSingleton.U_Instance.Next(3001, 3003)];
             }
         }
-
         public Equippable GetMeleeHelm(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -282,7 +325,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3003];
             }
         }
-
         public Equippable GetMeleeChest(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -292,7 +334,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3004];
             }
         }
-
         public Equippable GetMeleeLegs(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -302,7 +343,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3005];
             }
         }
-
         public Equippable GetMeleeFeet(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -312,7 +352,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3006];
             }
         }
-
         public Equippable GetMeleeShoulders(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -322,7 +361,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3007];
             }
         }
-
         public Equippable GetMeleeWrist(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -332,7 +370,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3008];
             }
         }
-
         public Equippable GetMeleeBling(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -346,6 +383,24 @@ namespace KazgarsRevenge
 
 
         #region Get Ranged Items
+        public Essence GetRangedEssence(FloorName currentFloor)
+        {
+            switch (currentFloor)
+            {
+                default:
+                case FloorName.Dungeon:
+                    return (Essence)AllItems[902];
+                case FloorName.Library:
+                    return (Essence)AllItems[905];
+                case FloorName.TortureChamber:
+                    return (Essence)AllItems[908];
+                case FloorName.Lab:
+                    return (Essence)AllItems[911];
+                case FloorName.GrandHall:
+                    return (Essence)AllItems[914];
+            }
+        }
+
         public Equippable GetRangedWeapon(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -355,7 +410,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3102];
             }
         }
-
         public Equippable GetRangedHelm(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -365,7 +419,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3103];
             }
         }
-
         public Equippable GetRangedChest(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -375,7 +428,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3104];
             }
         }
-
         public Equippable GetRangedLegs(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -385,7 +437,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3105];
             }
         }
-
         public Equippable GetRangedFeet(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -395,7 +446,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3106];
             }
         }
-
         public Equippable GetRangedShoulders(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -405,7 +455,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3107];
             }
         }
-
         public Equippable GetRangedWrist(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -415,7 +464,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3108];
             }
         }
-
         public Equippable GetRangedBling(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -429,6 +477,24 @@ namespace KazgarsRevenge
 
 
         #region GetMagicItems
+        public Essence GetMagicEssence(FloorName currentFloor)
+        {
+            switch (currentFloor)
+            {
+                default:
+                case FloorName.Dungeon:
+                    return (Essence)AllItems[903];
+                case FloorName.Library:
+                    return (Essence)AllItems[906];
+                case FloorName.TortureChamber:
+                    return (Essence)AllItems[909];
+                case FloorName.Lab:
+                    return (Essence)AllItems[912];
+                case FloorName.GrandHall:
+                    return (Essence)AllItems[915];
+            }
+        }
+
         public Equippable GetMagicWeapon(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -438,7 +504,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3202];
             }
         }
-
         public Equippable GetMagicHelm(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -448,7 +513,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3203];
             }
         }
-
         public Equippable GetMagicChest(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -458,7 +522,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3204];
             }
         }
-
         public Equippable GetMagicLegs(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -468,7 +531,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3205];
             }
         }
-
         public Equippable GetMagicFeet(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -478,7 +540,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3206];
             }
         }
-
         public Equippable GetMagicShoulders(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -488,7 +549,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3207];
             }
         }
-
         public Equippable GetMagicWrist(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -498,7 +558,6 @@ namespace KazgarsRevenge
                     return (Equippable)AllItems[3208];
             }
         }
-
         public Equippable GetMagicBling(FloorName currentFloor)
         {
             switch (currentFloor)
@@ -545,6 +604,39 @@ namespace KazgarsRevenge
                 AttackType.Ranged,
                 true,
                 id));
+            #endregion
+
+            #region Essence
+            id = 901;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.LesserEssence), id));
+            id = 902;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.LesserEssence), id));
+            id = 903;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.LesserEssence), id));
+            id = 904;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.EssenceyEssence), id));
+            id = 905;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.EssenceyEssence), id));
+            id = 906;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.EssenceyEssence), id));
+            id = 907;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.GreaterEssence), id));
+            id = 908;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.GreaterEssence), id));
+            id = 909;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.GreaterEssence), id));
+            id = 910;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.PotentEssence), id));
+            id = 911;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.PotentEssence), id));
+            id = 912;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.PotentEssence), id));
+            id = 913;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.IllustriousEssence), id));
+            id = 914;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.IllustriousEssence), id));
+            id = 915;
+            AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.IllustriousEssence), id));
             #endregion
 
             #region Shared Epic Drops
@@ -932,6 +1024,10 @@ namespace KazgarsRevenge
                 GearSlot.Bling,
                 GearSlot.None, 
                 id));
+            #endregion
+
+            #region Boss Gear
+
             #endregion
             #endregion
         }

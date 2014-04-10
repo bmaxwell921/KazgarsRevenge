@@ -17,6 +17,7 @@ namespace KazgarsRevenge
 
     public class Equippable : Item
     {
+        public Essence AppliedEssence { get; protected set; }
         public int ItemLevel { get; protected set; }
         public GearQuality Quality { get; protected set; }
         public Dictionary<StatType, float> StatEffects { get; protected set; }

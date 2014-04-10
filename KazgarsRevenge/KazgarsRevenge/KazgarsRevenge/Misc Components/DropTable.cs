@@ -199,7 +199,6 @@ namespace KazgarsRevenge
         #region Essence
         private void GetEssenceDrops(IList<Item> drops, FloorName floor)
         {
-            // TODO anything else? - Set the strength or whatever
             if (!this.drops.ContainsKey(ItemType.Essence))
             {
                 return;

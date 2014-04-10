@@ -237,6 +237,7 @@
     <Compile Include="Networking\Handlers\DiscoveryResponseHandler.cs" />
     <Compile Include="Networking\Misc\ServerInfo.cs" />
     <Compile Include="Non-Component\Items\Equippable.cs" />
+    <Compile Include="Non-Component\Items\Essence.cs" />
     <Compile Include="Non-Component\Items\Item.cs" />
     <Compile Include="Libraries\SoundEffectLibrary.cs" />
     <Compile Include="Managers\Entities\EnemyManager.cs" />
