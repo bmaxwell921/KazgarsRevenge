@@ -635,22 +635,24 @@ namespace KazgarsRevenge
                 List<Vector3> spawnLocs = new List<Vector3>();
                 spawnLocs.Add(pos);
 
-                EnemySpawnerType spawnerType = EnemySpawnerType.NormalSingle;
+                EntityType type = EntityType.NormalEnemy;
+                int num = 1;
                 int r = RandSingleton.U_Instance.Next(100);
-                if (r < 25)
-                {
-                    spawnerType = EnemySpawnerType.NormalCluster;
+                if (r < 50)
+                {//normal cluster
+                    num = RandSingleton.U_Instance.Next(3, 7);
                 }
-                else if (r < 50)
-                {
-                    spawnerType = EnemySpawnerType.EliteSingleWithNormals;
+                else if (r < 14)
+                {//elite single
+                    type = EntityType.EliteEnemy;
                 }
-                else if (r < 75)
-                {
-                    spawnerType = EnemySpawnerType.EliteCluster;
+                else if (r < 11)
+                {//elite cluster
+                    type = EntityType.EliteEnemy;
+                    num = RandSingleton.U_Instance.Next(3, 7);
                 }
 
-                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, EntityType.NormalEnemy, spawnLocs, PROXIMITY * CHUNK_SIZE, DELAY, spawnerType, 1);
+                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, type, spawnLocs, PROXIMITY * CHUNK_SIZE, DELAY, num);
                 spawner.AddComponent(typeof(EnemyProximitySpawner), eps);
                 genComponentManager.AddComponent(eps);
 

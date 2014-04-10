@@ -6,13 +6,6 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
-    public enum EnemySpawnerType
-    {
-        NormalSingle,
-        NormalCluster,
-        EliteSingleWithNormals,
-        EliteCluster,
-    }
 
     /// <summary>
     /// Spawner that spawns stuff when other stuff gets within a certain proximity.
@@ -36,10 +29,9 @@ namespace KazgarsRevenge
         // Number of enemies actually spawned
         private int numSpawned;
 
-        private EnemySpawnerType spawnerType;
-
         PlayerManager players;
         LevelManager levels;
+        EnemyManager enemies;
 
         /// <summary>
         /// Creates a new spawner that spawns based on proximity to players
@@ -51,17 +43,17 @@ namespace KazgarsRevenge
         /// <param name="proximity">If the distance from the spawnLocation to the closest enemy is less than proximity, this spawns enemies</param>
         /// <param name="delay">The delay between each spawn</param>
         /// <param name="limit">Set this parameter if you wish to limit the number of enemies a spawner can spawn</param>
-        public EnemyProximitySpawner(KazgarsRevengeGame game, GameEntity entity, EntityType type, List<Vector3> spawnLocations, float proximity, float delay, EnemySpawnerType spawnerType, int limit = NO_LIMIT)
+        public EnemyProximitySpawner(KazgarsRevengeGame game, GameEntity entity, EntityType type, List<Vector3> spawnLocations, float proximity, float delay, int limit = NO_LIMIT)
             : base(game, entity, type, spawnLocations)
         {
             this.proximity = proximity;
             this.delay = delay;
             passedTime = delay;
             this.limit = limit;
-            this.spawnerType = spawnerType;
 
             this.players = game.Services.GetService(typeof(PlayerManager)) as PlayerManager;
             this.levels = game.Services.GetService(typeof(LevelManager)) as LevelManager;
+            enemies = game.Services.GetService(typeof(EnemyManager)) as EnemyManager;
         }
 
         public override void Update(GameTime gameTime)
@@ -107,36 +99,7 @@ namespace KazgarsRevenge
         {
             foreach (Vector3 loc in spawnLocations)
             {
-                EnemyManager enemies = (EnemyManager)Game.Services.GetService(typeof(EnemyManager));
-                int r;
-                switch (spawnerType)
-                {
-                    case EnemySpawnerType.NormalSingle:
-                        enemies.CreateNormalEnemy(loc);
-                        break;
-                    case EnemySpawnerType.NormalCluster:
-                        r = RandSingleton.U_Instance.Next(3, 7);
-                        for (int i = 0; i < r; ++i)
-                        {
-                            enemies.CreateNormalEnemy(loc);
-                        }
-                        break;
-                    case EnemySpawnerType.EliteSingleWithNormals:
-                        r = RandSingleton.U_Instance.Next(2, 5);
-                        for (int i = 0; i < r; ++i)
-                        {
-                            enemies.CreateNormalEnemy(loc + Vector3.Right * (i * 10 - 30));
-                        }
-                        enemies.CreateEliteEnemy(loc);
-                        break;
-                    case EnemySpawnerType.EliteCluster:
-                        r = RandSingleton.U_Instance.Next(3, 6);
-                        for (int i = 0; i < r; ++i)
-                        {
-                            enemies.CreateEliteEnemy(loc + Vector3.Right * (i * 10 - 30));
-                        }
-                        break;
-                }
+                ((EnemyManager)Game.Services.GetService(typeof(EnemyManager))).CreateEnemy(type, loc);
                 // Make sure to limit as necessary
                 ++numSpawned;
             }

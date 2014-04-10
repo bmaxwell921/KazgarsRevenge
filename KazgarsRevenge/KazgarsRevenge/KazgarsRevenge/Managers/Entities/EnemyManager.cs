@@ -48,6 +48,18 @@ namespace KazgarsRevenge
         }
 
         #region entities
+        public void CreateEnemy(EntityType type, Vector3 loc)
+        {
+            switch (type)
+            {
+                case EntityType.EliteEnemy:
+                    CreateEliteEnemy(loc);
+                    break;
+                default:
+                    CreateNormalEnemy(loc);
+                    break;
+            }
+        }
         public void CreateEliteEnemy(Vector3 loc)
         {
             int r;
