@@ -1729,7 +1729,7 @@
     <Compile Include="Models\Levels\RoomObjectMaps\00-0-G-0-objMap.fbx">
       <Name>00-0-G-0-objMap</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>LevelModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1772,6 +1772,13 @@
       <Name>level_up</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\MegaMap\00-0-G-0.png">
+      <Name>00-0-G-0</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
