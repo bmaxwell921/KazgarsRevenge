@@ -49,6 +49,10 @@ namespace KazgarsRevenge
 
         private void StartPhase1()
         {
+            if (activeBuffs.ContainsKey(Buff.Invincibility))
+            {
+                activeBuffs.Remove(Buff.Invincibility);
+            }
             state = DragonState.Phase1;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase1);
             timerCounter = 0;
@@ -129,6 +133,7 @@ namespace KazgarsRevenge
                     return;
                 }
             }
+            AddBuff(Buff.Invincibility, 1000, Entity);
         }
 
         bool iceHead = true;

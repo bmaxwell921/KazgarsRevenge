@@ -652,14 +652,14 @@ namespace KazgarsRevenge
                 {//normal cluster
                     num = RandSingleton.U_Instance.Next(3, 7);
                 }
-                else if (r < 64)
+                else if (r < 60)
                 {//elite single
                     type = EntityType.EliteEnemy;
                 }
-                else if (r < 75)
+                else if (r < 67)
                 {//elite cluster
                     type = EntityType.EliteEnemy;
-                    num = RandSingleton.U_Instance.Next(3, 7);
+                    num = RandSingleton.U_Instance.Next(2, 5);
                 }
 
                 EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, type, spawnLocs, PROXIMITY * CHUNK_SIZE, DELAY, num);

@@ -400,6 +400,7 @@ namespace KazgarsRevenge
         public PlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
             : base(game, entity, account.CharacterLevel)
         {
+            percentRegenPer5 = .01f;
             statsPerLevelMultiplier = 2;
             baseStatsMultiplier = 10;
             //shared data
