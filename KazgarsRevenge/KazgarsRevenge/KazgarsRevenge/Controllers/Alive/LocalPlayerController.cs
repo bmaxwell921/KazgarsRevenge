@@ -176,6 +176,7 @@ namespace KazgarsRevenge
         bool showEquipment = false;
         bool showTalents = false;
         bool showMegaMap = false;
+        string lastClick = null;
         string abilityToUseString = null;
         int selectedItemSlot = -1;
         int selectedTalentSlot = -1;
@@ -1247,10 +1248,18 @@ namespace KazgarsRevenge
             //happens on left mouse released
             //#Nate
             #region left click check
+            if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released  && outerCollides == null)
+            {
+                lastClick = null;
+            }
+            else if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released && outerCollides != null)
+            {
+                lastClick = outerCollides;
+            }
             if (outerCollides != null && ((prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released) || (curMouse.LeftButton == ButtonState.Pressed && !dragging) || (curMouse.LeftButton == ButtonState.Released && dragging)))
             {
                 //Set dragging to true if draggin mouse
-                if (curMouse.LeftButton == ButtonState.Pressed && innerCollides != null && !dragging)
+                if (lastClick != null && curMouse.LeftButton == ButtonState.Pressed && innerCollides != null && !dragging)
                 {
                     draggingSource = innerCollides;
                     dragging = true;
@@ -1265,7 +1274,7 @@ namespace KazgarsRevenge
                     return;
                 }
 
-                if ((!dragging && draggingSource != innerCollides) || dragging)
+                if (lastClick != null && (draggingSource != innerCollides || dragging))
                 {
                     switch (outerCollides)
                     {
@@ -2191,8 +2200,7 @@ namespace KazgarsRevenge
             s.Draw(texWhitePixel, xpRect, Color.Black * 0.5f);
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
             
-            //Mini Map (square for now)
-            //s.Draw(texWhitePixel, guiOutsideRects["map"], Color.Black * 0.5f); 
+            //Mini Map
             DrawMiniMap(s);
 
             if (showMegaMap)

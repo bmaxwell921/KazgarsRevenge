@@ -178,7 +178,7 @@ namespace KazgarsRevenge
                 public static readonly string Berserk2 = @"Textures\UI\Abilities\BN";
                 public static readonly string Berserk3 = @"Textures\UI\Abilities\BN";
                 public static readonly string Elusiveness = @"Textures\UI\Abilities\BN";
-                public static readonly string HealthPotion = @"Textures\UI\Abilities\BN";
+                public static readonly string HealthPotion = @"Textures\UI\Items\HP";
                 public static readonly string Homing = @"Textures\UI\Abilities\BN";
                 public static readonly string Invincibility = @"Textures\UI\Abilities\BN";
                 public static readonly string LuckPotion = @"Textures\UI\Abilities\BN";
