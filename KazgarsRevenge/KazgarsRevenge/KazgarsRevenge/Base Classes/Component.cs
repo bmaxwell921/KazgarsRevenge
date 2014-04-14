@@ -7,6 +7,13 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// Base class for all components.
+    /// Each type of component has its
+    /// own manager to take care of it
+    /// and call any extra methods needed
+    /// (e.g. Draw() for DrawableComponent3D)
+    /// </summary>
     public abstract class Component
     {
         protected KazgarsRevengeGame Game;
@@ -28,7 +35,7 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
-        /// called when added to a manager's entity list
+        /// called when this component is added to a manager's entity list
         /// </summary>
         public virtual void Start()
         {
@@ -41,7 +48,7 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
-        /// called when this component is removed (on the update after Kill() has been called)
+        /// called when this component is removed (on the update after KillComponent() has been called)
         /// </summary>
         public virtual void End()
         {

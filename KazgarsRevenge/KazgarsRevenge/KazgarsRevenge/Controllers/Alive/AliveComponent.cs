@@ -62,7 +62,7 @@ namespace KazgarsRevenge
     }
     public class AliveComponent : AIComponent
     {
-
+        //adds power to any entities that use resources
         public virtual void AddPower(int power)
         {
 
@@ -89,7 +89,7 @@ namespace KazgarsRevenge
         #region Experience
         public int Level { get; protected set; }
         protected float expMultiplier = 1;
-        protected int experience = 0;
+        protected int experience { get; private set; }
         public int NextLevelXP { get { return 100 * Level * Level; } }
         public void AddEXP(int level, EntityType entityType)
         {
@@ -111,6 +111,9 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// does level up graphics/sounds, increments level, recalculates stats
+        /// </summary>
         public void LevelUp()
         {
             ++Level;
@@ -127,8 +130,13 @@ namespace KazgarsRevenge
         #endregion
 
         #region stats
+        //used for the pulling state (for chain spear or grappling hook pulls)
         protected bool pulling = false;
-        protected float percentRegenPer5 = 0;
+
+        //passive health regen
+        protected float percentHPRegenPer5 = 0;
+
+        //these values are multiplied by Level and added to stats
         private Dictionary<StatType, float> statsPerLevel = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 0},
@@ -142,6 +150,7 @@ namespace KazgarsRevenge
             {StatType.Armor, 0},
         };
 
+        //shouldn't be modified; used to recalculate stats
         protected Dictionary<StatType, float> originalBaseStats = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 120},
@@ -154,6 +163,8 @@ namespace KazgarsRevenge
             {StatType.Vitality, 10},
             {StatType.Armor, 0}
         };
+
+        //can be modified by buffs to increase stats
         protected Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>()
         {
             {StatType.RunSpeed, 120},
@@ -167,18 +178,20 @@ namespace KazgarsRevenge
             {StatType.Armor, 0}
         };
 
+        //holds all current stats
         private Dictionary<StatType, float> stats = new Dictionary<StatType, float>();
 
+        /// <summary>
+        /// Used to access current stats in the controller
+        /// </summary>
         protected float GetStat(StatType t)
         {
-            float ret = stats[t];
-            if (ret < 0)
-            {
-                return 0;
-            }
-            return ret;
+            return Math.Min(0, stats[t]);
         }
 
+        /// <summary>
+        /// Helper to add the stats from an Equippable
+        /// </summary>
         protected void AddGearStats(Equippable gear)
         {
             if (gear.StatEffects != null)
@@ -194,8 +207,13 @@ namespace KazgarsRevenge
             }
         }
 
+        //alter these to make an AliveComponent relatively 
+        //stronger/weaker than other things its level
         protected float baseStatsMultiplier = 1;
         protected float statsPerLevelMultiplier = 1;
+        /// <summary>
+        /// Called whenever gear/buffs are added or level is changed
+        /// </summary>
         protected virtual void RecalculateStats()
         {
             if (stats.Count == 0)
@@ -246,6 +264,7 @@ namespace KazgarsRevenge
             this.Dead = false;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
+            sounds = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
 
             RecalculateStats();
             this.Health = MaxHealth;
@@ -254,19 +273,27 @@ namespace KazgarsRevenge
         public override void Start()
         {
             model = (AnimatedModelComponent)Entity.GetComponent(typeof(AnimatedModelComponent));
-            sounds = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
             base.Start();
         }
 
+        //methods called between controllers
         #region Inter-Controller
+        //the entity that killed this one (set after the killing blow happens)
         public AliveComponent Killer { get; protected set; }
 
+        /// <summary>
+        /// Called when resurrected or respawning
+        /// </summary>
         public void ReviveAlive()
         {
             Killer = null;
             Dead = false;
             Health = (int)(MaxHealth * .25f);
         }
+
+        /// <summary>
+        /// Called when player mouses over / targets this entity
+        /// </summary>
         public void Target()
         {
             if (showHealthWithOutline)
@@ -295,6 +322,9 @@ namespace KazgarsRevenge
 
         }
 
+        /// <summary>
+        /// Called when killed. Enemies will use this to give the player XP
+        /// </summary>
         protected virtual void DealWithKiller()
         {
 
@@ -309,19 +339,25 @@ namespace KazgarsRevenge
             }
         }
 
+        //used by grappling hook and chain spear controllers to move entities
         public void Pull()
         {
             pulling = true;
             physicalData.IsAffectedByGravity = false;
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
         }
-
         public virtual void StopPull()
         {
             pulling = false;
             physicalData.IsAffectedByGravity = true;
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.Normal;
         }
+
+        /// <summary>
+        /// knocks an entity back
+        /// </summary>
+        /// <param name="origin">origin of the impulse</param>
+        /// <param name="impulse">strength of the knockback</param>
         public void KnockBack(Vector3 origin, float impulse)
         {
             Vector3 newVel = physicalData.Position - origin;
@@ -335,6 +371,9 @@ namespace KazgarsRevenge
 
         #region Damage and Health
 
+        /// <summary>
+        /// Damage strenth calculation
+        /// </summary>
         protected int GeneratePrimaryDamage(StatType s)
         {
             float ret = stats[s];
@@ -386,6 +425,9 @@ namespace KazgarsRevenge
             return actualDamage;
         }
 
+        /// <summary>
+        /// Try to damage this entity, but can be negated if it has the right buff
+        /// </summary>
         public int DamageDodgeable(DeBuff db, int d, GameEntity from, AttackType type)
         {
             if (activeBuffs.ContainsKey(Buff.Elusiveness))
@@ -399,6 +441,9 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// Undodgeable damage
+        /// </summary>
         public int Damage(DeBuff db, int d, GameEntity from, AttackType type)
         {
             if (db == DeBuff.Burning && activeDebuffs.ContainsKey(DeBuff.Tar))
@@ -453,18 +498,26 @@ namespace KazgarsRevenge
             model.AddEmitter(typeof(LifestealParticleSystem), "lifesteal", 10, 15, Vector3.Zero);
             model.AddParticleTimer("lifesteal", 1000);
         }
+
+        /// <summary>
+        /// Called when damage has already been applied. Used for threat levels 
+        /// and graphics associated with damage
+        /// </summary>
+        /// <param name="damageDealt"></param>
         public virtual void HandleDamageDealt(int damageDealt)
         {
 
         }
         #endregion
 
+        
         private double regenTimer;
         protected bool showHealthWithOutline = true;
         protected Dictionary<DeBuff, NegativeEffect> activeDebuffs = new Dictionary<DeBuff, NegativeEffect>();
         protected Dictionary<Buff, PositiveEffect> activeBuffs = new Dictionary<Buff, PositiveEffect>();
         public override void Update(GameTime gameTime)
         {
+            //adjust model's outline color to reflect health
             if (showHealthWithOutline &&( modelParams.lineColor != Color.Black || HealthPercent != 1))
             {
                 modelParams.lineColor = Color.Lerp(Color.Red, Color.Green, HealthPercent);
@@ -472,6 +525,7 @@ namespace KazgarsRevenge
 
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
 
+            //update buffs/debuffs
             List<DeBuff> toRemoveDebuffs = new List<DeBuff>();
             foreach (KeyValuePair<DeBuff, NegativeEffect> k in activeDebuffs)
             {
@@ -517,12 +571,13 @@ namespace KazgarsRevenge
             regenTimer -= elapsed;
             if (regenTimer <= 0)
             {
-                Heal((int)Math.Ceiling(MaxHealth * percentRegenPer5));
+                Heal((int)Math.Ceiling(MaxHealth * percentHPRegenPer5));
                 regenTimer = 5000;
             }
         }
 
         #region Buffs and Debuffs
+        //structure to hold active debuff information
         protected class NegativeEffect
         {
             public DeBuff type { get; private set; }
@@ -558,12 +613,18 @@ namespace KazgarsRevenge
                 this.tickLength = tickLength;
             }
         }
+
+        //called when a stun is applied
         public virtual void HandleStun(double length)
         {
             model.AddEmitter(typeof(StunnedParticleSystem), "stun", 5, 5, Vector3.Up * 15);
             model.AddParticleTimer("stun", length);
         }
 
+        /// <summary>
+        /// Definition of Buff behavior
+        /// </summary>
+        /// <returns>true if the buff was applied, false otherwise</returns>
         private bool HandleBuff(Buff b, BuffState state, int stacks, GameEntity from)
         {
             switch (b)
@@ -620,8 +681,9 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
-        /// returns true if it applied the debuff, false if no (to limit certain debuffs, like slows)
+        /// Definition of Debuff behavior
         /// </summary>
+        /// <returns>true if the buff was applied, false otherwise (to limit certain debuffs, like slows)</returns>
         private bool HandleDeBuff(DeBuff d, BuffState state, int stacks, GameEntity from)
         {
             switch (d)
@@ -735,6 +797,7 @@ namespace KazgarsRevenge
             {DeBuff.Frozen, 1500},
             {DeBuff.Charge, 100}
         };
+
         Dictionary<DeBuff, double> debuffTickLengths = new Dictionary<DeBuff, double>()
         {
             {DeBuff.SerratedBleeding, 1000},
@@ -761,6 +824,9 @@ namespace KazgarsRevenge
             {Buff.SuperHealthPotion, 250}
         };
 
+        /// <summary>
+        /// Add the given buff to activeBuffs, using the length value from buffLengths
+        /// </summary>
         protected void AddBuff(Buff b, GameEntity from)
         {
             double length = 0;
@@ -771,6 +837,9 @@ namespace KazgarsRevenge
             AddBuff(b, length, from);
         }
 
+        /// <summary>
+        /// Add the given buff to activeBuffs, specifying a length
+        /// </summary>
         protected void AddBuff(Buff b, double length, GameEntity from)
         {
             double tickLength = double.MaxValue;
@@ -798,6 +867,9 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// Add the given buff to activeBuffs, specifying a length
+        /// </summary>
         protected void AddDebuff(DeBuff b, GameEntity from)
         {
             double length = 0;
@@ -808,6 +880,9 @@ namespace KazgarsRevenge
             AddDebuff(b, length, from);
         }
 
+        /// <summary>
+        /// Add the given buff to activeBuffs, using the length value from buffLengths
+        /// </summary>
         private void AddDebuff(DeBuff b, double length, GameEntity from)
         {
             if (b == DeBuff.Stunned)

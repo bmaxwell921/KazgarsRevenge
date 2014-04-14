@@ -7,12 +7,19 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// Used for checking if attack controllers should hit them or not
+    /// </summary>
     public enum FactionType
     {
         Players,
         Enemies,
         Neutral,
     }
+
+    /// <summary>
+    /// Used for loot drops, spawning, and sensors (can find all entities of given type in radius)
+    /// </summary>
     public enum EntityType
     {
         None,
@@ -22,6 +29,15 @@ namespace KazgarsRevenge
         Player,
         Misc,
     }
+
+    /// <summary>
+    /// An Entity holds some data about what categories it falls into
+    /// and holds all of the components that make it up.
+    /// 
+    /// e.g. a typical Enemy entity is made up of a
+    /// PhysicsComponent, AnimatedModelComponent,
+    /// EnemyController, DropTable, and BlobShadowDecal.
+    /// </summary>
     public class GameEntity
     {
         public Identification id;
