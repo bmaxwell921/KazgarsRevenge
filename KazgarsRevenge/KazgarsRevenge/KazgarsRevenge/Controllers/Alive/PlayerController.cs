@@ -17,6 +17,8 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
+    //used to categorize abilities and enemy drops 
+    //(Melee enemies drop melee essence and gear)
     public enum AttackType
     {
         None,
@@ -24,6 +26,8 @@ namespace KazgarsRevenge
         Ranged,
         Magic,
     }
+
+    //all the possible slots for equipables on kazgar
     public enum GearSlot
     {
         None,
@@ -42,7 +46,7 @@ namespace KazgarsRevenge
     public abstract class PlayerController : AliveComponent
     {
 
-        #region member variables
+        #region General Member Variables
         //services
         protected Space physics;
         protected CameraComponent camera;
@@ -69,8 +73,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region Abilities
-
-
+        //resource
         protected int currentPower = 0;
         protected const int maxPower = 30;
         public override void AddPower(int power)
@@ -101,7 +104,7 @@ namespace KazgarsRevenge
         protected Dictionary<DeBuff, Tooltip> debuffTooltips = new Dictionary<DeBuff, Tooltip>();
         #endregion
 
-        #region inventory and gear
+        #region Inventory and Gear
         protected int gold = 0;
         protected const int NUM_LOOT_SHOWN = 4;
         protected int maxInventorySlots = 16;
@@ -109,7 +112,15 @@ namespace KazgarsRevenge
         protected Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
         //inventory
         protected Item[] inventory = new Item[16];
-        //#Nate
+
+        /// <summary>
+        /// Adds the piece of gear to kazgar. If it's a weapon,
+        /// it attaches an unanimated model to the specified hand.
+        /// Otherwise, it will add a synced model to kazgar (animates
+        /// according to kazgar's skeleton)
+        /// </summary>
+        /// <param name="equipMe"></param>
+        /// <param name="slot"></param>
         protected virtual void EquipGear(Equippable equipMe, GearSlot slot)
         {
             if (equipMe.ItemLevel > Level)
@@ -175,8 +186,9 @@ namespace KazgarsRevenge
                 AddToInventory(equipMe);
             }
         }
+
         /// <summary>
-        /// tries to put equipped item into inventory. If there was no inventory space, returns false.
+        /// tries to put equipped item into inventory in the specified slot. Used with dragging/swapping.
         /// </summary>
         protected bool UnequipGear(GearSlot slot, int inventoryPos)
         {
@@ -206,6 +218,9 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// tries to put equipped item into inventory. If there was no inventory space, returns false.
+        /// </summary>
         protected bool UnequipGear(GearSlot slot)
         {
             Equippable toRemove = gear[slot];
@@ -235,6 +250,12 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// Tries to add the given item to the inventory
+        /// </summary>
+        /// <param name="toAdd">the item to add</param>
+        /// <param name="inventoryIndex">the index of the inventory array to add the item to</param>
+        /// <returns>true if the index was empty, false otherwise</returns>
         public bool AddToInventory(Item toAdd, int inventoryIndex)
         {
             if (toAdd == null)
@@ -243,7 +264,7 @@ namespace KazgarsRevenge
             }
 
             //check if full
-            if (inventory[inventoryIndex] != null)
+            if (inventoryIndex >= inventory.Length || inventory[inventoryIndex] != null)
             {
                 return false;
             }
@@ -258,9 +279,12 @@ namespace KazgarsRevenge
 
             return true;
         }
+
         /// <summary>
-        /// tries to add item to inventory if there is space. returns false if no space left
+        /// Tries to add the given item to the inventory
         /// </summary>
+        /// <param name="toAdd">the item to add</param>
+        /// <returns>true if the inventory wasn't full, false otherwise</returns>
         public bool AddToInventory(Item toAdd)
         {
             if (toAdd == null)
@@ -317,6 +341,12 @@ namespace KazgarsRevenge
             //awkward if it does
             return false;
         }
+
+        /// <summary>
+        /// Removes one item with the given ID from the inventory. 
+        /// Used for consumables.
+        /// </summary>
+        /// <returns>true if it found one to remove</returns>
         protected bool RemoveOneFromInventory(int itemID)
         {
             for (int i = 0; i < inventory.Length; ++i)
@@ -333,6 +363,10 @@ namespace KazgarsRevenge
             }
             return false;
         }
+
+        /// <summary>
+        /// overriding base method to account for equiped gear
+        /// </summary>
         protected override void RecalculateStats()
         {
             base.RecalculateStats();
@@ -348,6 +382,10 @@ namespace KazgarsRevenge
 
             stateResetLength = 3000 * (1 - Math.Min(.95f, GetStat(StatType.AttackSpeed)));
         }
+
+        /// <summary>
+        /// gets the type of the weapon in main hand
+        /// </summary>
         protected AttackType GetMainhandType()
         {
             Equippable e = gear[GearSlot.Righthand];
@@ -360,6 +398,10 @@ namespace KazgarsRevenge
                 return AttackType.None;
             }
         }
+
+        /// <summary>
+        /// gets the type of the weapon in off hand
+        /// </summary>
         protected AttackType GetOffhandType()
         {
             Equippable e = gear[GearSlot.Lefthand];
@@ -373,6 +415,10 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="i"></param>
         protected void UseItem(Item i)
         {
             switch (i.Type)
@@ -436,11 +482,10 @@ namespace KazgarsRevenge
             base.Start();
         }
 
-        private void InitPlayerFromFile()
-        {
 
-        }
-
+        /// <summary>
+        /// Initializes the fields that are needed for new and old players
+        /// </summary>
         private void InitGeneralFields()
         {
             #region members
@@ -457,49 +502,7 @@ namespace KazgarsRevenge
 
             SetUpActionSequences();
             #endregion
-        }
 
-        private void InitNewPlayer()
-        {
-            #region stats and inventory
-            RecalculateStats();
-
-            for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
-            {
-                gear.Add((GearSlot)i, null);
-            }
-            #endregion
-
-            #region ability initialization
-            //create initial abilities
-
-            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetCachedAbility(AbilityName.None));
-            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetCachedAbility(AbilityName.None));
-            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetCachedAbility(AbilityName.None));
-            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetCachedAbility(AbilityName.None));
-            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetCachedAbility(AbilityName.None));
-            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetCachedAbility(AbilityName.None));
-            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetCachedAbility(AbilityName.None));
-            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetCachedAbility(AbilityName.None));
-            //added item slot abilities
-            boundAbilities[8] = new KeyValuePair<Keys, Ability>(Keys.D1, GetCachedAbility(AbilityName.None));
-            boundAbilities[9] = new KeyValuePair<Keys, Ability>(Keys.D2, GetCachedAbility(AbilityName.None));
-            boundAbilities[10] = new KeyValuePair<Keys, Ability>(Keys.D3, GetCachedAbility(AbilityName.None));
-            boundAbilities[11] = new KeyValuePair<Keys, Ability>(Keys.D4, GetCachedAbility(AbilityName.None));
-
-            mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(ButtonState.Pressed, GetCachedAbility(AbilityName.None));
-            for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
-            {
-                abilityLearnedFlags[(AbilityName)i] = false;
-            }
-
-            abilityLearnedFlags[AbilityName.HealthPotion] = true;
-            abilityLearnedFlags[AbilityName.SuperHealthPotion] = true;
-            abilityLearnedFlags[AbilityName.InstaHealthPotion] = true;
-            abilityLearnedFlags[AbilityName.PotionOfLuck] = true;
-            abilityLearnedFlags[AbilityName.InivisibilityPotion] = true;
-            #endregion
-            
             #region de/buff definitions
 
             buffIcons.Add(Buff.AdrenalineRush, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Buffs.AdrenalineRush));
@@ -567,25 +570,102 @@ namespace KazgarsRevenge
             #endregion
         }
 
+        /// <summary>
+        /// Initializes a new player who doesn't have a save file yet
+        /// </summary>
+        private void InitNewPlayer()
+        {
+            #region stats and inventory
+            RecalculateStats();
+
+            for (int i = 0; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
+            {
+                gear.Add((GearSlot)i, null);
+            }
+            #endregion
+
+            #region ability initialization
+            //create initial abilities
+
+            boundAbilities[0] = new KeyValuePair<Keys, Ability>(Keys.Q, GetCachedAbility(AbilityName.None));
+            boundAbilities[1] = new KeyValuePair<Keys, Ability>(Keys.W, GetCachedAbility(AbilityName.None));
+            boundAbilities[2] = new KeyValuePair<Keys, Ability>(Keys.E, GetCachedAbility(AbilityName.None));
+            boundAbilities[3] = new KeyValuePair<Keys, Ability>(Keys.R, GetCachedAbility(AbilityName.None));
+            boundAbilities[4] = new KeyValuePair<Keys, Ability>(Keys.A, GetCachedAbility(AbilityName.None));
+            boundAbilities[5] = new KeyValuePair<Keys, Ability>(Keys.S, GetCachedAbility(AbilityName.None));
+            boundAbilities[6] = new KeyValuePair<Keys, Ability>(Keys.D, GetCachedAbility(AbilityName.None));
+            boundAbilities[7] = new KeyValuePair<Keys, Ability>(Keys.F, GetCachedAbility(AbilityName.None));
+            //added item slot abilities
+            boundAbilities[8] = new KeyValuePair<Keys, Ability>(Keys.D1, GetCachedAbility(AbilityName.None));
+            boundAbilities[9] = new KeyValuePair<Keys, Ability>(Keys.D2, GetCachedAbility(AbilityName.None));
+            boundAbilities[10] = new KeyValuePair<Keys, Ability>(Keys.D3, GetCachedAbility(AbilityName.None));
+            boundAbilities[11] = new KeyValuePair<Keys, Ability>(Keys.D4, GetCachedAbility(AbilityName.None));
+
+            mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(ButtonState.Pressed, GetCachedAbility(AbilityName.None));
+            for (int i = 0; i < Enum.GetNames(typeof(AbilityName)).Length; ++i)
+            {
+                abilityLearnedFlags[(AbilityName)i] = false;
+            }
+
+            abilityLearnedFlags[AbilityName.HealthPotion] = true;
+            abilityLearnedFlags[AbilityName.SuperHealthPotion] = true;
+            abilityLearnedFlags[AbilityName.InstaHealthPotion] = true;
+            abilityLearnedFlags[AbilityName.PotionOfLuck] = true;
+            abilityLearnedFlags[AbilityName.InivisibilityPotion] = true;
+            #endregion
+            
+        }
+
+        /// <summary>
+        /// Initializes a player from a save file
+        /// </summary>
+        private void InitPlayerFromFile()
+        {
+
+        }
+
         #region Action Sequences
-
-        protected bool usingPrimary = false;
-        protected Vector3 velDir = Vector3.Zero;
+        //counter for resetting state
+        protected double stateResetCounter = 0;
+        //minimum milliseconds for an attack. decided in recalculatestats() by attack speed
+        protected double stateResetLength = 0;
+        //the suffix for the animation; used for main/offhand
+        protected string aniSuffix = "";
+        //counter for executing the next action
+        protected double millisActionCounter;
+        protected double millisActionLength;
+        //used for player state machine
+        protected bool inPrimarySequence = false;
+        //used to force the player's velocity to a certain direction, for movement abilities (e.g. Tumble)
+        protected Vector3 forcedVelocityDir = Vector3.Zero;
+        //used to determine whether to just draw the ground target
+        //billboard, or to use the ability
         protected bool targetingGroundLocation = false;
+        //the position to use an ability on
         protected Vector3 groundAbilityTarget = Vector3.Zero;
+        //the size of the ground target ability
         protected float targetedGroundSize = 0;
+        //the ability that was used most recently; used for ground target abilities
         protected Ability lastUsedAbility = null;
-
+        //the name of the sequence currently being used
         protected string currentActionName = "";
+        //holds the definitions of every action sequence
         private Dictionary<string, List<Action>> actionSequences;
+        //action sequences can alter this to indicate if they need to do anything if interrupted
         protected bool needInterruptAction = true;
+        //sequences can change this too, to indicate if they are able to be interrupted
         protected bool canInterrupt = false;
+        //contains the definitions of what to do if any action is interrupted.
+        //if it's not manually specified, it will contain an empty action
         private Dictionary<string, Action> interruptActions;
 
-        //the first item in the list is called immediately (when StartSequence is called)
+        //the list of actions currently being used. the first item in the list is called immediately (when StartSequence is called)
         protected List<Action> currentSequence = null;
+        //the current index of the current sequence
         protected int actionIndex = 0;
 
+        //if the player is in a charging state, gives a float representing
+        //the percent of how close the player is to the next action.
         protected float GetPercentCharged()
         {
             if (attState != AttackState.Charging)
@@ -597,9 +677,13 @@ namespace KazgarsRevenge
                 return (float)(millisActionCounter / millisActionLength);
             }
         }
-        //to be used for charging/casting abilities; when you
-        //interrupt them, you don't want to use it
-        //and you want to go back to fighting stance
+
+
+        /// <summary>
+        /// to be used for charging/casting abilities; when you
+        /// interrupt them, you don't want to use it
+        /// and you want to go back to fighting stance
+        /// </summary>
         protected void CancelFinishSequence()
         {
             animations.UnpauseAnimation();
@@ -607,6 +691,10 @@ namespace KazgarsRevenge
             currentActionName = "";
             abilityFinishedAction();
         }
+
+        /// <summary>
+        /// Begins the action sequence of the given ability
+        /// </summary>
         protected void StartAbilitySequence(Ability ability)
         {
             if (ability == null)
@@ -624,11 +712,31 @@ namespace KazgarsRevenge
             }
             lastUsedAbility = ability;
         }
+
+        /// <summary>
+        /// Starting a ground target sequence 
+        /// (starts showing target billboard, but doesn't interrupt player motion)
+        /// </summary>
+        /// <param name="name"></param>
+        private void StartGroundTargetSequence(string name)
+        {
+            InterruptReset(name);
+
+            currentSequence[0]();
+            millisActionCounter = 0;
+        }
+
+        /// <summary>
+        /// Uses the first Action of a sequence without interrupting the current sequence
+        /// </summary>
         protected void UseSequenceParallel(string name)
         {
             actionSequences[name][0]();
         }
 
+        /// <summary>
+        /// Start a new sequence. Ends any current sequences first.
+        /// </summary>
         protected void StartSequence(string name)
         {
             if (name != "PlaceHolder" && name != "")
@@ -647,13 +755,6 @@ namespace KazgarsRevenge
             }
         }
 
-        private void StartGroundTargetSequence(string name)
-        {
-            InterruptReset(name);
-
-            currentSequence[0]();
-            millisActionCounter = 0;
-        }
 
         //for buffs, so as to not disrupt running / whatever else
         protected void InterruptReset(string name)
@@ -668,7 +769,7 @@ namespace KazgarsRevenge
                 actionIndex = 0;
                 currentActionName = name;
                 stateResetCounter = double.MaxValue;
-                usingPrimary = false;
+                inPrimarySequence = false;
             }
         }
         //calls the interrupt handler for the current sequence
@@ -690,6 +791,9 @@ namespace KazgarsRevenge
                 attState = AttackState.None;
             };
         }
+        /// <summary>
+        /// adds all of the action sequences to the dictionary
+        /// </summary>
         private void SetUpActionSequences()
         {
             SetUpHelperActions();
@@ -754,6 +858,8 @@ namespace KazgarsRevenge
             }
         }
 
+
+        //Misc actions
         private List<Action> IdleActions()
         {
             List<Action> sequence = new List<Action>();
@@ -825,8 +931,6 @@ namespace KazgarsRevenge
         }
         private const int arrowDrawMillis = 50;
         private const int arrowReleaseMillis = 150;
-
-        //Misc actions
         private List<Action> LootActions()
         {
             List<Action> sequence = new List<Action>();
@@ -1024,7 +1128,7 @@ namespace KazgarsRevenge
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
                 millisActionLength = 200;
-                usingPrimary = true;
+                inPrimarySequence = true;
             });
             sequence.Add(() =>
             {
@@ -1059,7 +1163,7 @@ namespace KazgarsRevenge
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
                 millisActionLength = arrowDrawMillis;
-                usingPrimary = true;
+                inPrimarySequence = true;
             });
             sequence.Add(() =>
             {
@@ -1123,7 +1227,7 @@ namespace KazgarsRevenge
                 stateResetCounter = 0;
                 millisActionLength = 350;
 
-                usingPrimary = true;
+                inPrimarySequence = true;
             });
             sequence.Add(() =>
             {
@@ -1170,7 +1274,7 @@ namespace KazgarsRevenge
                 {
                     millisActionLength *= 2;
                 }
-                usingPrimary = true;
+                inPrimarySequence = true;
             });
             sequence.Add(() =>
             {
@@ -1593,8 +1697,8 @@ namespace KazgarsRevenge
                 PlayAnimation("k_tumble", MixType.None);
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
-                velDir = GetForward() * 500;
-                ChangeVelocity(velDir);
+                forcedVelocityDir = GetForward() * 500;
+                ChangeVelocity(forcedVelocityDir);
                 millisActionLength = 600;
                 double elusiveLength = 600;
                 if (abilityLearnedFlags[AbilityName.Elusiveness])
@@ -1608,7 +1712,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 physicalData.CollisionInformation.CollisionRules.Group = Game.PlayerCollisionGroup;
-                velDir = Vector3.Zero;
+                forcedVelocityDir = Vector3.Zero;
                 ChangeVelocity(Vector3.Zero);
                 millisActionLength = 0;
                 groundTargetLocation = physicalData.Position;
@@ -1731,8 +1835,8 @@ namespace KazgarsRevenge
                 PlayAnimation("k_charge", MixType.None);
                 attState = AttackState.Locked;
                 stateResetCounter = 0;
-                velDir = GetForward() * 400;
-                ChangeVelocity(velDir);
+                forcedVelocityDir = GetForward() * 400;
+                ChangeVelocity(forcedVelocityDir);
                 millisActionLength = 800;
                 AddBuff(Buff.Unstoppable, 800, Entity);
                 attacks.CreateCharge(physicalData.Position, this as AliveComponent, millisActionLength);
@@ -1741,7 +1845,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 physicalData.CollisionInformation.CollisionRules.Group = Game.PlayerCollisionGroup;
-                velDir = Vector3.Zero;
+                forcedVelocityDir = Vector3.Zero;
                 ChangeVelocity(Vector3.Zero);
                 millisActionLength = 0;
                 groundTargetLocation = physicalData.Position;
@@ -1884,10 +1988,16 @@ namespace KazgarsRevenge
         
 
 
-
+        //the number of times that the fighting stance actions have happened
         int fightingStanceLoops = 0;
+        //holds the AttachableModel objects that goes to kazgar's hands when using ranged abilities
         AttachableModel attachedArrowL;
         AttachableModel attachedArrowR;
+
+        /// <summary>
+        /// waits for millisActionsCounter
+        /// </summary>
+        /// <param name="elapsed"></param>
         protected void UpdateActionSequences(double elapsed)
         {
             millisActionCounter += elapsed;
@@ -1901,6 +2011,7 @@ namespace KazgarsRevenge
                 }
             }
 
+            //special handlers for idling states
             aniCounter += elapsed;
             if (aniCounter >= aniLength)
             {
@@ -1926,7 +2037,7 @@ namespace KazgarsRevenge
 
 
 
-        
+        //helper that abilities call when they're finished
         Action abilityFinishedAction;
         #endregion
 
@@ -1940,14 +2051,7 @@ namespace KazgarsRevenge
             CastingSpell,
         }
 
-        protected double stateResetCounter = 0;
-        //minimum milliseconds for an attack. decided in recalculatestats()
-        protected double stateResetLength = 0;
-        protected string aniSuffix = "";
-
-        protected double millisActionCounter;
-        protected double millisActionLength;
-
+        //player's current attack state
         protected AttackState attState = AttackState.None;
 
         protected string currentAniName;
@@ -1957,6 +2061,7 @@ namespace KazgarsRevenge
             PlayAnimation(animationName, t);
 
         }
+        //length of animation
         double aniCounter = 0;
         double aniLength = 0;
         private void PlayAnimation(string animationName, MixType t, float playbackRate)
@@ -1977,15 +2082,12 @@ namespace KazgarsRevenge
         #endregion
 
         #region Damage
-
-        //TODO: damage tracker and "in combat" status  #resolved?
         public override void HandleDamageDealt(int damageDealt)
         {
             inCombat = true;
             millisCombatCounter = 0;
         }
 
-        //TODO: particles for being hit / sound?
         protected override void TakeDamage(int damage, GameEntity from)
         {
             inCombat = true;
@@ -2004,17 +2106,26 @@ namespace KazgarsRevenge
 
         #region helpers
         protected bool inSoulevator = false;
+        /// <summary>
+        /// called by the soulevator controller when the player runs into it
+        /// </summary>
         public void EnterSoulevator()
         {
             StartSequence("idle");
             attState = AttackState.Locked;
             inSoulevator = true;
         }
+        /// <summary>
+        /// called by the player when exiting the soulevator
+        /// </summary>
         protected void ExitSoulevator()
         {
             attState = AttackState.None;
             inSoulevator = false;
         }
+        /// <summary>
+        /// closing loot window, letting loot soul go
+        /// </summary>
         protected void CloseLoot()
         {
             looting = false;
@@ -2024,6 +2135,9 @@ namespace KazgarsRevenge
                 lootingSoul.CloseLoot();
             }
         }
+        /// <summary>
+        /// opening loot window, locking player's state
+        /// </summary>
         protected void OpenLoot()
         {
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
@@ -2044,10 +2158,17 @@ namespace KazgarsRevenge
                 }
             }
         }
+        /// <summary>
+        /// swapping the weapons in player's right and left hand slows
+        /// </summary>
         protected void SwapWeapons()
         {
-            Equippable r = gear[GearSlot.Righthand];
-            Equippable l = gear[GearSlot.Lefthand];
+            Weapon r = gear[GearSlot.Righthand] as Weapon;
+            Weapon l = gear[GearSlot.Lefthand] as Weapon;
+            if (r.TwoHanded)
+            {
+                return;
+            }
 
             if (attached.ContainsKey(GearSlot.Righthand.ToString()))
             {
@@ -2072,6 +2193,12 @@ namespace KazgarsRevenge
             gear[GearSlot.Righthand] = l;
             gear[GearSlot.Lefthand] = r;
         }
+
+        /// <summary>
+        /// convenience for converting between gearslot and kazgar's skeleton names
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public string GearSlotToBoneName(GearSlot s)
         {
             switch (s)
@@ -2084,10 +2211,10 @@ namespace KazgarsRevenge
                     return "Armature";
             }
         }
+
         /// <summary>
         /// rotates kazgar towards mouse
         /// </summary>
-        /// <param name="move"></param>
         protected void UpdateRotation(Vector3 move)
         {
             //orientation
@@ -2100,6 +2227,7 @@ namespace KazgarsRevenge
             yaw += MathHelper.Pi;
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
         }
+
         protected void ChangeVelocity(Vector3 newVel)
         {
             if (!pulling)
@@ -2108,6 +2236,11 @@ namespace KazgarsRevenge
             }
 
         }
+
+        /// <summary>
+        /// converts bepu's Matrix3x3 to an XNA Matrix object
+        /// </summary>
+        /// <returns></returns>
         protected Matrix GetRotation()
         {
             Matrix3X3 bepurot = physicalData.OrientationMatrix;
@@ -2117,6 +2250,9 @@ namespace KazgarsRevenge
         {
             return physicalData.OrientationMatrix.Forward;
         }
+        /// <summary>
+        /// ask bepu for nearby entities
+        /// </summary>
         protected GameEntity QueryNearEntity(string entityName, Vector3 position, float insideOfRadius)
         {
             Vector3 min = new Vector3(position.X - insideOfRadius, 0, position.Z - insideOfRadius);
@@ -2135,6 +2271,10 @@ namespace KazgarsRevenge
             }
             return null;
         }
+
+        /// <summary>
+        /// gui collision
+        /// </summary>
         protected bool RectContains(Rectangle rect, int x, int y)
         {
             if (x >= rect.X && x <= rect.X + rect.Width 
@@ -2144,6 +2284,8 @@ namespace KazgarsRevenge
             }
             return false;
         }
+
+
         public override void StopPull()
         {
             groundTargetLocation = physicalData.Position;

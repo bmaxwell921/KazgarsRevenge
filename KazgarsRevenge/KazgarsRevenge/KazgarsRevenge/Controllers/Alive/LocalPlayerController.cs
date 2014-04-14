@@ -223,7 +223,7 @@ namespace KazgarsRevenge
             if ((attState == AttackState.Locked || attState == AttackState.LockedMoving) && canInterrupt && stateResetCounter >= stateResetLength)
             {
                 attState = AttackState.None;
-                usingPrimary = false;
+                inPrimarySequence = false;
             }
 
             UpdateActionSequences(elapsed);
@@ -325,7 +325,7 @@ namespace KazgarsRevenge
                     ResetTargettedEntity();
                 }
 
-                if (((attState != AttackState.Locked && attState != AttackState.LockedMoving) || usingPrimary) 
+                if (((attState != AttackState.Locked && attState != AttackState.LockedMoving) || inPrimarySequence) 
                     && !looting)
                 {
                     CheckAbilities(move, mouseOnGui);
@@ -380,13 +380,13 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    if (velDir == Vector3.Zero)
+                    if (forcedVelocityDir == Vector3.Zero)
                     {
                         ChangeVelocity(Vector3.Zero);
                     }
                     else
                     {
-                        ChangeVelocity(velDir);
+                        ChangeVelocity(forcedVelocityDir);
                     }
                 }
             }
@@ -403,6 +403,7 @@ namespace KazgarsRevenge
             base.Update(gameTime);
         }
 
+        #region Update Helpers
         Func<BroadPhaseEntry, bool> rayCastFilter;
         bool RayCastFilter(BroadPhaseEntry entry)
         {
@@ -685,6 +686,7 @@ namespace KazgarsRevenge
         /// <param name="gameTime"></param>
         private void CheckAbilities(Vector3 move, bool mouseOnGui)
         {
+            //reset targeting state if you press escape
             if (curKeys.IsKeyDown(Keys.Escape))
             {
                 targetingGroundLocation = false;
@@ -922,7 +924,7 @@ namespace KazgarsRevenge
             }
 
             //primary attack (autos)
-            if (!usingPrimary && (curMouse.LeftButton == ButtonState.Pressed && (curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space)) 
+            if (!inPrimarySequence && (curMouse.LeftButton == ButtonState.Pressed && (curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space)) 
                 || targetedPhysicalData != null))
             {
                 //used to differentiate between left hand, right hand, and two hand animations
@@ -1080,6 +1082,8 @@ namespace KazgarsRevenge
                 }
             }
         }
+        #endregion
+
 
         #region Helpers
         /// <summary>

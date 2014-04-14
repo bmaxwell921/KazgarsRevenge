@@ -87,7 +87,8 @@ namespace KazgarsRevenge
         public bool Dead { get; private set; }
 
         #region Experience
-        public int Level { get; protected set; }
+        private int level;
+        public int Level { get { return Math.Max(1, level); } private set { level = value; } }
         protected float expMultiplier = 1;
         protected int experience { get; private set; }
         public int NextLevelXP { get { return 100 * Level * Level; } }
@@ -186,7 +187,7 @@ namespace KazgarsRevenge
         /// </summary>
         protected float GetStat(StatType t)
         {
-            return Math.Min(0, stats[t]);
+            return Math.Max(0, stats[t]);
         }
 
         /// <summary>
@@ -396,12 +397,11 @@ namespace KazgarsRevenge
                 actualDamage = d;
                 if (!trueDamage)
                 {
-                    actualDamage -= (int)(actualDamage * stats[StatType.Armor] / (20 * Level));
-                    if (actualDamage < 0)
-                    {
-                        actualDamage = 0;
-                    }
+                    actualDamage -= Math.Max(0, 
+                        (int)(actualDamage * GetStat(StatType.Armor) / (20 * (Level)))
+                        );
                 }
+
                 if (!Dead)
                 {
                     if (activeDebuffs.ContainsKey(DeBuff.MagneticImplant))
