@@ -38,7 +38,7 @@ namespace KazgarsRevenge
         bool prevGrav = false;
         AliveComponent target;
         Entity targetData;
-        bool gotOneAlready = false;
+        //if this controller collides with the same entity, tell it so and start pulling it towards the creator
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
             if (!pulling)
@@ -55,9 +55,8 @@ namespace KazgarsRevenge
                         target = hitEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
                         if (target != null)
                         {
-                            if (!gotOneAlready)
+                            if (!pulling)
                             {
-                                gotOneAlready = true;
                                 targetData = hitEntity.GetSharedData(typeof(Entity)) as Entity;
                                 target.Pull();
                                 physicalData.LinearVelocity = Vector3.Zero;
@@ -70,6 +69,7 @@ namespace KazgarsRevenge
                                     target.DamageDodgeable(stun ? DeBuff.ForcefulThrow : DeBuff.None, 0, creator.Entity, AttackType.None);
                                 }
                             }
+                            
                         }
                     }
                 }
@@ -92,7 +92,7 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             if (pulling)
-            {
+            {//force entity being pulled to slide towards creator
                 Vector3 dir = creatorData.Position - physicalData.Position;
                 dir.Y = 0;
                 if (dir != Vector3.Zero)

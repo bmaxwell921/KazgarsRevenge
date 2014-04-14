@@ -8,7 +8,9 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
-    
+    /// <summary>
+    /// The base controller for projectiles
+    /// </summary>
     public class ProjectileController : AttackController
     {
         public ProjectileController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
@@ -75,7 +77,7 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             if (homing)
-            {
+            {//if homing, look for closest target and rotate towards it
                 if(target == null || target.Dead)
                 {
                     target = null;

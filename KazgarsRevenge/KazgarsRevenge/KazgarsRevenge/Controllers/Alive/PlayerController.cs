@@ -2444,7 +2444,7 @@ namespace KazgarsRevenge
         {
             return new Ability(AbilityName.Omnishot, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Abilities.Range.OMNI_SHOT), 
                 4000, AttackType.Ranged, "omnishot", AbilityType.Instant,
-                10, "Fire an arrow that splits into\n"
+                0, "Fire an arrow that splits into\n"
                     +"20 arrows (which gain all other\n"
                     +"ranged primary attack bonuses).");
         }
