@@ -2165,7 +2165,7 @@ namespace KazgarsRevenge
         {
             Weapon r = gear[GearSlot.Righthand] as Weapon;
             Weapon l = gear[GearSlot.Lefthand] as Weapon;
-            if (r.TwoHanded)
+            if (r != null && r.TwoHanded)
             {
                 return;
             }
