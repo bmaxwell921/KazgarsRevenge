@@ -2478,7 +2478,7 @@ namespace KazgarsRevenge
 
         private bool drawSel = true;
         private int selCount = 0;
-
+        int size = 200;
         private void DrawMiniMap(SpriteBatch s)
         {
             LevelManager lm = (Game.Services.GetService(typeof(LevelManager)) as LevelManager);
@@ -2493,30 +2493,48 @@ namespace KazgarsRevenge
             int curChunk = lm.GetCurrentChunk(physicalData.Position);
 
             Color blendColor = Color.White;
-            for (int i = 0; i < 9; ++i)
+            if (lm.currentLevel.width * lm.currentLevel.height == 1)
+            {
+                return;
+            }
+            for (int i = 0; i < lm.currentLevel.width * lm.currentLevel.height; ++i)
             {
                 // Safety check in case they go outside the level somehow
                 if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && i == curChunk && drawSel)
                 {
                     blendColor = Color.Yellow;
                 }
-                s.Draw(Texture2DUtil.Instance.GetTexture(mapImgDict[keyPre +i]), guiInsideRects["map"][keyPre + i], blendColor);
+                s.Draw(Texture2DUtil.Instance.GetTexture(mapImgDict[keyPre + i]), guiInsideRects["map"][keyPre + i], blendColor);
                 blendColor = Color.White;
             }
-
-
-            // TODO this is option 2, but I like the other way better I think
-            // Safety check in case they go outside the level somehow
-            //if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && drawSel)
-            //{
-            //    s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MiniMap.SELECTOR), guiInsideRects["map"][keyPre + curChunk], Color.Yellow);
-            //}
 
             // Switch between highlighting and not every 1/3 of a second if running at 60fps
             if (selCount++ % 20 == 0)
             {
                 drawSel = !drawSel;
             }
+
+            // TODO Brandon
+            //LevelManager lm = Game.Services.GetService(typeof(LevelManager)) as LevelManager;
+            //string currentChunk = lm.GetCurrentChunkImgName(physicalData.Position);
+            //Rectangle miniRect = guiOutsideRects["map"];
+            //Rotation rotation = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkRotation(physicalData.Position);
+
+            //Texture2D chunkImg = Texture2DUtil.Instance.GetTexture(currentChunk);
+            
+            //// We need to rotate the image about its center
+            //int originX = chunkImg.Width / 2;
+            //int originY = chunkImg.Height / 2;
+
+            //Vector2 playerLoc = new Vector2(physicalData.Position.X, physicalData.Position.Z);
+            //int xCoord = (int)physicalData.Position.X / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
+            //int yCoord = (int)physicalData.Position.Z / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
+
+
+            //s.Draw(chunkImg, new Rectangle(miniRect.X + miniRect.Width / 2, miniRect.Y + miniRect.Height / 2, miniRect.Width, miniRect.Height),
+            //    new Rectangle((int)playerLoc.X - size, (int)playerLoc.Y - size, size * 2, size * 2), Color.White, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
+
+            //s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), playerRect, Color.Blue);
         }
 
         private void DrawMegaMap(SpriteBatch s)
