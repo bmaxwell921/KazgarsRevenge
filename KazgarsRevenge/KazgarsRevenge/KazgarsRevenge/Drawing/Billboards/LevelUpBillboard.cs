@@ -12,13 +12,13 @@ namespace KazgarsRevenge
             : base(game, entity, position)
         {
             effect = (game.Services.GetService(typeof(BillBoardManager)) as BillBoardManager).LevelUpCircleEffect.Clone();
-            maxRadius = 1000;
+            maxDiameter = 1000;
             increasePerSec = 1500;
         }
 
         public override void Draw(CameraComponent camera)
         {
-            effect.Parameters["alpha"].SetValue(1 - (size.X / maxRadius));
+            effect.Parameters["alpha"].SetValue(1 - (size.X / maxDiameter));
             base.Draw(camera);
         }
     }

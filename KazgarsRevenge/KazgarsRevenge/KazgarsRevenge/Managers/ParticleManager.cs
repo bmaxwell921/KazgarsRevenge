@@ -20,7 +20,8 @@ namespace KazgarsRevenge
         public override void Initialize()
         {
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
-
+            
+            //add all particle types to dictionary
             systems.Add(typeof(WeaponSparksSystem), new WeaponSparksSystem(Game, Game.Content));
             systems.Add(typeof(SoulCreationParticleSystem), new SoulCreationParticleSystem(Game, Game.Content));
             systems.Add(typeof(Buff1ParticleSystem), new Buff1ParticleSystem(Game, Game.Content));

@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// holds the data for an attached model
+    /// </summary>
     public class AttachableModel
     {
         public bool Draw { get; set; }

@@ -106,12 +106,13 @@ namespace KazgarsRevenge
         KeyboardState prevKeys = Keyboard.GetState();
         public override void Update(GameTime gameTime)
         {
+            //update bounding boxes for AI and Lights
             Vector3 characterPos = Vector3.Zero;
             if (physicalData != null)
             {
                 characterPos = physicalData.Position;
             }
-            PlayerLightPos = new Vector3(characterPos.X, 50, characterPos.Z);
+            PlayerLightPos = new Vector3(characterPos.X + 5, 50, characterPos.Z + 5);
 
             Vector3 min = new Vector3(characterPos.X - playerSightRadius, 0, characterPos.Z - playerSightRadius);
             Vector3 max = new Vector3(characterPos.X + playerSightRadius, 100, characterPos.Z + playerSightRadius);
@@ -125,6 +126,7 @@ namespace KazgarsRevenge
             max = new Vector3(characterPos.X + aiUpdateRadius, 100, characterPos.Z + aiUpdateRadius);
             this.AIBox = new BoundingBox(min, max);
 
+            //update input
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
             if (Game.IsActive)
@@ -133,6 +135,7 @@ namespace KazgarsRevenge
                 double elapsedMillis = gameTime.ElapsedGameTime.TotalMilliseconds;
                 float amount = (float)elapsedMillis / 1000.0f;
 
+                //zoom based on scrollwheel
                 if (curMouse.ScrollWheelValue < prevMouse.ScrollWheelValue)
                 {
                     zoom *= 1.2f;
@@ -150,7 +153,9 @@ namespace KazgarsRevenge
                     zoom = maxZoom;
                 }
 
-                if (curKeys.IsKeyDown(Keys.Right) && prevKeys.IsKeyUp(Keys.Right))
+                
+                //yaw rotating
+                /*if (curKeys.IsKeyDown(Keys.Right) && prevKeys.IsKeyUp(Keys.Right))
                 {
                     nextYaw += MathHelper.PiOver2;
                     if (nextYaw > MathHelper.Pi * 2)
@@ -167,10 +172,11 @@ namespace KazgarsRevenge
                     {
                         nextYaw += MathHelper.Pi * 2;
                     }
-                }
+                }*/
 
             }
 
+            //updating yaw rotation
             if (yaw != nextYaw)
             {
                 float add = .05f;
@@ -226,7 +232,7 @@ namespace KazgarsRevenge
 
             inverseViewProj = Matrix.Invert(view * proj);
 
-
+            //TODO: add timer for this
             UpdateLights();
             
             prevMouse = curMouse;
@@ -283,7 +289,7 @@ namespace KazgarsRevenge
                 lightPositions[i++] = inactiveLightPos;
             }
 
-            //update effects?
+            //tell effects to update
             ++LastLightUpdate;
         }
 

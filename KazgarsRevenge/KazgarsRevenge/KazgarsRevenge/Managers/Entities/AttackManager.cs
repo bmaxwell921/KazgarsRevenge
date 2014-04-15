@@ -31,7 +31,6 @@ namespace KazgarsRevenge
             base.Initialize();
 
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
-
             particles = Game.Services.GetService(typeof(ParticleManager)) as ParticleManager;
         }
 
@@ -983,8 +982,8 @@ namespace KazgarsRevenge
             entity.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
-            DeathTimerController controller = new DeathTimerController(mainGame, entity, duration);
-            entity.AddComponent(typeof(DeathTimerController), controller);
+            DeathTimer controller = new DeathTimer(mainGame, entity, duration);
+            entity.AddComponent(typeof(DeathTimer), controller);
             genComponentManager.AddComponent(controller);
 
             attacks.Add(entity);

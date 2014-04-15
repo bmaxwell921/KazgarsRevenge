@@ -12,6 +12,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// used to communicate between controllers and this component to change various drawing parameters
+    /// </summary>
     public class SharedGraphicsParams
     {
         public float alpha;
@@ -58,17 +61,24 @@ namespace KazgarsRevenge
 
         }
 
+        //can turn off main model, if you just want to draw an attached or synced model
         bool drawMainModel = true;
         public void TurnOffMainModel()
         {
             drawMainModel = false;
         }
 
+        /// <summary>
+        /// turns off the outline effect on this model
+        /// </summary>
         public void TurnOffOutline()
         {
             modelParams.lineIntensity = 0;
         }
 
+        /// <summary>
+        /// tints all pixels on this model
+        /// </summary>
         public void AddColorTint(Color tint)
         {
             foreach (ModelMesh mesh in model.Meshes)
@@ -85,6 +95,9 @@ namespace KazgarsRevenge
             this.modelParams.alpha = alpha;
         }
 
+        /// <summary>
+        /// set the offset relative to a bone's Up for the specified emitter
+        /// </summary>
         public void SetEmitterUp(string key, float amount)
         {
             if (emitters.ContainsKey(key))
@@ -93,6 +106,9 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// set an emitter's velocity relative to the given bone
+        /// </summary>
         public void SetEmitterVel(string emitterName, float vel, string relativeBone, Vector3 offset)
         {
             ParticleEmitter possEmitter;
@@ -107,7 +123,7 @@ namespace KazgarsRevenge
 
         public ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, string attachBoneName)
         {
-            return AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);
+            return AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, maxOffset, offsetFromCenter, model.Bones[attachBoneName].Index - 2);
         }
 
         public ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxOffset, Vector3 offsetFromCenter, int attachIndex)
@@ -115,7 +131,7 @@ namespace KazgarsRevenge
             return AddEmitter(particleType, systemName, particlesPerSecond, maxOffset, maxOffset, offsetFromCenter, attachIndex);
         }
 
-        public ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxHorizontalOffset, int maxVerticalOffset, Vector3 offsetFromCenter, int attachIndex)
+        private ParticleEmitter AddEmitter(Type particleType, string systemName, float particlesPerSecond, int maxHorizontalOffset, int maxVerticalOffset, Vector3 offsetFromCenter, int attachIndex)
         {
             ParticleEmitter toAdd = new ParticleEmitter((Game.Services.GetService(typeof(CameraComponent)) as CameraComponent), (Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(particleType), particlesPerSecond, physicalData.Position, offsetFromCenter, attachIndex);
             toAdd.SetHorizontalOffset(maxHorizontalOffset);
@@ -148,10 +164,11 @@ namespace KazgarsRevenge
             conglomeration *= rot;
             conglomeration *= Matrix.CreateTranslation(physicalData.Position);
 
+            //update animations
             animationPlayer.Update(gameTime.ElapsedGameTime, true, conglomeration);
 
+            //update particle emitters
             Matrix[] boneTransforms = animationPlayer.GetWorldTransforms();
-
             List<string> toRemove = new List<string>();
             foreach (KeyValuePair<string, ParticleEmitter> k in emitters)
             {

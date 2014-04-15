@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// Draws 2D components (just player HUD for now)
+    /// </summary>
     public class SpriteManager : DrawableGameComponent
     {
         List<Component> components = new List<Component>();

@@ -100,6 +100,9 @@ namespace KazgarsRevenge
             return new Tooltip(tiplines);
         }
 
+        /// <summary>
+        /// Get the color associated with the quality
+        /// </summary>
         public static Color GetQualityColor(GearQuality quality)
         {
             switch (quality)

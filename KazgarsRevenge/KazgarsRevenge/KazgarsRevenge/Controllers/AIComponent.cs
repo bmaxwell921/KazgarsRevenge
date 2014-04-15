@@ -22,6 +22,11 @@ namespace KazgarsRevenge
         protected float newDir;
         protected float curDir;
 
+        /// <summary>
+        /// gets the absolute world translation of the bone index given
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         protected Vector3 GetBoneTranslation(int index)
         {
             return (Entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer).GetWorldTransforms()[index].Translation;
@@ -69,6 +74,9 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// 180 degrees off of GetPhysicsYaw
+        /// </summary>
         protected float GetGraphicsYaw(Vector3 move)
         {
             Vector3 lmove = new Vector3();
@@ -93,6 +101,7 @@ namespace KazgarsRevenge
             return yaw;
         }
 
+        //get the radians representing the angle in the XZ plane for the given direction
         protected float GetPhysicsYaw(Vector3 move)
         {
             float retYaw = -GetGraphicsYaw(move) - MathHelper.PiOver2;

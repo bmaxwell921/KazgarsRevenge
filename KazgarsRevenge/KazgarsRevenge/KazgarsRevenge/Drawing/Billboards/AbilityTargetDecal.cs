@@ -10,6 +10,9 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// a billboard close to the ground that indicates player's mouse position
+    /// </summary>
     public class AbilityTargetDecal : DrawableComponentBillboard
     {
         public AbilityTargetDecal(KazgarsRevengeGame game, GameEntity entity, float size)

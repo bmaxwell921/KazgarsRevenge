@@ -8,6 +8,9 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// a billboard that stretches from its creator to its own position
+    /// </summary>
     abstract public class HorizontalStretchingBillboard : DrawableComponentBillboard
     {
         Entity creatorData;

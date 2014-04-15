@@ -124,7 +124,7 @@ namespace KazgarsRevenge
                     AdjustDir(normalSpeed, .045f);
 
                     break;
-                case LootSoulState.Following:
+                case LootSoulState.Following://follows other loot soul (slowly turns rotates towards it)
                     if (Loot.Count == 0)
                     {
                         physicalData.LinearVelocity = Vector3.Zero;
@@ -147,7 +147,7 @@ namespace KazgarsRevenge
                         }
                     }
                     break;
-                case LootSoulState.Scared:
+                case LootSoulState.Scared://running around randomly
                     timer2Counter += gameTime.ElapsedGameTime.TotalMilliseconds;
                     if (timer2Counter > timer2Length)
                     {
@@ -165,7 +165,7 @@ namespace KazgarsRevenge
                         newDir = curDir;
                     }
                     break;
-                case LootSoulState.BeingLooted:
+                case LootSoulState.BeingLooted://staying in place, letting playercontroller say when to start a new loop animation (synced up with kazgar's k_loot_spin animation)
                     AdjustSizeTo(10);
 
                     if (timerCounter >= timerLength)
@@ -193,6 +193,7 @@ namespace KazgarsRevenge
             }
         }
 
+        //used to slowly adjust size to something else
         private void AdjustSizeTo(float size)
         {
             float rate = .05f + Math.Abs(modelParams.size.X - size) / 10.0f;
@@ -216,6 +217,7 @@ namespace KazgarsRevenge
             modelParams.size.Y = modelParams.size.X;
             modelParams.size.Z = modelParams.size.X;
         }
+
 
         string currentAni = "";
         SharedGraphicsParams modelParams = null;
@@ -264,6 +266,9 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// unite with other loot soul; die and return contained loot
+        /// </summary>
         public List<Item> Unite()
         {
             soulState = LootSoulState.Dying;
@@ -283,7 +288,7 @@ namespace KazgarsRevenge
         }
 
 
-
+        //merge with other loot souls when colliding with them
         protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
             if (soulState != LootSoulState.Dying && soulState != LootSoulState.BeingLooted)

@@ -10,6 +10,9 @@ using BEPUphysics.ResourceManagement;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// component with ability to query for nearby entities
+    /// </summary>
     public class QueryComponent : Component
     {
         public QueryComponent(KazgarsRevengeGame game, GameEntity entity)

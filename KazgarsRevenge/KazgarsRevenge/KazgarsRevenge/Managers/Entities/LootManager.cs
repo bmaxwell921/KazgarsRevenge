@@ -16,9 +16,11 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// Manages loot souls and loot generation
+    /// </summary>
     public class LootManager : EntityManager
     {
-
         List<GameEntity> lootSouls = new List<GameEntity>();
 
         public LootManager(KazgarsRevengeGame game)
@@ -94,6 +96,9 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// Combines the loot contained in two loot souls into one list
+        /// </summary>
         public List<Item> CombineLoot(List<Item> first, List<Item> second)
         {
             List<Item> retItems = new List<Item>();
@@ -135,6 +140,7 @@ namespace KazgarsRevenge
             return retItems;
         }
 
+        //stuff for generating loot and droptables
         #region Loot
         private Dictionary<int, Item> AllItems = new Dictionary<int, Item>();
         public Item GetItem(int id)

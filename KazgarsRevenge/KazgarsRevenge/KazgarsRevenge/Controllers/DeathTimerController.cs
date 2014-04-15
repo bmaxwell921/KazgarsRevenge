@@ -6,10 +6,10 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
-    public class DeathTimerController : Component
+    public class DeathTimer : Component
     {
         double duration;
-        public DeathTimerController(KazgarsRevengeGame game, GameEntity entity, double duration)
+        public DeathTimer(KazgarsRevengeGame game, GameEntity entity, double duration)
             : base(game, entity)
         {
             this.duration = duration;
