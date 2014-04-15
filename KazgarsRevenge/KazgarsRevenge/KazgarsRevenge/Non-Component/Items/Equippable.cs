@@ -52,9 +52,9 @@ namespace KazgarsRevenge
             StatEffects = new Dictionary<StatType, float>();
             foreach (KeyValuePair<StatType, float> k in statAllocatements)
             {
-                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance)
+                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance || k.Key == StatType.RunSpeed)
                 {
-                    StatEffects.Add(k.Key, (float)Math.Round(k.Value * statAmount / 100, 3));
+                    StatEffects.Add(k.Key, k.Value);
                 }
                 else
                 {
@@ -87,7 +87,7 @@ namespace KazgarsRevenge
 
             foreach (KeyValuePair<StatType, float> k in StatEffects)
             {
-                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance)
+                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance || k.Key == StatType.RunSpeed)
                 {
                     tiplines.Add(new TooltipLine(Color.Green, "+" + Math.Ceiling(k.Value * 100) + "% " + k.Key.ToString(), .35f));
                 }
