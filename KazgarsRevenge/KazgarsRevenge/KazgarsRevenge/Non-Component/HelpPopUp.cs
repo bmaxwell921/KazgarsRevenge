@@ -23,12 +23,26 @@ namespace KazgarsRevenge
     {
         private List<TooltipLine> lines;
         public int LineCount { get { return lines == null ? 0 : lines.Count; } }
+        Texture2D texHover = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.HOVER);
+        Texture2D gotIt = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_R);
+        Texture2D dontShowAgain = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.HOVER);
+
         public HelpPopUp(List<TooltipLine> lines)
         {
             this.lines = lines;
         }
 
-        public void Draw(SpriteBatch s, Vector2 topLeft, SpriteFont font, float scale, float lineHeight)
+        //Define tutorial popUps here!
+        public static List<HelpPopUp> getTutorial()
+        {
+            List<HelpPopUp> toRet = new List<HelpPopUp>();
+            toRet.Add(new HelpPopUp(new List<TooltipLine> { new TooltipLine(Color.White, "Press M for Map!", .65f), new TooltipLine(Color.Gold, "Your map is guide inside of", .4f), new TooltipLine(Color.Gold, "Kazgar's tower.  Use it to help you", .4f), new TooltipLine(Color.Gold, "locate the key and defeat the boss.", .4f) }));
+            toRet.Add(new HelpPopUp(new List<TooltipLine> { new TooltipLine(Color.White, "More Tuts", .65f), new TooltipLine(Color.Gold, "Write some damn lines!", .4f)}));
+
+            return toRet;
+        }
+
+        public void Draw(SpriteBatch s, Vector2 topLeft, SpriteFont font, float scale, float lineHeight, Rectangle highlightLocation, Rectangle gotItRect, Rectangle dontShowRect)
         {
             float y = 0;
             for (int i = 0; i < lines.Count; ++i)
@@ -36,6 +50,10 @@ namespace KazgarsRevenge
                 s.DrawString(font, lines[i].text, topLeft + new Vector2(0, y), lines[i].color, 0, Vector2.Zero, scale * lines[i].scale, SpriteEffects.None, 0);
                 y += lines[i].scale * lineHeight;
             }
+
+            s.Draw(texHover, highlightLocation, Color.White);
+            s.Draw(gotIt, gotItRect, Color.White);
+            s.Draw(dontShowAgain, dontShowRect, Color.White);
         }
     }
 }

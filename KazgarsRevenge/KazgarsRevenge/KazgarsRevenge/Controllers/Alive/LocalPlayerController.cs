@@ -129,7 +129,7 @@ namespace KazgarsRevenge
         public override void Start()
         {
             groundIndicator = Entity.GetComponent(typeof(AbilityTargetDecal)) as AbilityTargetDecal;
-
+            helpPoPs = HelpPopUp.getTutorial();
             base.Start();
         }
 
@@ -187,6 +187,7 @@ namespace KazgarsRevenge
         String draggingSource;
         Tooltip currentTooltip = null;
         bool hovering = false;
+        List<HelpPopUp> helpPoPs = new List<HelpPopUp>();
 
         List<Buff> buffs = new List<Buff>();
         List<DeBuff> debuffs = new List<DeBuff>();
@@ -2461,7 +2462,13 @@ namespace KazgarsRevenge
                 s.DrawString(font, "Soulevator Menu", new Vector2(100, 100), Color.White);
             }
             #endregion
+
+            #region helpPopUps
+            //Rectangle spot= new Rectangle(0,0,50,50);
+            //helpPoPs[0].Draw(s, new Vector2((int)(maxX / 2 - 125 * average), (int)((maxY - 273 * average))), font, average, 50f, guiInsideRects["inventory"]["inventory" + 2], spot, spot);
             
+            #endregion
+
             #endregion
 
 
