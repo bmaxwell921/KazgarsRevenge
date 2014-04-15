@@ -199,7 +199,14 @@ namespace KazgarsRevenge
             {
                 foreach (KeyValuePair<StatType, float> k in gear.StatEffects)
                 {
-                    stats[k.Key] += k.Value;
+                    if (k.Key == StatType.RunSpeed)
+                    {
+                        stats[k.Key] += stats[k.Key] * k.Value;
+                    }
+                    else
+                    {
+                        stats[k.Key] += k.Value;
+                    }
                 }
             }
             if (gear.AppliedEssence != null)

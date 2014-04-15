@@ -39,7 +39,7 @@ namespace KazgarsRevenge
         {
             homing = true;
             this.target = null;
-            this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);
+            this.curDir = GetYaw(physicalData.LinearVelocity);
         }
 
         public void Bleed()
@@ -91,7 +91,7 @@ namespace KazgarsRevenge
                 {
                     Vector3 move = (target.Entity.GetSharedData(typeof(Entity)) as Entity).Position - physicalData.Position;
                     move.Y = 0;
-                    newDir = GetPhysicsYaw(move);
+                    newDir = GetYaw(move);
                     AdjustDir(450.0f, .25f);
                 }
             }

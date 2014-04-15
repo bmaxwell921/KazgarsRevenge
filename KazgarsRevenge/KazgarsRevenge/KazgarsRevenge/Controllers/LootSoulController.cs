@@ -112,7 +112,7 @@ namespace KazgarsRevenge
                             Vector3 dir = (possPlayer.GetSharedData(typeof(Entity)) as Entity).Position;
                             dir = dir - physicalData.Position;
                             dir.Y = 0;
-                            newDir = GetPhysicsYaw(dir);
+                            newDir = GetYaw(dir);
                             newDir += (rand.Next(60) - 30) / 100;
                         }
                         else
@@ -142,7 +142,7 @@ namespace KazgarsRevenge
                         {
                             Vector3 move = targetData.Position - physicalData.Position;
                             move.Y = 0;
-                            newDir = GetPhysicsYaw(move);
+                            newDir = GetYaw(move);
                             AdjustDir(normalSpeed, .075f);
                         }
                     }

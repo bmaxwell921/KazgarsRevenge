@@ -112,7 +112,7 @@ namespace KazgarsRevenge
             {
                 characterPos = physicalData.Position;
             }
-            PlayerLightPos = new Vector3(characterPos.X + 5, 50, characterPos.Z + 5);
+            PlayerLightPos = new Vector3(characterPos.X + 20, 50, characterPos.Z + 20);
 
             Vector3 min = new Vector3(characterPos.X - playerSightRadius, 0, characterPos.Z - playerSightRadius);
             Vector3 max = new Vector3(characterPos.X + playerSightRadius, 100, characterPos.Z + playerSightRadius);

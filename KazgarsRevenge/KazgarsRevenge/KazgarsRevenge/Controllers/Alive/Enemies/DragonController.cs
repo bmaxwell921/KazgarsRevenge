@@ -211,7 +211,7 @@ namespace KazgarsRevenge
         {
             Vector3 diff = targetData.Position - physicalData.Position;
             diff.Y = 0;
-            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetBackwardsYaw(diff), 0, 0);
 
             if (running)
             {
@@ -316,7 +316,7 @@ namespace KazgarsRevenge
                             attacks.SpawnSpitSparks(model.GetBonePosition("d_mouth_emittor_R") + off);
                             attacks.SpawnSpitSparks(model.GetBonePosition("d_mouth_emittor_L") + off);
                         }
-                        attacks.CreateDragonCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetPhysicsYaw(dir), damage, this as AliveComponent);
+                        attacks.CreateDragonCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetYaw(dir), damage, this as AliveComponent);
                     }
                     break;
             }

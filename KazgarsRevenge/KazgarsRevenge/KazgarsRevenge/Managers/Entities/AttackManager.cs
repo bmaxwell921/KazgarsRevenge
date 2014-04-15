@@ -218,6 +218,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region Abilities
+        //Ranged
         public void CreateSnipe(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool magnet)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
@@ -535,6 +536,7 @@ namespace KazgarsRevenge
         }
 
 
+        //Melee
         public void CreateCharge(Vector3 pos, AliveComponent creator, double duration)
         {
             GameEntity entity = new GameEntity("attack", FactionType.Neutral, EntityType.None);
@@ -747,6 +749,9 @@ namespace KazgarsRevenge
 
             attacks.Add(entity);
         }
+
+        //Magic
+
         #endregion
 
         #region Enemy Abilities

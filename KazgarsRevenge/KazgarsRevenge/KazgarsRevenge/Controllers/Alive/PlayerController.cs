@@ -473,6 +473,26 @@ namespace KazgarsRevenge
             Equippable g = (Equippable)lewtz.GetItem(3107);
             g.SetStats(GearQuality.Standard, 2);
             EquipGear(g, GearSlot.Righthand);
+
+
+            g = (Equippable)lewtz.GetItem(3301);
+            g.SetStats(GearQuality.Epic, 1);
+            EquipGear(g, GearSlot.Righthand);
+            g = (Equippable)lewtz.GetItem(3302);
+            g.SetStats(GearQuality.Epic, 1);
+            EquipGear(g, GearSlot.Righthand);
+            g = (Equippable)lewtz.GetItem(3303);
+            g.SetStats(GearQuality.Epic, 1);
+            EquipGear(g, GearSlot.Righthand);
+            g = (Equippable)lewtz.GetItem(3304);
+            g.SetStats(GearQuality.Epic, 1);
+            EquipGear(g, GearSlot.Righthand);
+            g = (Equippable)lewtz.GetItem(3305);
+            g.SetStats(GearQuality.Epic, 1);
+            EquipGear(g, GearSlot.Righthand);
+            g = (Equippable)lewtz.GetItem(3306);
+            g.SetStats(GearQuality.Epic, 1);
+            EquipGear(g, GearSlot.Righthand);
         }
 
         public override void Start()
@@ -481,7 +501,6 @@ namespace KazgarsRevenge
             attachedArrowR = new AttachableModel(attacks.GetUnanimatedModel("Models\\Projectiles\\Arrow"), GearSlotToBoneName(GearSlot.Righthand), 0, -MathHelper.PiOver2);
             base.Start();
         }
-
 
         /// <summary>
         /// Initializes the fields that are needed for new and old players
@@ -1763,7 +1782,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateReflect(physicalData.Position + forward * 35, GetPhysicsYaw(forward), this as AliveComponent);
+                attacks.CreateReflect(physicalData.Position + forward * 35, GetYaw(forward), this as AliveComponent);
 
                 millisActionLength = 300;
             });
@@ -1817,7 +1836,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateHeadbutt(physicalData.Position + forward * 35, GetPhysicsYaw(forward), this as AliveComponent);
+                attacks.CreateHeadbutt(physicalData.Position + forward * 35, GetYaw(forward), this as AliveComponent);
 
                 millisActionLength = animations.GetAniMillis("k_headbutt") - 200;
             });
@@ -1872,7 +1891,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateGarrote(physicalData.Position + forward * 35, GetPhysicsYaw(forward), this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) * 5, abilityLearnedFlags[AbilityName.ExcruciatingTwist]);
+                attacks.CreateGarrote(physicalData.Position + forward * 35, GetYaw(forward), this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) * 5, abilityLearnedFlags[AbilityName.ExcruciatingTwist]);
 
                 if (abilityLearnedFlags[AbilityName.SadisticFrenzy])
                 {
@@ -2218,12 +2237,7 @@ namespace KazgarsRevenge
         protected void UpdateRotation(Vector3 move)
         {
             //orientation
-            float yaw = (float)Math.Atan(move.X / move.Z);
-            if (move.Z < 0 && move.X >= 0
-                || move.Z < 0 && move.X < 0)
-            {
-                yaw += MathHelper.Pi;
-            }
+            float yaw = (float)Math.Atan2(move.X, move.Z);
             yaw += MathHelper.Pi;
             physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
         }

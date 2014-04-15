@@ -69,6 +69,13 @@ namespace KazgarsRevenge
 
                 public class Armor
                 {
+                    public static readonly string DRAGON_HEAD = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_CHEST = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_LEGS = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_SHOULDERS = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_WRIST = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_BOOTS = @"Textures\UI\Items\Armor\helmetIcon";
+
                     public static readonly string MELEE_HEAD_RHINO = @"Textures\UI\Items\Armor\helmetIcon";
                     public static readonly string MELEE_CHEST_RHINO = @"Textures\UI\Items\Armor\I2";
                     public static readonly string MELEE_LEGS_RHINO = @"Textures\UI\Items\Armor\I2";
