@@ -1098,10 +1098,11 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(physics);
 
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\fire_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
-            pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
-            modelManager.AddComponent(graphics);
+            graphics.SlideAnimateTexture(.1f);
             graphics.AddEmitter(typeof(FirePillarMistSystem), "firemist", 40, 25, Vector3.Down * 17);
             graphics.AddEmitter(typeof(FirePillarSystem), "fire", 10, 25, Vector3.Down * 25);
+            pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
 
             PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, false);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);

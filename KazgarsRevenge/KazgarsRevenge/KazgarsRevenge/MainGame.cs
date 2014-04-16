@@ -102,7 +102,7 @@ namespace KazgarsRevenge
             {
                 graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                graphics.IsFullScreen = false;
+                graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
             }
             else

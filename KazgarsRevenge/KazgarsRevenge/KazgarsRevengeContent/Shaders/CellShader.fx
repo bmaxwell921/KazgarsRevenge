@@ -1,3 +1,6 @@
+float CurrentTime;
+float slidePerSec = 0;
+
 float alpha = 1;
 float lineIntensity = 1;
 float3 ambient = (.17, .17, .17);
@@ -61,7 +64,7 @@ ToonVSOutput ToonVS( float4 Pos: POSITION, float2 Tex : TEXCOORD, float3 N: NORM
 // Pixel shader: vertex lighting.
 float4 ToonPS(ToonVSOutput pin) : COLOR
 {
-	float4 Color = tex2D(ColorMapSampler, pin.TexCoord);
+	float4 Color = tex2D(ColorMapSampler, pin.TexCoord + float2((CurrentTime * slidePerSec), 0));
 	
 	
 	
@@ -72,7 +75,8 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 	float3 lightDir;
 	float amt;
 	float att;
-	float tmp;/*
+	float tmp;
+	/*
 	for(int i=0; i<30; ++i)
 	{
 		if(lightPositions[i].x != -10000)

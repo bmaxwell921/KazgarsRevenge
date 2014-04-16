@@ -101,6 +101,19 @@ namespace KazgarsRevenge
             }
         }
 
+        bool animated = false;
+        public void SlideAnimateTexture(float pixelsPerSec)
+        {
+            animated = true;
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    effect.Parameters["slidePerSec"].SetValue(pixelsPerSec);
+                }
+            }
+        }
+
         Matrix rotation = Matrix.Identity;
         public override void Update(GameTime gameTime)
         {
@@ -143,6 +156,10 @@ namespace KazgarsRevenge
                 {
                     foreach (Effect effect in mesh.Effects)
                     {
+                        if (animated)
+                        {
+                            effect.Parameters["CurrentTime"].SetValue((float)gameTime.TotalGameTime.TotalSeconds);
+                        }
                         effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                         effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                         Matrix world = transforms[mesh.ParentBone.Index]

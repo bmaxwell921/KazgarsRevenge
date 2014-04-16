@@ -656,7 +656,7 @@ namespace KazgarsRevenge
             id = 9900;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
                 "Boots of Testing",
-                new Dictionary<StatType, float>() { { StatType.RunSpeed, .3f }, { StatType.Vitality, 3 } },
+                new Dictionary<StatType, float>() { { StatType.RunSpeed, 2f }, { StatType.Vitality, 3 } },
                 GetAnimatedModel(armorDir + "armor_boots_rino"),
                 GearSlot.Feet,
                 GearSlot.None,

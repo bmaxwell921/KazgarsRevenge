@@ -1,7 +1,5 @@
 #include "Skinning.fxh"
 
-
-
 float alpha = 1;
 float lineIntensity = 1;
 float3 lineColor = float3(0,0,0);

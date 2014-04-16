@@ -627,6 +627,7 @@ namespace KazgarsRevenge
             model.AddEmitter(typeof(StunnedParticleSystem), "stun", 5, 5, Vector3.Up * 15);
             model.AddParticleTimer("stun", length);
         }
+
         /// <summary>
         /// Definition of Buff behavior
         /// </summary>
