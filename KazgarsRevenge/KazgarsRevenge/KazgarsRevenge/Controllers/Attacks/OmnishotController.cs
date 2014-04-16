@@ -42,7 +42,7 @@ namespace KazgarsRevenge
             //create 20 arrows in 30 degree spread from current direction
             AttackManager attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
 
-            float curYaw = GetYaw(physicalData.OrientationMatrix.Forward);
+            float curYaw = GetBackwardsYaw(physicalData.OrientationMatrix.Forward);
 
 
             for (int i = 0; i < 20; ++i)

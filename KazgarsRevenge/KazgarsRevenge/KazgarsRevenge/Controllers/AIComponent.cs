@@ -40,14 +40,9 @@ namespace KazgarsRevenge
         {
             if (curDir != newDir)
             {
-
                 if (Math.Abs(curDir - newDir) <= turnSpeed * 1.3f)
                 {
                     curDir = newDir;
-                    Vector3 newVel = new Vector3((float)Math.Cos(curDir), 0, (float)Math.Sin(curDir));
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetBackwardsYaw(newVel), 0, 0);
-                    newVel *= runSpeed;
-                    physicalData.LinearVelocity = newVel;
                 }
                 else
                 {
@@ -66,28 +61,38 @@ namespace KazgarsRevenge
                     {
                         curDir += MathHelper.TwoPi;
                     }
-                    Vector3 newVel = new Vector3((float)Math.Cos(curDir), 0, (float)Math.Sin(curDir));
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetBackwardsYaw(newVel), 0, 0);
-                    newVel *= runSpeed;
-                    physicalData.LinearVelocity = newVel;
                 }
+                Vector3 newVel = new Vector3((float)Math.Sin(curDir + MathHelper.Pi), 0, (float)Math.Cos(curDir + MathHelper.Pi));
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(curDir, 0, 0);
+                newVel *= runSpeed;
+                physicalData.LinearVelocity = newVel;
             }
+        }
+        /// <summary>
+        /// get the radians representing the angle in the XZ plane for the given direction
+        /// </summary>
+        protected float GetYaw(Vector3 dir)
+        {
+            float retYaw = (float)Math.Atan2(dir.X, dir.Z);
+            retYaw += MathHelper.Pi;
+            return retYaw;
         }
 
         /// <summary>
         /// 180 degrees off of GetYaw
         /// </summary>
-        protected float GetBackwardsYaw(Vector3 move)
+        protected float GetBackwardsYaw(Vector3 dir)
         {
-            float yaw = (float)Math.Atan2(move.X, move.Z);
-            yaw += MathHelper.Pi;
-            return yaw;
-        }
-
-        //get the radians representing the angle in the XZ plane for the given direction
-        protected float GetYaw(Vector3 move)
-        {
-            return -GetBackwardsYaw(move) - MathHelper.PiOver2;
+            float retYaw = GetYaw(dir) - MathHelper.Pi;
+            while (retYaw < 0)
+            {
+                retYaw += MathHelper.Pi * 2;
+            }
+            while (retYaw > MathHelper.Pi * 2)
+            {
+                retYaw -= MathHelper.Pi * 2;
+            }
+            return retYaw;
         }
     }
 }

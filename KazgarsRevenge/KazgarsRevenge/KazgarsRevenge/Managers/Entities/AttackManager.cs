@@ -984,6 +984,8 @@ namespace KazgarsRevenge
             entity.AddSharedData(typeof(Entity), box);
 
             UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, entity, GetUnanimatedModel("Models\\ice_block"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            graphics.TurnOffOutline();
+            graphics.AddEmitter(typeof(FrostAOEMistSystem), "frost", 10, 10, Vector3.Zero);
             entity.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
@@ -992,6 +994,8 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(controller);
 
             attacks.Add(entity);
+
+            SpawnIceBlockPoof(position);
         }
 
         public void CreateLevelUpGraphics(Entity playerEntity)
@@ -1357,6 +1361,16 @@ namespace KazgarsRevenge
 
         #region Particles
         ParticleManager particles;
+
+        public void SpawnIceBlockPoof(Vector3 position)
+        {
+            position.Y = 10;
+            ParticleSystem poof = particles.GetSystem(typeof(ToonFrostExplosionPoofSystem));
+            for (int i = 0; i < 15; ++i)
+            {
+                poof.AddParticle(position, Vector3.Zero);
+            }
+        }
 
         public void SpawnSpitSparks(Vector3 position)
         {

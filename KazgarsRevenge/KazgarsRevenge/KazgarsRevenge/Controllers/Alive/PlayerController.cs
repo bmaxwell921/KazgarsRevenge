@@ -446,12 +446,6 @@ namespace KazgarsRevenge
         public PlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
             : base(game, entity, account.CharacterLevel)
         {
-            percentHPRegenPer5 = .03f;
-            statsPerLevelMultiplier = 2;
-            baseStatsMultiplier = 10;
-            //shared data
-            this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
-            this.syncedModels = Entity.GetSharedData(typeof(Dictionary<string, Model>)) as Dictionary<string, Model>;
 
             InitGeneralFields();
 
@@ -507,6 +501,10 @@ namespace KazgarsRevenge
         /// </summary>
         private void InitGeneralFields()
         {
+            percentHPRegenPer5 = .03f;
+            statsPerLevelMultiplier = 2;
+            baseStatsMultiplier = 10;
+
             #region members
             //services
             physics = Game.Services.GetService(typeof(Space)) as Space;
@@ -514,6 +512,9 @@ namespace KazgarsRevenge
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
             lewtz = Game.Services.GetService(typeof(LootManager)) as LootManager;
             nmm = Game.Services.GetService(typeof(NetworkMessageManager)) as NetworkMessageManager;
+            //shared data
+            this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;
+            this.syncedModels = Entity.GetSharedData(typeof(Dictionary<string, Model>)) as Dictionary<string, Model>;
             #endregion
 
             #region animation setup
@@ -638,9 +639,9 @@ namespace KazgarsRevenge
         /// <summary>
         /// Initializes a player from a save file
         /// </summary>
-        private void InitPlayerFromFile()
+        private void InitPlayerFromFile(Account acc)
         {
-
+            
         }
 
         #region Action Sequences
@@ -823,6 +824,7 @@ namespace KazgarsRevenge
             actionSequences.Add("idle", IdleActions());
             actionSequences.Add("fightingstance", FightingStanceActions());
             //misc
+            actionSequences.Add("stun", StunActions());
             actionSequences.Add("loot", LootActions());
             actionSequences.Add("loot_spin", LootSpinActions());
             actionSequences.Add("loot_smash", LootSmashActions());
@@ -879,6 +881,31 @@ namespace KazgarsRevenge
 
 
         //Misc actions
+        private List<Action> StunActions()
+        {
+            List<Action> sequence = new List<Action>();
+            sequence.Add(() =>
+            {
+                physicalData.LinearVelocity = Vector3.Zero;
+                attState = AttackState.Locked;
+                animations.PauseAnimation();
+                canInterrupt = false;
+                needInterruptAction = true;
+            });
+            sequence.Add(() =>
+            {
+                attState = AttackState.None;
+                animations.UnpauseAnimation();
+            });
+
+            interruptActions.Add("stun", () =>
+            {
+                attState = AttackState.None;
+                animations.UnpauseAnimation();
+            });
+
+            return sequence;
+        }
         private List<Action> IdleActions()
         {
             List<Action> sequence = new List<Action>();
@@ -1782,7 +1809,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateReflect(physicalData.Position + forward * 35, GetYaw(forward), this as AliveComponent);
+                attacks.CreateReflect(physicalData.Position + forward * 35, GetBackwardsYaw(forward), this as AliveComponent);
 
                 millisActionLength = 300;
             });
@@ -1836,7 +1863,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateHeadbutt(physicalData.Position + forward * 35, GetYaw(forward), this as AliveComponent);
+                attacks.CreateHeadbutt(physicalData.Position + forward * 35, GetBackwardsYaw(forward), this as AliveComponent);
 
                 millisActionLength = animations.GetAniMillis("k_headbutt") - 200;
             });
@@ -1891,7 +1918,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateGarrote(physicalData.Position + forward * 35, GetYaw(forward), this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) * 5, abilityLearnedFlags[AbilityName.ExcruciatingTwist]);
+                attacks.CreateGarrote(physicalData.Position + forward * 35, GetBackwardsYaw(forward), this as AliveComponent, GeneratePrimaryDamage(StatType.Strength) * 5, abilityLearnedFlags[AbilityName.ExcruciatingTwist]);
 
                 if (abilityLearnedFlags[AbilityName.SadisticFrenzy])
                 {
@@ -2299,7 +2326,6 @@ namespace KazgarsRevenge
             return false;
         }
 
-
         public override void StopPull()
         {
             groundTargetLocation = physicalData.Position;
@@ -2309,11 +2335,8 @@ namespace KazgarsRevenge
         }
         public override void HandleStun(double length)
         {
-            physicalData.LinearVelocity = Vector3.Zero;
-            attState = AttackState.Locked;
-            stateResetCounter = length;
-            canInterrupt = true;
-            base.HandleStun(length);
+            millisActionLength = length;
+            StartSequence("stun");
         }
         #endregion
 

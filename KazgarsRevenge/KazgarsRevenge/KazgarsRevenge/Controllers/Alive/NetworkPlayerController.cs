@@ -75,13 +75,13 @@ namespace KazgarsRevenge
             Vector3 diff = targetPos - physicalData.Position;
             if (Math.Abs(diff.X) > stopRadius && Math.Abs(diff.Z) > stopRadius)
             {
-                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetBackwardsYaw(diff), 0, 0);
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(diff), 0, 0);
             }
 
 
             //get turning speed (should be faster the greater the difference in direction)
 
-            newDir = GetYaw(diff);
+            newDir = GetBackwardsYaw(diff);
             //in case one is around 2pi and the other is around 0 (the difference would be larger than it should)
             float dirdiff = Math.Min(Math.Abs(newDir - curDir), Math.Abs(newDir + MathHelper.TwoPi - curDir));
 
@@ -115,7 +115,7 @@ namespace KazgarsRevenge
                 case NetPlayerState.Standing:
                     if (Math.Abs(diff.X) > stopRadius && Math.Abs(diff.Z) > stopRadius)
                     {
-                        curDir = GetBackwardsYaw(diff);
+                        curDir = GetYaw(diff);
                         physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(curDir, 0, 0);
                         animations.StartClip("k_run", MixType.None);
                         state = NetPlayerState.Running;

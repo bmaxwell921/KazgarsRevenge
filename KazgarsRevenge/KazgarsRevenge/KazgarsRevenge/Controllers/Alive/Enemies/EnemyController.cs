@@ -215,8 +215,8 @@ namespace KazgarsRevenge
                     timerCounter = 0;
                     timerLength = rand.Next(1000, 3000);
                     float newDir = rand.Next(1, 627) / 10.0f;
-                    Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetBackwardsYaw(newVel), 0, 0);
+                    Vector3 newVel = new Vector3((float)Math.Sin(newDir + MathHelper.Pi), 0, (float)Math.Cos(newDir + MathHelper.Pi));
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(newDir, 0, 0);
                     newVel *= settings.walkSpeed;
                     curVel = newVel;
                     ChangeVelocity(curVel);
@@ -281,7 +281,7 @@ namespace KazgarsRevenge
             else if (startedAttack)
             {
                 //update rotation towards target every frame during this state
-                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetBackwardsYaw(diff), 0, 0);
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(diff), 0, 0);
                 attackCreateCounter += millis;
                 attackCounter += millis;
                 if (attackCreateCounter >= settings.attackCreateMillis)
@@ -298,7 +298,7 @@ namespace KazgarsRevenge
                 if (attackCounter >= settings.attackLength)
                 {
                     //rotating towards target
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetBackwardsYaw(diff), 0, 0);
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(diff), 0, 0);
                     attackCounter = 0;
 
                     //if the player is within attack radius, begin attack
@@ -463,7 +463,7 @@ namespace KazgarsRevenge
                     if (updatedPath || rotateTimerCounter > rotateTimerLength)
                     {
                         rotateTimerCounter = 0;
-                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetBackwardsYaw(diff), 0, 0);
+                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(diff), 0, 0);
                     }
 
                     if (currentAniName != settings.aniPrefix + settings.moveAniName)

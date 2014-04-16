@@ -16,7 +16,7 @@ namespace KazgarsRevenge
             : base(game, entity, damage, factionToHit, creator, AttackType.Ranged)
         {
             this.lifeLength = 1000;
-            this.curDir = GetYaw(physicalData.LinearVelocity);
+            this.curDir = GetBackwardsYaw(physicalData.LinearVelocity);
             this.initialDamage = damage;
             if (magnetic)
             {

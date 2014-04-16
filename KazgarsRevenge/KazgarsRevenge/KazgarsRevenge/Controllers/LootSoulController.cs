@@ -104,20 +104,27 @@ namespace KazgarsRevenge
                             return;
                         }
 
-
                         //wander towards player
                         GameEntity possPlayer = QueryNearEntityName("localplayer", physicalData.Position, 0, 10000);
                         if (possPlayer != null)
                         {
-                            Vector3 dir = (possPlayer.GetSharedData(typeof(Entity)) as Entity).Position;
-                            dir = dir - physicalData.Position;
-                            dir.Y = 0;
-                            newDir = GetYaw(dir);
-                            newDir += (rand.Next(60) - 30) / 100;
+                            Vector3 diff = (possPlayer.GetSharedData(typeof(Entity)) as Entity).Position - physicalData.Position;
+                            diff.Y = 0;
+                            newDir = GetYaw(diff);
+                            newDir += (float)(rand.Next(60) - 30) / 100.0f;
+                            if (newDir < 0)
+                            {
+                                newDir += MathHelper.Pi * 2;
+                            }
+                            else if(newDir > MathHelper.Pi * 2)
+                            {
+                                newDir -= MathHelper.Pi * 2;
+                            }
+
                         }
                         else
                         {
-                            newDir = rand.Next(1, 627) / 100.0f;
+                            newDir = (float)rand.Next(1, 627) / 100.0f;
                         }
                     }
 
@@ -140,9 +147,17 @@ namespace KazgarsRevenge
                         }
                         else
                         {
-                            Vector3 move = targetData.Position - physicalData.Position;
-                            move.Y = 0;
-                            newDir = GetYaw(move);
+                            Vector3 diff = targetData.Position - physicalData.Position;
+                            diff.Y = 0;
+                            newDir = GetYaw(diff);
+                            if (newDir < 0)
+                            {
+                                newDir += MathHelper.Pi * 2;
+                            }
+                            else if (newDir > MathHelper.Pi * 2)
+                            {
+                                newDir -= MathHelper.Pi * 2;
+                            }
                             AdjustDir(normalSpeed, .075f);
                         }
                     }
