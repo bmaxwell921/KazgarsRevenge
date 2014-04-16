@@ -444,7 +444,7 @@ namespace KazgarsRevenge
         #endregion
 
         public PlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
-            : base(game, entity, 70)
+            : base(game, entity, account.CharacterLevel)
         {
 
             InitGeneralFields();
