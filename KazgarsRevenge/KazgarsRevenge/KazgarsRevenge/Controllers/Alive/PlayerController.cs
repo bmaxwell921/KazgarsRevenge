@@ -1236,7 +1236,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this as AliveComponent, activeBuffs.ContainsKey(Buff.Homing), abilityLearnedFlags[AbilityName.Penetrating], abilityLearnedFlags[AbilityName.Leeching], activeBuffs.ContainsKey(Buff.SerratedBleeding));
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this as AliveComponent, activeBuffs.ContainsKey(Buff.Homing), abilityLearnedFlags[AbilityName.Penetrating], abilityLearnedFlags[AbilityName.Leeching], activeBuffs.ContainsKey(Buff.SerratedBleeding), false);
                 
                 millisActionLength = animations.GetAniMillis("k_shoot" + aniSuffix) - arrowReleaseMillis - arrowDrawMillis;
 
@@ -1253,7 +1253,7 @@ namespace KazgarsRevenge
                     attached.Remove("handarrow");
                 }
                 Vector3 forward = GetForward();
-                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this as AliveComponent, activeBuffs.ContainsKey(Buff.Homing), abilityLearnedFlags[AbilityName.Penetrating], abilityLearnedFlags[AbilityName.Leeching], activeBuffs.ContainsKey(Buff.SerratedBleeding));
+                attacks.CreateArrow(physicalData.Position + forward * 10, forward, GeneratePrimaryDamage(StatType.Agility), this as AliveComponent, activeBuffs.ContainsKey(Buff.Homing), abilityLearnedFlags[AbilityName.Penetrating], abilityLearnedFlags[AbilityName.Leeching], activeBuffs.ContainsKey(Buff.SerratedBleeding), false);
 
                 PlayAnimation("k_fighting_stance", MixType.None);
             });
@@ -1549,7 +1549,7 @@ namespace KazgarsRevenge
                     targetedGroundSize = makeItRainSize;
                     if (abilityLearnedFlags[AbilityName.StrongWinds])
                     {
-                        targetedGroundSize *= 4f;
+                        targetedGroundSize *= 5f;
                     }
                     //skip other actions
                     actionIndex = 10;
@@ -2276,6 +2276,18 @@ namespace KazgarsRevenge
                 physicalData.LinearVelocity = newVel;
             }
 
+            if (float.IsNaN(newVel.X))
+            {
+                newVel.X = 0;
+            }
+            if (float.IsNaN(newVel.Y))
+            {
+                newVel.Y = 0;
+            }
+            if (float.IsNaN(newVel.Z))
+            {
+                newVel.Z = 0;
+            }
         }
 
         /// <summary>

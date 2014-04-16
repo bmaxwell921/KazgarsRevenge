@@ -118,7 +118,7 @@ namespace KazgarsRevenge
                 enemyType = EntityType.EliteEnemy;
             }
 
-            GameEntity enemy = new GameEntity("Pigman", FactionType.Enemies, enemyType);
+            GameEntity enemy = new GameEntity((elite? "Elite " : "") + "Pigman", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
@@ -159,7 +159,7 @@ namespace KazgarsRevenge
             {
                 enemyType = EntityType.EliteEnemy;
             }
-            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, enemyType);
+            GameEntity enemy = new GameEntity((elite ? "Elite " : "") + "Skeleton", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Vector3 boxSize = new Vector3(20f, 37f, 20f);
@@ -196,7 +196,7 @@ namespace KazgarsRevenge
             {
                 enemyType = EntityType.EliteEnemy;
             }
-            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, enemyType);
+            GameEntity enemy = new GameEntity((elite ? "Elite " : "") + "Skeleton", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
@@ -237,7 +237,7 @@ namespace KazgarsRevenge
             {
                 enemyType = EntityType.EliteEnemy;
             }
-            GameEntity enemy = new GameEntity("Animated Armor", FactionType.Enemies, enemyType);
+            GameEntity enemy = new GameEntity((elite ? "Elite " : "") + "Animated Armor", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Dictionary<string, Model> syncedModels = new Dictionary<string, Model>();

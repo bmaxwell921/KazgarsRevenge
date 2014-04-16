@@ -47,7 +47,7 @@ namespace KazgarsRevenge
         }
 
         #region Primaries
-        public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool homing, bool penetrating, bool leeching, bool bleeding)
+        public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool homing, bool penetrating, bool leeching, bool bleeding, bool multiShot)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
@@ -69,7 +69,7 @@ namespace KazgarsRevenge
                 arrowAI.Home();
                 arrowGraphics.AddEmitter(typeof(HomingTrailParticleSystem), "trail", 80, 0, Vector3.Forward * 6);
             }
-            else
+            else if(!multiShot)
             {
                 ArrowVBillboard trail = new ArrowVBillboard(mainGame, arrow);
                 arrow.AddComponent(typeof(ArrowVBillboard), trail);
@@ -101,8 +101,13 @@ namespace KazgarsRevenge
 
             attacks.Add(arrow);
 
-            soundEffects.playRangedSound();
+            if (!multiShot)
+            {
+                soundEffects.playRangedSound();
+            }
         }
+
+
 
         public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, bool twohanded)
         {
@@ -265,7 +270,9 @@ namespace KazgarsRevenge
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"),
                                                                                 new Vector3(10), Vector3.Backward * 6, 0, 0, 0);
-            //arrowGraphics.AddEmitter(typeof(SoulTrailParticleSystem), 50, 2, Vector3.Zero);
+            ArrowVBillboard trailv = new ArrowVBillboard(mainGame, arrow);
+            arrow.AddComponent(typeof(ArrowVBillboard), trailv);
+            billboardManager.AddComponent(trailv);
             
             OmnishotController arrowAI = new OmnishotController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
@@ -1198,6 +1205,7 @@ namespace KazgarsRevenge
             SpawnTarParticles(position);
         }
 
+        Quaternion downOrientation = Quaternion.CreateFromYawPitchRoll(0, -MathHelper.PiOver2, 0);
         public void CreateFallingArrow(Vector3 position)
         {
             GameEntity arrow = new GameEntity("arrow", FactionType.Neutral, EntityType.Misc);
@@ -1207,7 +1215,7 @@ namespace KazgarsRevenge
             arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = Vector3.Down * 50;
-            arrowData.Orientation = Quaternion.CreateFromYawPitchRoll(0, -MathHelper.PiOver2, 0);
+            arrowData.Orientation = downOrientation;
             arrow.AddSharedData(typeof(Entity), arrowData);
             
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
