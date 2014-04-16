@@ -1788,7 +1788,6 @@
       <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Compile Include="Models\Armor\Dragon\armor_boots_dragon.fbx">
       <Name>armor_boots_dragon</Name>
