@@ -129,7 +129,7 @@ namespace KazgarsRevenge
         public override void Start()
         {
             groundIndicator = Entity.GetComponent(typeof(AbilityTargetDecal)) as AbilityTargetDecal;
-            helpPoPs = HelpPopUp.getTutorial();
+            helpPoPs = HelpPopUp.getTutorial(guiOutsideRects, guiInsideRects);
             base.Start();
         }
 
@@ -656,6 +656,16 @@ namespace KazgarsRevenge
                 {
                     ExitSoulevator();
                 }
+            }
+
+            //HelpPopUps
+            if (helpPoPs.Count > 0 && !guiOutsideRects.ContainsKey("helpPop"))
+            {
+                guiOutsideRects.Add("helpPop", helpPopRect);
+            }
+            else
+            {
+                guiOutsideRects.Remove("helpPop");
             }
 
 
@@ -1503,6 +1513,14 @@ namespace KazgarsRevenge
                             }
                             break;
                         #endregion
+                        #region help pop ups
+                        case "helpPop":
+                            if (innerCollides.Equals("ok"))
+                            {
+                                helpPoPs.RemoveAt(0);
+                            }
+                            break;
+                        #endregion
                     }
                 }
             }
@@ -1883,7 +1901,7 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> abilityDict;
         Dictionary<string, Rectangle> lootDict;
         Dictionary<string, Rectangle> talentDict;
-
+        Dictionary<string, Rectangle> helpPopDict;
         Dictionary<string, Rectangle> talentArrowsDict;
 
         Rectangle inventoryRect;
@@ -1894,6 +1912,7 @@ namespace KazgarsRevenge
         Rectangle playerHPRect;
         Rectangle powerBackRect;
         Rectangle megaMapRect;
+        Rectangle helpPopRect;
         Vector2 powerTextPos;
 
         Rectangle hoverRect;
@@ -1925,6 +1944,7 @@ namespace KazgarsRevenge
             //guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
 
+
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
             Vector2 equipmentUR = new Vector2((int)(maxX - 744 * average), (int)(296 * average));
             Vector2 talentUR = new Vector2(5 * average, 180 * average);
@@ -1936,6 +1956,7 @@ namespace KazgarsRevenge
             lootRect = new Rectangle((int)lootUR.X, (int)lootUR.Y, (int)(150 * average), (int)(300 * average));
             megaMapRect = new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int)(160 * average), (int)(622 * average), (int)(622 * average));
             tooltipRect = new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average));
+            helpPopRect = new Rectangle((int)(maxX / 2 - 150 * average), (int)((maxY - 273 * average)), (int)(300 * average), (int)(95 * average));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
@@ -1950,6 +1971,7 @@ namespace KazgarsRevenge
             xpDict = new Dictionary<string, Rectangle>();
             tooltipDict = new Dictionary<string, Rectangle>();
             talentDict = new Dictionary<string, Rectangle>();
+            helpPopDict = new Dictionary<string, Rectangle>();
             talentArrowsDict = new Dictionary<string, Rectangle>();
 
 
@@ -1965,6 +1987,7 @@ namespace KazgarsRevenge
             //guiInsideRects.Add("chat", chatDict);
             guiInsideRects.Add("player", playerDict);
             guiInsideRects.Add("talents", talentDict);
+            guiInsideRects.Add("helpPop", helpPopDict);
 
 
             //Equipment inner
@@ -2071,6 +2094,8 @@ namespace KazgarsRevenge
             playerHPRect = new Rectangle((int)(160 * average), 0, (int)(256 * average), (int)(32 * average));
             powerBackRect = new Rectangle(playerHPRect.X, playerHPRect.Y + playerHPRect.Height, playerHPRect.Width, playerHPRect.Height);
             powerTextPos = new Vector2((int)(170 * average), (int)(35 * average));
+
+            helpPopDict.Add("ok", new Rectangle((int)(maxX / 2 + 125 * average), (int)((maxY - 273 * average)), 25, 25));
         }
         #endregion
 
@@ -2464,8 +2489,12 @@ namespace KazgarsRevenge
             #endregion
 
             #region helpPopUps
-            //Rectangle spot= new Rectangle(0,0,50,50);
-            //helpPoPs[0].Draw(s, new Vector2((int)(maxX / 2 - 125 * average), (int)((maxY - 273 * average))), font, average, 50f, guiInsideRects["inventory"]["inventory" + 2], spot, spot);
+            if (helpPoPs.Count > 0)
+            {
+                s.Draw(texWhitePixel, new Rectangle((int)(maxX / 2 - 150 * average), (int)((maxY - 273 * average)), (int)(300 * average), (int)(95 * average)), Color.Black * 0.5f);
+                helpPoPs[0].Draw(s, new Vector2((int)(maxX / 2 - 150 * average), (int)((maxY - 273 * average))), font, average, 50f, guiInsideRects["helpPop"]["ok"], guiInsideRects["helpPop"]["ok"]);
+            }
+            
             
             #endregion
 
