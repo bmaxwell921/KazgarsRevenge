@@ -969,55 +969,55 @@ namespace KazgarsRevenge
             id = 3103;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_HEAD_SKELETON),
                 "Ranger Helm",
-                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "Barrel\\armor_head_barrel"),
+                new Dictionary<StatType, float>() { { StatType.Agility, .75f }, { StatType.Vitality, .15f }, {StatType.Armor, .1f} },
+                GetAnimatedModel(armorDir + "Bowser\\armor_head_bowser"),
                 GearSlot.Head,
                 GearSlot.None,
                 id));
             id = 3104;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_CHEST_SKELETON),
                 "Ranger Chestpiece",
-                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "Barrel\\armor_chest_barrel"),
+                new Dictionary<StatType, float>() { { StatType.Agility, .5f }, { StatType.Vitality, .25f }, {StatType.Armor, .25f} },
+                GetAnimatedModel(armorDir + "Bowser\\armor_chest_bowser"),
                 GearSlot.Chest,
                 GearSlot.None,
                 id));
             id = 3105;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_LEGS_SKELETON),
                 "Ranger Legguards",
-                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "Barrel\\armor_legs_barrel"),
+                new Dictionary<StatType, float>() { { StatType.Agility, .5f }, { StatType.Vitality, .4f }, {StatType.Armor, .1f} },
+                GetAnimatedModel(armorDir + "Bowser\\armor_legs_bowser"),
                 GearSlot.Legs,
                 GearSlot.None,
                 id));
             id = 3106;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_FEET_SKELETON),
                 "Ranger Boots",
-                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "Barrel\\armor_boots_barrel"),
+                new Dictionary<StatType, float>() { { StatType.Agility, .6f }, { StatType.Vitality, .3f }, { StatType.RunSpeed, .1f } },
+                GetAnimatedModel(armorDir + "Bowser\\armor_boots_bowser"),
                 GearSlot.Feet,
                 GearSlot.None,
                 id));
             id = 3107;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_SHOULDERS_SKELETON),
                 "Ranger Shoulderpads",
-                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "Barrel\\armor_shoulders_barrel"),
+                new Dictionary<StatType, float>() { { StatType.Agility, 1f } },
+                GetAnimatedModel(armorDir + "Bowser\\armor_shoulders_bowser"),
                 GearSlot.Shoulders,
                 GearSlot.None,
                 id));
             id = 3108;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_WRIST_SKELETON),
                 "Ranger Wristguards",
-                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
-                GetAnimatedModel(armorDir + "Barrel\\armor_wrist_barrel"),
+                new Dictionary<StatType, float>() { { StatType.Agility, .6f }, { StatType.Vitality, .2f }, {StatType.Armor, .2f} },
+                GetAnimatedModel(armorDir + "Bowser\\armor_wrist_bowser"),
                 GearSlot.Wrist,
                 GearSlot.None,
                 id));
             id = 3109;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_BLING),
                 "Ranger Ring",
-                new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
+                new Dictionary<StatType, float>() { { StatType.Agility, .8f }, { StatType.CooldownReduction, .2f } },
                 null,
                 GearSlot.Bling,
                 GearSlot.None,

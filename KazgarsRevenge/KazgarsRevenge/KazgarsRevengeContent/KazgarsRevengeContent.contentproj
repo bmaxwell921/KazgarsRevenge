@@ -1826,6 +1826,79 @@
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Armor\Bowser\armor_boots_bowser.fbx">
+      <Name>armor_boots_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_chest_bowser.fbx">
+      <Name>armor_chest_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_head_bowser.fbx">
+      <Name>armor_head_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_legs_bowser.fbx">
+      <Name>armor_legs_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_shoulders_bowser.fbx">
+      <Name>armor_shoulders_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_wrist_bowser.fbx">
+      <Name>armor_wrist_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Armor\Bowser\ranged.png">
+      <Name>ranged</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\axe2.fbx">
+      <Name>axe2</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\key_blade.fbx">
+      <Name>key_blade</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\dragon_claw.fbx">
+      <Name>dragon_claw</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\ice_sword.fbx">
+      <Name>ice_sword</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
