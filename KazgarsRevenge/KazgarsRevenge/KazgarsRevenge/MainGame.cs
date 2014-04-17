@@ -307,7 +307,7 @@ namespace KazgarsRevenge
                 ++loadInt;
                 if (loadInt > 3)
                 {
-                    ActuallyLoadLevel(FloorName.Dungeon);
+                    ActuallyLoadLevel(this.loadFloor);
                     TransitionToPlaying();
                 }
             }
@@ -328,6 +328,8 @@ namespace KazgarsRevenge
             gameState = GameState.Playing;
         }
 
+        private FloorName loadFloor;
+
         /// <summary>
         /// Starts the loading of a level with the given FloorName
         /// </summary>
@@ -335,6 +337,7 @@ namespace KazgarsRevenge
         public void LoadLevel(FloorName name)
         {
             gameState = GameState.Loading;
+            loadFloor = name;
         }
 
         public void ActuallyLoadLevel(FloorName name)

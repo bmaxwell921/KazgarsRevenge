@@ -147,6 +147,12 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void CreateLevel(FloorName name)
         {
+            // Just a special case for the game
+            if (name == FloorName.Ground)
+            {
+                CreateGround();
+                return;
+            }
             this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
         }
 
@@ -158,6 +164,12 @@ namespace KazgarsRevenge
         /// <param name="levelHeight"></param>
         public void CreateLevel(FloorName name, int levelWidth, int levelHeight)
         {
+            // Just a special case for the ground
+            if (name == FloorName.Ground)
+            {
+                CreateGround();
+                return;
+            }
             this.rooms = new List<GameEntity>();
             LevelBuilder lBuilder = new LevelBuilder(Game.Services.GetService(typeof(LoggerManager)) as LoggerManager, levelWidth, levelHeight);
             this.currentLevel = lBuilder.BuildLevel(name);
