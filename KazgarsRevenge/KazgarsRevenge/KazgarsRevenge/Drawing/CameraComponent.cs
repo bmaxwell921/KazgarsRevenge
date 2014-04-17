@@ -98,6 +98,7 @@ namespace KazgarsRevenge
             shakeTimer = 500;
         }
 
+        double lightUpdateCounter;
         Random rand;
         MouseState curMouse = Mouse.GetState();
         MouseState prevMouse = Mouse.GetState();
@@ -232,8 +233,12 @@ namespace KazgarsRevenge
 
             inverseViewProj = Matrix.Invert(view * proj);
 
-            //TODO: add timer for this
-            UpdateLights();
+            lightUpdateCounter -= gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (lightUpdateCounter <= 0)
+            {
+                lightUpdateCounter = 5000;
+                UpdateLights();
+            }
             
             prevMouse = curMouse;
             prevKeys = curKeys;
@@ -259,7 +264,7 @@ namespace KazgarsRevenge
         float playerSightRadius = 800;
         public BoundingBox CameraBox { get; private set; }
 
-        float lightSensingRadius = 1000;
+        float lightSensingRadius = 1500;
         BoundingBox LightSensingBox;
         private void UpdateLights()
         {

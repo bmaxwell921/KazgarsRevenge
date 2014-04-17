@@ -40,14 +40,17 @@ namespace KazgarsRevenge
         {
             if (curDir != newDir)
             {
+                //if close enough to the target direction, snap to it
                 if (Math.Abs(curDir - newDir) <= turnSpeed * 1.3f)
                 {
                     curDir = newDir;
                 }
-                else
+                else//otherwise, add turnSpeed radians toward the target direction
                 {
                     float add = turnSpeed;
                     float diff = curDir - newDir;
+                    //if diff is between 0 and pi, or between -pi and -2pi, need to subtract radians.
+                    //otherwise add radians
                     if (diff > 0 && diff < MathHelper.Pi || diff < 0 && -diff > MathHelper.Pi)
                     {
                         add *= -1;

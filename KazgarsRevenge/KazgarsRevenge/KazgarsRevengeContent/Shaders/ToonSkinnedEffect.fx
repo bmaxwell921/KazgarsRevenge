@@ -7,10 +7,8 @@ float3 colorTint = float3(1,1,1);
 
 float3 playerLightPosition = float3(0,0,0);
 float3 playerLightColor = float3(1,1,1);
-float3 lightPositions[30];
-float LightAttenuation = 300;
-float LightFalloff = 2;
-float3 lightColors[30];
+float3 lightPositions[5];
+float3 lightColors[5];
 
 // The texture that contains the celmap
 texture CelMap;
@@ -54,49 +52,39 @@ float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
 {
 	float4 Color = SAMPLE_TEXTURE(Texture, pin.TexCoord);
 	
-	float light = 0;
-	float3 totalColor = float3(1,1,1);
-	float curActiveLights = 1;
-
-	float3 lightDir;
-	float amt;
-	float att;
+	float highestAmt = 0;
 	float tmp;
-	/*
-	for(int i=0; i<30; ++i)
+	float tmp2;
+	float light = 0;
+	float3 totalColor = float3(0,0,0);
+	
+	float amts[5];
+	int i;
+	for(i=0; i<5; ++i)
 	{
-		if(lightPositions[i].x != -10000)
+		tmp =  1 - saturate(distance(lightPositions[i], pin.worldPos) / 300);
+		light += tmp;
+		amts[i] = tmp;
+
+		tmp2 = tmp;
+		if(tmp2 > highestAmt)
 		{
-			//get direction of light
-			lightDir = normalize(lightPositions[i] - pin.worldPos);
-
-			//get amount of light on this vertex
-			amt = saturate(dot(pin.normal, lightDir));
-
-			//get attenuation
-			att = 1 - pow(saturate(distance(lightPositions[i], pin.worldPos) / LightAttenuation), LightFalloff);
-		
-			//send resulting light to pixel shader
-			tmp = amt * att;
-			light += tmp;
-
-			totalColor += lightColors[i];
-
-			++curActiveLights;
+			highestAmt = tmp2;
+			totalColor = lightColors[i];
 		}
-	}*/
+	}
 
 	//player light location
-	lightDir = normalize(playerLightPosition - pin.worldPos);
-	amt = saturate(dot(pin.normal, lightDir));
-	att = 1 - pow(saturate(distance(playerLightPosition, pin.worldPos) / LightAttenuation), LightFalloff);
-	tmp = amt * att;
+	float3 lightDir = normalize(playerLightPosition - pin.worldPos);
+	tmp = saturate(dot(pin.normal, lightDir));
+	tmp *= 1 - pow(saturate(distance(playerLightPosition, pin.worldPos) / 300), 2);
 	light += tmp;
-	totalColor += playerLightColor;
-	++curActiveLights;
 
-	
-	totalColor /= curActiveLights;
+	//make the light's color become blacker as it falls off
+	totalColor *= highestAmt / light;
+
+	float playerLightAmt = max(0, tmp / light - highestAmt / light);
+	totalColor += playerLightColor * playerLightAmt;
 	
     if (light> ToonThresholds[0])
 	{
