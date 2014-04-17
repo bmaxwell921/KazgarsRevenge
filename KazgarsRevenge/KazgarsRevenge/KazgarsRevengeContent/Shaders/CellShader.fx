@@ -92,7 +92,7 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 	//make the light's color become blacker as it falls off
 	totalColor *= highestAmt / light;
 
-	float playerLightAmt = max(0, tmp / light - highestAmt / light);
+	float playerLightAmt = max(0, tmp / light - 2 * highestAmt / light);
 	totalColor += playerLightColor * playerLightAmt;
 
     Color.rgb *= light * totalColor * colorTint + ambient;

@@ -4,6 +4,7 @@ float alpha = 1;
 float lineIntensity = 1;
 float3 lineColor = float3(0,0,0);
 float3 colorTint = float3(1,1,1);
+float3 ambient = (.1, .1, .1);
 
 float3 playerLightPosition = float3(0,0,0);
 float3 playerLightColor = float3(1,1,1);
@@ -80,11 +81,8 @@ float4 PSToonPointLight(ToonVSOutput pin) : SV_Target0
 	tmp *= 1 - pow(saturate(distance(playerLightPosition, pin.worldPos) / 300), 2);
 	light += tmp;
 
-	//make the light's color become blacker as it falls off
-	totalColor *= highestAmt / light;
+	totalColor = lerp(playerLightColor, totalColor, highestAmt / light);
 
-	float playerLightAmt = max(0, tmp / light - highestAmt / light);
-	totalColor += playerLightColor * playerLightAmt;
 	
     if (light> ToonThresholds[0])
 	{

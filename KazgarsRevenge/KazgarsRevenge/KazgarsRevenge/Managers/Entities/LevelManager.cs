@@ -639,7 +639,7 @@ namespace KazgarsRevenge
         // TODO Set these based on a difficulty level???
         private static readonly float PROXIMITY = 60;
         // Spawn every 3 seconds
-        private static readonly float DELAY = 3000;
+        private static readonly float DELAY = 4000;
 
         private void CreateMobSpawner(Vector3 pos)
         {
@@ -667,7 +667,9 @@ namespace KazgarsRevenge
                     num = RandSingleton.U_Instance.Next(2, 5);
                 }
 
-                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, type, spawnLocs, PROXIMITY * CHUNK_SIZE, DELAY, num);
+                //add some randomness to the delay to get an even distribution of spawn times
+                float delayAdd = RandSingleton.U_Instance.Next(1500) - 750;
+                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, type, spawnLocs, PROXIMITY * CHUNK_SIZE, DELAY + delayAdd, num);
                 spawner.AddComponent(typeof(EnemyProximitySpawner), eps);
                 genComponentManager.AddComponent(eps);
 
