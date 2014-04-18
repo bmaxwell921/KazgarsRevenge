@@ -807,15 +807,6 @@ namespace KazgarsRevenge
             attacks.SpawnHitBlood(physicalData.Position);
         }
 
-        protected bool InsideCameraBox(BoundingBox cameraBox)
-        {
-            Vector3 pos = physicalData.Position;
-            return !(pos.X < cameraBox.Min.X
-                || pos.X > cameraBox.Max.X
-                || pos.Z < cameraBox.Min.Z
-                || pos.Z > cameraBox.Max.Z);
-        }
-
         
         //pathing stuff
         bool debuggingPaths = false;

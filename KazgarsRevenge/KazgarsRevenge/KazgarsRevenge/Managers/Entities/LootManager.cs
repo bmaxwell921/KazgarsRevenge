@@ -88,6 +88,29 @@ namespace KazgarsRevenge
             SpawnSoulPoof(position);
         }
 
+        public void CreateTreasureGopher(Vector3 position)
+        {
+            GameEntity entity = new GameEntity("loot", FactionType.Neutral, EntityType.Misc);
+
+            Entity data = new Box(position, 5, 5, 5);
+            entity.AddSharedData(typeof(Entity), data);
+
+            PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
+            entity.AddComponent(typeof(PhysicsComponent), physics);
+            genComponentManager.AddComponent(physics);
+
+            AnimatedModelComponent graphics = new AnimatedModelComponent(mainGame, entity, GetAnimatedModel("Models\\Gopher\\idle"), 10, Vector3.Zero);
+            entity.AddComponent(typeof(AnimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            TreasureGopherController controller = new TreasureGopherController(mainGame, entity, GetTreasureGopherLoot(levelManager.currentLevel.currentFloor, entity));
+            entity.AddComponent(typeof(TreasureGopherController), controller);
+            genComponentManager.AddComponent(controller);
+
+            lootSouls.Add(entity);
+
+        }
+
         public void SpawnSoulPoof(Vector3 position)
         {
             for (int i = 0; i < 20; ++i)
@@ -165,6 +188,11 @@ namespace KazgarsRevenge
                 killer = deadguy.Killer;
             }
             return table.GetDrops(floor, killer);
+        }
+
+        private List<Item> GetTreasureGopherLoot(FloorName floor, GameEntity gopherEntity)
+        {
+            return new List<Item>();
         }
 
         public DropTable CreateNormalDropTableFor(GameEntity enemy, AttackType type1, AttackType type2)

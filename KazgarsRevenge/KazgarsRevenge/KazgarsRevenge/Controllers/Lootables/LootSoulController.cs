@@ -15,9 +15,9 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    public class LootSoulController : AIComponent
+    public class LootSoulController : LootableController
     {
-        public enum LootSoulState
+        enum LootSoulState
         {
             Dying,
             Scared,
@@ -25,23 +25,14 @@ namespace KazgarsRevenge
             Following,
             BeingLooted,
         }
-        public LootSoulState soulState { get; private set; }
+        LootSoulState soulState { get; set; }
 
         public int totalSouls { get; private set; }
         AnimationPlayer animations;
-        private List<Item> loot;
-        public List<Item> Loot
-        {
-            get
-            {
-                return loot;
-            }
-        }
 
         public LootSoulController(KazgarsRevengeGame game, GameEntity entity, int wanderSeed, List<Item> loot, int totalSouls)
-            : base(game, entity)
+            : base(game, entity, loot)
         {
-            this.loot = loot;
             this.totalSouls = totalSouls;
             soulState = LootSoulState.Wandering;
 
@@ -236,9 +227,8 @@ namespace KazgarsRevenge
 
         string currentAni = "";
         SharedGraphicsParams modelParams = null;
-        public void OpenLoot(Vector3 position, Quaternion q)
+        public override void OpenLoot(Vector3 position, Quaternion q)
         {
-
             physicalData.Position = position;
             physicalData.Orientation = q;
             soulState = LootSoulState.BeingLooted;
@@ -249,36 +239,20 @@ namespace KazgarsRevenge
             physicalData.LinearVelocity = Vector3.Zero;
         }
 
-        public void StartSpin()
+        public override void StartSpin()
         {
             animations.StartClip("soul_loot_spin", MixType.PauseAtEnd);
         }
-
-        public void CloseLoot()
+        public override void CloseLoot()
         {
             currentAni = "soul_loot_smash";
             animations.StartClip(currentAni, MixType.MixInto);
             timerCounter = 0;
             timerLength = animations.GetAniMillis(currentAni) - 30;
         }
-
-        public Item GetLoot(int lootIndex)
+        public override bool CanLoot()
         {
-            if (loot.Count - 1 < lootIndex)
-            {
-                //that loot doesn't exist
-                return null;
-            }
-
-            return loot[lootIndex];
-        }
-
-        public void RemoveLoot(int lootIndex)
-        {
-            if (loot.Count - 1 >= lootIndex)
-            {
-                loot.RemoveAt(lootIndex);
-            }
+            return soulState != LootSoulState.BeingLooted && soulState != LootSoulState.Dying;
         }
 
         /// <summary>
@@ -289,11 +263,6 @@ namespace KazgarsRevenge
             soulState = LootSoulState.Dying;
             Entity.KillEntity();
             return loot;
-        }
-
-        public bool RequestLootFromServer(int i)
-        {
-            return true;
         }
 
         public override void End()

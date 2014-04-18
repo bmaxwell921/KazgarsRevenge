@@ -145,8 +145,10 @@
     <Compile Include="Controllers\DebrisController.cs" />
     <Compile Include="Controllers\FallingArrowController.cs" />
     <Compile Include="Controllers\LevelUpController.cs" />
-    <Compile Include="Controllers\LootSoulController.cs" />
+    <Compile Include="Controllers\Lootables\LootableController.cs" />
+    <Compile Include="Controllers\Lootables\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
+    <Compile Include="Controllers\Lootables\TreasureGopherController.cs" />
     <Compile Include="Controllers\Objects\KeyController.cs" />
     <Compile Include="Controllers\Objects\PillarController.cs" />
     <Compile Include="Controllers\Objects\SoulevatorController.cs" />

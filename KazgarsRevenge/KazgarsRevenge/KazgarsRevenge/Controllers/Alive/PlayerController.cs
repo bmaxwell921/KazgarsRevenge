@@ -108,7 +108,7 @@ namespace KazgarsRevenge
         protected int gold = 0;
         protected const int NUM_LOOT_SHOWN = 4;
         protected int maxInventorySlots = 16;
-        protected LootSoulController lootingSoul = null;
+        protected LootableController lootingSoul = null;
         protected Dictionary<GearSlot, Equippable> gear = new Dictionary<GearSlot, Equippable>();
         //inventory
         protected Item[] inventory = new Item[16];
@@ -2193,8 +2193,8 @@ namespace KazgarsRevenge
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
             if (possLoot != null)
             {
-                lootingSoul = (possLoot.GetComponent(typeof(AIComponent)) as LootSoulController);
-                if (lootingSoul.soulState != LootSoulController.LootSoulState.BeingLooted && lootingSoul.soulState != LootSoulController.LootSoulState.Dying)
+                lootingSoul = (possLoot.GetComponent(typeof(AIComponent)) as LootableController);
+                if (lootingSoul.CanLoot())
                 {
                     StartSequence("loot");
                     lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);

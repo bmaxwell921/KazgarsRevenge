@@ -415,7 +415,7 @@ namespace KazgarsRevenge
 
         /// <summary>
         /// creates a raycast from the mouse, and returns the position on the ground that it hits.
-        /// Also does a bepu raycast and finds the first enemy it hits, and keeps its healthcomponent
+        /// Also does a bepu raycast and finds the first enemy it hits, and keeps its AliveComponent
         /// for gui purposes
         /// </summary>
         /// <returns></returns>
@@ -498,7 +498,6 @@ namespace KazgarsRevenge
         /// <summary>
         /// Checks which buttons are pressed down
         /// </summary>
-        /// <returns></returns>
         private bool CheckGUIButtons()
         {
             //switch weapon hands (for demo)
