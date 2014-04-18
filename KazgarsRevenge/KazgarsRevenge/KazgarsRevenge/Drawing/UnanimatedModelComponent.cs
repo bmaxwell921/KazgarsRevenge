@@ -175,6 +175,8 @@ namespace KazgarsRevenge
                         {
                             effect.Parameters["lightPositions"].SetValue(camera.lightPositions);
                             effect.Parameters["lightColors"].SetValue(camera.lightColors);
+                            effect.Parameters["ambient"].SetValue(camera.AmbientLight);
+
                         }
                     }
                     mesh.Draw();

@@ -147,6 +147,7 @@ namespace KazgarsRevenge
         /// <param name="name"></param>
         public void CreateLevel(FloorName name)
         {
+            camera.StartLevel(name);
             // Just a special case for the game
             if (name == FloorName.Ground)
             {

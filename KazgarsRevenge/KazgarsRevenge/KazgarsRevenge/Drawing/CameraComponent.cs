@@ -88,6 +88,15 @@ namespace KazgarsRevenge
             int swidth = Game.GraphicsDevice.Viewport.Width;
 
             LastLightUpdate = int.MinValue;
+
+            ambientLightDefs = new Vector3[Enum.GetNames(typeof(FloorName)).Length];
+            ambientLightDefs[(int)FloorName.Ground] = new Vector3(.3f, .3f, .3f);
+            ambientLightDefs[(int)FloorName.Dungeon] = new Vector3(.085f, .085f, .085f);
+            ambientLightDefs[(int)FloorName.Library] = new Vector3(.3f, .3f, .3f);
+            ambientLightDefs[(int)FloorName.TortureChamber] = new Vector3(.3f, .3f, .3f);
+            ambientLightDefs[(int)FloorName.Lab] = new Vector3(.3f, .3f, .3f);
+            ambientLightDefs[(int)FloorName.GrandHall] = new Vector3(.5f, .5f, .5f);
+
         }
 
         double shakeTimer = -1;
@@ -249,6 +258,8 @@ namespace KazgarsRevenge
         }
 
         #region Lights
+        public Vector3 AmbientLight { get; private set; }
+        Vector3[] ambientLightDefs;
         public Vector3 PlayerLightPos { get; private set; }
 
         public const int MAX_ACTIVE_LIGHTS = 30;
@@ -298,6 +309,11 @@ namespace KazgarsRevenge
             ++LastLightUpdate;
         }
 
+        public void StartLevel(FloorName name)
+        {
+            AmbientLight = ambientLightDefs[(int)name];
+            LastLightUpdate = int.MinValue;
+        }
         #endregion
     }
 }

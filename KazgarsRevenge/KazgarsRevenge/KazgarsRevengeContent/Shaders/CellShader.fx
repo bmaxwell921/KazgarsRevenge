@@ -85,15 +85,18 @@ float4 ToonPS(ToonVSOutput pin) : COLOR
 	}
 	
 
-	//player light location
+	//player light source
 	tmp = 1 - saturate(distance(playerLightPosition, pin.worldPos) / 300);
 	light += tmp;
 
-	//make the light's color become blacker as it falls off
-	totalColor *= highestAmt / light;
+	float envAmt = saturate(highestAmt / light);
+	float playerAmt = tmp / light;
 
-	float playerLightAmt = max(0, tmp / light - 2 * highestAmt / light);
-	totalColor += playerLightColor * playerLightAmt;
+	//make the light's color become blacker as it falls off
+	totalColor *= envAmt;
+
+	playerAmt = saturate(playerAmt - 2 * envAmt);
+	totalColor += playerLightColor * playerAmt;
 
     Color.rgb *= light * totalColor * colorTint + ambient;
     Color.a = min(alpha, Color.a);
