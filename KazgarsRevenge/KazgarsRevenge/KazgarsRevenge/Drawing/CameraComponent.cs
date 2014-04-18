@@ -272,7 +272,7 @@ namespace KazgarsRevenge
         float aiUpdateRadius = 600;
         public BoundingBox AIBox { get; private set; }
 
-        float playerSightRadius = 800;
+        float playerSightRadius = 900;
         public BoundingBox CameraBox { get; private set; }
 
         float lightSensingRadius = 1500;
