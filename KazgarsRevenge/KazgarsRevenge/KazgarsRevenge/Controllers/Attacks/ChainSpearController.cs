@@ -41,21 +41,21 @@ namespace KazgarsRevenge
         //if this controller collides with the same entity, tell it so and start pulling it towards the creator
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
-            if (!pulling)
+            lock (targetData)
             {
-                GameEntity hitEntity = other.Tag as GameEntity;
-                if (hitEntity != null)
+                if (!pulling)
                 {
-                    if (hitEntity.Name == "room")
+                    GameEntity hitEntity = other.Tag as GameEntity;
+                    if (hitEntity != null)
                     {
-                        Entity.KillEntity();
-                    }
-                    if (hitEntity.Faction == factionToSpear)
-                    {
-                        target = hitEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
-                        if (target != null)
+                        if (hitEntity.Name == "room")
                         {
-                            if (!pulling)
+                            Entity.KillEntity();
+                        }
+                        if (hitEntity.Faction == factionToSpear)
+                        {
+                            target = hitEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+                            if (target != null)
                             {
                                 targetData = hitEntity.GetSharedData(typeof(Entity)) as Entity;
                                 target.Pull();
@@ -66,10 +66,9 @@ namespace KazgarsRevenge
                                 lifeLength = 8000;
                                 if (target != null)
                                 {
-                                    target.DamageDodgeable(stun ? DeBuff.ForcefulThrow : DeBuff.None, 0, creator.Entity, AttackType.None);
+                                    target.Damage(stun ? DeBuff.ForcefulThrow : DeBuff.None, 0, creator.Entity, AttackType.None, false);
                                 }
                             }
-                            
                         }
                     }
                 }

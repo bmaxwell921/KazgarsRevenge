@@ -1865,13 +1865,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Armor\Bowser\ranged.png">
-      <Name>ranged</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Models\Weapons\axe2.fbx">
       <Name>axe2</Name>
       <Importer>FbxImporter</Importer>

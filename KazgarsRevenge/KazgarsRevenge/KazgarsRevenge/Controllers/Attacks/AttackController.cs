@@ -40,7 +40,7 @@ namespace KazgarsRevenge
 
         public void Reflect(FactionType toHit)
         {
-            //flip faction to hit and direction
+            //fchange faction and flip direction
             this.factionToHit = toHit;
             Entity.ChangeFaction(toHit);
             physicalData.LinearVelocity = new Vector3(-physicalData.LinearVelocity.X, 0, -physicalData.LinearVelocity.Z);
@@ -144,7 +144,7 @@ namespace KazgarsRevenge
             if (t != null)
             {
                 int toDeal = GetDamage();
-                int d = t.DamageDodgeable(debuff, toDeal, creator.Entity, type);
+                int d = t.Damage(debuff, toDeal, creator.Entity, type, true);
                 damageDealt += d;
                 if (lifesteal)
                 {

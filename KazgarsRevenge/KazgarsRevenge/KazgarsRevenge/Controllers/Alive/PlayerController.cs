@@ -2151,15 +2151,19 @@ namespace KazgarsRevenge
         #endregion
 
         #region helpers
+        private object actionLockObj = new Object();
         protected bool inSoulevator = false;
         /// <summary>
         /// called by the soulevator controller when the player runs into it
         /// </summary>
         public void EnterSoulevator()
         {
-            StartSequence("idle");
-            attState = AttackState.Locked;
-            inSoulevator = true;
+            lock (actionLockObj)
+            {
+                StartSequence("idle");
+                attState = AttackState.Locked;
+                inSoulevator = true;
+            }
         }
         /// <summary>
         /// called by the player when exiting the soulevator

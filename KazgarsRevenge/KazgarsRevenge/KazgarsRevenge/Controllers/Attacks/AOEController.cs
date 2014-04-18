@@ -73,7 +73,7 @@ namespace KazgarsRevenge
                                 AliveComponent alive = entity.GetComponent(typeof(AliveComponent)) as AliveComponent;
                                 if (alive != null)
                                 {
-                                    damageDealt += alive.Damage(debuff, damage, creator.Entity, AttackType.None);
+                                    damageDealt += alive.Damage(debuff, damage, creator.Entity, AttackType.None, false);
                                 }
                             }
                         }

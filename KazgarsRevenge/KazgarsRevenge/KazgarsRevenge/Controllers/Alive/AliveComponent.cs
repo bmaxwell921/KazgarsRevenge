@@ -396,18 +396,20 @@ namespace KazgarsRevenge
         /// <summary>
         /// calculates the actual amount of damage and then returns what was subtracted
         /// </summary>
-        protected int Damage(int d, GameEntity from, bool trueDamage)
+        protected int Damage(int d, GameEntity from, bool dodgeable)
         {
+            if (dodgeable && activeBuffs.ContainsKey(Buff.Elusiveness))
+            {
+                //dodge
+                return 0;
+            }
             int actualDamage = 0;
             if (!activeBuffs.ContainsKey(Buff.Invincibility))
             {
                 actualDamage = d;
-                if (!trueDamage)
-                {
-                    actualDamage -= Math.Max(0, 
-                        (int)(actualDamage * GetStat(StatType.Armor) / (20 * (Level)))
-                        );
-                }
+                actualDamage -= Math.Max(0, 
+                    (int)(actualDamage * GetStat(StatType.Armor) / (20 * (Level)))
+                    );
 
                 if (!Dead)
                 {
@@ -433,25 +435,9 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
-        /// Try to damage this entity, but can be negated if it has the right buff
+        /// Try to damage this alivecomponent
         /// </summary>
-        public int DamageDodgeable(DeBuff db, int d, GameEntity from, AttackType type)
-        {
-            if (activeBuffs.ContainsKey(Buff.Elusiveness))
-            {
-                //dodge
-                return 0;
-            }
-            else
-            {
-                return Damage(db, d, from, type);
-            }
-        }
-
-        /// <summary>
-        /// Undodgeable damage
-        /// </summary>
-        public int Damage(DeBuff db, int d, GameEntity from, AttackType type)
+        public int Damage(DeBuff db, int d, GameEntity from, AttackType type, bool dodgeable)
         {
             if (db == DeBuff.Burning && activeDebuffs.ContainsKey(DeBuff.Tar))
             {
@@ -463,7 +449,7 @@ namespace KazgarsRevenge
                 d *= 15;
             }
 
-            int actualDamage = Damage(d, from, false);
+            int actualDamage = Damage(d, from, dodgeable);
             TakeDamage(actualDamage, from);
 
             //handle negative effect
