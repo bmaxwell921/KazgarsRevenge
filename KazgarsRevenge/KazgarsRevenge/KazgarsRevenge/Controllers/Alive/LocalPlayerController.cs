@@ -1520,6 +1520,18 @@ namespace KazgarsRevenge
                             }
                             break;
                         #endregion
+                        #region soulevator
+                        case "soulevator":
+                            int result = -1;
+                            if (Int32.TryParse(innerCollides, out result))
+                            {
+                                if (result >= 0 && result < Enum.GetNames(typeof(FloorName)).Length)
+                                {
+                                    (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateLevel((FloorName)result);
+                                }
+                            }
+                            break;
+                        #endregion
                     }
                 }
             }
@@ -1902,6 +1914,7 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> talentDict;
         Dictionary<string, Rectangle> helpPopDict;
         Dictionary<string, Rectangle> talentArrowsDict;
+        Dictionary<string, Rectangle> soulevatorDict;
 
         Rectangle inventoryRect;
         Rectangle equipmentRect;
@@ -1942,6 +1955,8 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             //guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
+            Rectangle soulRect = new Rectangle((int)(100 * average), (int)(50 * average), (int)(200 * average), (int)(400 * average));
+            guiOutsideRects.Add("soulevator", soulRect);
 
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
@@ -1972,6 +1987,7 @@ namespace KazgarsRevenge
             talentDict = new Dictionary<string, Rectangle>();
             helpPopDict = new Dictionary<string, Rectangle>();
             talentArrowsDict = new Dictionary<string, Rectangle>();
+            soulevatorDict = new Dictionary<string, Rectangle>();
 
 
             //Add frame dictionaries
@@ -1987,6 +2003,7 @@ namespace KazgarsRevenge
             guiInsideRects.Add("player", playerDict);
             guiInsideRects.Add("talents", talentDict);
             guiInsideRects.Add("helpPop", helpPopDict);
+            guiInsideRects.Add("soulevator", soulevatorDict);
 
 
             //Equipment inner
@@ -2096,6 +2113,15 @@ namespace KazgarsRevenge
             powerTextPos = new Vector2((int)(170 * average), (int)(35 * average));
 
             helpPopDict.Add("ok", new Rectangle((int)(maxX / 2 + 125 * average), (int)((maxY - 273 * average)), 25, 25));
+
+            //soulevator menu
+            for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
+            {
+                soulevatorDict.Add(i + "", new Rectangle(soulRect.X + (int)(10 * average), soulRect.Y + (int)(15 * i * average), soulRect.Width - (int)(20 * average), soulRect.Height - (int)(20 * average)));
+            }
+
+
+
         }
         #endregion
 
@@ -2483,8 +2509,12 @@ namespace KazgarsRevenge
             #region soulevator
             if (inSoulevator)
             {
-                s.Draw(texWhitePixel, new Rectangle(50, 50, 500, 500), Color.Black * .5f);
-                s.DrawString(font, "Soulevator Menu", new Vector2(100, 100), Color.White);
+                s.Draw(texWhitePixel, guiOutsideRects["soulevator"], Color.Black);
+                for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
+                {
+                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i+""];
+                    s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White);
+                }
             }
             #endregion
 

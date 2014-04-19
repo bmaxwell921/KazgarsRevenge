@@ -141,12 +141,57 @@ namespace KazgarsRevenge
             Texture2DUtil.Instance.GetTexture(@"Textures\UI\MegaMap\" + currentLevel.chunkInfos[0, 0].ChunkName);
         }
 
+        private void ClearLevelEntities()
+        {
+            if (key != null)
+            {
+                key.KillEntity();
+                key = null;
+            }
+
+            if (lockedDoors != null)
+            {
+                foreach (GameEntity g in lockedDoors)
+                {
+                    g.KillEntity();
+                }
+                lockedDoors.Clear();
+            }
+
+            if (props != null)
+            {
+                foreach (GameEntity g in props)
+                {
+                    g.KillEntity();
+                }
+                props.Clear();
+            }
+
+            if (misc != null)
+            {
+                foreach (GameEntity g in misc)
+                {
+                    g.KillEntity();
+                }
+                misc.Clear();
+            }
+
+
+            foreach (GameEntity g in rooms)
+            {
+                g.KillEntity();
+            }
+            rooms.Clear();
+
+        }
+
         /// <summary>
         /// Generates a new level to play with the default width and height in chunks (3x3)
         /// </summary>
         /// <param name="name"></param>
         public void CreateLevel(FloorName name)
         {
+            ClearLevelEntities();
             camera.StartLevel(name);
             // Just a special case for the game
             if (name == FloorName.Ground)
