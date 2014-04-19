@@ -2007,6 +2007,7 @@ namespace KazgarsRevenge
             Rectangle totalMiniArea = guiOutsideRects["map"];
             int miniInnerWidth = totalMiniArea.Width / 3;
             int miniInnerHeight = totalMiniArea.Height / 3;
+            mapDict["Total"] = totalMiniArea;
             mapDict["Loc0"] = new Rectangle(totalMiniArea.X, totalMiniArea.Y, miniInnerWidth, miniInnerHeight);
             mapDict["Loc1"] = new Rectangle(totalMiniArea.X + miniInnerWidth, totalMiniArea.Y, miniInnerWidth, miniInnerHeight);
             mapDict["Loc2"] = new Rectangle(totalMiniArea.X + miniInnerWidth * 2, totalMiniArea.Y, miniInnerWidth, miniInnerHeight);
@@ -2544,49 +2545,43 @@ namespace KazgarsRevenge
 
         private bool drawSel = true;
         private int selCount = 0;
-
+        private int zoom = 300;
         private void DrawMiniMap(SpriteBatch s)
         {
+            /*
+             * Basically we need to find the player's position within a chunk, then we can translate
+             * that position in the chunk to a position in the chunk image, and draw that area of the chunk
+             */ 
             LevelManager lm = (Game.Services.GetService(typeof(LevelManager)) as LevelManager);
-            // When the player goes to a new chunk we need to update the miniMap images
-            if (lm.NeedsMiniMapUpdate())
-            {
-                mapImgDict = lm.getMiniImageMap();
-            }
-            string keyPre = "Loc";
 
-            // The chunk we're currently in
-            int curChunk = lm.GetCurrentChunk(physicalData.Position);
+            // Current chunk's image
+            Texture2D curChunk = Texture2DUtil.Instance.GetTexture(lm.GetCurrentChunkImgName(physicalData.Position));
+            Rotation curRot = lm.GetCurrentChunkRotation(physicalData.Position);
 
-            Color blendColor = Color.White;
-            if (lm.currentLevel.width * lm.currentLevel.height == 1)
-            {
-                return;
-            }
-            for (int i = 0; i < lm.currentLevel.width * lm.currentLevel.height; ++i)
-            {
-                // Safety check in case they go outside the level somehow
-                if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && i == curChunk && drawSel)
-                {
-                    blendColor = Color.Yellow;
-                }
-                s.Draw(Texture2DUtil.Instance.GetTexture(mapImgDict[keyPre +i]), guiInsideRects["map"][keyPre + i], blendColor);
-                blendColor = Color.White;
-            }
+            // The x and y coord of the current chunk (in the 3x3 grid)
+            int chunkX = (int)physicalData.Position.X / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
+            int chunkZ = (int)physicalData.Position.Z / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
 
+            // Where the player's located in the chunk
+            float inChunkX = physicalData.Position.X - (chunkX * LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
+            float inChunkZ = physicalData.Position.Z - (chunkZ * LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
 
-            // TODO this is option 2, but I like the other way better I think
-            // Safety check in case they go outside the level somehow
-            //if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && drawSel)
-            //{
-            //    s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MiniMap.SELECTOR), guiInsideRects["map"][keyPre + curChunk], Color.Yellow);
-            //}
+            /*
+             * Translate to coordinates in the image:
+             *  (inChunkX / chunkWidth) = (imgX / imgWidth)
+             *  imgX = (imgWidth) * (inChunkX / chunkWidth)
+             */
+            float imgX = curChunk.Width * (inChunkX / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE));
+            float imgZ = curChunk.Width * (inChunkZ / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE));
 
-            // Switch between highlighting and not every 1/3 of a second if running at 60fps
-            if (selCount++ % 20 == 0)
-            {
-                drawSel = !drawSel;
-            }
+            Rectangle src = new Rectangle((int) imgX, (int) imgZ, zoom, zoom);
+            // Center it
+            src.X -= (int) (zoom / 2); 
+            src.Y -= (int) (zoom / 2);
+
+            Rectangle drawLoc = guiInsideRects["map"]["Total"];
+            s.Draw(curChunk, new Rectangle(drawLoc.X, drawLoc.Y, drawLoc.Width, drawLoc.Height), src,
+                Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
         }
 
         private void DrawMegaMap(SpriteBatch s)
