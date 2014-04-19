@@ -2157,7 +2157,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// called by the soulevator controller when the player runs into it
         /// </summary>
-        public void EnterSoulevator()
+        public virtual void EnterSoulevator()
         {
             lock (actionLockObj)
             {

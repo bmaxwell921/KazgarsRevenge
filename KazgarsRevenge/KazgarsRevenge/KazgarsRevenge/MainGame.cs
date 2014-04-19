@@ -334,16 +334,35 @@ namespace KazgarsRevenge
         /// Starts the loading of a level with the given FloorName
         /// </summary>
         /// <param name="name"></param>
-        public void LoadLevel(FloorName name)
+        public void LoadNewLevel(FloorName name)
         {
             gameState = GameState.Loading;
             loadFloor = name;
+            createNewPlayer = true;
+        }
+
+        bool createNewPlayer = true;
+        /// <summary>
+        /// Assume that the player has already been created, so just reset its position
+        /// </summary>
+        public void LoadNextLevel(FloorName name)
+        {
+            gameState = GameState.Loading;
+            loadFloor = name;
+            createNewPlayer = false;
         }
 
         public void ActuallyLoadLevel(FloorName name)
         {
             levels.CreateLevel(name);
-            players.CreateMainPlayerInLevel(DUMMY_ID);
+            if (createNewPlayer)
+            {
+                players.CreateMainPlayerInLevel(DUMMY_ID);
+            }
+            else
+            {
+                players.ResetPlayerPosition();
+            }
         }
 
         Vector2 vecLoadingText;

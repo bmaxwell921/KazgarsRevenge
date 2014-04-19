@@ -1527,7 +1527,7 @@ namespace KazgarsRevenge
                             {
                                 if (result >= 0 && result < Enum.GetNames(typeof(FloorName)).Length)
                                 {
-                                    (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateLevel((FloorName)result);
+                                    (Game as MainGame).LoadNewLevel((FloorName)result);
                                 }
                             }
                             break;
@@ -1833,6 +1833,19 @@ namespace KazgarsRevenge
                     }
                     break;
                 #endregion
+                #region soulevator
+                case "soulevator":
+                    int result = -1;
+                    if (Int32.TryParse(innerCollides, out result))
+                    {
+                        if (result >= 0 && result < Enum.GetNames(typeof(FloorName)).Length)
+                        {
+                            hovering = true;
+                            hoverRect = guiInsideRects["soulevator"][result + ""];
+                        }
+                    }
+                    break;
+                #endregion
                 default:
                     currentTooltip = null;
                     break;
@@ -1878,6 +1891,14 @@ namespace KazgarsRevenge
 
         }
 
+        public override void EnterSoulevator()
+        {
+            base.EnterSoulevator();
+            if (!guiOutsideRects.ContainsKey("soulevator"))
+            {
+                guiOutsideRects.Add("soulevator", soulevatorRect);
+            }
+        }
         #endregion
 
         #region Draw Parameter Setup
@@ -1925,6 +1946,7 @@ namespace KazgarsRevenge
         Rectangle powerBackRect;
         Rectangle megaMapRect;
         Rectangle helpPopRect;
+        Rectangle soulevatorRect
         Vector2 powerTextPos;
 
         Rectangle hoverRect;
@@ -1955,8 +1977,8 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             //guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
-            Rectangle soulRect = new Rectangle((int)(100 * average), (int)(50 * average), (int)(200 * average), (int)(400 * average));
-            guiOutsideRects.Add("soulevator", soulRect);
+            soulevatorRect = new Rectangle((int)(470 * average), 0, (int)(400 * average), (int)(475 * average));
+            //guiOutsideRects.Add("soulevator", soulRect);
 
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
@@ -2117,7 +2139,7 @@ namespace KazgarsRevenge
             //soulevator menu
             for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
             {
-                soulevatorDict.Add(i + "", new Rectangle(soulRect.X + (int)(10 * average), soulRect.Y + (int)(15 * i * average), soulRect.Width - (int)(20 * average), soulRect.Height - (int)(20 * average)));
+                soulevatorDict.Add(i + "", new Rectangle(soulRect.X + (int)(10 * average), soulRect.Y + (int)(75 * i * average + 10 * average), soulRect.Width - (int)(20 * average), (int)(50 * average)));
             }
 
 
@@ -2493,6 +2515,18 @@ namespace KazgarsRevenge
             }
             #endregion
 
+            #region soulevator
+            if (inSoulevator)
+            {
+                s.Draw(texWhitePixel, guiOutsideRects["soulevator"], Color.Black);
+                for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
+                {
+                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i+""];
+                    s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                }
+            }
+            #endregion
+
             #region tooltip and hover
             if (currentTooltip != null)
             {
@@ -2503,18 +2537,6 @@ namespace KazgarsRevenge
             if (hovering)
             {
                 s.Draw(texHover, hoverRect, new Color(255, 255, 166));
-            }
-            #endregion
-
-            #region soulevator
-            if (inSoulevator)
-            {
-                s.Draw(texWhitePixel, guiOutsideRects["soulevator"], Color.Black);
-                for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
-                {
-                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i+""];
-                    s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White);
-                }
             }
             #endregion
 

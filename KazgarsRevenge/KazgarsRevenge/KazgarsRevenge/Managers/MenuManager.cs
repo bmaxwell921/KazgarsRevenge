@@ -224,7 +224,7 @@ namespace KazgarsRevenge
         // Does the loading, then sets the loadingStae as Complete
         private void ActualLoad(object name)
         {
-            (Game as MainGame).LoadLevel((FloorName)name);
+            (Game as MainGame).LoadNewLevel((FloorName)name);
             lock (lockObj)
             {
                 loadingState = LoadingState.COMPLETE;
