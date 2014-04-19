@@ -1545,7 +1545,8 @@ namespace KazgarsRevenge
                             {
                                 if (result >= 0 && result < Enum.GetNames(typeof(FloorName)).Length)
                                 {
-                                    (Game as MainGame).LoadNewLevel((FloorName)result);
+                                    (Game as MainGame).LoadNextLevel((FloorName)result);
+                                    ExitSoulevator();
                                 }
                             }
                             break;
@@ -1917,6 +1918,15 @@ namespace KazgarsRevenge
                 guiOutsideRects.Add("soulevator", soulevatorRect);
             }
         }
+
+        protected override void ExitSoulevator()
+        {
+            base.ExitSoulevator();
+            if (guiOutsideRects.ContainsKey("soulevator"))
+            {
+                guiOutsideRects.Remove("soulevator");
+            }
+        }
         #endregion
 
         #region Draw Parameter Setup
@@ -1964,7 +1974,7 @@ namespace KazgarsRevenge
         Rectangle powerBackRect;
         Rectangle megaMapRect;
         Rectangle helpPopRect;
-        Rectangle soulevatorRect
+        Rectangle soulevatorRect;
         Vector2 powerTextPos;
 
         Rectangle hoverRect;
@@ -2157,7 +2167,7 @@ namespace KazgarsRevenge
             //soulevator menu
             for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
             {
-                soulevatorDict.Add(i + "", new Rectangle(soulRect.X + (int)(10 * average), soulRect.Y + (int)(75 * i * average + 10 * average), soulRect.Width - (int)(20 * average), (int)(50 * average)));
+                soulevatorDict.Add(i + "", new Rectangle(soulevatorRect.X + (int)(10 * average), soulevatorRect.Y + (int)(75 * i * average + 10 * average), soulevatorRect.Width - (int)(20 * average), (int)(50 * average)));
             }
 
 
@@ -2534,12 +2544,12 @@ namespace KazgarsRevenge
             #endregion
 
             #region soulevator
-            if (inSoulevator)
+            if (inSoulevator && guiOutsideRects.ContainsKey("soulevator"))
             {
                 s.Draw(texWhitePixel, guiOutsideRects["soulevator"], Color.Black);
                 for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
                 {
-                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i+""];
+                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i + ""];
                     s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                 }
             }
@@ -2644,12 +2654,13 @@ namespace KazgarsRevenge
 
             Rectangle src = new Rectangle((int) imgX, (int) imgZ, zoom, zoom);
             // Center it
-            src.X -= (int) (zoom / 2); 
+            src.X -= (int) (zoom / 2);
             src.Y -= (int) (zoom / 2);
 
             Rectangle drawLoc = guiInsideRects["map"]["Total"];
             s.Draw(curChunk, new Rectangle(drawLoc.X + drawLoc.Width / 2, drawLoc.Y + drawLoc.Height / 2, drawLoc.Width, drawLoc.Height), src,
                 Color.White, -curRot.ToRadians(), new Vector2(zoom / 2, zoom / 2), SpriteEffects.None, 0);
+
 
             Rectangle playerRec = megaMapDict["playerPos"];
             playerRec.X = drawLoc.X + drawLoc.Width / 2;

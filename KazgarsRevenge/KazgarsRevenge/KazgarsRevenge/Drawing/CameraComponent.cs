@@ -312,7 +312,7 @@ namespace KazgarsRevenge
         public void StartLevel(FloorName name)
         {
             AmbientLight = ambientLightDefs[(int)name];
-            LastLightUpdate = int.MinValue;
+            lightUpdateCounter = 0;
         }
         #endregion
     }

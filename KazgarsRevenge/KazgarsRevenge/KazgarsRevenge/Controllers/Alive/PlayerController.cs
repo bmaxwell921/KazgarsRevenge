@@ -2169,7 +2169,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// called by the player when exiting the soulevator
         /// </summary>
-        protected void ExitSoulevator()
+        protected virtual void ExitSoulevator()
         {
             attState = AttackState.None;
             inSoulevator = false;
@@ -2282,7 +2282,7 @@ namespace KazgarsRevenge
             }
 
             if (float.IsNaN(newVel.X))
-            {
+            {//whyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
                 newVel.X = 0;
             }
             if (float.IsNaN(newVel.Y))

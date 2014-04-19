@@ -143,6 +143,8 @@ namespace KazgarsRevenge
 
         private void ClearLevelEntities()
         {
+            (Game.Services.GetService(typeof(EnemyManager)) as EnemyManager).ClearEnemies();
+
             if (key != null)
             {
                 key.KillEntity();
@@ -176,12 +178,24 @@ namespace KazgarsRevenge
                 misc.Clear();
             }
 
-
-            foreach (GameEntity g in rooms)
+            if (rooms != null)
             {
-                g.KillEntity();
+                foreach (GameEntity g in rooms)
+                {
+                    g.KillEntity();
+                }
+                rooms.Clear();
             }
-            rooms.Clear();
+
+            if (lights != null)
+            {
+                foreach (GameEntity g in lights)
+                {
+                    g.KillEntity();
+                }
+                lights.Clear();
+            }
+
 
         }
 
@@ -192,7 +206,6 @@ namespace KazgarsRevenge
         public void CreateLevel(FloorName name)
         {
             ClearLevelEntities();
-            camera.StartLevel(name);
             // Just a special case for the game
             if (name == FloorName.Ground)
             {
@@ -200,6 +213,8 @@ namespace KazgarsRevenge
                 return;
             }
             this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
+
+            camera.StartLevel(name);
         }
 
         /// <summary>

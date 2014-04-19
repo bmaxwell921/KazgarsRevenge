@@ -359,6 +359,15 @@ namespace KazgarsRevenge
         }
 
         #endregion
+
+        public void ClearEnemies()
+        {
+            foreach (KeyValuePair<Identification, GameEntity> k in enemies)
+            {
+                k.Value.KillEntity();
+            }
+            enemies.Clear();
+        }
         
         /// <summary>
         /// Gets an enemy from this manager with the associated id, or null if none exists
