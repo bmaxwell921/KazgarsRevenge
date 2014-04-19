@@ -630,7 +630,25 @@ namespace KazgarsRevenge
                 showMegaMap = !showMegaMap;
             }
 
-            
+            if (curKeys.IsKeyDown(Keys.OemPlus))
+            {
+                zoom -= 30;
+            }
+
+            if (curKeys.IsKeyDown(Keys.OemMinus))
+            {
+                zoom += 30;
+            }
+
+            if (zoom < 100)
+            {
+                zoom = 100;
+            }
+
+            if (zoom > 1200)
+            {
+                zoom = 1200;
+            }
 
             //Esc closes all
             if (curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
@@ -2595,8 +2613,6 @@ namespace KazgarsRevenge
             #endregion mouse
         }
 
-        private bool drawSel = true;
-        private int selCount = 0;
         private int zoom = 300;
         private void DrawMiniMap(SpriteBatch s)
         {
@@ -2632,8 +2648,13 @@ namespace KazgarsRevenge
             src.Y -= (int) (zoom / 2);
 
             Rectangle drawLoc = guiInsideRects["map"]["Total"];
-            s.Draw(curChunk, new Rectangle(drawLoc.X, drawLoc.Y, drawLoc.Width, drawLoc.Height), src,
-                Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+            s.Draw(curChunk, new Rectangle(drawLoc.X + drawLoc.Width / 2, drawLoc.Y + drawLoc.Height / 2, drawLoc.Width, drawLoc.Height), src,
+                Color.White, -curRot.ToRadians(), new Vector2(zoom / 2, zoom / 2), SpriteEffects.None, 0);
+
+            Rectangle playerRec = megaMapDict["playerPos"];
+            playerRec.X = drawLoc.X + drawLoc.Width / 2;
+            playerRec.Y = drawLoc.Y + drawLoc.Height / 2;
+            s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), playerRec, Color.Blue);
         }
 
         private void DrawMegaMap(SpriteBatch s)
