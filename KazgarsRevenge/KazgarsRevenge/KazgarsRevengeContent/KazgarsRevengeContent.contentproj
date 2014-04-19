@@ -1895,6 +1895,9 @@
   <ItemGroup>
     <Compile Include="Textures\UI\MiniMap\B-NSE.png">
       <Name>B-NSE</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="Textures\UI\Frames\equipment.png">
       <Name>equipment</Name>
       <Importer>TextureImporter</Importer>
