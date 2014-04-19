@@ -2612,6 +2612,11 @@ namespace KazgarsRevenge
             Rectangle drawLoc = guiInsideRects["map"]["Total"];
             s.Draw(curChunk, new Rectangle(drawLoc.X, drawLoc.Y, drawLoc.Width, drawLoc.Height), src,
                 Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+
+            Rectangle playerRec = megaMapDict["playerPos"];
+            playerRec.X = drawLoc.X + drawLoc.Width / 2;
+            playerRec.Y = drawLoc.Y + drawLoc.Height / 2;
+            s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), playerRec, Color.Blue);
         }
 
         private void DrawMegaMap(SpriteBatch s)
