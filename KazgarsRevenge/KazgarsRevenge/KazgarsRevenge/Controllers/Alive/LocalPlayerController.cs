@@ -196,6 +196,7 @@ namespace KazgarsRevenge
         Tooltip currentTooltip = null;
         bool hovering = false;
         List<HelpPopUp> helpPoPs = new List<HelpPopUp>();
+        bool isHelpPopupShown = false;
 
         List<Buff> buffs = new List<Buff>();
         List<DeBuff> debuffs = new List<DeBuff>();
@@ -684,13 +685,18 @@ namespace KazgarsRevenge
             }
 
             //HelpPopUps
-            if (helpPoPs.Count > 0 && !guiOutsideRects.ContainsKey("helpPop"))
+            if (!isHelpPopupShown)
             {
-                guiOutsideRects.Add("helpPop", helpPopRect);
+                if (helpPoPs.Count > 0 && !guiOutsideRects.ContainsKey("helpPop"))
+                {
+                    isHelpPopupShown = true;
+                    guiOutsideRects.Add("helpPop", helpPopRect);
+                }
             }
-            else
+            else if(helpPoPs.Count <= 0 && guiOutsideRects.ContainsKey("helpPop"))
             {
                 guiOutsideRects.Remove("helpPop");
+                isHelpPopupShown = false;
             }
 
 
@@ -1271,13 +1277,16 @@ namespace KazgarsRevenge
             {
                 return null;
             }
-            foreach (KeyValuePair<string, Rectangle> k in guiInsideRects[outsideRec])
+            if (guiInsideRects.ContainsKey(outsideRec))
             {
-                if (RectContains(k.Value, curMouse.X, curMouse.Y))
+                foreach (KeyValuePair<string, Rectangle> k in guiInsideRects[outsideRec])
                 {
-                    return k.Key;
-                }
+                    if (RectContains(k.Value, curMouse.X, curMouse.Y))
+                    {
+                        return k.Key;
+                    }
 
+                }
             }
             return null;
         }
@@ -1790,6 +1799,7 @@ namespace KazgarsRevenge
                 currentTooltip = null;
                 return;
             }
+
             switch (outerCollides)
             {
                 #region inventory
@@ -1954,6 +1964,17 @@ namespace KazgarsRevenge
                     }
                     break;
                 #endregion
+                case "helpPop":
+                    if (innerCollides == "ok")
+                    {
+                        hovering = true;
+                        hoverRect = guiInsideRects["helpPop"]["ok"];
+                    }
+                    break;
+                case "buttons":
+                    hovering = true;
+                    hoverRect = guiInsideRects[outerCollides][innerCollides];
+                    break;
                 default:
                     currentTooltip = null;
                     break;
@@ -2141,7 +2162,6 @@ namespace KazgarsRevenge
             guiInsideRects.Add("loot", lootDict);
             guiInsideRects.Add("xp", xpDict);
             guiInsideRects.Add("tooltip", tooltipDict);
-            guiInsideRects.Add("map", mapDict);
             guiInsideRects.Add("megaMap", megaMapDict);
             //guiInsideRects.Add("chat", chatDict);
             guiInsideRects.Add("player", playerDict);
@@ -2659,26 +2679,13 @@ namespace KazgarsRevenge
             }
             #endregion
 
-            #region tooltip and hover
-            if (currentTooltip != null)
-            {
-                s.Draw(texWhitePixel, tooltipRect, Color.Black * 0.5f);
-                currentTooltip.Draw(s, new Vector2(tooltipRect.X, tooltipRect.Y), font, average, 50f);
-            }
-
-            if (hovering)
-            {
-                s.Draw(texHover, hoverRect, new Color(255, 255, 166));
-            }
-            #endregion
-
             #region soulevator
             if (inSoulevator)
             {
                 s.Draw(texWhitePixel, guiOutsideRects["soulevator"], Color.Black);
                 for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
                 {
-                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i+""];
+                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i + ""];
                     s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White);
                 }
             }
@@ -2703,6 +2710,19 @@ namespace KazgarsRevenge
             
             #endregion
 
+            //always keep this last so hover image is drawn on top
+            #region tooltip and hover
+            if (currentTooltip != null)
+            {
+                s.Draw(texWhitePixel, tooltipRect, Color.Black * 0.5f);
+                currentTooltip.Draw(s, new Vector2(tooltipRect.X, tooltipRect.Y), font, average, 50f);
+            }
+
+            if (hovering)
+            {
+                s.Draw(texHover, hoverRect, new Color(255, 255, 166));
+            }
+            #endregion
             #endregion
 
 
@@ -2782,7 +2802,7 @@ namespace KazgarsRevenge
             src.X -= (int) (zoom / 2);
             src.Y -= (int) (zoom / 2);
 
-            Rectangle drawLoc = guiInsideRects["map"]["Total"];
+            Rectangle drawLoc = mapDict["Total"];
             s.Draw(curChunk, new Rectangle(drawLoc.X + drawLoc.Width / 2, drawLoc.Y + drawLoc.Height / 2, drawLoc.Width, drawLoc.Height), src,
                 Color.White, -curRot.ToRadians(), new Vector2(zoom / 2, zoom / 2), SpriteEffects.None, 0);
 
