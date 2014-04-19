@@ -638,7 +638,25 @@ namespace KazgarsRevenge
                 showMegaMap = !showMegaMap;
             }
 
-            
+            if (curKeys.IsKeyDown(Keys.OemPlus))
+            {
+                zoom -= 30;
+            }
+
+            if (curKeys.IsKeyDown(Keys.OemMinus))
+            {
+                zoom += 30;
+            }
+
+            if (zoom < 100)
+            {
+                zoom = 100;
+            }
+
+            if (zoom > 1200)
+            {
+                zoom = 1200;
+            }
 
             //Esc closes all
             if (curKeys.IsKeyDown(Keys.Escape) && prevKeys.IsKeyUp(Keys.Escape))
@@ -1387,7 +1405,7 @@ namespace KazgarsRevenge
                                 }
                             }
                             //Scroll Up
-                            else if (innerCollides.Equals("downArrow")&& lootingSoul.Loot.Count > NUM_LOOT_SHOWN*(lootScroll+1))
+                            else if (innerCollides.Equals("downArrow") && lootingSoul.Loot.Count > NUM_LOOT_SHOWN * (lootScroll + 1))
                             {
                                 lootScroll++;
                             }
@@ -1433,17 +1451,17 @@ namespace KazgarsRevenge
                                 if (currentTalentTree == TalentTrees.ranged)
                                 {
                                     checkTalentOnBar(rangedAbilities);
-                                    if (check == 12) 
+                                    if (check == 12)
                                         mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    else 
+                                    else
                                         boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 }
                                 else if (currentTalentTree == TalentTrees.melee)
                                 {
                                     checkTalentOnBar(meleeAbilities);
-                                    if (check == 12) 
+                                    if (check == 12)
                                         mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    else 
+                                    else
                                         boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 }
                                 else if (currentTalentTree == TalentTrees.magic)
@@ -1608,10 +1626,23 @@ namespace KazgarsRevenge
                             }
                             break;
                         #endregion
+                        #region soulevator
+                        case "soulevator":
+                            int result = -1;
+                            if (Int32.TryParse(innerCollides, out result))
+                            {
+                                if (result >= 0 && result < Enum.GetNames(typeof(FloorName)).Length)
+                                {
+                                    (Game.Services.GetService(typeof(LevelManager)) as LevelManager).CreateLevel((FloorName)result);
+                                }
+                            }
+                            break;
+                        #endregion
                     }
                 }
             }
             #endregion
+
 
             #region right click check
             if (outerCollides != null && prevMouse.RightButton == ButtonState.Pressed && curMouse.RightButton == ButtonState.Released)
@@ -1991,6 +2022,8 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> helpPopDict;
         Dictionary<string, Rectangle> talentArrowsDict;
         Dictionary<string, Rectangle> buttonsDict;
+        Dictionary<string, Rectangle> soulevatorDict;
+
 
         Rectangle inventoryRect;
         Rectangle equipmentRect;
@@ -2034,6 +2067,10 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
             guiOutsideRects.Add("buttons", new Rectangle((int)((maxX - 430 * average)), (int)(0), (int)(86 * average), (int)(344 * average)));
 
+            Rectangle soulRect = new Rectangle((int)(100 * average), (int)(50 * average), (int)(200 * average), (int)(400 * average));
+            guiOutsideRects.Add("soulevator", soulRect);
+
+
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
             Vector2 equipmentUR = new Vector2((int)(maxX - 744 * average), (int)(296 * average));
             Vector2 talentUR = new Vector2(5 * average, 180 * average);
@@ -2063,6 +2100,7 @@ namespace KazgarsRevenge
             helpPopDict = new Dictionary<string, Rectangle>();
             talentArrowsDict = new Dictionary<string, Rectangle>();
             buttonsDict = new Dictionary<string, Rectangle>();
+            soulevatorDict = new Dictionary<string, Rectangle>();
 
 
             //Add frame dictionaries
@@ -2079,8 +2117,8 @@ namespace KazgarsRevenge
             guiInsideRects.Add("talents", talentDict);
             guiInsideRects.Add("helpPop", helpPopDict);
             guiInsideRects.Add("buttons", buttonsDict);
+            guiInsideRects.Add("soulevator", soulevatorDict);
             #endregion
-
 
             //Equipment inner
             equipmentDict.Add(GearSlot.Wrist.ToString(), new Rectangle((int)(equipmentUR.X + 8 * average), (int)(equipmentUR.Y + 78 * average), (int)(88 * average), (int)(88 * average)));
@@ -2100,6 +2138,7 @@ namespace KazgarsRevenge
             Rectangle totalMiniArea = guiOutsideRects["map"];
             int miniInnerWidth = totalMiniArea.Width / 3;
             int miniInnerHeight = totalMiniArea.Height / 3;
+            mapDict["Total"] = totalMiniArea;
             mapDict["Loc0"] = new Rectangle(totalMiniArea.X, totalMiniArea.Y, miniInnerWidth, miniInnerHeight);
             mapDict["Loc1"] = new Rectangle(totalMiniArea.X + miniInnerWidth, totalMiniArea.Y, miniInnerWidth, miniInnerHeight);
             mapDict["Loc2"] = new Rectangle(totalMiniArea.X + miniInnerWidth * 2, totalMiniArea.Y, miniInnerWidth, miniInnerHeight);
@@ -2190,13 +2229,20 @@ namespace KazgarsRevenge
             playerDict.Add("power",powerBackRect);
 
             //OK button on PopUps
-            helpPopDict.Add("ok", new Rectangle((int)(maxX / 2 + 125 * average), (int)((maxY - 273 * average)), (int)(25 * average), (int)(25 * average)));
+            helpPopDict.Add("ok", new Rectangle((int)(maxX / 2 + 120 * average), (int)((maxY - 273 * average)), (int)(30 * average), (int)(30 * average)));
 
             //Buttons
             buttonsDict.Add("map", new Rectangle((int)(maxX - 430 * average),(int)(0*average),(int)(86*average),(int)(86*average)));
             buttonsDict.Add("character", new Rectangle((int)(maxX - 430 * average), (int)(172 * average), (int)(86 * average), (int)(86 * average)));
             buttonsDict.Add("inventory", new Rectangle((int)(maxX - 430 * average), (int)(86 * average), (int)(86 * average), (int)(86 * average)));
             buttonsDict.Add("talents", new Rectangle((int)(maxX - 430 * average), (int)(258 * average), (int)(86 * average), (int)(86 * average)));
+
+            //soulevator menu
+            for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
+            {
+                soulevatorDict.Add(i + "", new Rectangle(soulRect.X + (int)(10 * average), soulRect.Y + (int)(15 * i * average), soulRect.Width - (int)(20 * average), soulRect.Height - (int)(20 * average)));
+            }
+
         }
         #endregion
 
@@ -2353,7 +2399,7 @@ namespace KazgarsRevenge
             s.DrawString(font, currentPower + "", powerTextPos, Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
             s.DrawString(font, "    /" + maxPower, powerTextPos, Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
             //main player health
-            s.Draw(health_bar, new Rectangle(playerHPRect.X, playerHPRect.Y, (int)(playerHPRect.Width * HealthPercent * average), (int)(playerHPRect.Height)), new Rectangle(0, 0, (int)(health_bar.Width * HealthPercent * average), (int)health_bar.Height), Color.White);
+            s.Draw(health_bar, new Rectangle(playerHPRect.X, playerHPRect.Y, (int)(playerHPRect.Width * HealthPercent), (int)(playerHPRect.Height)), new Rectangle(0, 0, (int)(health_bar.Width * HealthPercent), (int)health_bar.Height), Color.White);
 
             for (int i = 0; i < 6; i++)
             {
@@ -2586,8 +2632,12 @@ namespace KazgarsRevenge
             #region soulevator
             if (inSoulevator)
             {
-                s.Draw(texWhitePixel, new Rectangle(50, 50, 500, 500), Color.Black * .5f);
-                s.DrawString(font, "Soulevator Menu", new Vector2(100, 100), Color.White);
+                s.Draw(texWhitePixel, guiOutsideRects["soulevator"], Color.Black);
+                for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
+                {
+                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i+""];
+                    s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White);
+                }
             }
             #endregion
 
@@ -2655,51 +2705,48 @@ namespace KazgarsRevenge
             #endregion mouse
         }
 
-        private bool drawSel = true;
-        private int selCount = 0;
-
+        private int zoom = 300;
         private void DrawMiniMap(SpriteBatch s)
         {
+            /*
+             * Basically we need to find the player's position within a chunk, then we can translate
+             * that position in the chunk to a position in the chunk image, and draw that area of the chunk
+             */ 
             LevelManager lm = (Game.Services.GetService(typeof(LevelManager)) as LevelManager);
-            // When the player goes to a new chunk we need to update the miniMap images
-            if (lm.NeedsMiniMapUpdate())
-            {
-                mapImgDict = lm.getMiniImageMap();
-            }
-            string keyPre = "Loc";
 
-            // The chunk we're currently in
-            int curChunk = lm.GetCurrentChunk(physicalData.Position);
+            // Current chunk's image
+            Texture2D curChunk = Texture2DUtil.Instance.GetTexture(lm.GetCurrentChunkImgName(physicalData.Position));
+            Rotation curRot = lm.GetCurrentChunkRotation(physicalData.Position);
 
-            Color blendColor = Color.White;
-            if (lm.currentLevel.width * lm.currentLevel.height == 1)
-            {
-                return;
-            }
-            for (int i = 0; i < lm.currentLevel.width * lm.currentLevel.height; ++i)
-            {
-                // Safety check in case they go outside the level somehow
-                if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && i == curChunk && drawSel)
-                {
-                    blendColor = Color.Yellow;
-                }
-                s.Draw(Texture2DUtil.Instance.GetTexture(mapImgDict[keyPre +i]), guiInsideRects["map"][keyPre + i], blendColor);
-                blendColor = Color.White;
-            }
+            // The x and y coord of the current chunk (in the 3x3 grid)
+            int chunkX = (int)physicalData.Position.X / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
+            int chunkZ = (int)physicalData.Position.Z / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
 
+            // Where the player's located in the chunk
+            float inChunkX = physicalData.Position.X - (chunkX * LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
+            float inChunkZ = physicalData.Position.Z - (chunkZ * LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
 
-            // TODO this is option 2, but I like the other way better I think
-            // Safety check in case they go outside the level somehow
-            //if (guiInsideRects["map"].ContainsKey(keyPre + curChunk) && drawSel)
-            //{
-            //    s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MiniMap.SELECTOR), guiInsideRects["map"][keyPre + curChunk], Color.Yellow);
-            //}
+            /*
+             * Translate to coordinates in the image:
+             *  (inChunkX / chunkWidth) = (imgX / imgWidth)
+             *  imgX = (imgWidth) * (inChunkX / chunkWidth)
+             */
+            float imgX = curChunk.Width * (inChunkX / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE));
+            float imgZ = curChunk.Width * (inChunkZ / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE));
 
-            // Switch between highlighting and not every 1/3 of a second if running at 60fps
-            if (selCount++ % 20 == 0)
-            {
-                drawSel = !drawSel;
-            }
+            Rectangle src = new Rectangle((int) imgX, (int) imgZ, zoom, zoom);
+            // Center it
+            src.X -= (int) (zoom / 2); 
+            src.Y -= (int) (zoom / 2);
+
+            Rectangle drawLoc = guiInsideRects["map"]["Total"];
+            s.Draw(curChunk, new Rectangle(drawLoc.X + drawLoc.Width / 2, drawLoc.Y + drawLoc.Height / 2, drawLoc.Width, drawLoc.Height), src,
+                Color.White, -curRot.ToRadians(), new Vector2(zoom / 2, zoom / 2), SpriteEffects.None, 0);
+
+            Rectangle playerRec = megaMapDict["playerPos"];
+            playerRec.X = drawLoc.X + drawLoc.Width / 2;
+            playerRec.Y = drawLoc.Y + drawLoc.Height / 2;
+            s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), playerRec, Color.Blue);
         }
 
         private void DrawMegaMap(SpriteBatch s)

@@ -141,12 +141,57 @@ namespace KazgarsRevenge
             Texture2DUtil.Instance.GetTexture(@"Textures\UI\MegaMap\" + currentLevel.chunkInfos[0, 0].ChunkName);
         }
 
+        private void ClearLevelEntities()
+        {
+            if (key != null)
+            {
+                key.KillEntity();
+                key = null;
+            }
+
+            if (lockedDoors != null)
+            {
+                foreach (GameEntity g in lockedDoors)
+                {
+                    g.KillEntity();
+                }
+                lockedDoors.Clear();
+            }
+
+            if (props != null)
+            {
+                foreach (GameEntity g in props)
+                {
+                    g.KillEntity();
+                }
+                props.Clear();
+            }
+
+            if (misc != null)
+            {
+                foreach (GameEntity g in misc)
+                {
+                    g.KillEntity();
+                }
+                misc.Clear();
+            }
+
+
+            foreach (GameEntity g in rooms)
+            {
+                g.KillEntity();
+            }
+            rooms.Clear();
+
+        }
+
         /// <summary>
         /// Generates a new level to play with the default width and height in chunks (3x3)
         /// </summary>
         /// <param name="name"></param>
         public void CreateLevel(FloorName name)
         {
+            ClearLevelEntities();
             camera.StartLevel(name);
             // Just a special case for the game
             if (name == FloorName.Ground)
@@ -944,7 +989,7 @@ namespace KazgarsRevenge
 
             private void LogChunkChoice(int i, int j, ChunkInfo ci)
             {
-                lm.Log(Level.DEBUG, String.Format("LevelGeneration chose chunk:\n\t\t\t{0}\n\t\t\tLocation:({1},{2})\n\t\t\tFileName:{3}", ci.ToString(), i, j, ci.FileName));
+                lm.Log(Level.DEBUG, String.Format("LevelGeneration chose chunk:\n\t\t\t{0}\n\t\t\tLocation:({1},{2})\n\t\t\tRotation:{3}\n\t\t\tFileName:{4}", ci.ToString(), i, j, ci.rotation, ci.FileName));
             }
 
             // Places a home chunk in the middle of the level

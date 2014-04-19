@@ -443,12 +443,13 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        protected Account playerAccount;
         public PlayerController(KazgarsRevengeGame game, GameEntity entity, Account account)
             : base(game, entity, account.CharacterLevel)
         {
+            this.playerAccount = account;
 
             InitGeneralFields();
-
             InitNewPlayer();
 
             //adding gear for testing
