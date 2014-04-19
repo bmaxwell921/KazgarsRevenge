@@ -50,6 +50,10 @@ namespace KazgarsRevenge
             talentArrowDownLeft = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_DL);
             talentArrowRight = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_R);
             talentArrowLeft = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_L);
+            mapIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MapIcon);
+            characterIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.CharacterIcon);
+            inventoryIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.InventoryIcon);
+            talentIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.TalentIcon);
 
             #endregion
 
@@ -154,6 +158,10 @@ namespace KazgarsRevenge
         Texture2D talentArrowUp;
         Texture2D talentArrowUpRight;
         Texture2D talentArrowUpLeft;
+        Texture2D mapIcon;
+        Texture2D characterIcon;
+        Texture2D inventoryIcon;
+        Texture2D talentIcon;
 
         //Equipment Base
         Texture2D helmetIcon;
@@ -1520,6 +1528,86 @@ namespace KazgarsRevenge
                             }
                             break;
                         #endregion
+                        #region buttons
+                        case "buttons":
+                            if (innerCollides.Equals("map"))
+                            {
+                                showMegaMap = !showMegaMap;
+                            }
+                            else if (innerCollides.Equals("inventory"))
+                            {
+                                showInventory = !showInventory;
+                                showEquipment = false;
+
+                                if (showInventory)
+                                {
+                                    if (!guiOutsideRects.ContainsKey("inventory"))
+                                    {
+                                        guiOutsideRects.Add("inventory", inventoryRect);
+                                    }
+                                }
+                                else
+                                {
+                                    if (guiOutsideRects.ContainsKey("inventory"))
+                                    {
+                                        guiOutsideRects.Remove("inventory");
+                                    }
+                                }
+
+                                if (guiOutsideRects.ContainsKey("equipment"))
+                                {
+                                    guiOutsideRects.Remove("equipment");
+                                }
+                            }
+                            else if (innerCollides.Equals("character"))
+                            {
+                                showEquipment = !showEquipment;
+                                showInventory = showEquipment;
+
+                                if (showEquipment)
+                                {
+                                    if (!guiOutsideRects.ContainsKey("equipment"))
+                                    {
+                                        guiOutsideRects.Add("equipment", equipmentRect);
+                                    }
+                                    if (!guiOutsideRects.ContainsKey("inventory"))
+                                    {
+                                        guiOutsideRects.Add("inventory", inventoryRect);
+                                    }
+                                }
+                                else
+                                {
+                                    if (guiOutsideRects.ContainsKey("equipment"))
+                                    {
+                                        guiOutsideRects.Remove("equipment");
+                                    }
+                                    if (guiOutsideRects.ContainsKey("inventory"))
+                                    {
+                                        guiOutsideRects.Remove("inventory");
+                                    }
+                                }
+                            }
+                            else if (innerCollides.Equals("talents"))
+                            {
+                                showTalents = !showTalents;
+
+                                if (showTalents)
+                                {
+                                    if (!guiOutsideRects.ContainsKey("talents"))
+                                    {
+                                        guiOutsideRects.Add("talents", talentRect);
+                                    }
+                                }
+                                else
+                                {
+                                    if (guiOutsideRects.ContainsKey("talents"))
+                                    {
+                                        guiOutsideRects.Remove("talents");
+                                    }
+                                }
+                            }
+                            break;
+                        #endregion
                     }
                 }
             }
@@ -1902,6 +1990,7 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> talentDict;
         Dictionary<string, Rectangle> helpPopDict;
         Dictionary<string, Rectangle> talentArrowsDict;
+        Dictionary<string, Rectangle> buttonsDict;
 
         Rectangle inventoryRect;
         Rectangle equipmentRect;
@@ -1918,6 +2007,7 @@ namespace KazgarsRevenge
         Rectangle tooltipRect;
         private void InitDrawingParams()
         {
+            #region variables
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
             maxX = Game.GraphicsDevice.Viewport.Width;
             maxY = Game.GraphicsDevice.Viewport.Height;
@@ -1942,7 +2032,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             //guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
-
+            guiOutsideRects.Add("buttons", new Rectangle((int)((maxX - 430 * average)), (int)(0), (int)(86 * average), (int)(344 * average)));
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
             Vector2 equipmentUR = new Vector2((int)(maxX - 744 * average), (int)(296 * average));
@@ -1972,6 +2062,7 @@ namespace KazgarsRevenge
             talentDict = new Dictionary<string, Rectangle>();
             helpPopDict = new Dictionary<string, Rectangle>();
             talentArrowsDict = new Dictionary<string, Rectangle>();
+            buttonsDict = new Dictionary<string, Rectangle>();
 
 
             //Add frame dictionaries
@@ -1987,6 +2078,8 @@ namespace KazgarsRevenge
             guiInsideRects.Add("player", playerDict);
             guiInsideRects.Add("talents", talentDict);
             guiInsideRects.Add("helpPop", helpPopDict);
+            guiInsideRects.Add("buttons", buttonsDict);
+            #endregion
 
 
             //Equipment inner
@@ -2093,8 +2186,17 @@ namespace KazgarsRevenge
             playerHPRect = new Rectangle((int)(160 * average), 0, (int)(256 * average), (int)(32 * average));
             powerBackRect = new Rectangle(playerHPRect.X, playerHPRect.Y + playerHPRect.Height, playerHPRect.Width, playerHPRect.Height);
             powerTextPos = new Vector2((int)(170 * average), (int)(35 * average));
+            playerDict.Add("hp", playerHPRect);
+            playerDict.Add("power",powerBackRect);
 
-            helpPopDict.Add("ok", new Rectangle((int)(maxX / 2 + 125 * average), (int)((maxY - 273 * average)), 25, 25));
+            //OK button on PopUps
+            helpPopDict.Add("ok", new Rectangle((int)(maxX / 2 + 125 * average), (int)((maxY - 273 * average)), (int)(25 * average), (int)(25 * average)));
+
+            //Buttons
+            buttonsDict.Add("map", new Rectangle((int)(maxX - 430 * average),(int)(0*average),(int)(86*average),(int)(86*average)));
+            buttonsDict.Add("character", new Rectangle((int)(maxX - 430 * average), (int)(172 * average), (int)(86 * average), (int)(86 * average)));
+            buttonsDict.Add("inventory", new Rectangle((int)(maxX - 430 * average), (int)(86 * average), (int)(86 * average), (int)(86 * average)));
+            buttonsDict.Add("talents", new Rectangle((int)(maxX - 430 * average), (int)(258 * average), (int)(86 * average), (int)(86 * average)));
         }
         #endregion
 
@@ -2224,18 +2326,20 @@ namespace KazgarsRevenge
 
             #endregion
 
-            //XP Area
+            #region xp area
             Rectangle xpRect = guiOutsideRects["xp"];
             s.Draw(texWhitePixel, xpRect, Color.Black * 0.5f);
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
-            
-            //Mini Map
+            #endregion
+
+            #region minimap
             DrawMiniMap(s);
 
             if (showMegaMap)
             {
                 DrawMegaMap(s);
             }
+            #endregion
 
             #region main player frame
             //Main Player Frame Pic
@@ -2485,6 +2589,15 @@ namespace KazgarsRevenge
                 s.Draw(texWhitePixel, new Rectangle(50, 50, 500, 500), Color.Black * .5f);
                 s.DrawString(font, "Soulevator Menu", new Vector2(100, 100), Color.White);
             }
+            #endregion
+
+            #region buttons
+            //backing
+            s.Draw(texWhitePixel, guiOutsideRects["buttons"], Color.Black * .5f);
+            s.Draw(mapIcon, guiInsideRects["buttons"]["map"], Color.White);
+            s.Draw(inventoryIcon, guiInsideRects["buttons"]["inventory"], Color.White);
+            s.Draw(characterIcon, guiInsideRects["buttons"]["character"], Color.White);
+            s.Draw(talentIcon, guiInsideRects["buttons"]["talents"], Color.White);
             #endregion
 
             #region helpPopUps
