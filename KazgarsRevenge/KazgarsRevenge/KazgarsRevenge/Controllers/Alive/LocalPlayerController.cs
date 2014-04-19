@@ -50,6 +50,10 @@ namespace KazgarsRevenge
             talentArrowDownLeft = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_DL);
             talentArrowRight = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_R);
             talentArrowLeft = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Talent_Arrow_L);
+            mapIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MapIcon);
+            characterIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.CharacterIcon);
+            inventoryIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.InventoryIcon);
+            talentIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.TalentIcon);
 
             #endregion
 
@@ -154,6 +158,10 @@ namespace KazgarsRevenge
         Texture2D talentArrowUp;
         Texture2D talentArrowUpRight;
         Texture2D talentArrowUpLeft;
+        Texture2D mapIcon;
+        Texture2D characterIcon;
+        Texture2D inventoryIcon;
+        Texture2D talentIcon;
 
         //Equipment Base
         Texture2D helmetIcon;
@@ -1397,7 +1405,7 @@ namespace KazgarsRevenge
                                 }
                             }
                             //Scroll Up
-                            else if (innerCollides.Equals("downArrow")&& lootingSoul.Loot.Count > NUM_LOOT_SHOWN*(lootScroll+1))
+                            else if (innerCollides.Equals("downArrow") && lootingSoul.Loot.Count > NUM_LOOT_SHOWN * (lootScroll + 1))
                             {
                                 lootScroll++;
                             }
@@ -1443,17 +1451,17 @@ namespace KazgarsRevenge
                                 if (currentTalentTree == TalentTrees.ranged)
                                 {
                                     checkTalentOnBar(rangedAbilities);
-                                    if (check == 12) 
+                                    if (check == 12)
                                         mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    else 
+                                    else
                                         boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 }
                                 else if (currentTalentTree == TalentTrees.melee)
                                 {
                                     checkTalentOnBar(meleeAbilities);
-                                    if (check == 12) 
+                                    if (check == 12)
                                         mouseBoundAbility[0] = new KeyValuePair<ButtonState, Ability>(mouseBoundAbility[0].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
-                                    else 
+                                    else
                                         boundAbilities[check] = new KeyValuePair<Keys, Ability>(boundAbilities[check].Key, GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name));
                                 }
                                 else if (currentTalentTree == TalentTrees.magic)
@@ -1538,6 +1546,86 @@ namespace KazgarsRevenge
                             }
                             break;
                         #endregion
+                        #region buttons
+                        case "buttons":
+                            if (innerCollides.Equals("map"))
+                            {
+                                showMegaMap = !showMegaMap;
+                            }
+                            else if (innerCollides.Equals("inventory"))
+                            {
+                                showInventory = !showInventory;
+                                showEquipment = false;
+
+                                if (showInventory)
+                                {
+                                    if (!guiOutsideRects.ContainsKey("inventory"))
+                                    {
+                                        guiOutsideRects.Add("inventory", inventoryRect);
+                                    }
+                                }
+                                else
+                                {
+                                    if (guiOutsideRects.ContainsKey("inventory"))
+                                    {
+                                        guiOutsideRects.Remove("inventory");
+                                    }
+                                }
+
+                                if (guiOutsideRects.ContainsKey("equipment"))
+                                {
+                                    guiOutsideRects.Remove("equipment");
+                                }
+                            }
+                            else if (innerCollides.Equals("character"))
+                            {
+                                showEquipment = !showEquipment;
+                                showInventory = showEquipment;
+
+                                if (showEquipment)
+                                {
+                                    if (!guiOutsideRects.ContainsKey("equipment"))
+                                    {
+                                        guiOutsideRects.Add("equipment", equipmentRect);
+                                    }
+                                    if (!guiOutsideRects.ContainsKey("inventory"))
+                                    {
+                                        guiOutsideRects.Add("inventory", inventoryRect);
+                                    }
+                                }
+                                else
+                                {
+                                    if (guiOutsideRects.ContainsKey("equipment"))
+                                    {
+                                        guiOutsideRects.Remove("equipment");
+                                    }
+                                    if (guiOutsideRects.ContainsKey("inventory"))
+                                    {
+                                        guiOutsideRects.Remove("inventory");
+                                    }
+                                }
+                            }
+                            else if (innerCollides.Equals("talents"))
+                            {
+                                showTalents = !showTalents;
+
+                                if (showTalents)
+                                {
+                                    if (!guiOutsideRects.ContainsKey("talents"))
+                                    {
+                                        guiOutsideRects.Add("talents", talentRect);
+                                    }
+                                }
+                                else
+                                {
+                                    if (guiOutsideRects.ContainsKey("talents"))
+                                    {
+                                        guiOutsideRects.Remove("talents");
+                                    }
+                                }
+                            }
+                            break;
+                        #endregion
                         #region soulevator
                         case "soulevator":
                             int result = -1;
@@ -1555,6 +1643,7 @@ namespace KazgarsRevenge
                 }
             }
             #endregion
+
 
             #region right click check
             if (outerCollides != null && prevMouse.RightButton == ButtonState.Pressed && curMouse.RightButton == ButtonState.Released)
@@ -1963,7 +2052,9 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> talentDict;
         Dictionary<string, Rectangle> helpPopDict;
         Dictionary<string, Rectangle> talentArrowsDict;
+        Dictionary<string, Rectangle> buttonsDict;
         Dictionary<string, Rectangle> soulevatorDict;
+
 
         Rectangle inventoryRect;
         Rectangle equipmentRect;
@@ -1981,6 +2072,7 @@ namespace KazgarsRevenge
         Rectangle tooltipRect;
         private void InitDrawingParams()
         {
+            #region variables
             mid = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
             maxX = Game.GraphicsDevice.Viewport.Width;
             maxY = Game.GraphicsDevice.Viewport.Height;
@@ -2007,6 +2099,7 @@ namespace KazgarsRevenge
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
             soulevatorRect = new Rectangle((int)(470 * average), 0, (int)(400 * average), (int)(475 * average));
             //guiOutsideRects.Add("soulevator", soulRect);
+            guiOutsideRects.Add("buttons", new Rectangle((int)((maxX - 430 * average)), (int)(0), (int)(86 * average), (int)(344 * average)));
 
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
@@ -2037,6 +2130,7 @@ namespace KazgarsRevenge
             talentDict = new Dictionary<string, Rectangle>();
             helpPopDict = new Dictionary<string, Rectangle>();
             talentArrowsDict = new Dictionary<string, Rectangle>();
+            buttonsDict = new Dictionary<string, Rectangle>();
             soulevatorDict = new Dictionary<string, Rectangle>();
 
 
@@ -2053,8 +2147,9 @@ namespace KazgarsRevenge
             guiInsideRects.Add("player", playerDict);
             guiInsideRects.Add("talents", talentDict);
             guiInsideRects.Add("helpPop", helpPopDict);
+            guiInsideRects.Add("buttons", buttonsDict);
             guiInsideRects.Add("soulevator", soulevatorDict);
-
+            #endregion
 
             //Equipment inner
             equipmentDict.Add(GearSlot.Wrist.ToString(), new Rectangle((int)(equipmentUR.X + 8 * average), (int)(equipmentUR.Y + 78 * average), (int)(88 * average), (int)(88 * average)));
@@ -2161,16 +2256,23 @@ namespace KazgarsRevenge
             playerHPRect = new Rectangle((int)(160 * average), 0, (int)(256 * average), (int)(32 * average));
             powerBackRect = new Rectangle(playerHPRect.X, playerHPRect.Y + playerHPRect.Height, playerHPRect.Width, playerHPRect.Height);
             powerTextPos = new Vector2((int)(170 * average), (int)(35 * average));
+            playerDict.Add("hp", playerHPRect);
+            playerDict.Add("power",powerBackRect);
 
-            helpPopDict.Add("ok", new Rectangle((int)(maxX / 2 + 125 * average), (int)((maxY - 273 * average)), 25, 25));
+            //OK button on PopUps
+            helpPopDict.Add("ok", new Rectangle((int)(maxX / 2 + 120 * average), (int)((maxY - 273 * average)), (int)(30 * average), (int)(30 * average)));
+
+            //Buttons
+            buttonsDict.Add("map", new Rectangle((int)(maxX - 430 * average),(int)(0*average),(int)(86*average),(int)(86*average)));
+            buttonsDict.Add("character", new Rectangle((int)(maxX - 430 * average), (int)(172 * average), (int)(86 * average), (int)(86 * average)));
+            buttonsDict.Add("inventory", new Rectangle((int)(maxX - 430 * average), (int)(86 * average), (int)(86 * average), (int)(86 * average)));
+            buttonsDict.Add("talents", new Rectangle((int)(maxX - 430 * average), (int)(258 * average), (int)(86 * average), (int)(86 * average)));
 
             //soulevator menu
             for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
             {
                 soulevatorDict.Add(i + "", new Rectangle(soulevatorRect.X + (int)(10 * average), soulevatorRect.Y + (int)(75 * i * average + 10 * average), soulevatorRect.Width - (int)(20 * average), (int)(50 * average)));
             }
-
-
 
         }
         #endregion
@@ -2301,18 +2403,20 @@ namespace KazgarsRevenge
 
             #endregion
 
-            //XP Area
+            #region xp area
             Rectangle xpRect = guiOutsideRects["xp"];
             s.Draw(texWhitePixel, xpRect, Color.Black * 0.5f);
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
-            
-            //Mini Map
+            #endregion
+
+            #region minimap
             DrawMiniMap(s);
 
             if (showMegaMap)
             {
                 DrawMegaMap(s);
             }
+            #endregion
 
             #region main player frame
             //Main Player Frame Pic
@@ -2566,6 +2670,27 @@ namespace KazgarsRevenge
             {
                 s.Draw(texHover, hoverRect, new Color(255, 255, 166));
             }
+            #endregion
+
+            #region soulevator
+            if (inSoulevator)
+            {
+                s.Draw(texWhitePixel, guiOutsideRects["soulevator"], Color.Black);
+                for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
+                {
+                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i+""];
+                    s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White);
+                }
+            }
+            #endregion
+
+            #region buttons
+            //backing
+            s.Draw(texWhitePixel, guiOutsideRects["buttons"], Color.Black * .5f);
+            s.Draw(mapIcon, guiInsideRects["buttons"]["map"], Color.White);
+            s.Draw(inventoryIcon, guiInsideRects["buttons"]["inventory"], Color.White);
+            s.Draw(characterIcon, guiInsideRects["buttons"]["character"], Color.White);
+            s.Draw(talentIcon, guiInsideRects["buttons"]["talents"], Color.White);
             #endregion
 
             #region helpPopUps
