@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System.Threading;
@@ -93,5 +94,133 @@ namespace KazgarsRevenge
             }
             return textures[name];
         }
+
+        /// <summary>
+        /// Gets the requested texture rotated by the specified multiple of 90 degrees.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="rot"></param>
+        /// <param name="graphics"></param>
+        /// <returns></returns>
+        public Texture2D GetRotatedTexture(string name, Rotation rot, GraphicsDevice graphics)
+        {
+            if (rot == Rotation.ZERO)
+            {
+                return GetTexture(name);
+            }
+
+            //check for cached version of rotated texture
+            if (!textures.ContainsKey(name + rot.ToDegrees()))
+            {
+                //do a thread-safe load of the rotated image
+                Texture2D originalTex = GetTexture(name);
+                mutex.WaitOne();
+                try
+                {
+                    textures[name + rot.ToDegrees()] = RotateTexture(originalTex, rot, graphics);
+                }
+                finally
+                {
+                    mutex.ReleaseMutex();
+                }
+
+            }
+            return textures[name + rot.ToDegrees()];
+        }
+
+        /// <summary>
+        /// assumes the image is an even number of pixels wide/tall, rotate multiple of 90 degrees COUNTERclockwise
+        /// </summary>
+        private Texture2D RotateTexture(Texture2D originalTex, Rotation rot, GraphicsDevice graphics)
+        {
+            Color[] colors = new Color[originalTex.Width * originalTex.Height];
+            originalTex.GetData(colors);
+
+            int w = originalTex.Width;
+            int h = originalTex.Height;
+
+            int xul = 0;
+            int yul = 0;
+
+            int xur = w - 1;
+            int yur = 0;
+
+            int xbr = w - 1;
+            int ybr = h - 1;
+
+            int xbl = 0;
+            int ybl = h - 1;
+
+
+            for (int x = 0; x < w / 2; ++x)
+            {
+                for (int y = 0; y < h / 2; ++y)
+                {
+                    ++xul;
+                    ++yur;
+                    --xbr;
+                    --ybl;
+
+                    Color tmpur;
+                    Color tmpbr;
+                    Color tmpbl;
+                    switch (rot)
+                    {
+                        case Rotation.NINETY:
+                            //save current bottom left and bottom right pixels
+                            tmpbl = colors[xbl + ybl * w];
+                            tmpbr = colors[xbr + ybr * w];
+                            //set bottom left to upper left pixel
+                            colors[xbl + ybl * w] = colors[xul + yul * w];
+                            //set upper left to upper right pixel
+                            colors[xul + yul * w] = colors[xur + yur * w];
+                            //set upper right to saved bottom right pixel
+                            colors[xur + yur * w] = tmpbr;
+                            //set bottom right to saved bottom left pixel
+                            colors[xbr + ybr * w] = tmpbl;
+                            break;
+                        case Rotation.ONE_EIGHTY:
+                            //save current bottom right and bottom left pixels
+                            tmpbr = colors[xbr + ybr * w];
+                            tmpbl = colors[xbl + ybl * w];
+                            //set bottom right to upper left pixel
+                            colors[xbr + ybr * w] = colors[xul + yul * w];
+                            //set bottom left to upper right pixel
+                            colors[xbl + ybl * w] = colors[xur + yur * w];
+                            //set upper left to saved bottom right pixel's old color
+                            colors[xul + yul * w] = tmpbr;
+                            //set upper right to saved bottom left pixel's old color
+                            colors[xur + yur * w] = tmpbl;
+                            break;
+                        case Rotation.TWO_SEVENTY:
+                            //save current upper right and bottom left pixels
+                            tmpur = colors[xur + yur * w];
+                            tmpbl = colors[xbl + ybl * w];
+                            //set upper right to upper left pixel
+                            colors[xur + yur * w] = colors[xul + yul * w];
+                            //set bottom left to bottom right pixel
+                            colors[xbl + ybl * w] = colors[xbr + ybr * w];
+                            //set upper left to saved bottom left pixel's old color
+                            colors[xul + yul * w] = tmpbl;
+                            //set bottom right to saved upper right pixel's old color
+                            colors[xbr + ybr * w] = tmpur;
+                            break;
+                    }
+                }
+                ++yul;
+                --xur;
+                --ybr;
+                ++xbl;
+                xul = 0;
+                yur = 0;
+                xbr = w - 1;
+                ybl = h - 1;
+            }
+
+            Texture2D retTex = new Texture2D(graphics, originalTex.Width, originalTex.Height);
+            retTex.SetData(colors);
+            return retTex;
+        }
+
     }
 }

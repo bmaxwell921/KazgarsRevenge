@@ -2778,8 +2778,7 @@ namespace KazgarsRevenge
             LevelManager lm = (Game.Services.GetService(typeof(LevelManager)) as LevelManager);
 
             // Current chunk's image
-            Texture2D curChunk = Texture2DUtil.Instance.GetTexture(lm.GetCurrentChunkImgName(physicalData.Position));
-            Rotation curRot = lm.GetCurrentChunkRotation(physicalData.Position);
+            Texture2D curChunk = Texture2DUtil.Instance.GetRotatedTexture(lm.GetCurrentChunkImgName(physicalData.Position), lm.GetCurrentChunkRotation(physicalData.Position), Game.GraphicsDevice);
 
             // The x and y coord of the current chunk (in the 3x3 grid)
             int chunkX = (int)physicalData.Position.X / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE);
@@ -2804,7 +2803,7 @@ namespace KazgarsRevenge
 
             Rectangle drawLoc = mapDict["Total"];
             s.Draw(curChunk, new Rectangle(drawLoc.X + drawLoc.Width / 2, drawLoc.Y + drawLoc.Height / 2, drawLoc.Width, drawLoc.Height), src,
-                Color.White, -curRot.ToRadians(), new Vector2(zoom / 2, zoom / 2), SpriteEffects.None, 0);
+                Color.White, 0, new Vector2(zoom / 2, zoom / 2), SpriteEffects.None, 0);
 
 
             Rectangle playerRec = megaMapDict["playerPos"];
