@@ -580,7 +580,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent lightPhysics = new PhysicsComponent(mainGame, light);
 
-            light.AddSharedData(typeof(PhysicsComponent), lightPhysics);
+            light.AddComponent(typeof(PhysicsComponent), lightPhysics);
             genComponentManager.AddComponent(lightPhysics);
 
             lights.Add(light);

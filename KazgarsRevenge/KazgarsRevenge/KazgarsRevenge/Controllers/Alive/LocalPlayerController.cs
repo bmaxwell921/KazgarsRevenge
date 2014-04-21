@@ -1126,7 +1126,6 @@ namespace KazgarsRevenge
         }
         #endregion
 
-
         #region Helpers
         /// <summary>
         /// Helps to check and equip gear

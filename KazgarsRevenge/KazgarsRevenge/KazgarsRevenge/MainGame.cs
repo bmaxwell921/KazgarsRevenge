@@ -347,6 +347,10 @@ namespace KazgarsRevenge
         /// </summary>
         public void LoadNextLevel(FloorName name)
         {
+            if (levels.currentLevel.currentFloor == name)
+            {
+                return;
+            }
             gameState = GameState.Loading;
             loadFloor = name;
             createNewPlayer = false;
