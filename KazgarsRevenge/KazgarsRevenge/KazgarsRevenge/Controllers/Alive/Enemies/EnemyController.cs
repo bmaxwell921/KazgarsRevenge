@@ -181,7 +181,7 @@ namespace KazgarsRevenge
             threatLevels.Clear();
 
             scanTimerCounter += millis;
-            if (scanTimerCounter > scanTimerLength)
+            if (scanTimerCounter >= scanTimerLength)
             {
                 scanTimerCounter = 0;
                 GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, settings.noticePlayerRange, false);
@@ -191,9 +191,12 @@ namespace KazgarsRevenge
                     if (targetHealth != null && !targetHealth.Dead)
                     {
                         targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                        SwitchToAttacking();
-                        PlayAnimation(settings.aniPrefix + settings.moveAniName);
-                        return;
+                        if (RaycastLOSIsClear(targetData.Position - physicalData.Position))
+                        {
+                            SwitchToAttacking();
+                            PlayAnimation(settings.aniPrefix + settings.moveAniName);
+                            return;
+                        }
                     }
                 }
             }
@@ -305,7 +308,7 @@ namespace KazgarsRevenge
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
                         //when about to begin next attack, check if there is anything in between us and the target first
-                        if (raycastCheckTarget && settings.attackRange > LevelManager.BLOCK_SIZE && !RayCastCheckForRoom(diff))
+                        if (raycastCheckTarget && settings.attackRange > LevelManager.BLOCK_SIZE && !RaycastLOSIsClear(diff))
                         {
                             currentUpdateFunction = new AIUpdateFunction(AIRunningToTarget);
                             raycastTimerCounter = 100000;
@@ -365,7 +368,7 @@ namespace KazgarsRevenge
                 {
                     if (raycastTimerCounter >= raycastTimerLength)
                     {
-                        nothingBetween = !raycastCheckTarget || RayCastCheckForRoom(diff);
+                        nothingBetween = !raycastCheckTarget || RaycastLOSIsClear(diff);
                         nothingWasBetween = nothingBetween;
                         raycastTimerCounter = 0;
                     }
@@ -397,7 +400,7 @@ namespace KazgarsRevenge
                     {
                         if (raycastTimerCounter >= raycastTimerLength)
                         {
-                            beeline = RayCastCheckForRoom(diff);
+                            beeline = RaycastLOSIsClear(diff);
                             nothingWasBetween = beeline;
                             raycastTimerCounter = 0;
                         }
@@ -707,7 +710,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// raycasts to see if any physics objects part of an entity named "room" are in the way
         /// </summary>
-        private bool RayCastCheckForRoom(Vector3 toTarget)
+        private bool RaycastLOSIsClear(Vector3 toTarget)
         {
             bool nothingBetween = true;
 
