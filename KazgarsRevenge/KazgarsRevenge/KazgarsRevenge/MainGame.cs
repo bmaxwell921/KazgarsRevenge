@@ -367,6 +367,7 @@ namespace KazgarsRevenge
             {
                 players.ResetPlayerPosition();
             }
+            camera.StartLevel(name);
         }
 
         Vector2 vecLoadingText;

@@ -213,8 +213,6 @@ namespace KazgarsRevenge
                 return;
             }
             this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
-
-            camera.StartLevel(name);
         }
 
         /// <summary>

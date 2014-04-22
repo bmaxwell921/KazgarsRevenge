@@ -33,7 +33,7 @@ namespace KazgarsRevenge
         }
 
         /// <summary>
-        /// used for turning model smoothly. slowly adjusts orientation towards 
+        /// used for turning model smoothly. slowly adjusts orientation towards
         /// the newDir and changes velocity based on given speeds
         /// </summary>
         protected void AdjustDir(float runSpeed, float turnSpeed)
