@@ -311,11 +311,25 @@ namespace KazgarsRevenge
         {
             GameEntity entity = new GameEntity("Shopkeeper", FactionType.Players, EntityType.Shopkeeper);
 
-            SetupEntityPhysicsAndShadow(entity, position, new Vector3(10, 40, 10), -1);
+            SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 35, 20), -1);
 
             SetupEntityGraphics(entity, "Models\\Enemies\\Dummy\\dummy_idle", 10);
 
             ShopkeeperController controller = new ShopkeeperController(mainGame, entity);
+            entity.AddComponent(typeof(PlayerInteractiveController), controller);
+            genComponentManager.AddComponent(controller);
+
+            friendlyNPCS.Add(entity);
+        }
+        public void CreateEssenceGuy(Vector3 position)
+        {
+            GameEntity entity = new GameEntity("Essence Guy", FactionType.Players, EntityType.Shopkeeper);
+
+            SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 35, 20), -1);
+
+            SetupEntityGraphics(entity, "Models\\Enemies\\Dummy\\dummy_idle", 10);
+
+            EssenceGuyController controller = new EssenceGuyController(mainGame, entity);
             entity.AddComponent(typeof(PlayerInteractiveController), controller);
             genComponentManager.AddComponent(controller);
 

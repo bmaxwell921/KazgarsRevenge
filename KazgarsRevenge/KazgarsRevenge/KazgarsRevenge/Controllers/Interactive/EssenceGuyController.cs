@@ -9,14 +9,13 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
-    public class ShopkeeperController : PlayerInteractiveController
+    public class EssenceGuyController : PlayerInteractiveController
     {
-        public ShopkeeperController(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity, InteractiveType.Shopkeeper)
+        public EssenceGuyController(KazgarsRevengeGame game, GameEntity entity)
+            : base(game, entity, InteractiveType.EssenceGuy)
         {
             targetedColor = Color.Gold;
             untargetedColor = Color.Gray;
-
         }
 
 

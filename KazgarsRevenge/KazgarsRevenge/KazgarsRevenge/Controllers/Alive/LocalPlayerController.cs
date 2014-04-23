@@ -300,10 +300,11 @@ namespace KazgarsRevenge
                     //Trash item here?
                     if (selectedItemSlot != -1)
                     {
-                        if(!guiOutsideRects.ContainsKey("trashItem")){
+                        if (!guiOutsideRects.ContainsKey("trashItem"))
+                        {
                             guiOutsideRects.Add("trashItem", trashItemRect);
                             itemToDelete = selectedItemSlot;
-                            }
+                        }
                     }
 
                     selectedItemSlot = -1;
