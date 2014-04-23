@@ -181,6 +181,7 @@ namespace KazgarsRevenge
                 public static readonly string RIGHT_ARROW = @"Textures\UI\Frames\rightArrow";
                 public static readonly string LEFT_ARROW = @"Textures\UI\Frames\leftArrow";
                 public static readonly string HELMET = @"Textures\UI\Frames\helmetIcon";
+                public static readonly string shopFrame = @"Textures\UI\Frames\shopgui";
             }
 
             public class Buffs

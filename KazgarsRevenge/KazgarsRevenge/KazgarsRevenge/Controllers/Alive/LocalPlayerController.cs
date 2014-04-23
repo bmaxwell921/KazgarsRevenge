@@ -54,7 +54,7 @@ namespace KazgarsRevenge
             characterIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.CharacterIcon);
             inventoryIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.InventoryIcon);
             talentIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.TalentIcon);
-
+            shopFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.shopFrame);
             #endregion
 
             #region Ability Image Load
@@ -164,6 +164,7 @@ namespace KazgarsRevenge
         Texture2D characterIcon;
         Texture2D inventoryIcon;
         Texture2D talentIcon;
+        Texture2D shopFrame;
 
         //Equipment Base
         Texture2D helmetIcon;
@@ -1351,7 +1352,6 @@ namespace KazgarsRevenge
         {
             //appropriate action for gui element collided with
             //happens on left mouse released
-            //#Nate
             #region left click check
             if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released  && outerCollides == null)
             {
@@ -2137,6 +2137,10 @@ namespace KazgarsRevenge
             {
                 case InteractiveType.Shopkeeper:
                     //#Nate start drawing shop gui here
+                    if (!guiOutsideRects.ContainsKey("shopKeeper"))
+                    {
+                        guiOutsideRects.Add("shopKeeper", shopKeeperRect);
+                    }
                     break;
             }
         }
@@ -2239,7 +2243,7 @@ namespace KazgarsRevenge
             //guiOutsideRects.Add("soulevator", soulRect);
             guiOutsideRects.Add("buttons", new Rectangle((int)((maxX - 430 * average)), (int)(0), (int)(86 * average), (int)(344 * average)));
             trashItemRect = new Rectangle((int)(((maxX / 2) - 175 * average)), (int)((150 * average)), (int)(350 * average), (int)(150 * average));
-            shopKeeperRect = new Rectangle((int)(5 * average), (int)(180 * average), (int)(500 * average), (int)(500 * average));
+            shopKeeperRect = new Rectangle((int)(5 * average), (int)(180 * average), (int)(545 * average), (int)(648 * average));
 
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
@@ -2423,8 +2427,14 @@ namespace KazgarsRevenge
             trashItemDict.Add("cancel", new Rectangle((int)(((maxX / 2 + 50) * average)), (int)((235 * average)), (int)(75 * average), (int)(50 * average)));
 
             //Shop Keeper
-
-
+            for (int i = 0; i < 10; i += 2)
+            {
+                shopKeeperDict.Add("itemIcon" + i, new Rectangle((int)(25 * average), (int)(273 + i/2 * 111 * average), (int)(78 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemFrame" + i, new Rectangle((int)(103 * average), (int)(273 + i/2 * 111 * average), (int)(135 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemIcon" + (i + 1), new Rectangle((int)(258 * average), (int)(273 + i/2 * 111 * average), (int)(78 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemFrame" + (i + 1), new Rectangle((int)(336 * average), (int)(273 + i/2 * 111 * average), (int)(135 * average), (int)(78 * average)));
+            }
+            
         }
         #endregion
 
@@ -2819,6 +2829,18 @@ namespace KazgarsRevenge
                 s.DrawString(font, "to delete this item?", new Vector2((int)(((maxX / 2 - 110) * average)), (int)((185 * average))), Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
 
                 if (itemToDelete != -1) s.Draw(texHover, guiInsideRects["inventory"]["inventory" + itemToDelete], Color.Red);
+            }
+            #endregion
+
+            #region shopKeeper
+            if (guiOutsideRects.ContainsKey("shopKeeper"))
+            {
+                s.Draw(shopFrame, guiOutsideRects["shopKeeper"], Color.White);
+                for (int i = 0; i < 10; i++)
+                {
+                    s.Draw(texPlaceHolder, guiInsideRects["shopKeeper"]["itemIcon" + i], Color.White);
+                    s.Draw(texPlaceHolder, guiInsideRects["shopKeeper"]["itemFrame" + i], Color.White);
+                }
             }
             #endregion
 
