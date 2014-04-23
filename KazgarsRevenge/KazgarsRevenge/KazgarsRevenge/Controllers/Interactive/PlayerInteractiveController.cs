@@ -26,7 +26,7 @@ namespace KazgarsRevenge
         public override void Start()
         {
             modelParams = Entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
-            modelParams.lineColor = targetedColor;
+            modelParams.lineColor = untargetedColor;
             base.Start();
         }
 

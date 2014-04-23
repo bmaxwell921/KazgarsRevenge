@@ -565,11 +565,11 @@ namespace KazgarsRevenge
                 {
                     if (i == 0)
                     {
-                        enemyManager.CreateVendorGuy(Vector3.Transform(shopLocations[i], chunkTransform));
+                        
                     }
                     else if (i == 1)
                     {
-
+                        enemyManager.CreateVendorGuy(Vector3.Transform(shopLocations[i], chunkTransform));
                     }
                 }
 

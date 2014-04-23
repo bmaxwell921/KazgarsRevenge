@@ -142,6 +142,7 @@ namespace KazgarsRevenge
         GameEntity mouseHoveredEntity;
         AliveComponent mouseHoveredHealth;
         PlayerInteractiveController mouseHoveredThing;
+        Vector3 lastInteractedPosition = Vector3.Zero;
 
         #region UI Textures
         Texture2D texCursor;
@@ -409,6 +410,23 @@ namespace KazgarsRevenge
                         ChangeVelocity(forcedVelocityDir);
                     }
                 }
+
+
+                if (Math.Abs(physicalData.Position.X - lastInteractedPosition.X) + Math.Abs(physicalData.Position.Z - lastInteractedPosition.Z) > 75)
+                {
+                    if (inSoulevator)
+                    {
+                        ExitSoulevator();
+                    }
+                    else if (inShop)
+                    {
+                        ExitShop();
+                    }
+                    else if (inEssenceShop)
+                    {
+                        ExitEssenceShop();
+                    }
+                }
             }
             else
             {
@@ -515,8 +533,9 @@ namespace KazgarsRevenge
                                 {
                                     mouseHoveredThing.Target();
                                     Entity hoveredEnt = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
-                                    if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released &&
-                                        (Math.Abs(physicalData.Position.X - hoveredEnt.Position.X) + Math.Abs(physicalData.Position.Z - hoveredEnt.Position.Z) < 75.0f))
+                                    lastInteractedPosition = hoveredEnt.Position;
+                                    if (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released &&
+                                        (Math.Abs(physicalData.Position.X - lastInteractedPosition.X) + Math.Abs(physicalData.Position.Z - lastInteractedPosition.Z) < 75.0f))
                                     {
                                         InteractWithEntity(mouseHoveredThing.Type);
                                     }
@@ -2083,18 +2102,28 @@ namespace KazgarsRevenge
 
         }
 
-        public override void EnterSoulevator()
+        //variables for menus
+        protected bool inSoulevator = false;
+        protected bool inShop = false;
+        protected bool inEssenceShop = false;
+        /// <summary>
+        /// called by the soulevator controller when the player runs into it
+        /// </summary>
+        public virtual void EnterSoulevator(Vector3 position)
         {
-            base.EnterSoulevator();
+            lastInteractedPosition = position;
+            inSoulevator = true;
             if (!guiOutsideRects.ContainsKey("soulevator"))
             {
                 guiOutsideRects.Add("soulevator", soulevatorRect);
             }
         }
-
-        protected override void ExitSoulevator()
+        /// <summary>
+        /// called by the player when exiting the soulevator
+        /// </summary>
+        protected virtual void ExitSoulevator()
         {
-            base.ExitSoulevator();
+            inSoulevator = false;
             if (guiOutsideRects.ContainsKey("soulevator"))
             {
                 guiOutsideRects.Remove("soulevator");
@@ -2109,6 +2138,16 @@ namespace KazgarsRevenge
                     //#Nate start drawing shop gui here
                     break;
             }
+        }
+
+        private void ExitShop()
+        {
+            inShop = false;
+        }
+
+        private void ExitEssenceShop()
+        {
+            inEssenceShop = false;
         }
         #endregion
 
@@ -2766,18 +2805,6 @@ namespace KazgarsRevenge
                 {
                     Rectangle tmpSoulRect = guiInsideRects["soulevator"][i + ""];
                     s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
-                }
-            }
-            #endregion
-
-            #region soulevator
-            if (inSoulevator)
-            {
-                s.Draw(texWhitePixel, guiOutsideRects["soulevator"], Color.Black);
-                for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
-                {
-                    Rectangle tmpSoulRect = guiInsideRects["soulevator"][i + ""];
-                    s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White);
                 }
             }
             #endregion
