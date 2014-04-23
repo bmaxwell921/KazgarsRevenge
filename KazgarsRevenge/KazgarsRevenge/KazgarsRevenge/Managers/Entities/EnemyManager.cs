@@ -291,21 +291,36 @@ namespace KazgarsRevenge
             enemies.Add(id, enemy);
         }
 
-        public void CreateDummy(Identification id, Vector3 position)
+
+        List<GameEntity> friendlyNPCS = new List<GameEntity>();
+        public void CreateDummy(Vector3 position)
         {
             GameEntity entity = new GameEntity("Training Dummy", FactionType.Enemies, EntityType.NormalEnemy);
 
             SetupEntityPhysicsAndShadow(entity, position, new Vector3(10, 40, 10), -1);
 
-            SetupEntityGraphics(entity, "Models\\Enemies\\Dummy", 10);
+            SetupEntityGraphics(entity, "Models\\Enemies\\Dummy\\dummy_idle", 10);
 
             DummyController controller = new DummyController(mainGame, entity, players.GetHighestLevel());
             entity.AddComponent(typeof(AliveComponent), controller);
             genComponentManager.AddComponent(controller);
 
-            enemies.Add(id, entity);
+            friendlyNPCS.Add(entity);
         }
+        public void CreateVendorGuy(Vector3 position)
+        {
+            GameEntity entity = new GameEntity("Shopkeeper", FactionType.Players, EntityType.Shopkeeper);
 
+            SetupEntityPhysicsAndShadow(entity, position, new Vector3(10, 40, 10), -1);
+
+            SetupEntityGraphics(entity, "Models\\Enemies\\Dummy\\dummy_idle", 10);
+
+            ShopkeeperController controller = new ShopkeeperController(mainGame, entity);
+            entity.AddComponent(typeof(PlayerInteractiveController), controller);
+            genComponentManager.AddComponent(controller);
+
+            friendlyNPCS.Add(entity);
+        }
 
 
         #region Bosses
@@ -397,6 +412,12 @@ namespace KazgarsRevenge
                 k.Value.KillEntity();
             }
             enemies.Clear();
+
+            foreach (GameEntity e in friendlyNPCS)
+            {
+                e.KillEntity();
+            }
+            friendlyNPCS.Clear();
         }
         
         /// <summary>

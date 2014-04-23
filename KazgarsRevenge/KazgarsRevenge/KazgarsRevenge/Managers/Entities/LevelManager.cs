@@ -560,6 +560,19 @@ namespace KazgarsRevenge
                     CreateTorchEmitter(Vector3.Transform(v, chunkTransform));
                 }
 
+                List<Vector3> shopLocations = levelInfo.shopKeeperLocations;
+                for (int i = 0; i < shopLocations.Count; ++i)
+                {
+                    if (i == 0)
+                    {
+                        enemyManager.CreateVendorGuy(Vector3.Transform(shopLocations[i], chunkTransform));
+                    }
+                    else if (i == 1)
+                    {
+
+                    }
+                }
+
             }
         }
 

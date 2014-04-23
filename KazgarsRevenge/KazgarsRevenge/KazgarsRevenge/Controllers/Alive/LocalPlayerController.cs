@@ -141,6 +141,7 @@ namespace KazgarsRevenge
         Entity targetedPhysicalData;
         GameEntity mouseHoveredEntity;
         AliveComponent mouseHoveredHealth;
+        PlayerInteractiveController mouseHoveredThing;
 
         #region UI Textures
         Texture2D texCursor;
@@ -457,6 +458,15 @@ namespace KazgarsRevenge
                 mouseHoveredLocation = r.Position + r.Direction * distance.Value;
             }
 
+            if (float.IsNaN(mouseHoveredLocation.X) || float.IsNaN(mouseHoveredLocation.Y) || float.IsNaN(mouseHoveredLocation.Z))
+            {
+                //trying to find nan
+                throw new Exception("NaN happened because of raycast?");
+                mouseHoveredLocation.X = 0;
+                mouseHoveredLocation.Y = 0;
+                mouseHoveredLocation.Z = 0;
+            }
+
             //check if ray hits GameEntity if not holding down mouse button
             List<RayCastResult> results = new List<RayCastResult>();
             physics.RayCast(r, 10000, rayCastFilter, results);
@@ -483,7 +493,7 @@ namespace KazgarsRevenge
                         mouseHoveredEntity = result.HitObject.Tag as GameEntity;
                         if (mouseHoveredEntity != null)
                         {
-                            if (mouseHoveredEntity.Type == EntityType.Misc)
+                            if (mouseHoveredEntity.Type == EntityType.Misc || mouseHoveredEntity.Type == EntityType.None || mouseHoveredEntity.Type == EntityType.Player)
                             {
                                 ResetTargettedEntity();
                             }
@@ -492,18 +502,28 @@ namespace KazgarsRevenge
                             else// if (newTarget)
                             {
                                 mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
+                                mouseHoveredThing = mouseHoveredEntity.GetComponent(typeof(PlayerInteractiveController)) as PlayerInteractiveController;
                                 if (mouseHoveredHealth != null)
                                 {
-                                    mouseHoveredHealth.Target();
+                                    mouseHoveredHealth.Target(); 
+                                    if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                                    {
+                                        targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
+                                    }
                                 }
-
-                                if (mouseHoveredHealth == null)
+                                else if (mouseHoveredThing != null)
+                                {
+                                    mouseHoveredThing.Target();
+                                    Entity hoveredEnt = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
+                                    if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released &&
+                                        (Math.Abs(physicalData.Position.X - hoveredEnt.Position.X) + Math.Abs(physicalData.Position.Z - hoveredEnt.Position.Z) < 75.0f))
+                                    {
+                                        InteractWithEntity(mouseHoveredThing.Type);
+                                    }
+                                }
+                                else
                                 {
                                     ResetTargettedEntity();
-                                }
-                                else if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
-                                {
-                                    targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
                                 }
                                 break;
                             }
@@ -1257,8 +1277,13 @@ namespace KazgarsRevenge
             {
                 mouseHoveredHealth.UnTarget();
             }
+            if (mouseHoveredThing != null)
+            {
+                mouseHoveredThing.UnTarget();
+            }
             mouseHoveredEntity = null;
             mouseHoveredHealth = null;
+            mouseHoveredThing = null;
         }
 
         /// <summary>
@@ -2073,6 +2098,16 @@ namespace KazgarsRevenge
             if (guiOutsideRects.ContainsKey("soulevator"))
             {
                 guiOutsideRects.Remove("soulevator");
+            }
+        }
+
+        private void InteractWithEntity(InteractiveType type)
+        {
+            switch (type)
+            {
+                case InteractiveType.Shopkeeper:
+                    //#Nate start drawing shop gui here
+                    break;
             }
         }
         #endregion

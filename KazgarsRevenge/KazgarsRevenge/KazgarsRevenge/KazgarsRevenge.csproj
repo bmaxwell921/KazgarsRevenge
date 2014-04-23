@@ -145,6 +145,7 @@
     <Compile Include="Controllers\DeathTimerController.cs" />
     <Compile Include="Controllers\DebrisController.cs" />
     <Compile Include="Controllers\FallingArrowController.cs" />
+    <Compile Include="Controllers\Interactive\PlayerInteractiveController.cs" />
     <Compile Include="Controllers\LevelUpController.cs" />
     <Compile Include="Controllers\Lootables\LootableController.cs" />
     <Compile Include="Controllers\Lootables\LootSoulController.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Controllers\Objects\PillarController.cs" />
     <Compile Include="Controllers\Objects\SoulevatorController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
+    <Compile Include="Controllers\Interactive\ShopkeeperController.cs" />
     <Compile Include="Drawing\Billboards\AdrenalineRushBillboard.cs" />
     <Compile Include="Drawing\Billboards\ArrowVBillboard.cs" />
     <Compile Include="Drawing\Billboards\Base Classes\VerticalStretchingBillboard.cs" />
