@@ -35,40 +35,6 @@ namespace KazgarsRevenge
             stopRadius = 2;
         }
 
-        /// <summary>
-        /// Copied from PlayerController, pull up hierarchy
-        /// </summary>
-        /// <param name="equipMe"></param>
-        /// <param name="slot"></param>
-        protected override void EquipGear(Equippable equipMe, GearSlot slot)
-        {
-            float xRot = 0;
-            //if the player is trying to equip a two-handed weapon to the offhand, unequip both current weapons and equip it to the main hand
-            Weapon possWep = equipMe as Weapon;
-            if (possWep != null)
-            {
-                if (possWep.TwoHanded)
-                {
-                    if (slot == GearSlot.Lefthand)
-                    {
-                        EquipGear(equipMe, GearSlot.Righthand);
-                        return;
-                    }
-                }
-
-                if (slot == GearSlot.Righthand)
-                {
-                    xRot = MathHelper.Pi;
-                }
-            }
-
-            //otherwise, carry on
-            gear[slot] = equipMe;
-            RecalculateStats();
-
-            attached.Add(slot.ToString(), new AttachableModel(equipMe.GearModel, GearSlotToBoneName(slot), xRot, 0));
-        }
-
         public void SetPosition(Vector3 pos)
         {
             this.targetPos = pos;

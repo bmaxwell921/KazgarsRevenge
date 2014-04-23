@@ -1164,7 +1164,10 @@ namespace KazgarsRevenge
                 if (e != null && (e.Slot == slot || e.Slot2 == slot))
                 {
                     inventory[selectedItemSlot] = null;
-                    EquipGear(e, slot);
+                    if (!EquipGear(e, slot))
+                    {
+                        inventory[selectedItemSlot] = e;
+                    }
                     selectedItemSlot = -1;
                 }
                 else

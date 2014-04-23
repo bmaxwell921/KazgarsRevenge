@@ -121,13 +121,12 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="equipMe"></param>
         /// <param name="slot"></param>
-        protected virtual void EquipGear(Equippable equipMe, GearSlot slot)
+        protected virtual bool EquipGear(Equippable equipMe, GearSlot slot)
         {
             if (equipMe.ItemLevel > Level)
             {
-                AddToInventory(equipMe);
                 (Game as MainGame).AddAlert("That item's level is too high");
-                return;
+                return false;
             }
 
             float xRot = 0;
@@ -148,12 +147,19 @@ namespace KazgarsRevenge
                 {
                     if (slot == GearSlot.Lefthand)
                     {
-                        EquipGear(equipMe, GearSlot.Righthand);
-                        return;
+                        return EquipGear(equipMe, GearSlot.Righthand);
                     }
+
+                    //don't let player replace dual wielded weapons with a twohander if there is not enough space for them
+                    if (gear[GearSlot.Righthand] != null && gear[GearSlot.Lefthand] != null && !CheckForInventorySpace(2))
+                    {
+                        (Game as MainGame).AddAlert("Inventory is full");
+                        return false;
+                    }
+
                     if (!UnequipGear(GearSlot.Lefthand))
                     {
-                        return;
+                        return false;
                     }
                 }
 
@@ -179,12 +185,19 @@ namespace KazgarsRevenge
                     {
                         syncedModels.Add(slot.ToString(), equipMe.GearModel);
                     }
+                    return true;
+                }
+                else
+                {
+                    (Game as MainGame).AddAlert("Inventory is full");
+                    return false;
                 }
             }
             else
             {
-                AddToInventory(equipMe);
+                (Game as MainGame).AddAlert("Can't equip that to your " + slot.ToString());
             }
+            return false;
         }
 
         /// <summary>
@@ -342,6 +355,24 @@ namespace KazgarsRevenge
             return false;
         }
 
+        public bool CheckForInventorySpace(int amt)
+        {
+            int count = 0;
+            for (int i = 0; i < inventory.Length; ++i)
+            {
+                if (inventory[i] == null)
+                {
+                    ++count;
+                    if (count >= amt)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+
+        }
+
         /// <summary>
         /// Removes one item with the given ID from the inventory. 
         /// Used for consumables.
@@ -414,33 +445,6 @@ namespace KazgarsRevenge
                 return AttackType.None;
             }
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        protected void UseItem(Item i)
-        {
-            switch (i.Type)
-            {
-                case ItemType.Equippable:
-                    Equippable equip = i as Equippable;
-                    if (equip != null)
-                    {
-                        EquipGear(equip, equip.Slot);
-                    }
-                    break;
-                case ItemType.Potion:
-
-                    break;
-                case ItemType.Recipe:
-
-                    break;
-                case ItemType.Essence:
-
-                    break;
-            }
-        }
         #endregion
 
         protected Account playerAccount;
@@ -455,39 +459,39 @@ namespace KazgarsRevenge
             //adding gear for testing
             Equippable wep = (Equippable)lewtz.GetItem(9901);
             wep.SetStats(GearQuality.Legendary, 70);
-            EquipGear(wep, GearSlot.Righthand);
+            AddToInventory(wep);
             
             Equippable boots = (Equippable)lewtz.GetItem(9900);
             boots.SetStats(GearQuality.Legendary, 70);
-            EquipGear(boots, GearSlot.Feet);
+            AddToInventory(boots);
 
 
-            EquipGear((Equippable)lewtz.GetItem(3002), GearSlot.Righthand);
-            EquipGear((Equippable)lewtz.GetItem(3102), GearSlot.Righthand);
+            AddToInventory(lewtz.GetItem(3002));
+            AddToInventory(lewtz.GetItem(3102));
 
             Equippable g = (Equippable)lewtz.GetItem(3107);
             g.SetStats(GearQuality.Standard, 2);
-            EquipGear(g, GearSlot.Righthand);
+            AddToInventory(g);
 
 
             g = (Equippable)lewtz.GetItem(3301);
             g.SetStats(GearQuality.Epic, 1);
-            EquipGear(g, GearSlot.Righthand);
+            AddToInventory(g);
             g = (Equippable)lewtz.GetItem(3302);
             g.SetStats(GearQuality.Epic, 1);
-            EquipGear(g, GearSlot.Righthand);
+            AddToInventory(g);
             g = (Equippable)lewtz.GetItem(3303);
             g.SetStats(GearQuality.Epic, 1);
-            EquipGear(g, GearSlot.Righthand);
+            AddToInventory(g);
             g = (Equippable)lewtz.GetItem(3304);
             g.SetStats(GearQuality.Epic, 1);
-            EquipGear(g, GearSlot.Righthand);
+            AddToInventory(g);
             g = (Equippable)lewtz.GetItem(3305);
             g.SetStats(GearQuality.Epic, 1);
-            EquipGear(g, GearSlot.Righthand);
+            AddToInventory(g);
             g = (Equippable)lewtz.GetItem(3306);
             g.SetStats(GearQuality.Epic, 1);
-            EquipGear(g, GearSlot.Righthand);
+            AddToInventory(g);
         }
 
         public override void Start()
