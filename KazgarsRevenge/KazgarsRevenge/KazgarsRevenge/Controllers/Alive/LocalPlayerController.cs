@@ -187,6 +187,7 @@ namespace KazgarsRevenge
         string lastClick = null;
         string abilityToUseString = null;
         int selectedItemSlot = -1;
+        int itemToDelete = -1;
         int selectedTalentSlot = -1;
         int lootScroll = 0;
         GearSlot selectedEquipPiece;
@@ -295,6 +296,14 @@ namespace KazgarsRevenge
                 if (outerCollides == null && (selectedItemSlot != -1 || selectedEquipSlot || selectedTalentSlot != -1) && prevMouse.LeftButton == ButtonState.Pressed && curMouse.LeftButton == ButtonState.Released)
                 {
                     //Trash item here?
+                    if (selectedItemSlot != -1)
+                    {
+                        if(!guiOutsideRects.ContainsKey("trashItem")){
+                            guiOutsideRects.Add("trashItem", trashItemRect);
+                            itemToDelete = selectedItemSlot;
+                            }
+                    }
+
                     selectedItemSlot = -1;
                     selectedTalentSlot = -1;
                     selectedEquipSlot = false;
@@ -1650,6 +1659,19 @@ namespace KazgarsRevenge
                             }
                             break;
                         #endregion
+                        #region trashItem
+                        case "trashItem":
+                            if (innerCollides.Equals("ok")){
+                                inventory[itemToDelete] = null;
+                                itemToDelete = -1;
+                            }
+                            else if (innerCollides.Equals("cancel"))
+                            {
+                                itemToDelete = -1;
+                            }
+                            guiOutsideRects.Remove("trashItem");
+                            break;
+                        #endregion
                     }
                 }
             }
@@ -1966,6 +1988,20 @@ namespace KazgarsRevenge
                     }
                     break;
                 #endregion
+                #region trashItem
+                case "trashItem":
+                    if (innerCollides.Equals("ok"))
+                    {
+                        hovering = true;
+                        hoverRect = guiInsideRects["trashItem"]["ok"];
+                    }
+                    else if (innerCollides.Equals("cancel"))
+                    {
+                        hovering = true;
+                        hoverRect = guiInsideRects["trashItem"]["cancel"];
+                    }
+                    break;
+                #endregion
                 case "helpPop":
                     if (innerCollides == "ok")
                     {
@@ -2077,6 +2113,8 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> talentArrowsDict;
         Dictionary<string, Rectangle> buttonsDict;
         Dictionary<string, Rectangle> soulevatorDict;
+        Dictionary<string, Rectangle> trashItemDict;
+        Dictionary<string, Rectangle> shopKeeperDict;
 
 
         Rectangle inventoryRect;
@@ -2089,6 +2127,8 @@ namespace KazgarsRevenge
         Rectangle megaMapRect;
         Rectangle helpPopRect;
         Rectangle soulevatorRect;
+        Rectangle trashItemRect;
+        Rectangle shopKeeperRect;
         Vector2 powerTextPos;
 
         Rectangle hoverRect;
@@ -2123,6 +2163,8 @@ namespace KazgarsRevenge
             soulevatorRect = new Rectangle((int)(470 * average), 0, (int)(400 * average), (int)(475 * average));
             //guiOutsideRects.Add("soulevator", soulRect);
             guiOutsideRects.Add("buttons", new Rectangle((int)((maxX - 430 * average)), (int)(0), (int)(86 * average), (int)(344 * average)));
+            trashItemRect = new Rectangle((int)(((maxX / 2) - 175 * average)), (int)((150 * average)), (int)(350 * average), (int)(150 * average));
+            shopKeeperRect = new Rectangle((int)(5 * average), (int)(180 * average), (int)(500 * average), (int)(500 * average));
 
 
             Vector2 inventoryUR = new Vector2((int)(maxX - 440 * average), (int)(380 * average));
@@ -2155,6 +2197,9 @@ namespace KazgarsRevenge
             talentArrowsDict = new Dictionary<string, Rectangle>();
             buttonsDict = new Dictionary<string, Rectangle>();
             soulevatorDict = new Dictionary<string, Rectangle>();
+            trashItemDict = new Dictionary<string, Rectangle>();
+            shopKeeperDict = new Dictionary<string, Rectangle>();
+
 
 
             //Add frame dictionaries
@@ -2171,6 +2216,8 @@ namespace KazgarsRevenge
             guiInsideRects.Add("helpPop", helpPopDict);
             guiInsideRects.Add("buttons", buttonsDict);
             guiInsideRects.Add("soulevator", soulevatorDict);
+            guiInsideRects.Add("trashItem", trashItemDict);
+            guiInsideRects.Add("shopKeeper", shopKeeperDict);
             #endregion
 
             //Equipment inner
@@ -2295,6 +2342,13 @@ namespace KazgarsRevenge
             {
                 soulevatorDict.Add(i + "", new Rectangle(soulevatorRect.X + (int)(10 * average), soulevatorRect.Y + (int)(75 * i * average + 10 * average), soulevatorRect.Width - (int)(20 * average), (int)(50 * average)));
             }
+
+            //Trash Item
+            trashItemDict.Add("ok", new Rectangle((int)(((maxX / 2 - 125) * average)), (int)((235 * average)), (int)(75 * average), (int)(50 * average)));
+            trashItemDict.Add("cancel", new Rectangle((int)(((maxX / 2 + 50) * average)), (int)((235 * average)), (int)(75 * average), (int)(50 * average)));
+
+            //Shop Keeper
+
 
         }
         #endregion
@@ -2690,6 +2744,18 @@ namespace KazgarsRevenge
                     Rectangle tmpSoulRect = guiInsideRects["soulevator"][i + ""];
                     s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White);
                 }
+            }
+            #endregion
+
+            #region trash item
+            if(guiOutsideRects.ContainsKey("trashItem")){
+                s.Draw(texWhitePixel, guiOutsideRects["trashItem"], Color.Black *.5f);
+                s.Draw(texPlaceHolder, guiInsideRects["trashItem"]["ok"], Color.Green);
+                s.Draw(texPlaceHolder, guiInsideRects["trashItem"]["cancel"], Color.Red);
+                s.DrawString(font, "Are you sure you want", new Vector2((int)(((maxX / 2 - 120) * average)), (int)((160 * average))), Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
+                s.DrawString(font, "to delete this item?", new Vector2((int)(((maxX / 2 - 110) * average)), (int)((185 * average))), Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
+
+                if (itemToDelete != -1) s.Draw(texHover, guiInsideRects["inventory"]["inventory" + itemToDelete], Color.Red);
             }
             #endregion
 
