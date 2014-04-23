@@ -47,7 +47,10 @@ namespace KazgarsRevenge
             }
         }
 
-        #region entities
+
+
+
+
         public void CreateEnemy(EntityType type, Vector3 loc)
         {
             switch (type)
@@ -151,7 +154,6 @@ namespace KazgarsRevenge
 
             enemies.Add(id, enemy);
         }
-
         public void CreateMagicSkeleton(Identification id, Vector3 position, int level, bool elite)
         {
             EntityType enemyType = EntityType.NormalEnemy;
@@ -188,7 +190,6 @@ namespace KazgarsRevenge
 
             enemies.Add(id, enemy);
         }
-
         public void CreateCrossbowSkeleton(Identification id, Vector3 position, int level, bool elite)
         {
             EntityType enemyType = EntityType.NormalEnemy;
@@ -229,7 +230,6 @@ namespace KazgarsRevenge
 
             enemies.Add(id, enemy);
         }
-
         public void CreateArmorEnemy(Identification id, Vector3 position, int level, bool elite)
         {
             EntityType enemyType = EntityType.NormalEnemy;
@@ -291,6 +291,24 @@ namespace KazgarsRevenge
             enemies.Add(id, enemy);
         }
 
+        public void CreateDummy(Identification id, Vector3 position)
+        {
+            GameEntity entity = new GameEntity("Training Dummy", FactionType.Enemies, EntityType.NormalEnemy);
+
+            SetupEntityPhysicsAndShadow(entity, position, new Vector3(10, 40, 10), -1);
+
+            SetupEntityGraphics(entity, "Models\\Enemies\\Dummy", 10);
+
+            DummyController controller = new DummyController(mainGame, entity, players.GetHighestLevel());
+            entity.AddComponent(typeof(AliveComponent), controller);
+            genComponentManager.AddComponent(controller);
+
+            enemies.Add(id, entity);
+        }
+
+
+
+        #region Bosses
         public void CreateBoss(Identification id, Vector3 position)
         {
             //TODO: switch based on level
@@ -323,6 +341,12 @@ namespace KazgarsRevenge
 
             enemies.Add(id, dragon);
         }
+        #endregion
+
+
+
+
+
 
         /// <summary>
         /// Creates an enemy with typical physics and animated graphics around the given entity.
@@ -342,7 +366,15 @@ namespace KazgarsRevenge
         private void SetupEntityPhysicsAndShadow(GameEntity entity, Vector3 position, Vector3 dimensions, float mass)
         {
             position.Y = LevelManager.MOB_SPAWN_Y;
-            Entity enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z, mass);
+            Entity enemyPhysicalData;
+            if (mass == -1)
+            {
+                enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z);
+            }
+            else
+            {
+                enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z, mass);
+            }
             enemyPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
             enemyPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             enemyPhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
@@ -357,8 +389,6 @@ namespace KazgarsRevenge
             entity.AddComponent(typeof(BlobShadowDecal), enemyShadow);
             billboardManager.AddComponent(enemyShadow);
         }
-
-        #endregion
 
         public void ClearEnemies()
         {
