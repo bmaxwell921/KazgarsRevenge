@@ -90,6 +90,8 @@ namespace KazgarsRevenge
         
         protected override void Initialize()
         {
+            GraphicsDevice.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
+
             settings.particleSettings = SettingAmount.Low;
 
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
@@ -102,7 +104,7 @@ namespace KazgarsRevenge
             {
                 graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                graphics.IsFullScreen = false;
+                graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
             }
             else
@@ -266,7 +268,6 @@ namespace KazgarsRevenge
         string alertMessage = "";
         double alertTimeLeft = 0;
         float alertSourceX = 0;
-
         List<FloatingText> floatingText = new List<FloatingText>();
         Vector2 alertStart = Vector2.Zero;
         public void AddAlert(string text)
@@ -281,11 +282,26 @@ namespace KazgarsRevenge
             floatingText.Add(floater);
         }
 
+        const bool debug = false;
         int loadInt = 0;
+        int frameCounter = 0;
+        int frameRate = 0;
+        TimeSpan elapsedTime = TimeSpan.Zero;
         protected override void Update(GameTime gameTime)
         {
             if (gameState == GameState.Playing)
             {
+                if (debug)
+                {
+                    elapsedTime += gameTime.ElapsedGameTime;
+                    if (elapsedTime > TimeSpan.FromSeconds(1))
+                    {
+                        elapsedTime -= TimeSpan.FromSeconds(1);
+                        frameRate = frameCounter;
+                        frameCounter = 0;
+                    }
+                }
+
                 physics.Update();
                 double millis = gameTime.ElapsedGameTime.TotalMilliseconds;
                 if (alertTimeLeft > 0)
@@ -308,7 +324,7 @@ namespace KazgarsRevenge
                 if (loadInt > 3)
                 {
                     ActuallyLoadLevel(this.loadFloor);
-                    TransitionToPlaying();
+                    loadInt = 20;
                 }
             }
 
@@ -401,6 +417,7 @@ namespace KazgarsRevenge
             }
             else if (gameState == GameState.Playing)
             {
+
                 //draw depth render target
                 GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
                 GraphicsDevice.Clear(Color.Black);
@@ -441,14 +458,14 @@ namespace KazgarsRevenge
 
 
                 //physics debugging
-                
+                /*
                 effectModelDrawer.LightingEnabled = false;
                 effectModelDrawer.VertexColorEnabled = true;
                 effectModelDrawer.World = Matrix.Identity;
                 effectModelDrawer.View = camera.View;
                 effectModelDrawer.Projection = camera.Projection;
                 modelDrawer.Draw(effectModelDrawer, physics);
-                
+                 */
 
                 spriteBatch.Begin();
                 spriteManager.Draw(spriteBatch);
@@ -465,6 +482,12 @@ namespace KazgarsRevenge
                 if (alertTimeLeft > 0)
                 {
                     spriteBatch.DrawString(normalFont, alertMessage, new Vector2(maxX / 2, 172 * average), Color.Red * (float)(alertTimeLeft / 2500), 0, new Vector2(alertSourceX, 0), .5f * average, SpriteEffects.None, 0);
+                }
+
+                if (debug)
+                {
+                    ++frameCounter;
+                    spriteBatch.DrawString(normalFont, frameRate + " FPS", new Vector2(maxX / 2, maxY / 2), Color.Red);
                 }
                 spriteBatch.End();
 

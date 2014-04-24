@@ -257,7 +257,9 @@ namespace KazgarsRevenge
 
         }
 
-        #region Lights
+
+
+
         public Vector3 AmbientLight { get; private set; }
         Vector3[] ambientLightDefs;
         public Vector3 PlayerLightPos { get; private set; }
@@ -314,6 +316,11 @@ namespace KazgarsRevenge
             AmbientLight = ambientLightDefs[(int)name];
             lightUpdateCounter = 0;
         }
-        #endregion
+
+        public void RefreshLights()
+        {
+            lightUpdateCounter = 0;
+        }
+
     }
 }

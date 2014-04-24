@@ -47,7 +47,7 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
         }
 
-        float senseRadius = LevelManager.BLOCK_SIZE * 2;
+        float senseRadius = LevelManager.BLOCK_SIZE * 1.5f;
         double timerCounter;
         CameraComponent camera;
         Entity avoidData = null;

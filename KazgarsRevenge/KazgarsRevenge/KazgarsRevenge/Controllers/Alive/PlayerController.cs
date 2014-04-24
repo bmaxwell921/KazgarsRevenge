@@ -1080,6 +1080,7 @@ namespace KazgarsRevenge
                 ReviveAlive();
                 StartSequence("fightingstance");
                 AddBuff(Buff.Invincibility, Entity);
+                camera.RefreshLights();
             });
 
             return sequence;

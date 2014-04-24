@@ -381,7 +381,7 @@ namespace KazgarsRevenge
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 
             Model roomModel = GetUnanimatedModel(modelPath);
-
+            
             Vector3[] vertices;
             int[] indices;
             TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
@@ -533,7 +533,7 @@ namespace KazgarsRevenge
                 List<Vector3> mobSpawnLocations = levelInfo.mobSpawnLocations;
                 foreach (Vector3 v in mobSpawnLocations)
                 {
-                    CreateMobSpawner(Vector3.Transform(v, chunkTransform));
+                    //CreateMobSpawner(Vector3.Transform(v, chunkTransform));
                 }
 
                 List<Vector3> playerspawns = levelInfo.playerSpawnLocations;
@@ -586,7 +586,10 @@ namespace KazgarsRevenge
                 List<Vector3> gopherLocs = levelInfo.gopherLocations;
                 foreach (Vector3 v in gopherLocs)
                 {
-                    (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(v, chunkTransform));
+                    if (RandSingleton.U_Instance.Next(2) == 0)
+                    {
+                        (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(v, chunkTransform));
+                    }
                 }
             }
         }
@@ -1364,8 +1367,8 @@ namespace KazgarsRevenge
         // Returns the image name of the chunk the player is currently in
         public string GetCurrentChunkImgName(Vector3 location)
         {
-            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
-            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+            int xCoord = Math.Min(2, (int)location.X / (CHUNK_SIZE * BLOCK_SIZE));
+            int yCoord = Math.Min(2, (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE));
             return @"Textures\UI\MegaMap\" + currentLevel.chunkInfos[xCoord, yCoord].ChunkName;
         }
 

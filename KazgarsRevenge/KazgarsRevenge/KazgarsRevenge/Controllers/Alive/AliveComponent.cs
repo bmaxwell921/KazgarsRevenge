@@ -348,8 +348,10 @@ namespace KazgarsRevenge
         }
 
         //used by grappling hook and chain spear controllers to move entities
+        BEPUphysics.CollisionRuleManagement.CollisionRule prevRule = BEPUphysics.CollisionRuleManagement.CollisionRule.Normal;
         public void Pull()
         {
+            prevRule = physicalData.CollisionInformation.CollisionRules.Personal;
             pulling = true;
             physicalData.IsAffectedByGravity = false;
             physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
@@ -358,7 +360,7 @@ namespace KazgarsRevenge
         {
             pulling = false;
             physicalData.IsAffectedByGravity = true;
-            physicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.Normal;
+            physicalData.CollisionInformation.CollisionRules.Personal = prevRule;
         }
 
         /// <summary>
