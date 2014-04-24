@@ -245,7 +245,7 @@ namespace KazgarsRevenge
             lightUpdateCounter -= gameTime.ElapsedGameTime.TotalMilliseconds;
             if (lightUpdateCounter <= 0)
             {
-                lightUpdateCounter = 5000;
+                lightUpdateCounter = 4000;
                 UpdateLights();
             }
             

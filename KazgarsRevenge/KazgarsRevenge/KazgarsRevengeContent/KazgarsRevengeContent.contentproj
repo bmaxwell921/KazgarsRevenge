@@ -1933,12 +1933,13 @@
       <Name>shopgui</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-  </Compile>
+    </Compile>
     <Compile Include="Models\Gopher\g_idle.fbx">
       <Name>g_idle</Name>
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_MergeAnimations>Models\\Gopher\\g_dig.fbx%3bModels\\Gopher\\g_loot.fbx%3bModels\\Gopher\\g_loot_smash.fbx%3bModels\\Gopher\\g_loot_spin.fbx%3bModels\\Gopher\\g_run.fbx%3bModels\\Gopher\\g_surprise.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1947,6 +1948,7 @@
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
       <ProcessorParameters_MergeAnimations>Models\\Enemies\\Succubus\\su_slash.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

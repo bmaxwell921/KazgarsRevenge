@@ -2179,8 +2179,8 @@ namespace KazgarsRevenge
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
             if (possLoot != null)
             {
-                lootingSoul = (possLoot.GetComponent(typeof(AIComponent)) as LootableController);
-                if (lootingSoul.CanLoot())
+                lootingSoul = (possLoot.GetComponent(typeof(LootableController)) as LootableController);
+                if (lootingSoul != null && lootingSoul.CanLoot())
                 {
                     StartSequence("loot");
                     lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);

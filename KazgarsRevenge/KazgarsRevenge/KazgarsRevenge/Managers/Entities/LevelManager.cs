@@ -583,7 +583,11 @@ namespace KazgarsRevenge
                     enemyManager.CreateDummy(Vector3.Transform(v, chunkTransform));
                 }
 
-                
+                List<Vector3> gopherLocs = levelInfo.gopherLocations;
+                foreach (Vector3 v in gopherLocs)
+                {
+                    (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(v, chunkTransform));
+                }
             }
         }
 

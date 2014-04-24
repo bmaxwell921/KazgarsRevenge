@@ -22,7 +22,8 @@ namespace KazgarsRevenge
             Idle,
             Surprised,
             Avoiding,
-            Digging,
+            DiggingDown,
+            DiggingUp,
             BeingLooted,
         }
 
@@ -41,12 +42,17 @@ namespace KazgarsRevenge
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             this.camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             PlayAnimation("g_idle", MixType.None);
+
+
+            physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
         }
 
-        float senseRadius = LevelManager.BLOCK_SIZE * 4;
+        float senseRadius = LevelManager.BLOCK_SIZE * 2;
         double timerCounter;
         CameraComponent camera;
         Entity avoidData = null;
+        float runSpeed = 50;
+        
         public override void Update(GameTime gameTime)
         {
             double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -96,16 +102,39 @@ namespace KazgarsRevenge
                     }
 
                     Vector3 diff = physicalData.Position - avoidData.Position;
+                    diff.Y = 0;
+                    if (Math.Abs(diff.X) + Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE * 4)
+                    {
+                        physicalData.LinearVelocity = Vector3.Zero;
+                        state = GopherState.Idle;
+                        return;
+                    }
                     if (diff != Vector3.Zero)
                     {
                         diff.Normalize();
                     }
 
-                    //TODO round direction to 45 degree angle, check for collision with wall and start dig state
+                    //run away from player
+                    physicalData.OrientationMatrix = CreateRotationFromForward(diff);
+                    physicalData.LinearVelocity = diff * runSpeed;
+
 
                     break;
-                case GopherState.Digging:
-
+                case GopherState.DiggingDown:
+                    timerCounter -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if (timerCounter <= 0)
+                    {
+                        state = GopherState.DiggingUp;
+                        timerCounter = animations.GetAniMillis("g_dig") - 1000;
+                        physicalData.Position = physicalData.Position + physicalData.OrientationMatrix.Forward * LevelManager.BLOCK_SIZE * 3;
+                    }
+                    break;
+                case GopherState.DiggingUp:
+                    timerCounter -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if (timerCounter <= 0)
+                    {
+                        state = GopherState.Idle;
+                    }
                     break;
                 case GopherState.BeingLooted:
                     timerCounter -= elapsed;
@@ -155,6 +184,23 @@ namespace KazgarsRevenge
         public override bool CanLoot()
         {
             return true;
+        }
+
+        protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
+        {
+            if (state == GopherState.Avoiding)
+            {
+                GameEntity ent = other.Tag as GameEntity;
+                if (ent != null)
+                {
+                    if (ent.Name == "room")
+                    {
+                        state = GopherState.DiggingDown;
+                        PlayAnimation("g_dig", MixType.None);
+                        timerCounter = 1000;
+                    }
+                }
+            }
         }
     }
 }

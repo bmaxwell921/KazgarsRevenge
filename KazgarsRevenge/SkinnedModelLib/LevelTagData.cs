@@ -24,6 +24,7 @@ namespace SkinnedModelLib
         public List<Vector3> groundPropLocations = new List<Vector3>();
         public List<Vector3> shopKeeperLocations = new List<Vector3>();
         public List<Vector3> dummyLocations = new List<Vector3>();
+        public List<Vector3> gopherLocations = new List<Vector3>();
 
 
         public LevelTagData()

@@ -290,7 +290,42 @@ namespace KazgarsRevenge
 
             enemies.Add(id, enemy);
         }
+        public void CreateSuccubus(Identification id, Vector3 position, int level, bool elite)
+        {
+            EntityType enemyType = EntityType.NormalEnemy;
+            if (elite)
+            {
+                enemyType = EntityType.EliteEnemy;
+            }
+            GameEntity enemy = new GameEntity((elite ? "Elite " : "") + "Succubus", FactionType.Enemies, enemyType);
+            enemy.id = id;
 
+            Vector3 boxSize = new Vector3(20f, 37f, 20f);
+            if (elite)
+            {
+                boxSize.X = 30;
+                boxSize.Z = 30;
+            }
+            SetupEntityPhysicsAndShadow(enemy, position, boxSize, 100);
+            float modelScale = 10;
+            if (elite)
+            {
+                modelScale = 15;
+            }
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Succubus\\su_fly", modelScale);
+
+            SuccubusController enemyController = new SuccubusController(mainGame, enemy, level);
+            if (elite)
+            {
+                enemyController.MakeElite();
+            }
+            enemy.AddComponent(typeof(AliveComponent), enemyController);
+            genComponentManager.AddComponent(enemyController);
+
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Magic, AttackType.None));
+
+            enemies.Add(id, enemy);
+        }
 
         List<GameEntity> friendlyNPCS = new List<GameEntity>();
         public void CreateDummy(Vector3 position)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using BEPUphysics;
+using BEPUphysics.MathExtensions;
 using BEPUphysics.Entities;
 using SkinnedModelLib;
 
@@ -96,6 +97,15 @@ namespace KazgarsRevenge
                 retYaw -= MathHelper.Pi * 2;
             }
             return retYaw;
+        }
+
+        protected Matrix3X3 CreateRotationFromForward(Vector3 forward)
+        {
+            Matrix3X3 rotation = Matrix3X3.Identity;
+            rotation.Forward = Vector3.Normalize(forward);
+            rotation.Right = Vector3.Normalize(Vector3.Cross(rotation.Forward, Vector3.Up));
+            rotation.Up = Vector3.Up;
+            return rotation;
         }
 
         protected bool InsideCameraBox(BoundingBox cameraBox)

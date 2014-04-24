@@ -605,6 +605,20 @@ namespace KazgarsRevenge
         //keeps track of all attackers' threat levels
         List<EntityIntPair> threatLevels = new List<EntityIntPair>();
 
+
+        /// <summary>
+        /// Called when damage is taken to play a hit animation (mixed)
+        /// //and spawn blood/spark particles
+        /// </summary>
+        protected virtual void DoDamagedGraphics()
+        {
+            PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
+            animations.SetNonMixedBones(armBoneIndices);
+            SpawnHitParticles();
+        }
+        #endregion
+
+        #region overrides
         //deal with threat and add floating text
         protected override void TakeDamage(int d, GameEntity from)
         {
@@ -627,19 +641,6 @@ namespace KazgarsRevenge
             }
         }
 
-        /// <summary>
-        /// Called when damage is taken to play a hit animation (mixed)
-        /// //and spawn blood/spark particles
-        /// </summary>
-        protected virtual void DoDamagedGraphics()
-        {
-            PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
-            animations.SetNonMixedBones(armBoneIndices);
-            SpawnHitParticles();
-        }
-        #endregion
-
-        #region overrides
         //enemies give XP
         protected override void DealWithKiller()
         {

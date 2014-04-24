@@ -110,6 +110,7 @@
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Common\TextureStrings.cs" />
     <Compile Include="Controllers\Alive\Enemies\ArmorEnemyController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\SuccubusController.cs" />
     <Compile Include="Controllers\Alive\Enemies\CrossbowSkeletonController.cs" />
     <Compile Include="Controllers\Alive\Enemies\DragonController.cs" />
     <Compile Include="Controllers\Alive\Enemies\DummyController.cs" />

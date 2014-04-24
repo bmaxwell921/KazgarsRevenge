@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BEPUphysics;
+using BEPUphysics.MathExtensions;
 using BEPUphysics.Entities;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.CollisionTests;
@@ -79,7 +80,7 @@ namespace KazgarsRevenge
             lootSoul.AddComponent(typeof(UnanimatedModelComponent), lootGraphics);
             modelManager.AddComponent(lootGraphics);
 
-            lootSoul.AddComponent(typeof(AIComponent), lootController);
+            lootSoul.AddComponent(typeof(LootableController), lootController);
             genComponentManager.AddComponent(lootController);
 
             lootSoul.AddComponent(typeof(BlobShadowDecal), lootShadow);
@@ -90,21 +91,29 @@ namespace KazgarsRevenge
 
         public void CreateTreasureGopher(Vector3 position)
         {
+            position.Y = 15;
             GameEntity entity = new GameEntity("loot", FactionType.Neutral, EntityType.Misc);
 
-            Entity data = new Box(position, 5, 5, 5);
+            Entity data = new Box(position, 15, 10, 15, 5);
+            data.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
+            data.IsAffectedByGravity = false;
+            data.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             entity.AddSharedData(typeof(Entity), data);
 
             PhysicsComponent physics = new PhysicsComponent(mainGame, entity);
             entity.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            AnimatedModelComponent graphics = new AnimatedModelComponent(mainGame, entity, GetAnimatedModel("Models\\Gopher\\g_idle"), 10, Vector3.Zero);
+            Model model = GetAnimatedModel("Models\\Gopher\\g_idle");
+            AnimationPlayer anims = new AnimationPlayer(model.Tag as SkinningData);
+            entity.AddSharedData(typeof(AnimationPlayer), anims);
+
+            AnimatedModelComponent graphics = new AnimatedModelComponent(mainGame, entity, model, 10, Vector3.Zero);
             entity.AddComponent(typeof(AnimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
             TreasureGopherController controller = new TreasureGopherController(mainGame, entity, GetTreasureGopherLoot(levelManager.currentLevel.currentFloor, entity));
-            entity.AddComponent(typeof(TreasureGopherController), controller);
+            entity.AddComponent(typeof(LootableController), controller);
             genComponentManager.AddComponent(controller);
 
             lootSouls.Add(entity);
@@ -192,7 +201,21 @@ namespace KazgarsRevenge
 
         private List<Item> GetTreasureGopherLoot(FloorName floor, GameEntity gopherEntity)
         {
-            return new List<Item>();
+            List<Item> retList = new List<Item>();
+            switch (floor)
+            {
+                default:
+                case FloorName.Dungeon:
+                    Item g = new Item(ItemType.Gold, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.FEW), "gold", (int)floor * 50 + 5, 0);
+                    retList.Add(g);
+                    Potion pot = new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 1, 4);
+                    retList.Add(pot);
+                    Equippable e = AllItems[RandSingleton.U_Instance.Next(9001, 9022)] as Equippable;
+                    e.SetStats(GearQuality.Epic, RandSingleton.U_Instance.Next(1, 10) + (int)floor);
+                    retList.Add(e);
+                    break;
+            }
+            return retList;
         }
 
         public DropTable CreateNormalDropTableFor(GameEntity enemy, AttackType type1, AttackType type2)
@@ -306,8 +329,8 @@ namespace KazgarsRevenge
 
         public void AddEpicDrops(DropTable dt)
         {
-            int numEpics = 27;
-            for (int i = 1; i < 1 + numEpics; ++i)
+            int numEpics = 21;
+            for (int i = 1; i <= numEpics; ++i)
             {
                 int id = i + 9000;
                 dt.AddDrop(ItemType.Equippable, (Equippable)AllItems[id], 100 / numEpics);
@@ -792,7 +815,7 @@ namespace KazgarsRevenge
                 id));
 
             //ranged set?
-            id = 9011;
+            id = 9008;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_HEAD_SKELETON),
                 "Skeleton Helm",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
@@ -800,7 +823,7 @@ namespace KazgarsRevenge
                 GearSlot.Head,
                 GearSlot.None,
                 id));
-            id = 9012;
+            id = 9009;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_CHEST_SKELETON),
                 "Skeleton Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
@@ -808,7 +831,7 @@ namespace KazgarsRevenge
                 GearSlot.Chest,
                 GearSlot.None,
                 id));
-            id = 9013;
+            id = 9010;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_LEGS_SKELETON),
                 "Skeleton Legguards",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
@@ -816,7 +839,7 @@ namespace KazgarsRevenge
                 GearSlot.Legs,
                 GearSlot.None,
                 id));
-            id = 9014;
+            id = 9011;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_FEET_SKELETON),
                 "Skeleton Boots",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
@@ -824,7 +847,7 @@ namespace KazgarsRevenge
                 GearSlot.Feet,
                 GearSlot.None,
                 id));
-            id = 9015;
+            id = 9012;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_SHOULDERS_SKELETON),
                 "Skeleton Pauldrons",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
@@ -832,7 +855,7 @@ namespace KazgarsRevenge
                 GearSlot.Shoulders,
                 GearSlot.None,
                 id));
-            id = 9016;
+            id = 9013;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_WRIST_SKELETON),
                 "Skeleton Bracers",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
@@ -840,7 +863,7 @@ namespace KazgarsRevenge
                 GearSlot.Wrist,
                 GearSlot.None,
                 id));
-            id = 9017;
+            id = 9014;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_BLING),
                 "Skeleton Ring",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
@@ -851,7 +874,7 @@ namespace KazgarsRevenge
 
 
             //cardinal set
-            id = 9021;
+            id = 9015;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_RHINO),
                 "Cardinal Helm",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
@@ -859,7 +882,7 @@ namespace KazgarsRevenge
                 GearSlot.Head,
                 GearSlot.None,
                 id));
-            id = 9022;
+            id = 9016;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_RHINO),
                 "Cardinal Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
@@ -867,7 +890,7 @@ namespace KazgarsRevenge
                 GearSlot.Chest,
                 GearSlot.None,
                 id));
-            id = 9023;
+            id = 9017;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_RHINO),
                 "Cardinal Legguards",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
@@ -875,7 +898,7 @@ namespace KazgarsRevenge
                 GearSlot.Legs,
                 GearSlot.None,
                 id));
-            id = 9024;
+            id = 9018;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
                 "Cardinal Boots",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
@@ -883,7 +906,7 @@ namespace KazgarsRevenge
                 GearSlot.Feet,
                 GearSlot.None,
                 id));
-            id = 9025;
+            id = 9019;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_RHINO),
                 "Cardinal Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
@@ -891,7 +914,7 @@ namespace KazgarsRevenge
                 GearSlot.Shoulders,
                 GearSlot.None,
                 id));
-            id = 9026;
+            id = 9020;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_RHINO),
                 "Cardinal Wristguards",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
@@ -899,7 +922,7 @@ namespace KazgarsRevenge
                 GearSlot.Wrist,
                 GearSlot.None,
                 id));
-            id = 9027;
+            id = 9021;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING),
                 "Cardinal Ring",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
