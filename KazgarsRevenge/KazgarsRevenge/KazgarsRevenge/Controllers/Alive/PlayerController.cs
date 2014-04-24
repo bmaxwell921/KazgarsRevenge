@@ -456,6 +456,8 @@ namespace KazgarsRevenge
             InitGeneralFields();
             InitNewPlayer();
 
+            AddToInventory(lewtz.GetItem(901));
+
             //adding gear for testing
             Equippable wep = (Equippable)lewtz.GetItem(9901);
             wep.SetStats(GearQuality.Legendary, 70);

@@ -99,6 +99,11 @@ namespace KazgarsRevenge
                 }
             }
 
+            if (AppliedEssence != null)
+            {
+                tiplines.Add(new TooltipLine(new Color(0, 30, 255), "+" + AppliedEssence.StatIncrease + " " + AppliedEssence.BoostedStat.ToString(), .35f));
+            }
+
             tiplines.Add(new TooltipLine(Color.Gold, "\nSells for " + GoldCost + "g", .5f));
             return new Tooltip(tiplines);
         }
@@ -111,7 +116,7 @@ namespace KazgarsRevenge
             switch (quality)
             {
                 case GearQuality.Good:
-                    return Color.Blue;
+                    return new Color(0, 30, 255);
                 case GearQuality.Epic:
                     return Color.Purple;
                 case GearQuality.Legendary:
@@ -119,6 +124,12 @@ namespace KazgarsRevenge
                 default:
                     return Color.Green;
             }
+        }
+
+        public void ApplyEssence(Essence e)
+        {
+            AppliedEssence = e;
+            SetTooltip(GetEquippableTooltip());
         }
     }
 }

@@ -2878,7 +2878,7 @@ namespace KazgarsRevenge
             #region tooltip and hover
             if (currentTooltip != null)
             {
-                s.Draw(texWhitePixel, tooltipRect, Color.Black * 0.5f);
+                s.Draw(texWhitePixel, tooltipRect, Color.Black * 0.8f);
                 currentTooltip.Draw(s, new Vector2(tooltipRect.X, tooltipRect.Y), font, average, 50f);
             }
 
