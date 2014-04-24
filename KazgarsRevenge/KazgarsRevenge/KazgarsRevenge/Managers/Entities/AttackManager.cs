@@ -113,7 +113,7 @@ namespace KazgarsRevenge
         {
             CreateMeleeAttack(position, damage, creator, 0, twohanded);
         }
-        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, float lifesteal, bool twohanded)
+        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, float lifesteal, bool clang)
         {
             GameEntity newAttack = new GameEntity("melee", creator.Entity.Faction, EntityType.Misc);
             newAttack.id = IdentificationFactory.getId(EntityType.Misc, players.myId.id);
@@ -143,7 +143,7 @@ namespace KazgarsRevenge
             attacks.Add(newAttack);
 
             soundEffects.playMeleeMissSound();
-            if (!twohanded)
+            if (!clang)
             {
                 soundEffects.playMeleeHitFloorSound();
             }

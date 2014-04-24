@@ -66,7 +66,8 @@ namespace KazgarsRevenge
             return new Tooltip(
                 new List<TooltipLine>{
                     new TooltipLine(Color.White, name, .75f), 
-                    new TooltipLine(Color.Gold, description, .4f)});
+                    new TooltipLine(Color.Gold, description, .4f),
+                    new TooltipLine(Color.Gold, "\n\nSells for " + GoldCost + "g", .5f)});
         }
 
         public override object Clone()

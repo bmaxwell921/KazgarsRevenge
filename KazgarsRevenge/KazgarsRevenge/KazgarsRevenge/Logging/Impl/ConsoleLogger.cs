@@ -15,7 +15,7 @@ namespace KazgarsRevenge
         {
         }
 
-        public override void Log(Level level, string message)
+        public override void Log(LogLevel level, string message)
         {
             Console.WriteLine(ALogger.OUTPUT_FORMAT, level, message);
         }

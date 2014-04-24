@@ -15,6 +15,7 @@ namespace KazgarsRevenge
         public Essence(Texture2D icon, int id)
             : base(ItemType.Essence, icon, "Essence", 1, id)
         {
+            GoldCost = Math.Max(5, (id - 901) * 40);
             string essencePrefix = "";
             string essenceSuffix = "";
             #region essence definitions

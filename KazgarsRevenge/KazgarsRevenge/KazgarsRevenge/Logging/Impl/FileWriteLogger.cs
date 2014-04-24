@@ -39,7 +39,7 @@ namespace KazgarsRevenge
             CreateLoggingFile(filePath);
         }
 
-        public override void Log(Level level, string message)
+        public override void Log(LogLevel level, string message)
         {
             string output = String.Format(ALogger.OUTPUT_FORMAT, level, message);
             using (StreamWriter sw = File.AppendText(filePath))

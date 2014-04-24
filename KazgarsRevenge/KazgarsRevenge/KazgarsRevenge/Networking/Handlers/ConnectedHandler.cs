@@ -25,7 +25,7 @@ namespace KazgarsRevenge
             PlayerManager pm = (PlayerManager)game.Services.GetService(typeof(PlayerManager));
             NetworkMessageManager nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
             LoggerManager lm = (LoggerManager)game.Services.GetService(typeof(LoggerManager));
-            lm.Log(Level.DEBUG, "Receiving Connection info from server");
+            lm.Log(LogLevel.DEBUG, "Receiving Connection info from server");
 
             int clientId = nim.ReadInt32();
             bool isHost = nim.ReadBoolean();

@@ -17,7 +17,7 @@ namespace KazgarsRevenge
         {
         }
 
-        public abstract void Log(Level level, string message);
+        public abstract void Log(LogLevel level, string message);
 
         // Just use the name for hashes and equality
         public override int GetHashCode()

@@ -12,7 +12,7 @@ namespace KazgarsRevenge
     public class LoggerManager
     {
         // Mapping to show which levels are enabled
-        protected IDictionary<Level, bool> levelStatus;
+        protected IDictionary<LogLevel, bool> levelStatus;
 
         private ISet<ILogger> loggers;
         public static LoggerManager lm;
@@ -22,10 +22,10 @@ namespace KazgarsRevenge
         /// </summary>
         public LoggerManager()
         {
-            levelStatus = new Dictionary<Level, bool>();
+            levelStatus = new Dictionary<LogLevel, bool>();
             loggers = new HashSet<ILogger>();
 
-            EnableLoggingLevels(Level.DEBUG, Level.ERROR, Level.INFO);
+            EnableLoggingLevels(LogLevel.DEBUG, LogLevel.ERROR, LogLevel.INFO);
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="level"></param>
         /// <param name="message"></param>
-        public void Log(Level level, string message)
+        public void Log(LogLevel level, string message)
         {
             if (!LevelEnabled(level))
             {
@@ -46,7 +46,7 @@ namespace KazgarsRevenge
             }
         }
 
-        private bool LevelEnabled(Level level)
+        private bool LevelEnabled(LogLevel level)
         {
             return levelStatus.ContainsKey(level) && levelStatus[level];
         }
@@ -77,7 +77,7 @@ namespace KazgarsRevenge
         /// Note: params keyword works just like the ellipsis in java
         /// </summary>
         /// <param name="levels"></param>
-        public void EnableLoggingLevels(params Level[] levels)
+        public void EnableLoggingLevels(params LogLevel[] levels)
         {
             SetLoggingLevels(levels, true);
         }
@@ -86,14 +86,14 @@ namespace KazgarsRevenge
         /// Disables logging for the given levels.
         /// </summary>
         /// <param name="levels"></param>
-        public void DisableLoggingLevels(params Level[] levels)
+        public void DisableLoggingLevels(params LogLevel[] levels)
         {
             SetLoggingLevels(levels, false);
         }
 
-        private void SetLoggingLevels(Level[] levels, bool status)
+        private void SetLoggingLevels(LogLevel[] levels, bool status)
         {
-            foreach (Level l in levels)
+            foreach (LogLevel l in levels)
             {
                 levelStatus[l] = status;
             }

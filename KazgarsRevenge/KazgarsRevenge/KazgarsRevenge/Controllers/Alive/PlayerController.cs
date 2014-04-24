@@ -1184,7 +1184,7 @@ namespace KazgarsRevenge
             sequence.Add(() =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, false);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, true);
                 millisActionLength = animations.GetAniMillis("k_punch") - millisActionLength;
                 needInterruptAction = false;
             });
@@ -1197,7 +1197,7 @@ namespace KazgarsRevenge
             interruptActions.Add("k_punch", () =>
             {
                 Vector3 forward = GetForward();
-                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, false);
+                attacks.CreateMeleeAttack(physicalData.Position + forward * 35, GeneratePrimaryDamage(StatType.Strength), this as AliveComponent, true);
             });
 
             return sequence;

@@ -238,7 +238,7 @@ namespace KazgarsRevenge
             }
             catch (Exception e)
             {
-                lm.Log(Level.DEBUG, String.Format("Can't read file: {0}", e.Message));
+                lm.Log(LogLevel.DEBUG, String.Format("Can't read file: {0}", e.Message));
                 return null;
             }
         }

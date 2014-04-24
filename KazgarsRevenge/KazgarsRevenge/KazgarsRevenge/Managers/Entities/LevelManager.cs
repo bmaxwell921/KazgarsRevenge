@@ -363,7 +363,7 @@ namespace KazgarsRevenge
             }
             catch (Exception)
             {
-                (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Problem parsing roomName: {0}", roomName));
+                (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(LogLevel.DEBUG, String.Format("Problem parsing roomName: {0}", roomName));
                 return null;
             }
         }
@@ -1026,7 +1026,7 @@ namespace KazgarsRevenge
 
             private void LogChunkChoice(int i, int j, ChunkInfo ci)
             {
-                lm.Log(Level.DEBUG, String.Format("LevelGeneration chose chunk:\n\t\t\t{0}\n\t\t\tLocation:({1},{2})\n\t\t\tRotation:{3}\n\t\t\tFileName:{4}", ci.ToString(), i, j, ci.rotation, ci.FileName));
+                lm.Log(LogLevel.DEBUG, String.Format("LevelGeneration chose chunk:\n\t\t\t{0}\n\t\t\tLocation:({1},{2})\n\t\t\tRotation:{3}\n\t\t\tFileName:{4}", ci.ToString(), i, j, ci.rotation, ci.FileName));
             }
 
             // Places a home chunk in the middle of the level

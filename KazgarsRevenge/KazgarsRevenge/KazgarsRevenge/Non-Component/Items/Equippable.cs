@@ -34,6 +34,7 @@ namespace KazgarsRevenge
             this.Slot = slot;
             this.Slot2 = secondSlot;
             this.Quality = GearQuality.Standard;
+
             SetTooltip(new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "", 1) }));
         }
 
@@ -62,6 +63,7 @@ namespace KazgarsRevenge
                 }
             }
 
+            this.GoldCost = ItemLevel * (int)Quality + 10;
             SetTooltip(GetEquippableTooltip());
         }
 
@@ -97,6 +99,7 @@ namespace KazgarsRevenge
                 }
             }
 
+            tiplines.Add(new TooltipLine(Color.Gold, "\nSells for " + GoldCost + "g", .5f));
             return new Tooltip(tiplines);
         }
 
