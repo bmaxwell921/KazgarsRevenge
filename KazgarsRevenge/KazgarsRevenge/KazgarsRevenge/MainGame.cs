@@ -98,7 +98,7 @@ namespace KazgarsRevenge
             SetUpLoggers();
 
 
-            bool fullscreen = true;
+            bool fullscreen = false;
 
             if (fullscreen)
             {
@@ -324,7 +324,7 @@ namespace KazgarsRevenge
                 if (loadInt > 3)
                 {
                     ActuallyLoadLevel(this.loadFloor);
-                    loadInt = 20;
+                    TransitionToPlaying();
                 }
             }
 
