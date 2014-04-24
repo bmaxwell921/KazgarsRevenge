@@ -1851,7 +1851,24 @@ namespace KazgarsRevenge
                         }
                         break;
                     #endregion
-
+                    #region player frame
+                    case "shopKeeper":
+                        if (innerCollides != null)
+                        {
+                            for (int i = 0; i < 6; i++)
+                            {
+                                if (innerCollides.Equals("itemIcon" + i) || innerCollides.Equals("itemFrame" + i) && i < buffs.Count) 
+                                {
+                                    
+                                }
+                                else
+                                {
+                                    //do nothing / future implementation
+                                }
+                            }
+                        }
+                        break;
+                    #endregion
                 }
 
             }
