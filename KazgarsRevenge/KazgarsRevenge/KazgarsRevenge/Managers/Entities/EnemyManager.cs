@@ -297,7 +297,7 @@ namespace KazgarsRevenge
         {
             GameEntity entity = new GameEntity("Training Dummy", FactionType.Enemies, EntityType.NormalEnemy);
 
-            SetupEntityPhysicsAndShadow(entity, position, new Vector3(10, 40, 10), -1);
+            SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 40, 20), -1);
 
             SetupEntityGraphics(entity, "Models\\Enemies\\Dummy\\dummy_idle", 10);
 
@@ -406,7 +406,7 @@ namespace KazgarsRevenge
             }
             enemyPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
             enemyPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            enemyPhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
+            enemyPhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(-MathHelper.PiOver4 * 3, 0, 0));
             entity.AddSharedData(typeof(Entity), enemyPhysicalData);
 
             PhysicsComponent enemyPhysics = new PhysicsComponent(mainGame, entity);

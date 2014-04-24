@@ -99,7 +99,7 @@ namespace KazgarsRevenge
             entity.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            AnimatedModelComponent graphics = new AnimatedModelComponent(mainGame, entity, GetAnimatedModel("Models\\Gopher\\idle"), 10, Vector3.Zero);
+            AnimatedModelComponent graphics = new AnimatedModelComponent(mainGame, entity, GetAnimatedModel("Models\\Gopher\\g_idle"), 10, Vector3.Zero);
             entity.AddComponent(typeof(AnimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 

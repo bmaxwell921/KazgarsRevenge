@@ -39,8 +39,8 @@ namespace KazgarsRevenge
             : base(game, entity, loot)
         {
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
-            animations.StartClip("gopher_wander", MixType.None);
             this.camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
+            PlayAnimation("g_idle", MixType.None);
         }
 
         float senseRadius = LevelManager.BLOCK_SIZE * 4;
@@ -55,15 +55,15 @@ namespace KazgarsRevenge
                 case GopherState.Idle:
                     if (InsideCameraBox(camera.CameraBox))
                     {
-                        if (currentAni != "gopher_idle")
+                        if (currentAni != "g_idle")
                         {
-                            PlayAnimation("gopher_idle", MixType.None);
+                            PlayAnimation("g_idle", MixType.None);
                         }
                         GameEntity possPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, senseRadius, false);
                         if (possPlayer != null)
                         {
                             avoidData = possPlayer.GetSharedData(typeof(Entity)) as Entity;
-                            PlayAnimation("gopher_surprised", MixType.PauseAtEnd);
+                            PlayAnimation("g_surprise", MixType.PauseAtEnd);
                             state = GopherState.Surprised;
                             timerCounter = animations.GetAniMillis(currentAni);
                         }
@@ -90,9 +90,9 @@ namespace KazgarsRevenge
                         }
                     }
 
-                    if (currentAni != "gopher_run")
+                    if (currentAni != "g_run")
                     {
-                        PlayAnimation("gopher_run", MixType.None);
+                        PlayAnimation("g_run", MixType.None);
                     }
 
                     Vector3 diff = physicalData.Position - avoidData.Position;
@@ -111,7 +111,7 @@ namespace KazgarsRevenge
                     timerCounter -= elapsed;
                     if (timerCounter <= 0)
                     {
-                        if (currentAni == "gopher_loot_smash")
+                        if (currentAni == "g_loot_smash")
                         {
                             if (loot.Count == 0)
                             {
@@ -135,19 +135,19 @@ namespace KazgarsRevenge
             physicalData.Position = position;
             physicalData.Orientation = q;
             state = GopherState.BeingLooted;
-            PlayAnimation("gopher_loot", MixType.PauseAtEnd);
+            PlayAnimation("g_loot", MixType.PauseAtEnd);
             timerCounter = animations.GetAniMillis(currentAni);
             physicalData.LinearVelocity = Vector3.Zero;
         }
 
         public override void StartSpin()
         {
-            PlayAnimation("gopher_loot_spin", MixType.PauseAtEnd);
+            PlayAnimation("g_loot_spin", MixType.PauseAtEnd);
         }
 
         public override void CloseLoot()
         {
-            PlayAnimation("gopher_loot_smash", MixType.MixInto);
+            PlayAnimation("g_loot_smash", MixType.MixInto);
             timerCounter = 0;
             timerCounter = animations.GetAniMillis(currentAni) - 30;
         }

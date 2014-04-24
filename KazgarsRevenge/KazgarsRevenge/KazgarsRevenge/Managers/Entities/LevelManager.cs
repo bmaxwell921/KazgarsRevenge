@@ -577,6 +577,13 @@ namespace KazgarsRevenge
                     }
                 }
 
+                List<Vector3> dummyLocations = levelInfo.dummyLocations;
+                foreach (Vector3 v in dummyLocations)
+                {
+                    enemyManager.CreateDummy(Vector3.Transform(v, chunkTransform));
+                }
+
+                
             }
         }
 

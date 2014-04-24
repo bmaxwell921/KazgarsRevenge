@@ -40,6 +40,7 @@ namespace AnimationPipeline
             AddPointsTo(GetDataHolder(input, "playerspawn"), tag.playerSpawnLocations);
             AddPointsTo(GetDataHolder(input, "groundobjs"), tag.groundPropLocations);
             AddPointsTo(GetDataHolder(input, "shops"), tag.shopKeeperLocations);
+            AddPointsTo(GetDataHolder(input, "dummies"), tag.dummyLocations);
 
             ModelContent retModel = base.Process(input, context);
             retModel.Tag = tag;
