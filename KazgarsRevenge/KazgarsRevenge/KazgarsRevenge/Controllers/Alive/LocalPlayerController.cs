@@ -349,7 +349,7 @@ namespace KazgarsRevenge
                 }
 
                 if (((attState != AttackState.Locked && attState != AttackState.LockedMoving) || inPrimarySequence) 
-                    && !looting)
+                    && !looting && !inShop && !inEssenceShop && !inBank)
                 {
                     CheckAbilities(move, mouseOnGui);
                 }
@@ -2107,6 +2107,7 @@ namespace KazgarsRevenge
         protected bool inSoulevator = false;
         protected bool inShop = false;
         protected bool inEssenceShop = false;
+        protected bool inBank = false;
         /// <summary>
         /// called by the soulevator controller when the player runs into it
         /// </summary>
@@ -2139,7 +2140,13 @@ namespace KazgarsRevenge
                     //#Nate start drawing shop gui here
                     if (!guiOutsideRects.ContainsKey("shopKeeper"))
                     {
+                        inShop = true;
                         guiOutsideRects.Add("shopKeeper", shopKeeperRect);
+                        showInventory = true;
+                        if (!guiOutsideRects.ContainsKey("inventory"))
+                        {
+                            guiOutsideRects.Add("inventory", inventoryRect);
+                        }
                     }
                     break;
             }
@@ -2147,6 +2154,10 @@ namespace KazgarsRevenge
 
         private void ExitShop()
         {
+            if (guiOutsideRects.ContainsKey("shopKeeper"))
+            {
+                guiOutsideRects.Remove("shopKeeper");
+            }
             inShop = false;
         }
 
