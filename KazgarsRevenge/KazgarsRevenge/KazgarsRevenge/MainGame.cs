@@ -109,8 +109,8 @@ namespace KazgarsRevenge
             }
             else
             {
-                graphics.PreferredBackBufferWidth = 1280;
-                graphics.PreferredBackBufferHeight = 720;
+                graphics.PreferredBackBufferWidth = 1920;
+                graphics.PreferredBackBufferHeight = 1080;
                 graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
                 screenScale = ((float)GraphicsDevice.Viewport.Height / 720f + (float)GraphicsDevice.Viewport.Width / 1280f) / 2;
