@@ -113,7 +113,7 @@ namespace KazgarsRevenge
                 graphics.PreferredBackBufferHeight = 720;
                 graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
-                screenScale = ((float)GraphicsDevice.Viewport.Height / 720f + (float)GraphicsDevice.Viewport.Width / 1280f) / 2;
+                screenScale = ((float)GraphicsDevice.Viewport.Height / graphics.PreferredBackBufferHeight + (float)GraphicsDevice.Viewport.Width / graphics.PreferredBackBufferWidth) / 2;
             }
 
             Texture2DUtil.Instance.SetContent(Content);
@@ -381,7 +381,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                players.ResetPlayerPosition();
+                players.StartNewLevel();
             }
             camera.StartLevel(name);
         }

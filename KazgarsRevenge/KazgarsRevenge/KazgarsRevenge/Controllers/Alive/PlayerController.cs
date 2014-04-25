@@ -705,7 +705,6 @@ namespace KazgarsRevenge
             }
         }
 
-
         /// <summary>
         /// to be used for charging/casting abilities; when you
         /// interrupt them, you don't want to use it
@@ -841,13 +840,13 @@ namespace KazgarsRevenge
             actionSequences.Add(AbilityName.SuperHealthPotion.ToString(), SuperHealthPotActions());
             actionSequences.Add(AbilityName.PotionOfLuck.ToString(), LuckPotActions());
             actionSequences.Add(AbilityName.InstaHealthPotion.ToString(), InstaHealthPotActions());
-
+            actionSequences.Add(AbilityName.PortalPotion.ToString(), PortalPotionActions());
             //primary attacks
             actionSequences.Add("swing", SwingActions());
             actionSequences.Add("shoot", ShootActions());
             actionSequences.Add("punch", PunchActions());
             actionSequences.Add("magic", MagicActions());
-            //abilities
+        //abilities
             //ranged
             actionSequences.Add("snipe", SnipeActions());
             actionSequences.Add("omnishot", OmnishotActions());
@@ -1101,7 +1100,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    (Game as MainGame).AddAlert("No potions left!");
+                    (Game as MainGame).AddAlert("No health potions left!");
                 }
                 abilityFinishedAction();
             });
@@ -1122,7 +1121,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    (Game as MainGame).AddAlert("No potions left!");
+                    (Game as MainGame).AddAlert("No health potions left!");
                 }
                 abilityFinishedAction();
             });
@@ -1142,7 +1141,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    (Game as MainGame).AddAlert("No potions left!");
+                    (Game as MainGame).AddAlert("No health potions left!");
                 }
                 abilityFinishedAction();
             });
@@ -1161,9 +1160,30 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    (Game as MainGame).AddAlert("No potions left!");
+                    (Game as MainGame).AddAlert("No health potions left!");
                 }
                 abilityFinishedAction();
+            });
+
+            return sequence;
+        }
+        Vector3 lastPortedPosition = new Vector3(-10000, 0, 0);
+        Vector3 unsetPortPosition = new Vector3(-10000, 0, 0);
+        private List<Action> PortalPotionActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                if (RemoveOneFromInventory(6))
+                {
+                    physicalData.Position = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
+                    camera.RefreshLights();
+                }
+                else
+                {
+                    (Game as MainGame).AddAlert("No portal potions left!");
+                }
             });
 
             return sequence;
@@ -2895,5 +2915,6 @@ namespace KazgarsRevenge
         InstaHealthPotion,
         PotionOfLuck,
         InivisibilityPotion,
+        PortalPotion,
     }
 }

@@ -133,6 +133,7 @@ namespace KazgarsRevenge
             }
         }
 
+
         /// <summary>
         /// Combines the loot contained in two loot souls into one list
         /// </summary>
@@ -177,8 +178,14 @@ namespace KazgarsRevenge
             return retItems;
         }
 
-        //methods for generating loot and droptables
-        #region Loot
+
+
+
+
+        /*
+         * methods for generating loot and droptables
+         */
+
         private Dictionary<int, Item> AllItems = new Dictionary<int, Item>();
         public Item GetItem(int id)
         {
@@ -213,7 +220,7 @@ namespace KazgarsRevenge
                 case FloorName.Dungeon:
                     Item g = new Item(ItemType.Gold, Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.FEW), "gold", (int)floor * 50 + 5, 0);
                     retList.Add(g);
-                    Potion pot = new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 1, 4);
+                    Potion pot = GetItem(4) as Potion;
                     retList.Add(pot);
                     Equippable e = AllItems[RandSingleton.U_Instance.Next(9001, 9022)] as Equippable;
                     e.SetStats(GearQuality.Epic, RandSingleton.U_Instance.Next(1, 10) + (int)floor);
@@ -258,8 +265,16 @@ namespace KazgarsRevenge
                     AddMagicDrops(dt, currentFloor);
                     break;
             }
-            dt.AddDrop(ItemType.Potion, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, 1), 24, 5);
-            dt.AddDrop(ItemType.Potion, null, 76);
+            
+            //25% chance to drop (up to 5) health potions
+            dt.AddDrop(ItemType.Potion, GetItem(1), 25, 5);
+            //5% chance to drop (up to 2) portal potions
+            //dt.AddDrop(ItemType.Potion, GetItem(6), 5, 2);
+            dt.AddDrop(ItemType.Potion, null, 70);
+
+            //testing portal potion
+            dt.AddDrop(ItemType.Potion, GetItem(6), 500, 5);
+
             return dt;
         }
 
@@ -276,14 +291,23 @@ namespace KazgarsRevenge
 
             return dt;
         }
+
+        public List<Item> GetShopItems(FloorName floor)
+        {
+            List<Item> retItems = new List<Item>();
+
+            Weapon sword = GetItem(3002) as Weapon;
+            sword.SetStats(GearQuality.Standard, 1);
+            retItems.Add(sword);
+
+            Potion p = GetItem(1) as Potion;
+            p.AddQuantity(5);
+            retItems.Add(p);
+
+            return retItems;
+        }
         
         #region Helpers
-        
-        private void AddCommonDrops(DropTable dt)
-        {
-            //TODO any common drops
-        }
-
         public void AddMeleeDrops(DropTable dt, FloorName currentFloor)
         {
             dt.AddDrop(ItemType.Equippable, GetMeleeWeapon(currentFloor), 4);
@@ -694,8 +718,31 @@ namespace KazgarsRevenge
         /// </summary>
         private void InitializeItems()
         {
-            /*ID allocations:
-             * gear IDs:
+            int id;
+            /* Consumable IDs:
+             * 1: health pot
+             * 2: super health pot
+             * 3: insta health pot
+             * 4: luck potion
+             * 5: invis potion
+             * 6: portal potion
+             */
+            id = 1;
+            AllItems.Add(id, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, id));
+            id = 2;
+            AllItems.Add(id, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, id));
+            id = 3;
+            AllItems.Add(id, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, id));
+            id = 4;
+            AllItems.Add(id, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, id));
+            id = 5;
+            AllItems.Add(id, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, id));
+            id = 6;
+            AllItems.Add(id, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, id));
+
+
+
+            /* Gear IDs:
              * 
              * 9900-10000: test gear
              * 
@@ -707,7 +754,6 @@ namespace KazgarsRevenge
              * 3301-3350: dungeon Boss gear
              * 
              */
-            int id;
             #region Test Gear
             id = 9900;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
@@ -1199,6 +1245,5 @@ namespace KazgarsRevenge
             #endregion
             #endregion
         }
-        #endregion
     }
 }
