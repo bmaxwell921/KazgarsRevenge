@@ -205,6 +205,9 @@ namespace KazgarsRevenge
         List<Buff> buffs = new List<Buff>();
         List<DeBuff> debuffs = new List<DeBuff>();
 
+        List<Item> shopStock = new List<Item>();
+        List<Item> buyBack = new List<Item>();
+
         enum TalentTrees
         {
             ranged,
@@ -1239,7 +1242,7 @@ namespace KazgarsRevenge
                         abilityLearnedFlags[talents[(int)check / 4, check % 4].name] = true;
                     }
                     else
-                    {   //floating error TODO decide if we like that it's over the interface or not
+                    {   
                         ((MainGame)Game).AddAlert("I can't unlock that yet!");
                     }
                 }
@@ -1730,7 +1733,7 @@ namespace KazgarsRevenge
                 {
                     #region inventory
                     case "inventory":
-                        if (innerCollides != null && innerCollides.Contains("inventory") && selectedItemSlot == -1)  //equip item right clicked on
+                        if (innerCollides != null && innerCollides.Contains("inventory") && selectedItemSlot == -1 && !inShop)  //equip item right clicked on, NOT SHOPPING
                         {
                             for (int i = 0; i <= maxInventorySlots; i++)
                             {
@@ -1772,6 +1775,20 @@ namespace KazgarsRevenge
                                             (Game as MainGame).AddAlert("Can't use that");
                                         }
                                     }
+                                }
+                            }
+                        }
+                        //Shopping
+                        if (innerCollides != null && innerCollides.Contains("inventory") && inShop)
+                        {
+                            for (int i = 0; i <= maxInventorySlots; i++)
+                            {
+                                if (innerCollides == "inventory" + i && inventory[i] != null)
+                                {
+                                    gold += inventory[i].GoldCost;
+                                    buyBack.Add(inventory[i]);
+                                    currentTooltip = null;
+                                    inventory[i] = null;
                                 }
                             }
                         }
@@ -1834,7 +1851,24 @@ namespace KazgarsRevenge
                         }
                         break;
                     #endregion
-
+                    #region player frame
+                    case "shopKeeper":
+                        if (innerCollides != null)
+                        {
+                            for (int i = 0; i < 6; i++)
+                            {
+                                if (innerCollides.Equals("itemIcon" + i) || innerCollides.Equals("itemFrame" + i) && i < buffs.Count) 
+                                {
+                                    
+                                }
+                                else
+                                {
+                                    //do nothing / future implementation
+                                }
+                            }
+                        }
+                        break;
+                    #endregion
                 }
 
             }
@@ -2847,10 +2881,18 @@ namespace KazgarsRevenge
             if (guiOutsideRects.ContainsKey("shopKeeper"))
             {
                 s.Draw(shopFrame, guiOutsideRects["shopKeeper"], Color.White);
-                for (int i = 0; i < 10; i++)
+                
+                for (int i = 0; i < 10 && i < buyBack.Count; i++)
                 {
-                    s.Draw(texPlaceHolder, guiInsideRects["shopKeeper"]["itemIcon" + i], Color.White);
-                    s.Draw(texPlaceHolder, guiInsideRects["shopKeeper"]["itemFrame" + i], Color.White);
+                    if (buyBack[i] != null)
+                    {
+                        s.Draw(buyBack[buyBack.Count - i - 1].Icon, guiInsideRects["shopKeeper"]["itemIcon" + i], Color.White);
+                        s.Draw(texWhitePixel, guiInsideRects["shopKeeper"]["itemFrame" + i], Color.Black * .8f);
+                        s.DrawString(font, buyBack[buyBack.Count - i - 1].Name, new Vector2(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 5, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + 5), Color.White, 0, Vector2.Zero, average * .25f, SpriteEffects.None, 0);
+                        s.Draw(goldIcon, new Rectangle(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 5, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + guiInsideRects["shopKeeper"]["itemFrame" + i].Height - 25, 20, 20), Color.White);
+                        s.DrawString(font, buyBack[buyBack.Count - i - 1].GoldCost.ToString(), new Vector2(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 25, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + guiInsideRects["shopKeeper"]["itemFrame" + i].Height - 25), Color.Gold, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
+                    }
+                    
                 }
             }
             #endregion
