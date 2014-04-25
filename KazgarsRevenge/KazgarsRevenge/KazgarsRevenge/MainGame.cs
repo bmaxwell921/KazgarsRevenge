@@ -92,7 +92,7 @@ namespace KazgarsRevenge
         {
             GraphicsDevice.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
 
-            settings.particleSettings = SettingAmount.Low;
+            settings.particleSettings = SettingAmount.High;
 
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
             SetUpLoggers();
@@ -282,7 +282,7 @@ namespace KazgarsRevenge
             floatingText.Add(floater);
         }
 
-        const bool debug = true;
+        bool debug = false;
         int loadInt = 0;
         int frameCounter = 0;
         int frameRate = 0;

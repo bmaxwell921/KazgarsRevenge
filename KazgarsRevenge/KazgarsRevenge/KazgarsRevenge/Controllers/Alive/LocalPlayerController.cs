@@ -133,7 +133,6 @@ namespace KazgarsRevenge
         public override void Start()
         {
             groundIndicator = Entity.GetComponent(typeof(AbilityTargetDecal)) as AbilityTargetDecal;
-            helpPoPs = HelpPopUp.getTutorial(guiOutsideRects, guiInsideRects);
             base.Start();
         }
 
@@ -484,7 +483,7 @@ namespace KazgarsRevenge
             if (float.IsNaN(mouseHoveredLocation.X) || float.IsNaN(mouseHoveredLocation.Y) || float.IsNaN(mouseHoveredLocation.Z))
             {
                 //trying to find nan
-                throw new Exception("NaN happened because of raycast?");
+                //throw new Exception("NaN happened because of raycast?");
                 mouseHoveredLocation.X = 0;
                 mouseHoveredLocation.Y = 0;
                 mouseHoveredLocation.Z = 0;
@@ -1610,7 +1609,10 @@ namespace KazgarsRevenge
                         case "helpPop":
                             if (innerCollides.Equals("ok"))
                             {
-                                helpPoPs.RemoveAt(0);
+                                if (helpPoPs.Count > 0)
+                                {
+                                    helpPoPs.RemoveAt(0);
+                                }
                             }
                             break;
                         #endregion
@@ -2239,7 +2241,7 @@ namespace KazgarsRevenge
         Dictionary<string, Rectangle> soulevatorDict;
         Dictionary<string, Rectangle> trashItemDict;
         Dictionary<string, Rectangle> shopKeeperDict;
-
+        Dictionary<string, Rectangle> extrasDict;
 
         Rectangle inventoryRect;
         Rectangle equipmentRect;
@@ -2326,6 +2328,7 @@ namespace KazgarsRevenge
             soulevatorDict = new Dictionary<string, Rectangle>();
             trashItemDict = new Dictionary<string, Rectangle>();
             shopKeeperDict = new Dictionary<string, Rectangle>();
+            extrasDict = new Dictionary<string, Rectangle>();
 
 
 
@@ -2345,6 +2348,7 @@ namespace KazgarsRevenge
             guiInsideRects.Add("soulevator", soulevatorDict);
             guiInsideRects.Add("trashItem", trashItemDict);
             guiInsideRects.Add("shopKeeper", shopKeeperDict);
+            guiInsideRects.Add("extras", extrasDict);
             #endregion
 
             //Equipment inner
@@ -2482,7 +2486,8 @@ namespace KazgarsRevenge
                 shopKeeperDict.Add("itemIcon" + (i + 1), new Rectangle((int)(258 * average), (int)(273 + i/2 * 111 * average), (int)(78 * average), (int)(78 * average)));
                 shopKeeperDict.Add("itemFrame" + (i + 1), new Rectangle((int)(336 * average), (int)(273 + i/2 * 111 * average), (int)(135 * average), (int)(78 * average)));
             }
-            
+
+            extrasDict.Add("abilities", guiOutsideRects["abilities"]);
         }
         #endregion
 
@@ -2913,7 +2918,7 @@ namespace KazgarsRevenge
             if (helpPoPs.Count > 0)
             {
                 s.Draw(texWhitePixel, helpPopRect, Color.Black * 0.5f);
-                helpPoPs[0].Draw(s, helpPopPos, font, average, 50f, guiInsideRects["helpPop"]["ok"], guiInsideRects["helpPop"]["ok"]);
+                helpPoPs[0].Draw(s, helpPopPos, font, average, 50f, guiInsideRects["helpPop"]["ok"], guiInsideRects["helpPop"]["ok"], guiInsideRects);
             }
             
             
