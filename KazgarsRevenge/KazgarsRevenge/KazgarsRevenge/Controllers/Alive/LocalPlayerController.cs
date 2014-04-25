@@ -187,6 +187,7 @@ namespace KazgarsRevenge
         bool showEquipment = false;
         bool showTalents = false;
         bool showMegaMap = false;
+        bool buyingBack = false;
         string lastClick = null;
         string abilityToUseString = null;
         int selectedItemSlot = -1;
@@ -207,6 +208,7 @@ namespace KazgarsRevenge
 
         List<Item> shopStock = new List<Item>();
         List<Item> buyBack = new List<Item>();
+
 
         enum TalentTrees
         {
@@ -1720,6 +1722,21 @@ namespace KazgarsRevenge
                             guiOutsideRects.Remove("trashItem");
                             break;
                         #endregion
+                        #region shop keeper
+                        case "shopKeeper":
+                            if (innerCollides != null)
+                            {
+                                if (innerCollides.Equals("buy"))
+                                {
+                                    buyingBack = false;
+                                }
+                                else if (innerCollides.Equals("buyBack"))
+                                {
+                                    buyingBack = true;
+                                }
+                            }
+                            break;
+                        #endregion
                     }
                 }
             }
@@ -1851,15 +1868,34 @@ namespace KazgarsRevenge
                         }
                         break;
                     #endregion
-                    #region player frame
+                    #region shop keeper
                     case "shopKeeper":
                         if (innerCollides != null)
                         {
-                            for (int i = 0; i < 6; i++)
+                            for (int i = 0; i < 10; i++)
                             {
-                                if (innerCollides.Equals("itemIcon" + i) || innerCollides.Equals("itemFrame" + i) && i < buffs.Count) 
+                                if (innerCollides.Equals("itemIcon" + i) || innerCollides.Equals("itemFrame" + i)) 
                                 {
-                                    
+                                    if (buyingBack) //buying back
+                                    {
+                                        if (i < buyBack.Count)      //if it's in the list
+                                        {
+                                            if (gold >= buyBack[buyBack.Count - i - 1].GoldCost)    //if you have the gold to buy it back
+                                            {
+                                                if (AddToInventory(buyBack[buyBack.Count - i - 1]))  //if add to inventory works
+                                                {
+                                                    gold -= buyBack[buyBack.Count - i - 1].GoldCost;
+                                                    buyBack.RemoveAt(buyBack.Count - i - 1);
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                    else    //shopping
+                                    {
+
+
+                                    }
                                 }
                                 else
                                 {
@@ -2477,12 +2513,13 @@ namespace KazgarsRevenge
             //Shop Keeper
             for (int i = 0; i < 10; i += 2)
             {
-                shopKeeperDict.Add("itemIcon" + i, new Rectangle((int)(25 * average), (int)(273 + i/2 * 111 * average), (int)(78 * average), (int)(78 * average)));
-                shopKeeperDict.Add("itemFrame" + i, new Rectangle((int)(103 * average), (int)(273 + i/2 * 111 * average), (int)(135 * average), (int)(78 * average)));
-                shopKeeperDict.Add("itemIcon" + (i + 1), new Rectangle((int)(258 * average), (int)(273 + i/2 * 111 * average), (int)(78 * average), (int)(78 * average)));
-                shopKeeperDict.Add("itemFrame" + (i + 1), new Rectangle((int)(336 * average), (int)(273 + i/2 * 111 * average), (int)(135 * average), (int)(78 * average)));
-            }
-            
+                shopKeeperDict.Add("itemIcon" + i, new Rectangle((int)(25 * average), (int)((273 + i/2 * 111) * average), (int)(78 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemFrame" + i, new Rectangle((int)(103 * average), (int)((273 + i/2 * 111) * average), (int)(135 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemIcon" + (i + 1), new Rectangle((int)(258 * average), (int)((273 + i/2 * 111) * average), (int)(78 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemFrame" + (i + 1), new Rectangle((int)(336 * average), (int)((273 + i/2 * 111) * average), (int)(135 * average), (int)(78 * average)));
+            }//5,180
+            shopKeeperDict.Add("buy", new Rectangle((int)(493 * average), (int)(180 * average), (int)(57 * average), (int)(78 * average)));
+            shopKeeperDict.Add("buyBack", new Rectangle((int)(493 * average), (int)(258 * average), (int)(57 * average), (int)(78 * average)));
         }
         #endregion
 
@@ -2884,18 +2921,33 @@ namespace KazgarsRevenge
             if (guiOutsideRects.ContainsKey("shopKeeper"))
             {
                 s.Draw(shopFrame, guiOutsideRects["shopKeeper"], Color.White);
-                
-                for (int i = 0; i < 10 && i < buyBack.Count; i++)
+                if (buyingBack) //buyback
                 {
-                    if (buyBack[i] != null)
+                    for (int i = 0; i < 10 && i < buyBack.Count; i++)
                     {
-                        s.Draw(buyBack[buyBack.Count - i - 1].Icon, guiInsideRects["shopKeeper"]["itemIcon" + i], Color.White);
-                        s.Draw(texWhitePixel, guiInsideRects["shopKeeper"]["itemFrame" + i], Color.Black * .8f);
-                        s.DrawString(font, buyBack[buyBack.Count - i - 1].Name, new Vector2(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 5, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + 5), Color.White, 0, Vector2.Zero, average * .25f, SpriteEffects.None, 0);
-                        s.Draw(goldIcon, new Rectangle(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 5, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + guiInsideRects["shopKeeper"]["itemFrame" + i].Height - 25, 20, 20), Color.White);
-                        s.DrawString(font, buyBack[buyBack.Count - i - 1].GoldCost.ToString(), new Vector2(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 25, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + guiInsideRects["shopKeeper"]["itemFrame" + i].Height - 25), Color.Gold, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
+                        if (buyBack[i] != null)
+                        {
+                            s.Draw(buyBack[buyBack.Count - i - 1].Icon, guiInsideRects["shopKeeper"]["itemIcon" + i], Color.White);
+                            s.Draw(texWhitePixel, guiInsideRects["shopKeeper"]["itemFrame" + i], Color.Black * .8f);
+                            s.DrawString(font, buyBack[buyBack.Count - i - 1].Name, new Vector2(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 5, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + 5), Color.White, 0, Vector2.Zero, average * .25f, SpriteEffects.None, 0);
+                            s.Draw(goldIcon, new Rectangle(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 5, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + guiInsideRects["shopKeeper"]["itemFrame" + i].Height - 25, 20, 20), Color.White);
+                            s.DrawString(font, buyBack[buyBack.Count - i - 1].GoldCost.ToString(), new Vector2(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 25, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + guiInsideRects["shopKeeper"]["itemFrame" + i].Height - 25), Color.Gold, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
+                        }
                     }
-                    
+                }
+                else    //shopping
+                {
+                    for (int i = 0; i < 10 && i < shopStock.Count; i++)
+                    {
+                        if (shopStock[i] != null)
+                        {
+                            s.Draw(shopStock[i].Icon, guiInsideRects["shopKeeper"]["itemIcon" + i], Color.White);
+                            s.Draw(texWhitePixel, guiInsideRects["shopKeeper"]["itemFrame" + i], Color.Black * .8f);
+                            s.DrawString(font, shopStock[i].Name, new Vector2(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 5, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + 5), Color.White, 0, Vector2.Zero, average * .25f, SpriteEffects.None, 0);
+                            s.Draw(goldIcon, new Rectangle(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 5, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + guiInsideRects["shopKeeper"]["itemFrame" + i].Height - 25, 20, 20), Color.White);
+                            s.DrawString(font, shopStock[i].GoldCost.ToString(), new Vector2(guiInsideRects["shopKeeper"]["itemFrame" + i].X + 25, guiInsideRects["shopKeeper"]["itemFrame" + i].Y + guiInsideRects["shopKeeper"]["itemFrame" + i].Height - 25), Color.Gold, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
+                        }
+                    }
                 }
             }
             #endregion
