@@ -109,8 +109,8 @@ namespace KazgarsRevenge
             }
             else
             {
-                graphics.PreferredBackBufferWidth = 1920;
-                graphics.PreferredBackBufferHeight = 1080;
+                graphics.PreferredBackBufferWidth = 1280;
+                graphics.PreferredBackBufferHeight = 720;
                 graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
                 screenScale = ((float)GraphicsDevice.Viewport.Height / 720f + (float)GraphicsDevice.Viewport.Width / 1280f) / 2;
@@ -282,7 +282,7 @@ namespace KazgarsRevenge
             floatingText.Add(floater);
         }
 
-        const bool debug = false;
+        const bool debug = true;
         int loadInt = 0;
         int frameCounter = 0;
         int frameRate = 0;

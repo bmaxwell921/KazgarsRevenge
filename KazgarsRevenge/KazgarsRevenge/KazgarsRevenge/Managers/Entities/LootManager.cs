@@ -113,6 +113,10 @@ namespace KazgarsRevenge
             entity.AddComponent(typeof(AnimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
+            BlobShadowDecal shadow = new BlobShadowDecal(mainGame, entity, 15);
+            entity.AddComponent(typeof(BlobShadowDecal), shadow);
+            billboardManager.AddComponent(shadow);
+
             TreasureGopherController controller = new TreasureGopherController(mainGame, entity, GetTreasureGopherLoot(levelManager.currentLevel.currentFloor, entity));
             entity.AddComponent(typeof(LootableController), controller);
             genComponentManager.AddComponent(controller);

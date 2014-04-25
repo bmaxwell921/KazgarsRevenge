@@ -61,7 +61,7 @@ namespace KazgarsRevenge
             for (int i = 0; i < lines.Count; ++i)
             {
                 s.DrawString(font, lines[i].text, topLeft + new Vector2(0, y), lines[i].color, 0, Vector2.Zero, scale * lines[i].scale, SpriteEffects.None, 0);
-                y += lines[i].scale * lineHeight;
+                y += lines[i].scale * lineHeight * scale;
             }
 
             s.Draw(texHover, highlight, Color.White);
