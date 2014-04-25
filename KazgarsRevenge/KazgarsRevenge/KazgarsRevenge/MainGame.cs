@@ -381,7 +381,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                players.ResetPlayerPosition();
+                players.StartNewLevel();
             }
             camera.StartLevel(name);
         }

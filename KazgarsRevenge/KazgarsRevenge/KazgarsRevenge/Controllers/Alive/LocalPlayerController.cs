@@ -2235,6 +2235,11 @@ namespace KazgarsRevenge
         {
             inEssenceShop = false;
         }
+
+        public void StartNewLevel(Vector3 spawnLoc)
+        {
+            physicalData.Position = spawnLoc;
+        }
         #endregion
 
         #region Draw Parameter Setup
