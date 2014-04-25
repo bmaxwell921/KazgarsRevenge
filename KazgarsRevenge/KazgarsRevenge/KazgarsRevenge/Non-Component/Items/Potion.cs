@@ -35,6 +35,10 @@ namespace KazgarsRevenge
                     this.Name = "Potion of Invisibility";
                     this.PotionAbility = AbilityName.None;
                     break;
+                case 6:
+                    this.Name = "Portal Potion";
+                    this.PotionAbility = AbilityName.PortalPotion;
+                    break;
             }
 
             SetTooltip(GetPotionTooltip(Name, GetPotionDescription()));
@@ -56,6 +60,9 @@ namespace KazgarsRevenge
                 case 5:
                     return "Makes you undetectable by \n"
                     + "monsters for 20 seconds";
+                case 6:
+                    return "Teleports you back to the\n"
+                        + "Soulevator";
                 default:
                     return "Default potion text!";
             }
