@@ -73,6 +73,8 @@ namespace KazgarsRevenge
             systems.Add(typeof(FirePillarSystem), new FirePillarSystem(Game, Game.Content));
             systems.Add(typeof(LevelUpExplosionSystem), new LevelUpExplosionSystem(Game, Game.Content));
             systems.Add(typeof(TorchSystem), new TorchSystem(Game, Game.Content));
+            systems.Add(typeof(GopherDigPoofSystem), new GopherDigPoofSystem(Game, Game.Content));
+            systems.Add(typeof(GopherGlowSystem), new GopherGlowSystem(Game, Game.Content));
             
 
             foreach (KeyValuePair<Type, ParticleSystem> k in systems)

@@ -91,11 +91,11 @@ namespace KazgarsRevenge
 
         public void CreateTreasureGopher(Vector3 position)
         {
-            position.Y = 15;
+            position.Y = 4;
             GameEntity entity = new GameEntity("loot", FactionType.Neutral, EntityType.Misc);
 
             Entity data = new Box(position, 15, 10, 15, 5);
-            data.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
+            data.CollisionInformation.CollisionRules.Group = mainGame.UntouchableCollisionGroup;
             data.IsAffectedByGravity = false;
             data.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             entity.AddSharedData(typeof(Entity), data);
@@ -109,6 +109,7 @@ namespace KazgarsRevenge
             entity.AddSharedData(typeof(AnimationPlayer), anims);
 
             AnimatedModelComponent graphics = new AnimatedModelComponent(mainGame, entity, model, 10, Vector3.Zero);
+            graphics.AddEmitter(typeof(GopherGlowSystem), "glow", 100, 0, Vector3.Zero);
             entity.AddComponent(typeof(AnimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 

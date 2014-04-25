@@ -59,7 +59,7 @@ namespace KazgarsRevenge
             //shared physical data (shared between AnimatedModelComponent, PhysicsComponent, and PlayerController)
             Entity playerPhysicalData = new Cylinder(position, 37, 6, 2);
             //assigns a collision group to the physics
-            playerPhysicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
+            playerPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.PlayerCollisionGroup;
 
             //taking away friction
             playerPhysicalData.Material.KineticFriction = 0;

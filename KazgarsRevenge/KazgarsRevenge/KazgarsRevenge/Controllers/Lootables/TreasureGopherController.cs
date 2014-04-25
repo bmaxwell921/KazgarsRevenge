@@ -34,6 +34,9 @@ namespace KazgarsRevenge
             animations.StartClip(aniName, type);
         }
 
+        LevelManager levels;
+        AttackManager attacks;
+
         AnimationPlayer animations;
         GopherState state = GopherState.Idle;
         public TreasureGopherController(KazgarsRevengeGame game, GameEntity entity, List<Item> loot)
@@ -45,13 +48,16 @@ namespace KazgarsRevenge
 
 
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
+
+            levels = Game.Services.GetService(typeof(LevelManager)) as LevelManager;
+            attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
         }
 
-        float senseRadius = LevelManager.BLOCK_SIZE * 1.5f;
+        float senseRadius = 325f;
         double timerCounter;
         CameraComponent camera;
         Entity avoidData = null;
-        float runSpeed = 50;
+        float runSpeed = 145;
         
         public override void Update(GameTime gameTime)
         {
@@ -65,7 +71,7 @@ namespace KazgarsRevenge
                         {
                             PlayAnimation("g_idle", MixType.None);
                         }
-                        GameEntity possPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, senseRadius, false);
+                        GameEntity possPlayer = QueryNearEntityName("localplayer", physicalData.Position, 0, senseRadius);
                         if (possPlayer != null)
                         {
                             avoidData = possPlayer.GetSharedData(typeof(Entity)) as Entity;
@@ -85,7 +91,7 @@ namespace KazgarsRevenge
                 case GopherState.Avoiding:
                     if (avoidData == null)
                     {
-                        GameEntity possPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, senseRadius, false);
+                        GameEntity possPlayer = QueryNearEntityName("localplayer", physicalData.Position, 0, senseRadius);
                         if (possPlayer != null)
                         {
                             avoidData = possPlayer.GetSharedData(typeof(Entity)) as Entity;
@@ -103,7 +109,7 @@ namespace KazgarsRevenge
 
                     Vector3 diff = physicalData.Position - avoidData.Position;
                     diff.Y = 0;
-                    if (Math.Abs(diff.X) + Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE * 4)
+                    if (Math.Abs(diff.X) + Math.Abs(diff.Z) > LevelManager.BLOCK_SIZE * 6)
                     {
                         physicalData.LinearVelocity = Vector3.Zero;
                         state = GopherState.Idle;
@@ -121,22 +127,36 @@ namespace KazgarsRevenge
 
                     break;
                 case GopherState.DiggingDown:
+                    physicalData.LinearVelocity = Vector3.Zero;
                     timerCounter -= gameTime.ElapsedGameTime.TotalMilliseconds;
                     if (timerCounter <= 0)
                     {
                         state = GopherState.DiggingUp;
                         timerCounter = animations.GetAniMillis("g_dig") - 1000;
-                        physicalData.Position = physicalData.Position + physicalData.OrientationMatrix.Forward * LevelManager.BLOCK_SIZE * 3;
+                        attacks.SpawnGopherDigPoof(physicalData.Position);
+
+                        Vector3 newPos = levels.FindClosestNodeTo(physicalData.Position + physicalData.OrientationMatrix.Forward * LevelManager.BLOCK_SIZE * 3, Vector3.Zero);
+                        if (Math.Abs(physicalData.Position.X - newPos.X) + Math.Abs(physicalData.Position.Z - newPos.Z) < LevelManager.BLOCK_SIZE)
+                        {
+                            newPos = levels.FindClosestNodeTo(physicalData.Position + physicalData.OrientationMatrix.Backward * LevelManager.BLOCK_SIZE * 3, Vector3.Zero);
+                        }
+
+                        newPos.Y = 8;
+                        physicalData.Position = newPos;
+                        attacks.SpawnGopherDigPoof(physicalData.Position);
                     }
                     break;
                 case GopherState.DiggingUp:
+                    physicalData.LinearVelocity = Vector3.Zero;
                     timerCounter -= gameTime.ElapsedGameTime.TotalMilliseconds;
                     if (timerCounter <= 0)
                     {
-                        state = GopherState.Idle;
+                        state = GopherState.Avoiding;
+                        timerCounter = 10000;
                     }
                     break;
                 case GopherState.BeingLooted:
+                    physicalData.LinearVelocity = Vector3.Zero;
                     timerCounter -= elapsed;
                     if (timerCounter <= 0)
                     {
@@ -149,7 +169,7 @@ namespace KazgarsRevenge
                             else
                             {
                                 Vector3 smashedPos = GetBoneTranslation(1);
-                                physicalData.Position = new Vector3(smashedPos.X, 10, smashedPos.Z);
+                                physicalData.Position = new Vector3(smashedPos.X, 8, smashedPos.Z);
                                 state = GopherState.Avoiding;
                             }
                         }
@@ -177,7 +197,6 @@ namespace KazgarsRevenge
         public override void CloseLoot()
         {
             PlayAnimation("g_loot_smash", MixType.MixInto);
-            timerCounter = 0;
             timerCounter = animations.GetAniMillis(currentAni) - 30;
         }
 

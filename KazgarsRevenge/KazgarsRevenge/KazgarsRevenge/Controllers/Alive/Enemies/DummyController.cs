@@ -28,7 +28,7 @@ namespace KazgarsRevenge
         {
             curAnim = animation;
             anims.StartClip(animation, MixType.None);
-            aniCounter = anims.GetAniMillis(animation) - 16;
+            aniCounter = anims.GetAniMillis(animation);
         }
 
 

@@ -268,12 +268,14 @@
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
     <Compile Include="Particles\Systems\Debuffs\FireAOESystem.cs" />
+    <Compile Include="Particles\Systems\Entities\GopherGlowSystem.cs" />
     <Compile Include="Particles\Systems\Entities\FirePillarMistSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOEMistSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOESystem.cs" />
     <Compile Include="Particles\Systems\Charge\DragonFireChargeSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\SmokeAOESystem.cs" />
     <Compile Include="Particles\Systems\Entities\FirePillarSystem.cs" />
+    <Compile Include="Particles\Systems\Entities\GopherDigPoofSystem.cs" />
     <Compile Include="Particles\Systems\Entities\TorchSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Explosions\LevelUpExplosionSystem.cs" />

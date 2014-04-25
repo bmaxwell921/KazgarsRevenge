@@ -1369,6 +1369,15 @@ namespace KazgarsRevenge
 
         #region Particles
         ParticleManager particles;
+        public void SpawnGopherDigPoof(Vector3 position)
+        {
+            position.Y = 10;
+            ParticleSystem poof = particles.GetSystem(typeof(GopherDigPoofSystem));
+            for (int i = 0; i < 15; ++i)
+            {
+                poof.AddParticle(position, Vector3.Zero);
+            }
+        }
 
         public void SpawnIceBlockPoof(Vector3 position)
         {

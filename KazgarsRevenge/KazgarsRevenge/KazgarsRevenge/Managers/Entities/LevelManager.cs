@@ -533,7 +533,7 @@ namespace KazgarsRevenge
                 List<Vector3> mobSpawnLocations = levelInfo.mobSpawnLocations;
                 foreach (Vector3 v in mobSpawnLocations)
                 {
-                    //CreateMobSpawner(Vector3.Transform(v, chunkTransform));
+                    CreateMobSpawner(Vector3.Transform(v, chunkTransform));
                 }
 
                 List<Vector3> playerspawns = levelInfo.playerSpawnLocations;
@@ -919,7 +919,7 @@ namespace KazgarsRevenge
         }
 
         // Returns the Vector3 node in the pathGraph closest to the given location. Taking into account the final location we're trying to get to
-        private Vector3 FindClosestNodeTo(Vector3 location, Vector3 dest)
+        public Vector3 FindClosestNodeTo(Vector3 location, Vector3 dest)
         {
             Vector3 min = Vector3.Zero;
             // Set this as null for the first time around
