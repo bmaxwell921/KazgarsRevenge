@@ -61,8 +61,9 @@ namespace KazgarsRevenge
                     return "Makes you undetectable by \n"
                     + "monsters for 20 seconds";
                 case 6:
-                    return "Teleports you back to the\n"
-                        + "Soulevator";
+                    return "Teleports you either to the\n"
+                           +"soulevator, or the last place\n"
+                           +"you teleported from";
                 default:
                     return "Default potion text!";
             }

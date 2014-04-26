@@ -268,12 +268,9 @@ namespace KazgarsRevenge
             
             //25% chance to drop (up to 5) health potions
             dt.AddDrop(ItemType.Potion, GetItem(1), 25, 5);
-            //5% chance to drop (up to 2) portal potions
-            //dt.AddDrop(ItemType.Potion, GetItem(6), 5, 2);
+            //10% chance to drop (up to 2) portal potions
+            dt.AddDrop(ItemType.Potion, GetItem(6), 5, 2);
             dt.AddDrop(ItemType.Potion, null, 70);
-
-            //testing portal potion
-            dt.AddDrop(ItemType.Potion, GetItem(6), 500, 5);
 
             return dt;
         }
@@ -322,7 +319,7 @@ namespace KazgarsRevenge
             dt.AddDrop(ItemType.Equippable, null, 75);
 
             dt.AddDrop(ItemType.Essence, GetMeleeEssence(currentFloor), 5);
-            //dt.AddDrop(ItemType.Essence, null, 95);
+            dt.AddDrop(ItemType.Essence, null, 95);
         }
 
         public void AddRangedDrops(DropTable dt, FloorName currentFloor)

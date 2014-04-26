@@ -591,8 +591,6 @@ namespace KazgarsRevenge
                         (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(v, chunkTransform));
                     }
                 }
-
-                (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(Vector3.Zero, chunkTransform));
             }
         }
 
@@ -747,7 +745,7 @@ namespace KazgarsRevenge
 
         private void CreateMobSpawner(Vector3 pos)
         {
-            if (RandSingleton.U_Instance.Next(100) < 30)
+            if (RandSingleton.U_Instance.Next(100) < 60)
             {
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
@@ -759,7 +757,7 @@ namespace KazgarsRevenge
                 int r = RandSingleton.U_Instance.Next(100);
                 if (r < 30)
                 {//normal cluster
-                    num = RandSingleton.U_Instance.Next(3, 7);
+                    num = RandSingleton.U_Instance.Next(2, 4);
                 }
                 else if (r < 40)
                 {//elite single

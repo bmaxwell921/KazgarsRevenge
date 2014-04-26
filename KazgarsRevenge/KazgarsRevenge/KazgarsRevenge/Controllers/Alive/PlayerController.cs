@@ -74,6 +74,12 @@ namespace KazgarsRevenge
         #endregion
 
         #region Abilities
+        protected override void HandleLevelUp()
+        {
+            ++totalTalentPoints;
+            base.HandleLevelUp();
+        }
+
         //resource
         protected int currentPower = 0;
         protected const int maxPower = 30;
@@ -87,7 +93,7 @@ namespace KazgarsRevenge
         }
         
         protected int spentTalentPoints = 0;
-        protected int totalTalentPoints = 1000;
+        protected int totalTalentPoints = 3;
         protected const float meleeRange = 50;
         protected const float bowRange = 1000;
         protected Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
@@ -457,10 +463,12 @@ namespace KazgarsRevenge
             InitGeneralFields();
             InitNewPlayer();
 
-            AddToInventory(lewtz.GetItem(901));
-
             //adding gear for testing
             /*
+            Potion pot = (Potion)lewtz.GetItem(6);
+            pot.AddQuantity(15);
+            AddToInventory(pot);
+            
             Equippable wep = (Equippable)lewtz.GetItem(9901);
             wep.SetStats(GearQuality.Legendary, 70);
             AddToInventory(wep);
@@ -498,6 +506,14 @@ namespace KazgarsRevenge
             AddToInventory(g);
              */
 
+            //gear for demo
+            Weapon wep = lewtz.GetItem(3001) as Weapon;
+            wep.SetStats(GearQuality.Standard, 1);
+            AddToInventory(wep);
+
+            wep = lewtz.GetItem(3102) as Weapon;
+            wep.SetStats(GearQuality.Standard, 1);
+            AddToInventory(wep);
 
         }
 
@@ -513,9 +529,9 @@ namespace KazgarsRevenge
         /// </summary>
         private void InitGeneralFields()
         {
-            percentHPRegenPer5 = .03f;
+            percentHPRegenPer5 = .05f;
             statsPerLevelMultiplier = 2;
-            baseStatsMultiplier = 10;
+            baseStatsMultiplier = 15;
 
             #region members
             //services
@@ -1173,9 +1189,9 @@ namespace KazgarsRevenge
 
             return sequence;
         }
-        Vector3 lastPortedPosition = new Vector3(-10000, 0, 0);
-        Vector3 unsetPortPosition = new Vector3(-10000, 0, 0);
-        const float teleDur = 1200;
+        protected Vector3 lastPortedPosition = new Vector3(-10000, 0, 0);
+        protected Vector3 unsetPortPosition = new Vector3(-10000, 0, 0);
+        const float teleDur = 800;
         private List<Action> PortalPotionActions()
         {
             List<Action> sequence = new List<Action>();
@@ -1205,7 +1221,17 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-                physicalData.Position = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
+                Vector3 newPos = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
+                if (lastPortedPosition != unsetPortPosition)
+                {
+                    newPos = lastPortedPosition;
+                    lastPortedPosition = unsetPortPosition;
+                }
+                else
+                {
+                    lastPortedPosition = physicalData.Position;
+                }
+                physicalData.Position = newPos;
                 camera.RefreshLights();
                 attacks.CreateTeleSphere(physicalData.Position, teleDur);
                 millisActionLength = teleDur * 3 / 4;
@@ -2132,25 +2158,28 @@ namespace KazgarsRevenge
             }
 
             //special handlers for idling states
-            aniCounter += elapsed;
-            if (aniCounter >= aniLength)
+            if (attState == AttackState.None)
             {
-                if (currentAniName == "k_fighting_stance")
+                aniCounter += elapsed;
+                if (aniCounter >= aniLength)
                 {
-                    ++fightingStanceLoops;
-                    if (fightingStanceLoops > 3)
+                    if (currentAniName == "k_fighting_stance")
                     {
-                        StartSequence("fightingstance");
+                        ++fightingStanceLoops;
+                        if (fightingStanceLoops > 3)
+                        {
+                            StartSequence("fightingstance");
+                            fightingStanceLoops = 0;
+                        }
+                    }
+                    else
+                    {
                         fightingStanceLoops = 0;
                     }
-                }
-                else
-                {
-                    fightingStanceLoops = 0;
-                }
-                if (currentAniName == "k_from_fighting_stance")
-                {
-                    StartSequence("idle");
+                    if (currentAniName == "k_from_fighting_stance")
+                    {
+                        StartSequence("idle");
+                    }
                 }
             }
         }
