@@ -2273,7 +2273,12 @@ namespace KazgarsRevenge
         protected void OpenLoot()
         {
             GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
-            if (possLoot != null)
+            if (possLoot == null)
+            {
+                possLoot = QueryNearEntity("treasure gopher", physicalData.Position + Vector3.Down * 18, 50);
+            }
+
+            if(possLoot != null)
             {
                 lootingSoul = (possLoot.GetComponent(typeof(LootableController)) as LootableController);
                 if (lootingSoul != null && lootingSoul.CanLoot())
