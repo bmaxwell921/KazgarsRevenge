@@ -45,12 +45,12 @@ namespace KazgarsRevenge
             this.CreateMainPlayer((Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation(), id);
         }
 
-        public void StartNewLevel()
+        public void StartNewLevel(FloorName name)
         {
             if (playerMap.ContainsKey(myId))
             {
                 LocalPlayerController player = playerMap[myId].GetComponent(typeof(AliveComponent)) as LocalPlayerController;
-                player.StartNewLevel((Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation());
+                player.StartNewLevel((Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation(), name);
             }
         }
 

@@ -74,6 +74,12 @@ namespace KazgarsRevenge
         #endregion
 
         #region Abilities
+        protected override void HandleLevelUp()
+        {
+            ++totalTalentPoints;
+            base.HandleLevelUp();
+        }
+
         //resource
         protected int currentPower = 0;
         protected const int maxPower = 30;
@@ -87,7 +93,7 @@ namespace KazgarsRevenge
         }
         
         protected int spentTalentPoints = 0;
-        protected int totalTalentPoints = 1000;
+        protected int totalTalentPoints = 3;
         protected const float meleeRange = 50;
         protected const float bowRange = 1000;
         protected Dictionary<string, Ability> allAbilities = new Dictionary<string, Ability>();
@@ -458,6 +464,7 @@ namespace KazgarsRevenge
             InitNewPlayer();
 
             //adding gear for testing
+            /*
             Potion pot = (Potion)lewtz.GetItem(6);
             pot.AddQuantity(15);
             AddToInventory(pot);
@@ -497,8 +504,16 @@ namespace KazgarsRevenge
             g = (Equippable)lewtz.GetItem(3306);
             g.SetStats(GearQuality.Epic, 1);
             AddToInventory(g);
-             
+             */
 
+            //gear for demo
+            Weapon wep = lewtz.GetItem(3001) as Weapon;
+            wep.SetStats(GearQuality.Standard, 1);
+            AddToInventory(wep);
+
+            wep = lewtz.GetItem(3102) as Weapon;
+            wep.SetStats(GearQuality.Standard, 1);
+            AddToInventory(wep);
 
         }
 
@@ -514,9 +529,9 @@ namespace KazgarsRevenge
         /// </summary>
         private void InitGeneralFields()
         {
-            percentHPRegenPer5 = .03f;
+            percentHPRegenPer5 = .05f;
             statsPerLevelMultiplier = 2;
-            baseStatsMultiplier = 10;
+            baseStatsMultiplier = 15;
 
             #region members
             //services

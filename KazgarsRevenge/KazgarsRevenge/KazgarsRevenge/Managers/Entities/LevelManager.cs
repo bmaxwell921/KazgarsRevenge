@@ -745,7 +745,7 @@ namespace KazgarsRevenge
 
         private void CreateMobSpawner(Vector3 pos)
         {
-            if (RandSingleton.U_Instance.Next(100) < 30)
+            if (RandSingleton.U_Instance.Next(100) < 60)
             {
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
@@ -755,15 +755,15 @@ namespace KazgarsRevenge
                 EntityType type = EntityType.NormalEnemy;
                 int num = 1;
                 int r = RandSingleton.U_Instance.Next(100);
-                if (r < 40)
+                if (r < 30)
                 {//normal cluster
-                    num = RandSingleton.U_Instance.Next(3, 7);
+                    num = RandSingleton.U_Instance.Next(2, 4);
                 }
-                else if (r < 50)
+                else if (r < 40)
                 {//elite single
                     type = EntityType.EliteEnemy;
                 }
-                else if (r < 57)
+                else if (r < 47)
                 {//elite cluster
                     type = EntityType.EliteEnemy;
                     num = RandSingleton.U_Instance.Next(2, 5);

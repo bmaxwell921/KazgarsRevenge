@@ -136,6 +136,12 @@ namespace KazgarsRevenge
             meleeAbilities[6, 2] = new AbilityNode(AbilityName.ForcefulThrow, new AbilityName[] { AbilityName.ChainSpear }, false, 1, abilityLearnedFlags);
             meleeAbilities[6, 3] = new AbilityNode(AbilityName.ChainSpear, new AbilityName[] { AbilityName.Headbutt }, false, 2, abilityLearnedFlags);
             #endregion
+
+
+            helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Inventory]);
+            helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Inventory2]);
+            helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Character]);
+            helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Equip]);
         }
 
         AbilityTargetDecal groundIndicator;
@@ -462,6 +468,12 @@ namespace KazgarsRevenge
             prevKeys = curKeys;
 
             groundIndicator.UpdateMouseLocation(mouseHoveredLocation, targetingGroundLocation, targetedGroundSize);
+
+            if (lastPortedPosition != unsetPortPosition
+                && Math.Abs(physicalData.Position.X - lastPortedPosition.X) + Math.Abs(physicalData.Position.Z - lastPortedPosition.Z) > LevelManager.BLOCK_SIZE * 8)
+            {
+                lastPortedPosition = unsetPortPosition;
+            }
 
             base.Update(gameTime);
         }
@@ -2285,10 +2297,44 @@ namespace KazgarsRevenge
             inEssenceShop = false;
         }
 
-        public void StartNewLevel(Vector3 spawnLoc)
+        public void StartNewLevel(Vector3 spawnLoc, FloorName floor)
         {
             physicalData.Position = spawnLoc;
             lastPortedPosition = unsetPortPosition;
+
+            if (Level == 1)
+            {
+                helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Map]);
+                helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Power]);
+            }
+        }
+
+        protected override void HandleLevelUp()
+        {
+            if (Level == 2)
+            {
+                helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Talent]);
+                helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Ability]);
+                helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Talent2]);
+                helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Talent3]);
+            }
+            base.HandleLevelUp();
+        }
+
+        int timesPowerAdded = 0;
+        public override void AddPower(int power)
+        {
+            if (timesPowerAdded != -1)
+            {
+                ++timesPowerAdded;
+                if (timesPowerAdded >= 30)
+                {
+                    helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Health]);
+                    helpPoPs.Add(HelpPopUp.PopUpDefinitions[PopUpNames.Loot]);
+                    timesPowerAdded = -1;
+                }
+            }
+            base.AddPower(power);
         }
         #endregion
 
@@ -2396,7 +2442,7 @@ namespace KazgarsRevenge
             megaMapRect = new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int)(160 * average), (int)(622 * average), (int)(622 * average));
             tooltipRect = new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average));
 
-            helpPopPos = new Vector2((int)(maxX / 2 - 150 * average), (int)((maxY - 283 * average)));
+            helpPopPos = new Vector2((int)(maxX / 2 - 150 * average), (int)((maxY - 323 * average)));
             helpPopRect = new Rectangle((int)helpPopPos.X, (int)helpPopPos.Y, (int)(300 * average), (int)(95 * average));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
@@ -2488,18 +2534,18 @@ namespace KazgarsRevenge
             inventoryDict.Add("equipArrow", new Rectangle((int)(inventoryUL.X + 20 * average), (int)(inventoryUL.Y + 5 * average), (int)(40 * average), (int)(40 * average)));
 
             //ability
-            abilityDict.Add("primary", new Rectangle((int)(abilitiesUL.X + 366 * average), (int)(abilitiesUL.Y + 117 * average), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability12", new Rectangle((int)(abilitiesUL.X + 440 * average), (int)(abilitiesUL.Y + 117 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("primary", new Rectangle((int)(abilitiesUL.X + 366 * average), (int)(abilitiesUL.Y + 97 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability12", new Rectangle((int)(abilitiesUL.X + 440 * average), (int)(abilitiesUL.Y + 97 * average), (int)(64 * average), (int)(64 * average)));
             //abilities 0-7
             for (int i = 0; i < 4; ++i)
             {
-                abilityDict.Add("ability" + i, new Rectangle((int)(abilitiesUL.X + (60 + 74 * i) * average), (int)(abilitiesUL.Y + 80 * average), (int)(64 * average), (int)(64 * average)));
-                abilityDict.Add("ability" + (i + 4), new Rectangle((int)(abilitiesUL.X + (60 + 74 * i) * average), (int)(abilitiesUL.Y + 154 * average), (int)(64 * average), (int)(64 * average)));
+                abilityDict.Add("ability" + i, new Rectangle((int)(abilitiesUL.X + (60 + 74 * i) * average), (int)(abilitiesUL.Y + 60 * average), (int)(64 * average), (int)(64 * average)));
+                abilityDict.Add("ability" + (i + 4), new Rectangle((int)(abilitiesUL.X + (60 + 74 * i) * average), (int)(abilitiesUL.Y + 134 * average), (int)(64 * average), (int)(64 * average)));
             }
-            abilityDict.Add("ability8", new Rectangle((int)(abilitiesUL.X + 524 * average), (int)(abilitiesUL.Y + 80 * average), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability9", new Rectangle((int)(abilitiesUL.X + 598 * average), (int)(abilitiesUL.Y + 80 * average), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability10", new Rectangle((int)(abilitiesUL.X + 524 * average), (int)(abilitiesUL.Y + 154 * average), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability11", new Rectangle((int)(abilitiesUL.X + 598 * average), (int)(abilitiesUL.Y + 154 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability8", new Rectangle((int)(abilitiesUL.X + 524 * average), (int)(abilitiesUL.Y + 60 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability9", new Rectangle((int)(abilitiesUL.X + 598 * average), (int)(abilitiesUL.Y + 60 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability10", new Rectangle((int)(abilitiesUL.X + 524 * average), (int)(abilitiesUL.Y + 134 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability11", new Rectangle((int)(abilitiesUL.X + 598 * average), (int)(abilitiesUL.Y + 134 * average), (int)(64 * average), (int)(64 * average)));
 
             //Talents
             for (int i = 0; i < 4; ++i)
@@ -2727,6 +2773,7 @@ namespace KazgarsRevenge
             #region main player frame
             //Main Player Frame Pic
             s.Draw(texWhitePixel, portraitRect, Color.Black * 0.5f);
+            s.DrawString(font, "Level " + Level, new Vector2(10, 10), Color.Yellow, 0, Vector2.Zero, average * .75f, SpriteEffects.None, 0);
             //Main Player Frame Health
             s.Draw(texWhitePixel, playerHPRect, Color.Black * 0.5f);
             //power
