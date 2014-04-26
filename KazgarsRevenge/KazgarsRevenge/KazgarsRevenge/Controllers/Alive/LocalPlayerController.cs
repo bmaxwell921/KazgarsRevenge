@@ -1965,6 +1965,10 @@ namespace KazgarsRevenge
                 }
 
             }
+            if (outerCollides != null && curMouse.RightButton == ButtonState.Pressed)
+                UISlotUsed[9] = false;
+            else if (curMouse.RightButton == ButtonState.Pressed)
+                UISlotUsed[9] = true;
             #endregion
         }
 
