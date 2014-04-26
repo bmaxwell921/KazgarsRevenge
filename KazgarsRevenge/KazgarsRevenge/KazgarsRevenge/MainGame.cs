@@ -92,7 +92,7 @@ namespace KazgarsRevenge
         {
             GraphicsDevice.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
 
-            settings.particleSettings = SettingAmount.High;
+            settings.particleSettings = SettingAmount.Low;
 
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
             SetUpLoggers();
@@ -104,13 +104,13 @@ namespace KazgarsRevenge
             {
                 graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                graphics.IsFullScreen = false;
+                graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
             }
             else
             {
-                graphics.PreferredBackBufferWidth = 1280;
-                graphics.PreferredBackBufferHeight = 720;
+                graphics.PreferredBackBufferWidth = 1920;
+                graphics.PreferredBackBufferHeight = 1080;
                 graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
                 screenScale = ((float)GraphicsDevice.Viewport.Height / graphics.PreferredBackBufferHeight + (float)GraphicsDevice.Viewport.Width / graphics.PreferredBackBufferWidth) / 2;
@@ -379,10 +379,8 @@ namespace KazgarsRevenge
             {
                 players.CreateMainPlayerInLevel(DUMMY_ID);
             }
-            else
-            {
-                players.StartNewLevel();
-            }
+                
+			players.StartNewLevel(name);
             camera.StartLevel(name);
         }
 

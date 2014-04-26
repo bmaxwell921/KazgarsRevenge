@@ -1001,8 +1001,6 @@ namespace KazgarsRevenge
             genComponentManager.AddComponent(controller);
 
             attacks.Add(entity);
-
-            SpawnIceBlockPoof(position);
         }
 
         public void CreateIceBlock(Vector3 position, double duration)

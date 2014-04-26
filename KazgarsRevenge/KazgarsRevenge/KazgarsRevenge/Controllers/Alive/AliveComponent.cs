@@ -87,11 +87,15 @@ namespace KazgarsRevenge
         public bool Dead { get; private set; }
 
         #region Experience
+        protected virtual void HandleLevelUp()
+        {
+
+        }
         private int level;
         public int Level { get { return Math.Max(1, level); } private set { level = value; } }
         protected float expMultiplier = 1;
         protected int experience { get; private set; }
-        public int NextLevelXP { get { return 100 * Level * Level; } }
+        public int NextLevelXP { get { return 200 * Level; } }
         public void AddEXP(int level, EntityType entityType)
         {
             int exp = (int)(level * 25 * expMultiplier);
@@ -119,6 +123,7 @@ namespace KazgarsRevenge
         {
             ++Level;
             RecalculateStats();
+            HandleLevelUp();
 
             attacks.CreateLevelUpGraphics(physicalData);
 
