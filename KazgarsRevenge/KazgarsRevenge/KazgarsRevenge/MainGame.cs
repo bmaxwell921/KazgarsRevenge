@@ -98,13 +98,13 @@ namespace KazgarsRevenge
             SetUpLoggers();
 
 
-            bool fullscreen = false;
+            bool fullscreen = true;
 
             if (fullscreen)
             {
                 graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                graphics.IsFullScreen = true;
+                graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
             }
             else
