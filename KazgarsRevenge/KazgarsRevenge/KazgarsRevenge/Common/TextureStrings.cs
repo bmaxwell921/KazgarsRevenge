@@ -24,7 +24,7 @@ namespace KazgarsRevenge
             public static readonly string Talent_Arrow_UL = @"Textures\UI\Frames\TTArrow1";
             public static readonly string Talent_Arrow_L = @"Textures\UI\Frames\TTArrow2";
             public static readonly string Talent_Arrow_DL = @"Textures\UI\Frames\TTArrow3";
-            public static readonly string Talent_Arrow_D = @"Textures\UI\\Frames\TTArrow4";
+            public static readonly string Talent_Arrow_D = @"Textures\UI\\Frames\arrowDown";
             public static readonly string Talent_Arrow_DR = @"Textures\UI\Frames\TTArrow5";
             public static readonly string Talent_Arrow_R = @"Textures\UI\Frames\TTArrow6";
             public static readonly string Talent_Arrow_UR = @"Textures\UI\Frames\TTArrow7";
@@ -182,6 +182,13 @@ namespace KazgarsRevenge
                 public static readonly string LEFT_ARROW = @"Textures\UI\Frames\leftArrow";
                 public static readonly string HELMET = @"Textures\UI\Frames\helmetIcon";
                 public static readonly string shopFrame = @"Textures\UI\Frames\shopgui";
+                public static readonly string abilityFrame = @"Textures\UI\Frames\abilityFrame";
+                public static readonly string inventoryFrame = @"Textures\UI\Frames\inventoryFrame";
+                public static readonly string lootFrame = @"Textures\UI\Frames\lootFrame";
+                public static readonly string equipmentFrame = @"Textures\UI\Frames\equipmentFrame";
+                public static readonly string talentFrame = @"Textures\UI\Frames\talentFrame";
+                public static readonly string talentBackHammer = @"Textures\UI\Frames\talentBackHammer";
+                public static readonly string talentBackBow = @"Textures\UI\Frames\talentBackBow";
             }
 
             public class Buffs

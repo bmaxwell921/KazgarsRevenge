@@ -55,6 +55,13 @@ namespace KazgarsRevenge
             inventoryIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.InventoryIcon);
             talentIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.TalentIcon);
             shopFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.shopFrame);
+            abilityFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.abilityFrame);
+            inventoryFrame= Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.inventoryFrame);
+            lootFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.lootFrame);
+            equipmentFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.equipmentFrame);
+            talentFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.talentFrame);
+            talentBackHammer = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.talentBackHammer);
+            talentBackBow = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.talentBackBow);
             #endregion
 
             #region Ability Image Load
@@ -164,6 +171,13 @@ namespace KazgarsRevenge
         Texture2D inventoryIcon;
         Texture2D talentIcon;
         Texture2D shopFrame;
+        Texture2D abilityFrame;
+        Texture2D equipmentFrame;
+        Texture2D inventoryFrame;
+        Texture2D lootFrame;
+        Texture2D talentFrame;
+        Texture2D talentBackHammer;
+        Texture2D talentBackBow;
 
         //Equipment Base
         Texture2D helmetIcon;
@@ -2296,6 +2310,7 @@ namespace KazgarsRevenge
         Rectangle soulevatorRect;
         Rectangle trashItemRect;
         Rectangle shopKeeperRect;
+        Rectangle talentBackRect;
         Vector2 powerTextPos;
         Vector2 helpPopPos;
 
@@ -2343,6 +2358,8 @@ namespace KazgarsRevenge
             inventoryRect = new Rectangle((int)inventoryUL.X, (int)inventoryUL.Y, (int)(440 * average), (int)(440 * average));
             equipmentRect = new Rectangle((int)equipmentUL.X, (int)equipmentUL.Y, (int)(304 * average), (int)(608 * average));
             talentRect = new Rectangle((int)talentUL.X, (int)talentUL.Y, (int)(406 * average), (int)(812 * average));
+            talentBackRect = new Rectangle((int)(talentUL.X + 10 * average), (int)(talentUL.Y + 10 * average), (int)(talentRect.Width - 20 * average), (int)(talentRect.Height - 150 * average));
+
             lootRect = new Rectangle((int)lootUL.X, (int)lootUL.Y, (int)(150 * average), (int)(300 * average));
             megaMapRect = new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int)(160 * average), (int)(622 * average), (int)(622 * average));
             tooltipRect = new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average));
@@ -2568,7 +2585,7 @@ namespace KazgarsRevenge
 
             #region Ability Bar
             //Ability Bar
-            s.Draw(texWhitePixel, guiOutsideRects["abilities"], Color.Black * 0.5f);
+            s.Draw(abilityFrame, guiOutsideRects["abilities"], Color.Black * 0.5f);
             for (int i = 0; i < 12; ++i)
             {
                 Rectangle temprect = guiInsideRects["abilities"]["ability" + i];
@@ -2739,11 +2756,10 @@ namespace KazgarsRevenge
             #region inventory / Equipment
             if (showInventory)
             {
-
                 //Equipment pane
                 if (showEquipment)
                 {
-                    s.Draw(texWhitePixel, guiOutsideRects["equipment"], Color.Black * .5f);
+                    s.Draw(equipmentFrame, guiOutsideRects["equipment"], Color.Black * .5f);
                     //Collapse arrow
                     s.Draw(rightArrow, guiInsideRects["inventory"]["equipArrow"], Color.White);
 
@@ -2760,7 +2776,7 @@ namespace KazgarsRevenge
                     s.Draw(leftArrow, guiInsideRects["inventory"]["equipArrow"], Color.White);
                 }
 
-                s.Draw(texWhitePixel, guiOutsideRects["inventory"], Color.Black * .5f);
+                s.Draw(inventoryFrame, guiOutsideRects["inventory"], Color.Black * .5f);
                 //Gold display
 
                 s.Draw(goldIcon, new Rectangle((int)(maxX - 320 * average), (int)(385 * average), (int)(40 * average), (int)(40 * average)), Color.White);
@@ -2780,10 +2796,13 @@ namespace KazgarsRevenge
 
                 }
             }
+            #endregion
+            
+            #region Loot
             //Draw Loot
             if (looting && lootingSoul != null && guiOutsideRects.ContainsKey("loot"))
             {
-                s.Draw(texWhitePixel, guiOutsideRects["loot"], Color.Black * .5f);
+                s.Draw(lootFrame, guiOutsideRects["loot"], Color.Black * .5f);
 
                 List<Item> loot = lootingSoul.Loot;
                 for (int i = 0; i + lootScroll * NUM_LOOT_SHOWN < loot.Count && i < NUM_LOOT_SHOWN; ++i)
@@ -2821,7 +2840,7 @@ namespace KazgarsRevenge
             #region talents
             if (showTalents)
             {
-                s.Draw(texWhitePixel, guiOutsideRects["talents"], Color.Black * .5f);
+                s.Draw(talentFrame, guiOutsideRects["talents"], Color.Black * .5f);
                 if (currentTalentTree == TalentTrees.ranged)
                 {
                     drawTalentHelper(s, rangedAbilities);
@@ -2856,6 +2875,7 @@ namespace KazgarsRevenge
                 }
                 else if (currentTalentTree == TalentTrees.melee)
                 {
+                    s.Draw(talentBackHammer, talentBackRect, Color.White);
                     drawTalentHelper(s, meleeAbilities);
 
                     #region draw melee arrows
