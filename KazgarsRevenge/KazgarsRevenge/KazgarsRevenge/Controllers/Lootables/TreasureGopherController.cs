@@ -59,7 +59,7 @@ namespace KazgarsRevenge
         double timerCounter;
         CameraComponent camera;
         Entity avoidData = null;
-        float runSpeed = 50;
+        float runSpeed = 100;
         
         public override void Update(GameTime gameTime)
         {

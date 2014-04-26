@@ -457,10 +457,11 @@ namespace KazgarsRevenge
             InitGeneralFields();
             InitNewPlayer();
 
-            AddToInventory(lewtz.GetItem(901));
-
             //adding gear for testing
-            /*
+            Potion pot = (Potion)lewtz.GetItem(6);
+            pot.AddQuantity(15);
+            AddToInventory(pot);
+            
             Equippable wep = (Equippable)lewtz.GetItem(9901);
             wep.SetStats(GearQuality.Legendary, 70);
             AddToInventory(wep);
@@ -496,7 +497,7 @@ namespace KazgarsRevenge
             g = (Equippable)lewtz.GetItem(3306);
             g.SetStats(GearQuality.Epic, 1);
             AddToInventory(g);
-             */
+             
 
 
         }
@@ -1173,9 +1174,9 @@ namespace KazgarsRevenge
 
             return sequence;
         }
-        Vector3 lastPortedPosition = new Vector3(-10000, 0, 0);
-        Vector3 unsetPortPosition = new Vector3(-10000, 0, 0);
-        const float teleDur = 1200;
+        protected Vector3 lastPortedPosition = new Vector3(-10000, 0, 0);
+        protected Vector3 unsetPortPosition = new Vector3(-10000, 0, 0);
+        const float teleDur = 800;
         private List<Action> PortalPotionActions()
         {
             List<Action> sequence = new List<Action>();
@@ -1205,7 +1206,17 @@ namespace KazgarsRevenge
 
             sequence.Add(() =>
             {
-                physicalData.Position = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
+                Vector3 newPos = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
+                if (lastPortedPosition != unsetPortPosition)
+                {
+                    newPos = lastPortedPosition;
+                    lastPortedPosition = unsetPortPosition;
+                }
+                else
+                {
+                    lastPortedPosition = physicalData.Position;
+                }
+                physicalData.Position = newPos;
                 camera.RefreshLights();
                 attacks.CreateTeleSphere(physicalData.Position, teleDur);
                 millisActionLength = teleDur * 3 / 4;
@@ -2132,25 +2143,28 @@ namespace KazgarsRevenge
             }
 
             //special handlers for idling states
-            aniCounter += elapsed;
-            if (aniCounter >= aniLength)
+            if (attState == AttackState.None)
             {
-                if (currentAniName == "k_fighting_stance")
+                aniCounter += elapsed;
+                if (aniCounter >= aniLength)
                 {
-                    ++fightingStanceLoops;
-                    if (fightingStanceLoops > 3)
+                    if (currentAniName == "k_fighting_stance")
                     {
-                        StartSequence("fightingstance");
+                        ++fightingStanceLoops;
+                        if (fightingStanceLoops > 3)
+                        {
+                            StartSequence("fightingstance");
+                            fightingStanceLoops = 0;
+                        }
+                    }
+                    else
+                    {
                         fightingStanceLoops = 0;
                     }
-                }
-                else
-                {
-                    fightingStanceLoops = 0;
-                }
-                if (currentAniName == "k_from_fighting_stance")
-                {
-                    StartSequence("idle");
+                    if (currentAniName == "k_from_fighting_stance")
+                    {
+                        StartSequence("idle");
+                    }
                 }
             }
         }

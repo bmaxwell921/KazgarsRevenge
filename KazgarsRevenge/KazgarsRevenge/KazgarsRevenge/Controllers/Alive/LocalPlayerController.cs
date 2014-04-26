@@ -1729,7 +1729,7 @@ namespace KazgarsRevenge
                             int result = -1;
                             if (Int32.TryParse(innerCollides, out result))
                             {
-                                if (result >= 0 && result < Enum.GetNames(typeof(FloorName)).Length)
+                                if (result >= 0 && result <= playerAccount.UnlockedFloors && result < Enum.GetNames(typeof(FloorName)).Length)
                                 {
                                     (Game as MainGame).LoadNextLevel((FloorName)result);
                                     ExitSoulevator();
@@ -1813,7 +1813,14 @@ namespace KazgarsRevenge
                                         Potion p = inventory[i] as Potion;
                                         if (p != null)
                                         {
-                                            UseSequenceParallel(p.PotionAbility.ToString());
+                                            if (p.PotionAbility != AbilityName.PortalPotion)
+                                            {
+                                                UseSequenceParallel(p.PotionAbility.ToString());
+                                            }
+                                            else
+                                            {
+                                                StartSequence(p.PotionAbility.ToString());
+                                            }
                                         }
                                         else
                                         {
@@ -2137,7 +2144,7 @@ namespace KazgarsRevenge
                     int result = -1;
                     if (Int32.TryParse(innerCollides, out result))
                     {
-                        if (result >= 0 && result < Enum.GetNames(typeof(FloorName)).Length)
+                        if (result >= 0 && result <= playerAccount.UnlockedFloors && result < Enum.GetNames(typeof(FloorName)).Length)
                         {
                             hovering = true;
                             hoverRect = guiInsideRects["soulevator"][result + ""];
@@ -2281,6 +2288,7 @@ namespace KazgarsRevenge
         public void StartNewLevel(Vector3 spawnLoc)
         {
             physicalData.Position = spawnLoc;
+            lastPortedPosition = unsetPortPosition;
         }
         #endregion
 
@@ -2945,7 +2953,7 @@ namespace KazgarsRevenge
             if (inSoulevator && guiOutsideRects.ContainsKey("soulevator"))
             {
                 s.Draw(texWhitePixel, guiOutsideRects["soulevator"], Color.Black);
-                for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length; ++i)
+                for (int i = 0; i < Enum.GetNames(typeof(FloorName)).Length && i <= playerAccount.UnlockedFloors; ++i)
                 {
                     Rectangle tmpSoulRect = guiInsideRects["soulevator"][i + ""];
                     s.DrawString(font, ((FloorName)i).ToString(), new Vector2(tmpSoulRect.X, tmpSoulRect.Y), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
@@ -3121,7 +3129,6 @@ namespace KazgarsRevenge
             s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), playerRec, Color.Blue);
         }
 
-        
         private void DrawMegaMap(SpriteBatch s)
         {
             float alpha = .5f;

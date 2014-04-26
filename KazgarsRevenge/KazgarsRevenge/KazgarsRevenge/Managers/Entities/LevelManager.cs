@@ -591,8 +591,6 @@ namespace KazgarsRevenge
                         (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(v, chunkTransform));
                     }
                 }
-
-                (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(Vector3.Zero, chunkTransform));
             }
         }
 
@@ -757,15 +755,15 @@ namespace KazgarsRevenge
                 EntityType type = EntityType.NormalEnemy;
                 int num = 1;
                 int r = RandSingleton.U_Instance.Next(100);
-                if (r < 30)
+                if (r < 40)
                 {//normal cluster
                     num = RandSingleton.U_Instance.Next(3, 7);
                 }
-                else if (r < 40)
+                else if (r < 50)
                 {//elite single
                     type = EntityType.EliteEnemy;
                 }
-                else if (r < 47)
+                else if (r < 57)
                 {//elite cluster
                     type = EntityType.EliteEnemy;
                     num = RandSingleton.U_Instance.Next(2, 5);
