@@ -2745,41 +2745,33 @@ namespace KazgarsRevenge
             #endregion
             #region Ability Frames
             //Draw the frames around abilities being used
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
                 if (UISlotUsed[i])
                 {
-                    s.Draw(icon_selected, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                    s.Draw(icon_selected, guiInsideRects["abilities"]["ability" + i], Color.White);
                 }
-                if (UISlotUsed[i + 4])
-                {
-                    s.Draw(icon_selected, new Rectangle((int)((maxX / 2 - (301 - 74 * i) * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
-                }
-            }
-            //Primary
-            //if (UISlotUsed[8])
-            //{
-            //    s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 5 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
-            //}
-            if (UISlotUsed[9])
-            {
-                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 79 * average)), (int)((maxY - 111 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
             }
             if (UISlotUsed[10])
             {
-                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                s.Draw(icon_selected, guiInsideRects["abilities"]["ability" + 8], Color.White);
             }
             if (UISlotUsed[11])
             {
-                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 148 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
-            }
-            if (UISlotUsed[12])
-            {
-                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 163 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                s.Draw(icon_selected, guiInsideRects["abilities"]["ability" + 9], Color.White);
             }
             if (UISlotUsed[13])
             {
-                s.Draw(icon_selected, new Rectangle((int)((maxX / 2 + 237 * average)), (int)((maxY - 74 * average)), (int)(64 * average), (int)(64 * average)), Color.White);
+                s.Draw(icon_selected, guiInsideRects["abilities"]["ability" + 11], Color.White);
+            }
+            if (UISlotUsed[12])
+            {
+                s.Draw(icon_selected, guiInsideRects["abilities"]["ability" + 10], Color.White);
+            }
+            //Right Mouse
+            if (UISlotUsed[9])
+            {
+                s.Draw(icon_selected, guiInsideRects["abilities"]["ability" + 12], Color.White);
             }
             #endregion
 
