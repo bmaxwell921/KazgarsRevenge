@@ -92,7 +92,7 @@ namespace KazgarsRevenge
         public void CreateTreasureGopher(Vector3 position)
         {
             position.Y = 4;
-            GameEntity entity = new GameEntity("loot", FactionType.Neutral, EntityType.Misc);
+            GameEntity entity = new GameEntity("treasure gopher", FactionType.Neutral, EntityType.Misc);
 
             Entity data = new Box(position, 15, 10, 15, 5);
             data.CollisionInformation.CollisionRules.Group = mainGame.UntouchableCollisionGroup;

@@ -31,6 +31,7 @@ namespace KazgarsRevenge
             //content
             InitDrawingParams();
             font = game.Content.Load<SpriteFont>("Verdana");
+            largeFont = game.Content.Load<SpriteFont>("VerdanaLarge");
             texWhitePixel = Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE);
             texHover = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.HOVER);
             texChargeBarFront = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.CHARGE_BAR_FRONT);
@@ -608,7 +609,7 @@ namespace KazgarsRevenge
             }
 
             //loot nearby soul
-            if (!inCombat && !looting && attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
+            if (!looting && attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
             {
                 OpenLoot();
                 if (!guiOutsideRects.ContainsKey("loot"))
@@ -2357,6 +2358,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region Draw Parameter Setup
+        SpriteFont largeFont;
         SpriteFont font;
         Texture2D texWhitePixel;
         Texture2D texHover;
@@ -3090,7 +3092,7 @@ namespace KazgarsRevenge
             if (helpPoPs.Count > 0)
             {
                 s.Draw(texWhitePixel, helpPopRect, Color.Black * 0.5f);
-                helpPoPs[0].Draw(s, helpPopPos, font, average, 50f, guiInsideRects["helpPop"]["ok"], guiInsideRects["helpPop"]["ok"], guiInsideRects);
+                helpPoPs[0].Draw(s, helpPopPos, largeFont, average, 50f, guiInsideRects["helpPop"]["ok"], guiInsideRects["helpPop"]["ok"], guiInsideRects);
             }
             
             
@@ -3101,7 +3103,7 @@ namespace KazgarsRevenge
             if (currentTooltip != null)
             {
                 s.Draw(texWhitePixel, tooltipRect, Color.Black * 0.8f);
-                currentTooltip.Draw(s, new Vector2(tooltipRect.X, tooltipRect.Y), font, average, 50f);
+                currentTooltip.Draw(s, new Vector2(tooltipRect.X, tooltipRect.Y), largeFont, average, 50f);
             }
 
             if (hovering)
