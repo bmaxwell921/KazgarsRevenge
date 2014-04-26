@@ -2025,6 +2025,16 @@ namespace KazgarsRevenge
                                 return;
                             }
                         }
+                        if (lootingSoul.Loot.Count() > NUM_LOOT_SHOWN + NUM_LOOT_SHOWN * lootScroll && innerCollides.Equals("downArrow"))
+                        {
+                            hovering = true;
+                            hoverRect = guiInsideRects["loot"]["downArrow"];
+                        }
+                        if (lootScroll > 0 && innerCollides.Equals("upArrow"))
+                        {
+                            hovering = true;
+                            hoverRect = guiInsideRects["loot"]["upArrow"];
+                        }
                         hovering = true;
                         hoverRect = guiInsideRects[outerCollides][innerCollides];
 
@@ -2495,13 +2505,13 @@ namespace KazgarsRevenge
             //abilities 0-7
             for (int i = 0; i < 4; ++i)
             {
-                abilityDict.Add("ability" + i, new Rectangle((int)(abilitiesUL.X + (60 + 74 * i) * average), (int)(abilitiesUL.Y + 80 * average), (int)(64 * average), (int)(64 * average)));
-                abilityDict.Add("ability" + (i + 4), new Rectangle((int)(abilitiesUL.X + (60 + 74 * i) * average), (int)(abilitiesUL.Y + 154 * average), (int)(64 * average), (int)(64 * average)));
+                abilityDict.Add("ability" + i, new Rectangle((int)(abilitiesUL.X + (60 + 74 * i) * average), (int)(abilitiesUL.Y + 57 * average), (int)(64 * average), (int)(64 * average)));
+                abilityDict.Add("ability" + (i + 4), new Rectangle((int)(abilitiesUL.X + (60 + 74 * i) * average), (int)(abilitiesUL.Y + 131 * average), (int)(64 * average), (int)(64 * average)));
             }
-            abilityDict.Add("ability8", new Rectangle((int)(abilitiesUL.X + 524 * average), (int)(abilitiesUL.Y + 80 * average), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability9", new Rectangle((int)(abilitiesUL.X + 598 * average), (int)(abilitiesUL.Y + 80 * average), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability10", new Rectangle((int)(abilitiesUL.X + 524 * average), (int)(abilitiesUL.Y + 154 * average), (int)(64 * average), (int)(64 * average)));
-            abilityDict.Add("ability11", new Rectangle((int)(abilitiesUL.X + 598 * average), (int)(abilitiesUL.Y + 154 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability8", new Rectangle((int)(abilitiesUL.X + 524 * average), (int)(abilitiesUL.Y + 57 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability9", new Rectangle((int)(abilitiesUL.X + 598 * average), (int)(abilitiesUL.Y + 57 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability10", new Rectangle((int)(abilitiesUL.X + 524 * average), (int)(abilitiesUL.Y + 131 * average), (int)(64 * average), (int)(64 * average)));
+            abilityDict.Add("ability11", new Rectangle((int)(abilitiesUL.X + 598 * average), (int)(abilitiesUL.Y + 131 * average), (int)(64 * average), (int)(64 * average)));
 
             //Talents
             for (int i = 0; i < 4; ++i)
@@ -2531,9 +2541,9 @@ namespace KazgarsRevenge
             //up arrow
             lootDict.Add("upArrow", new Rectangle((int)(lootUL.X + 90 * average), (int)(lootUL.Y + 260 * average), (int)(25 * average), (int)(25 * average)));
             //down arrow
-            lootDict.Add("downArrow", new Rectangle((int)(lootUL.X + 120 * average), (int)(lootUL.Y + 260 * average), (int)(25 * average), (int)(25 * average)));
+            lootDict.Add("downArrow", new Rectangle((int)(lootUL.X + 115 * average), (int)(lootUL.Y + 260 * average), (int)(25 * average), (int)(25 * average)));
             //loot all button
-            lootDict.Add("lootAll", new Rectangle((int)(lootUL.X + 105 * average), (int)(lootUL.Y + 5 * average), (int)(40 * average), (int)(40 * average)));
+            lootDict.Add("lootAll", new Rectangle((int)(lootUL.X + 100 * average), (int)(lootUL.Y + 10 * average), (int)(40 * average), (int)(40 * average)));
 
             //Buffs and Debuffs
             for (int i = 0; i < 6; i++)
@@ -2814,8 +2824,8 @@ namespace KazgarsRevenge
                 s.Draw(inventoryFrame, guiOutsideRects["inventory"], Color.White);
                 //Gold display
 
-                s.Draw(goldIcon, new Rectangle((int)(maxX - 420 * average), (int)(375 * average), (int)(40 * average), (int)(40 * average)), Color.White);
-                s.DrawString(font, gold.ToString(), new Vector2(maxX - 380 * average, 370 * average), Color.White, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                s.Draw(goldIcon, new Rectangle((int)(maxX - 440 * average), (int)(395 * average), (int)(25 * average), (int)(25 * average)), Color.White);
+                s.DrawString(font, gold.ToString(), new Vector2(maxX - 410 * average, 397 * average), Color.Gold, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
                 //Draw inventory items
                 for (int i = 0; i < inventory.Length; ++i)
                 {
