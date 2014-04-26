@@ -1929,11 +1929,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\UI\Frames\shopgui.png">
-      <Name>shopgui</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Models\Gopher\g_idle.fbx">
       <Name>g_idle</Name>
       <Importer>FbxImporter</Importer>
@@ -2072,6 +2067,13 @@
     </Compile>
     <Compile Include="Textures\UI\yes.png">
       <Name>yes</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\shopgui.png">
+      <Name>shopgui</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

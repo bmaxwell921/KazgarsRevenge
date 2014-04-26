@@ -3043,6 +3043,9 @@ namespace KazgarsRevenge
             if (guiOutsideRects.ContainsKey("shopKeeper"))
             {
                 s.Draw(shopFrame, guiOutsideRects["shopKeeper"], Color.White);
+                s.Draw(texPlaceHolder, guiInsideRects["shopKeeper"]["buy"], Color.Green);
+                s.Draw(texPlaceHolder, guiInsideRects["shopKeeper"]["buyBack"], Color.Red);
+
                 if (buyingBack) //buyback
                 {
                     for (int i = 0; i < 10 && i < buyBack.Count; i++)
