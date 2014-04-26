@@ -32,6 +32,8 @@ namespace KazgarsRevenge
             Vector2 nextDrawLoc = levelsDrawLoc;
 
             float offset = mm.normalFont.MeasureString(LEVEL_PREPEND).Y * mm.guiScale.Y;
+            base.AddSelection(new SelectionV2(mm, "Ground Floor", nextDrawLoc), mm.menus[MenuManager.LOADING]);
+            nextDrawLoc.Y += offset;
 
             // Levels they can go to
             for (int i = 1; i <= acctInfo.UnlockedFloors; ++i)
@@ -56,6 +58,12 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public override object Unload()
         {
+            // Ground floor
+            if (currentSel == 0)
+            {
+                return 0;
+            }
+
             if (currentSel != base.selections.Count - 1)
             {
                 SelectionV2 sel = base.selections[currentSel].sel;
@@ -63,6 +71,8 @@ namespace KazgarsRevenge
                 string level = sel.name.Split(' ')[1];
                 return Convert.ToInt32(level);
             }
+
+            // Back button
             return -1;
         }
     }

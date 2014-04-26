@@ -15,6 +15,8 @@ namespace KazgarsRevenge
         public static readonly string WHITE_PIX = @"Textures\whitePixel";
         public class UI
         {
+            public static readonly string YES = @"Textures\UI\yes";
+            public static readonly string NO = @"Textures\UI\no";
             public static readonly string WHITE_CURSOR = @"Textures\UI\cursor";
             public static readonly string HOVER = @"Textures\UI\hover";
             public static readonly string INPUT_TEXTURE = @"Textures\UI\TextBox";
@@ -33,6 +35,11 @@ namespace KazgarsRevenge
             public static readonly string MeleeBanner = @"Textures\UI\Frames\meleeBanner";
             public static readonly string RangedBanner = @"Textures\UI\Frames\rangedBanner";
             public static readonly string MagicBanner = @"Textures\UI\Frames\magicBanner";
+
+            public static readonly string MapIcon = @"Textures\UI\Frames\map";
+            public static readonly string InventoryIcon = @"Textures\UI\Frames\inventory";
+            public static readonly string CharacterIcon = @"Textures\UI\Frames\equipment";
+            public static readonly string TalentIcon = @"Textures\UI\Frames\talents";
 
             public class MiniMap
             {
@@ -69,6 +76,13 @@ namespace KazgarsRevenge
 
                 public class Armor
                 {
+                    public static readonly string DRAGON_HEAD = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_CHEST = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_LEGS = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_SHOULDERS = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_WRIST = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_BOOTS = @"Textures\UI\Items\Armor\helmetIcon";
+
                     public static readonly string MELEE_HEAD_RHINO = @"Textures\UI\Items\Armor\helmetIcon";
                     public static readonly string MELEE_CHEST_RHINO = @"Textures\UI\Items\Armor\I2";
                     public static readonly string MELEE_LEGS_RHINO = @"Textures\UI\Items\Armor\I2";
@@ -169,6 +183,16 @@ namespace KazgarsRevenge
                 public static readonly string RIGHT_ARROW = @"Textures\UI\Frames\rightArrow";
                 public static readonly string LEFT_ARROW = @"Textures\UI\Frames\leftArrow";
                 public static readonly string HELMET = @"Textures\UI\Frames\helmetIcon";
+                public static readonly string shopFrame = @"Textures\UI\Frames\shopgui";
+                public static readonly string abilityFrame = @"Textures\UI\Frames\abilityFrame";
+                public static readonly string inventoryFrame = @"Textures\UI\Frames\inventoryFrame";
+                public static readonly string lootFrame = @"Textures\UI\Frames\lootFrame";
+                public static readonly string equipmentFrame = @"Textures\UI\Frames\equipmentFrame";
+                public static readonly string talentFrame = @"Textures\UI\Frames\talentFrame";
+                public static readonly string talentBackHammer = @"Textures\UI\Frames\talentBackHammer";
+                public static readonly string talentBackBow = @"Textures\UI\Frames\talentBackBow";
+                public static readonly string smallArrowDown = @"Textures\UI\Frames\smallArrowDown";
+                public static readonly string smallArrowUp = @"Textures\UI\Frames\smallArrowUp";
             }
 
             public class Buffs
@@ -178,7 +202,7 @@ namespace KazgarsRevenge
                 public static readonly string Berserk2 = @"Textures\UI\Abilities\BN";
                 public static readonly string Berserk3 = @"Textures\UI\Abilities\BN";
                 public static readonly string Elusiveness = @"Textures\UI\Abilities\BN";
-                public static readonly string HealthPotion = @"Textures\UI\Abilities\BN";
+                public static readonly string HealthPotion = @"Textures\UI\Items\HP";
                 public static readonly string Homing = @"Textures\UI\Abilities\BN";
                 public static readonly string Invincibility = @"Textures\UI\Abilities\BN";
                 public static readonly string LuckPotion = @"Textures\UI\Abilities\BN";

@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// Handles the level models. This exists to make the outlines show up in front of levels.
+    /// </summary>
     public class LevelModelManager : DrawableGameComponent
     {
         List<DrawableComponent3D> components = new List<DrawableComponent3D>();

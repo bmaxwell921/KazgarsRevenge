@@ -110,8 +110,10 @@
     <Compile Include="Common\Networking\Handlers\BaseDataMessageHandler.cs" />
     <Compile Include="Common\TextureStrings.cs" />
     <Compile Include="Controllers\Alive\Enemies\ArmorEnemyController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\SuccubusController.cs" />
     <Compile Include="Controllers\Alive\Enemies\CrossbowSkeletonController.cs" />
     <Compile Include="Controllers\Alive\Enemies\DragonController.cs" />
+    <Compile Include="Controllers\Alive\Enemies\DummyController.cs" />
     <Compile Include="Controllers\Alive\LocalPlayerController.cs" />
     <Compile Include="Controllers\Alive\Enemies\MagicSkeletonController.cs" />
     <Compile Include="Controllers\Attacks\AOEController.cs" />
@@ -141,15 +143,22 @@
     <Compile Include="Controllers\Attacks\HomingHealController.cs" />
     <Compile Include="Controllers\Attacks\ReflectController.cs" />
     <Compile Include="Controllers\Attacks\BladenadoController.cs" />
+    <Compile Include="Controllers\DeathTimerController.cs" />
     <Compile Include="Controllers\DebrisController.cs" />
     <Compile Include="Controllers\FallingArrowController.cs" />
+    <Compile Include="Controllers\Interactive\EssenceGuyController.cs" />
+    <Compile Include="Controllers\Interactive\PlayerInteractiveController.cs" />
     <Compile Include="Controllers\LevelUpController.cs" />
-    <Compile Include="Controllers\LootSoulController.cs" />
+    <Compile Include="Controllers\Lootables\LootableController.cs" />
+    <Compile Include="Controllers\Lootables\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
+    <Compile Include="Controllers\Lootables\TreasureGopherController.cs" />
+    <Compile Include="Controllers\Objects\TeleSphereController.cs" />
     <Compile Include="Controllers\Objects\KeyController.cs" />
     <Compile Include="Controllers\Objects\PillarController.cs" />
     <Compile Include="Controllers\Objects\SoulevatorController.cs" />
     <Compile Include="Controllers\QueryComponent.cs" />
+    <Compile Include="Controllers\Interactive\ShopkeeperController.cs" />
     <Compile Include="Drawing\Billboards\AdrenalineRushBillboard.cs" />
     <Compile Include="Drawing\Billboards\ArrowVBillboard.cs" />
     <Compile Include="Drawing\Billboards\Base Classes\VerticalStretchingBillboard.cs" />
@@ -236,6 +245,7 @@
     <Compile Include="Networking\Handlers\ConnectedHandler.cs" />
     <Compile Include="Networking\Handlers\DiscoveryResponseHandler.cs" />
     <Compile Include="Networking\Misc\ServerInfo.cs" />
+    <Compile Include="Non-Component\HelpPopUp.cs" />
     <Compile Include="Non-Component\Items\Equippable.cs" />
     <Compile Include="Non-Component\Items\Essence.cs" />
     <Compile Include="Non-Component\Items\Item.cs" />
@@ -259,12 +269,16 @@
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
     <Compile Include="Particles\Systems\Debuffs\FireAOESystem.cs" />
+    <Compile Include="Particles\Systems\Entities\FrostDragonPlusSystem.cs" />
+    <Compile Include="Particles\Systems\Entities\FireDragonPlusSystem.cs" />
+    <Compile Include="Particles\Systems\Entities\GopherGlowSystem.cs" />
     <Compile Include="Particles\Systems\Entities\FirePillarMistSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOEMistSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOESystem.cs" />
     <Compile Include="Particles\Systems\Charge\DragonFireChargeSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\SmokeAOESystem.cs" />
     <Compile Include="Particles\Systems\Entities\FirePillarSystem.cs" />
+    <Compile Include="Particles\Systems\Entities\GopherDigPoofSystem.cs" />
     <Compile Include="Particles\Systems\Entities\TorchSystem.cs" />
     <Compile Include="Particles\Systems\Explosions\FlashExplosionSmokeBig.cs" />
     <Compile Include="Particles\Systems\Explosions\LevelUpExplosionSystem.cs" />
@@ -370,6 +384,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Chunks\15-1-N-E.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Chunks\00-0-G-0.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="TextFile1.txt" />

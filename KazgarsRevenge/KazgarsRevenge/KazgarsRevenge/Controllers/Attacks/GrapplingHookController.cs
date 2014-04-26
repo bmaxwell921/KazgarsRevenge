@@ -33,25 +33,28 @@ namespace KazgarsRevenge
 
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
-            GameEntity hitEntity = other.Tag as GameEntity;
-            if (hitEntity != null)
+            lock (creatorData)
             {
                 if (!pulling)
                 {
-                    if (hitEntity.Name == "room")
+                    GameEntity hitEntity = other.Tag as GameEntity;
+                    if (hitEntity != null)
                     {
-                        creator.Pull();
-                        physicalData.LinearVelocity = Vector3.Zero;
-                        (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
-                        pulling = true;
-                        Vector3 dir = physicalData.Position - creatorData.Position;
-                        dir.Y = 0;
-                        if (dir != Vector3.Zero)
+                        if (hitEntity.Name == "room")
                         {
-                            dir.Normalize();
+                            creator.Pull();
+                            physicalData.LinearVelocity = Vector3.Zero;
+                            (Entity.GetComponent(typeof(PhysicsComponent)) as PhysicsComponent).KillComponent();
+                            pulling = true;
+                            Vector3 dir = physicalData.Position - creatorData.Position;
+                            dir.Y = 0;
+                            if (dir != Vector3.Zero)
+                            {
+                                dir.Normalize();
+                            }
+                            creatorData.LinearVelocity = dir * 800;
+                            lifeLength = 8000;
                         }
-                        creatorData.LinearVelocity = dir * 800;
-                        lifeLength = 8000;
                     }
                 }
             }
@@ -88,11 +91,13 @@ namespace KazgarsRevenge
                 }
                 lastDist = len;
             }
-
-            lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (lifeCounter >= lifeLength)
+            else
             {
-                EndPull();
+                lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (lifeCounter >= lifeLength)
+                {
+                    Entity.KillEntity();
+                }
             }
             base.Update(gameTime);
         }

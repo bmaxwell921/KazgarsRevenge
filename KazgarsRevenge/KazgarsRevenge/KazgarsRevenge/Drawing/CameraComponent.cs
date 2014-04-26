@@ -88,6 +88,15 @@ namespace KazgarsRevenge
             int swidth = Game.GraphicsDevice.Viewport.Width;
 
             LastLightUpdate = int.MinValue;
+
+            ambientLightDefs = new Vector3[Enum.GetNames(typeof(FloorName)).Length];
+            ambientLightDefs[(int)FloorName.Ground] = new Vector3(.3f, .3f, .3f);
+            ambientLightDefs[(int)FloorName.Dungeon] = new Vector3(.085f, .085f, .085f);
+            ambientLightDefs[(int)FloorName.Library] = new Vector3(.3f, .3f, .3f);
+            ambientLightDefs[(int)FloorName.TortureChamber] = new Vector3(.3f, .3f, .3f);
+            ambientLightDefs[(int)FloorName.Lab] = new Vector3(.3f, .3f, .3f);
+            ambientLightDefs[(int)FloorName.GrandHall] = new Vector3(.5f, .5f, .5f);
+
         }
 
         double shakeTimer = -1;
@@ -98,6 +107,7 @@ namespace KazgarsRevenge
             shakeTimer = 500;
         }
 
+        double lightUpdateCounter;
         Random rand;
         MouseState curMouse = Mouse.GetState();
         MouseState prevMouse = Mouse.GetState();
@@ -106,12 +116,13 @@ namespace KazgarsRevenge
         KeyboardState prevKeys = Keyboard.GetState();
         public override void Update(GameTime gameTime)
         {
+            //update bounding boxes for AI and Lights
             Vector3 characterPos = Vector3.Zero;
             if (physicalData != null)
             {
                 characterPos = physicalData.Position;
             }
-            PlayerLightPos = new Vector3(characterPos.X, 50, characterPos.Z);
+            PlayerLightPos = new Vector3(characterPos.X + 20, 50, characterPos.Z + 20);
 
             Vector3 min = new Vector3(characterPos.X - playerSightRadius, 0, characterPos.Z - playerSightRadius);
             Vector3 max = new Vector3(characterPos.X + playerSightRadius, 100, characterPos.Z + playerSightRadius);
@@ -125,6 +136,7 @@ namespace KazgarsRevenge
             max = new Vector3(characterPos.X + aiUpdateRadius, 100, characterPos.Z + aiUpdateRadius);
             this.AIBox = new BoundingBox(min, max);
 
+            //update input
             curMouse = Mouse.GetState();
             curKeys = Keyboard.GetState();
             if (Game.IsActive)
@@ -133,6 +145,7 @@ namespace KazgarsRevenge
                 double elapsedMillis = gameTime.ElapsedGameTime.TotalMilliseconds;
                 float amount = (float)elapsedMillis / 1000.0f;
 
+                //zoom based on scrollwheel
                 if (curMouse.ScrollWheelValue < prevMouse.ScrollWheelValue)
                 {
                     zoom *= 1.2f;
@@ -150,7 +163,9 @@ namespace KazgarsRevenge
                     zoom = maxZoom;
                 }
 
-                if (curKeys.IsKeyDown(Keys.Right) && prevKeys.IsKeyUp(Keys.Right))
+                
+                //yaw rotating
+                /*if (curKeys.IsKeyDown(Keys.Right) && prevKeys.IsKeyUp(Keys.Right))
                 {
                     nextYaw += MathHelper.PiOver2;
                     if (nextYaw > MathHelper.Pi * 2)
@@ -167,10 +182,11 @@ namespace KazgarsRevenge
                     {
                         nextYaw += MathHelper.Pi * 2;
                     }
-                }
+                }*/
 
             }
 
+            //updating yaw rotation
             if (yaw != nextYaw)
             {
                 float add = .05f;
@@ -226,8 +242,12 @@ namespace KazgarsRevenge
 
             inverseViewProj = Matrix.Invert(view * proj);
 
-
-            UpdateLights();
+            lightUpdateCounter -= gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (lightUpdateCounter <= 0)
+            {
+                lightUpdateCounter = 4000;
+                UpdateLights();
+            }
             
             prevMouse = curMouse;
             prevKeys = curKeys;
@@ -237,7 +257,11 @@ namespace KazgarsRevenge
 
         }
 
-        #region Lights
+
+
+
+        public Vector3 AmbientLight { get; private set; }
+        Vector3[] ambientLightDefs;
         public Vector3 PlayerLightPos { get; private set; }
 
         public const int MAX_ACTIVE_LIGHTS = 30;
@@ -250,10 +274,10 @@ namespace KazgarsRevenge
         float aiUpdateRadius = 600;
         public BoundingBox AIBox { get; private set; }
 
-        float playerSightRadius = 800;
+        float playerSightRadius = 900;
         public BoundingBox CameraBox { get; private set; }
 
-        float lightSensingRadius = 1000;
+        float lightSensingRadius = 1500;
         BoundingBox LightSensingBox;
         private void UpdateLights()
         {
@@ -283,10 +307,20 @@ namespace KazgarsRevenge
                 lightPositions[i++] = inactiveLightPos;
             }
 
-            //update effects?
+            //tell effects to update
             ++LastLightUpdate;
         }
 
-        #endregion
+        public void StartLevel(FloorName name)
+        {
+            AmbientLight = ambientLightDefs[(int)name];
+            lightUpdateCounter = 0;
+        }
+
+        public void RefreshLights()
+        {
+            lightUpdateCounter = 0;
+        }
+
     }
 }

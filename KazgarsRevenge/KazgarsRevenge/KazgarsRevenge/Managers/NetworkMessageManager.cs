@@ -83,7 +83,7 @@ namespace KazgarsRevenge
         {
             if (players.myId.id == newHost)
             {
-                ((LoggerManager)Game.Services.GetService(typeof(LoggerManager))).Log(Level.DEBUG, String.Format("I, id: {0}, am host, bitches!!!", players.myId));
+                ((LoggerManager)Game.Services.GetService(typeof(LoggerManager))).Log(LogLevel.DEBUG, String.Format("I, id: {0}, am host, bitches!!!", players.myId));
                 this.isHost = true;
             }
         }

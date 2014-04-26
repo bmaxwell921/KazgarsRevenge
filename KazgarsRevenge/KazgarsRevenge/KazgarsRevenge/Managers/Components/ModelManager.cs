@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// Draws all 3D models (except for the level models)
+    /// </summary>
     public class ModelManager : DrawableGameComponent
     {
         List<DrawableComponent3D> components = new List<DrawableComponent3D>();

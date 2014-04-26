@@ -137,6 +137,10 @@ namespace KazgarsRevenge
                 ISet<Direction> dirs = new HashSet<Direction>();
                 foreach (char c in parts[3])
                 {
+                    if (c == '0')
+                    {
+                        continue;
+                    }
                     dirs.Add(Extenders.FromChar(c));
                 }
 
@@ -202,6 +206,12 @@ namespace KazgarsRevenge
             return GetSatisfyingChunk(name, ChunkType.SOULEVATOR, allDirs);
         }
 
+        public ChunkInfo GetGround()
+        {
+            // 0 doors
+            return chunkDefs[ChunkType.GROUND][0].First();
+        }
+
         /// <summary>
         /// Reads the given chunkInfo from file and returns the concrete object
         /// </summary>
@@ -228,7 +238,7 @@ namespace KazgarsRevenge
             }
             catch (Exception e)
             {
-                lm.Log(Level.DEBUG, String.Format("Can't read file: {0}", e.Message));
+                lm.Log(LogLevel.DEBUG, String.Format("Can't read file: {0}", e.Message));
                 return null;
             }
         }

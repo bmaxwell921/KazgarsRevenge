@@ -13,10 +13,10 @@ namespace KazgarsRevenge
     {
         private enum DragonState
         {
-            Waiting,
-            Phase1,
-            Phase2,
-            Enrage,
+            Waiting,//sits around waiting for player
+            Phase1,//shoots fire/iceballs at player
+            Phase2,//chases player and creates ground effects
+            Enrage,//continuously breathes fire
         }
 
         DragonState state = DragonState.Phase1;
@@ -36,6 +36,8 @@ namespace KazgarsRevenge
             chargingBoneNames.Add("d_mouth_emittor_R");
             chargingBoneNames.Add("d_mouth_emittor_L");
             rotateTimerLength = 0;
+
+            baseStatsMultiplier = 10;
         }
         
         public override void Update(GameTime gameTime)
@@ -62,6 +64,10 @@ namespace KazgarsRevenge
 
         private void StartPhase2()
         {
+            if (activeBuffs.ContainsKey(Buff.Invincibility))
+            {
+                activeBuffs.Remove(Buff.Invincibility);
+            }
             raycastCheckTarget = false;
             state = DragonState.Phase2;
             currentUpdateFunction = new AIUpdateFunction(AIDragonPhase2);
@@ -129,13 +135,14 @@ namespace KazgarsRevenge
                     return;
                 }
             }
+            AddBuff(Buff.Invincibility, 1000, Entity);
         }
 
         bool iceHead = true;
 
+        //the entities of the pillars that give the dragon invincibility
         GameEntity frostPillar;
         GameEntity firePillar;
-
         private void AIDragonPhase1(double millis)
         {
             //if pillars are destroyed, go to phase 2
@@ -146,12 +153,11 @@ namespace KazgarsRevenge
 
             //launch ice or fire attacks (alternating)
             AIAutoAttackingTarget(millis);
+            AddBuff(Buff.Invincibility, 1000, Entity);
         }
 
         double nextSpitBomb = 1000;
-
         double enrageTimer = 12000;
-
         protected override void AIRunningToTarget(double millis)
         {
             if (state == DragonState.Phase2)
@@ -207,7 +213,7 @@ namespace KazgarsRevenge
         {
             Vector3 diff = targetData.Position - physicalData.Position;
             diff.Y = 0;
-            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+            physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(diff), 0, 0);
 
             if (running)
             {
@@ -308,11 +314,11 @@ namespace KazgarsRevenge
                         if (chosenAttack == 1)
                         {
                             damage = (int)(damage * 2f);
-                            Vector3 off = physicalData.OrientationMatrix.Forward * 8;
+                            Vector3 off = physicalData.OrientationMatrix.Forward * 12;
                             attacks.SpawnSpitSparks(model.GetBonePosition("d_mouth_emittor_R") + off);
                             attacks.SpawnSpitSparks(model.GetBonePosition("d_mouth_emittor_L") + off);
                         }
-                        attacks.CreateDragonCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetPhysicsYaw(dir), damage, this as AliveComponent);
+                        attacks.CreateDragonCleave(physicalData.Position + physicalData.OrientationMatrix.Forward * 80, GetBackwardsYaw(dir), damage, this as AliveComponent);
                     }
                     break;
             }
@@ -327,8 +333,6 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case DragonState.Phase1:
-                    //TODO: replace with fire/ice spit animation length 
-                    //and put in correct animation names when we get the dragon model
                     if (iceHead)
                     {
                         //AddChargeParticles(typeof(FrostChargeSystem));
@@ -433,6 +437,7 @@ namespace KazgarsRevenge
 
         protected override void KillAlive()
         {
+            //make sure all particles are gone
             model.RemoveEmitter("flamethrower");
             model.RemoveEmitter("frostthrower");
             base.KillAlive();

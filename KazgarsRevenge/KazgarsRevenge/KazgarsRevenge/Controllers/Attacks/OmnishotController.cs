@@ -39,13 +39,18 @@ namespace KazgarsRevenge
 
         public override void End()
         {
+            //create 20 arrows in 30 degree spread from current direction
             AttackManager attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
+
+            float curYaw = GetBackwardsYaw(physicalData.OrientationMatrix.Forward);
+
+
             for (int i = 0; i < 20; ++i)
             {
-                float yaw = (float)((i / 22.0f) * Math.PI * 2);
-                Vector3 dir = new Vector3((float)Math.Cos(yaw), 0, (float)Math.Sin(yaw));
+                float yaw = (float)((i / 22.0f) * MathHelper.ToRadians(30) - MathHelper.ToRadians(15)) + curYaw;
+                Vector3 dir = new Vector3((float)Math.Sin(yaw), 0, (float)Math.Cos(yaw));
 
-                attacks.CreateArrow(physicalData.Position, dir, (int)damage, creator, home, penetrate, leech, bleed);
+                attacks.CreateArrow(physicalData.Position, dir, (int)damage, creator, home, penetrate, leech, bleed, true);
             }
         }
     }

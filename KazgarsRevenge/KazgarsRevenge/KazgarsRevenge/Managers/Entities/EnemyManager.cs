@@ -47,7 +47,10 @@ namespace KazgarsRevenge
             }
         }
 
-        #region entities
+
+
+
+
         public void CreateEnemy(EntityType type, Vector3 loc)
         {
             switch (type)
@@ -118,7 +121,7 @@ namespace KazgarsRevenge
                 enemyType = EntityType.EliteEnemy;
             }
 
-            GameEntity enemy = new GameEntity("Pigman", FactionType.Enemies, enemyType);
+            GameEntity enemy = new GameEntity((elite? "Elite " : "") + "Pigman", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
@@ -151,7 +154,6 @@ namespace KazgarsRevenge
 
             enemies.Add(id, enemy);
         }
-
         public void CreateMagicSkeleton(Identification id, Vector3 position, int level, bool elite)
         {
             EntityType enemyType = EntityType.NormalEnemy;
@@ -159,7 +161,7 @@ namespace KazgarsRevenge
             {
                 enemyType = EntityType.EliteEnemy;
             }
-            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, enemyType);
+            GameEntity enemy = new GameEntity((elite ? "Elite " : "") + "Skeleton", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Vector3 boxSize = new Vector3(20f, 37f, 20f);
@@ -188,7 +190,6 @@ namespace KazgarsRevenge
 
             enemies.Add(id, enemy);
         }
-
         public void CreateCrossbowSkeleton(Identification id, Vector3 position, int level, bool elite)
         {
             EntityType enemyType = EntityType.NormalEnemy;
@@ -196,7 +197,7 @@ namespace KazgarsRevenge
             {
                 enemyType = EntityType.EliteEnemy;
             }
-            GameEntity enemy = new GameEntity("Skeleton", FactionType.Enemies, enemyType);
+            GameEntity enemy = new GameEntity((elite ? "Elite " : "") + "Skeleton", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Dictionary<string, AttachableModel> attached = new Dictionary<string, AttachableModel>();
@@ -229,7 +230,6 @@ namespace KazgarsRevenge
 
             enemies.Add(id, enemy);
         }
-
         public void CreateArmorEnemy(Identification id, Vector3 position, int level, bool elite)
         {
             EntityType enemyType = EntityType.NormalEnemy;
@@ -237,7 +237,7 @@ namespace KazgarsRevenge
             {
                 enemyType = EntityType.EliteEnemy;
             }
-            GameEntity enemy = new GameEntity("Animated Armor", FactionType.Enemies, enemyType);
+            GameEntity enemy = new GameEntity((elite ? "Elite " : "") + "Animated Armor", FactionType.Enemies, enemyType);
             enemy.id = id;
 
             Dictionary<string, Model> syncedModels = new Dictionary<string, Model>();
@@ -290,7 +290,107 @@ namespace KazgarsRevenge
 
             enemies.Add(id, enemy);
         }
+        public void CreateSuccubus(Identification id, Vector3 position, int level, bool elite)
+        {
+            EntityType enemyType = EntityType.NormalEnemy;
+            if (elite)
+            {
+                enemyType = EntityType.EliteEnemy;
+            }
+            GameEntity enemy = new GameEntity((elite ? "Elite " : "") + "Succubus", FactionType.Enemies, enemyType);
+            enemy.id = id;
 
+            Vector3 boxSize = new Vector3(20f, 37f, 20f);
+            if (elite)
+            {
+                boxSize.X = 30;
+                boxSize.Z = 30;
+            }
+            SetupEntityPhysicsAndShadow(enemy, position, boxSize, 100);
+            float modelScale = 10;
+            if (elite)
+            {
+                modelScale = 15;
+            }
+            SetupEntityGraphics(enemy, "Models\\Enemies\\Succubus\\su_fly", modelScale);
+
+            SuccubusController enemyController = new SuccubusController(mainGame, enemy, level);
+            if (elite)
+            {
+                enemyController.MakeElite();
+            }
+            enemy.AddComponent(typeof(AliveComponent), enemyController);
+            genComponentManager.AddComponent(enemyController);
+
+            enemy.AddComponent(typeof(DropTable), lm.CreateNormalDropTableFor(enemy, AttackType.Magic, AttackType.None));
+
+            enemies.Add(id, enemy);
+        }
+
+        List<GameEntity> friendlyNPCS = new List<GameEntity>();
+        public void CreateDummy(Vector3 position)
+        {
+            GameEntity entity = new GameEntity("Training Dummy", FactionType.Enemies, EntityType.NormalEnemy);
+
+            SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 40, 20), -1);
+
+            SetupEntityGraphics(entity, "Models\\Enemies\\Dummy\\dummy_idle", 10);
+
+            DummyController controller = new DummyController(mainGame, entity, players.GetHighestLevel());
+            entity.AddComponent(typeof(AliveComponent), controller);
+            genComponentManager.AddComponent(controller);
+
+            friendlyNPCS.Add(entity);
+        }
+        public void CreateJeebes(Vector3 position)
+        {
+            GameEntity entity = new GameEntity("Jeebes", FactionType.Players, EntityType.Shopkeeper);
+
+            SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 35, 20), -1);
+
+            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Skeleton\\s_idle");
+            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
+            entity.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
+            Dictionary<string, Model> syncedModels = new Dictionary<string, Model>();
+            syncedModels.Add("butler", GetAnimatedModel("Models\\Enemies\\Outfits\\skeleOutfit"));
+            entity.AddSharedData(typeof(Dictionary<string, Model>), syncedModels);
+
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, entity, enemyModel, 10, Vector3.Down * 18);
+            entity.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
+            modelManager.AddComponent(enemyGraphics);
+
+            ShopkeeperController controller = new ShopkeeperController(mainGame, entity);
+            entity.AddComponent(typeof(PlayerInteractiveController), controller);
+            genComponentManager.AddComponent(controller);
+
+            friendlyNPCS.Add(entity);
+        }
+        public void CreateHeebes(Vector3 position)
+        {
+            GameEntity entity = new GameEntity("Heebes", FactionType.Players, EntityType.Shopkeeper);
+
+            SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 35, 20), -1);
+
+            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
+            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
+            entity.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
+            Dictionary<string, Model> syncedModels = new Dictionary<string, Model>();
+            syncedModels.Add("butler", GetAnimatedModel("Models\\Enemies\\Outfits\\pigOutfit"));
+            entity.AddSharedData(typeof(Dictionary<string, Model>), syncedModels);
+
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, entity, enemyModel, 10, Vector3.Down * 18);
+            entity.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
+            modelManager.AddComponent(enemyGraphics);
+
+
+            EssenceGuyController controller = new EssenceGuyController(mainGame, entity);
+            entity.AddComponent(typeof(PlayerInteractiveController), controller);
+            genComponentManager.AddComponent(controller);
+
+            friendlyNPCS.Add(entity);
+        }
+
+        #region Bosses
         public void CreateBoss(Identification id, Vector3 position)
         {
             //TODO: switch based on level
@@ -300,7 +400,7 @@ namespace KazgarsRevenge
         public void CreateDragon(Identification id, Vector3 position)
         {
             position.Y = 42;
-            GameEntity dragon = new GameEntity("Chillinator", FactionType.Enemies, EntityType.NormalEnemy);
+            GameEntity dragon = new GameEntity("Dragon", FactionType.Enemies, EntityType.NormalEnemy);
             dragon.id = id;
 
             SetupEntityPhysicsAndShadow(dragon, position, new Vector3(100, 40, 100), 250);
@@ -323,6 +423,12 @@ namespace KazgarsRevenge
 
             enemies.Add(id, dragon);
         }
+        #endregion
+
+
+
+
+
 
         /// <summary>
         /// Creates an enemy with typical physics and animated graphics around the given entity.
@@ -342,10 +448,18 @@ namespace KazgarsRevenge
         private void SetupEntityPhysicsAndShadow(GameEntity entity, Vector3 position, Vector3 dimensions, float mass)
         {
             position.Y = LevelManager.MOB_SPAWN_Y;
-            Entity enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z, mass);
+            Entity enemyPhysicalData;
+            if (mass == -1)
+            {
+                enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z);
+            }
+            else
+            {
+                enemyPhysicalData = new Box(position, dimensions.X, dimensions.Y, dimensions.Z, mass);
+            }
             enemyPhysicalData.CollisionInformation.CollisionRules.Group = mainGame.EnemyCollisionGroup;
             enemyPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
-            enemyPhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(MathHelper.Pi, 0, 0));
+            enemyPhysicalData.OrientationMatrix = Matrix3X3.CreateFromMatrix(Matrix.CreateFromYawPitchRoll(-MathHelper.PiOver4 * 3, 0, 0));
             entity.AddSharedData(typeof(Entity), enemyPhysicalData);
 
             PhysicsComponent enemyPhysics = new PhysicsComponent(mainGame, entity);
@@ -358,7 +472,20 @@ namespace KazgarsRevenge
             billboardManager.AddComponent(enemyShadow);
         }
 
-        #endregion
+        public void ClearEnemies()
+        {
+            foreach (KeyValuePair<Identification, GameEntity> k in enemies)
+            {
+                k.Value.KillEntity();
+            }
+            enemies.Clear();
+
+            foreach (GameEntity e in friendlyNPCS)
+            {
+                e.KillEntity();
+            }
+            friendlyNPCS.Clear();
+        }
         
         /// <summary>
         /// Gets an enemy from this manager with the associated id, or null if none exists

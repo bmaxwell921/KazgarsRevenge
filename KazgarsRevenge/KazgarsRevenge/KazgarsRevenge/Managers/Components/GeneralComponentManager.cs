@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// Manager for misc components (controllers, physics, most anything that isn't graphics)
+    /// </summary>
     public class GeneralComponentManager : GameComponent
     {
         List<Component> components = new List<Component>();

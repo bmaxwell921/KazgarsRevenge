@@ -25,6 +25,8 @@ namespace KazgarsRevenge
         public string Name { get; protected set; }
         public int ItemID { get; private set; }
         public Tooltip Tooltip { get; private set; }
+        public int GoldCost { get { return worth * Quantity; } protected set { worth = value; } }
+        private int worth = 0;
 
         /// <summary>
         /// creates a stackable item
@@ -38,6 +40,7 @@ namespace KazgarsRevenge
             {
                 this.Stackable = true;
                 this.Quantity = quantity;
+                this.GoldCost = 5;
             }
             else
             {

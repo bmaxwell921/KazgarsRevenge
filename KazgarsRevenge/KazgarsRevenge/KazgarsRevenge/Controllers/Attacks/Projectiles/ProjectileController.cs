@@ -8,7 +8,9 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
-    
+    /// <summary>
+    /// The base controller for projectiles
+    /// </summary>
     public class ProjectileController : AttackController
     {
         public ProjectileController(KazgarsRevengeGame game, GameEntity entity, int damage, FactionType factionToHit, AliveComponent creator)
@@ -37,7 +39,7 @@ namespace KazgarsRevenge
         {
             homing = true;
             this.target = null;
-            this.curDir = GetPhysicsYaw(physicalData.LinearVelocity);
+            this.curDir = GetYaw(physicalData.LinearVelocity);
         }
 
         public void Bleed()
@@ -75,7 +77,7 @@ namespace KazgarsRevenge
         public override void Update(GameTime gameTime)
         {
             if (homing)
-            {
+            {//if homing, look for closest target and rotate towards it
                 if(target == null || target.Dead)
                 {
                     target = null;
@@ -89,7 +91,15 @@ namespace KazgarsRevenge
                 {
                     Vector3 move = (target.Entity.GetSharedData(typeof(Entity)) as Entity).Position - physicalData.Position;
                     move.Y = 0;
-                    newDir = GetPhysicsYaw(move);
+                    newDir = GetYaw(move);
+                    if (newDir < 0)
+                    {
+                        newDir += MathHelper.Pi * 2;
+                    }
+                    else if (newDir > MathHelper.Pi * 2)
+                    {
+                        newDir -= MathHelper.Pi * 2;
+                    }
                     AdjustDir(450.0f, .25f);
                 }
             }

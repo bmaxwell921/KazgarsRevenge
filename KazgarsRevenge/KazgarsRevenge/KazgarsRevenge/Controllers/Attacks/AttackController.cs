@@ -14,12 +14,15 @@ using BEPUphysics.Collidables.MobileCollidables;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// the base controller for all attacks. handles the Bepu Entity.
+    /// </summary>
     public class AttackController : AIComponent
     {
         //the entity that created this attack
         protected AliveComponent creator;
         protected float damage;
-        //either "good" or "bad", for now
+        //the types of entities to hit
         protected FactionType factionToHit;
         protected DeBuff debuff = DeBuff.None;
         protected AttackType type;
@@ -37,7 +40,7 @@ namespace KazgarsRevenge
 
         public void Reflect(FactionType toHit)
         {
-            //flip faction to hit and direction
+            //fchange faction and flip direction
             this.factionToHit = toHit;
             Entity.ChangeFaction(toHit);
             physicalData.LinearVelocity = new Vector3(-physicalData.LinearVelocity.X, 0, -physicalData.LinearVelocity.Z);
@@ -108,6 +111,9 @@ namespace KazgarsRevenge
         }
 
         int damageDealt = 0;
+        /// <summary>
+        /// Called when a collision is first detected
+        /// </summary>
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
             GameEntity hitEntity = other.Tag as GameEntity;
@@ -138,7 +144,7 @@ namespace KazgarsRevenge
             if (t != null)
             {
                 int toDeal = GetDamage();
-                int d = t.DamageDodgeable(debuff, toDeal, creator.Entity, type);
+                int d = t.Damage(debuff, toDeal, creator.Entity, type, true);
                 damageDealt += d;
                 if (lifesteal)
                 {
@@ -147,11 +153,15 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// helper to get the damage. can be overridden to account for a critical strike chance
+        /// </summary>
         protected virtual int GetDamage()
         {
             return (int)damage;
         }
 
+        //tell the creator of this entity how much damage it dealt
         public override void End()
         {
             creator.HandleDamageDealt(damageDealt);

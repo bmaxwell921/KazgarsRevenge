@@ -183,7 +183,7 @@ namespace KazgarsRevenge
 
         #region ChunkType Extenders
 
-        private static char HOME = 'H'; private static char SOUL = 'S'; private static char BOSS = 'B'; private static char KEY = 'K'; private static char NORMAL = 'N';
+        private static char HOME = 'H'; private static char SOUL = 'S'; private static char BOSS = 'B'; private static char KEY = 'K'; private static char NORMAL = 'N'; private static char GROUND = 'G';
         /// <summary>
         /// Converts the given chunkType character to its enum value
         /// </summary>
@@ -212,6 +212,10 @@ namespace KazgarsRevenge
             {
                 return ChunkType.NORMAL;
             }
+            else if (chunkType == GROUND)
+            {
+                return ChunkType.GROUND;
+            }
 
             throw new ArgumentException(String.Format("Unrecognized chunkType: {0}", chunkType));
         }
@@ -238,6 +242,10 @@ namespace KazgarsRevenge
             {
                 return NORMAL;
             }
+            else if (chunkType == ChunkType.GROUND)
+            {
+                return GROUND;
+            }
 
             throw new ArgumentException("Unaccounted enum value!");
         }
@@ -259,7 +267,11 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public static FloorName GetFloorName(int level)
         {
-            if (level == 1)
+            if (level == 0)
+            {
+                return FloorName.Ground;
+            }
+            else if (level == 1)
             {
                 return FloorName.Dungeon;
             }
@@ -284,7 +296,11 @@ namespace KazgarsRevenge
 
         public static int ToInt(this FloorName name)
         {
-            if (name == FloorName.Dungeon)
+            if (name == FloorName.Ground)
+            {
+                return 0;
+            }
+            else if (name == FloorName.Dungeon)
             {
                 return 1;
             }

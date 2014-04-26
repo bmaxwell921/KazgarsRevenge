@@ -34,6 +34,7 @@ namespace KazgarsRevenge
             this.Slot = slot;
             this.Slot2 = secondSlot;
             this.Quality = GearQuality.Standard;
+
             SetTooltip(new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "", 1) }));
         }
 
@@ -52,9 +53,9 @@ namespace KazgarsRevenge
             StatEffects = new Dictionary<StatType, float>();
             foreach (KeyValuePair<StatType, float> k in statAllocatements)
             {
-                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance)
+                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance || k.Key == StatType.RunSpeed)
                 {
-                    StatEffects.Add(k.Key, (float)Math.Round(k.Value * statAmount / 100, 3));
+                    StatEffects.Add(k.Key, k.Value);
                 }
                 else
                 {
@@ -62,6 +63,7 @@ namespace KazgarsRevenge
                 }
             }
 
+            this.GoldCost = ItemLevel * (int)Quality + 10;
             SetTooltip(GetEquippableTooltip());
         }
 
@@ -87,7 +89,7 @@ namespace KazgarsRevenge
 
             foreach (KeyValuePair<StatType, float> k in StatEffects)
             {
-                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance)
+                if (k.Key == StatType.AttackSpeed || k.Key == StatType.CooldownReduction || k.Key == StatType.CritChance || k.Key == StatType.RunSpeed)
                 {
                     tiplines.Add(new TooltipLine(Color.Green, "+" + Math.Ceiling(k.Value * 100) + "% " + k.Key.ToString(), .35f));
                 }
@@ -97,15 +99,24 @@ namespace KazgarsRevenge
                 }
             }
 
+            if (AppliedEssence != null)
+            {
+                tiplines.Add(new TooltipLine(new Color(0, 30, 255), "+" + AppliedEssence.StatIncrease + " " + AppliedEssence.BoostedStat.ToString(), .35f));
+            }
+
+            tiplines.Add(new TooltipLine(Color.Gold, "\nSells for " + GoldCost + "g", .5f));
             return new Tooltip(tiplines);
         }
 
+        /// <summary>
+        /// Get the color associated with the quality
+        /// </summary>
         public static Color GetQualityColor(GearQuality quality)
         {
             switch (quality)
             {
                 case GearQuality.Good:
-                    return Color.Blue;
+                    return new Color(0, 30, 255);
                 case GearQuality.Epic:
                     return Color.Purple;
                 case GearQuality.Legendary:
@@ -113,6 +124,12 @@ namespace KazgarsRevenge
                 default:
                     return Color.Green;
             }
+        }
+
+        public void ApplyEssence(Essence e)
+        {
+            AppliedEssence = e;
+            SetTooltip(GetEquippableTooltip());
         }
     }
 }

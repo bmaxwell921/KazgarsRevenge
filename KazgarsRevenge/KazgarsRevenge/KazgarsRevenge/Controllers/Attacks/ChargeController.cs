@@ -53,7 +53,7 @@ namespace KazgarsRevenge
                 AliveComponent alive = hitEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
                 if (alive != null)
                 {
-                    alive.Damage(DeBuff.Charge, 0, creator.Entity, AttackType.None);
+                    alive.Damage(DeBuff.Charge, 0, creator.Entity, AttackType.None, true);
                     alive.KnockBack(physicalData.Position, 900);
                     //(Game.Services.GetService(typeof(CameraComponent)) as CameraComponent).ShakeCamera(.5f);
                 }

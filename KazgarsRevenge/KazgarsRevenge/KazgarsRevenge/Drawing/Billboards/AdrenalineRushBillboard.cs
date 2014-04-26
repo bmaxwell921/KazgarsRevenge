@@ -7,6 +7,9 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// a vertical animated billboard that centers on the player's position
+    /// </summary>
     public class AdrenalineRushBillboard : DrawableComponentBillboard
     {
         Entity followData;

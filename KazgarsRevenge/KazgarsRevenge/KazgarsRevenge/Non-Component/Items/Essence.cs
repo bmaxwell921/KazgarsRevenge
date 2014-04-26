@@ -15,6 +15,7 @@ namespace KazgarsRevenge
         public Essence(Texture2D icon, int id)
             : base(ItemType.Essence, icon, "Essence", 1, id)
         {
+            GoldCost = Math.Max(5, (id - 901) * 40);
             string essencePrefix = "";
             string essenceSuffix = "";
             #region essence definitions
@@ -108,12 +109,13 @@ namespace KazgarsRevenge
                     break;
             }
             #endregion
-
+            Color r = Color.Blue;
             SetTooltip(new Tooltip(
                 new List<TooltipLine> {
-                new TooltipLine(Color.Blue, essencePrefix + " Essence", .65f),
-                new TooltipLine(Color.Blue, "of the " + essenceSuffix, .65f),
-                new TooltipLine(Color.Gold, "Use: increases the selected gear's", .4f),
+                new TooltipLine(new Color(0, 30, 255), essencePrefix + " Essence", .65f),
+                new TooltipLine(new Color(0, 30, 255), "of the " + essenceSuffix, .65f),
+                new TooltipLine(Color.Gold, "Apply at Essence Guy.", .4f),
+                new TooltipLine(Color.Gold, "Will increase a piece of gear's", .4f),
                 new TooltipLine(Color.Gold, "stats by +" + StatIncrease + " " + BoostedStat.ToString() , .4f)
                 }));
         }

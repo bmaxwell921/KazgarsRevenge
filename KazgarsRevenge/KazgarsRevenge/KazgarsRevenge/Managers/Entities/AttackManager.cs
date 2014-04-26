@@ -31,7 +31,6 @@ namespace KazgarsRevenge
             base.Initialize();
 
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
-
             particles = Game.Services.GetService(typeof(ParticleManager)) as ParticleManager;
         }
 
@@ -48,7 +47,7 @@ namespace KazgarsRevenge
         }
 
         #region Primaries
-        public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool homing, bool penetrating, bool leeching, bool bleeding)
+        public void CreateArrow(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool homing, bool penetrating, bool leeching, bool bleeding, bool multiShot)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
             position.Y = 40;
@@ -70,7 +69,7 @@ namespace KazgarsRevenge
                 arrowAI.Home();
                 arrowGraphics.AddEmitter(typeof(HomingTrailParticleSystem), "trail", 80, 0, Vector3.Forward * 6);
             }
-            else
+            else if(!multiShot)
             {
                 ArrowVBillboard trail = new ArrowVBillboard(mainGame, arrow);
                 arrow.AddComponent(typeof(ArrowVBillboard), trail);
@@ -102,14 +101,19 @@ namespace KazgarsRevenge
 
             attacks.Add(arrow);
 
-            soundEffects.playRangedSound();
+            if (!multiShot)
+            {
+                soundEffects.playRangedSound();
+            }
         }
+
+
 
         public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, bool twohanded)
         {
             CreateMeleeAttack(position, damage, creator, 0, twohanded);
         }
-        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, float lifesteal, bool twohanded)
+        public void CreateMeleeAttack(Vector3 position, int damage, AliveComponent creator, float lifesteal, bool clang)
         {
             GameEntity newAttack = new GameEntity("melee", creator.Entity.Faction, EntityType.Misc);
             newAttack.id = IdentificationFactory.getId(EntityType.Misc, players.myId.id);
@@ -139,7 +143,7 @@ namespace KazgarsRevenge
             attacks.Add(newAttack);
 
             soundEffects.playMeleeMissSound();
-            if (!twohanded)
+            if (!clang)
             {
                 soundEffects.playMeleeHitFloorSound();
             }
@@ -219,6 +223,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region Abilities
+        //Ranged
         public void CreateSnipe(Vector3 position, Vector3 dir, int damage, AliveComponent creator, bool magnet)
         {
             GameEntity arrow = new GameEntity("arrow", creator.Entity.Faction, EntityType.Misc);
@@ -265,7 +270,9 @@ namespace KazgarsRevenge
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
             UnanimatedModelComponent arrowGraphics = new UnanimatedModelComponent(mainGame, arrow, GetUnanimatedModel("Models\\Projectiles\\Arrow"),
                                                                                 new Vector3(10), Vector3.Backward * 6, 0, 0, 0);
-            //arrowGraphics.AddEmitter(typeof(SoulTrailParticleSystem), 50, 2, Vector3.Zero);
+            ArrowVBillboard trailv = new ArrowVBillboard(mainGame, arrow);
+            arrow.AddComponent(typeof(ArrowVBillboard), trailv);
+            billboardManager.AddComponent(trailv);
             
             OmnishotController arrowAI = new OmnishotController(mainGame, arrow, damage, creator.Entity.Faction == FactionType.Players ? FactionType.Enemies : FactionType.Players, creator);
 
@@ -536,6 +543,7 @@ namespace KazgarsRevenge
         }
 
 
+        //Melee
         public void CreateCharge(Vector3 pos, AliveComponent creator, double duration)
         {
             GameEntity entity = new GameEntity("attack", FactionType.Neutral, EntityType.None);
@@ -748,6 +756,9 @@ namespace KazgarsRevenge
 
             attacks.Add(entity);
         }
+
+        //Magic
+
         #endregion
 
         #region Enemy Abilities
@@ -971,6 +982,50 @@ namespace KazgarsRevenge
         #endregion
 
         #region Misc
+        public void CreateTeleSphere(Vector3 position, double duration)
+        {
+            position.Y = 0;
+            GameEntity entity = new GameEntity("", FactionType.Neutral, EntityType.None);
+
+            Entity box = new Box(position, 1, 1, 1);
+            entity.AddSharedData(typeof(Entity), box);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, entity, GetUnanimatedModel("Models\\sphere"), new Vector3(0), Vector3.Zero, 0, 0, 0);
+            graphics.TurnOffOutline();
+            graphics.AddColorTint(Color.Purple);
+            entity.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            TeleSphereController controller = new TeleSphereController(mainGame, entity, duration);
+            entity.AddComponent(typeof(TeleSphereController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(entity);
+        }
+
+        public void CreateIceBlock(Vector3 position, double duration)
+        {
+            position.Y = 0;
+            GameEntity entity = new GameEntity("", FactionType.Neutral, EntityType.None);
+
+            Entity box = new Box(position, 1, 1, 1);
+            entity.AddSharedData(typeof(Entity), box);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, entity, GetUnanimatedModel("Models\\ice_block"), new Vector3(10), Vector3.Zero, 0, 0, 0);
+            graphics.TurnOffOutline();
+            graphics.AddEmitter(typeof(FrostAOEMistSystem), "frost", 10, 10, Vector3.Zero);
+            entity.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            DeathTimer controller = new DeathTimer(mainGame, entity, duration);
+            entity.AddComponent(typeof(DeathTimer), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(entity);
+
+            SpawnIceBlockPoof(position);
+        }
+
         public void CreateLevelUpGraphics(Entity playerEntity)
         {
             GameEntity levelUp = new GameEntity("levelup", FactionType.Neutral, EntityType.None);
@@ -1171,6 +1226,7 @@ namespace KazgarsRevenge
             SpawnTarParticles(position);
         }
 
+        Quaternion downOrientation = Quaternion.CreateFromYawPitchRoll(0, -MathHelper.PiOver2, 0);
         public void CreateFallingArrow(Vector3 position)
         {
             GameEntity arrow = new GameEntity("arrow", FactionType.Neutral, EntityType.Misc);
@@ -1180,7 +1236,7 @@ namespace KazgarsRevenge
             arrowData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             arrowData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             arrowData.LinearVelocity = Vector3.Down * 50;
-            arrowData.Orientation = Quaternion.CreateFromYawPitchRoll(0, -MathHelper.PiOver2, 0);
+            arrowData.Orientation = downOrientation;
             arrow.AddSharedData(typeof(Entity), arrowData);
             
             PhysicsComponent arrowPhysics = new PhysicsComponent(mainGame, arrow);
@@ -1334,6 +1390,25 @@ namespace KazgarsRevenge
 
         #region Particles
         ParticleManager particles;
+        public void SpawnGopherDigPoof(Vector3 position)
+        {
+            position.Y = 10;
+            ParticleSystem poof = particles.GetSystem(typeof(GopherDigPoofSystem));
+            for (int i = 0; i < 15; ++i)
+            {
+                poof.AddParticle(position, Vector3.Zero);
+            }
+        }
+
+        public void SpawnIceBlockPoof(Vector3 position)
+        {
+            position.Y = 10;
+            ParticleSystem poof = particles.GetSystem(typeof(ToonFrostExplosionPoofSystem));
+            for (int i = 0; i < 15; ++i)
+            {
+                poof.AddParticle(position, Vector3.Zero);
+            }
+        }
 
         public void SpawnSpitSparks(Vector3 position)
         {

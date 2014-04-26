@@ -90,6 +90,8 @@ namespace KazgarsRevenge
         
         protected override void Initialize()
         {
+            GraphicsDevice.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
+
             settings.particleSettings = SettingAmount.Low;
 
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
@@ -102,16 +104,16 @@ namespace KazgarsRevenge
             {
                 graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                graphics.IsFullScreen = false;
+                graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
             }
             else
             {
-                graphics.PreferredBackBufferWidth = 1280;
-                graphics.PreferredBackBufferHeight = 720;
+                graphics.PreferredBackBufferWidth = 1920;
+                graphics.PreferredBackBufferHeight = 1080;
                 graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
-                screenScale = ((float)GraphicsDevice.Viewport.Height / 720f + (float)GraphicsDevice.Viewport.Width / 1280f) / 2;
+                screenScale = ((float)GraphicsDevice.Viewport.Height / graphics.PreferredBackBufferHeight + (float)GraphicsDevice.Viewport.Width / graphics.PreferredBackBufferWidth) / 2;
             }
 
             Texture2DUtil.Instance.SetContent(Content);
@@ -266,7 +268,6 @@ namespace KazgarsRevenge
         string alertMessage = "";
         double alertTimeLeft = 0;
         float alertSourceX = 0;
-
         List<FloatingText> floatingText = new List<FloatingText>();
         Vector2 alertStart = Vector2.Zero;
         public void AddAlert(string text)
@@ -281,11 +282,26 @@ namespace KazgarsRevenge
             floatingText.Add(floater);
         }
 
+        bool debug = false;
         int loadInt = 0;
+        int frameCounter = 0;
+        int frameRate = 0;
+        TimeSpan elapsedTime = TimeSpan.Zero;
         protected override void Update(GameTime gameTime)
         {
             if (gameState == GameState.Playing)
             {
+                if (debug)
+                {
+                    elapsedTime += gameTime.ElapsedGameTime;
+                    if (elapsedTime > TimeSpan.FromSeconds(1))
+                    {
+                        elapsedTime -= TimeSpan.FromSeconds(1);
+                        frameRate = frameCounter;
+                        frameCounter = 0;
+                    }
+                }
+
                 physics.Update();
                 double millis = gameTime.ElapsedGameTime.TotalMilliseconds;
                 if (alertTimeLeft > 0)
@@ -307,7 +323,7 @@ namespace KazgarsRevenge
                 ++loadInt;
                 if (loadInt > 3)
                 {
-                    ActuallyLoadLevel(FloorName.Dungeon);
+                    ActuallyLoadLevel(this.loadFloor);
                     TransitionToPlaying();
                 }
             }
@@ -328,29 +344,44 @@ namespace KazgarsRevenge
             gameState = GameState.Playing;
         }
 
+        private FloorName loadFloor;
+
         /// <summary>
         /// Starts the loading of a level with the given FloorName
         /// </summary>
         /// <param name="name"></param>
-        public void LoadLevel(FloorName name)
+        public void LoadNewLevel(FloorName name)
         {
             gameState = GameState.Loading;
+            loadFloor = name;
+            createNewPlayer = true;
+        }
+
+        bool createNewPlayer = true;
+        /// <summary>
+        /// Assume that the player has already been created, so just reset its position
+        /// </summary>
+        public void LoadNextLevel(FloorName name)
+        {
+            if (levels.currentLevel.currentFloor == name)
+            {
+                return;
+            }
+            gameState = GameState.Loading;
+            loadFloor = name;
+            createNewPlayer = false;
         }
 
         public void ActuallyLoadLevel(FloorName name)
         {
-            //genComponentManager.Enabled = false;
-
-            // Testing version
-            //levels.DemoLevel();
-            //players.CreateMainPlayer(new Vector3(900, 20, 1400), DUMMY_ID);
-            //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), new Vector3(120, 20, 400));
-
-            // Down here is the final version of this method
             levels.CreateLevel(name);
-            players.CreateMainPlayerInLevel(DUMMY_ID);
-
-            //enemies.CreateDragon(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), levels.GetPlayerSpawnLocation() + Vector3.Right * 200);
+            if (createNewPlayer)
+            {
+                players.CreateMainPlayerInLevel(DUMMY_ID);
+            }
+                
+			players.StartNewLevel(name);
+            camera.StartLevel(name);
         }
 
         Vector2 vecLoadingText;
@@ -384,6 +415,7 @@ namespace KazgarsRevenge
             }
             else if (gameState == GameState.Playing)
             {
+
                 //draw depth render target
                 GraphicsDevice.SetRenderTarget(normalDepthRenderTarget);
                 GraphicsDevice.Clear(Color.Black);
@@ -399,12 +431,13 @@ namespace KazgarsRevenge
                 levelModelManager.Draw(gameTime, false);
                 renderManager.Draw(gameTime, false);
 
-                //draw particles
-                particleManager.Draw(gameTime);
-
                 GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
                 //draw billboarded stuff
                 billboards.Draw();
+
+                //draw particles
+                particleManager.Draw(gameTime);
+
 
 
                 //reset graphics device
@@ -431,7 +464,7 @@ namespace KazgarsRevenge
                 effectModelDrawer.View = camera.View;
                 effectModelDrawer.Projection = camera.Projection;
                 modelDrawer.Draw(effectModelDrawer, physics);
-                */
+                 */
 
                 spriteBatch.Begin();
                 spriteManager.Draw(spriteBatch);
@@ -448,6 +481,12 @@ namespace KazgarsRevenge
                 if (alertTimeLeft > 0)
                 {
                     spriteBatch.DrawString(normalFont, alertMessage, new Vector2(maxX / 2, 172 * average), Color.Red * (float)(alertTimeLeft / 2500), 0, new Vector2(alertSourceX, 0), .5f * average, SpriteEffects.None, 0);
+                }
+
+                if (debug)
+                {
+                    ++frameCounter;
+                    spriteBatch.DrawString(normalFont, frameRate + " FPS", new Vector2(maxX / 2, maxY / 2), Color.Red);
                 }
                 spriteBatch.End();
 

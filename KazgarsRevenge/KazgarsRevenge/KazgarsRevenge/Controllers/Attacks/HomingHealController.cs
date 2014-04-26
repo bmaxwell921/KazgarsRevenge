@@ -60,7 +60,7 @@ namespace KazgarsRevenge
                         move.Normalize();
                     }
 
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(move), 0, 0);
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(move), 0, 0);
                     physicalData.LinearVelocity = move * 250.0f;
 
                     turnCounter = 0;

@@ -26,20 +26,26 @@ namespace KazgarsRevenge
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
         }
 
-
+        private object lockObj = new Object();
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
-            GameEntity hitEntity = other.Tag as GameEntity;
-            if (hitEntity != null && hitEntity.Type == EntityType.Player)
+            lock (lockObj)
             {
-                (Game.Services.GetService(typeof(LevelManager)) as LevelManager).UnlockDoors();
-                (Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary).playUnlockSound();
-                ParticleSystem p = (Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(typeof(KeyUnlockSystem));
-                for (int i = 0; i < 50; ++i)
+                if (!Entity.Dead)
                 {
-                    p.AddParticle(physicalData.Position, Vector3.Zero);
+                    GameEntity hitEntity = other.Tag as GameEntity;
+                    if (hitEntity != null && hitEntity.Type == EntityType.Player)
+                    {
+                        (Game.Services.GetService(typeof(LevelManager)) as LevelManager).UnlockDoors();
+                        (Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary).playUnlockSound();
+                        ParticleSystem p = (Game.Services.GetService(typeof(ParticleManager)) as ParticleManager).GetSystem(typeof(KeyUnlockSystem));
+                        for (int i = 0; i < 50; ++i)
+                        {
+                            p.AddParticle(physicalData.Position, Vector3.Zero);
+                        }
+                        Entity.KillEntity();
+                    }
                 }
-                Entity.KillEntity();
             }
         }
 

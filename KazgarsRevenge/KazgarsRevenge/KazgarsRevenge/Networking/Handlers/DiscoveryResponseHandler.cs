@@ -21,7 +21,7 @@ namespace KazgarsRevenge
         {
             NetworkMessageManager nmm = (NetworkMessageManager)game.Services.GetService(typeof(NetworkMessageManager));
             LoggerManager lm = (LoggerManager)game.Services.GetService(typeof(LoggerManager));
-            lm.Log(Level.DEBUG, "Adding some server info");
+            lm.Log(LogLevel.DEBUG, "Adding some server info");
 
             ServerInfo si = new ServerInfo(nim.ReadString(), nim.SenderEndpoint);
 

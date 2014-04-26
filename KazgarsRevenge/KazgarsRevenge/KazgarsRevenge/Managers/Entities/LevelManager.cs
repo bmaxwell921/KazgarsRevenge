@@ -38,6 +38,7 @@ namespace KazgarsRevenge
 
     public enum FloorName
     {
+        Ground = 0,
         Dungeon = 1,
         Library = 2,
         TortureChamber = 3,
@@ -131,12 +132,86 @@ namespace KazgarsRevenge
             pathConnections['W'] = new Vector3(-0.5f, 0, 0);
         }
 
+        public void CreateGround()
+        {
+            this.rooms = new List<GameEntity>();
+            LevelBuilder lb = new LevelBuilder(Game.Services.GetService(typeof(LoggerManager)) as LoggerManager, 1, 1);
+            this.currentLevel = lb.BuildGround();
+            this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[0, 0], currentLevel.chunkInfos[0, 0], 0, 0));
+            Texture2DUtil.Instance.GetTexture(@"Textures\UI\MegaMap\" + currentLevel.chunkInfos[0, 0].ChunkName);
+        }
+
+        private void ClearLevelEntities()
+        {
+            (Game.Services.GetService(typeof(EnemyManager)) as EnemyManager).ClearEnemies();
+
+            if (key != null)
+            {
+                key.KillEntity();
+                key = null;
+            }
+
+            if (lockedDoors != null)
+            {
+                foreach (GameEntity g in lockedDoors)
+                {
+                    g.KillEntity();
+                }
+                lockedDoors.Clear();
+            }
+
+            if (props != null)
+            {
+                foreach (GameEntity g in props)
+                {
+                    g.KillEntity();
+                }
+                props.Clear();
+            }
+
+            if (misc != null)
+            {
+                foreach (GameEntity g in misc)
+                {
+                    g.KillEntity();
+                }
+                misc.Clear();
+            }
+
+            if (rooms != null)
+            {
+                foreach (GameEntity g in rooms)
+                {
+                    g.KillEntity();
+                }
+                rooms.Clear();
+            }
+
+            if (lights != null)
+            {
+                foreach (GameEntity g in lights)
+                {
+                    g.KillEntity();
+                }
+                lights.Clear();
+            }
+
+
+        }
+
         /// <summary>
         /// Generates a new level to play with the default width and height in chunks (3x3)
         /// </summary>
         /// <param name="name"></param>
         public void CreateLevel(FloorName name)
         {
+            ClearLevelEntities();
+            // Just a special case for the game
+            if (name == FloorName.Ground)
+            {
+                CreateGround();
+                return;
+            }
             this.CreateLevel(name, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT);
         }
 
@@ -148,6 +223,12 @@ namespace KazgarsRevenge
         /// <param name="levelHeight"></param>
         public void CreateLevel(FloorName name, int levelWidth, int levelHeight)
         {
+            // Just a special case for the ground
+            if (name == FloorName.Ground)
+            {
+                CreateGround();
+                return;
+            }
             this.rooms = new List<GameEntity>();
             LevelBuilder lBuilder = new LevelBuilder(Game.Services.GetService(typeof(LoggerManager)) as LoggerManager, levelWidth, levelHeight);
             this.currentLevel = lBuilder.BuildLevel(name);
@@ -158,6 +239,11 @@ namespace KazgarsRevenge
                 for (int j = 0; j < levelHeight; ++j)
                 {
                     this.rooms.AddRange(CreateChunkRooms(currentLevel.chunks[i, j], currentLevel.chunkInfos[i, j], i , j));
+                    
+                    // Load the map images here so it doesn't lag in game
+                    Texture2DUtil.Instance.GetTexture(currentLevel.chunkInfos[i, j].miniMapImgName(true));
+                    Texture2DUtil.Instance.GetTexture(currentLevel.chunkInfos[i, j].miniMapImgName(false));
+                    Texture2DUtil.Instance.GetTexture(@"Textures\UI\MegaMap\" + currentLevel.chunkInfos[i, j].ChunkName);
                 }
             }
         }
@@ -277,7 +363,7 @@ namespace KazgarsRevenge
             }
             catch (Exception)
             {
-                (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(Level.DEBUG, String.Format("Problem parsing roomName: {0}", roomName));
+                (Game.Services.GetService(typeof(LoggerManager)) as LoggerManager).Log(LogLevel.DEBUG, String.Format("Problem parsing roomName: {0}", roomName));
                 return null;
             }
         }
@@ -295,7 +381,7 @@ namespace KazgarsRevenge
             GameEntity room = new GameEntity("room", FactionType.Neutral, EntityType.Misc);
 
             Model roomModel = GetUnanimatedModel(modelPath);
-
+            
             Vector3[] vertices;
             int[] indices;
             TriangleMesh.GetVerticesAndIndicesFromModel(roomModel, out vertices, out indices);
@@ -474,6 +560,37 @@ namespace KazgarsRevenge
                     CreateTorchEmitter(Vector3.Transform(v, chunkTransform));
                 }
 
+                List<Vector3> shopLocations = levelInfo.shopKeeperLocations;
+                for (int i = 0; i < shopLocations.Count; ++i)
+                {
+                    if (i == 0)
+                    {
+                        
+                    }
+                    else if (i == 1)
+                    {
+                        enemyManager.CreateJeebes(Vector3.Transform(shopLocations[i], chunkTransform));
+                    }
+                    else if (i == 2)
+                    {
+                        enemyManager.CreateHeebes(Vector3.Transform(shopLocations[i], chunkTransform));
+                    }
+                }
+
+                List<Vector3> dummyLocations = levelInfo.dummyLocations;
+                foreach (Vector3 v in dummyLocations)
+                {
+                    enemyManager.CreateDummy(Vector3.Transform(v, chunkTransform));
+                }
+
+                List<Vector3> gopherLocs = levelInfo.gopherLocations;
+                foreach (Vector3 v in gopherLocs)
+                {
+                    if (RandSingleton.U_Instance.Next(2) == 0)
+                    {
+                        (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(v, chunkTransform));
+                    }
+                }
             }
         }
 
@@ -492,7 +609,7 @@ namespace KazgarsRevenge
 
             PhysicsComponent lightPhysics = new PhysicsComponent(mainGame, light);
 
-            light.AddSharedData(typeof(PhysicsComponent), lightPhysics);
+            light.AddComponent(typeof(PhysicsComponent), lightPhysics);
             genComponentManager.AddComponent(lightPhysics);
 
             lights.Add(light);
@@ -624,11 +741,11 @@ namespace KazgarsRevenge
         // TODO Set these based on a difficulty level???
         private static readonly float PROXIMITY = 60;
         // Spawn every 3 seconds
-        private static readonly float DELAY = 3000;
+        private static readonly float DELAY = 7000;
 
         private void CreateMobSpawner(Vector3 pos)
         {
-            if (RandSingleton.U_Instance.Next(1000) < 20)
+            if (RandSingleton.U_Instance.Next(100) < 60)
             {
                 GameEntity spawner = new GameEntity("spawner", FactionType.Neutral, EntityType.None);
 
@@ -638,21 +755,23 @@ namespace KazgarsRevenge
                 EntityType type = EntityType.NormalEnemy;
                 int num = 1;
                 int r = RandSingleton.U_Instance.Next(100);
-                if (r < 50)
+                if (r < 30)
                 {//normal cluster
-                    num = RandSingleton.U_Instance.Next(3, 7);
+                    num = RandSingleton.U_Instance.Next(2, 4);
                 }
-                else if (r < 64)
+                else if (r < 40)
                 {//elite single
                     type = EntityType.EliteEnemy;
                 }
-                else if (r < 75)
+                else if (r < 47)
                 {//elite cluster
                     type = EntityType.EliteEnemy;
-                    num = RandSingleton.U_Instance.Next(3, 7);
+                    num = RandSingleton.U_Instance.Next(2, 5);
                 }
 
-                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, type, spawnLocs, PROXIMITY * CHUNK_SIZE, DELAY, num);
+                //add some randomness to the delay to get an even distribution of spawn times
+                float delayAdd = RandSingleton.U_Instance.Next(4000) - 2000;
+                EnemyProximitySpawner eps = new EnemyProximitySpawner(mainGame, spawner, type, spawnLocs, PROXIMITY * CHUNK_SIZE, DELAY + delayAdd, num);
                 spawner.AddComponent(typeof(EnemyProximitySpawner), eps);
                 genComponentManager.AddComponent(eps);
 
@@ -798,7 +917,7 @@ namespace KazgarsRevenge
         }
 
         // Returns the Vector3 node in the pathGraph closest to the given location. Taking into account the final location we're trying to get to
-        private Vector3 FindClosestNodeTo(Vector3 location, Vector3 dest)
+        public Vector3 FindClosestNodeTo(Vector3 location, Vector3 dest)
         {
             Vector3 min = Vector3.Zero;
             // Set this as null for the first time around
@@ -875,6 +994,18 @@ namespace KazgarsRevenge
             }
 
             /// <summary>
+            /// Builds the Level 0 floor
+            /// </summary>
+            /// <returns></returns>
+            public LevelInfo BuildGround()
+            {
+                ChunkInfo[,] chunkInfos = new ChunkInfo[1, 1];
+                chunkInfos[0, 0] = ChunkUtil.Instance.GetGround();
+                Chunk[,] chunks = ReadChunks(FloorName.Ground, chunkInfos);
+                return new LevelInfo(FloorName.Ground, chunks, chunkInfos, 1, 1);
+            }
+
+            /// <summary>
             /// Builds a Level based on the given floorName and returns a list of all the rooms 
             /// in the level
             /// </summary>
@@ -902,7 +1033,7 @@ namespace KazgarsRevenge
 
             private void LogChunkChoice(int i, int j, ChunkInfo ci)
             {
-                lm.Log(Level.DEBUG, String.Format("LevelGeneration chose chunk:\n\t\t\t{0}\n\t\t\tLocation:({1},{2})\n\t\t\tFileName:{3}", ci.ToString(), i, j, ci.FileName));
+                lm.Log(LogLevel.DEBUG, String.Format("LevelGeneration chose chunk:\n\t\t\t{0}\n\t\t\tLocation:({1},{2})\n\t\t\tRotation:{3}\n\t\t\tFileName:{4}", ci.ToString(), i, j, ci.rotation, ci.FileName));
             }
 
             // Places a home chunk in the middle of the level
@@ -1070,13 +1201,16 @@ namespace KazgarsRevenge
             pillar.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\fire_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
-            pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
-            modelManager.AddComponent(graphics);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\fire_column"), new Vector3(10), Vector3.Down * 40, 0, 0, 0);
+            graphics.SlideAnimateTexture(.15f);
             graphics.AddEmitter(typeof(FirePillarMistSystem), "firemist", 40, 25, Vector3.Down * 17);
             graphics.AddEmitter(typeof(FirePillarSystem), "fire", 10, 25, Vector3.Down * 25);
+            Vector3 emittOff = (data.Position - physicalData.Position) * .6f;
+            graphics.AddEmitter(typeof(FireDragonPlusSystem), "invul", 10, 25, 5, emittOff);
+            pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, false);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, data, false);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 
@@ -1103,12 +1237,14 @@ namespace KazgarsRevenge
             pillar.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\ice_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\ice_column"), new Vector3(10), Vector3.Down * 40, 0, 0, 0);
+            graphics.AddEmitter(typeof(FrostAOEMistSystem), "mist", 40, 25, Vector3.Down * 17);
+            Vector3 emittOff = (data.Position - physicalData.Position) * .6f;
+            graphics.AddEmitter(typeof(FrostDragonPlusSystem), "invul", 10, 25, 5, emittOff);
             pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
-            graphics.AddEmitter(typeof(FrostAOEMistSystem), "mist", 40, 25, Vector3.Down * 17);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, true);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, data, true);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 
@@ -1232,20 +1368,36 @@ namespace KazgarsRevenge
             return xCoord + yCoord * currentLevel.width;
         }
 
+        public int GetNumChunks(int dimension)
+        {
+            return currentLevel.chunkInfos.GetUpperBound(dimension);
+        }
+
         // Returns the image name of the chunk the player is currently in
         public string GetCurrentChunkImgName(Vector3 location)
         {
-            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
-            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+            int xCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(0), (int)location.X / (CHUNK_SIZE * BLOCK_SIZE));
+            int yCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(1), (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE));
             return @"Textures\UI\MegaMap\" + currentLevel.chunkInfos[xCoord, yCoord].ChunkName;
         }
 
         // Gets rotation of the chunk the player is currently in
         public Rotation GetCurrentChunkRotation(Vector3 location)
         {
-            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
-            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+            int xCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(0), (int)location.X / (CHUNK_SIZE * BLOCK_SIZE));
+            int yCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(1), (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE));
             return currentLevel.chunkInfos[xCoord, yCoord].rotation;
+        }
+
+
+        public string GetChunkName(int x, int y)
+        {
+            return @"Textures\UI\MegaMap\" + currentLevel.chunkInfos[x, y].ChunkName;
+        }
+
+        public Rotation GetChunkRotation(int x, int y)
+        {
+            return currentLevel.chunkInfos[x, y].rotation;
         }
     }
 }

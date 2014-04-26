@@ -7,22 +7,26 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// Manager for DrawableComponentBillboard objects
+    /// </summary>
     public class BillBoardManager : GameComponent
     {
         List<DrawableComponentBillboard> components = new List<DrawableComponentBillboard>();
         public BillBoardManager(KazgarsRevengeGame game)
             : base(game)
         {
-
             this.UpdateOrder = 3;
         }
 
         float currentTime = 0;
 
+        //effects to clone
         private Effect billboardEffect;
         private Effect slidingBillboardEffect;
         private Effect animatedBillboardEffect;
 
+        //effects for specific billboards (might make this dictionary if we make many more)
         public Effect AdrenalineRushEffect { get; private set; }
         public Effect LevelUpBeamEffect { get; private set; }
         public Effect LevelUpCircleEffect { get; private set; }
@@ -126,7 +130,6 @@ namespace KazgarsRevenge
             Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             Game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            PillarBeamEffect.Parameters["CurrentTime"].SetValue(currentTime);
             AdrenalineRushEffect.Parameters["CurrentTime"].SetValue(currentTime);
 
             for (int i = 0; i < components.Count; ++i)

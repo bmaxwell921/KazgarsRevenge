@@ -63,7 +63,7 @@
       <Name>k_idle1</Name>
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_walk.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3bModels\\Player\\k_whirlwind.fbx%3bModels\\Player\\k_spin.fbx%3bModels\\Player\\k_headbutt.fbx%3bModels\\Player\\k_thrust_l.fbx%3bModels\\Player\\k_thrust_r.fbx%3bModels\\Player\\k_charge.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_walk.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3bModels\\Player\\k_whirlwind.fbx%3bModels\\Player\\k_spin.fbx%3bModels\\Player\\k_headbutt.fbx%3bModels\\Player\\k_thrust_l.fbx%3bModels\\Player\\k_thrust_r.fbx%3bModels\\Player\\k_charge.fbx%3bModels\\Player\\k_kick.fbx%3b</ProcessorParameters_MergeAnimations>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\spikes.fbx">
@@ -1557,8 +1557,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\UI\MiniMap\B-WN.png">
-      <Name>B-WN</Name>
+    <Compile Include="Textures\UI\MiniMap\B-NW.png">
+      <Name>B-NW</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1729,7 +1729,7 @@
     <Compile Include="Models\Levels\RoomObjectMaps\00-0-G-0-objMap.fbx">
       <Name>00-0-G-0-objMap</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>LevelModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1772,6 +1772,315 @@
       <Name>level_up</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\MegaMap\00-0-G-0.png">
+      <Name>00-0-G-0</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\ice_block.fbx">
+      <Name>ice_block</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Armor\Dragon\armor_boots_dragon.fbx">
+      <Name>armor_boots_dragon</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Dragon\armor_chest_dragon.fbx">
+      <Name>armor_chest_dragon</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Dragon\armor_head_dragon.fbx">
+      <Name>armor_head_dragon</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Dragon\armor_legs_dragon.fbx">
+      <Name>armor_legs_dragon</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Dragon\armor_shoulders_dragon.fbx">
+      <Name>armor_shoulders_dragon</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Dragon\armor_wrist_dragon.fbx">
+      <Name>armor_wrist_dragon</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Armor\Bowser\armor_boots_bowser.fbx">
+      <Name>armor_boots_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_chest_bowser.fbx">
+      <Name>armor_chest_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_head_bowser.fbx">
+      <Name>armor_head_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_legs_bowser.fbx">
+      <Name>armor_legs_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_shoulders_bowser.fbx">
+      <Name>armor_shoulders_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Armor\Bowser\armor_wrist_bowser.fbx">
+      <Name>armor_wrist_bowser</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\axe2.fbx">
+      <Name>axe2</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\key_blade.fbx">
+      <Name>key_blade</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\dragon_claw.fbx">
+      <Name>dragon_claw</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Weapons\ice_sword.fbx">
+      <Name>ice_sword</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\MiniMap\B-NSE.png">
+      <Name>B-NSE</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\equipment.png">
+      <Name>equipment</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\inventory.png">
+      <Name>inventory</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\map.png">
+      <Name>map</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\talents.png">
+      <Name>talents</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Enemies\Dummy\dummy_idle.fbx">
+      <Name>dummy_idle</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Dummy\\dummy_hit.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Gopher\g_idle.fbx">
+      <Name>g_idle</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Gopher\\g_dig.fbx%3bModels\\Gopher\\g_loot.fbx%3bModels\\Gopher\\g_loot_smash.fbx%3bModels\\Gopher\\g_loot_spin.fbx%3bModels\\Gopher\\g_run.fbx%3bModels\\Gopher\\g_surprise.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Enemies\Succubus\su_fly.fbx">
+      <Name>su_fly</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Succubus\\su_slash.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\abilityFrame.png">
+      <Name>abilityFrame</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\equipmentFrame.png">
+      <Name>equipmentFrame</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\inventoryFrame.png">
+      <Name>inventoryFrame</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\lootFrame.png">
+      <Name>lootFrame</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\talentFrame.png">
+      <Name>talentFrame</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\talentBackBow.png">
+      <Name>talentBackBow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\talentBackHammer.png">
+      <Name>talentBackHammer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Misc\crunchsplat.mp3">
+      <Name>crunchsplat</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Chest\chest_idle.fbx">
+      <Name>chest_idle</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Chest\\chest_open.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Enemies\Mimic\chest_idle.fbx">
+      <Name>chest_idle</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Mimic\\chest_bite.fbx%3bModels\\Enemies\\Mimic\\chest_open.fbx%3bModels\\Enemies\\Mimic\\chest_walk.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Misc\g_extra.wav">
+      <Name>g_extra</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Misc\g_spin.wav">
+      <Name>g_spin</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Misc\g_pick_up.mp3">
+      <Name>g_pick_up</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\smallArrowDown.png">
+      <Name>smallArrowDown</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\Frames\smallArrowUp.png">
+      <Name>smallArrowUp</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Enemies\Outfits\pigOutfit.fbx">
+      <Name>pigOutfit</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+    <Compile Include="Models\Enemies\Outfits\skeleOutfit.fbx">
+      <Name>skeleOutfit</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\no.png">
+      <Name>no</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\UI\yes.png">
+      <Name>yes</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Frames\shopgui.png">
+      <Name>shopgui</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="VerdanaLarge.spritefont">
+      <Name>VerdanaLarge</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

@@ -42,6 +42,7 @@ namespace SkinnedModelLib
         int secondKeyframe;
         List<int> bonesToIgnore = null;
         TimeSpan mixDur = TimeSpan.Zero;
+        double keyframeLerpAmt = 0;
 
         // Current animation transform matrices.
         Matrix[] boneTransforms;
@@ -92,6 +93,7 @@ namespace SkinnedModelLib
 
         public void StartClip(string clipName, MixType t, float playbackRate)
         {
+            keyframeLerpAmt = 0;
             this.PlaybackRate = playbackRate;
             pauseAtEnd = false;
             paused = false;
@@ -203,6 +205,8 @@ namespace SkinnedModelLib
             }
 
             currentTimeValue = time;
+
+            
         }
 
         private void UpdateSecondTime(TimeSpan time, bool relativeToCurrentTime)
@@ -273,10 +277,17 @@ namespace SkinnedModelLib
             // Read keyframe matrices.
             IList<Keyframe> keyframes = currentClipValue.Keyframes;
 
+            //keyframeLerpAmt = currentTimeValue.TotalMilliseconds - currentClipValue.Keyframes[currentKeyframe].Time.TotalMilliseconds;
+            //keyframeLerpAmt = currentTimeValue.TotalMilliseconds / keyframeLerpAmt;
 
             while (currentKeyframe < keyframes.Count)
             {
                 Keyframe keyframe = keyframes[currentKeyframe];
+                /*Keyframe nextKeyFrame = null;
+                if (currentKeyframe < keyframes.Count - 1)
+                {
+                    nextKeyFrame = keyframes[currentKeyframe + 1];
+                }*/
 
                 // Stop when we've read up to the current time position.
                 if (keyframe.Time > currentTimeValue)
@@ -284,6 +295,10 @@ namespace SkinnedModelLib
 
                 // Use this keyframe.
                 Matrix transform = keyframe.Transform;
+                /*if (nextKeyFrame != null)
+                {
+                    transform = Matrix.Lerp(transform, nextKeyFrame.Transform, (float)keyframeLerpAmt);
+                }*/
                 boneTransforms[keyframe.Bone] = transform;
                 currentKeyframe++;
             }

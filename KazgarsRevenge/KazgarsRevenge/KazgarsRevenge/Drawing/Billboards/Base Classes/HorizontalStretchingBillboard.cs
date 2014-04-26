@@ -8,6 +8,9 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// a billboard that stretches from its creator to its own position
+    /// </summary>
     abstract public class HorizontalStretchingBillboard : DrawableComponentBillboard
     {
         Entity creatorData;
@@ -22,17 +25,17 @@ namespace KazgarsRevenge
         protected float maxSize = 600;
         protected float creatorOffsetRight = 0;
 
-        protected float followOffsetRight = 0;
+        protected float percToFollow = 1;
         public override void Update(GameTime gameTime)
         {
             //get length of billboard
-            Vector3 creatorPos = creatorData.Position;
+            Vector3 followPos = followData.Position;
+
+            Vector3 toFollow = creatorData.Position - followPos;
+            Vector3 creatorPos = followPos + toFollow * percToFollow;
             creatorPos += creatorData.OrientationMatrix.Right * creatorOffsetRight;
 
-            Vector3 followPos = followData.Position;
-            followPos += followData.OrientationMatrix.Right * followOffsetRight;
-
-            Vector3 diff = followPos - creatorPos;
+            Vector3 diff = creatorPos - followPos;
             origin.X = (followPos.X + creatorPos.X) / 2;
             origin.Y = 20;
             origin.Z = (followPos.Z + creatorPos.Z) / 2;

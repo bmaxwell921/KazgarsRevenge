@@ -42,6 +42,7 @@ namespace KazgarsRevenge
                 tiplines.Add(new TooltipLine(Color.Green, "+" + k.Value + " " + k.Key.ToString(), .35f));
             }
 
+            tiplines.Add(new TooltipLine(Color.Gold, "\nSells for " + GoldCost + "g", .5f));
             return new Tooltip(tiplines);
         }
     }

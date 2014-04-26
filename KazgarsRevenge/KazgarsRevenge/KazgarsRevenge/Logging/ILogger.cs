@@ -12,7 +12,7 @@ namespace KazgarsRevenge
     /// 
     /// Ordered from least severe to most
     /// </summary>
-    public enum Level {INFO, DEBUG, ERROR};
+    public enum LogLevel {INFO, DEBUG, ERROR};
 
     /// <summary>
     /// Defines behavior for loggers
@@ -24,6 +24,6 @@ namespace KazgarsRevenge
         /// </summary>
         /// <param name="level"></param>
         /// <param name="message"></param>
-        void Log(Level level, string message);
+        void Log(LogLevel level, string message);
     }
 }

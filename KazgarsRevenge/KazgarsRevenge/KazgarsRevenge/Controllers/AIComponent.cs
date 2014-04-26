@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using BEPUphysics;
+using BEPUphysics.MathExtensions;
 using BEPUphysics.Entities;
 using SkinnedModelLib;
 
@@ -22,32 +23,35 @@ namespace KazgarsRevenge
         protected float newDir;
         protected float curDir;
 
+        /// <summary>
+        /// gets the absolute world translation of the bone index given
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         protected Vector3 GetBoneTranslation(int index)
         {
             return (Entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer).GetWorldTransforms()[index].Translation;
         }
 
         /// <summary>
-        /// used for turning model smoothly. slowly adjusts orientation towards 
+        /// used for turning model smoothly. slowly adjusts orientation towards
         /// the newDir and changes velocity based on given speeds
         /// </summary>
         protected void AdjustDir(float runSpeed, float turnSpeed)
         {
             if (curDir != newDir)
             {
-
+                //if close enough to the target direction, snap to it
                 if (Math.Abs(curDir - newDir) <= turnSpeed * 1.3f)
                 {
                     curDir = newDir;
-                    Vector3 newVel = new Vector3((float)Math.Cos(curDir), 0, (float)Math.Sin(curDir));
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
-                    newVel *= runSpeed;
-                    physicalData.LinearVelocity = newVel;
                 }
-                else
+                else//otherwise, add turnSpeed radians toward the target direction
                 {
                     float add = turnSpeed;
                     float diff = curDir - newDir;
+                    //if diff is between 0 and pi, or between -pi and -2pi, need to subtract radians.
+                    //otherwise add radians
                     if (diff > 0 && diff < MathHelper.Pi || diff < 0 && -diff > MathHelper.Pi)
                     {
                         add *= -1;
@@ -61,51 +65,56 @@ namespace KazgarsRevenge
                     {
                         curDir += MathHelper.TwoPi;
                     }
-                    Vector3 newVel = new Vector3((float)Math.Cos(curDir), 0, (float)Math.Sin(curDir));
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
-                    newVel *= runSpeed;
-                    physicalData.LinearVelocity = newVel;
                 }
+                Vector3 newVel = new Vector3((float)Math.Sin(curDir + MathHelper.Pi), 0, (float)Math.Cos(curDir + MathHelper.Pi));
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(curDir, 0, 0);
+                newVel *= runSpeed;
+                physicalData.LinearVelocity = newVel;
             }
         }
-
-        protected float GetGraphicsYaw(Vector3 move)
+        /// <summary>
+        /// get the radians representing the angle in the XZ plane for the given direction
+        /// </summary>
+        protected float GetYaw(Vector3 dir)
         {
-            Vector3 lmove = new Vector3();
-            lmove.X = move.X;
-            lmove.Y = move.Y;
-            lmove.Z = move.Z;
-            if (lmove.Z == 0)
-            {
-                lmove.Z = .00000001f;
-            }
-            else
-            {
-                lmove.Normalize();
-            }
-            float yaw = (float)Math.Atan(lmove.X / lmove.Z);
-            if (lmove.Z < 0 && lmove.X >= 0
-                || lmove.Z < 0 && lmove.X < 0)
-            {
-                yaw += MathHelper.Pi;
-            }
-            yaw += MathHelper.Pi;
-            return yaw;
-        }
-
-        protected float GetPhysicsYaw(Vector3 move)
-        {
-            float retYaw = -GetGraphicsYaw(move) - MathHelper.PiOver2;
-            while(retYaw > MathHelper.TwoPi)
-            {
-                retYaw -= MathHelper.TwoPi;
-            }
-            while(retYaw < 0)
-            {
-                retYaw += MathHelper.TwoPi;
-            }
-
+            float retYaw = (float)Math.Atan2(dir.X, dir.Z);
+            retYaw += MathHelper.Pi;
             return retYaw;
+        }
+
+        /// <summary>
+        /// 180 degrees off of GetYaw
+        /// </summary>
+        protected float GetBackwardsYaw(Vector3 dir)
+        {
+            float retYaw = GetYaw(dir) - MathHelper.Pi;
+            while (retYaw < 0)
+            {
+                retYaw += MathHelper.Pi * 2;
+            }
+            while (retYaw > MathHelper.Pi * 2)
+            {
+                retYaw -= MathHelper.Pi * 2;
+            }
+            return retYaw;
+        }
+
+        protected Matrix3X3 CreateRotationFromForward(Vector3 forward)
+        {
+            Matrix3X3 rotation = Matrix3X3.Identity;
+            rotation.Forward = Vector3.Normalize(forward);
+            rotation.Right = Vector3.Normalize(Vector3.Cross(rotation.Forward, Vector3.Up));
+            rotation.Up = Vector3.Up;
+            return rotation;
+        }
+
+        protected bool InsideCameraBox(BoundingBox cameraBox)
+        {
+            Vector3 pos = physicalData.Position;
+            return !(pos.X < cameraBox.Min.X
+                || pos.X > cameraBox.Max.X
+                || pos.Z < cameraBox.Min.Z
+                || pos.Z > cameraBox.Max.Z);
         }
     }
 }

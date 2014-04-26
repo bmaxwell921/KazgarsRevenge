@@ -14,21 +14,6 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    public class EntityIntPair
-    {
-        public GameEntity Entity;
-        public int amount;
-        public EntityIntPair(GameEntity entity, int amount)
-        {
-            this.Entity = entity;
-            this.amount = amount;
-        }
-
-        public void AddAmount(int d)
-        {
-            amount += d;
-        }
-    }
     public struct EnemyControllerSettings
     {
         public string aniPrefix;
@@ -49,6 +34,28 @@ namespace KazgarsRevenge
     }
     public class EnemyController : AliveComponent
     {
+        /// <summary>
+        /// Used for holding threat levels
+        /// (each entity attacking this enemy has a certain
+        /// level of "threat"; this enemy will attack the
+        /// one with the highest threat)
+        /// </summary>
+        public class EntityIntPair
+        {
+            public GameEntity Entity;
+            public int amount;
+            public EntityIntPair(GameEntity entity, int amount)
+            {
+                this.Entity = entity;
+                this.amount = amount;
+            }
+
+            public void AddAmount(int d)
+            {
+                amount += d;
+            }
+        }
+
         enum EnemyState
         {
             Normal,
@@ -91,6 +98,9 @@ namespace KazgarsRevenge
             rayCastFilter = RayCastFilter;
         }
 
+        /// <summary>
+        /// Turns this enemy into an elite by raising its stats
+        /// </summary>
         public void MakeElite()
         {
             baseStatsMultiplier = 4;
@@ -110,6 +120,9 @@ namespace KazgarsRevenge
             currentAniName = animationName;
         }
 
+        /// <summary>
+        /// the data for the entity this enemy is attacking
+        /// </summary>
         protected AliveComponent targetHealth;
         protected Entity targetData;
 
@@ -117,8 +130,18 @@ namespace KazgarsRevenge
         protected double timerLength;
         Vector3 curVel = Vector3.Zero;
 
+        /// <summary>
+        /// Enemy state is defined by a delegate
+        /// that is called each update.
+        /// 
+        /// State is changed by switching that delegate.
+        /// </summary>
+        /// <param name="millis"></param>
         protected delegate void AIUpdateFunction(double millis);
+
+        //this is the delegate for the state to fall back on for idling
         protected AIUpdateFunction idleUpdateFunction;
+
         //change this to switch states
         protected AIUpdateFunction currentUpdateFunction;
         public override void Update(GameTime gameTime)
@@ -126,15 +149,16 @@ namespace KazgarsRevenge
             switch (state)
             {
                 case EnemyState.Normal:
+                    //only updates if it's not stunned and it's close enough to the player
                     if (!activeDebuffs.ContainsKey(DeBuff.Stunned) && InsideCameraBox(camera.AIBox))
                     {
                         currentUpdateFunction(gameTime.ElapsedGameTime.TotalMilliseconds);
                     }
                     break;
-                case EnemyState.Dying:
+                case EnemyState.Dying://playing death animation
                     AIDying(gameTime.ElapsedGameTime.TotalMilliseconds);
                     break;
-                case EnemyState.Decaying:
+                case EnemyState.Decaying://fading out model, waiting to kill this Entity
                     AIDecaying(gameTime.ElapsedGameTime.TotalMilliseconds);
                     break;
             }
@@ -144,15 +168,20 @@ namespace KazgarsRevenge
 
         #region State Definitions
 
+        //variables for wandering function
         bool chillin = true;
         double scanTimerCounter = 0;
         double scanTimerLength = 2000;
+        /// <summary>
+        /// Uses AIKinematicWander, but also scans for a nearby player every so often
+        /// </summary>
+        /// <param name="millis"></param>
         protected virtual void AIWanderingHostile(double millis)
         {
             threatLevels.Clear();
 
             scanTimerCounter += millis;
-            if (scanTimerCounter > scanTimerLength)
+            if (scanTimerCounter >= scanTimerLength)
             {
                 scanTimerCounter = 0;
                 GameEntity possTargetPlayer = QueryNearEntityFaction(FactionType.Players, physicalData.Position, 0, settings.noticePlayerRange, false);
@@ -162,9 +191,12 @@ namespace KazgarsRevenge
                     if (targetHealth != null && !targetHealth.Dead)
                     {
                         targetData = possTargetPlayer.GetSharedData(typeof(Entity)) as Entity;
-                        SwitchToAttacking();
-                        PlayAnimation(settings.aniPrefix + settings.moveAniName);
-                        return;
+                        if (RaycastLOSIsClear(targetData.Position - physicalData.Position))
+                        {
+                            SwitchToAttacking();
+                            PlayAnimation(settings.aniPrefix + settings.moveAniName);
+                            return;
+                        }
                     }
                 }
             }
@@ -172,6 +204,10 @@ namespace KazgarsRevenge
             AIKinematicWander(millis);
         }
 
+        /// <summary>
+        /// Alternates between wandering in a random direction and sitting still
+        /// </summary>
+        /// <param name="millis"></param>
         protected virtual void AIKinematicWander(double millis)
         {
             timerCounter += millis;
@@ -182,8 +218,8 @@ namespace KazgarsRevenge
                     timerCounter = 0;
                     timerLength = rand.Next(1000, 3000);
                     float newDir = rand.Next(1, 627) / 10.0f;
-                    Vector3 newVel = new Vector3((float)Math.Cos(newDir), 0, (float)Math.Sin(newDir));
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(newVel), 0, 0);
+                    Vector3 newVel = new Vector3((float)Math.Sin(newDir + MathHelper.Pi), 0, (float)Math.Cos(newDir + MathHelper.Pi));
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(newDir, 0, 0);
                     newVel *= settings.walkSpeed;
                     curVel = newVel;
                     ChangeVelocity(curVel);
@@ -194,7 +230,7 @@ namespace KazgarsRevenge
             }
             else
             {
-                //if it's already sitting still, play idle animation (just in case)
+                //if it's already sitting still, play idle animation (just in case it's stuck in a different animation)
                 if (Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) < .1f)
                 {
                     PlayAnimation(settings.aniPrefix + settings.idleAniName);
@@ -215,6 +251,7 @@ namespace KazgarsRevenge
             }
         }
 
+        //attack state variables
         protected double attackCreateCounter;
         protected double attackCounter = double.MaxValue;
         protected bool startedAttack = false;
@@ -222,18 +259,32 @@ namespace KazgarsRevenge
         protected double attackAniCounter = 0;
         protected bool endingAttack = false;
         protected bool raycastCheckTarget = true;
+        /// <summary>
+        /// Continually starts a melee or ranged attack towards the target.
+        /// 
+        /// Switches to AIRunningToTarget if it's out of range or not in line of sight
+        /// </summary>
+        /// <param name="millis"></param>
         protected virtual void AIAutoAttackingTarget(double millis)
         {
+
+            //vector3 from this entity to the target
+            Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
+
+            //already created attack entity, just waiting for end of attacking animation.
+            //doesn't rotate towards target
             attackAniCounter += millis;
             if (endingAttack && attackAniCounter >= attackAniLength)
             {
                 PlayAnimation(settings.aniPrefix + settings.idleAniName);
                 endingAttack = false;
             }
-            Vector3 diff = new Vector3(targetData.Position.X - physicalData.Position.X, 0, targetData.Position.Z - physicalData.Position.Z);
-            if (startedAttack)
+            //playing the attack animation, waiting to create the actual attack entity
+            //(timed with the animation; the millis to wait should be specified in the settings)
+            else if (startedAttack)
             {
-                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                //update rotation towards target every frame during this state
+                physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(diff), 0, 0);
                 attackCreateCounter += millis;
                 attackCounter += millis;
                 if (attackCreateCounter >= settings.attackCreateMillis)
@@ -244,19 +295,20 @@ namespace KazgarsRevenge
                     endingAttack = true;
                 }
             }
-            else if (targetHealth != null && targetData != null && !targetHealth.Dead)
+            else if (targetHealth != null && targetData != null && !targetHealth.Dead)//haven't started an attack yet
             {
                 attackCounter += millis;
                 if (attackCounter >= settings.attackLength)
                 {
-                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                    //rotating towards target
+                    physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(diff), 0, 0);
                     attackCounter = 0;
 
                     //if the player is within attack radius, begin attack
                     if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange)
                     {
                         //when about to begin next attack, check if there is anything in between us and the target first
-                        if (raycastCheckTarget && settings.attackRange > LevelManager.BLOCK_SIZE && !RayCastCheckForRoom(diff))
+                        if (raycastCheckTarget && settings.attackRange > LevelManager.BLOCK_SIZE && !RaycastLOSIsClear(diff))
                         {
                             currentUpdateFunction = new AIUpdateFunction(AIRunningToTarget);
                             raycastTimerCounter = 100000;
@@ -277,6 +329,7 @@ namespace KazgarsRevenge
             }
             else
             {
+                //target is dead or null, so switching back to wander
                 SwitchToWandering();
             }
         }
@@ -296,6 +349,11 @@ namespace KazgarsRevenge
 
         double rotateTimerCounter;
         protected double rotateTimerLength = 1000;
+        /// <summary>
+        /// Uses pathfinding (unless otherwise specified in settings) to get to the target
+        /// and then start attacking when in range
+        /// </summary>
+        /// <param name="millis"></param>
         protected virtual void AIRunningToTarget(double millis)
         {
             raycastTimerCounter += millis;
@@ -310,7 +368,7 @@ namespace KazgarsRevenge
                 {
                     if (raycastTimerCounter >= raycastTimerLength)
                     {
-                        nothingBetween = !raycastCheckTarget || RayCastCheckForRoom(diff);
+                        nothingBetween = !raycastCheckTarget || RaycastLOSIsClear(diff);
                         nothingWasBetween = nothingBetween;
                         raycastTimerCounter = 0;
                     }
@@ -320,11 +378,9 @@ namespace KazgarsRevenge
                     }
                 }
 
-                //if the target is within attack radius,
-                //     (TODO: and nothing is between this and the target, e.g. raycast returns nothing but target?)
-                //go to attack state
                 if (Math.Abs(diff.X) < settings.attackRange && Math.Abs(diff.Z) < settings.attackRange && nothingBetween)
                 {
+                    //if the target is within attack radius and nothing is in between, go to attack state
                     SwitchToAttacking();
                     ChangeVelocity(Vector3.Zero);
                 }
@@ -338,13 +394,13 @@ namespace KazgarsRevenge
 
                     bool updatedPath = false;
 
-                    //if not a ranged unit, but using pathfinding, do a raycast every so often to see if we can just run to the player
+                    //if not a ranged unit, but using pathfinding, do a raycast every so often to see if we can run straight to the player
                     bool beeline = false;
                     if (usesPath)
                     {
                         if (raycastTimerCounter >= raycastTimerLength)
                         {
-                            beeline = RayCastCheckForRoom(diff);
+                            beeline = RaycastLOSIsClear(diff);
                             nothingWasBetween = beeline;
                             raycastTimerCounter = 0;
                         }
@@ -410,7 +466,7 @@ namespace KazgarsRevenge
                     if (updatedPath || rotateTimerCounter > rotateTimerLength)
                     {
                         rotateTimerCounter = 0;
-                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetGraphicsYaw(diff), 0, 0);
+                        physicalData.Orientation = Quaternion.CreateFromYawPitchRoll(GetYaw(diff), 0, 0);
                     }
 
                     if (currentAniName != settings.aniPrefix + settings.moveAniName)
@@ -425,6 +481,11 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// Waits until death animation is done, and then spawns a loot soul 
+        /// and starts decaying
+        /// </summary>
+        /// <param name="millis"></param>
         protected void AIDying(double millis)
         {
             timerCounter += millis;
@@ -439,6 +500,10 @@ namespace KazgarsRevenge
             }
         }
 
+        /// <summary>
+        /// Waiting to get rid of entity entirely
+        /// </summary>
+        /// <param name="millis"></param>
         protected void AIDecaying(double millis)
         {
             //fade out model until completely transparent, then kill the entity
@@ -453,14 +518,22 @@ namespace KazgarsRevenge
             modelParams.lineIntensity = percent;
         }
 
+        /// <summary>
+        /// Should be used instead of setting this enemy's velocity directly
+        /// </summary>
+        /// <param name="vel"></param>
         private void ChangeVelocity(Vector3 vel)
         {
+            //TODO: send networked message?
             if (!pulling)
             {
                 physicalData.LinearVelocity = vel;
             }
         }
 
+        /// <summary>
+        /// Called whenever this enemy switches to attacking state
+        /// </summary>
         protected virtual void SwitchToAttacking()
         {
             minChaseCounter = 0;
@@ -472,6 +545,9 @@ namespace KazgarsRevenge
             currentUpdateFunction = new AIUpdateFunction(AIAutoAttackingTarget);
         }
 
+        /// <summary>
+        /// Called whenever this enemy switches to wandering state
+        /// </summary>
         protected virtual void SwitchToWandering()
         {
             targetHealth = null;
@@ -484,12 +560,19 @@ namespace KazgarsRevenge
         }
         #endregion
 
+        //attack helpers can be overridden to customize attacking behavior
         #region attack helpers
+        /// <summary>
+        /// Called when AIAutoAttacking creates the attack entity
+        /// </summary>
         protected virtual void CreateAttack()
         {
             attacks.CreateMeleeAttack(physicalData.Position + physicalData.OrientationMatrix.Forward * 25, GeneratePrimaryDamage(StatType.Strength), this, settings.usesTwoHander);
         }
 
+        /// <summary>
+        /// Called when the attacking animation is started
+        /// </summary>
         protected virtual void StartAttack()
         {
             attackAniCounter = 0;
@@ -499,7 +582,14 @@ namespace KazgarsRevenge
             PlayAnimation(settings.aniPrefix + settings.attackAniName);
         }
 
+        //the bones to attach charging particles to
         protected List<string> chargingBoneNames = new List<string>();
+
+        /// <summary>
+        /// Called by specific types of enemy controllers, to add a particle effect
+        /// for charging up a spell
+        /// </summary>
+        /// <param name="particleType"></param>
         protected virtual void AddChargeParticles(Type particleType)
         {
             foreach (string s in chargingBoneNames)
@@ -510,8 +600,26 @@ namespace KazgarsRevenge
             }
         }
 
+        //bones to ignore when mixing hit animation
         List<int> armBoneIndices = new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17 };
+        //keeps track of all attackers' threat levels
         List<EntityIntPair> threatLevels = new List<EntityIntPair>();
+
+
+        /// <summary>
+        /// Called when damage is taken to play a hit animation (mixed)
+        /// //and spawn blood/spark particles
+        /// </summary>
+        protected virtual void DoDamagedGraphics()
+        {
+            PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
+            animations.SetNonMixedBones(armBoneIndices);
+            SpawnHitParticles();
+        }
+        #endregion
+
+        #region overrides
+        //deal with threat and add floating text
         protected override void TakeDamage(int d, GameEntity from)
         {
             if (state != EnemyState.Dying && state != EnemyState.Decaying)
@@ -532,15 +640,8 @@ namespace KazgarsRevenge
                 }
             }
         }
-        protected virtual void DoDamagedGraphics()
-        {
-            PlayAnimation(settings.aniPrefix + settings.hitAniName, MixType.MixOnce);
-            animations.SetNonMixedBones(armBoneIndices);
-            SpawnHitParticles();
-        }
-        #endregion
 
-        #region overrides
+        //enemies give XP
         protected override void DealWithKiller()
         {
             if (Killer != null)
@@ -550,6 +651,7 @@ namespace KazgarsRevenge
             base.DealWithKiller();
         }
 
+        //kill entity physics and start playing death animation
         protected override void KillAlive()
         {
             (Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary).playEnemyDeath(settings.aniPrefix);
@@ -589,10 +691,12 @@ namespace KazgarsRevenge
 
         public override void StopPull()
         {
+            //reset attack length
             attackCounter = settings.attackLength;
             base.StopPull();
         }
 
+        //set up animation stuff when component is created
         public override void Start()
         {
             PlayAnimation(settings.aniPrefix + settings.idleAniName);
@@ -607,7 +711,7 @@ namespace KazgarsRevenge
         /// <summary>
         /// raycasts to see if any physics objects part of an entity named "room" are in the way
         /// </summary>
-        private bool RayCastCheckForRoom(Vector3 toTarget)
+        private bool RaycastLOSIsClear(Vector3 toTarget)
         {
             bool nothingBetween = true;
 
@@ -681,6 +785,10 @@ namespace KazgarsRevenge
             SwitchToAttacking();
         }
 
+        /// <summary>
+        /// helper for calculating threat
+        /// </summary>
+        /// <param name="ent"></param>
         private void InsertThreatEntity(EntityIntPair ent)
         {
             for (int i = 0; i < threatLevels.Count; ++i)
@@ -693,20 +801,18 @@ namespace KazgarsRevenge
             }
             threatLevels.Add(ent);
         }
+
+        /// <summary>
+        /// Spawns particles when hit. By default, it's blood particles.
+        /// </summary>
+
         protected virtual void SpawnHitParticles()
         {
             attacks.SpawnHitBlood(physicalData.Position);
         }
 
-        protected bool InsideCameraBox(BoundingBox cameraBox)
-        {
-            Vector3 pos = physicalData.Position;
-            return !(pos.X < cameraBox.Min.X
-                || pos.X > cameraBox.Max.X
-                || pos.Z < cameraBox.Min.Z
-                || pos.Z > cameraBox.Max.Z);
-        }
-
+        
+        //pathing stuff
         bool debuggingPaths = false;
         List<GameEntity> currentPathMarkers = new List<GameEntity>();
         protected void GetNewPath()

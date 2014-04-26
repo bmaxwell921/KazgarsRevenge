@@ -16,6 +16,9 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// a controller that rotates and explodes when it hits the ground
+    /// </summary>
     abstract public class BombController : Component
     {
         

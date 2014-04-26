@@ -16,10 +16,12 @@ namespace KazgarsRevenge
 {
     public class SoulevatorController : Component
     {
+        Entity physicalData;
         public SoulevatorController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
-            (entity.GetSharedData(typeof(Entity)) as Entity).CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
+            physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
+            physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
         }
 
 
@@ -28,10 +30,10 @@ namespace KazgarsRevenge
             GameEntity hitEntity = other.Tag as GameEntity;
             if (hitEntity != null && hitEntity.Name == "localplayer")
             {
-                PlayerController controller = hitEntity.GetComponent(typeof(AliveComponent)) as PlayerController;
+                LocalPlayerController controller = hitEntity.GetComponent(typeof(AliveComponent)) as LocalPlayerController;
                 if (controller != null)
                 {
-                    controller.EnterSoulevator();
+                    controller.EnterSoulevator(physicalData.Position);
                 }
             }
         }

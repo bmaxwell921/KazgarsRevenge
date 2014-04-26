@@ -56,7 +56,7 @@ namespace KazgarsRevenge
 
                 if (handler == null)
                 {
-                    lm.Log(Level.DEBUG, String.Format("Unhandled message type: {0}. Message was: {1}", msg.MessageType, msg.ReadString()));
+                    lm.Log(LogLevel.DEBUG, String.Format("Unhandled message type: {0}. Message was: {1}", msg.MessageType, msg.ReadString()));
                     continue;
                 }
 

@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KazgarsRevenge
 {
+    /// <summary>
+    /// A texture billboarded into 3D space
+    /// </summary>
     public abstract class DrawableComponentBillboard: Component
     {
         public bool Visible { get; protected set; }
