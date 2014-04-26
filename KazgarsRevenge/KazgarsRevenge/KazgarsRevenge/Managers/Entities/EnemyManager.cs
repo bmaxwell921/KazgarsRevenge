@@ -342,13 +342,22 @@ namespace KazgarsRevenge
 
             friendlyNPCS.Add(entity);
         }
-        public void CreateVendorGuy(Vector3 position)
+        public void CreateJeebes(Vector3 position)
         {
-            GameEntity entity = new GameEntity("Shopkeeper", FactionType.Players, EntityType.Shopkeeper);
+            GameEntity entity = new GameEntity("Jeebes", FactionType.Players, EntityType.Shopkeeper);
 
             SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 35, 20), -1);
 
-            SetupEntityGraphics(entity, "Models\\Enemies\\Dummy\\dummy_idle", 10);
+            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Skeleton\\s_idle");
+            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
+            entity.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
+            Dictionary<string, Model> syncedModels = new Dictionary<string, Model>();
+            syncedModels.Add("butler", GetAnimatedModel("Models\\Enemies\\Outfits\\skeleOutfit"));
+            entity.AddSharedData(typeof(Dictionary<string, Model>), syncedModels);
+
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, entity, enemyModel, 10, Vector3.Down * 18);
+            entity.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
+            modelManager.AddComponent(enemyGraphics);
 
             ShopkeeperController controller = new ShopkeeperController(mainGame, entity);
             entity.AddComponent(typeof(PlayerInteractiveController), controller);
@@ -356,13 +365,23 @@ namespace KazgarsRevenge
 
             friendlyNPCS.Add(entity);
         }
-        public void CreateEssenceGuy(Vector3 position)
+        public void CreateHeebes(Vector3 position)
         {
-            GameEntity entity = new GameEntity("Essence Guy", FactionType.Players, EntityType.Shopkeeper);
+            GameEntity entity = new GameEntity("Heebes", FactionType.Players, EntityType.Shopkeeper);
 
             SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 35, 20), -1);
 
-            SetupEntityGraphics(entity, "Models\\Enemies\\Dummy\\dummy_idle", 10);
+            Model enemyModel = GetAnimatedModel("Models\\Enemies\\Pigman\\pig_idle");
+            AnimationPlayer enemyAnimations = new AnimationPlayer(enemyModel.Tag as SkinningData);
+            entity.AddSharedData(typeof(AnimationPlayer), enemyAnimations);
+            Dictionary<string, Model> syncedModels = new Dictionary<string, Model>();
+            syncedModels.Add("butler", GetAnimatedModel("Models\\Enemies\\Outfits\\pigOutfit"));
+            entity.AddSharedData(typeof(Dictionary<string, Model>), syncedModels);
+
+            AnimatedModelComponent enemyGraphics = new AnimatedModelComponent(mainGame, entity, enemyModel, 10, Vector3.Down * 18);
+            entity.AddComponent(typeof(AnimatedModelComponent), enemyGraphics);
+            modelManager.AddComponent(enemyGraphics);
+
 
             EssenceGuyController controller = new EssenceGuyController(mainGame, entity);
             entity.AddComponent(typeof(PlayerInteractiveController), controller);
@@ -370,7 +389,6 @@ namespace KazgarsRevenge
 
             friendlyNPCS.Add(entity);
         }
-
 
         #region Bosses
         public void CreateBoss(Identification id, Vector3 position)

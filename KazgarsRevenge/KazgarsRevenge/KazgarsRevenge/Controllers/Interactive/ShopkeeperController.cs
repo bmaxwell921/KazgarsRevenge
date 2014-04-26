@@ -16,7 +16,6 @@ namespace KazgarsRevenge
         {
             targetedColor = Color.Gold;
             untargetedColor = Color.Gray;
-
         }
 
 
