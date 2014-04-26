@@ -1,1 +1,8 @@
-{"blocks":[{"location":{"x":0,"y":0},"name":"1-NE-southWestWall","rotation":"ZERO"}],"location":{"x":0,"y":0},"name":"1-NE-southWestWall","rotation":"ZERO"}
+{
+  "location": {
+    "x": 0,
+    "y": 0
+  },
+  "name": "1-NE-southWestWall",
+  "rotation": "ZERO"
+}
