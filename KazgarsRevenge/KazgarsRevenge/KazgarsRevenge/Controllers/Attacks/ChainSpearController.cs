@@ -41,7 +41,7 @@ namespace KazgarsRevenge
         //if this controller collides with the same entity, tell it so and start pulling it towards the creator
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
-            lock (targetData)
+            lock (creatorData)
             {
                 if (!pulling)
                 {
@@ -82,7 +82,6 @@ namespace KazgarsRevenge
                 targetData.LinearVelocity = Vector3.Zero;
                 target.StopPull();
             }
-            creator.StopPull();
             Entity.KillEntity();
         }
 
@@ -110,11 +109,13 @@ namespace KazgarsRevenge
                 }
                 lastDist = len;
             }
-
-            lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (lifeCounter >= lifeLength)
+            else
             {
-                EndPull();
+                lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (lifeCounter >= lifeLength)
+                {
+                    Entity.KillEntity();
+                }
             }
             base.Update(gameTime);
         }

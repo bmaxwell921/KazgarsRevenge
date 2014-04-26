@@ -91,11 +91,13 @@ namespace KazgarsRevenge
                 }
                 lastDist = len;
             }
-
-            lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (lifeCounter >= lifeLength)
+            else
             {
-                EndPull();
+                lifeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (lifeCounter >= lifeLength)
+                {
+                    Entity.KillEntity();
+                }
             }
             base.Update(gameTime);
         }

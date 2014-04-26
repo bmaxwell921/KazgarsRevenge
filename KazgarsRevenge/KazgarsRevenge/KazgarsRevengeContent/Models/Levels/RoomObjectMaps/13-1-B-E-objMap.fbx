@@ -10,10 +10,10 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2014
 		Month: 04
-		Day: 24
-		Hour: 15
-		Minute: 44
-		Second: 52
+		Day: 26
+		Hour: 03
+		Minute: 08
+		Second: 21
 		Millisecond: 0
 	}
 	Creator: "FBX SDK/FBX Plugins build 20070228"
@@ -21,7 +21,7 @@ FBXHeaderExtension:  {
 		FlagPLE: 0
 	}
 }
-CreationTime: "2014-04-24 15:44:52:000"
+CreationTime: "2014-04-26 03:08:21:000"
 Creator: "Blender version 2.70 (sub 0)"
 
 ; Object definitions
@@ -63951,7 +63951,7 @@ Objects:  {
 			Property: "QuaternionInterpolate", "bool", "",0
 			Property: "Visibility", "Visibility", "A+",1
 			Property: "Lcl Translation", "Lcl Translation", "A+",0.000000000000000,0.000000000000000,0.000000000000000
-			Property: "Lcl Rotation", "Lcl Rotation", "A+",0.000000000000000,-0.000000000000000,0.000000000000000
+			Property: "Lcl Rotation", "Lcl Rotation", "A+",-0.000000000000000,89.999954693024662,0.000000000000000
 			Property: "Lcl Scaling", "Lcl Scaling", "A+",1.000000000000000,1.000000000000000,1.000000000000000
 			Property: "RotationOffset", "Vector3D", "",0,0,0
 			Property: "RotationPivot", "Vector3D", "",0,0,0
@@ -69949,7 +69949,7 @@ Objects:  {
 		}
 		PoseNode:  {
 			Node: "Model::light_2_67"
-			Matrix: 0.000000075497901,1.000000000000000,0.000000162920685,0.000000000000000,-1.000000000000000,0.000000075497901,0.000000000000012,0.000000000000000,0.000000000000000,-0.000000162920685,1.000000000000000,0.000000000000000,-70.000000000000000,0.000000000000000,0.000000000000000,1.000000000000000
+			Matrix: -0.000000000000048,1.000000000000000,0.000000087422784,0.000000000000000,0.000000639757843,-0.000000087422784,1.000000000000000,0.000000000000000,1.000000000000000,0.000000000000104,-0.000000639757843,0.000000000000000,-70.000000000000000,0.000000000000000,0.000000000000000,1.000000000000000
 		}
 		PoseNode:  {
 			Node: "Model::light_2_68"
@@ -107580,19 +107580,19 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: 0.000000000000000
-						KeyVer: 4005
-						KeyCount: 1
-						Key: 
-							1924423250,0.000000000000000,L
-						Color: 1,0,0
-					}
-					Channel: "Y" {
 						Default: -0.000000000000000
 						KeyVer: 4005
 						KeyCount: 1
 						Key: 
 							1924423250,-0.000000000000000,L
+						Color: 1,0,0
+					}
+					Channel: "Y" {
+						Default: 89.999961523213827
+						KeyVer: 4005
+						KeyCount: 1
+						Key: 
+							1924423250,89.999961523213827,L
 						Color: 0,1,0
 					}
 					Channel: "Z" {

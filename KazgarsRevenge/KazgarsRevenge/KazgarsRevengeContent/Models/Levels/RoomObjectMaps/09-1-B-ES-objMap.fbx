@@ -10,10 +10,10 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2014
 		Month: 04
-		Day: 24
-		Hour: 15
-		Minute: 36
-		Second: 16
+		Day: 26
+		Hour: 03
+		Minute: 04
+		Second: 55
 		Millisecond: 0
 	}
 	Creator: "FBX SDK/FBX Plugins build 20070228"
@@ -21,7 +21,7 @@ FBXHeaderExtension:  {
 		FlagPLE: 0
 	}
 }
-CreationTime: "2014-04-24 15:36:16:000"
+CreationTime: "2014-04-26 03:04:55:000"
 Creator: "Blender version 2.70 (sub 0)"
 
 ; Object definitions
@@ -29598,8 +29598,8 @@ Objects:  {
 		Properties60:  {
 			Property: "QuaternionInterpolate", "bool", "",0
 			Property: "Visibility", "Visibility", "A+",1
-			Property: "Lcl Translation", "Lcl Translation", "A+",-49.293399810791016,-0.000003735309065,-22.927162170410156
-			Property: "Lcl Rotation", "Lcl Rotation", "A+",0.000000000000000,-0.000000000000000,0.000000000000000
+			Property: "Lcl Translation", "Lcl Translation", "A+",-50.061729431152344,-0.000000167774431,-1.029792785644531
+			Property: "Lcl Rotation", "Lcl Rotation", "A+",-0.000000000000000,89.999954693024662,0.000000000000000
 			Property: "Lcl Scaling", "Lcl Scaling", "A+",1.000000000000000,1.000000000000000,1.000000000000000
 			Property: "RotationOffset", "Vector3D", "",0,0,0
 			Property: "RotationPivot", "Vector3D", "",0,0,0
@@ -72845,7 +72845,7 @@ Objects:  {
 		}
 		PoseNode:  {
 			Node: "Model::light_412"
-			Matrix: 0.000000075497901,1.000000000000000,0.000000162920685,0.000000000000000,-1.000000000000000,0.000000075497901,0.000000000000012,0.000000000000000,0.000000000000000,-0.000000162920685,1.000000000000000,0.000000000000000,-49.293399810791016,0.000000000000227,-92.927162170410156,1.000000000000000
+			Matrix: -0.000000000000048,1.000000000000000,0.000000087422784,0.000000000000000,0.000000639757843,-0.000000087422784,1.000000000000000,0.000000000000000,1.000000000000000,0.000000000000104,-0.000000639757843,0.000000000000000,-50.061729431152344,0.000000000000057,-71.029792785644531,1.000000000000000
 		}
 		PoseNode:  {
 			Node: "Model::light_2_75"
@@ -92117,46 +92117,46 @@ Takes:  {
 			Channel: "Transform" {
 				Channel: "T" {
 					Channel: "X" {
-						Default: -49.293399810791016
+						Default: -50.061729431152344
 						KeyVer: 4005
 						KeyCount: 1
 						Key: 
-							1924423250,-49.293399810791016,L
+							1924423250,-50.061729431152344,L
 						Color: 1,0,0
 					}
 					Channel: "Y" {
-						Default: -0.000003735309065
+						Default: -0.000000167774431
 						KeyVer: 4005
 						KeyCount: 1
 						Key: 
-							1924423250,-0.000003735309065,L
+							1924423250,-0.000000167774431,L
 						Color: 0,1,0
 					}
 					Channel: "Z" {
-						Default: -22.927162170410156
+						Default: -1.029792785644531
 						KeyVer: 4005
 						KeyCount: 1
 						Key: 
-							1924423250,-22.927162170410156,L
+							1924423250,-1.029792785644531,L
 						Color: 0,0,1
 					}
 					LayerType: 1
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: 0.000000000000000
-						KeyVer: 4005
-						KeyCount: 1
-						Key: 
-							1924423250,0.000000000000000,L
-						Color: 1,0,0
-					}
-					Channel: "Y" {
 						Default: -0.000000000000000
 						KeyVer: 4005
 						KeyCount: 1
 						Key: 
 							1924423250,-0.000000000000000,L
+						Color: 1,0,0
+					}
+					Channel: "Y" {
+						Default: 89.999961523213827
+						KeyVer: 4005
+						KeyCount: 1
+						Key: 
+							1924423250,89.999961523213827,L
 						Color: 0,1,0
 					}
 					Channel: "Z" {

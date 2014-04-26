@@ -433,12 +433,13 @@ namespace KazgarsRevenge
                 levelModelManager.Draw(gameTime, false);
                 renderManager.Draw(gameTime, false);
 
-                //draw particles
-                particleManager.Draw(gameTime);
-
                 GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
                 //draw billboarded stuff
                 billboards.Draw();
+
+                //draw particles
+                particleManager.Draw(gameTime);
+
 
 
                 //reset graphics device

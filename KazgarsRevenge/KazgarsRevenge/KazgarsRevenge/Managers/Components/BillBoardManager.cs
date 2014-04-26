@@ -130,7 +130,6 @@ namespace KazgarsRevenge
             Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             Game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            PillarBeamEffect.Parameters["CurrentTime"].SetValue(currentTime);
             AdrenalineRushEffect.Parameters["CurrentTime"].SetValue(currentTime);
 
             for (int i = 0; i < components.Count; ++i)

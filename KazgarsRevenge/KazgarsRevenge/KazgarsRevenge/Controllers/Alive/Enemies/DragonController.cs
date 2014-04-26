@@ -36,6 +36,8 @@ namespace KazgarsRevenge
             chargingBoneNames.Add("d_mouth_emittor_R");
             chargingBoneNames.Add("d_mouth_emittor_L");
             rotateTimerLength = 0;
+
+            baseStatsMultiplier = 10;
         }
         
         public override void Update(GameTime gameTime)

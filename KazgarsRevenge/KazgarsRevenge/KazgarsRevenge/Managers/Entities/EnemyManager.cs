@@ -382,7 +382,7 @@ namespace KazgarsRevenge
         public void CreateDragon(Identification id, Vector3 position)
         {
             position.Y = 42;
-            GameEntity dragon = new GameEntity("Chillinator", FactionType.Enemies, EntityType.NormalEnemy);
+            GameEntity dragon = new GameEntity("Dragon", FactionType.Enemies, EntityType.NormalEnemy);
             dragon.id = id;
 
             SetupEntityPhysicsAndShadow(dragon, position, new Vector3(100, 40, 100), 250);

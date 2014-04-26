@@ -1203,14 +1203,16 @@ namespace KazgarsRevenge
             pillar.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\fire_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
-            graphics.SlideAnimateTexture(.1f);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\fire_column"), new Vector3(10), Vector3.Down * 40, 0, 0, 0);
+            graphics.SlideAnimateTexture(.15f);
             graphics.AddEmitter(typeof(FirePillarMistSystem), "firemist", 40, 25, Vector3.Down * 17);
             graphics.AddEmitter(typeof(FirePillarSystem), "fire", 10, 25, Vector3.Down * 25);
+            Vector3 emittOff = (data.Position - physicalData.Position) * .6f;
+            graphics.AddEmitter(typeof(FireDragonPlusSystem), "invul", 10, 25, 5, emittOff);
             pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, false);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, data, false);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 
@@ -1237,12 +1239,14 @@ namespace KazgarsRevenge
             pillar.AddComponent(typeof(PhysicsComponent), physics);
             genComponentManager.AddComponent(physics);
 
-            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\ice_column"), new Vector3(10), Vector3.Down * 20, 0, 0, 0);
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, pillar, GetUnanimatedModel("Models\\Levels\\Props\\ice_column"), new Vector3(10), Vector3.Down * 40, 0, 0, 0);
+            graphics.AddEmitter(typeof(FrostAOEMistSystem), "mist", 40, 25, Vector3.Down * 17);
+            Vector3 emittOff = (data.Position - physicalData.Position) * .6f;
+            graphics.AddEmitter(typeof(FrostDragonPlusSystem), "invul", 10, 25, 5, emittOff);
             pillar.AddComponent(typeof(UnanimatedModelComponent), graphics);
             modelManager.AddComponent(graphics);
-            graphics.AddEmitter(typeof(FrostAOEMistSystem), "mist", 40, 25, Vector3.Down * 17);
 
-            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, dragon.Entity.GetSharedData(typeof(Entity)) as Entity, true);
+            PillarBeamBillboard beam = new PillarBeamBillboard(mainGame, pillar, data, true);
             pillar.AddComponent(typeof(PillarBeamBillboard), beam);
             billboardManager.AddComponent(beam);
 
@@ -1369,16 +1373,16 @@ namespace KazgarsRevenge
         // Returns the image name of the chunk the player is currently in
         public string GetCurrentChunkImgName(Vector3 location)
         {
-            int xCoord = Math.Min(2, (int)location.X / (CHUNK_SIZE * BLOCK_SIZE));
-            int yCoord = Math.Min(2, (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE));
+            int xCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(0), (int)location.X / (CHUNK_SIZE * BLOCK_SIZE));
+            int yCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(1), (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE));
             return @"Textures\UI\MegaMap\" + currentLevel.chunkInfos[xCoord, yCoord].ChunkName;
         }
 
         // Gets rotation of the chunk the player is currently in
         public Rotation GetCurrentChunkRotation(Vector3 location)
         {
-            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
-            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+            int xCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(0), (int)location.X / (CHUNK_SIZE * BLOCK_SIZE));
+            int yCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(1), (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE));
             return currentLevel.chunkInfos[xCoord, yCoord].rotation;
         }
     }

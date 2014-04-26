@@ -269,6 +269,8 @@
     <Compile Include="Particles\Base Classes\ParticleSystem.cs" />
     <Compile Include="Particles\Base Classes\ParticleVertex.cs" />
     <Compile Include="Particles\Systems\Debuffs\FireAOESystem.cs" />
+    <Compile Include="Particles\Systems\Entities\FrostDragonPlusSystem.cs" />
+    <Compile Include="Particles\Systems\Entities\FireDragonPlusSystem.cs" />
     <Compile Include="Particles\Systems\Entities\GopherGlowSystem.cs" />
     <Compile Include="Particles\Systems\Entities\FirePillarMistSystem.cs" />
     <Compile Include="Particles\Systems\Debuffs\FrostAOEMistSystem.cs" />
