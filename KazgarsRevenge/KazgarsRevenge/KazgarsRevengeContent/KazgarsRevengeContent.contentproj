@@ -2072,17 +2072,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <Compile Include="Textures\UI\Frames\shopgui.png">
       <Name>shopgui</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-=======
+    </Compile>
     <Compile Include="VerdanaLarge.spritefont">
       <Name>VerdanaLarge</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
->>>>>>> efcbf0c8d895c66ea9b066ec03da06104f0e82b8
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
