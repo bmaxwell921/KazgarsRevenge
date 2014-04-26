@@ -292,8 +292,9 @@ namespace KazgarsRevenge
             return dt;
         }
 
-        public List<Item> GetShopItems(FloorName floor)
+        public List<Item> GetShopItems()
         {
+            FloorName floor = levelManager.currentLevel.currentFloor;
             List<Item> retItems = new List<Item>();
 
             Weapon sword = GetItem(3002) as Weapon;
