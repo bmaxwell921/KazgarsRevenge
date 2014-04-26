@@ -63,7 +63,7 @@
       <Name>k_idle1</Name>
       <Importer>FbxImporter</Importer>
       <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_walk.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3bModels\\Player\\k_whirlwind.fbx%3bModels\\Player\\k_spin.fbx%3bModels\\Player\\k_headbutt.fbx%3bModels\\Player\\k_thrust_l.fbx%3bModels\\Player\\k_thrust_r.fbx%3bModels\\Player\\k_charge.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_MergeAnimations>Models\\Player\\k_idle2.fbx%3bModels\\Player\\k_idle3.fbx%3bModels\\Player\\k_idle4.fbx%3bModels\\Player\\k_idle5.fbx%3bModels\\Player\\k_walk.fbx%3bModels\\Player\\k_from_fighting_stance.fbx%3bModels\\Player\\k_flip.fbx%3bModels\\Player\\k_fighting_stance.fbx%3bModels\\Player\\k_buff.fbx%3bModels\\Player\\k_loot_spin.fbx%3bModels\\Player\\k_loot.fbx%3bModels\\Player\\k_loot_smash.fbx%3bModels\\Player\\k_tumble.fbx%3bModels\\Player\\k_magic_l.fbx%3bModels\\Player\\k_magic_r.fbx%3bModels\\Player\\k_shoot_l.fbx%3bModels\\Player\\k_shoot_r.fbx%3bModels\\Player\\k_shoot_twohand.fbx%3bModels\\Player\\k_swing_l.fbx%3bModels\\Player\\k_swing_r.fbx%3bModels\\Player\\k_magic_twohand.fbx%3bModels\\Player\\k_punch.fbx%3bModels\\Player\\k_swing_twohand.fbx%3bModels\\Player\\k_death.fbx%3bModels\\Player\\k_throw.fbx%3bModels\\Player\\k_whirlwind.fbx%3bModels\\Player\\k_spin.fbx%3bModels\\Player\\k_headbutt.fbx%3bModels\\Player\\k_thrust_l.fbx%3bModels\\Player\\k_thrust_r.fbx%3bModels\\Player\\k_charge.fbx%3bModels\\Player\\k_kick.fbx%3b</ProcessorParameters_MergeAnimations>
       <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
     </Compile>
     <Compile Include="Models\spikes.fbx">
@@ -1999,6 +1999,50 @@
       <Name>talentBackHammer</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Misc\crunchsplat.mp3">
+      <Name>crunchsplat</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Chest\chest_idle.fbx">
+      <Name>chest_idle</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Chest\\chest_open.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Enemies\Mimic\chest_idle.fbx">
+      <Name>chest_idle</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_MergeAnimations>Models\\Enemies\\Mimic\\chest_bite.fbx%3bModels\\Enemies\\Mimic\\chest_open.fbx%3bModels\\Enemies\\Mimic\\chest_walk.fbx%3b</ProcessorParameters_MergeAnimations>
+      <ProcessorParameters_RotationY>-90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Misc\g_extra.wav">
+      <Name>g_extra</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sound\Misc\g_spin.wav">
+      <Name>g_spin</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sound\Misc\g_pick_up.mp3">
+      <Name>g_pick_up</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

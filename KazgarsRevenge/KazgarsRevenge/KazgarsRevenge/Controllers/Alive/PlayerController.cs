@@ -1169,6 +1169,7 @@ namespace KazgarsRevenge
         }
         Vector3 lastPortedPosition = new Vector3(-10000, 0, 0);
         Vector3 unsetPortPosition = new Vector3(-10000, 0, 0);
+        const float teleDur = 1200;
         private List<Action> PortalPotionActions()
         {
             List<Action> sequence = new List<Action>();
@@ -1177,13 +1178,47 @@ namespace KazgarsRevenge
             {
                 if (RemoveOneFromInventory(6))
                 {
-                    physicalData.Position = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
-                    camera.RefreshLights();
+                    attacks.CreateTeleSphere(physicalData.Position, teleDur);
+                    millisActionLength = teleDur * 3 / 4;
+                    attState = AttackState.Locked;
+                    canInterrupt = false;
+                    needInterruptAction = true;
                 }
                 else
                 {
                     (Game as MainGame).AddAlert("No portal potions left!");
+                    actionIndex = 1000;
                 }
+            });
+
+            sequence.Add(() =>
+            {
+                modelParams.visible = false;
+                millisActionLength = teleDur / 4;
+            });
+
+            sequence.Add(() =>
+            {
+                physicalData.Position = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetPlayerSpawnLocation();
+                camera.RefreshLights();
+                attacks.CreateTeleSphere(physicalData.Position, teleDur);
+                millisActionLength = teleDur * 3 / 4;
+            });
+
+            sequence.Add(() =>
+            {
+                modelParams.visible = true;
+                millisActionLength = teleDur / 4;
+            });
+
+            sequence.Add(abilityFinishedAction);
+
+
+            //this shouldn't happen, but just in case
+            interruptActions.Add("portalpot", () =>
+            {
+                modelParams.visible = true;
+                attState = AttackState.None;
             });
 
             return sequence;
@@ -1801,6 +1836,11 @@ namespace KazgarsRevenge
         double spinCreateMillis = 100;
         private List<Action> CleaveActions()
         {
+            /*
+                model.AddEmitter(typeof(FrostSwipeSystem), "cleavetrail", 100, 0, Vector3.Zero, GearSlotToBoneName(GearSlot.Righthand));
+                model.SetEmitterUp("cleavetrail", -3);
+                model.AddParticleTimer("cleavetrail", millisActionLength);
+             * */
             List<Action> sequence = new List<Action>();
             sequence.Add(() =>
             {
@@ -1809,7 +1849,7 @@ namespace KazgarsRevenge
                 millisActionLength = spinCreateMillis;
 
                 model.AddEmitter(typeof(FireSwipeSystem), "cleavetrail", 150, 0, Vector3.Zero, GearSlotToBoneName(GearSlot.Righthand));
-                model.SetEmitterUp("cleavetrail", -4);
+                model.SetEmitterUp("cleavetrail", -3);
                 model.AddParticleTimer("cleavetrail", animations.GetAniMillis("k_spin"));
             });
             sequence.Add(() =>

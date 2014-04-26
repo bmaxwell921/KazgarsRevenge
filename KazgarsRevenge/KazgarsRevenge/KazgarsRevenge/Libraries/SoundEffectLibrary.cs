@@ -31,10 +31,22 @@ namespace KazgarsRevenge
         GameState prevState = GameState.Playing;
         public override void Update(GameTime gameTime)
         {
+            double elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
             GameState state = (Game as MainGame).gameState;
             if (state != prevState)
             { 
                 //HandleStateChange(state);
+            }
+
+            if (nextScream != -10000)
+            {
+                nextScream -= elapsed;
+                if (nextScream <= 0)
+                {
+                    gopherScream.Stop();
+                    gopherScream.Play();
+                    nextScream = screamLength + rand.Next(1000, 3000);
+                }
             }
 
             prevState = state;
@@ -57,6 +69,7 @@ namespace KazgarsRevenge
             songs.Add("menu", game.Content.Load<Song>("Sound\\Music\\menuSong"));
         }
 
+        double screamLength;
         public void loadSoundEffects(MainGame game)
         {
             for (int i = 0; i < numBowSounds; i++)
@@ -79,6 +92,11 @@ namespace KazgarsRevenge
 
             soundEffects.Add("unlockDoors", game.Content.Load<SoundEffect>("Sound\\keyUnlock"));
             soundEffects.Add("levelup", game.Content.Load<SoundEffect>("Sound\\level_up"));
+            soundEffects.Add("gopher_death", game.Content.Load<SoundEffect>("Sound\\Misc\\crunchsplat"));
+            soundEffects.Add("gopher_pickup", game.Content.Load<SoundEffect>("Sound\\Misc\\g_pick_up"));
+            soundEffects.Add("gopher_spin", game.Content.Load<SoundEffect>("Sound\\Misc\\g_spin"));
+            soundEffects.Add("gopher_smash", game.Content.Load<SoundEffect>("Sound\\Misc\\g_extra"));
+            screamLength = soundEffects["gopher_spin"].Duration.TotalMilliseconds;
         }
 
         public void PlaySound(string s)
@@ -156,12 +174,51 @@ namespace KazgarsRevenge
                 soundEffects[key].Play();
             }
         }
+
         #endregion
 
         #region Level Scripts
         public void playUnlockSound()
         {
             soundEffects["unlockDoors"].Play();
+        }
+        #endregion
+
+
+        #region misc
+        public void playGopherPickUp()
+        {
+            soundEffects["gopher_pickup"].Play();
+        }
+
+        SoundEffectInstance gopherScream;
+        double nextScream = -10000;
+        public void startGopherSpin()
+        {
+            if (nextScream == -10000)
+            {
+                if (gopherScream == null)
+                {
+                    gopherScream = soundEffects["gopher_spin"].CreateInstance();
+                }
+                gopherScream.Stop();
+                gopherScream.Play();
+
+                nextScream = screamLength + rand.Next(1000, 5000);
+            }
+        }
+        public void endGopherSpin(bool dead)
+        {
+            nextScream = -10000;
+            gopherScream.Stop();
+            if (dead)
+            {
+                soundEffects["gopher_death"].Play();
+            }
+            else
+            {
+                soundEffects["gopher_smash"].Play();
+            }
         }
         #endregion
     }

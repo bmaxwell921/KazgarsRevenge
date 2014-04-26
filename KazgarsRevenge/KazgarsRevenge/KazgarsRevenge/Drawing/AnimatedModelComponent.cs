@@ -21,12 +21,14 @@ namespace KazgarsRevenge
         public float lineIntensity;
         public Color lineColor;
         public Vector3 size;
+        public bool visible;
         public SharedGraphicsParams()
         {
             alpha = 1f;
             lineIntensity = 1f;
             size = new Vector3(1);
             lineColor = Color.Black;
+            visible = true;
         }
     }
 
@@ -199,7 +201,7 @@ namespace KazgarsRevenge
         private int lastLightUpdate = 0;
         public override void Draw(GameTime gameTime, CameraComponent camera, bool edgeDetection)
         {
-            if (InsideCameraBox(camera.CameraBox))
+            if (InsideCameraBox(camera.CameraBox) && modelParams.visible)
             {
                 Matrix[] bones = animationPlayer.GetSkinTransforms();
 

@@ -982,6 +982,29 @@ namespace KazgarsRevenge
         #endregion
 
         #region Misc
+        public void CreateTeleSphere(Vector3 position, double duration)
+        {
+            position.Y = 0;
+            GameEntity entity = new GameEntity("", FactionType.Neutral, EntityType.None);
+
+            Entity box = new Box(position, 1, 1, 1);
+            entity.AddSharedData(typeof(Entity), box);
+
+            UnanimatedModelComponent graphics = new UnanimatedModelComponent(mainGame, entity, GetUnanimatedModel("Models\\sphere"), new Vector3(0), Vector3.Zero, 0, 0, 0);
+            graphics.TurnOffOutline();
+            graphics.AddColorTint(Color.Purple);
+            entity.AddComponent(typeof(UnanimatedModelComponent), graphics);
+            modelManager.AddComponent(graphics);
+
+            TeleSphereController controller = new TeleSphereController(mainGame, entity, duration);
+            entity.AddComponent(typeof(TeleSphereController), controller);
+            genComponentManager.AddComponent(controller);
+
+            attacks.Add(entity);
+
+            SpawnIceBlockPoof(position);
+        }
+
         public void CreateIceBlock(Vector3 position, double duration)
         {
             position.Y = 0;

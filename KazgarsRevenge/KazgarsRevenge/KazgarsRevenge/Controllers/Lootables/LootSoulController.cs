@@ -283,7 +283,7 @@ namespace KazgarsRevenge
                     //if we hit another soul, merge with it
                     if (hitEntity.Name == "loot")
                     {
-                        LootSoulController otherSoul = hitEntity.GetComponent(typeof(AIComponent)) as LootSoulController;
+                        LootSoulController otherSoul = hitEntity.GetComponent(typeof(LootableController)) as LootSoulController;
                         if (otherSoul != null && otherSoul.soulState != LootSoulState.Dying && otherSoul.soulState != LootSoulState.BeingLooted)
                         {
                             List<Item> toAdd = otherSoul.Unite();

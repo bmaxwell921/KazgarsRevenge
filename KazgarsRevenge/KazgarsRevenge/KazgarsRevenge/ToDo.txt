@@ -15,6 +15,15 @@ buff particles
 			-blue/epic
 
 
+current
+========
+mimic / charge ai
+chest model
+heebes/jeebes
+tutorial popups
+gopher sounds
+
+
 
 Abilities
 ===========

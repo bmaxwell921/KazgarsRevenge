@@ -153,6 +153,7 @@
     <Compile Include="Controllers\Lootables\LootSoulController.cs" />
     <Compile Include="Controllers\Alive\NetworkPlayerController.cs" />
     <Compile Include="Controllers\Lootables\TreasureGopherController.cs" />
+    <Compile Include="Controllers\Objects\TeleSphereController.cs" />
     <Compile Include="Controllers\Objects\KeyController.cs" />
     <Compile Include="Controllers\Objects\PillarController.cs" />
     <Compile Include="Controllers\Objects\SoulevatorController.cs" />

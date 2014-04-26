@@ -28,14 +28,15 @@ namespace KazgarsRevenge
         }
 
         string currentAni = "";
-        private void PlayAnimation(string aniName, MixType type)
+        private void PlayAnimation(string aniName, MixType type, float rate)
         {
             currentAni = aniName;
-            animations.StartClip(aniName, type);
+            animations.StartClip(aniName, type, rate);
         }
 
         LevelManager levels;
         AttackManager attacks;
+        SoundEffectLibrary sounds;
 
         AnimationPlayer animations;
         GopherState state = GopherState.Idle;
@@ -44,20 +45,21 @@ namespace KazgarsRevenge
         {
             animations = entity.GetSharedData(typeof(AnimationPlayer)) as AnimationPlayer;
             this.camera = game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
-            PlayAnimation("g_idle", MixType.None);
+            PlayAnimation("g_idle", MixType.None, 1);
 
 
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
 
             levels = Game.Services.GetService(typeof(LevelManager)) as LevelManager;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
+            sounds = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
         }
 
         float senseRadius = 325f;
         double timerCounter;
         CameraComponent camera;
         Entity avoidData = null;
-        float runSpeed = 145;
+        float runSpeed = 50;
         
         public override void Update(GameTime gameTime)
         {
@@ -67,15 +69,19 @@ namespace KazgarsRevenge
                 case GopherState.Idle:
                     if (InsideCameraBox(camera.CameraBox))
                     {
+                        if (physicalData.Position.Y > 5)
+                        {
+                            physicalData.Position = new Vector3(physicalData.Position.X, 4, physicalData.Position.Z);
+                        }
                         if (currentAni != "g_idle")
                         {
-                            PlayAnimation("g_idle", MixType.None);
+                            PlayAnimation("g_idle", MixType.None, 1);
                         }
                         GameEntity possPlayer = QueryNearEntityName("localplayer", physicalData.Position, 0, senseRadius);
                         if (possPlayer != null)
                         {
                             avoidData = possPlayer.GetSharedData(typeof(Entity)) as Entity;
-                            PlayAnimation("g_surprise", MixType.PauseAtEnd);
+                            PlayAnimation("g_surprise", MixType.PauseAtEnd, 1);
                             state = GopherState.Surprised;
                             timerCounter = animations.GetAniMillis(currentAni);
                         }
@@ -104,7 +110,7 @@ namespace KazgarsRevenge
 
                     if (currentAni != "g_run")
                     {
-                        PlayAnimation("g_run", MixType.None);
+                        PlayAnimation("g_run", MixType.None, 1);
                     }
 
                     Vector3 diff = physicalData.Position - avoidData.Position;
@@ -164,12 +170,16 @@ namespace KazgarsRevenge
                         {
                             if (loot.Count == 0)
                             {
+                                Vector3 smashedPos = GetBoneTranslation(1);
+                                attacks.SpawnHitBlood(smashedPos);
+                                sounds.endGopherSpin(true);
                                 Entity.KillEntity();
                             }
                             else
                             {
                                 Vector3 smashedPos = GetBoneTranslation(1);
-                                physicalData.Position = new Vector3(smashedPos.X, 8, smashedPos.Z);
+                                physicalData.Position = new Vector3(smashedPos.X, 4, smashedPos.Z);
+                                PlayAnimation("g_run", MixType.None, 1);
                                 state = GopherState.Avoiding;
                             }
                         }
@@ -181,23 +191,31 @@ namespace KazgarsRevenge
 
         public override void OpenLoot(Vector3 position, Quaternion q)
         {
+            spun = 0;
+            sounds.playGopherPickUp();
             physicalData.Position = position;
             physicalData.Orientation = q;
             state = GopherState.BeingLooted;
-            PlayAnimation("g_loot", MixType.PauseAtEnd);
-            timerCounter = animations.GetAniMillis(currentAni);
+            PlayAnimation("g_loot", MixType.PauseAtEnd, 1.217f);
             physicalData.LinearVelocity = Vector3.Zero;
         }
 
+        int spun = 0;
         public override void StartSpin()
         {
-            PlayAnimation("g_loot_spin", MixType.PauseAtEnd);
+            ++spun;
+            if (spun == 2)
+            {
+                sounds.startGopherSpin();
+            }
+            PlayAnimation("g_loot_spin", MixType.PauseAtEnd, 1.217f);
         }
 
         public override void CloseLoot()
         {
-            PlayAnimation("g_loot_smash", MixType.MixInto);
-            timerCounter = animations.GetAniMillis(currentAni) - 30;
+            PlayAnimation("g_loot_smash", MixType.MixInto, 1.217f);
+            timerCounter = animations.GetAniMillis(currentAni) * .75f - 17;
+            sounds.endGopherSpin(false);
         }
 
         public override bool CanLoot()
@@ -215,7 +233,7 @@ namespace KazgarsRevenge
                     if (ent.Name == "room")
                     {
                         state = GopherState.DiggingDown;
-                        PlayAnimation("g_dig", MixType.None);
+                        PlayAnimation("g_dig", MixType.None, 1);
                         timerCounter = 1000;
                     }
                 }
