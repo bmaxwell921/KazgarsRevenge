@@ -98,7 +98,7 @@ namespace KazgarsRevenge
             SetUpLoggers();
 
 
-            bool fullscreen = false;
+            bool fullscreen = true;
 
             if (fullscreen)
             {
