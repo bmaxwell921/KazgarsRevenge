@@ -189,6 +189,8 @@ namespace KazgarsRevenge
                 public static readonly string talentFrame = @"Textures\UI\Frames\talentFrame";
                 public static readonly string talentBackHammer = @"Textures\UI\Frames\talentBackHammer";
                 public static readonly string talentBackBow = @"Textures\UI\Frames\talentBackBow";
+                public static readonly string smallArrowDown = @"Textures\UI\Frames\smallArrowDown";
+                public static readonly string smallArrowUp = @"Textures\UI\Frames\smallArrowUp";
             }
 
             public class Buffs

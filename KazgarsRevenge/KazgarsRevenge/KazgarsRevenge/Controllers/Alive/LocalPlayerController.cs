@@ -62,6 +62,8 @@ namespace KazgarsRevenge
             talentFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.talentFrame);
             talentBackHammer = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.talentBackHammer);
             talentBackBow = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.talentBackBow);
+            smallArrowUp = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.smallArrowUp);
+            smallArrowDown = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.smallArrowDown);
             #endregion
 
             #region Ability Image Load
@@ -178,6 +180,9 @@ namespace KazgarsRevenge
         Texture2D talentFrame;
         Texture2D talentBackHammer;
         Texture2D talentBackBow;
+
+        Texture2D smallArrowDown;
+        Texture2D smallArrowUp;
 
         //Equipment Base
         Texture2D helmetIcon;
@@ -1468,8 +1473,15 @@ namespace KazgarsRevenge
                         #endregion
                         #region loot
                         case "loot":
-                            if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
-                            if (innerCollides == null || !looting) break;
+                            if (selectedEquipSlot)
+                            {
+                                selectedEquipSlot = !selectedEquipSlot;
+                            }
+
+                            if (innerCollides == null || !looting)
+                            {
+                                break;
+                            }
                             //Loot All
                             else if (innerCollides.Equals("lootAll"))
                             {
@@ -1927,6 +1939,7 @@ namespace KazgarsRevenge
             #endregion
         }
 
+        Tooltip lootAllTooltip = new Tooltip(new List<TooltipLine> { new TooltipLine(Color.White, "Loot All", .8f) });
         private void CheckMouseHover(string outerCollides, string innerCollides)
         {   //Holding an item.  Set hover over slot to equip
             if (showEquipment && selectedItemSlot != -1)
@@ -1976,12 +1989,20 @@ namespace KazgarsRevenge
                 #endregion
                 #region loot
                 case "loot":
-                    if (selectedEquipSlot) selectedEquipSlot = !selectedEquipSlot;
-                    if (innerCollides == null || !looting) break;
-                    //Loot All
-                    else if (innerCollides.Equals("lootAll"))
+                    if (selectedEquipSlot)
                     {
-                        //TODO Loot All Tooltip
+                        selectedEquipSlot = !selectedEquipSlot;
+                    }
+
+                    if (innerCollides == null || !looting)
+                    {
+                        break;
+                    }
+                    else if (innerCollides.Equals("lootAll"))//Loot All
+                    {
+                        currentTooltip = lootAllTooltip;
+                        hovering = true;
+                        hoverRect = guiInsideRects[outerCollides][innerCollides];
                     }
                     else
                     {//Normal Loot
@@ -1989,10 +2010,15 @@ namespace KazgarsRevenge
                         {
                             if (innerCollides.Equals("loot" + i) && lootingSoul.GetLoot(i) != null)
                             {
+                                hovering = true;
                                 currentTooltip = lootingSoul.GetLoot(i).Tooltip;
                                 hoverRect = guiInsideRects["loot"]["loot" + i];
+                                return;
                             }
                         }
+                        hovering = true;
+                        hoverRect = guiInsideRects[outerCollides][innerCollides];
+
                     }
                     break;
                 #endregion
@@ -2493,9 +2519,9 @@ namespace KazgarsRevenge
                 lootDict.Add("loot" + i, new Rectangle((int)(lootUL.X + 15 * average), (int)(lootUL.Y + 15 * average + i * 65 * average), (int)(50 * average), (int)(50 * average)));
             }
             //up arrow
-            lootDict.Add("upArrow", new Rectangle((int)(lootUL.X + 120 * average), (int)(lootUL.Y + 240 * average), (int)(25 * average), (int)(25 * average)));
+            lootDict.Add("upArrow", new Rectangle((int)(lootUL.X + 90 * average), (int)(lootUL.Y + 260 * average), (int)(25 * average), (int)(25 * average)));
             //down arrow
-            lootDict.Add("downArrow", new Rectangle((int)(lootUL.X + 120 * average), (int)(lootUL.Y + 270 * average), (int)(25 * average), (int)(25 * average)));
+            lootDict.Add("downArrow", new Rectangle((int)(lootUL.X + 120 * average), (int)(lootUL.Y + 260 * average), (int)(25 * average), (int)(25 * average)));
             //loot all button
             lootDict.Add("lootAll", new Rectangle((int)(lootUL.X + 105 * average), (int)(lootUL.Y + 5 * average), (int)(40 * average), (int)(40 * average)));
 
@@ -2816,20 +2842,12 @@ namespace KazgarsRevenge
                 }
                 if (lootingSoul.Loot.Count() > NUM_LOOT_SHOWN + NUM_LOOT_SHOWN * lootScroll)
                 {
-                    s.Draw(talentArrowDown, guiInsideRects["loot"]["downArrow"], Color.White);
-                }
-                else
-                {
-                    s.Draw(texPlaceHolder, guiInsideRects["loot"]["downArrow"], Color.Black * .5f);
+                    s.Draw(smallArrowDown, guiInsideRects["loot"]["downArrow"], Color.White);
                 }
                 if (lootScroll > 0)
                 {
 
-                    s.Draw(talentArrowUp, guiInsideRects["loot"]["upArrow"], Color.White);
-                }
-                else
-                {
-                    s.Draw(texPlaceHolder, guiInsideRects["loot"]["upArrow"], Color.Black * .5f);
+                    s.Draw(smallArrowUp, guiInsideRects["loot"]["upArrow"], Color.White);
                 }
 
                 s.Draw(texPlaceHolder, guiInsideRects["loot"]["lootAll"], Color.White);
