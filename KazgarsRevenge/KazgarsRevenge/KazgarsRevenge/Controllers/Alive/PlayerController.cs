@@ -52,6 +52,7 @@ namespace KazgarsRevenge
         protected CameraComponent camera;
         protected SoundEffectLibrary soundEffects;
         protected LootManager lewtz;
+        protected LevelManager levels;
         protected NetworkMessageManager nmm;
 
         //data
@@ -518,6 +519,7 @@ namespace KazgarsRevenge
             camera = Game.Services.GetService(typeof(CameraComponent)) as CameraComponent;
             soundEffects = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
             lewtz = Game.Services.GetService(typeof(LootManager)) as LootManager;
+            levels = Game.Services.GetService(typeof(LevelManager)) as LevelManager;
             nmm = Game.Services.GetService(typeof(NetworkMessageManager)) as NetworkMessageManager;
             //shared data
             this.attached = Entity.GetSharedData(typeof(Dictionary<string, AttachableModel>)) as Dictionary<string, AttachableModel>;

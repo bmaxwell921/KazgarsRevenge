@@ -709,22 +709,22 @@ namespace KazgarsRevenge
 
             if (curKeys.IsKeyDown(Keys.OemPlus))
             {
-                zoom -= 30;
+                zoom -= 25;
             }
 
             if (curKeys.IsKeyDown(Keys.OemMinus))
             {
-                zoom += 30;
+                zoom += 25;
             }
 
-            if (zoom < 100)
+            if (zoom < 400)
             {
-                zoom = 100;
+                zoom = 400;
             }
 
-            if (zoom > 1200)
+            if (zoom > 800)
             {
-                zoom = 1200;
+                zoom = 800;
             }
 
             //Esc closes all
@@ -3059,7 +3059,7 @@ namespace KazgarsRevenge
             #endregion mouse
         }
 
-        private int zoom = 300;
+        private int zoom = 800;
         private void DrawMiniMap(SpriteBatch s)
         {
             /*
@@ -3103,6 +3103,7 @@ namespace KazgarsRevenge
             s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.WHITE_PIX), playerRec, Color.Blue);
         }
 
+        
         private void DrawMegaMap(SpriteBatch s)
         {
             float alpha = .5f;
@@ -3110,21 +3111,34 @@ namespace KazgarsRevenge
             {
                 alpha = .9f;
             }*/
-            string currentChunk = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkImgName(physicalData.Position);
-            Rectangle chunkRect = guiInsideRects["megaMap"]["megaMap"];
+            float actualChunkSize = LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE;
+            Rectangle MegaMapRect = guiInsideRects["megaMap"]["megaMap"];
+            int xChunks = levels.GetNumChunks(0) + 1;
+            int yChunks = levels.GetNumChunks(1) + 1;
 
-            Rotation rotation = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).GetCurrentChunkRotation(physicalData.Position);
+            int tileSizeX = megaMapRect.Width / xChunks;
+            int tileSizeY = megaMapRect.Height / yChunks;
+            for (int i = 0; i < xChunks; ++i)
+            {
+                for (int j = 0; j < yChunks; ++j)
+                {
+                    string currentChunk = levels.GetChunkName(i, j);
+                    Rotation rotation = levels.GetChunkRotation(i, j);
 
-            // We need to rotate the image about its center
-            int originX = Texture2DUtil.Instance.GetTexture(currentChunk).Width / 2;
-            int originY = Texture2DUtil.Instance.GetTexture(currentChunk).Height / 2;
-            s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), new Rectangle(chunkRect.X + chunkRect.Width/ 2, chunkRect.Y + chunkRect.Height/2, chunkRect.Width, chunkRect.Height), 
-                null, Color.White * alpha, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
+                    // We need to rotate the image about its center
+                    int originX = Texture2DUtil.Instance.GetTexture(currentChunk).Width / 2;
+                    int originY = Texture2DUtil.Instance.GetTexture(currentChunk).Height / 2;
+
+                    Rectangle curChunkRect = new Rectangle(megaMapRect.X + tileSizeX * i, megaMapRect.Y + tileSizeY * j, tileSizeX, tileSizeY);
+                    s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), new Rectangle(curChunkRect.X + curChunkRect.Width / 2, curChunkRect.Y + curChunkRect.Height / 2, curChunkRect.Width, curChunkRect.Height),
+                        null, Color.White * alpha, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
+                }
+            }
 
             // Scale the player location to the map
             Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];
-            playerRect.X = (int) ((physicalData.Position.X % (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE)) / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE) * chunkRect.Width * average) + chunkRect.X;
-            playerRect.Y = (int) ((physicalData.Position.Z % (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE)) / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE) * chunkRect.Height * average) + chunkRect.Y;
+            playerRect.X = (int)((physicalData.Position.X % (actualChunkSize * xChunks)) / (actualChunkSize * xChunks) * MegaMapRect.Width * average) + MegaMapRect.X;
+            playerRect.Y = (int)((physicalData.Position.Z % (actualChunkSize * yChunks)) / (actualChunkSize * yChunks) * MegaMapRect.Height * average) + MegaMapRect.Y;
             
             // Center playerRect
             playerRect.X -= playerRect.Width / 2;

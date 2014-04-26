@@ -1370,6 +1370,11 @@ namespace KazgarsRevenge
             return xCoord + yCoord * currentLevel.width;
         }
 
+        public int GetNumChunks(int dimension)
+        {
+            return currentLevel.chunkInfos.GetUpperBound(dimension);
+        }
+
         // Returns the image name of the chunk the player is currently in
         public string GetCurrentChunkImgName(Vector3 location)
         {
@@ -1384,6 +1389,17 @@ namespace KazgarsRevenge
             int xCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(0), (int)location.X / (CHUNK_SIZE * BLOCK_SIZE));
             int yCoord = Math.Min(currentLevel.chunkInfos.GetUpperBound(1), (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE));
             return currentLevel.chunkInfos[xCoord, yCoord].rotation;
+        }
+
+
+        public string GetChunkName(int x, int y)
+        {
+            return @"Textures\UI\MegaMap\" + currentLevel.chunkInfos[x, y].ChunkName;
+        }
+
+        public Rotation GetChunkRotation(int x, int y)
+        {
+            return currentLevel.chunkInfos[x, y].rotation;
         }
     }
 }
