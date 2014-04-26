@@ -1944,7 +1944,7 @@ namespace KazgarsRevenge
                                         {
                                             if (gold >= shopStock[i].GoldCost)    //if you have the gold to buy it
                                             {
-                                                if (AddToInventory(shopStock[i]))  //if add to inventory works
+                                                if (AddToInventory((Item)shopStock[i].Clone()))  //if add to inventory works
                                                 {
                                                     gold -= shopStock[i].GoldCost;
                                                 }
@@ -2054,8 +2054,6 @@ namespace KazgarsRevenge
                             hovering = true;
                             hoverRect = guiInsideRects["loot"]["upArrow"];
                         }
-                        hovering = true;
-                        hoverRect = guiInsideRects[outerCollides][innerCollides];
 
                     }
                     break;
