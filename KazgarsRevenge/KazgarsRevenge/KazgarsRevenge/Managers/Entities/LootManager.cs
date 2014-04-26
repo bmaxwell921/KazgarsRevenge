@@ -1128,7 +1128,7 @@ namespace KazgarsRevenge
             id = 3202;
             AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.GENERIC_STAFF),
                 "Wizard Staff",
-                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetUnanimatedModel(weaponDir + "staff"),
                 AttackType.Magic,
                 true,
@@ -1136,7 +1136,7 @@ namespace KazgarsRevenge
             id = 3203;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_HEAD_SMART),
                 "Wizard Helm",
-                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_head_cardinal"),
                 GearSlot.Head,
                 GearSlot.None,
@@ -1144,7 +1144,7 @@ namespace KazgarsRevenge
             id = 3204;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_CHEST_SMART),
                 "Wizard Vest",
-                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_chest_cardinal"),
                 GearSlot.Chest,
                 GearSlot.None,
@@ -1152,7 +1152,7 @@ namespace KazgarsRevenge
             id = 3205;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_LEGS_SMART),
                 "Wizard Kilt",
-                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_legs_cardinal"),
                 GearSlot.Legs,
                 GearSlot.None,
@@ -1160,7 +1160,7 @@ namespace KazgarsRevenge
             id = 3206;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_FEET_SMART),
                 "Wizard Boots",
-                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_boots_cardinal"),
                 GearSlot.Feet,
                 GearSlot.None,
@@ -1168,7 +1168,7 @@ namespace KazgarsRevenge
             id = 3207;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_SHOULDERS_SMART),
                 "Wizard Shoulders",
-                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_shoulders_cardinal"),
                 GearSlot.Shoulders,
                 GearSlot.None,
@@ -1176,7 +1176,7 @@ namespace KazgarsRevenge
             id = 3208;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_WRIST_SMART),
                 "Wizard Bracers",
-                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_wrist_cardinal"),
                 GearSlot.Wrist,
                 GearSlot.None,
@@ -1184,7 +1184,7 @@ namespace KazgarsRevenge
             id = 3209;
             AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_BLING),
                 "Wizard Ring",
-                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 null,
                 GearSlot.Bling,
                 GearSlot.None,

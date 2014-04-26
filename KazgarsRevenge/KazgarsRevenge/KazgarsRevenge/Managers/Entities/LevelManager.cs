@@ -591,6 +591,11 @@ namespace KazgarsRevenge
                         (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(v, chunkTransform));
                     }
                 }
+
+                if (currentLevel.currentFloor != FloorName.Ground)
+                {
+                    (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(Vector3.Zero, chunkTransform));
+                }
             }
         }
 

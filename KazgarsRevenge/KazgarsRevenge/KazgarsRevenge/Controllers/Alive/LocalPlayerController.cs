@@ -2039,9 +2039,13 @@ namespace KazgarsRevenge
                         {
                             if (innerCollides.Equals("loot" + i) && lootingSoul.GetLoot(i) != null)
                             {
-                                hovering = true;
-                                currentTooltip = lootingSoul.GetLoot(i).Tooltip;
-                                hoverRect = guiInsideRects["loot"]["loot" + i];
+                                Item possLoot = lootingSoul.GetLoot(i + NUM_LOOT_SHOWN * lootScroll);
+                                if (possLoot != null)
+                                {
+                                    hovering = true;
+                                    currentTooltip = possLoot.Tooltip;
+                                    hoverRect = guiInsideRects["loot"]["loot" + i];
+                                }
                                 return;
                             }
                         }
