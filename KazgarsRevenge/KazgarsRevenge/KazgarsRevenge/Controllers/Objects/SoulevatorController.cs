@@ -16,14 +16,42 @@ namespace KazgarsRevenge
 {
     public class SoulevatorController : Component
     {
+        SharedGraphicsParams modelParams;
         Entity physicalData;
         public SoulevatorController(KazgarsRevengeGame game, GameEntity entity)
             : base(game, entity)
         {
             physicalData = entity.GetSharedData(typeof(Entity)) as Entity;
             physicalData.CollisionInformation.Events.DetectingInitialCollision += HandleCollision;
+
+            modelParams = entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
         }
 
+        float alpha = 1;
+        bool increasing = false;
+        public override void Update(GameTime gameTime)
+        {
+            if (increasing)
+            {
+                alpha += .005f;
+                if (alpha >= .6f)
+                {
+                    increasing = false;
+                }
+            }
+            else
+            {
+                alpha -= .005f;
+                if (alpha <= .2f)
+                {
+                    increasing = true;
+                }
+            }
+
+            modelParams.alpha = alpha;
+
+            base.Update(gameTime);
+        }
 
         protected void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {

@@ -92,13 +92,7 @@ namespace KazgarsRevenge
 
         public void SetAlpha(float alpha)
         {
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (Effect effect in mesh.Effects)
-                {
-                    effect.Parameters["alpha"].SetValue(alpha);
-                }
-            }
+            modelParams.alpha = alpha;
         }
 
         bool animated = false;
@@ -160,6 +154,7 @@ namespace KazgarsRevenge
                         {
                             effect.Parameters["CurrentTime"].SetValue((float)gameTime.TotalGameTime.TotalSeconds);
                         }
+                        effect.Parameters["alpha"].SetValue(modelParams.alpha);
                         effect.Parameters["playerLightPosition"].SetValue(camera.PlayerLightPos);
                         effect.CurrentTechnique = effect.Techniques[edgeDetection ? "NormalDepth" : "Toon"];
                         Matrix world = transforms[mesh.ParentBone.Index]
