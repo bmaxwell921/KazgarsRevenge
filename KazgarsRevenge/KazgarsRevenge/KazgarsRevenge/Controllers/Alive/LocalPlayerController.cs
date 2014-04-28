@@ -2880,7 +2880,7 @@ namespace KazgarsRevenge
                         else
                         {
                             s.Draw(equippableOutline, guiInsideRects["equipment"][((GearSlot)i).ToString()], Equippable.GetQualityColor(e.Quality));
-                            s.Draw(texPlaceHolder, guiInsideRects["equipment"][((GearSlot)i).ToString()], Color.White);
+                            s.Draw(gear[(GearSlot)i].Icon, guiInsideRects["equipment"][((GearSlot)i).ToString()], Color.White);
                         }
                     }
                 }

@@ -465,30 +465,26 @@ namespace KazgarsRevenge
 
             //adding gear for testing
 
-            Equippable g = (Equippable)lewtz.GetItem(3107);
-            g.SetStats(GearQuality.Standard, 2);
+            Equippable g = (Equippable)lewtz.GetItem(3209);
+            g.SetStats(GearQuality.Standard, 1);
+            AddToInventory(g);
+            g = (Equippable)lewtz.GetItem(3203);
+            g.SetStats(GearQuality.Good, 1);
+            AddToInventory(g);
+            g = (Equippable)lewtz.GetItem(3204);
+            g.SetStats(GearQuality.Legendary, 1);
+            AddToInventory(g);
+            g = (Equippable)lewtz.GetItem(3205);
+            g.SetStats(GearQuality.Epic, 1);
+            AddToInventory(g);
+            g = (Equippable)lewtz.GetItem(3206);
+            g.SetStats(GearQuality.Good, 1);
+            AddToInventory(g);
+            g = (Equippable)lewtz.GetItem(3207);
+            g.SetStats(GearQuality.Good, 1);
             AddToInventory(g);
 
 
-            g = (Equippable)lewtz.GetItem(3301);
-            g.SetStats(GearQuality.Epic, 1);
-            AddToInventory(g);
-            g = (Equippable)lewtz.GetItem(3302);
-            g.SetStats(GearQuality.Epic, 1);
-            AddToInventory(g);
-            g = (Equippable)lewtz.GetItem(3303);
-            g.SetStats(GearQuality.Epic, 1);
-            AddToInventory(g);
-            g = (Equippable)lewtz.GetItem(3304);
-            g.SetStats(GearQuality.Epic, 1);
-            AddToInventory(g);
-            g = (Equippable)lewtz.GetItem(3305);
-            g.SetStats(GearQuality.Epic, 1);
-            AddToInventory(g);
-            g = (Equippable)lewtz.GetItem(3306);
-            g.SetStats(GearQuality.Epic, 1);
-            AddToInventory(g);
-             
 
             //gear for demo
             /*
