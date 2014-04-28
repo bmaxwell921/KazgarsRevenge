@@ -1394,14 +1394,34 @@ namespace KazgarsRevenge
             return currentLevel.chunkInfos[xCoord, yCoord].rotation;
         }
 
-
-        public string GetChunkName(int x, int y)
+        public void visitChunk(Vector3 location)
         {
-            return @"Textures\UI\MegaMap\" + currentLevel.chunkInfos[x, y].ChunkName;
+            int xCoord = (int)location.X / (CHUNK_SIZE * BLOCK_SIZE);
+            int yCoord = (int)location.Z / (CHUNK_SIZE * BLOCK_SIZE);
+
+            // This method is always called (for drawing the minimap), so we only need to update the visited chunks here
+            Vector2 visited = new Vector2(xCoord, yCoord);
+            if (!currentLevel.visitedChunks.Contains(visited))
+            {
+                currentLevel.visitedChunks.Add(visited);
+                currentLevel.updatedVisited = true;
+            }
+        }
+
+        public string GetChunkImgName(int x, int y)
+        {
+            // If the chunk has been visited then show it, otherwise just a grey square
+            return currentLevel.chunkInfos[x, y].miniMapImgName(currentLevel.visitedChunks.Contains(new Vector2(x, y)));
         }
 
         public Rotation GetChunkRotation(int x, int y)
         {
+            // The unknown chunks already handle rotation themselves, so just send back ZERO
+            if (!currentLevel.visitedChunks.Contains(new Vector2(x, y)))
+            {
+                return Rotation.ZERO;
+            }
+            // Otherwise, get the actual rotation
             return currentLevel.chunkInfos[x, y].rotation;
         }
     }

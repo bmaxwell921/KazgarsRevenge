@@ -149,6 +149,10 @@ namespace KazgarsRevenge
         /// <returns></returns>
         public string miniMapImgName(bool visited)
         {
+            if (visited)
+            {
+                return @"Textures\UI\MegaMap\" + ChunkName;
+            }
             string miniMapDir = @"Textures\UI\MiniMap\";
             StringBuilder sb = new StringBuilder();
                                                            // We don't show the key chunks, just boss and normal

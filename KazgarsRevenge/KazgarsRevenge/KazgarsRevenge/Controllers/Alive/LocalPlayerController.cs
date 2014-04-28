@@ -3194,6 +3194,7 @@ namespace KazgarsRevenge
              * that position in the chunk to a position in the chunk image, and draw that area of the chunk
              */ 
             LevelManager lm = (Game.Services.GetService(typeof(LevelManager)) as LevelManager);
+            lm.visitChunk(physicalData.Position);
 
             // Current chunk's image
             Texture2D curChunk = Texture2DUtil.Instance.GetRotatedTexture(lm.GetCurrentChunkImgName(physicalData.Position), lm.GetCurrentChunkRotation(physicalData.Position), Game.GraphicsDevice);
@@ -3238,8 +3239,8 @@ namespace KazgarsRevenge
             }*/
             float actualChunkSize = LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE;
             Rectangle MegaMapRect = guiInsideRects["megaMap"]["megaMap"];
-            int xChunks = levels.GetNumChunks(0) + 1;
-            int yChunks = levels.GetNumChunks(1) + 1;
+            int xChunks = levels.currentLevel.width;
+            int yChunks = levels.currentLevel.height;
 
             int tileSizeX = megaMapRect.Width / xChunks;
             int tileSizeY = megaMapRect.Height / yChunks;
@@ -3247,7 +3248,7 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < yChunks; ++j)
                 {
-                    string currentChunk = levels.GetChunkName(i, j);
+                    string currentChunk = levels.GetChunkImgName(i, j);
                     Rotation rotation = levels.GetChunkRotation(i, j);
 
                     // We need to rotate the image about its center
