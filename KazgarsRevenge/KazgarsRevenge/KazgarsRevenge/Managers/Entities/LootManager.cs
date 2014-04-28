@@ -793,6 +793,7 @@ namespace KazgarsRevenge
              * 9900-10000: test gear
              * 
              * 9001 - 9300: shared epic drops
+             * 9301 - 3400: mimic loot
              * 
              * 3001 - 3100: dungeon melee gear
              * 3101-3200: dungeon ranged gear
@@ -816,6 +817,14 @@ namespace KazgarsRevenge
                 GetUnanimatedModel(weaponDir + "staff"),
                 AttackType.Magic,
                 true,
+                id));
+            id = 9902;
+            AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.GENERIC_STAFF),
+                "Claymore of Testing",
+                new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                GetUnanimatedModel(weaponDir + "ice_sword"),
+                AttackType.Melee,
+                false,
                 id));
             #endregion
 
@@ -997,11 +1006,21 @@ namespace KazgarsRevenge
                 id));
             #endregion
 
+            #region Mimic Loot
+            id = 9301;
+            AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.KEY_SWORD),
+                "Key Shiv",
+                new Dictionary<StatType, float>() { { StatType.Strength, .75f }, { StatType.AttackSpeed, .1f }, { StatType.CritChance, .15f } },
+                GetUnanimatedModel(weaponDir + "key_blade"),
+                AttackType.Melee,
+                false,
+                id));
+            #endregion
 
             #region Dungeon Level
             #region Melee Gear
             id = 3001;
-            AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.BRUTISH_AXE),
+            AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.AXE_01),
                 "Brutish Axe",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetUnanimatedModel(weaponDir + "axe"),
@@ -1256,6 +1275,22 @@ namespace KazgarsRevenge
                 GetAnimatedModel(armorDir + "Dragon\\armor_shoulders_dragon"),
                 GearSlot.Shoulders,
                 GearSlot.None,
+                id));
+            id = 3307;
+            AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.AXE_01),
+                "Dragon Limb",
+                new Dictionary<StatType, float>() { { StatType.Strength, .75f }, { StatType.AttackSpeed, .1f }, {StatType.CritChance, .15f} },
+                GetUnanimatedModel(weaponDir + "dragon_claw"),
+                AttackType.Melee,
+                false,
+                id));
+            id = 3308;
+            AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.GENERIC_BOW),
+                "Dragon Bow",
+                new Dictionary<StatType, float>() { { StatType.Agility, .75f }, { StatType.AttackSpeed, .1f }, { StatType.CritChance, .15f } },
+                GetUnanimatedModel(weaponDir + "bow01"),
+                AttackType.Melee,
+                true,
                 id));
             #endregion
             #endregion
