@@ -464,22 +464,6 @@ namespace KazgarsRevenge
             InitNewPlayer();
 
             //adding gear for testing
-            /*
-            Potion pot = (Potion)lewtz.GetItem(6);
-            pot.AddQuantity(15);
-            AddToInventory(pot);
-            
-            Equippable wep = (Equippable)lewtz.GetItem(9901);
-            wep.SetStats(GearQuality.Legendary, 70);
-            AddToInventory(wep);
-            
-            Equippable boots = (Equippable)lewtz.GetItem(9900);
-            boots.SetStats(GearQuality.Legendary, 70);
-            AddToInventory(boots);
-
-
-            AddToInventory(lewtz.GetItem(3002));
-            AddToInventory(lewtz.GetItem(3102));
 
             Equippable g = (Equippable)lewtz.GetItem(3107);
             g.SetStats(GearQuality.Standard, 2);
@@ -504,9 +488,10 @@ namespace KazgarsRevenge
             g = (Equippable)lewtz.GetItem(3306);
             g.SetStats(GearQuality.Epic, 1);
             AddToInventory(g);
-             */
+             
 
             //gear for demo
+            /*
             Weapon wep = lewtz.GetItem(3001) as Weapon;
             wep.SetStats(GearQuality.Standard, 1);
             AddToInventory(wep);
@@ -514,6 +499,7 @@ namespace KazgarsRevenge
             wep = lewtz.GetItem(3102) as Weapon;
             wep.SetStats(GearQuality.Standard, 1);
             AddToInventory(wep);
+             */
 
         }
 

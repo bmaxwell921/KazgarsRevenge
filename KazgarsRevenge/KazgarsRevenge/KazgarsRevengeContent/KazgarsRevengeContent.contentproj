@@ -2199,32 +2199,32 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\UI\Items\Armor\BossGear\dragon_boot.png">
+    <Compile Include="Textures\UI\Items\Armor\BossGear\Dragon\dragon_boot.png">
       <Name>dragon_boot</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\UI\Items\Armor\BossGear\dragon_chest.png">
+    <Compile Include="Textures\UI\Items\Armor\BossGear\Dragon\dragon_chest.png">
       <Name>dragon_chest</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\UI\Items\Armor\BossGear\dragon_head.png">
+    <Compile Include="Textures\UI\Items\Armor\BossGear\Dragon\dragon_head.png">
       <Name>dragon_head</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\UI\Items\Armor\BossGear\dragon_leg.png">
+    <Compile Include="Textures\UI\Items\Armor\BossGear\Dragon\dragon_leg.png">
       <Name>dragon_leg</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\UI\Items\Armor\BossGear\dragon_shoulder.png">
+    <Compile Include="Textures\UI\Items\Armor\BossGear\Dragon\dragon_shoulder.png">
       <Name>dragon_shoulder</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\UI\Items\Armor\BossGear\dragon_wrist.png">
+    <Compile Include="Textures\UI\Items\Armor\BossGear\Dragon\dragon_wrist.png">
       <Name>dragon_wrist</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -2243,6 +2243,27 @@
     </Compile>
     <Compile Include="Textures\UI\Items\Armor\Weapons\key_sword.png">
       <Name>key_sword</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\Melee\rino_leg.png">
+      <Name>rino_leg</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\item_glow.png">
+      <Name>item_glow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\UI\Items\Armor\Melee\rino_chest.png">
+      <Name>rino_chest</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

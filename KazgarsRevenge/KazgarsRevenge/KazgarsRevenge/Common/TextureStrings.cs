@@ -49,6 +49,7 @@ namespace KazgarsRevenge
 
             public class Items
             {
+                public static readonly string ITEM_GLOW = @"Textures\UI\Items\item_glow";
                 public class Coins
                 {
                     public static readonly string FEW = @"Textures\UI\Items\gold1";
@@ -76,36 +77,36 @@ namespace KazgarsRevenge
 
                 public class Armor
                 {
-                    public static readonly string DRAGON_HEAD = @"Textures\UI\Items\Armor\helmetIcon";
-                    public static readonly string DRAGON_CHEST = @"Textures\UI\Items\Armor\helmetIcon";
-                    public static readonly string DRAGON_LEGS = @"Textures\UI\Items\Armor\helmetIcon";
-                    public static readonly string DRAGON_SHOULDERS = @"Textures\UI\Items\Armor\helmetIcon";
-                    public static readonly string DRAGON_WRIST = @"Textures\UI\Items\Armor\helmetIcon";
-                    public static readonly string DRAGON_BOOTS = @"Textures\UI\Items\Armor\helmetIcon";
+                    public static readonly string DRAGON_HEAD = @"Textures\UI\Items\Armor\BossGear\Dragon\dragon_head";
+                    public static readonly string DRAGON_CHEST = @"Textures\UI\Items\Armor\BossGear\Dragon\dragon_chest";
+                    public static readonly string DRAGON_LEGS = @"Textures\UI\Items\Armor\BossGear\Dragon\dragon_leg";
+                    public static readonly string DRAGON_SHOULDERS = @"Textures\UI\Items\Armor\BossGear\Dragon\dragon_shoulder";
+                    public static readonly string DRAGON_WRIST = @"Textures\UI\Items\Armor\BossGear\Dragon\dragon_wrist";
+                    public static readonly string DRAGON_BOOTS = @"Textures\UI\Items\Armor\BossGear\Dragon\dragon_boot";
 
-                    public static readonly string MELEE_HEAD_RHINO = @"Textures\UI\Items\Armor\helmetIcon";
-                    public static readonly string MELEE_CHEST_RHINO = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MELEE_LEGS_RHINO = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MELEE_FEET_RHINO = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MELEE_SHOULDERS_RHINO = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MELEE_WRIST_RHINO = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MELEE_BLING = @"Textures\UI\Items\Armor\I2";
+                    public static readonly string MELEE_HEAD_GENERIC = @"Textures\UI\Items\Armor\Melee\rino_head";
+                    public static readonly string MELEE_CHEST_GENERIC = @"Textures\UI\Items\Armor\Melee\rino_chest";
+                    public static readonly string MELEE_LEGS_GENERIC = @"Textures\UI\Items\Armor\Melee\rino_leg";
+                    public static readonly string MELEE_FEET_GENERIC = @"Textures\UI\Items\Armor\Melee\rino_boots";
+                    public static readonly string MELEE_SHOULDERS_GENERIC = @"Textures\UI\Items\Armor\Melee\rino_shoulder";
+                    public static readonly string MELEE_WRIST_GENERIC = @"Textures\UI\Items\Armor\Melee\rino_wrist";
+                    public static readonly string MELEE_BLING_GENERIC = @"Textures\UI\Items\Armor\I2";
 
-                    public static readonly string RANGED_HEAD_SKELETON = @"Textures\UI\Items\Armor\helmetIcon";
-                    public static readonly string RANGED_CHEST_SKELETON = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string RANGED_LEGS_SKELETON = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string RANGED_FEET_SKELETON = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string RANGED_SHOULDERS_SKELETON = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string RANGED_WRIST_SKELETON = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string RANGED_BLING = @"Textures\UI\Items\Armor\I2";
+                    public static readonly string RANGED_HEAD_GENERIC = @"Textures\UI\Items\Armor\Ranged\bowser_head";
+                    public static readonly string RANGED_CHEST_GENERIC = @"Textures\UI\Items\Armor\Ranged\bowser_chest";
+                    public static readonly string RANGED_LEGS_GENERIC = @"Textures\UI\Items\Armor\Ranged\bowser_leg";
+                    public static readonly string RANGED_FEET_GENERIC = @"Textures\UI\Items\Armor\Ranged\bowser_boot";
+                    public static readonly string RANGED_SHOULDERS_GENERIC = @"Textures\UI\Items\Armor\Ranged\bowser_shoulder";
+                    public static readonly string RANGED_WRIST_GENERIC = @"Textures\UI\Items\Armor\Ranged\bowser_wrist";
+                    public static readonly string RANGED_BLING_GENERIC = @"Textures\UI\Items\Armor\I2";
 
-                    public static readonly string MAGIC_HEAD_SMART = @"Textures\UI\Items\Armor\helmetIcon";
-                    public static readonly string MAGIC_CHEST_SMART = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MAGIC_LEGS_SMART = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MAGIC_FEET_SMART = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MAGIC_SHOULDERS_SMART = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MAGIC_WRIST_SMART = @"Textures\UI\Items\Armor\I2";
-                    public static readonly string MAGIC_BLING = @"Textures\UI\Items\Armor\I2";
+                    public static readonly string MAGIC_HEAD_GENERIC = @"Textures\UI\Items\Armor\Magic\cardinal_head";
+                    public static readonly string MAGIC_CHEST_GENERIC = @"Textures\UI\Items\Armor\Magic\cardinal_chest";
+                    public static readonly string MAGIC_LEGS_GENERIC = @"Textures\UI\Items\Armor\Magic\cardinal_leg";
+                    public static readonly string MAGIC_FEET_GENERIC = @"Textures\UI\Items\Armor\Magic\cardinal_boot";
+                    public static readonly string MAGIC_SHOULDERS_GENERIC = @"Textures\UI\Items\Armor\Magic\cardinal_shoulder";
+                    public static readonly string MAGIC_WRIST_GENERIC = @"Textures\UI\Items\Armor\Magic\cardinal_wrist";
+                    public static readonly string MAGIC_BLING_GENERIC = @"Textures\UI\Items\Armor\I2";
                 }
                 public class Weapons
                 {

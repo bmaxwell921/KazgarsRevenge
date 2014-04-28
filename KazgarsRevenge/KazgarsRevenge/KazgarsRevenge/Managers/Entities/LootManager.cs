@@ -717,7 +717,8 @@ namespace KazgarsRevenge
         private void InitializeItems()
         {
             int id;
-            /* Consumable IDs:
+            #region Potions
+            /* Potion IDs:
              * 1: health pot
              * 2: super health pot
              * 3: insta health pot
@@ -737,41 +738,22 @@ namespace KazgarsRevenge
             AllItems.Add(id, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, id));
             id = 6;
             AllItems.Add(id, new Potion(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH), 0, id));
-
-
-
-            /* Gear IDs:
-             * 
-             * 9900-10000: test gear
-             * 
-             * 9001 - 9300: shared epic drops
-             * 
-             * 3001 - 3100: dungeon melee gear
-             * 3101-3200: dungeon ranged gear
-             * 3201-3300: dungeon magic gear
-             * 3301-3350: dungeon Boss gear
-             * 
-             */
-            #region Test Gear
-            id = 9900;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
-                "Boots of Testing",
-                new Dictionary<StatType, float>() { { StatType.RunSpeed, 2f }, { StatType.Vitality, 3 } },
-                GetAnimatedModel(armorDir + "armor_boots_rino"),
-                GearSlot.Feet,
-                GearSlot.None,
-                id));
-            id = 9901;
-            AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.GENERIC_STAFF),
-                "Staff of Testing",
-                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
-                GetUnanimatedModel(weaponDir + "staff"),
-                AttackType.Magic,
-                true,
-                id));
             #endregion
 
+
             #region Essence
+            /*
+             * Essence ids: 901-915
+             * 
+             * ids progress from melee-ranged-magic, repeat
+             * 
+             * 901-903: lesser
+             * 904-906: normal
+             * 907-909: greater
+             * 910-912: potent
+             * 913-915: illustrious
+             * 
+             */
             id = 901;
             AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.LesserEssence), id));
             id = 902;
@@ -804,10 +786,44 @@ namespace KazgarsRevenge
             AllItems.Add(id, new Essence(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Essence.IllustriousEssence), id));
             #endregion
 
+
+            #region Equippables
+            /* Gear IDs:
+             * 
+             * 9900-10000: test gear
+             * 
+             * 9001 - 9300: shared epic drops
+             * 
+             * 3001 - 3100: dungeon melee gear
+             * 3101-3200: dungeon ranged gear
+             * 3201-3300: dungeon magic gear
+             * 3301-3350: dungeon Boss gear
+             * 
+             */
+            #region Test Gear
+            id = 9900;
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_GENERIC),
+                "Boots of Testing",
+                new Dictionary<StatType, float>() { { StatType.RunSpeed, 2f }, { StatType.Vitality, 3 } },
+                GetAnimatedModel(armorDir + "armor_boots_rino"),
+                GearSlot.Feet,
+                GearSlot.None,
+                id));
+            id = 9901;
+            AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.GENERIC_STAFF),
+                "Staff of Testing",
+                new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .5f } },
+                GetUnanimatedModel(weaponDir + "staff"),
+                AttackType.Magic,
+                true,
+                id));
+            #endregion
+
+
             #region Shared Epic Drops
             //rhino set
             id = 9001;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_GENERIC),
                 "Rhino Helm",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_head_rino"),
@@ -815,7 +831,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9002;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_GENERIC),
                 "Rhino Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_chest_rino"),
@@ -823,7 +839,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9003;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_GENERIC),
                 "Rhino Legguards",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_legs_rino"),
@@ -831,7 +847,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9004;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_GENERIC),
                 "Rhino Boots",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_boots_rino"),
@@ -839,7 +855,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9005;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_GENERIC),
                 "Rhino Pauldrons",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_shoulders_rino"),
@@ -847,7 +863,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9006;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_GENERIC),
                 "Rhino Wristguards",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_wrist_rino"),
@@ -855,7 +871,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9007;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING_GENERIC),
                 "Rhino Ring",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 null,
@@ -865,7 +881,7 @@ namespace KazgarsRevenge
 
             //ranged set?
             id = 9008;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_HEAD_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_HEAD_GENERIC),
                 "Skeleton Helm",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
                 GetAnimatedModel(armorDir + "armor_head_rino"),
@@ -873,7 +889,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9009;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_CHEST_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_CHEST_GENERIC),
                 "Skeleton Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
                 GetAnimatedModel(armorDir + "armor_chest_rino"),
@@ -881,7 +897,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9010;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_LEGS_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_LEGS_GENERIC),
                 "Skeleton Legguards",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
                 GetAnimatedModel(armorDir + "armor_legs_rino"),
@@ -889,7 +905,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9011;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_FEET_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_FEET_GENERIC),
                 "Skeleton Boots",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
                 GetAnimatedModel(armorDir + "armor_boots_rino"),
@@ -897,7 +913,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9012;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_SHOULDERS_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_SHOULDERS_GENERIC),
                 "Skeleton Pauldrons",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
                 GetAnimatedModel(armorDir + "armor_shoulders_rino"),
@@ -905,7 +921,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9013;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_WRIST_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_WRIST_GENERIC),
                 "Skeleton Bracers",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
                 GetAnimatedModel(armorDir + "armor_wrist_rino"),
@@ -913,7 +929,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9014;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_BLING),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_BLING_GENERIC),
                 "Skeleton Ring",
                 new Dictionary<StatType, float>() { { StatType.Agility, .25f }, { StatType.Vitality, .25f }, { StatType.AttackSpeed, .5f } },
                 null,
@@ -924,7 +940,7 @@ namespace KazgarsRevenge
 
             //cardinal set
             id = 9015;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_GENERIC),
                 "Cardinal Helm",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_head_cardinal"),
@@ -932,7 +948,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9016;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_GENERIC),
                 "Cardinal Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_chest_cardinal"),
@@ -940,7 +956,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9017;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_GENERIC),
                 "Cardinal Legguards",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_legs_cardinal"),
@@ -948,7 +964,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9018;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_GENERIC),
                 "Cardinal Boots",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_boots_cardinal"),
@@ -956,7 +972,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9019;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_GENERIC),
                 "Cardinal Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_shoulders_cardinal"),
@@ -964,7 +980,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9020;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_GENERIC),
                 "Cardinal Wristguards",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_wrist_cardinal"),
@@ -972,7 +988,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 9021;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING_GENERIC),
                 "Cardinal Ring",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .25f }, { StatType.Vitality, .75f } },
                 null,
@@ -980,6 +996,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             #endregion
+
 
             #region Dungeon Level
             #region Melee Gear
@@ -1000,7 +1017,7 @@ namespace KazgarsRevenge
                 false,
                 id));
             id = 3003;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_HEAD_GENERIC),
                 "Warrior Helm",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_head_rino"),
@@ -1008,7 +1025,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3004;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_CHEST_GENERIC),
                 "Warrior Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_chest_rino"),
@@ -1016,7 +1033,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3005;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_LEGS_GENERIC),
                 "Warrior Legguards",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_legs_rino"),
@@ -1024,7 +1041,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3006;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_FEET_GENERIC),
                 "Warrior Boots",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_boots_rino"),
@@ -1032,7 +1049,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3007;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_SHOULDERS_GENERIC),
                 "Warrior Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_shoulders_rino"),
@@ -1040,7 +1057,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3008;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_RHINO),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_WRIST_GENERIC),
                 "Warrior Wristguards",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 GetAnimatedModel(armorDir + "armor_wrist_rino"),
@@ -1048,7 +1065,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3009;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MELEE_BLING_GENERIC),
                 "Warrior Ring",
                 new Dictionary<StatType, float>() { { StatType.Strength, .25f }, { StatType.Vitality, .75f } },
                 null,
@@ -1067,7 +1084,7 @@ namespace KazgarsRevenge
                 false,
                 id));
             id = 3103;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_HEAD_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_HEAD_GENERIC),
                 "Ranger Helm",
                 new Dictionary<StatType, float>() { { StatType.Agility, .75f }, { StatType.Vitality, .15f }, {StatType.Armor, .1f} },
                 GetAnimatedModel(armorDir + "Bowser\\armor_head_bowser"),
@@ -1075,7 +1092,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3104;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_CHEST_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_CHEST_GENERIC),
                 "Ranger Chestpiece",
                 new Dictionary<StatType, float>() { { StatType.Agility, .5f }, { StatType.Vitality, .25f }, {StatType.Armor, .25f} },
                 GetAnimatedModel(armorDir + "Bowser\\armor_chest_bowser"),
@@ -1083,7 +1100,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3105;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_LEGS_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_LEGS_GENERIC),
                 "Ranger Legguards",
                 new Dictionary<StatType, float>() { { StatType.Agility, .5f }, { StatType.Vitality, .4f }, {StatType.Armor, .1f} },
                 GetAnimatedModel(armorDir + "Bowser\\armor_legs_bowser"),
@@ -1091,7 +1108,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3106;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_FEET_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_FEET_GENERIC),
                 "Ranger Boots",
                 new Dictionary<StatType, float>() { { StatType.Agility, .6f }, { StatType.Vitality, .3f }, { StatType.RunSpeed, .1f } },
                 GetAnimatedModel(armorDir + "Bowser\\armor_boots_bowser"),
@@ -1099,7 +1116,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3107;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_SHOULDERS_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_SHOULDERS_GENERIC),
                 "Ranger Shoulderpads",
                 new Dictionary<StatType, float>() { { StatType.Agility, 1f } },
                 GetAnimatedModel(armorDir + "Bowser\\armor_shoulders_bowser"),
@@ -1107,7 +1124,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3108;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_WRIST_SKELETON),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_WRIST_GENERIC),
                 "Ranger Wristguards",
                 new Dictionary<StatType, float>() { { StatType.Agility, .6f }, { StatType.Vitality, .2f }, {StatType.Armor, .2f} },
                 GetAnimatedModel(armorDir + "Bowser\\armor_wrist_bowser"),
@@ -1115,7 +1132,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3109;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_BLING),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.RANGED_BLING_GENERIC),
                 "Ranger Ring",
                 new Dictionary<StatType, float>() { { StatType.Agility, .8f }, { StatType.CooldownReduction, .2f } },
                 null,
@@ -1134,7 +1151,7 @@ namespace KazgarsRevenge
                 true,
                 id));
             id = 3203;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_HEAD_SMART),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_HEAD_GENERIC),
                 "Wizard Helm",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_head_cardinal"),
@@ -1142,7 +1159,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3204;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_CHEST_SMART),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_CHEST_GENERIC),
                 "Wizard Vest",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_chest_cardinal"),
@@ -1150,7 +1167,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3205;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_LEGS_SMART),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_LEGS_GENERIC),
                 "Wizard Kilt",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_legs_cardinal"),
@@ -1158,7 +1175,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3206;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_FEET_SMART),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_FEET_GENERIC),
                 "Wizard Boots",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_boots_cardinal"),
@@ -1166,7 +1183,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3207;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_SHOULDERS_SMART),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_SHOULDERS_GENERIC),
                 "Wizard Shoulders",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_shoulders_cardinal"),
@@ -1174,7 +1191,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3208;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_WRIST_SMART),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_WRIST_GENERIC),
                 "Wizard Bracers",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 GetAnimatedModel(armorDir + "Cardinal\\armor_wrist_cardinal"),
@@ -1182,7 +1199,7 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             id = 3209;
-            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_BLING),
+            AllItems.Add(id, new Equippable(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Armor.MAGIC_BLING_GENERIC),
                 "Wizard Ring",
                 new Dictionary<StatType, float>() { { StatType.Intellect, .65f }, { StatType.Vitality, .25f }, { StatType.CooldownReduction, .1f } },
                 null,
@@ -1241,6 +1258,8 @@ namespace KazgarsRevenge
                 GearSlot.None,
                 id));
             #endregion
+            #endregion
+
             #endregion
         }
     }

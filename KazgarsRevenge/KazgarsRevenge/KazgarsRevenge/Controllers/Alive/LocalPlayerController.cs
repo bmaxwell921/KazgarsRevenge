@@ -75,6 +75,8 @@ namespace KazgarsRevenge
             #region Item Image Load
             healthPot = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Potions.HEALTH);
             goldIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Coins.LOTS);
+
+            equippableOutline = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.ITEM_GLOW);
             #endregion
 
             #region ranged ability array
@@ -203,6 +205,8 @@ namespace KazgarsRevenge
         #region Item Icons
         Texture2D healthPot;
         Texture2D goldIcon;
+
+        Texture2D equippableOutline;
         #endregion
         #endregion
 
@@ -2867,8 +2871,17 @@ namespace KazgarsRevenge
                     //Equip icons
                     for (int i = 1; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
                     {
-                        Texture2D tempGearTex = gear[(GearSlot)i] == null ? texPlaceHolder : gear[(GearSlot)i].Icon;
-                        s.Draw(tempGearTex, guiInsideRects["equipment"][((GearSlot)i).ToString()], Color.White);
+                        //draw outline based on quality if it's a piece of gear
+                        Equippable e = gear[(GearSlot)i];
+                        if (e == null)
+                        {
+                            s.Draw(texPlaceHolder, guiInsideRects["equipment"][((GearSlot)i).ToString()], Color.White);
+                        }
+                        else
+                        {
+                            s.Draw(equippableOutline, guiInsideRects["equipment"][((GearSlot)i).ToString()], Equippable.GetQualityColor(e.Quality));
+                            s.Draw(texPlaceHolder, guiInsideRects["equipment"][((GearSlot)i).ToString()], Color.White);
+                        }
                     }
                 }
                 else
@@ -2888,6 +2901,14 @@ namespace KazgarsRevenge
                     if (inventory[i] != null)
                     {
                         Rectangle rect = guiInsideRects["inventory"]["inventory" + i];
+
+                        //draw glow behind icon if it's an equippable
+                        Equippable possEquip = inventory[i] as Equippable;
+                        if (possEquip != null)
+                        {
+                            s.Draw(equippableOutline, rect, Equippable.GetQualityColor(possEquip.Quality));
+                        }
+
                         s.Draw(inventory[i].Icon, rect, Color.White);
                         if (inventory[i].Quantity > 1)
                         {
@@ -2910,6 +2931,15 @@ namespace KazgarsRevenge
                 {
                     Rectangle rect = guiInsideRects["loot"]["loot" + i];
                     Item ltemp = loot[i + lootScroll * NUM_LOOT_SHOWN];
+
+                    //draw outline based on quality if it's a piece of gear
+                    Equippable possEquip = ltemp as Equippable;
+                    if (possEquip != null)
+                    {
+                        s.Draw(equippableOutline, rect, Equippable.GetQualityColor(possEquip.Quality));
+                    }
+
+                    //draw icon
                     s.Draw(ltemp.Icon, rect, Color.White);
                     if (ltemp.Quantity > 1)
                     {

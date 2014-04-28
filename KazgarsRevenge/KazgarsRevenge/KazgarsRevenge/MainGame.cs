@@ -91,14 +91,13 @@ namespace KazgarsRevenge
         protected override void Initialize()
         {
             GraphicsDevice.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
-
             settings.particleSettings = SettingAmount.Low;
 
             // LoggerManager created first since it doesn't rely on anything and everyone will want to use it
             SetUpLoggers();
 
 
-            bool fullscreen = false;
+            bool fullscreen = true;
 
             if (fullscreen)
             {
@@ -109,8 +108,8 @@ namespace KazgarsRevenge
             }
             else
             {
-                graphics.PreferredBackBufferWidth = 1920;
-                graphics.PreferredBackBufferHeight = 1080;
+                graphics.PreferredBackBufferWidth = 1024;
+                graphics.PreferredBackBufferHeight = 720;
                 graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
                 screenScale = ((float)GraphicsDevice.Viewport.Height / graphics.PreferredBackBufferHeight + (float)GraphicsDevice.Viewport.Width / graphics.PreferredBackBufferWidth) / 2;
