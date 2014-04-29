@@ -64,6 +64,9 @@ namespace KazgarsRevenge
 
             public IList<Vector3> spawnLocs;
 
+            // the location of the boss in the grid
+            public Vector2 bossLoc;
+
             // Keep track of which chunks the player has been in
             public ISet<Vector2> visitedChunks;
             // If they go to a new chunk, then the LocalPlayerController needs to know to update the minimap
@@ -76,7 +79,7 @@ namespace KazgarsRevenge
             // The graph representing enemy pathing possibilities.
              public AdjacencyGraph<Vector3, Edge<Vector3>> pathGraph;
 
-            public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos, int width, int height)
+            public LevelInfo(FloorName currentFloor, Chunk[,] chunks, ChunkInfo[,] chunkInfos, int width, int height, Vector2 bossLoc)
             {
                 this.currentFloor = currentFloor;
                 this.chunks = chunks;
@@ -84,6 +87,7 @@ namespace KazgarsRevenge
                 this.spawnLocs = new List<Vector3>();
                 this.width = width;
                 this.height = height;
+                this.bossLoc = bossLoc;
                 this.visitedChunks = new HashSet<Vector2>();
                 this.updatedVisited = false;
                 this.pathGraph = new AdjacencyGraph<Vector3, Edge<Vector3>>();
@@ -255,6 +259,7 @@ namespace KazgarsRevenge
         public Vector3 GetPlayerSpawnLocation()
         {
             Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.S_Instance.Next(currentLevel.spawnLocs.Count)];
+            spawnLoc.Y = 100;
             return spawnLoc;
         }
 
@@ -963,6 +968,9 @@ namespace KazgarsRevenge
              */ 
             private IList<int> chunkNums;
 
+            // Ugh gross, I don't want this here, but it'll work fast
+            private Vector2 bossLoc;
+
             // Default uses the level width and height as defined in the Constants file
             public LevelBuilder(LoggerManager lm)
                 : this(lm, Constants.LEVEL_WIDTH, Constants.LEVEL_HEIGHT)
@@ -1007,7 +1015,7 @@ namespace KazgarsRevenge
                 ChunkInfo[,] chunkInfos = new ChunkInfo[1, 1];
                 chunkInfos[0, 0] = ChunkUtil.Instance.GetGround();
                 Chunk[,] chunks = ReadChunks(FloorName.Ground, chunkInfos);
-                return new LevelInfo(FloorName.Ground, chunks, chunkInfos, 1, 1);
+                return new LevelInfo(FloorName.Ground, chunks, chunkInfos, 1, 1, new Vector2(-1, -1));
             }
 
             /// <summary>
@@ -1024,14 +1032,14 @@ namespace KazgarsRevenge
                 ChooseChunks(name, chunkInfos);
 
                 Chunk[,] chunks = ReadChunks(name, chunkInfos);
-                return new LevelInfo(name, chunks, chunkInfos, levelWidth, levelHeight);
+                return new LevelInfo(name, chunks, chunkInfos, levelWidth, levelHeight, bossLoc);
             }
 
             #region Choosing Chunks
             private void ChooseChunks(FloorName name, ChunkInfo[,] chunks)
             {
                 PlaceSoulevator(name, chunks);
-                Vector2 bossLoc = PlaceBoss(name, chunks);
+                this.bossLoc = PlaceBoss(name, chunks);
                 PlaceKey(name, chunks, bossLoc);
                 PlaceTheRest(name, chunks);
             }
@@ -1423,6 +1431,15 @@ namespace KazgarsRevenge
             }
             // Otherwise, get the actual rotation
             return currentLevel.chunkInfos[x, y].rotation;
+        }
+
+        public bool ShowBoss(int i, int j)
+        {
+            //if (currentLevel.visitedChunks.Count != currentLevel.width * currentLevel.height)
+            //{
+            //    return false;
+            //}
+            return new Vector2(i, j).Equals(currentLevel.bossLoc);
         }
     }
 }
