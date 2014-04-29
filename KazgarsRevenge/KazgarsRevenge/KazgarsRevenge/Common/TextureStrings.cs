@@ -47,6 +47,11 @@ namespace KazgarsRevenge
                 public static readonly string UNKNOWN = @"Textures\UI\MiniMap\UnknownMini";
             }
 
+            public class MegaMap
+            {
+                public static readonly string BOSS = @"Textures\UI\MegaMap\boss";
+            }
+
             public class Items
             {
                 public static readonly string ITEM_GLOW = @"Textures\UI\Items\item_glow";
