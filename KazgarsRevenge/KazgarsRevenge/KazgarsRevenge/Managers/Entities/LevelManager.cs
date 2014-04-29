@@ -259,7 +259,7 @@ namespace KazgarsRevenge
         public Vector3 GetPlayerSpawnLocation()
         {
             Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.S_Instance.Next(currentLevel.spawnLocs.Count)];
-            spawnLoc.Y = 100;
+            //spawnLoc.Y = 100;
             return spawnLoc;
         }
 
