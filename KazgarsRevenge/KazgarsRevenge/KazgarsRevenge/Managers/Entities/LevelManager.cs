@@ -259,7 +259,6 @@ namespace KazgarsRevenge
         public Vector3 GetPlayerSpawnLocation()
         {
             Vector3 spawnLoc = currentLevel.spawnLocs[RandSingleton.S_Instance.Next(currentLevel.spawnLocs.Count)];
-            //spawnLoc.Y = 100;
             return spawnLoc;
         }
 
@@ -1435,10 +1434,10 @@ namespace KazgarsRevenge
 
         public bool ShowBoss(int i, int j)
         {
-            //if (currentLevel.visitedChunks.Count != currentLevel.width * currentLevel.height)
-            //{
-            //    return false;
-            //}
+            if (currentLevel.visitedChunks.Count != currentLevel.width * currentLevel.height)
+            {
+                return false;
+            }
             return new Vector2(i, j).Equals(currentLevel.bossLoc);
         }
     }
