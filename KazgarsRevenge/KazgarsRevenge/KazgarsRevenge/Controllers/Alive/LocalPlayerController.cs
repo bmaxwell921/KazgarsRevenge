@@ -3263,7 +3263,7 @@ namespace KazgarsRevenge
                         int bossOriginX = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MegaMap.BOSS).Width / 2;
                         int bossOriginY = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MegaMap.BOSS).Height / 2;
                         s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MegaMap.BOSS), new Rectangle(curChunkRect.X + curChunkRect.Width / 2, curChunkRect.Y + curChunkRect.Height / 2, curChunkRect.Width, 
-                            curChunkRect.Height), null, Color.White * (alpha * 0.5f), 0, new Vector2(bossOriginX, bossOriginY), SpriteEffects.None, 0);
+                            curChunkRect.Height), null, Color.White * (0.15f), 0, new Vector2(bossOriginX, bossOriginY), SpriteEffects.None, 0);
                     }
                 }
             }
