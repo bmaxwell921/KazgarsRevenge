@@ -1288,7 +1288,7 @@ namespace KazgarsRevenge
             AllItems.Add(id, new Weapon(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Items.Weapons.GENERIC_BOW),
                 "Dragon Bow",
                 new Dictionary<StatType, float>() { { StatType.Agility, .75f }, { StatType.AttackSpeed, .1f }, { StatType.CritChance, .15f } },
-                GetUnanimatedModel(weaponDir + "bow01"),
+                GetUnanimatedModel(weaponDir + "dragon_bow"),
                 AttackType.Melee,
                 true,
                 id));
