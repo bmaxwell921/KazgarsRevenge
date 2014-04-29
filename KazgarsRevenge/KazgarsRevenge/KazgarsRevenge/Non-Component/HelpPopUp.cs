@@ -69,6 +69,7 @@ namespace KazgarsRevenge
                 s.Draw(texHover, inners[outerKey][innerKey], Color.White * alpha);
             }
             s.Draw(gotIt, gotItRect, Color.White);
+            s.Draw(texHover, gotItRect, Color.White * alpha);
             //s.Draw(dontShowAgain, dontShowRect, Color.White);
         }
 

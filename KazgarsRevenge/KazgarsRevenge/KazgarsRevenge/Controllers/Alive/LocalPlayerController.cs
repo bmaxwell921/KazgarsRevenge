@@ -479,7 +479,6 @@ namespace KazgarsRevenge
             {
                 lastPortedPosition = unsetPortPosition;
             }
-
             base.Update(gameTime);
         }
 
@@ -2473,11 +2472,11 @@ namespace KazgarsRevenge
             talentBackRect = new Rectangle((int)(talentUL.X + 50 * average), (int)(talentUL.Y + 50 * average), (int)(talentRect.Width - 80 * average), (int)(talentRect.Height - 200 * average));
 
             lootRect = new Rectangle((int)lootUL.X, (int)lootUL.Y, (int)(150 * average), (int)(300 * average));
-            megaMapRect = new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int)(160 * average), (int)(622 * average), (int)(622 * average));
+            megaMapRect = new Rectangle((int)((maxX / 2) - (622 * average / 2)), (int)(160 * average), (int)(622 * average), (int)(622 * average));
             tooltipRect = new Rectangle((int)((maxX - 300 * average)), (int)((maxY - 230 * average)), (int)(300 * average), (int)(230 * average));
 
-            helpPopPos = new Vector2((int)(maxX / 2 - 150 * average), (int)((maxY - 323 * average)));
-            helpPopRect = new Rectangle((int)helpPopPos.X, (int)helpPopPos.Y, (int)(300 * average), (int)(95 * average));
+            helpPopPos = new Vector2((int)(maxX / 2 - 170 * average), (int)((maxY - 323 * average)));
+            helpPopRect = new Rectangle((int)(helpPopPos.X - 20 * average), (int)(helpPopPos.Y - 10 * average), (int)(365 * average), (int)(115 * average));
             //guiOutsideRects.Add("chat", new Rectangle(0, (int)((maxY - 444 * average)), (int)(362 * average), (int)(444 * average)));
 
             guiInsideRects = new Dictionary<string, Dictionary<string, Rectangle>>();
@@ -3124,11 +3123,9 @@ namespace KazgarsRevenge
             #region helpPopUps
             if (helpPoPs.Count > 0)
             {
-                s.Draw(texWhitePixel, helpPopRect, Color.Black * 0.5f);
+                s.Draw(inventoryFrame, helpPopRect, Color.White);
                 helpPoPs[0].Draw(s, helpPopPos, largeFont, average, 50f, guiInsideRects["helpPop"]["ok"], guiInsideRects["helpPop"]["ok"], guiInsideRects);
             }
-
-
             #endregion
 
             //always keep this last so hover image is drawn on top
@@ -3273,9 +3270,9 @@ namespace KazgarsRevenge
 
             // Scale the player location to the map
             Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];
-            playerRect.X = (int)((physicalData.Position.X % (actualChunkSize * xChunks)) / (actualChunkSize * xChunks) * MegaMapRect.Width * average) + MegaMapRect.X;
-            playerRect.Y = (int)((physicalData.Position.Z % (actualChunkSize * yChunks)) / (actualChunkSize * yChunks) * MegaMapRect.Height * average) + MegaMapRect.Y;
-
+            playerRect.X = (int)((physicalData.Position.X % (actualChunkSize * xChunks)) / (actualChunkSize * xChunks) * megaMapRect.Width) + megaMapRect.X;
+            playerRect.Y = (int)((physicalData.Position.Z % (actualChunkSize * yChunks)) / (actualChunkSize * yChunks) * megaMapRect.Height) + megaMapRect.Y;
+            
             // Center playerRect
             playerRect.X -= playerRect.Width / 2;
             playerRect.Y -= playerRect.Height / 2;
