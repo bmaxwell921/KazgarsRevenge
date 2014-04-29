@@ -57,7 +57,7 @@ namespace KazgarsRevenge
             talentIcon = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.TalentIcon);
             shopFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.shopFrame);
             abilityFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.abilityFrame);
-            inventoryFrame= Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.inventoryFrame);
+            inventoryFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.inventoryFrame);
             lootFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.lootFrame);
             equipmentFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.equipmentFrame);
             talentFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.talentFrame);
@@ -120,7 +120,7 @@ namespace KazgarsRevenge
             meleeAbilities[2, 1] = new AbilityNode(AbilityName.Invigoration, new AbilityName[] { AbilityName.Decapitation }, false, 2, abilityLearnedFlags);
             meleeAbilities[2, 2] = new AbilityNode(AbilityName.SadisticFrenzy, new AbilityName[] { AbilityName.ExcruciatingTwist }, false, 2, abilityLearnedFlags);
 
-            meleeAbilities[3, 0] = new AbilityNode(AbilityName.Berserk, new AbilityName[] { AbilityName.ObsidianCoagulation}, false, 2, abilityLearnedFlags);
+            meleeAbilities[3, 0] = new AbilityNode(AbilityName.Berserk, new AbilityName[] { AbilityName.ObsidianCoagulation }, false, 2, abilityLearnedFlags);
             meleeAbilities[3, 1] = new AbilityNode(AbilityName.ObsidianCoagulation, new AbilityName[] { AbilityName.Invigoration, AbilityName.SadisticFrenzy, AbilityName.Bash }, false, 4, abilityLearnedFlags);
             meleeAbilities[3, 2] = new AbilityNode(AbilityName.Bash, new AbilityName[] { AbilityName.Charge }, false, 3, abilityLearnedFlags);
 
@@ -365,7 +365,7 @@ namespace KazgarsRevenge
 
                 CheckButtonClicks(outerCollides, innerCollides);
                 CheckMouseHover(outerCollides, innerCollides);
-                
+
 
                 Vector3 move = new Vector3(mouseHoveredLocation.X - physicalData.Position.X, 0, mouseHoveredLocation.Z - physicalData.Position.Z);
                 if (targetedPhysicalData != null)
@@ -382,7 +382,7 @@ namespace KazgarsRevenge
                     ResetTargettedEntity();
                 }
 
-                if (((attState != AttackState.Locked && attState != AttackState.LockedMoving) || inPrimarySequence) 
+                if (((attState != AttackState.Locked && attState != AttackState.LockedMoving) || inPrimarySequence)
                     && !looting && !inShop && !inEssenceShop && !inBank)
                 {
                     CheckAbilities(move, mouseOnGui);
@@ -565,7 +565,7 @@ namespace KazgarsRevenge
                                 mouseHoveredThing = mouseHoveredEntity.GetComponent(typeof(PlayerInteractiveController)) as PlayerInteractiveController;
                                 if (mouseHoveredHealth != null)
                                 {
-                                    mouseHoveredHealth.Target(); 
+                                    mouseHoveredHealth.Target();
                                     if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
                                     {
                                         targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
@@ -783,7 +783,7 @@ namespace KazgarsRevenge
                     guiOutsideRects.Add("helpPop", helpPopRect);
                 }
             }
-            else if(helpPoPs.Count <= 0 && guiOutsideRects.ContainsKey("helpPop"))
+            else if (helpPoPs.Count <= 0 && guiOutsideRects.ContainsKey("helpPop"))
             {
                 guiOutsideRects.Remove("helpPop");
                 isHelpPopupShown = false;
@@ -1056,12 +1056,12 @@ namespace KazgarsRevenge
             }
 
             //primary attack (autos)
-            if (!inPrimarySequence && (curMouse.LeftButton == ButtonState.Pressed && (curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space)) 
+            if (!inPrimarySequence && (curMouse.LeftButton == ButtonState.Pressed && (curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space))
                 || targetedPhysicalData != null))
             {
                 //used to differentiate between left hand, right hand, and two hand animations
                 aniSuffix = "_r";
-                
+
                 //figure out what kind of weapon is in the main hand
                 AttackType mainHandType = GetMainhandType();
                 AttackType offHandType = GetOffhandType();
@@ -1073,7 +1073,7 @@ namespace KazgarsRevenge
                     {
                         aniSuffix = "_twohand";
                     }
-                    else if(offHandType != AttackType.None)
+                    else if (offHandType != AttackType.None)
                     {
                         if (lastAniSuffix == "_r")
                         {
@@ -1279,7 +1279,7 @@ namespace KazgarsRevenge
                         abilityLearnedFlags[talents[(int)check / 4, check % 4].name] = true;
                     }
                     else
-                    {   
+                    {
                         ((MainGame)Game).AddAlert("I can't unlock that yet!");
                     }
                 }
@@ -1393,7 +1393,7 @@ namespace KazgarsRevenge
             //appropriate action for gui element collided with
             //happens on left mouse released
             #region left click check
-            if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released  && outerCollides == null)
+            if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released && outerCollides == null)
             {
                 lastClick = null;
             }
@@ -1756,7 +1756,8 @@ namespace KazgarsRevenge
                         #endregion
                         #region trashItem
                         case "trashItem":
-                            if (innerCollides.Equals("ok")){
+                            if (innerCollides.Equals("ok"))
+                            {
                                 inventory[itemToDelete] = null;
                                 itemToDelete = -1;
                             }
@@ -1879,9 +1880,9 @@ namespace KazgarsRevenge
                         if (innerCollides != null)
                         {
                             if (innerCollides.Equals("Ranged") || innerCollides.Equals("Melee") || innerCollides.Equals("Magic") || innerCollides.Equals("Points"))
-                                {
-                                    break;
-                                }
+                            {
+                                break;
+                            }
                             //TODO if we add any more innerFrames in abilities make sure we check those first
                             int check = Convert.ToInt32(innerCollides.Remove(0, 6));
                             if (currentTalentTree == TalentTrees.ranged)
@@ -1902,7 +1903,7 @@ namespace KazgarsRevenge
                     #region player frame
                     case "player":
                         if (innerCollides != null)
-                        {                           
+                        {
                             for (int i = 0; i < 6; i++)
                             {
                                 if (innerCollides.Equals("buff" + i) && i < buffs.Count) //&& buffs i is not null
@@ -1926,7 +1927,7 @@ namespace KazgarsRevenge
                         {
                             for (int i = 0; i < 10; i++)
                             {
-                                if (innerCollides.Equals("itemIcon" + i) || innerCollides.Equals("itemFrame" + i)) 
+                                if (innerCollides.Equals("itemIcon" + i) || innerCollides.Equals("itemFrame" + i))
                                 {
                                     if (buyingBack) //buying back
                                     {
@@ -2099,7 +2100,7 @@ namespace KazgarsRevenge
                             currentTooltip = boundAbilities[check].Value.Tooltip;
                         }
                         hovering = true;
-                        hoverRect = guiInsideRects["abilities"]["ability"+check];
+                        hoverRect = guiInsideRects["abilities"]["ability" + check];
                     }
                     break;
                 #endregion
@@ -2109,7 +2110,7 @@ namespace KazgarsRevenge
                     {
                         for (int i = 0; i < 6; i++)
                         {
-                            if(innerCollides.Equals("buff"+i) && i < buffs.Count()) //&& buffs i is not null
+                            if (innerCollides.Equals("buff" + i) && i < buffs.Count()) //&& buffs i is not null
                             {
                                 currentTooltip = buffTooltips[buffs[i]];
                                 hovering = true;
@@ -2121,7 +2122,8 @@ namespace KazgarsRevenge
                                 hovering = true;
                                 hoverRect = guiInsideRects["player"]["debuff" + i];
                             }
-                            else{
+                            else
+                            {
                                 //do nothing / future implementation
                             }
                         }
@@ -2246,8 +2248,8 @@ namespace KazgarsRevenge
                             }
                             //locked
                             else s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black * .8f);
-                        }   
-                        
+                        }
+
                         //Draw active frames around active items
                         if (GetCachedAbility(currentTree[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[currentTree[j, i].name])
                         {
@@ -2464,7 +2466,7 @@ namespace KazgarsRevenge
             Vector2 equipmentUL = new Vector2((int)(maxX - 794 * average), (int)(296 * average));
             Vector2 talentUL = new Vector2(5 * average, 180 * average);
             Vector2 lootUL = new Vector2((int)(420 * average), (int)(180 * average));
-            
+
             inventoryRect = new Rectangle((int)inventoryUL.X, (int)inventoryUL.Y, (int)(480 * average), (int)(480 * average));
             equipmentRect = new Rectangle((int)equipmentUL.X, (int)equipmentUL.Y, (int)(304 * average), (int)(608 * average));
             talentRect = new Rectangle((int)talentUL.X, (int)talentUL.Y, (int)(406 * average), (int)(812 * average));
@@ -2553,7 +2555,7 @@ namespace KazgarsRevenge
             mapImgDict = (Game.Services.GetService(typeof(LevelManager)) as LevelManager).getMiniImageMap();
 
             megaMapDict["megaMap"] = megaMapRect;
-            megaMapDict["playerPos"] = new Rectangle(0, 0, (int) (5 * average), (int) (5 * average));
+            megaMapDict["playerPos"] = new Rectangle(0, 0, (int)(5 * average), (int)(5 * average));
 
             //Inventory inner
             for (int i = 0; i < 4; ++i)
@@ -2626,13 +2628,13 @@ namespace KazgarsRevenge
             powerBackRect = new Rectangle(playerHPRect.X, playerHPRect.Y + playerHPRect.Height, playerHPRect.Width, playerHPRect.Height);
             powerTextPos = new Vector2((int)(170 * average), (int)(35 * average));
             playerDict.Add("hp", playerHPRect);
-            playerDict.Add("power",powerBackRect);
+            playerDict.Add("power", powerBackRect);
 
             //OK button on PopUps
             helpPopDict.Add("ok", new Rectangle((int)(maxX / 2 + 120 * average), (int)helpPopPos.Y, (int)(30 * average), (int)(30 * average)));
 
             //Buttons
-            buttonsDict.Add("map", new Rectangle((int)(maxX - 430 * average),(int)(0*average),(int)(86*average),(int)(86*average)));
+            buttonsDict.Add("map", new Rectangle((int)(maxX - 430 * average), (int)(0 * average), (int)(86 * average), (int)(86 * average)));
             buttonsDict.Add("character", new Rectangle((int)(maxX - 430 * average), (int)(172 * average), (int)(86 * average), (int)(86 * average)));
             buttonsDict.Add("inventory", new Rectangle((int)(maxX - 430 * average), (int)(86 * average), (int)(86 * average), (int)(86 * average)));
             buttonsDict.Add("talents", new Rectangle((int)(maxX - 430 * average), (int)(258 * average), (int)(86 * average), (int)(86 * average)));
@@ -2650,10 +2652,10 @@ namespace KazgarsRevenge
             //Shop Keeper
             for (int i = 0; i < 10; i += 2)
             {
-                shopKeeperDict.Add("itemIcon" + i, new Rectangle((int)(25 * average), (int)((273 + i/2 * 111) * average), (int)(78 * average), (int)(78 * average)));
-                shopKeeperDict.Add("itemFrame" + i, new Rectangle((int)(103 * average), (int)((273 + i/2 * 111) * average), (int)(135 * average), (int)(78 * average)));
-                shopKeeperDict.Add("itemIcon" + (i + 1), new Rectangle((int)(258 * average), (int)((273 + i/2 * 111) * average), (int)(78 * average), (int)(78 * average)));
-                shopKeeperDict.Add("itemFrame" + (i + 1), new Rectangle((int)(336 * average), (int)((273 + i/2 * 111) * average), (int)(135 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemIcon" + i, new Rectangle((int)(25 * average), (int)((273 + i / 2 * 111) * average), (int)(78 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemFrame" + i, new Rectangle((int)(103 * average), (int)((273 + i / 2 * 111) * average), (int)(135 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemIcon" + (i + 1), new Rectangle((int)(258 * average), (int)((273 + i / 2 * 111) * average), (int)(78 * average), (int)(78 * average)));
+                shopKeeperDict.Add("itemFrame" + (i + 1), new Rectangle((int)(336 * average), (int)((273 + i / 2 * 111) * average), (int)(135 * average), (int)(78 * average)));
             }//5,180
             shopKeeperDict.Add("buy", new Rectangle((int)(493 * average), (int)(180 * average), (int)(57 * average), (int)(78 * average)));
             shopKeeperDict.Add("buyBack", new Rectangle((int)(493 * average), (int)(258 * average), (int)(57 * average), (int)(78 * average)));
@@ -2675,7 +2677,7 @@ namespace KazgarsRevenge
                     enemyColor = Color.Purple;
                 }
                 s.DrawString(font, mouseHoveredEntity.Name, vecName, enemyColor, 0, new Vector2(font.MeasureString(mouseHoveredEntity.Name).X * average / 2, 0), average, SpriteEffects.None, 0);
-               
+
             }
             if (mouseHoveredHealth != null)
             {
@@ -2815,7 +2817,7 @@ namespace KazgarsRevenge
                 if (i < buffs.Count() && activeBuffs.ContainsKey(buffs[i]))
                 {
                     s.Draw(buffIcons[buffs[i]], guiInsideRects["player"]["buff" + i], Color.White);
-                    s.DrawString(font, (int)activeBuffs[buffs[i]].timeLeft/1000 + "s", new Vector2(guiInsideRects["player"]["timebuff" + i].X, guiInsideRects["player"]["timebuff" + i].Y), Color.Gold, 0, Vector2.Zero, 0.4f * average, SpriteEffects.None, 0);
+                    s.DrawString(font, (int)activeBuffs[buffs[i]].timeLeft / 1000 + "s", new Vector2(guiInsideRects["player"]["timebuff" + i].X, guiInsideRects["player"]["timebuff" + i].Y), Color.Gold, 0, Vector2.Zero, 0.4f * average, SpriteEffects.None, 0);
                 }
                 if (i < debuffs.Count() && activeDebuffs.ContainsKey(debuffs[i]))
                 {
@@ -2823,7 +2825,7 @@ namespace KazgarsRevenge
                     s.DrawString(font, (int)activeDebuffs[debuffs[i]].timeLeft / 1000 + "s", new Vector2(guiInsideRects["player"]["timedebuff" + i].X, guiInsideRects["player"]["timedebuff" + i].Y), Color.Gold, 0, Vector2.Zero, 0.4f * average, SpriteEffects.None, 0);
                 }
             }
-                            
+
             #endregion
 
             #region extra player frames
@@ -2919,7 +2921,7 @@ namespace KazgarsRevenge
                 }
             }
             #endregion
-            
+
             #region Loot
             //Draw Loot
             if (looting && lootingSoul != null && guiOutsideRects.ContainsKey("loot"))
@@ -3060,8 +3062,9 @@ namespace KazgarsRevenge
             #endregion
 
             #region trash item
-            if(guiOutsideRects.ContainsKey("trashItem")){
-                s.Draw(texWhitePixel, guiOutsideRects["trashItem"], Color.Black *.5f);
+            if (guiOutsideRects.ContainsKey("trashItem"))
+            {
+                s.Draw(texWhitePixel, guiOutsideRects["trashItem"], Color.Black * .5f);
                 s.Draw(texPlaceHolder, guiInsideRects["trashItem"]["ok"], Color.Green);
                 s.Draw(texPlaceHolder, guiInsideRects["trashItem"]["cancel"], Color.Red);
                 s.DrawString(font, "Are you sure you want", new Vector2((int)(maxX / 2 - 120 * average), (int)((160 * average))), Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
@@ -3124,8 +3127,8 @@ namespace KazgarsRevenge
                 s.Draw(texWhitePixel, helpPopRect, Color.Black * 0.5f);
                 helpPoPs[0].Draw(s, helpPopPos, largeFont, average, 50f, guiInsideRects["helpPop"]["ok"], guiInsideRects["helpPop"]["ok"], guiInsideRects);
             }
-            
-            
+
+
             #endregion
 
             //always keep this last so hover image is drawn on top
@@ -3192,7 +3195,7 @@ namespace KazgarsRevenge
             /*
              * Basically we need to find the player's position within a chunk, then we can translate
              * that position in the chunk to a position in the chunk image, and draw that area of the chunk
-             */ 
+             */
             LevelManager lm = (Game.Services.GetService(typeof(LevelManager)) as LevelManager);
             lm.visitChunk(physicalData.Position);
 
@@ -3214,10 +3217,10 @@ namespace KazgarsRevenge
             float imgX = curChunk.Width * (inChunkX / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE));
             float imgZ = curChunk.Width * (inChunkZ / (LevelManager.CHUNK_SIZE * LevelManager.BLOCK_SIZE));
 
-            Rectangle src = new Rectangle((int) imgX, (int) imgZ, zoom, zoom);
+            Rectangle src = new Rectangle((int)imgX, (int)imgZ, zoom, zoom);
             // Center it
-            src.X -= (int) (zoom / 2);
-            src.Y -= (int) (zoom / 2);
+            src.X -= (int)(zoom / 2);
+            src.Y -= (int)(zoom / 2);
 
             Rectangle drawLoc = mapDict["Total"];
             s.Draw(curChunk, new Rectangle(drawLoc.X + drawLoc.Width / 2, drawLoc.Y + drawLoc.Height / 2, drawLoc.Width, drawLoc.Height), src,
@@ -3258,6 +3261,13 @@ namespace KazgarsRevenge
                     Rectangle curChunkRect = new Rectangle(megaMapRect.X + tileSizeX * i, megaMapRect.Y + tileSizeY * j, tileSizeX, tileSizeY);
                     s.Draw(Texture2DUtil.Instance.GetTexture(currentChunk), new Rectangle(curChunkRect.X + curChunkRect.Width / 2, curChunkRect.Y + curChunkRect.Height / 2, curChunkRect.Width, curChunkRect.Height),
                         null, Color.White * alpha, -rotation.ToRadians(), new Vector2(originX, originY), SpriteEffects.None, 0);
+                    if (levels.ShowBoss(i, j))
+                    {
+                        int bossOriginX = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MegaMap.BOSS).Width / 2;
+                        int bossOriginY = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MegaMap.BOSS).Height / 2;
+                        s.Draw(Texture2DUtil.Instance.GetTexture(TextureStrings.UI.MegaMap.BOSS), new Rectangle(curChunkRect.X + curChunkRect.Width / 2, curChunkRect.Y + curChunkRect.Height / 2, curChunkRect.Width, 
+                            curChunkRect.Height), null, Color.White * (alpha * 0.5f), 0, new Vector2(bossOriginX, bossOriginY), SpriteEffects.None, 0);
+                    }
                 }
             }
 
@@ -3265,7 +3275,7 @@ namespace KazgarsRevenge
             Rectangle playerRect = guiInsideRects["megaMap"]["playerPos"];
             playerRect.X = (int)((physicalData.Position.X % (actualChunkSize * xChunks)) / (actualChunkSize * xChunks) * MegaMapRect.Width * average) + MegaMapRect.X;
             playerRect.Y = (int)((physicalData.Position.Z % (actualChunkSize * yChunks)) / (actualChunkSize * yChunks) * MegaMapRect.Height * average) + MegaMapRect.Y;
-            
+
             // Center playerRect
             playerRect.X -= playerRect.Width / 2;
             playerRect.Y -= playerRect.Height / 2;
