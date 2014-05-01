@@ -517,15 +517,6 @@ namespace KazgarsRevenge
                 mouseHoveredLocation = r.Position + r.Direction * distance.Value;
             }
 
-            if (float.IsNaN(mouseHoveredLocation.X) || float.IsNaN(mouseHoveredLocation.Y) || float.IsNaN(mouseHoveredLocation.Z))
-            {
-                //trying to find nan
-                //throw new Exception("NaN happened because of raycast?");
-                mouseHoveredLocation.X = 0;
-                mouseHoveredLocation.Y = 0;
-                mouseHoveredLocation.Z = 0;
-            }
-
             //check if ray hits GameEntity if not holding down mouse button
             List<RayCastResult> results = new List<RayCastResult>();
             physics.RayCast(r, 10000, rayCastFilter, results);

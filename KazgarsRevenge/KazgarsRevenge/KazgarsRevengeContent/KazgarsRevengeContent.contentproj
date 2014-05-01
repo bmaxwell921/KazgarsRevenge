@@ -938,11 +938,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Levels\Props\01-chair.fbx">
-      <Name>01-chair</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="Models\Levels\Props\01-lightFixture.fbx">
       <Name>01-lightFixture</Name>
       <Importer>FbxImporter</Importer>
@@ -2324,6 +2319,13 @@
   <ItemGroup>
     <Compile Include="Models\Weapons\dragon_bow.fbx">
       <Name>dragon_bow</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Levels\Props\01-chair.fbx">
+      <Name>01-chair</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
