@@ -11,6 +11,7 @@ namespace KazgarsRevenge
         Shopkeeper,
         EssenceGuy,
         Chest,
+        Lootsoul,
     }
 
     public class PlayerInteractiveController : Component

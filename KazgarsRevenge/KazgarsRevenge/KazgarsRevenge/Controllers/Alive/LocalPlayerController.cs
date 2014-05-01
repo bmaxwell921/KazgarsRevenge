@@ -260,6 +260,7 @@ namespace KazgarsRevenge
         KeyboardState curKeys = Keyboard.GetState();
         KeyboardState prevKeys = Keyboard.GetState();
         bool guiClick = false;
+        bool runningToEnemy = false;
         public override void Update(GameTime gameTime)
         {
             curMouse = Mouse.GetState();
@@ -556,8 +557,10 @@ namespace KazgarsRevenge
                                 if (mouseHoveredHealth != null)
                                 {
                                     mouseHoveredHealth.Target();
-                                    if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+                                    if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released 
+                                        && (mouseHoveredHealth as EnemyController != null))
                                     {
+                                        runningToEnemy = true;
                                         targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
                                     }
                                 }
@@ -566,7 +569,7 @@ namespace KazgarsRevenge
                                     mouseHoveredThing.Target();
                                     Entity hoveredEnt = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
                                     lastInteractedPosition = hoveredEnt.Position;
-                                    if (curMouse.RightButton == ButtonState.Pressed && prevMouse.RightButton == ButtonState.Released &&
+                                    if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released &&
                                         (Math.Abs(physicalData.Position.X - lastInteractedPosition.X) + Math.Abs(physicalData.Position.Z - lastInteractedPosition.Z) < 75.0f))
                                     {
                                         InteractWithEntity(mouseHoveredThing.Type);
@@ -1046,8 +1049,11 @@ namespace KazgarsRevenge
             }
 
             //primary attack (autos)
-            if (!inPrimarySequence && (curMouse.LeftButton == ButtonState.Pressed && (curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space))
-                || targetedPhysicalData != null))
+            if (!inPrimarySequence 
+                && (curMouse.LeftButton == ButtonState.Pressed 
+                && (curKeys.IsKeyDown(Keys.LeftShift) || curKeys.IsKeyDown(Keys.Space)) 
+                || runningToEnemy)
+                )
             {
                 //used to differentiate between left hand, right hand, and two hand animations
                 aniSuffix = "_r";
@@ -1335,6 +1341,7 @@ namespace KazgarsRevenge
             mouseHoveredEntity = null;
             mouseHoveredHealth = null;
             mouseHoveredThing = null;
+            runningToEnemy = false;
         }
 
         /// <summary>
@@ -2301,6 +2308,9 @@ namespace KazgarsRevenge
                             guiOutsideRects.Add("inventory", inventoryRect);
                         }
                     }
+                    break;
+                case InteractiveType.Lootsoul:
+                    OpenLoot();
                     break;
             }
         }
