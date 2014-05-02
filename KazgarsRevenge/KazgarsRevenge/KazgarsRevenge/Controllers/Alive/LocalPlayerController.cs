@@ -3171,20 +3171,44 @@ namespace KazgarsRevenge
 
 
             #region mouse
+            
             rectMouse.X = curMouse.X;
             rectMouse.Y = curMouse.Y;
             if (selectedItemSlot != -1)
             {
+                s.Draw(inventory[selectedItemSlot].Icon, rectMouse, Color.White);
                 s.Draw(texHover, guiInsideRects["inventory"]["inventory" + selectedItemSlot], Color.Gray);
+                Game.IsMouseVisible = false;
             }
             else if (selectedEquipSlot && gear[selectedEquipPiece] != null)
             {
+                s.Draw(gear[selectedEquipPiece].Icon, rectMouse, Color.White);
                 s.Draw(texHover, guiInsideRects["equipment"][((GearSlot)selectedEquipPiece).ToString()], Color.Gray);
+                Game.IsMouseVisible = false;
             }
             else if (selectedTalentSlot != -1)
             {
-                s.Draw(texHover, guiInsideRects["talents"]["talent"+selectedTalentSlot], Color.Gray);
+                if (currentTalentTree == TalentTrees.ranged)
+                {
+                    s.Draw(GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name).icon, rectMouse, Color.White);
+                }
+                else if (currentTalentTree == TalentTrees.melee)
+                {
+                    s.Draw(GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name).icon, rectMouse, Color.White);
+                }
+                else
+                {
+
+                }
+
+                s.Draw(texHover, guiInsideRects["talents"]["talent" + selectedTalentSlot], Color.Gray);
+                Game.IsMouseVisible = false;
             }
+            else
+            {
+                Game.IsMouseVisible = true;
+            }
+
             #endregion mouse
         }
 
