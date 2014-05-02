@@ -148,6 +148,7 @@ namespace KazgarsRevenge
         private void ClearLevelEntities()
         {
             (Game.Services.GetService(typeof(EnemyManager)) as EnemyManager).ClearEnemies();
+            (Game.Services.GetService(typeof(LootManager)) as LootManager).ClearGophers();
 
             if (key != null)
             {

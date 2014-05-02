@@ -23,6 +23,7 @@ namespace KazgarsRevenge
     public class LootManager : EntityManager
     {
         List<GameEntity> lootSouls = new List<GameEntity>();
+        List<GameEntity> gophers = new List<GameEntity>();
 
         public LootManager(KazgarsRevengeGame game)
             : base(game)
@@ -38,13 +39,13 @@ namespace KazgarsRevenge
             InitializeItems();
         }
 
-        public void ClearLevel()
+        public void ClearGophers()
         {
-            foreach (GameEntity ent in lootSouls)
+            foreach (GameEntity ent in gophers)
             {
                 ent.KillEntity();
             }
-            lootSouls.Clear();
+            gophers.Clear();
         }
 
         public void CreateLootSoul(Vector3 position, GameEntity entity)
@@ -130,7 +131,7 @@ namespace KazgarsRevenge
             entity.AddComponent(typeof(IPlayerInteractiveController), controller);
             genComponentManager.AddComponent(controller);
 
-            lootSouls.Add(entity);
+            gophers.Add(entity);
 
         }
 
