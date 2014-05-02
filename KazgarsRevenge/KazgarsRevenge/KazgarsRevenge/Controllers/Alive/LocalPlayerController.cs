@@ -3171,45 +3171,20 @@ namespace KazgarsRevenge
 
 
             #region mouse
-            /*
             rectMouse.X = curMouse.X;
             rectMouse.Y = curMouse.Y;
             if (selectedItemSlot != -1)
             {
-                rectMouse.Width = (int)(60 * average);
-                rectMouse.Height = (int)(60 * average);
-                s.Draw(inventory[selectedItemSlot].Icon, rectMouse, Color.White);
+                s.Draw(texHover, guiInsideRects["inventory"]["inventory" + selectedItemSlot], Color.Gray);
             }
             else if (selectedEquipSlot && gear[selectedEquipPiece] != null)
             {
-                rectMouse.Width = (int)(60 * average);
-                rectMouse.Height = (int)(60 * average);
-                s.Draw(gear[selectedEquipPiece].Icon, rectMouse, Color.White);
+                s.Draw(texHover, guiInsideRects["equipment"][((GearSlot)selectedEquipPiece).ToString()], Color.Gray);
             }
             else if (selectedTalentSlot != -1)
             {
-                rectMouse.Width = (int)(60 * average);
-                rectMouse.Height = (int)(60 * average);
-                if (currentTalentTree == TalentTrees.ranged)
-                {
-                    s.Draw(GetCachedAbility(rangedAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name).icon, rectMouse, Color.White);
-                }
-                else if (currentTalentTree == TalentTrees.melee)
-                {
-                    s.Draw(GetCachedAbility(meleeAbilities[selectedTalentSlot / 4, selectedTalentSlot % 4].name).icon, rectMouse, Color.White);
-                }
-                else
-                {
-
-                }
-
+                s.Draw(texHover, guiInsideRects["talents"]["talent"+selectedTalentSlot], Color.Gray);
             }
-            else
-            {
-                rectMouse.Width = 40;
-                rectMouse.Height = 40;
-                s.Draw(texCursor, rectMouse, Color.White);
-            }*/
             #endregion mouse
         }
 
