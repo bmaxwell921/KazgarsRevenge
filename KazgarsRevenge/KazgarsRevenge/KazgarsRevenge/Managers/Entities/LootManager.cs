@@ -38,6 +38,15 @@ namespace KazgarsRevenge
             InitializeItems();
         }
 
+        public void ClearLevel()
+        {
+            foreach (GameEntity ent in lootSouls)
+            {
+                ent.KillEntity();
+            }
+            lootSouls.Clear();
+        }
+
         public void CreateLootSoul(Vector3 position, GameEntity entity)
         {
             CreateLootSoul(position, (List<Item>) GetLootFor(levelManager.currentLevel.currentFloor, entity), 1);

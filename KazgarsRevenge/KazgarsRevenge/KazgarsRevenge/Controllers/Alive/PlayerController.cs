@@ -65,7 +65,7 @@ namespace KazgarsRevenge
         protected Vector3 mouseHoveredLocation = Vector3.Zero;
         protected Vector3 groundTargetLocation = Vector3.Zero;
         protected double millisRunningCounter = 2000;
-        protected double millisRunTime = 2000;
+        protected double millisRunTime = 4000;
         protected double millisCombatLength = 500;
         protected double millisCombatCounter = 0;
         protected bool inCombat = false;

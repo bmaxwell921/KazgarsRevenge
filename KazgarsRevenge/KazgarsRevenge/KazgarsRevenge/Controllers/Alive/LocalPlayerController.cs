@@ -423,9 +423,10 @@ namespace KazgarsRevenge
                 groundMove.Normalize();
             }
 
-            Vector3 distToTarget = physicalData.Position - groundTargetLocation;
-            distToTarget.Y = 0;
-            bool closeEnough = distToTarget.Length() <= stopRadius;
+            Vector3 toTarget = physicalData.Position - groundTargetLocation;
+            toTarget.Y = 0;
+            float distToTarget = toTarget.Length();
+            bool closeEnough = distToTarget <= stopRadius;
             if (!looting && (!guiClick || Math.Abs(physicalData.LinearVelocity.X) + Math.Abs(physicalData.LinearVelocity.Z) > .01f))
             {
                 if ((attState == AttackState.Charging || attState == AttackState.CastingSpell) && !closeEnough)
@@ -468,6 +469,16 @@ namespace KazgarsRevenge
             else
             {
                 ChangeVelocity(Vector3.Zero);
+            }
+
+            if (targetedPhysicalData != null && targetedThing != null)
+            {
+                if (InteractWithEntity(targetedThing, distToTarget))
+                {
+                    groundTargetLocation = physicalData.Position;
+                    targetedPhysicalData = null;
+                    targetedThing = null;
+                }
             }
 
             prevMouse = curMouse;
@@ -572,10 +583,6 @@ namespace KazgarsRevenge
                                     {
                                         targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
                                         targetedThing = mouseHoveredThing;
-                                        if (Math.Abs(physicalData.Position.X - lastInteractedPosition.X) + Math.Abs(physicalData.Position.Z - lastInteractedPosition.Z) < 50.0f)
-                                        {
-                                            InteractWithEntity(mouseHoveredThing);
-                                        }
                                     }
                                 }
                                 else
@@ -1169,9 +1176,13 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-                    StopRunning();
                     //stop if within stopRadius of targetted ground location
                     ChangeVelocity(Vector3.Zero);
+                    if (currentAniName == "k_walk")
+                    {
+                        StartSequence("fightingstance");
+                    }
+                    targetedThing = null;
                 }
             }
             else
@@ -1195,19 +1206,6 @@ namespace KazgarsRevenge
         #endregion
 
         #region Helpers
-        private void StopRunning()
-        {
-            if (targetedPhysicalData != null && targetedThing != null && (Math.Abs(physicalData.Position.X - targetedPhysicalData.Position.X) + Math.Abs(physicalData.Position.Z - targetedPhysicalData.Position.Z) < 50.0f))
-            {
-                InteractWithEntity(targetedThing);
-            }
-            else if (currentAniName == "k_walk")
-            {
-                StartSequence("fightingstance");
-            }
-            targetedThing = null;
-        }
-
         /// <summary>
         /// Helps to check and equip gear
         /// </summary>
@@ -2287,36 +2285,46 @@ namespace KazgarsRevenge
             }
         }
 
-        private void InteractWithEntity(IPlayerInteractiveController interactiveController)
+        private bool InteractWithEntity(IPlayerInteractiveController interactiveController, float distToTarget)
         {
             switch (interactiveController.GetType())
             {
                 case InteractiveType.Shopkeeper:
-                    if (!guiOutsideRects.ContainsKey("shopKeeper"))
+                    if (distToTarget <= 75)
                     {
-                        inShop = true;
-                        guiOutsideRects.Add("shopKeeper", shopKeeperRect);
-                        showInventory = true;
-                        if (!guiOutsideRects.ContainsKey("inventory"))
+                        if (!guiOutsideRects.ContainsKey("shopKeeper"))
                         {
-                            guiOutsideRects.Add("inventory", inventoryRect);
+                            inShop = true;
+                            guiOutsideRects.Add("shopKeeper", shopKeeperRect);
+                            showInventory = true;
+                            if (!guiOutsideRects.ContainsKey("inventory"))
+                            {
+                                guiOutsideRects.Add("inventory", inventoryRect);
+                            }
                         }
+                        return true;
                     }
                     break;
                 case InteractiveType.Lootsoul:
-                    if (!looting)
+                    if (distToTarget <= 35)
                     {
-                        OpenLoot(interactiveController);
-                        if (!guiOutsideRects.ContainsKey("loot"))
+                        if (!looting)
                         {
-                            guiOutsideRects.Add("loot", lootRect);
+                            OpenLoot(interactiveController);
+                            if (!guiOutsideRects.ContainsKey("loot"))
+                            {
+                                guiOutsideRects.Add("loot", lootRect);
+                            }
                         }
+                        return true;
                     }
                     break;
                 case InteractiveType.Chest:
                     StartSequence("openchest");
+                    return true;
                     break;
             }
+            return false;
         }
 
         private void ExitShop()

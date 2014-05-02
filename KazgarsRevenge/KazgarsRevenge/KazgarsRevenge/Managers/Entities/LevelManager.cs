@@ -587,17 +587,17 @@ namespace KazgarsRevenge
                     enemyManager.CreateDummy(Vector3.Transform(v, chunkTransform));
                 }
 
-                List<Vector3> gopherLocs = levelInfo.gopherLocations;
-                foreach (Vector3 v in gopherLocs)
-                {
-                    if (RandSingleton.U_Instance.Next(2) == 0)
-                    {
-                        (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(v, chunkTransform));
-                    }
-                }
-
                 if (currentLevel.currentFloor != FloorName.Ground)
                 {
+                    List<Vector3> gopherLocs = levelInfo.gopherLocations;
+                    foreach (Vector3 v in gopherLocs)
+                    {
+                        if (RandSingleton.U_Instance.Next(2) == 0)
+                        {
+                            (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(v, chunkTransform));
+                        }
+                    }
+
                     (Game.Services.GetService(typeof(LootManager)) as LootManager).CreateTreasureGopher(Vector3.Transform(Vector3.Zero, chunkTransform));
                 }
             }
