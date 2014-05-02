@@ -99,6 +99,7 @@
       <HintPath>..\..\SkinnedModelLib\bin\x86\Debug\SkinnedModelLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

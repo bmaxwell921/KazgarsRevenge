@@ -316,6 +316,7 @@ namespace KazgarsRevenge
                 if (attState != AttackState.None)
                 {
                     targetedPhysicalData = null;
+                    runningToEnemy = false;
                 }
             }
 
@@ -431,8 +432,15 @@ namespace KazgarsRevenge
             {
                 if ((attState == AttackState.Charging || attState == AttackState.CastingSpell) && !closeEnough)
                 {
-                    CancelFinishSequence();
-                    MoveCharacter(groundMove, closeEnough);
+                    if (Game.IsActive)
+                    {
+                        CancelFinishSequence();
+                        MoveCharacter(groundMove, closeEnough);
+                    }
+                    else
+                    {
+                        ChangeVelocity(Vector3.Zero);
+                    }
                 }
                 else if (attState == AttackState.None || attState == AttackState.LockedMoving)
                 {
@@ -478,6 +486,7 @@ namespace KazgarsRevenge
                     groundTargetLocation = physicalData.Position;
                     targetedPhysicalData = null;
                     targetedThing = null;
+                    runningToEnemy = false;
                 }
             }
 
@@ -535,6 +544,7 @@ namespace KazgarsRevenge
             if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
             {
                 targetedPhysicalData = null;
+                runningToEnemy = false;
             }
             if (curKeys.IsKeyDown(Keys.LeftShift))
             {
@@ -999,6 +1009,7 @@ namespace KazgarsRevenge
                     InterruptCurrentSequence();
                     CancelFinishSequence();
                     targetedPhysicalData = null;
+                    runningToEnemy = false;
                 }
                 else if (attState == AttackState.Charging)
                 {
@@ -1011,7 +1022,7 @@ namespace KazgarsRevenge
                     UpdateRotation(dir);
                     StartAbilitySequence(abilityToUse);
                     targetedPhysicalData = null;
-
+                    runningToEnemy = false;
                 }
                 else if (abilityToUse.AbilityType == AbilityType.Instant)
                 {
@@ -1020,6 +1031,7 @@ namespace KazgarsRevenge
                     UpdateRotation(dir);
                     StartAbilitySequence(abilityToUse);
                     targetedPhysicalData = null;
+                    runningToEnemy = false;
                 }
                 else
                 {
@@ -1031,6 +1043,7 @@ namespace KazgarsRevenge
                     }
                     StartAbilitySequence(abilityToUse);
                     targetedPhysicalData = null;
+                    runningToEnemy = false;
                 }
                 return;
             }
@@ -1206,6 +1219,7 @@ namespace KazgarsRevenge
         #endregion
 
         #region Helpers
+
         /// <summary>
         /// Helps to check and equip gear
         /// </summary>
@@ -1334,7 +1348,6 @@ namespace KazgarsRevenge
             mouseHoveredEntity = null;
             mouseHoveredHealth = null;
             mouseHoveredThing = null;
-            runningToEnemy = false;
         }
 
         /// <summary>
@@ -3158,6 +3171,7 @@ namespace KazgarsRevenge
 
 
             #region mouse
+            /*
             rectMouse.X = curMouse.X;
             rectMouse.Y = curMouse.Y;
             if (selectedItemSlot != -1)
@@ -3195,7 +3209,7 @@ namespace KazgarsRevenge
                 rectMouse.Width = 40;
                 rectMouse.Height = 40;
                 s.Draw(texCursor, rectMouse, Color.White);
-            }
+            }*/
             #endregion mouse
         }
 

@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -21,11 +25,37 @@ using EventInput;
 
 namespace KazgarsRevenge
 {
+    //inject cursor-loading method into NativeMethods
+    static class NativeMethods
+    {
+        public static Cursor LoadCustomCursor(string path)
+        {
+            IntPtr hCurs = LoadCursorFromFile(path);
+            if (hCurs == IntPtr.Zero)
+            {
+                throw new Win32Exception();
+            }
+            var retCurs = new Cursor(hCurs);
+            //force the cursor to own the handle so it gets released properly
+            var cursorField = typeof(Cursor).GetField("ownHandle", BindingFlags.NonPublic | BindingFlags.Instance);
+            cursorField.SetValue(retCurs, true);
+            return retCurs;
+        }
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern IntPtr LoadCursorFromFile(string path);
+    }
+
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
     public class MainGame : KazgarsRevengeGame
     {
+        [DllImport("user32.dll")]
+        static extern void ClipCursor(ref Rectangle rect);
+        [DllImport("user32.dll")]
+        static extern void ClipCursor(IntPtr rect);
+
         #region Settings
         public enum SettingAmount
         {
@@ -78,7 +108,6 @@ namespace KazgarsRevenge
         public RenderTarget2D RenderTarget { get { return renderTarget; } }
         float screenScale = 1;
         #endregion
-
         public MainGame()
         {
             gameState = GameState.StartMenu;
@@ -86,6 +115,14 @@ namespace KazgarsRevenge
 
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            
+            //create cursor, tell window to use it
+            Cursor newCursor = NativeMethods.LoadCustomCursor(TextureStrings.CURSOR);
+            Form winForm = (Form)Form.FromHandle(this.Window.Handle);
+            winForm.Cursor = newCursor;
+            IsMouseVisible = true;
+
         }
         
         protected override void Initialize()
@@ -105,6 +142,12 @@ namespace KazgarsRevenge
                 graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
+
+
+                Rectangle rect = Window.ClientBounds;
+                rect.Width += rect.X;
+                rect.Height += rect.Y;
+                ClipCursor(ref rect);
             }
             else
             {
@@ -288,6 +331,15 @@ namespace KazgarsRevenge
         TimeSpan elapsedTime = TimeSpan.Zero;
         protected override void Update(GameTime gameTime)
         {
+            if (IsActive && graphics.IsFullScreen)
+            {
+                Rectangle rect = Window.ClientBounds;
+                rect.Width += rect.X;
+                rect.Height += rect.Y;
+
+                ClipCursor(ref rect); 
+            }
+
             if (gameState == GameState.Playing)
             {
                 if (debug)
