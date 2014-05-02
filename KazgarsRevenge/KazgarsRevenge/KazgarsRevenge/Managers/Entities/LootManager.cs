@@ -51,10 +51,10 @@ namespace KazgarsRevenge
         public void CreateLootSoul(Vector3 position, List<Item> containedLoot, int totalSouls)
         {
             position.Y = 10;
-            GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral, EntityType.Misc);
+            GameEntity lootSoul = new GameEntity("loot", FactionType.Neutral, EntityType.Interactive);
             float size = 3 + totalSouls;
 
-            Entity lootPhysicalData = new Box(position, size, size, size, 1);
+            Entity lootPhysicalData = new Box(position, size + 10, size, size + 10, 1);
             lootPhysicalData.CollisionInformation.CollisionRules.Personal = BEPUphysics.CollisionRuleManagement.CollisionRule.NoSolver;
             lootPhysicalData.LocalInertiaTensorInverse = new BEPUphysics.MathExtensions.Matrix3X3();
             lootPhysicalData.IsAffectedByGravity = false;
@@ -80,7 +80,7 @@ namespace KazgarsRevenge
             lootSoul.AddComponent(typeof(UnanimatedModelComponent), lootGraphics);
             modelManager.AddComponent(lootGraphics);
 
-            lootSoul.AddComponent(typeof(LootableController), lootController);
+            lootSoul.AddComponent(typeof(IPlayerInteractiveController), lootController);
             genComponentManager.AddComponent(lootController);
 
             lootSoul.AddComponent(typeof(BlobShadowDecal), lootShadow);
@@ -92,7 +92,7 @@ namespace KazgarsRevenge
         public void CreateTreasureGopher(Vector3 position)
         {
             position.Y = 4;
-            GameEntity entity = new GameEntity("treasure gopher", FactionType.Neutral, EntityType.Misc);
+            GameEntity entity = new GameEntity("treasure gopher", FactionType.Neutral, EntityType.Interactive);
 
             Entity data = new Box(position, 15, 10, 15, 5);
             data.CollisionInformation.CollisionRules.Group = mainGame.UntouchableCollisionGroup;
@@ -118,7 +118,7 @@ namespace KazgarsRevenge
             billboardManager.AddComponent(shadow);
 
             TreasureGopherController controller = new TreasureGopherController(mainGame, entity, GetTreasureGopherLoot(levelManager.currentLevel.currentFloor, entity));
-            entity.AddComponent(typeof(LootableController), controller);
+            entity.AddComponent(typeof(IPlayerInteractiveController), controller);
             genComponentManager.AddComponent(controller);
 
             lootSouls.Add(entity);

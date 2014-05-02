@@ -344,7 +344,7 @@ namespace KazgarsRevenge
         }
         public void CreateJeebes(Vector3 position)
         {
-            GameEntity entity = new GameEntity("Jeebes", FactionType.Players, EntityType.Shopkeeper);
+            GameEntity entity = new GameEntity("Jeebes", FactionType.Players, EntityType.Interactive);
 
             SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 35, 20), -1);
 
@@ -360,14 +360,14 @@ namespace KazgarsRevenge
             modelManager.AddComponent(enemyGraphics);
 
             ShopkeeperController controller = new ShopkeeperController(mainGame, entity);
-            entity.AddComponent(typeof(PlayerInteractiveController), controller);
+            entity.AddComponent(typeof(IPlayerInteractiveController), controller);
             genComponentManager.AddComponent(controller);
 
             friendlyNPCS.Add(entity);
         }
         public void CreateHeebes(Vector3 position)
         {
-            GameEntity entity = new GameEntity("Heebes", FactionType.Players, EntityType.Shopkeeper);
+            GameEntity entity = new GameEntity("Heebes", FactionType.Players, EntityType.Interactive);
 
             SetupEntityPhysicsAndShadow(entity, position, new Vector3(20, 35, 20), -1);
 
@@ -384,7 +384,7 @@ namespace KazgarsRevenge
 
 
             EssenceGuyController controller = new EssenceGuyController(mainGame, entity);
-            entity.AddComponent(typeof(PlayerInteractiveController), controller);
+            entity.AddComponent(typeof(IPlayerInteractiveController), controller);
             genComponentManager.AddComponent(controller);
 
             friendlyNPCS.Add(entity);

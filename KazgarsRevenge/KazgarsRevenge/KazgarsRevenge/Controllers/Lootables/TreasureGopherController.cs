@@ -15,7 +15,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    public class TreasureGopherController : LootableController
+    public class TreasureGopherController : LootableController, IPlayerInteractiveController
     {
         enum GopherState
         {
@@ -38,6 +38,7 @@ namespace KazgarsRevenge
         AttackManager attacks;
         SoundEffectLibrary sounds;
 
+        SharedGraphicsParams modelParams;
         AnimationPlayer animations;
         GopherState state = GopherState.Idle;
         public TreasureGopherController(KazgarsRevengeGame game, GameEntity entity, List<Item> loot)
@@ -53,6 +54,8 @@ namespace KazgarsRevenge
             levels = Game.Services.GetService(typeof(LevelManager)) as LevelManager;
             attacks = Game.Services.GetService(typeof(AttackManager)) as AttackManager;
             sounds = Game.Services.GetService(typeof(SoundEffectLibrary)) as SoundEffectLibrary;
+
+            modelParams = entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
         }
 
         float senseRadius = 325f;
@@ -238,6 +241,21 @@ namespace KazgarsRevenge
                     }
                 }
             }
+        }
+
+        public new InteractiveType GetType()
+        {
+            return InteractiveType.Lootsoul;
+        }
+
+        public void Target()
+        {
+            modelParams.lineColor = Color.Gold;
+        }
+
+        public void UnTarget()
+        {
+            modelParams.lineColor = Color.Black;
         }
     }
 }

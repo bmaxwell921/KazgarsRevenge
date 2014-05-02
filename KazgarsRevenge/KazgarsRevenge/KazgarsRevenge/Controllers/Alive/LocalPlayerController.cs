@@ -158,7 +158,8 @@ namespace KazgarsRevenge
         Entity targetedPhysicalData;
         GameEntity mouseHoveredEntity;
         AliveComponent mouseHoveredHealth;
-        PlayerInteractiveController mouseHoveredThing;
+        IPlayerInteractiveController mouseHoveredThing;
+        IPlayerInteractiveController targetedThing;
         Vector3 lastInteractedPosition = Vector3.Zero;
 
         #region UI Textures
@@ -448,7 +449,6 @@ namespace KazgarsRevenge
                     }
                 }
 
-
                 if (Math.Abs(physicalData.Position.X - lastInteractedPosition.X) + Math.Abs(physicalData.Position.Z - lastInteractedPosition.Z) > 75)
                 {
                     if (inSoulevator)
@@ -488,7 +488,6 @@ namespace KazgarsRevenge
         bool RayCastFilter(BroadPhaseEntry entry)
         {
             return entry != physicalData.CollisionInformation
-                && entry.CollisionRules.Personal <= CollisionRule.Normal
                 && (entry as StaticMesh) == null;
         }
 
@@ -553,7 +552,7 @@ namespace KazgarsRevenge
                             else// if (newTarget)
                             {
                                 mouseHoveredHealth = mouseHoveredEntity.GetComponent(typeof(AliveComponent)) as AliveComponent;
-                                mouseHoveredThing = mouseHoveredEntity.GetComponent(typeof(PlayerInteractiveController)) as PlayerInteractiveController;
+                                mouseHoveredThing = mouseHoveredEntity.GetComponent(typeof(IPlayerInteractiveController)) as IPlayerInteractiveController;
                                 if (mouseHoveredHealth != null)
                                 {
                                     mouseHoveredHealth.Target();
@@ -569,10 +568,14 @@ namespace KazgarsRevenge
                                     mouseHoveredThing.Target();
                                     Entity hoveredEnt = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
                                     lastInteractedPosition = hoveredEnt.Position;
-                                    if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released &&
-                                        (Math.Abs(physicalData.Position.X - lastInteractedPosition.X) + Math.Abs(physicalData.Position.Z - lastInteractedPosition.Z) < 75.0f))
+                                    if (curMouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
                                     {
-                                        InteractWithEntity(mouseHoveredThing.Type);
+                                        targetedPhysicalData = mouseHoveredEntity.GetSharedData(typeof(Entity)) as Entity;
+                                        targetedThing = mouseHoveredThing;
+                                        if (Math.Abs(physicalData.Position.X - lastInteractedPosition.X) + Math.Abs(physicalData.Position.Z - lastInteractedPosition.Z) < 50.0f)
+                                        {
+                                            InteractWithEntity(mouseHoveredThing);
+                                        }
                                     }
                                 }
                                 else
@@ -605,24 +608,7 @@ namespace KazgarsRevenge
                 lootScroll = 0;
             }
 
-            //loot nearby soul
-            if (!looting && attState == AttackState.None && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
-            {
-                OpenLoot();
-                if (!guiOutsideRects.ContainsKey("loot"))
-                {
-                    guiOutsideRects.Add("loot", lootRect);
-                }
-            }
-            else if (looting && curKeys.IsKeyDown(Keys.Space) && prevKeys.IsKeyUp(Keys.Space) && currentAniName != "k_loot_smash")
-            {
-                CloseLoot();
-                if (guiOutsideRects.ContainsKey("loot"))
-                {
-                    guiOutsideRects.Remove("loot");
-                }
-            }
-            else if (looting && (lootingSoul == null || lootingSoul.Loot.Count == 0) && currentAniName != "k_loot_smash")
+            if (looting && (lootingSoul == null || lootingSoul.Loot.Count == 0) && currentAniName != "k_loot_smash")
             {
                 CloseLoot();
                 if (guiOutsideRects.ContainsKey("loot"))
@@ -1183,13 +1169,9 @@ namespace KazgarsRevenge
                 }
                 else
                 {
+                    StopRunning();
                     //stop if within stopRadius of targetted ground location
                     ChangeVelocity(Vector3.Zero);
-                    //just stopped moving
-                    if (currentAniName == "k_walk")
-                    {
-                        StartSequence("fightingstance");
-                    }
                 }
             }
             else
@@ -1213,6 +1195,19 @@ namespace KazgarsRevenge
         #endregion
 
         #region Helpers
+        private void StopRunning()
+        {
+            if (targetedPhysicalData != null && targetedThing != null && (Math.Abs(physicalData.Position.X - targetedPhysicalData.Position.X) + Math.Abs(physicalData.Position.Z - targetedPhysicalData.Position.Z) < 50.0f))
+            {
+                InteractWithEntity(targetedThing);
+            }
+            else if (currentAniName == "k_walk")
+            {
+                StartSequence("fightingstance");
+            }
+            targetedThing = null;
+        }
+
         /// <summary>
         /// Helps to check and equip gear
         /// </summary>
@@ -2292,12 +2287,11 @@ namespace KazgarsRevenge
             }
         }
 
-        private void InteractWithEntity(InteractiveType type)
+        private void InteractWithEntity(IPlayerInteractiveController interactiveController)
         {
-            switch (type)
+            switch (interactiveController.GetType())
             {
                 case InteractiveType.Shopkeeper:
-                    //#Nate start drawing shop gui here
                     if (!guiOutsideRects.ContainsKey("shopKeeper"))
                     {
                         inShop = true;
@@ -2310,7 +2304,17 @@ namespace KazgarsRevenge
                     }
                     break;
                 case InteractiveType.Lootsoul:
-                    OpenLoot();
+                    if (!looting)
+                    {
+                        OpenLoot(interactiveController);
+                        if (!guiOutsideRects.ContainsKey("loot"))
+                        {
+                            guiOutsideRects.Add("loot", lootRect);
+                        }
+                    }
+                    break;
+                case InteractiveType.Chest:
+                    StartSequence("openchest");
                     break;
             }
         }

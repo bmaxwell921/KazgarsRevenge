@@ -9,15 +9,30 @@ using BEPUphysics.Entities;
 
 namespace KazgarsRevenge
 {
-    public class ShopkeeperController : PlayerInteractiveController
+    public class ShopkeeperController : Component, IPlayerInteractiveController
     {
+        SharedGraphicsParams modelParams;
         public ShopkeeperController(KazgarsRevengeGame game, GameEntity entity)
-            : base(game, entity, InteractiveType.Shopkeeper)
+            : base(game, entity)
         {
-            targetedColor = Color.Gold;
-            untargetedColor = Color.Gray;
+            modelParams = entity.GetSharedData(typeof(SharedGraphicsParams)) as SharedGraphicsParams;
         }
 
+        public InteractiveType Type { get; private set; }
 
+        public void Target()
+        {
+            modelParams.lineColor = Color.White;
+        }
+
+        public void UnTarget()
+        {
+            modelParams.lineColor = Color.Black;
+        }
+
+        public new InteractiveType GetType()
+        {
+            return InteractiveType.Shopkeeper;
+        }
     }
 }

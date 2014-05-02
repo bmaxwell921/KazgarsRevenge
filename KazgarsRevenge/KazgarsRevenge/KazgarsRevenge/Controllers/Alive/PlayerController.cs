@@ -839,6 +839,7 @@ namespace KazgarsRevenge
             actionSequences.Add("loot_spin", LootSpinActions());
             actionSequences.Add("loot_smash", LootSmashActions());
             actionSequences.Add("death", DeathActions());
+            actionSequences.Add("openchest", OpenChestActions());
             //potions
             actionSequences.Add(AbilityName.HealthPotion.ToString(), HealthPotActions());
             actionSequences.Add(AbilityName.SuperHealthPotion.ToString(), SuperHealthPotActions());
@@ -1084,6 +1085,25 @@ namespace KazgarsRevenge
                 StartSequence("fightingstance");
                 AddBuff(Buff.Invincibility, Entity);
                 camera.RefreshLights();
+            });
+
+            return sequence;
+        }
+        private List<Action> OpenChestActions()
+        {
+            List<Action> sequence = new List<Action>();
+
+            sequence.Add(() =>
+            {
+                attState = AttackState.Locked;
+                PlayAnimation("k_kick", MixType.PauseAtEnd);
+
+                millisActionLength = animations.GetAniMillis("k_kick");
+            });
+
+            sequence.Add(() =>
+            {
+
             });
 
             return sequence;
@@ -2249,32 +2269,24 @@ namespace KazgarsRevenge
                 lootingSoul.CloseLoot();
             }
         }
+
         /// <summary>
         /// opening loot window, locking player's state
         /// </summary>
-        protected void OpenLoot()
+        protected void OpenLoot(Object possLootable)
         {
-            GameEntity possLoot = QueryNearEntity("loot", physicalData.Position + Vector3.Down * 18, 50);
-            if (possLoot == null)
+            lootingSoul = possLootable as LootableController;
+            if (lootingSoul != null && lootingSoul.CanLoot())
             {
-                possLoot = QueryNearEntity("treasure gopher", physicalData.Position + Vector3.Down * 18, 50);
+                StartSequence("loot");
+                lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);
+                looting = true;
+
+                groundTargetLocation = physicalData.Position;
             }
-
-            if(possLoot != null)
+            else
             {
-                lootingSoul = (possLoot.GetComponent(typeof(LootableController)) as LootableController);
-                if (lootingSoul != null && lootingSoul.CanLoot())
-                {
-                    StartSequence("loot");
-                    lootingSoul.OpenLoot(physicalData.Position + Vector3.Down * 18, physicalData.Orientation);
-                    looting = true;
-
-                    groundTargetLocation = physicalData.Position;
-                }
-                else
-                {
-                    lootingSoul = null;
-                }
+                lootingSoul = null;
             }
         }
         /// <summary>
@@ -2347,19 +2359,6 @@ namespace KazgarsRevenge
             if (!pulling)
             {
                 physicalData.LinearVelocity = newVel;
-            }
-
-            if (float.IsNaN(newVel.X))
-            {//whyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-                newVel.X = 0;
-            }
-            if (float.IsNaN(newVel.Y))
-            {
-                newVel.Y = 0;
-            }
-            if (float.IsNaN(newVel.Z))
-            {
-                newVel.Z = 0;
             }
         }
 

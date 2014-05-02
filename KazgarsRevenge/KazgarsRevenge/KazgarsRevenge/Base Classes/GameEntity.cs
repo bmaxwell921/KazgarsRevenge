@@ -27,7 +27,7 @@ namespace KazgarsRevenge
         EliteEnemy,
         Boss,
         Player,
-        Shopkeeper,
+        Interactive,
         Misc,
     }
 

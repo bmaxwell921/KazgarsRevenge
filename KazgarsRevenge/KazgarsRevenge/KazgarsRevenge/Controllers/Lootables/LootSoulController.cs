@@ -15,7 +15,7 @@ using SkinnedModelLib;
 
 namespace KazgarsRevenge
 {
-    public class LootSoulController : LootableController
+    public class LootSoulController : LootableController, IPlayerInteractiveController
     {
         enum LootSoulState
         {
@@ -272,33 +272,52 @@ namespace KazgarsRevenge
         }
 
 
+        object lockObj = new Object();
         //merge with other loot souls when colliding with them
         protected void HandleSoulCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair)
         {
-            if (soulState != LootSoulState.Dying && soulState != LootSoulState.BeingLooted)
+            lock (lockObj)
             {
-                GameEntity hitEntity = other.Tag as GameEntity;
-                if (hitEntity != null)
+                if (soulState != LootSoulState.Dying && soulState != LootSoulState.BeingLooted)
                 {
-                    //if we hit another soul, merge with it
-                    if (hitEntity.Name == "loot")
+                    GameEntity hitEntity = other.Tag as GameEntity;
+                    if (hitEntity != null)
                     {
-                        LootSoulController otherSoul = hitEntity.GetComponent(typeof(LootableController)) as LootSoulController;
-                        if (otherSoul != null && otherSoul.soulState != LootSoulState.Dying && otherSoul.soulState != LootSoulState.BeingLooted)
+                        //if we hit another soul, merge with it
+                        if (hitEntity.Name == "loot")
                         {
-                            List<Item> toAdd = otherSoul.Unite();
+                            LootSoulController otherSoul = hitEntity.GetComponent(typeof(IPlayerInteractiveController)) as LootSoulController;
+                            if (otherSoul != null && otherSoul.soulState != LootSoulState.Dying && otherSoul.soulState != LootSoulState.BeingLooted)
+                            {
+                                List<Item> toAdd = otherSoul.Unite();
 
-                            Vector3 newPos = physicalData.Position + (hitEntity.GetSharedData(typeof(Entity)) as Entity).Position;
-                            newPos /= 2;
+                                Vector3 newPos = physicalData.Position + (hitEntity.GetSharedData(typeof(Entity)) as Entity).Position;
+                                newPos /= 2;
 
-                            LootManager manager = (Game.Services.GetService(typeof(LootManager)) as LootManager);
-                            manager.CreateLootSoul(newPos, loot, toAdd, totalSouls + otherSoul.totalSouls);
-                            soulState = LootSoulState.Dying;
-                            Entity.KillEntity();
+                                LootManager manager = (Game.Services.GetService(typeof(LootManager)) as LootManager);
+                                manager.CreateLootSoul(newPos, loot, toAdd, totalSouls + otherSoul.totalSouls);
+                                soulState = LootSoulState.Dying;
+                                Entity.KillEntity();
+                            }
                         }
                     }
                 }
             }
+        }
+
+        public new InteractiveType GetType()
+        {
+            return InteractiveType.Lootsoul;
+        }
+
+        public void Target()
+        {
+            modelParams.lineColor = Color.White;
+        }
+
+        public void UnTarget()
+        {
+            modelParams.lineColor = Color.Black;
         }
     }
 }

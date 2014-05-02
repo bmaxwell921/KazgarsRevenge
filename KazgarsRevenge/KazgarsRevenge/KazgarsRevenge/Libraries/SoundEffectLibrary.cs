@@ -210,7 +210,10 @@ namespace KazgarsRevenge
         public void endGopherSpin(bool dead)
         {
             nextScream = -10000;
-            gopherScream.Stop();
+            if (gopherScream != null)
+            {
+                gopherScream.Stop();
+            }
             if (dead)
             {
                 soundEffects["gopher_death"].Play();
