@@ -193,6 +193,7 @@ namespace KazgarsRevenge
             {
                 public static readonly string ICON_SEL = @"Textures\UI\Frames\icon_selected";
                 public static readonly string HEALTH_BAR = @"Textures\UI\Frames\health_bar";
+                public static readonly string HEALTH_FRAME = @"Textures\UI\Frames\healthFrame";
                 public static readonly string RIGHT_ARROW = @"Textures\UI\Frames\rightArrow";
                 public static readonly string LEFT_ARROW = @"Textures\UI\Frames\leftArrow";
                 public static readonly string HELMET = @"Textures\UI\Frames\helmetIcon";
@@ -206,6 +207,7 @@ namespace KazgarsRevenge
                 public static readonly string talentBackBow = @"Textures\UI\Frames\talentBackBow";
                 public static readonly string smallArrowDown = @"Textures\UI\Frames\smallArrowDown";
                 public static readonly string smallArrowUp = @"Textures\UI\Frames\smallArrowUp";
+                public static readonly string iconBorder = @"Textures\UI\Frames\iconBorder";
             }
 
             public class Buffs

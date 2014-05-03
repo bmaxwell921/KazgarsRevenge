@@ -65,6 +65,8 @@ namespace KazgarsRevenge
             talentBackBow = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.talentBackBow);
             smallArrowUp = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.smallArrowUp);
             smallArrowDown = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.smallArrowDown);
+            healthFrame = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.HEALTH_FRAME);
+            iconBorder = Texture2DUtil.Instance.GetTexture(TextureStrings.UI.Frames.iconBorder);
             #endregion
 
             #region Ability Image Load
@@ -190,6 +192,8 @@ namespace KazgarsRevenge
         Texture2D talentFrame;
         Texture2D talentBackHammer;
         Texture2D talentBackBow;
+        Texture2D healthFrame;
+        Texture2D iconBorder;
 
         Texture2D smallArrowDown;
         Texture2D smallArrowUp;
@@ -2237,36 +2241,43 @@ namespace KazgarsRevenge
             {
                 for (int j = 0; j < 7; j++)
                 {
-                    if (currentTree[j, i] != null)
+                    Rectangle tempIconRect = guiInsideRects["talents"]["talent" + (i + j * 4)];
+                    AbilityNode tempTalent = currentTree[j, i];
+                    if (tempTalent != null)
                     {
                         //Draw Icon
-                        s.Draw(GetCachedAbility(currentTree[j, i].name).icon, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White);
+                        s.Draw(GetCachedAbility(tempTalent.name).icon, tempIconRect, Color.White);
                         //Draw shadow over locked abilities
-                        if (!abilityLearnedFlags[currentTree[j, i].name])
-                        {   //can be unlocked
-                            if (currentTree[j, i].canUnlock())
+                        if (!abilityLearnedFlags[tempTalent.name])
+                        {   
+                            //can be unlocked
+                            if (tempTalent.canUnlock() && TalentPointsLeft >= tempTalent.cost)
                             {
-                                s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.White * .5f);
-                                s.DrawString(font, currentTree[j, i].cost.ToString(), new Vector2(guiInsideRects["talents"]["talent" + (i + j * 4)].X, guiInsideRects["talents"]["talent" + (i + j * 4)].Y), Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
+                                s.Draw(texWhitePixel, tempIconRect, Color.White * .5f);
+                                s.DrawString(font, tempTalent.cost.ToString(), new Vector2(tempIconRect.X, tempIconRect.Y), Color.Black, 0, Vector2.Zero, average, SpriteEffects.None, 0);
                             }
-                            //locked
-                            else s.Draw(texWhitePixel, guiInsideRects["talents"]["talent" + (i + j * 4)], Color.Black * .8f);
+                            else//locked
+                            {
+                                s.Draw(texWhitePixel, tempIconRect, Color.Black * .8f);
+                            }
                         }
 
                         //Draw active frames around active items
-                        if (GetCachedAbility(currentTree[j, i].name).AbilityType != AbilityType.Passive && abilityLearnedFlags[currentTree[j, i].name])
+                        if (GetCachedAbility(tempTalent.name).AbilityType != AbilityType.Passive && abilityLearnedFlags[tempTalent.name])
                         {
-                            Rectangle temp = guiInsideRects["talents"]["talent" + (i + j * 4)];
-                            temp.X = (int)(temp.X - 6 * average);
-                            temp.Y = (int)(temp.Y - 6 * average);
-                            temp.Width = (int)(temp.Width + 12 * average);
-                            temp.Height = (int)(temp.Height + 12 * average);
-                            s.Draw(texActiveTalent, temp, Color.Red * .8f);
+                            tempIconRect.X -= (int)(5 * average);
+                            tempIconRect.Y -= (int)(5 * average);
+                            tempIconRect.Width += (int)(10 * average);
+                            tempIconRect.Height += (int)(10 * average);
+                            s.Draw(texActiveTalent, tempIconRect, Color.Red * .8f);
+                        }
+                        else
+                        {
+                            s.Draw(iconBorder, tempIconRect, Color.White);
                         }
                     }
                 }
             }
-
         }
 
         //variables for menus
@@ -2477,7 +2488,7 @@ namespace KazgarsRevenge
             Vector2 abilitiesUL = new Vector2((int)((maxX / 2 - 361 * average)), (int)((maxY - 228 * average)));
             guiOutsideRects = new Dictionary<string, Rectangle>();
             guiOutsideRects.Add("abilities", new Rectangle((int)abilitiesUL.X, (int)abilitiesUL.Y, (int)(722 * average), (int)(228 * average)));
-            guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 291 * average)), (int)((maxY - 178 * average)), (int)(582 * average), (int)(20 * average)));
+            guiOutsideRects.Add("xp", new Rectangle((int)((maxX / 2 - 335 * average)), (int)((maxY - 212 * average)), (int)(670 * average), (int)(40 * average)));
             guiOutsideRects.Add("map", new Rectangle((int)((maxX - 344 * average)), 0, (int)(344 * average), (int)(344 * average)));
             //guiOutsideRects.Add("megaMap", new Rectangle((int)(((maxX / 2) - (622 / 2)) * average), (int) (160 * average), (int) (622 * average), (int) (622 * average))); // TODO does this look ok?
             guiOutsideRects.Add("player", new Rectangle(0, 0, (int)(470 * average), (int)(160 * average)));
@@ -2722,18 +2733,18 @@ namespace KazgarsRevenge
             //s.Draw(texWhitePixel, guiOutsideRects["chat"], Color.Black * 0.5f);
 
             #region xp area
-            Rectangle xpRect = new Rectangle((int)((maxX / 2 - 335 * average)), (int)((maxY - 228 * average)), (int)(670 * average), (int)(40 * average));// guiOutsideRects["xp"];
+            Rectangle xpRect = guiOutsideRects["xp"];
             s.Draw(texWhitePixel, xpRect, Color.Black);
             s.Draw(texWhitePixel, new Rectangle(xpRect.X, xpRect.Y, xpRect.Width * experience / NextLevelXP, xpRect.Height), Color.Purple);
             #endregion
 
             #region Ability Bar
-            //Ability Bar
             s.Draw(abilityFrame, guiOutsideRects["abilities"], Color.White);
             for (int i = 0; i < 12; ++i)
             {
                 Rectangle temprect = guiInsideRects["abilities"]["ability" + i];
                 s.Draw(boundAbilities[i].Value.icon, temprect, Color.White);
+                s.Draw(iconBorder, new Rectangle((int)(temprect.X - 5 * average), (int)(temprect.Y - 5 * average), (int)(temprect.Width + 10 * average), (int)(temprect.Height + 10 * average)), Color.White);
                 /*
                 if (boundAbilities[i].Value.PowerCost > 0)
                 {
@@ -2784,7 +2795,7 @@ namespace KazgarsRevenge
             {
                 if (UISlotUsed[i])
                 {
-                    s.Draw(icon_selected, guiInsideRects["abilities"]["ability" + i], Color.White);
+                    s.Draw(texHover, guiInsideRects["abilities"]["ability" + i], Color.Gray);
                 }
             }
             if (UISlotUsed[10])
@@ -2812,7 +2823,6 @@ namespace KazgarsRevenge
 
             #endregion
 
-
             #region minimap
             DrawMiniMap(s);
 
@@ -2831,11 +2841,12 @@ namespace KazgarsRevenge
             //power
             s.Draw(texWhitePixel, powerBackRect, Color.Black);
             s.Draw(texWhitePixel, new Rectangle(powerBackRect.X, powerBackRect.Y, powerBackRect.Width * currentPower / maxPower, powerBackRect.Height), Color.Yellow);
-            s.Draw(texChargeBarFront, powerBackRect, Color.Red);
+            s.Draw(healthFrame, powerBackRect, Color.White);
             s.DrawString(font, currentPower + "", powerTextPos, Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
             s.DrawString(font, "    /" + maxPower, powerTextPos, Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
             //main player health
             s.Draw(health_bar, new Rectangle(playerHPRect.X, playerHPRect.Y, (int)(playerHPRect.Width * HealthPercent), (int)(playerHPRect.Height)), new Rectangle(0, 0, (int)(health_bar.Width * HealthPercent), (int)health_bar.Height), Color.White);
+            s.Draw(healthFrame, playerHPRect, Color.White);
 
             for (int i = 0; i < 6; i++)
             {
@@ -2898,16 +2909,21 @@ namespace KazgarsRevenge
                     //Equip icons
                     for (int i = 1; i < Enum.GetNames(typeof(GearSlot)).Length; ++i)
                     {
+                        Rectangle tempEquipRect = guiInsideRects["equipment"][((GearSlot)i).ToString()];
                         //draw outline based on quality if it's a piece of gear
                         Equippable e = gear[(GearSlot)i];
+
+                        s.Draw(texWhitePixel, tempEquipRect, Color.Black);
                         if (e == null)
                         {
-                            s.Draw(texPlaceHolder, guiInsideRects["equipment"][((GearSlot)i).ToString()], Color.White);
+                            s.Draw(texPlaceHolder, tempEquipRect, Color.White);
+                            s.Draw(iconBorder, new Rectangle((int)(tempEquipRect.X - 5 * average), (int)(tempEquipRect.Y - 5 * average), (int)(tempEquipRect.Width + 10 * average), (int)(tempEquipRect.Height + 10 * average)), Color.White);
                         }
                         else
                         {
-                            s.Draw(equippableOutline, guiInsideRects["equipment"][((GearSlot)i).ToString()], Equippable.GetQualityColor(e.Quality));
-                            s.Draw(gear[(GearSlot)i].Icon, guiInsideRects["equipment"][((GearSlot)i).ToString()], Color.White);
+                            s.Draw(equippableOutline, tempEquipRect, Equippable.GetQualityColor(e.Quality));
+                            s.Draw(gear[(GearSlot)i].Icon, tempEquipRect, Color.White);
+                            s.Draw(iconBorder, new Rectangle((int)(tempEquipRect.X - 5 * average), (int)(tempEquipRect.Y - 5 * average), (int)(tempEquipRect.Width + 10 * average), (int)(tempEquipRect.Height + 10 * average)), Color.White);
                         }
                     }
                 }
@@ -2929,6 +2945,7 @@ namespace KazgarsRevenge
                     {
                         Rectangle rect = guiInsideRects["inventory"]["inventory" + i];
 
+                        s.Draw(texWhitePixel, rect, Color.Black);
                         //draw glow behind icon if it's an equippable
                         Equippable possEquip = inventory[i] as Equippable;
                         if (possEquip != null)
@@ -2941,6 +2958,7 @@ namespace KazgarsRevenge
                         {
                             s.DrawString(font, "x" + inventory[i].Quantity, new Vector2(rect.X, rect.Y + rect.Height - 50 * average * .5f), Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
                         }
+                        s.Draw(iconBorder, new Rectangle((int)(rect.X - 5 * average), (int)(rect.Y - 5 * average), (int)(rect.Width + 10 * average), (int)(rect.Height + 10 * average)), Color.White);
                     }
 
                 }
@@ -2972,6 +2990,7 @@ namespace KazgarsRevenge
                     {
                         s.DrawString(font, "x" + ltemp.Quantity, new Vector2(rect.X, rect.Y + rect.Height - 50 * average * .5f), Color.White, 0, Vector2.Zero, average * .5f, SpriteEffects.None, 0);
                     }
+                    s.Draw(iconBorder, new Rectangle((int)(rect.X - 5 * average), (int)(rect.Y - 5 * average), (int)(rect.Width + 10 * average), (int)(rect.Height + 10 * average)), Color.White);
                 }
                 if (lootingSoul.Loot.Count() > NUM_LOOT_SHOWN + NUM_LOOT_SHOWN * lootScroll)
                 {
@@ -3198,7 +3217,7 @@ namespace KazgarsRevenge
                 }
                 else
                 {
-
+                    
                 }
 
                 s.Draw(texHover, guiInsideRects["talents"]["talent" + selectedTalentSlot], Color.Gray);

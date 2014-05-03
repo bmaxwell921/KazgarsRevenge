@@ -91,7 +91,8 @@ namespace KazgarsRevenge
         {
             currentPower = Math.Max(0, currentPower - power);
         }
-        
+
+        protected int TalentPointsLeft { get { return totalTalentPoints - spentTalentPoints; } }
         protected int spentTalentPoints = 0;
         protected int totalTalentPoints = 3;
         protected const float meleeRange = 50;

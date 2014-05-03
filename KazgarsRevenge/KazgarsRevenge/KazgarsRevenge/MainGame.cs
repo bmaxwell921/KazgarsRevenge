@@ -124,7 +124,15 @@ namespace KazgarsRevenge
             IsMouseVisible = true;
 
         }
-        
+
+        void TrapCursor(object sender, EventArgs e)
+        {
+            Rectangle rect = Window.ClientBounds;
+            rect.Width += rect.X;
+            rect.Height += rect.Y;
+            ClipCursor(ref rect);
+        }
+
         protected override void Initialize()
         {
             GraphicsDevice.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
@@ -143,16 +151,15 @@ namespace KazgarsRevenge
                 graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
 
+                TrapCursor(null, null);
 
-                Rectangle rect = Window.ClientBounds;
-                rect.Width += rect.X;
-                rect.Height += rect.Y;
-                ClipCursor(ref rect);
+                GraphicsDevice.DeviceReset += new EventHandler<EventArgs>(TrapCursor);
+                Activated += new EventHandler<EventArgs>(TrapCursor);
             }
             else
             {
-                graphics.PreferredBackBufferWidth = 1024;
-                graphics.PreferredBackBufferHeight = 720;
+                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 graphics.IsFullScreen = false;
                 graphics.ApplyChanges();
                 screenScale = ((float)GraphicsDevice.Viewport.Height / graphics.PreferredBackBufferHeight + (float)GraphicsDevice.Viewport.Width / graphics.PreferredBackBufferWidth) / 2;
@@ -331,14 +338,6 @@ namespace KazgarsRevenge
         TimeSpan elapsedTime = TimeSpan.Zero;
         protected override void Update(GameTime gameTime)
         {
-            if (IsActive && graphics.IsFullScreen)
-            {
-                Rectangle rect = Window.ClientBounds;
-                rect.Width += rect.X;
-                rect.Height += rect.Y;
-
-                ClipCursor(ref rect); 
-            }
 
             if (gameState == GameState.Playing)
             {
