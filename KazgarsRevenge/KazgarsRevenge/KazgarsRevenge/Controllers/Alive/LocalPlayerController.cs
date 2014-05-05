@@ -410,6 +410,11 @@ namespace KazgarsRevenge
                     }
                 }
 
+                if (targetedPhysicalData != null)
+                {
+                    groundTargetLocation = targetedPhysicalData.Position;
+                }
+
                 groundMove = move;
 
             }
