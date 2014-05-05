@@ -88,7 +88,7 @@ namespace KazgarsRevenge
             {PopUpNames.Talent3, new HelpPopUp(new List<TooltipLine> { new TooltipLine(Color.White, "Actives in Action!", .65f), new TooltipLine(Color.Gold, "Active talents have a red border.", .4f), new TooltipLine(Color.Gold, "Some active talents cost power.", .4f), new TooltipLine(Color.Gold, "Information is in the tooltips.", .4f) }, "buttons", "talents")},
 
             {PopUpNames.Health, new HelpPopUp(new List<TooltipLine> { new TooltipLine(Color.White, "Thrive and Survive!", .65f), new TooltipLine(Color.Gold, "When in combat be sure to keep", .4f), new TooltipLine(Color.Gold, "an eye on your health.  Regen", .4f), new TooltipLine(Color.Gold, "using potions and abilities.", .4f) }, "player", "hp")},
-            {PopUpNames.Loot, new HelpPopUp(new List<TooltipLine> { new TooltipLine(Color.White, "Collect the Spoils!", .65f), new TooltipLine(Color.Gold, "After slaying an enemy, press", .4f), new TooltipLine(Color.Gold, "SPACE to loot its soul.", .4f) }, null, null)},
+            {PopUpNames.Loot, new HelpPopUp(new List<TooltipLine> { new TooltipLine(Color.White, "Collect the Spoils!", .65f), new TooltipLine(Color.Gold, "After slaying an enemy, click", .4f), new TooltipLine(Color.Gold, "its soul to get your loot.", .4f) }, null, null)},
             {PopUpNames.Equip, new HelpPopUp(new List<TooltipLine> { new TooltipLine(Color.White, "Drag and Drop!", .65f), new TooltipLine(Color.Gold, "Equipping gear is easy!  Just", .4f), new TooltipLine(Color.Gold, "click and drag something from your", .4f), new TooltipLine(Color.Gold, " inventory into the correct slot.", .4f) }, "buttons", "character")},
         };
         #endregion
