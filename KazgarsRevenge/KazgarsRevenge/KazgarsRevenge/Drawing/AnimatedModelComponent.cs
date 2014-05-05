@@ -199,6 +199,10 @@ namespace KazgarsRevenge
         }
 
         private int lastLightUpdate = 0;
+        public void UpdateLightEffects()
+        {
+            lastLightUpdate = -1;
+        }
         public override void Draw(GameTime gameTime, CameraComponent camera, bool edgeDetection)
         {
             if (InsideCameraBox(camera.CameraBox) && modelParams.visible)

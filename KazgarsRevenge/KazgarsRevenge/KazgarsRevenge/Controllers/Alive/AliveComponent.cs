@@ -414,8 +414,8 @@ namespace KazgarsRevenge
             if (!activeBuffs.ContainsKey(Buff.Invincibility))
             {
                 actualDamage = d;
-                actualDamage -= Math.Max(0, 
-                    (int)(actualDamage * GetStat(StatType.Armor) / (20 * (Level)))
+                actualDamage = Math.Max(0, 
+                    actualDamage - (int)(actualDamage * GetStat(StatType.Armor) / (20 * (Level)))
                     );
 
                 if (!Dead)

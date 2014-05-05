@@ -193,6 +193,7 @@ namespace KazgarsRevenge
                     {
                         syncedModels.Add(slot.ToString(), equipMe.GearModel);
                     }
+                    model.UpdateLightEffects();
                     return true;
                 }
                 else
