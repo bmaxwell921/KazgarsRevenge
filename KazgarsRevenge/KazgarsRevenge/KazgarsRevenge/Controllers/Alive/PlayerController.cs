@@ -76,7 +76,8 @@ namespace KazgarsRevenge
         #region Abilities
         protected override void HandleLevelUp()
         {
-            ++totalTalentPoints;
+            //++totalTalentPoints;
+            totalTalentPoints += 4;
             base.HandleLevelUp();
         }
 
@@ -466,7 +467,7 @@ namespace KazgarsRevenge
             InitNewPlayer();
 
             //adding gear for testing
-
+            /*
             Equippable g = (Equippable)lewtz.GetItem(3209);
             g.SetStats(GearQuality.Standard, 1);
             AddToInventory(g);
@@ -485,11 +486,11 @@ namespace KazgarsRevenge
             g = (Equippable)lewtz.GetItem(3207);
             g.SetStats(GearQuality.Good, 1);
             AddToInventory(g);
-
+            */
 
 
             //gear for demo
-            /*
+            
             Weapon wep = lewtz.GetItem(3001) as Weapon;
             wep.SetStats(GearQuality.Standard, 1);
             AddToInventory(wep);
@@ -497,7 +498,7 @@ namespace KazgarsRevenge
             wep = lewtz.GetItem(3102) as Weapon;
             wep.SetStats(GearQuality.Standard, 1);
             AddToInventory(wep);
-             */
+             
 
         }
 

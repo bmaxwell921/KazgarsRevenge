@@ -95,7 +95,7 @@ namespace KazgarsRevenge
             switch (levelManager.currentLevel.currentFloor)
             {
                 case FloorName.Dungeon:
-                    r = RandSingleton.U_Instance.Next(3);
+                    r = RandSingleton.U_Instance.Next(4);
                     if (r == 0)
                     {
                         CreatePigman(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
@@ -104,9 +104,13 @@ namespace KazgarsRevenge
                     {
                         CreateCrossbowSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
                     }
-                    else
+                    else if (r == 2)
                     {
                         CreateMagicSkeleton(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
+                    }
+                    else
+                    {
+                        CreateArmorEnemy(IdentificationFactory.getId(EntityType.NormalEnemy, Identification.NO_CLIENT), loc, enemyLevel, false);
                     }
                     break;
             }
